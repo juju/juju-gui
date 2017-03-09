@@ -43,7 +43,8 @@ YUI.add('entity-details', function() {
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
-      scrollPosition: React.PropTypes.number.isRequired
+      scrollPosition: React.PropTypes.number.isRequired,
+      setPageTitle: React.PropTypes.func.isRequired
     },
 
     /**
@@ -149,12 +150,19 @@ YUI.add('entity-details', function() {
         return;
       }
       if (data.length > 0) {
-        var data = data[0];
-        var model = this.props.makeEntityModel(data);
-        this.setState({entityModel: model}, () => {
+        data = data[0];
+        const model = this.props.makeEntityModel(data);
+        this.setState({
+          entityModel: model
+        }, () => {
           this._changeActiveComponent('entity-details');
           this._getPlans();
         });
+        const modelEntity = model.toEntity();
+        const displayName = modelEntity.displayName;
+        const revision_id = modelEntity.revision_id;
+        const title = `${displayName} (#${revision_id})`;
+        this.props.setPageTitle(title);
       }
     },
 
@@ -213,6 +221,7 @@ YUI.add('entity-details', function() {
       if (this.detailsXhr) {
         this.detailsXhr.abort();
       }
+      this.props.setPageTitle();
     },
 
     /**

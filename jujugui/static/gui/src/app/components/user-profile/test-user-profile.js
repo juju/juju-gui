@@ -65,6 +65,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
+        setPageTitle={sinon.stub()}
         staticURL={staticURL}
         storeUser={sinon.stub()}
         userInfo={userInfo}
@@ -150,6 +151,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        setPageTitle={sinon.stub()}
         storeUser={storeUser}
         userInfo={userInfo}
       />, true);
@@ -180,6 +182,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
+        setPageTitle={sinon.stub()}
         storeUser={sinon.stub()}
         userInfo={userInfo}
       />, true);
@@ -205,6 +208,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
+        setPageTitle={sinon.stub()}
         storeUser={sinon.stub()}
         userInfo={userInfo}
       />, true);

@@ -59,26 +59,27 @@ describe('EntityDetails', function() {
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
-        scrollPosition={0} />);
+        scrollPosition={0}
+        setPageTitle={sinon.stub()} />);
     assert.equal(output.props.className, 'entity-details');
   });
 
   it('fetches an entity properly', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
-    var apiUrl = 'http://example.com';
-    var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    var makeEntityModel = sinon.stub().returns(mockEntity);
-    var deployService = sinon.spy();
-    var changeState = sinon.spy();
-    var importBundleYAML = sinon.spy();
-    var getBundleYAML = sinon.spy();
+    const apiUrl = 'http://example.com';
+    const id = mockEntity.get('id');
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const deployService = sinon.spy();
+    const changeState = sinon.spy();
+    const importBundleYAML = sinon.spy();
+    const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
-    var pluralize = sinon.spy();
-    var getFile = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var addNotification = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const pluralize = sinon.spy();
+    const getFile = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const addNotification = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
@@ -98,16 +99,17 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           addNotification={addNotification}
-          makeEntityModel={makeEntityModel} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+          makeEntityModel={makeEntityModel}
+          setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var expected = (
+    const expected = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -143,16 +145,16 @@ describe('EntityDetails', function() {
   });
 
   it('can display a message if there is a loading error', function() {
-    var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
-    var deployService = sinon.spy();
-    var changeState = sinon.spy();
-    var importBundleYAML = sinon.spy();
-    var getBundleYAML = sinon.spy();
-    var pluralize = sinon.spy();
-    var getFile = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const id = mockEntity.get('id');
+    const getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
+    const deployService = sinon.spy();
+    const changeState = sinon.spy();
+    const importBundleYAML = sinon.spy();
+    const getBundleYAML = sinon.spy();
+    const pluralize = sinon.spy();
+    const getFile = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           addNotification={sinon.stub()}
@@ -170,12 +172,13 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
-          scrollPosition={0} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+          scrollPosition={0}
+          setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    var expected = (
+    const output = shallowRenderer.getRenderOutput();
+    const expected = (
       <div className="entity-details"
         ref="content"
         tabIndex="0">
@@ -192,22 +195,22 @@ describe('EntityDetails', function() {
   });
 
   it('can display a bundle diagram', function() {
-    var apiUrl = 'http://example.com';
-    var mockEntity = jsTestUtils.makeEntity(true);
-    var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    var makeEntityModel = sinon.stub().returns(mockEntity);
-    var deployService = sinon.spy();
-    var changeState = sinon.spy();
-    var importBundleYAML = sinon.spy();
-    var getBundleYAML = sinon.spy();
+    const apiUrl = 'http://example.com';
+    const mockEntity = jsTestUtils.makeEntity(true);
+    const id = mockEntity.get('id');
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const deployService = sinon.spy();
+    const changeState = sinon.spy();
+    const importBundleYAML = sinon.spy();
+    const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
-    var pluralize = sinon.spy();
-    var getFile = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var getDiagramURL = sinon.spy();
-    var addNotification = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const pluralize = sinon.spy();
+    const getFile = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const getDiagramURL = sinon.spy();
+    const addNotification = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
@@ -227,16 +230,17 @@ describe('EntityDetails', function() {
           isLegacyJuju={false}
           pluralize={pluralize}
           addNotification={addNotification}
-          makeEntityModel={makeEntityModel} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+          makeEntityModel={makeEntityModel}
+          setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var expected = (
+    const expected = (
       <div className={'entity-details bundle'}
         ref="content"
         tabIndex="0">
@@ -273,17 +277,17 @@ describe('EntityDetails', function() {
   });
 
   it('will abort the request when unmounting', function() {
-    var abort = sinon.stub();
-    var id = mockEntity.get('id');
-    var getEntity = sinon.stub().returns({abort: abort});
-    var deployService = sinon.spy();
-    var changeState = sinon.spy();
-    var importBundleYAML = sinon.spy();
-    var getBundleYAML = sinon.spy();
-    var pluralize = sinon.spy();
-    var getFile = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const abort = sinon.stub();
+    const id = mockEntity.get('id');
+    const getEntity = sinon.stub().returns({abort: abort});
+    const deployService = sinon.spy();
+    const changeState = sinon.spy();
+    const importBundleYAML = sinon.spy();
+    const getBundleYAML = sinon.spy();
+    const pluralize = sinon.spy();
+    const getFile = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           addNotification={sinon.stub()}
@@ -301,8 +305,9 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
-          scrollPosition={0} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+          scrollPosition={0}
+          setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
     instance.componentWillUnmount();
@@ -310,8 +315,8 @@ describe('EntityDetails', function() {
   });
 
   it('sets the focus when rendered', function() {
-    var focus = sinon.stub();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const focus = sinon.stub();
+    const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={sinon.stub()}
@@ -329,8 +334,9 @@ describe('EntityDetails', function() {
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
-        scrollPosition={0} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+        scrollPosition={0}
+        setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
     instance.componentDidMount();
     assert.equal(focus.callCount, 1);
@@ -338,22 +344,22 @@ describe('EntityDetails', function() {
 
   it('can get plans', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
-    var plans = ['plan1', 'plan2'];
-    var addNotification = sinon.spy();
-    var apiUrl = 'http://example.com';
-    var changeState = sinon.spy();
-    var deployService = sinon.spy();
-    var getBundleYAML = sinon.spy();
-    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    var getFile = sinon.spy();
+    const plans = ['plan1', 'plan2'];
+    const addNotification = sinon.spy();
+    const apiUrl = 'http://example.com';
+    const changeState = sinon.spy();
+    const deployService = sinon.spy();
+    const getBundleYAML = sinon.spy();
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const getFile = sinon.spy();
     const getModelName = sinon.spy();
-    var id = mockEntity.get('id');
-    var importBundleYAML = sinon.spy();
-    var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    var makeEntityModel = sinon.stub().returns(mockEntity);
-    var pluralize = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const id = mockEntity.get('id');
+    const importBundleYAML = sinon.spy();
+    const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const pluralize = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
@@ -373,16 +379,17 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
-        scrollPosition={100} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+        scrollPosition={100}
+        setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var expected = (
+    const expected = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -420,22 +427,22 @@ describe('EntityDetails', function() {
 
   it('can not display plans', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
-    var plans = ['plan1', 'plan2'];
-    var addNotification = sinon.spy();
-    var apiUrl = 'http://example.com';
-    var changeState = sinon.spy();
-    var deployService = sinon.spy();
-    var getBundleYAML = sinon.spy();
-    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    var getFile = sinon.spy();
+    const plans = ['plan1', 'plan2'];
+    const addNotification = sinon.spy();
+    const apiUrl = 'http://example.com';
+    const changeState = sinon.spy();
+    const deployService = sinon.spy();
+    const getBundleYAML = sinon.spy();
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const getFile = sinon.spy();
     const getModelName = sinon.spy();
-    var id = mockEntity.get('id');
-    var importBundleYAML = sinon.spy();
-    var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    var makeEntityModel = sinon.stub().returns(mockEntity);
-    var pluralize = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const id = mockEntity.get('id');
+    const importBundleYAML = sinon.spy();
+    const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const pluralize = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
@@ -455,16 +462,17 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
-        scrollPosition={100} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+        scrollPosition={100}
+        setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var expected = (
+    const expected = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -501,21 +509,21 @@ describe('EntityDetails', function() {
 
   it('can set plans to empty on error', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
-    var addNotification = sinon.spy();
-    var apiUrl = 'http://example.com';
-    var changeState = sinon.spy();
-    var deployService = sinon.spy();
-    var getBundleYAML = sinon.spy();
-    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    var getFile = sinon.spy();
+    const addNotification = sinon.spy();
+    const apiUrl = 'http://example.com';
+    const changeState = sinon.spy();
+    const deployService = sinon.spy();
+    const getBundleYAML = sinon.spy();
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const getFile = sinon.spy();
     const getModelName = sinon.spy();
-    var id = mockEntity.get('id');
-    var importBundleYAML = sinon.spy();
-    var listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
-    var makeEntityModel = sinon.stub().returns(mockEntity);
-    var pluralize = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const id = mockEntity.get('id');
+    const importBundleYAML = sinon.spy();
+    const listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const pluralize = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
@@ -535,16 +543,17 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
-        scrollPosition={100} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+        scrollPosition={100}
+        setPageTitle={sinon.stub()} />, true);
+    const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var expected = (
+    const expected = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">

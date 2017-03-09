@@ -42,6 +42,7 @@ YUI.add('charmbrowser-component', function() {
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       series: React.PropTypes.object.isRequired,
+      setPageTitle: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       utils: React.PropTypes.object.isRequired
     },
@@ -182,7 +183,8 @@ YUI.add('charmbrowser-component', function() {
                 isLegacyJuju={this.props.isLegacyJuju}
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
-                makeEntityModel={this.props.makeEntityModel} />
+                makeEntityModel={this.props.makeEntityModel}
+                setPageTitle={this.props.setPageTitle} />
           );
           break;
       }

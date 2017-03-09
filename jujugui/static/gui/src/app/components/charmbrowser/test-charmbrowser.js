@@ -148,24 +148,25 @@ describe('Charmbrowser', function() {
   });
 
   it('displays entity details when the app state calls for it', function() {
-    var id = 'foobar';
-    var apiUrl = 'http://example.com';
+    const id = 'foobar';
+    const apiUrl = 'http://example.com';
     appState.current.store = id;
-    var getEntity = sinon.spy();
-    var makeEntityModel = sinon.spy();
-    var deployService = sinon.spy();
-    var importBundleYAML = sinon.spy();
-    var getBundleYAML = sinon.spy();
+    const getEntity = sinon.spy();
+    const makeEntityModel = sinon.spy();
+    const deployService = sinon.spy();
+    const importBundleYAML = sinon.spy();
+    const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
-    var getFile = sinon.spy();
-    var renderMarkdown = sinon.spy();
-    var getDiagramURL = sinon.spy();
-    var listPlansForCharm = sinon.spy();
-    var addNotification = sinon.spy();
-    var utils = {
+    const getFile = sinon.spy();
+    const renderMarkdown = sinon.spy();
+    const getDiagramURL = sinon.spy();
+    const listPlansForCharm = sinon.spy();
+    const addNotification = sinon.spy();
+    const utils = {
       pluralize: sinon.spy()
     };
-    var renderer = jsTestUtils.shallowRender(
+    const setPageTitle = sinon.spy();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
         addNotification={addNotification}
@@ -187,9 +188,10 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
-        series={{}} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+        series={{}}
+        setPageTitle={setPageTitle} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const expected = (
         <juju.components.Panel
           instanceName="white-box"
@@ -218,7 +220,8 @@ describe('Charmbrowser', function() {
               displayPlans={true}
               id={id}
               addNotification={addNotification}
-              pluralize={utils.pluralize} />
+              pluralize={utils.pluralize}
+              setPageTitle={setPageTitle} />
           </div>
         </juju.components.Panel>);
     assert.deepEqual(output, expected);
@@ -241,7 +244,8 @@ describe('Charmbrowser', function() {
     const utils = {
       pluralize: sinon.stub()
     };
-    var renderer = jsTestUtils.shallowRender(
+    const setPageTitle = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
         addNotification={addNotification}
@@ -263,9 +267,10 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
-        series={{}} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+        series={{}}
+        setPageTitle={setPageTitle} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const expected = (
         <juju.components.Panel
           instanceName="white-box"
@@ -294,7 +299,8 @@ describe('Charmbrowser', function() {
               displayPlans={true}
               id='~spinch/koala'
               addNotification={addNotification}
-              pluralize={utils.pluralize} />
+              pluralize={utils.pluralize}
+              setPageTitle={setPageTitle} />
           </div>
         </juju.components.Panel>);
     assert.deepEqual(output, expected);

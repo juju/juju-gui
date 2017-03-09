@@ -487,6 +487,8 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('gisf')) {
         document.body.classList.add('u-is-beta');
       }
+
+      this.defaultPageTitle = 'Juju GUI';
       this._init(cfg, modelAPI, controllerAPI);
     },
 
@@ -1156,6 +1158,7 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
+          setPageTitle={this.setPageTitle}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={utils.switchModel.bind(this, this.env)}
@@ -1844,7 +1847,8 @@ YUI.add('juju-gui', function(Y) {
           apiVersion={window.jujulib.charmstoreAPIVersion}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
-          makeEntityModel={Y.juju.makeEntityModel} />,
+          makeEntityModel={Y.juju.makeEntityModel}
+          setPageTitle={this.setPageTitle.bind(this)} />,
         document.getElementById('charmbrowser-container'));
       next();
     },
@@ -3007,6 +3011,14 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Sets the page title.
+      @param {String} title The title to be appended with ' - Juju GUI'
+    */
+    setPageTitle: function(title) {
+      document.title = title ? `${title} - Juju GUI` : this.defaultPageTitle;
+    },
+
+    /**
      * Record environment default series changes in our model.
      *
      * The provider type arrives asynchronously.  Instead of updating the
@@ -3036,7 +3048,8 @@ YUI.add('juju-gui', function(Y) {
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();
       // Update the page title.
-      document.title = `${environmentName} - Juju GUI`;
+      this.defaultPageTitle = `${environmentName} - Juju GUI`;
+      this.setPageTitle();
     },
 
     /**
