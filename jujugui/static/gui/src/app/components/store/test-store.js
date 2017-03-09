@@ -78,6 +78,7 @@ describe('Store', function() {
                     private, or share them back with the community.</p>
                     <p>
                     <a target="_blank"
+                      className="link"
                       href={doc}>
                       Learn more about writing charms&nbsp;&rsaquo;
                     </a></p>

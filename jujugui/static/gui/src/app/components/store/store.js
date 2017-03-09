@@ -149,6 +149,7 @@ YUI.add('store', function() {
                   private, or share them back with the community.</p>
                   <p>
                   <a target="_blank"
+                    className="link"
                     href={doc}>
                     Learn more about writing charms&nbsp;&rsaquo;
                   </a></p>
@@ -287,7 +288,8 @@ YUI.add('store', function() {
       ];
       var list = [];
       topics.forEach(function(topic, index) {
-        var key = `tagItem-${index}`;
+        let key = `tagItem-${index}`;
+        let comma = index === topics.length - 1 ? '' : ',';
         list.push(<li className="inline-list__item" key={key}>
             <span onClick={this._handleSearchClick}
                 data-filterkey="tags"
@@ -295,7 +297,8 @@ YUI.add('store', function() {
                 className="link">
                 {topic.name}
             </span>
-            <span className="note">({topic.count})</span>,
+            <span className="note">({topic.count})</span>
+            {comma}
         </li>);
       }, this);
       return (<div className="eight-col prepend-two align-center">
@@ -376,6 +379,7 @@ YUI.add('store', function() {
                     <h3>Nagios</h3>
                     <p>
                         By <a href={this._generateUserPath('charmers')}
+                            className="link"
                             target="_blank">
                             charmers
                         </a>
@@ -612,6 +616,7 @@ YUI.add('store', function() {
                 <div className="six-col no-margin-bottom last-col">
                     <h3>Realtime Syslog Analytics</h3>
                     <p>By <a href={this._generateUserPath('bigdata-charmers')}
+                            className="link"
                             target="_blank">
                             bigdata-charmers
                         </a>
@@ -797,6 +802,7 @@ YUI.add('store', function() {
                 <div className="six-col no-margin-bottom last-col">
                     <h3>MySQL</h3>
                     <p>By <a href={this._generateUserPath('mysql-charmers')}
+                            className="link"
                             target="_blank">
                             mysql-charmers
                         </a>
