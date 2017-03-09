@@ -63,23 +63,6 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     /**
-      Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
-
-      @method convertOpenPorts
-      @param {Array} ports A list of port objects, each one including the
-       "Number" and "Protocol" attributes.
-      @return {Array} The converted list of ports.
-    */
-    convertOpenPorts: function(ports) {
-      if (!ports) {
-        return [];
-      }
-      return ports.map(port => {
-        return port.number + '/' + port.protocol;
-      });
-    },
-
-    /**
       Return a list of endpoints suitable for being included in the database.
 
       @method createEndpoints
@@ -237,21 +220,29 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     unitInfo: function(db, action, change) {
-      var unitData = {
+      const portRanges = change['port-ranges'] || [];
+      const unitData = {
         id: change.name,
         charmUrl: change['charm-url'],
         service: change.application,
         machine: change['machine-id'],
         public_address: change['public-address'],
         private_address: change['private-address'],
-        open_ports: utils.convertOpenPorts(change.ports),
+        portRanges: portRanges.map(portRange => {
+          return {
+            from: portRange['from-port'],
+            to: portRange['to-port'],
+            protocol: portRange.protocol,
+            single: portRange['from-port'] === portRange['to-port']
+          };
+        }),
         subordinate: change.subordinate,
         workloadStatusMessage: ''
       };
 
       // Handle agent and workload status.
-      var agentStatus = change['agent-status'] || {};
-      var workloadStatus = change['workload-status'] || {};
+      const agentStatus = change['agent-status'] || {};
+      const workloadStatus = change['workload-status'] || {};
       unitData.workloadStatusMessage = workloadStatus.message;
       if (workloadStatus.current === 'error') {
         unitData.agent_state = workloadStatus.current;

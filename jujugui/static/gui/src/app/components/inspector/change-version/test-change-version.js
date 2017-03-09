@@ -62,7 +62,7 @@ describe('InspectorChangeVersion', function() {
           <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
-            cs:django
+            django
           </div>
         </div>
         <div className="inspector-spinner">
@@ -99,7 +99,7 @@ describe('InspectorChangeVersion', function() {
           <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
-            cs:django
+            django
           </div>
         </div>
         <ul className="inspector-change-version__versions">
@@ -140,7 +140,7 @@ describe('InspectorChangeVersion', function() {
           <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
-            cs:django-5
+            django/5
           </div>
         </div>
         <ul className="inspector-change-version__versions">
@@ -150,14 +150,16 @@ describe('InspectorChangeVersion', function() {
             downgrade={true}
             itemAction={list.props.children[0].props.itemAction}
             buttonAction={list.props.children[0].props.buttonAction}
-            id="cs:django-4" />
+            url={window.jujulib.URL.fromString('django/4')}
+          />
           <juju.components.InspectorChangeVersionItem
             acl={acl}
             key="cs:django-6"
             downgrade={false}
             itemAction={list.props.children[1].props.itemAction}
             buttonAction={list.props.children[1].props.buttonAction}
-            id="cs:django-6" />
+            url={window.jujulib.URL.fromString('django/6')}
+          />
         </ul>
       </div>);
   });
@@ -189,7 +191,7 @@ describe('InspectorChangeVersion', function() {
           <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
-            cs:django
+            django
           </div>
         </div>
         <ul className="inspector-change-version__versions">
@@ -225,7 +227,7 @@ describe('InspectorChangeVersion', function() {
     output.props.children[0].props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      store: 'django-5'
+      store: 'django/5'
     });
   });
 
@@ -254,7 +256,7 @@ describe('InspectorChangeVersion', function() {
     output.props.children[1].props.children[0].props.itemAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      store: 'django-4'
+      store: 'django/4'
     });
   });
 

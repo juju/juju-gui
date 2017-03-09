@@ -593,7 +593,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         'public-address': 'public_address',
         'private-address': 'private_address',
         'machine-id': 'machine',
-        ports: 'open_ports',
+        'port-ranges': 'portRanges',
         'agent-status': function(attrs) {
           // TODO frankban: handle unit agent status.
           return {

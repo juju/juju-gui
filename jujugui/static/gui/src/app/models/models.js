@@ -1006,7 +1006,7 @@ YUI.add('juju-models', function(Y) {
         subordinate: {
           value: false
         },
-        open_ports: {},
+        portRanges: {},
         public_address: {},
         private_address: {}
       }

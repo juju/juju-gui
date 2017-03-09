@@ -1007,8 +1007,10 @@ YUI.add('juju-gui', function(Y) {
           this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = () => {
-        return legacy ? this.env.get('connected') :
-          this.controllerAPI.get('connected');
+        if (legacy) {
+          return this.env && this.env.get('connected');
+        }
+        return this.controllerAPI && this.controllerAPI.get('connected');
       };
       const getDischargeToken = () => {
         return window.localStorage.getItem('discharge-token');

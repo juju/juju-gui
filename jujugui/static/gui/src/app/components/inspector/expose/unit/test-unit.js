@@ -34,7 +34,13 @@ describe('InspectorExposeUnit', function() {
     var unit = {
       id: 'django/1',
       displayName: 'django/1',
-      open_ports: [80, '443/tcp'],
+      portRanges: [{
+        from: 9000, to: 10000, protocol: 'udp', single: false
+      }, {
+        from: 443, to: 443, protocol: 'tcp', single: true
+      }, {
+        from: 8080, to: 8080, protocol: 'tcp', single: true
+      }],
       public_address: '20.20.20.199'
     };
     var action = sinon.stub();
@@ -53,19 +59,23 @@ describe('InspectorExposeUnit', function() {
           </div>
           <ul className="inspector-expose__unit-list">
             <li className="inspector-expose__item"
-              key="http://20.20.20.199:80">
-              <a href="http://20.20.20.199:80"
-                onClick={instance._stopBubble}
-                target="_blank">
-                {"20.20.20.199"}:{"80"}
-              </a>
+              key="20.20.20.199:9000-10000/udp">
+              <span>{"20.20.20.199:9000-10000/udp"}</span>
             </li>
             <li className="inspector-expose__item"
               key="https://20.20.20.199:443">
               <a href="https://20.20.20.199:443"
                 onClick={instance._stopBubble}
                 target="_blank">
-                {"20.20.20.199"}:{"443"}
+                {"20.20.20.199:443"}
+              </a>
+            </li>
+            <li className="inspector-expose__item"
+              key="http://20.20.20.199:8080">
+              <a href="http://20.20.20.199:8080"
+                onClick={instance._stopBubble}
+                target="_blank">
+                {"20.20.20.199:8080"}
               </a>
             </li>
           </ul>
