@@ -27,7 +27,9 @@ YUI.add('user-profile-entity-list', function() {
       broadcastStatus: React.PropTypes.func,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
+      d3: React.PropTypes.object,
       getDiagramURL: React.PropTypes.func.isRequired,
+      getKpiMetrics: React.PropTypes.func,
       type: React.PropTypes.string.isRequired,
       user: React.PropTypes.string,
     },
@@ -264,8 +266,10 @@ YUI.add('user-profile-entity-list', function() {
       return (
         <juju.components.UserProfileEntity
           changeState={this.props.changeState}
+          d3={this.props.d3}
           entity={charm}
           key={id}
+          getKpiMetrics={this.props.getKpiMetrics}
           type="charm">
           <span className={'user-profile__list-col five-col ' +
             'user-profile__list-name'}>

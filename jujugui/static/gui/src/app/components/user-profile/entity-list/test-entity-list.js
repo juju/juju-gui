@@ -80,12 +80,15 @@ describe('UserProfileEntityList', () => {
 
   it('renders a list of charms', () => {
     var changeState = sinon.stub();
+    var getKpiMetrics = sinon.stub();
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         changeState={changeState}
         charmstore={charmstore}
+        d3={{}}
         getDiagramURL={sinon.stub()}
+        getKpiMetrics={getKpiMetrics}
         type={type}
         user='who'
       />, true);
@@ -110,7 +113,9 @@ describe('UserProfileEntityList', () => {
           </li>
           {[<juju.components.UserProfileEntity
             changeState={changeState}
+            d3={{}}
             entity={charms[0]}
+            getKpiMetrics={getKpiMetrics}
             key="cs:django"
             type="charm">
             <span className={'user-profile__list-col five-col ' +
