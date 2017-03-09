@@ -159,7 +159,7 @@ YUI.add('juju-gui', function(Y) {
             });
           }
         },
-        help: 'Global Settings',
+        help: 'GUI Settings',
         label: 'Shift + !'
       },
       'S-/': {
