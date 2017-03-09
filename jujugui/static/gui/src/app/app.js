@@ -1027,10 +1027,12 @@ YUI.add('juju-gui', function(Y) {
             {this.db.notifications.add.bind(this.db.notifications)}
           charmstore={charmstore}
           currentModel={currentModel}
+          d3={d3}
           facadesExist={facadesExist}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
+          getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
           changeState={this.state.changeState.bind(this.state)}
           destroyModels={
             this.controllerAPI.destroyModels.bind(this.controllerAPI)}

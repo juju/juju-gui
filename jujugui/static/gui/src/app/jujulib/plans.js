@@ -335,6 +335,23 @@ var module = module;
       var url = this.url + '/profile';
       var payload = { update: { 'default-budget': defaultBudget } };
       return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+    },
+
+    /**
+      Retrieves the KPI metrics for a charm
+
+      @method getKpiMetrics
+      @param {String} charm The charm for which to retrive metrics
+      @param {Object} filters Additional filters for the call
+      @param {Function} callback A callback for handling the retrieved metrics
+    */
+    getKpiMetrics: function(charmId, filters, callback) {
+      var url = this.url + '/kpimetrics';
+      var payload = filters || {};
+      payload['charm-url'] = charmId;
+      var qs = jujulib._serialize(payload);
+      url += '?' + qs;
+      return jujulib._makeRequest(this.bakery, url, 'GET', payload, callback);
     }
 
   };

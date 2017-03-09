@@ -224,6 +224,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="django-cluster"
         expanded={false}>
         <span>Summary details</span>
         <div>
@@ -320,6 +321,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="django-cluster"
         expanded={false}>
         <span>Summary details</span>
         <div>
@@ -399,6 +401,7 @@ describe('UserProfileEntity', () => {
         changeState={sinon.stub()}
         entity={charm}
         expanded={false}
+        getKpiMetrics={sinon.stub()}
         type="charm">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
@@ -410,6 +413,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="cs:django"
         expanded={false}>
         <span>Summary details</span>
         <div>
