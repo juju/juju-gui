@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -61,17 +61,17 @@ YUI.add('account-payment-method-card', function() {
             </div>
             <div className="account__payment-card-back">
               <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-number">
-                  xxxx xxxx xxxx {card.last4}
+              <div className="account__payment-card-number">
+                xxxx xxxx xxxx {card.last4}
+              </div>
+              <div className="account__payment-card-bottom">
+                <div className="account__payment-card-expiry">
+                  {card.month}/{card.year}
                 </div>
-                <div className="account__payment-card-bottom">
-                  <div className="account__payment-card-expiry">
-                    {card.month}/{card.year}
-                  </div>
-                  <div className="account__payment-card-brand">
-                    {card.brand}
-                  </div>
+                <div className="account__payment-card-brand">
+                  {card.brand}
                 </div>
+              </div>
             </div>
           </div>
         </div>);

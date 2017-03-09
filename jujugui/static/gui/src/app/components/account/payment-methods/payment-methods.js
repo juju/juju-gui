@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -32,42 +32,33 @@ YUI.add('account-payment-method', function() {
     getInitialState: function() {
       this.xhrs = [];
       return {
-        loadingUser: false,
+        loading: false,
         user: null
       };
     },
 
     componentWillMount: function() {
-      const xhr = this.props.getUser(this.props.username, (error, user) => {
-        if (error) {
-          this.props.addNotification({
-            title: 'Could not load user info',
-            message: `Could not load user info: ${error}`,
-            level: 'error'
-          });
-          console.error('Could not load user info', error);
-          return;
-        }
-        this.setState({user: user});
+      this.setState({loading: true}, () => {
+        const xhr = this.props.getUser(this.props.username, (error, user) => {
+          if (error) {
+            this.props.addNotification({
+              title: 'Could not load user info',
+              message: `Could not load user info: ${error}`,
+              level: 'error'
+            });
+            console.error('Could not load user info', error);
+            return;
+          }
+          this.setState({user: user, loading: false});
+        });
+        this.xhrs.push(xhr);
       });
-      this.xhrs.push(xhr);
     },
 
     componentWillUnmount: function() {
       this.xhrs.forEach((xhr) => {
         xhr && xhr.abort && xhr.abort();
       });
-    },
-
-    /**
-      Handle toggling the card state.
-
-      @method _handleCardClick
-      @param {Object} The click event from the checkbox.
-    */
-    _handleCardClick: function(e) {
-      e.stopPropagation();
-      this.setState({cardFlipped: !this.state.cardFlipped});
     },
 
     /**
@@ -78,7 +69,8 @@ YUI.add('account-payment-method', function() {
     _generatePaymentMethods: function() {
       const user = this.state.user;
       if (!user) {
-        return;
+        return (
+          <juju.components.Spinner />);
       }
       const classes = {
         'user-profile__list-row': true,
@@ -129,6 +121,7 @@ YUI.add('account-payment-method', function() {
 }, '', {
   requires: [
     'account-payment-method-card',
-    'expanding-row'
+    'expanding-row',
+    'loading-spinner'
   ]
 });
