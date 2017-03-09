@@ -145,7 +145,12 @@ $pre-background: #fdf6f2;
     color: $cool-grey;
   }
 
-  .link:hover {
-    color: $link-blue;
+  .link {
+    text-decoration: none;
+
+    &:hover {
+      color: $link-blue;
+      text-decoration: underline;
+    }
   }
 }
