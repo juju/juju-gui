@@ -1308,7 +1308,6 @@ YUI.add('juju-controller-api', function(Y) {
       Modify (grant or revoke) user access to the specified model.
 
       @method _modifyModelAccess
-      @method _modifyModelAccess
       @param {String} modelId The UUID for the model on which the access is
                               being changed.
       @param {Array} users The usernames of the users who need modified access.
