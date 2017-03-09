@@ -1,0 +1,95 @@
+// Flipping inspired by https://davidwalsh.name/css-flip.
+.account__payment-card {
+  $width: 300px;
+  $height: 200px;
+  width: $width;
+  height: $height;
+  perspective: 1000px;
+  cursor: pointer;
+
+  &--flipped {
+    .account__payment-card {
+      &-container {
+        transform: rotateY(180deg);
+      }
+    }
+  }
+
+  &-container {
+    transition: 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+
+  &-front {
+    z-index: 2;
+  }
+
+  &-back {
+    transform: rotateY(180deg);
+  }
+
+  &-front,
+  &-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $width;
+    height: $height;
+    padding: 20px 40px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: $box-shadow;
+    overflow: hidden;
+    backface-visibility: hidden;
+  }
+
+  &-overlay {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+  }
+
+  &-overlay:after,
+  &-overlay:before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background-color: $black;
+    opacity: .05;
+  }
+
+  &-overlay:before {
+    top: 85px;
+    right: -170px;
+    transform: rotate(30deg);
+  }
+
+  &-overlay:after {
+    top: -210px;
+    left: -230px;
+    transform: rotate(17deg);
+  }
+
+  &-name,
+  &-number {
+    margin-top: 70px;
+  }
+
+  &-name {
+    text-align: center;
+  }
+
+  &-bottom {
+    margin-top: 40px;
+  }
+
+  &-expiry {
+    float: left;
+  }
+
+  &-brand {
+    float: right;
+  }
+}
