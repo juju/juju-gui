@@ -152,9 +152,7 @@ YUI.add('entity-details', function() {
       if (data.length > 0) {
         data = data[0];
         const model = this.props.makeEntityModel(data);
-        this.setState({
-          entityModel: model
-        }, () => {
+        this.setState({entityModel: model}, () => {
           this._changeActiveComponent('entity-details');
           this._getPlans();
         });

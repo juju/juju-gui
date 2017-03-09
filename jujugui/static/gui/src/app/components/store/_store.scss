@@ -10,7 +10,7 @@
 
   // XXX Ant, move to cloud-vanilla-theme
   .row--border-bottom {
-    border-bottom: 1px dotted $warm-grey;
+    border-bottom: 1px dotted $dark-warm-grey;
   }
 
   // XXX Ant, Ask about the styling going forward here
@@ -140,8 +140,12 @@
       background-color: $mysql-brand;
       color: $white;
 
-      a {
+      .link {
         color: $white;
+        
+        &:hover {
+          color: $white;
+        }
       }
 
       .button--inline-neutral {

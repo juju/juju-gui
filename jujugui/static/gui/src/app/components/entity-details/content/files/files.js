@@ -98,6 +98,7 @@ YUI.add('entity-files', function() {
         codeLink = (
           <li className="entity-files__link section__list-item">
             <a ref="codeLink"
+              className="link"
               target="_blank"
               href={codeUrl}>
               View code
@@ -136,7 +137,10 @@ YUI.add('entity-files', function() {
           var fileLink = `${url}/${path}`;
           return (
             <li key={path} className="entity-files__file">
-              <a href={fileLink} title={fileName} target="_blank">
+              <a href={fileLink}
+                className="link"
+                title={fileName}
+                target="_blank">
                 {fileName}
               </a>
             </li>
@@ -188,6 +192,7 @@ YUI.add('entity-files', function() {
             {this._generateCodeLink(entityModel.get('code_source'))}
             <li className="entity-files__link section__list-item">
               <a target="_blank"
+                className="link"
                 href={archiveUrl}>
                 Download .zip
               </a>

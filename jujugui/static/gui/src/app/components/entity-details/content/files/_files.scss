@@ -9,7 +9,7 @@
     }
 
     &:after {
-      color: $warm-grey;
+      color: $dark-warm-grey;
       content: '\2022';
       vertical-align: middle;
       margin: 0 5px;
@@ -59,7 +59,7 @@
       position: absolute;
       top: 0;
       left: 0 - (($dimension + 2px) / 2);
-      border: 1px solid $warm-grey;
+      border: 1px solid $dark-warm-grey;
       width: $dimension;
       height: $dimension;
       line-height: $dimension;

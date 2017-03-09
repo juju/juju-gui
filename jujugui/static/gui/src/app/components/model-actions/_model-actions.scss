@@ -14,11 +14,14 @@
     border: 1px solid $light-mid-grey;
     transition: background-color .2s;
     background-color: $canvas-background;
+    // scss-lint:disable ImportantRule
+    color: $warm-grey !important;
+    // scss-lint:disable ImportantRule
 
     &:hover {
       background-color: $white;
       // scss-lint:disable ImportantRule
-      color: $ubuntu-orange !important;
+      color: $dark-warm-grey !important;
       // scss-lint:disable ImportantRule
     }
   }
@@ -44,8 +47,8 @@
   }
 
   &__button {
-    @extend .link;
     @extend .tooltip;
+    cursor: pointer;
     display: inline-block;
     border-radius: 2px;
     border-right-width: 0;

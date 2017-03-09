@@ -52,7 +52,10 @@ describe('EntityFiles', function() {
     var archiveUrl = `${apiUrl}/trusty/django/archive`;
     var fileItems = [
       <li key="foo.zip" className="entity-files__file">
-        <a href={archiveUrl + '/foo.zip'} title="foo.zip" target="_blank">
+        <a href={archiveUrl + '/foo.zip'}
+          className="link"
+          title="foo.zip"
+          target="_blank">
           foo.zip
         </a>
       </li>,
@@ -66,6 +69,7 @@ describe('EntityFiles', function() {
           {[
             <li key="bar/foo.txt" className="entity-files__file">
               <a href={archiveUrl + '/bar/foo.txt'}
+                className="link"
                 title="foo.txt"
                 target="_blank">
                 foo.txt
@@ -83,6 +87,7 @@ describe('EntityFiles', function() {
         <ul className="section__list">
           <li className="entity-files__link section__list-item">
             <a ref="codeLink"
+              className="link"
               target="_blank"
               href="https://code.launchpad.net/django/code">
               View code
@@ -90,6 +95,7 @@ describe('EntityFiles', function() {
           </li>
           <li className="entity-files__link section__list-item">
             <a target="_blank"
+              className="link"
               href={archiveUrl}>
               Download .zip
             </a>

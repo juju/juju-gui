@@ -105,7 +105,7 @@
 
     li {
       &:after {
-        color: $warm-grey;
+        color: $dark-warm-grey;
         content: '\2022';
         vertical-align: middle;
         margin: 0 5px;
@@ -135,7 +135,7 @@
   }
 
   &__version {
-    color: $warm-grey;
+    color: $dark-warm-grey;
   }
 
   &__deploys {

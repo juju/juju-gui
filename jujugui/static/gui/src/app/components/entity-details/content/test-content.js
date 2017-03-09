@@ -26,7 +26,7 @@ chai.config.truncateThreshold = 0;
 function _generateTagItem(tag, fn) {
   return [
     <li key={tag + 0}>
-      <a data-id={tag} onClick={fn}>{tag}</a>
+      <a data-id={tag} className="link" onClick={fn}>{tag}</a>
     </li>
   ];
 }
@@ -109,6 +109,7 @@ describe('EntityContent', function() {
                 <ul className="section__links">
                   <li>
                     <a href="https://bugs.launchpad.net/charms/+source/django"
+                      className="link"
                       target="_blank">
                       Submit a bug
                     </a>
@@ -173,12 +174,14 @@ describe('EntityContent', function() {
         <ul className="section__links">
           <li>
             <a href="http://example.com/bugs"
+              className="link"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li>
             <a href="http://example.com/"
+              className="link"
               target="_blank">
               Project homepage
             </a>
@@ -239,6 +242,7 @@ describe('EntityContent', function() {
                 <ul className="section__links">
                   <li>
                     <a href="https://bugs.launchpad.net/charms/+source/django"
+                      className="link"
                       target="_blank">
                       Submit a bug
                     </a>
@@ -306,6 +310,7 @@ describe('EntityContent', function() {
                   <li>
                     <a href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
+                      className="link"
                       target="_blank">
                       Project homepage
                     </a>
@@ -448,6 +453,7 @@ describe('EntityContent', function() {
                   <li>
                     <a href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
+                      className="link"
                       target="_blank">
                       Project homepage
                     </a>
@@ -574,12 +580,14 @@ describe('EntityContent', function() {
         <ul className="section__links">
           <li>
             <a href="http://example.com/bugs"
+              className="link"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li>
             <a href="http://example.com/"
+              className="link"
               target="_blank">
               Project homepage
             </a>

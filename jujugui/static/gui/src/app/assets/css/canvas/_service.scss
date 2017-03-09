@@ -51,7 +51,7 @@
 
   &.is-running {
     .service-block {
-      stroke: $warm-grey;
+      stroke: $dark-warm-grey;
       stroke-width: 1;
     }
   }
@@ -97,7 +97,7 @@
     }
 
     &.is-running .service-block__halo {
-      stroke: $warm-grey;
+      stroke: $dark-warm-grey;
     }
 
     .service-block {
@@ -114,7 +114,7 @@
       // scss-lint:disable PropertySpelling
       r: 60;
       // scss-lint:enable PropertySpelling
-      stroke: $warm-grey;
+      stroke: $dark-warm-grey;
     }
 
     .relation-button {
@@ -139,7 +139,7 @@
     // scss-lint:enable NestingDepth
 
     .sub-rel-count {
-      fill: $warm-grey;
+      fill: $dark-warm-grey;
     }
   }
 
@@ -168,13 +168,13 @@
     }
 
     &.is-running .service-block__halo {
-      fill: $warm-grey;
+      fill: $dark-warm-grey;
     }
 
     &.subordinate {
       // scss-lint:disable NestingDepth
       .service-block__halo {
-        fill: $warm-grey;
+        fill: $dark-warm-grey;
         // scss-lint:disable PropertySpelling
         r: 80;
         // scss-lint:enable PropertySpelling

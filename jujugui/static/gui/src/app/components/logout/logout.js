@@ -63,6 +63,7 @@ YUI.add('logout-component', function() {
     */
     _generateClasses: function() {
       return classNames(
+        'link',
         'logout-link',
         {
           'logout-link--hidden': !this.props.visible

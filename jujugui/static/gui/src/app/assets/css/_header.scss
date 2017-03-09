@@ -18,14 +18,14 @@
 
   &__link {
     box-sizing: border-box;
-    color: $warm-grey;
+    color: $dark-warm-grey;
     display: block;
     transition: color .3s;
 
     &:hover,
     &:active,
     &:focus {
-      color: $ubuntu-orange;
+      color: $link-blue;
     }
   }
 
@@ -59,15 +59,6 @@
         max-width: 100px;
         margin-right: 20px;
         margin-left: 10px;
-        color: $warm-grey;
-        opacity: 1;
-        transition: all .3s;
-
-        &:focus,
-        &:active,
-        &:hover {
-          color: $ubuntu-orange;
-        }
       }
     }
   }

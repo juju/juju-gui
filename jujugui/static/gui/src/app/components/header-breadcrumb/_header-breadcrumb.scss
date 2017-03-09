@@ -10,21 +10,24 @@
 
   &--link {
     position: relative;
-    border-bottom: 1px solid currentColor;
+    border-bottom: 1px solid transparent;
     font-size: 23px;
     text-decoration: none;
+    line-height: 40px;
 
     &:focus,
     &:active,
     &:hover {
+      color: $link-blue;
       text-decoration: none;
+      border-bottom-color: currentColor;
     }
 
     &:before {
       content: '/';
       position: absolute;
       left: -14px;
-      top: -2px;
+      top: -7px;
       color: $mid-grey;
     }
 

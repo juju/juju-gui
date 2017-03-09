@@ -144,4 +144,13 @@ $pre-background: #fdf6f2;
     font-size: 14px;
     color: $cool-grey;
   }
+
+  .link {
+    text-decoration: none;
+
+    &:hover {
+      color: $link-blue;
+      text-decoration: underline;
+    }
+  }
 }
