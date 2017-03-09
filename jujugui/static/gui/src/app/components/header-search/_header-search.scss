@@ -1,7 +1,7 @@
 .header-search {
   $transition-duration: .3s;
   background-color: transparent;
-  color: $warm-grey;
+  color: $dark-warm-grey;
   padding: 12px 12px 11px;
   transition: background-color $transition-duration;
 
@@ -24,15 +24,15 @@
       &:active,
       &:hover {
         &::-webkit-input-placeholder {
-          color: $warm-grey;
+          color: $dark-warm-grey;
         }
 
         &::-moz-placeholder {
-          color: $warm-grey;
+          color: $dark-warm-grey;
         }
 
         &:-ms-input-placeholder {
-          color: $warm-grey;
+          color: $dark-warm-grey;
         }
       }
     }
@@ -69,7 +69,7 @@
   }
 
   .svg-icon {
-    fill: $warm-grey;
+    fill: $dark-warm-grey;
     transition: fill $transition-duration;
   }
 

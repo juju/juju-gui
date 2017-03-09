@@ -40,7 +40,7 @@
     &-text {
       max-width: 360px;
       margin: 0 auto;
-      color: $warm-grey;
+      color: $dark-warm-grey;
     }
   }
 
@@ -75,7 +75,7 @@
       &-text {
         max-width: 360px;
         margin: 0 auto;
-        color: $warm-grey;
+        color: $dark-warm-grey;
       }
 
       .user-profile__create-new {
@@ -95,7 +95,7 @@
 
     &-tags {
       @extend %list-style;
-      color: $warm-grey;
+      color: $dark-warm-grey;
       font-size: 14px;
     }
 

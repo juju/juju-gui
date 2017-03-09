@@ -14,13 +14,13 @@
     padding: 13px 11px;
     margin: 12px 0 11px 12px;
     // scss-lint:disable ImportantRule
-    color: #888 !important;
+    color: $warm-grey !important;
     // scss-lint:disable ImportantRule
 
     &:hover {
       background-color: $white;
       // scss-lint:disable ImportantRule
-      color: $warm-grey !important;
+      color: $dark-warm-grey !important;
       // scss-lint:disable ImportantRule
     }
   }
@@ -32,7 +32,7 @@
   &__show-menu {
     background-color: $white;
     // scss-lint:disable ImportantRule
-    color: $warm-grey !important;
+    color: $dark-warm-grey !important;
     // scss-lint:disable ImportantRule
 
     .tooltip__tooltip--below {
@@ -95,12 +95,12 @@
     }
 
     &-info {
-      color: $warm-grey;
+      color: $dark-warm-grey;
     }
   }
 
   &__extra-info {
     float: right;
-    color: $warm-grey;
+    color: $dark-warm-grey;
   }
 }
