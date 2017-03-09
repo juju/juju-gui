@@ -2,7 +2,7 @@
   $transition-duration: .3s;
   background-color: transparent;
   color: $warm-grey;
-  padding: 12px 12px 11px;
+  padding: 12px;
   transition: background-color $transition-duration;
 
   &--active {
@@ -79,7 +79,7 @@
     right: 12px;
     top: 12px;
     border-left: 1px solid $mid-grey;
-    padding: 15px;
+    padding: 14px;
     line-height: 15px;
 
     &:focus,
