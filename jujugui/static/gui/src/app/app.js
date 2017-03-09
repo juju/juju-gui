@@ -1233,9 +1233,10 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
-          user={this._getAuth()}
-          userInfo={this._getUserInfo(state)}
-          users={Y.clone(this.get('users'), true)} />,
+          addNotification={this.db.notifications.add.bind(
+              this.db.notifications)}
+          getUser={this.payment.getUser.bind(this.payment)}
+          userInfo={this._getUserInfo(state)} />,
         document.getElementById('top-page-container'));
       next();
     },

@@ -66,6 +66,10 @@
     &-row {
       border-bottom: 1px dotted $mid-grey;
 
+      &:last-child {
+        border-bottom: none;
+      }
+
       &-title {
         font-size: 23px;
         margin-bottom: 40px;
