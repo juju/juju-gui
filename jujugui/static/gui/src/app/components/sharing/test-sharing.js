@@ -274,7 +274,7 @@ describe('Sharing', () => {
     assert.equal(grantModelAccess.called, true,
       'grantModelAccess was not called');
     assert.deepEqual(grantModelAccess.args[0], [
-      ['chekov'],
+      'chekov',
       'read',
       instance._modifyModelAccessCallback
     ], 'grantModelAccess not called with the correct data');
@@ -313,7 +313,7 @@ describe('Sharing', () => {
     assert.equal(revokeModelAccess.called, true,
       'revokeModelAccess was not called');
     assert.deepEqual(revokeModelAccess.args[0], [
-      ['drwho@external'],
+      'drwho@external',
       'read',
       instance._modifyModelAccessCallback
     ], 'revokeModelAccess not called with the correct data');
