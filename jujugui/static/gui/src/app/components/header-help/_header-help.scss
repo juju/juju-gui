@@ -2,6 +2,8 @@
 // specific with it's colours. This should be improved when the juju-gui
 // finally moves on to a new vanilla theme.
 .header-help {
+  margin-right: 10px;
+
   &__button {
     @extend .link;
     @extend .tooltip;
