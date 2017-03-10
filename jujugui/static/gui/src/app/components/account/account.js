@@ -25,8 +25,32 @@ YUI.add('account', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
-      getUser: React.PropTypes.func.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
+      getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getUser: React.PropTypes.func,
+      listClouds: React.PropTypes.func.isRequired,
+      revokeCloudCredential: React.PropTypes.func.isRequired,
+      showPay: React.PropTypes.bool,
+      user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired
+    },
+
+    /**
+      Generate the payment details section.
+
+      @method _generatePaymentDetails
+    */
+    _generatePaymentDetails: function() {
+      if (this.props.showPay) {
+        return (
+          <juju.components.AccountPaymentMethod
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getUser={this.props.getUser}
+            username={this.props.userInfo.profile} />);
+      } else {
+        return null;
+      }
     },
 
     render: function() {
@@ -43,11 +67,15 @@ YUI.add('account', function() {
                 avatar=""
                 links={links}
                 userInfo={this.props.userInfo} />
-              <juju.components.AccountPaymentMethod
+              <juju.components.AccountCredentials
                 acl={this.props.acl}
                 addNotification={this.props.addNotification}
-                getUser={this.props.getUser}
-                username={this.props.userInfo.profile} />
+                getCloudCredentialNames={this.props.getCloudCredentialNames}
+                getCloudProviderDetails={this.props.getCloudProviderDetails}
+                revokeCloudCredential={this.props.revokeCloudCredential}
+                listClouds={this.props.listClouds}
+                username={this.props.user} />
+              {this._generatePaymentDetails()}
             </div>
           </div>
         </juju.components.Panel>
@@ -58,6 +86,7 @@ YUI.add('account', function() {
 
 }, '', {
   requires: [
+    'account-credentials',
     'account-payment-method',
     'panel-component',
     'user-profile-header'

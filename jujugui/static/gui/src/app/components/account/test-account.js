@@ -36,11 +36,21 @@ describe('Account', () => {
     const userInfo = {profile: 'spinach'};
     const getUser = sinon.stub();
     const addNotification = sinon.stub();
+    const getCloudCredentialNames = sinon.stub();
+    const getCloudProviderDetails = sinon.stub();
+    const listClouds = sinon.stub();
+    const revokeCloudCredential = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
         getUser={getUser}
+        listClouds={listClouds}
+        revokeCloudCredential={revokeCloudCredential}
+        showPay={true}
+        user="spinach@external"
         userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     const links = [{
@@ -56,11 +66,68 @@ describe('Account', () => {
               avatar=""
               links={links}
               userInfo={userInfo} />
+            <juju.components.AccountCredentials
+              acl={acl}
+              addNotification={addNotification}
+              getCloudCredentialNames={getCloudCredentialNames}
+              getCloudProviderDetails={getCloudProviderDetails}
+              revokeCloudCredential={revokeCloudCredential}
+              listClouds={listClouds}
+              username="spinach@external" />
             <juju.components.AccountPaymentMethod
               acl={acl}
               addNotification={addNotification}
               getUser={getUser}
               username="spinach" />
+          </div>
+        </div>
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without payments', () => {
+    const userInfo = {profile: 'spinach'};
+    const getUser = sinon.stub();
+    const addNotification = sinon.stub();
+    const getCloudCredentialNames = sinon.stub();
+    const getCloudProviderDetails = sinon.stub();
+    const listClouds = sinon.stub();
+    const revokeCloudCredential = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.Account
+        acl={acl}
+        addNotification={addNotification}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        getUser={getUser}
+        listClouds={listClouds}
+        revokeCloudCredential={revokeCloudCredential}
+        showPay={false}
+        user="spinach@external"
+        userInfo={userInfo} />, true);
+    const output = component.getRenderOutput();
+    const links = [{
+      label: 'Primary account'
+    }];
+    const expected = (
+      <juju.components.Panel
+        instanceName="account"
+        visible={true}>
+        <div className="twelve-col">
+          <div className="inner-wrapper">
+            <juju.components.UserProfileHeader
+              avatar=""
+              links={links}
+              userInfo={userInfo} />
+            <juju.components.AccountCredentials
+              acl={acl}
+              addNotification={addNotification}
+              getCloudCredentialNames={getCloudCredentialNames}
+              getCloudProviderDetails={getCloudProviderDetails}
+              revokeCloudCredential={revokeCloudCredential}
+              listClouds={listClouds}
+              username="spinach@external" />
+            {null}
           </div>
         </div>
       </juju.components.Panel>);

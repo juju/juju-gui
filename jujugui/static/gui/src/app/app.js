@@ -1232,12 +1232,26 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _renderAccount: function(state, next) {
+      const controllerAPI = this.controllerAPI;
+      if (!controllerAPI || !controllerAPI.userIsAuthenticated) {
+        // If the controller isn't ready yet then don't render anything.
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
-          getUser={this.payment.getUser.bind(this.payment)}
+          getUser={this.payment && this.payment.getUser.bind(this.payment)}
+          getCloudCredentialNames={
+            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
+          getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
+            views.utils)}
+          listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          revokeCloudCredential={
+            controllerAPI.revokeCloudCredential.bind(controllerAPI)}
+          showPay={window.juju_config.payFlag || false}
+          user={controllerAPI.getCredentials().user}
           userInfo={this._getUserInfo(state)} />,
         document.getElementById('top-page-container'));
       next();

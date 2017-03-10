@@ -1808,6 +1808,10 @@ YUI.add('juju-view-utils', function(Y) {
         title: 'Local'
       }
     };
+    // Map the cloud id to provider type.
+    if (providerName === 'aws') {
+      providerName = 'ec2';
+    }
     return providers[providerName];
   };
 
