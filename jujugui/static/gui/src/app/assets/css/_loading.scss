@@ -48,10 +48,55 @@
     }
   }
 
-  // scss-lint:disable IdSelector
-  #loading-spinner { // sass-lint:disable-line no-ids, id-name-format
-    // scss-lint:enable IdSelector
-    height: 100px;
-    text-align: center;
+
+  #loading-indicator {  // sass-lint:disable-line no-ids, id-name-format
+    $progress-bar-height: 8px;
+    background-color: $light-mid-grey;
+    border-radius: $border-radius;
+    height: $progress-bar-height;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+
+    @keyframes progress-indicator {
+      from {
+        left: -50%;
+        width: 50%;
+      }
+      to {
+        left: 100%;
+        width: 100%;
+      }
+    }
+
+    &:after {
+      animation: progress-indicator 1.25s linear infinite;
+      background-color: $dark-grey;
+      border-radius: $border-radius;
+      content: " ";
+      height: 100%;
+      display: block;
+      position: absolute;
+      width: 50%;
+    }
+  }
+}
+
+#loading-message {  // sass-lint:disable-line no-ids, id-name-format
+  top: 50%;
+  margin: -100px 0 0 -25%;
+  width: 50%;
+
+  .panel {
+    box-shadow: none;
+    padding: 20px;
+    width: auto;
+
+    .header {
+      background-color: transparent;
+      font-size: 13px;
+      color: $warm-grey;
+      margin: 0;
+    }
   }
 }
