@@ -1808,6 +1808,7 @@ YUI.add('juju-view-utils', function(Y) {
         title: 'Local'
       }
     };
+    // Sometimes the cloud id is ec2, othertimes aws, so map to the object key.
     if (providerName === 'aws') {
       providerName = 'ec2';
     }

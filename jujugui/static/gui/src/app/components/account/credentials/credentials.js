@@ -56,20 +56,22 @@ YUI.add('account-credentials', function() {
       @method _getClouds
     */
     _getClouds: function() {
-      const xhr = this.props.listClouds((error, clouds) => {
-        if (error) {
-          const message = 'Unable to list clouds';
-          this.props.addNotification({
-            title: message,
-            message: `${message}: ${error}`,
-            level: 'error'
-          });
-          console.error(message, error);
-          return;
-        }
-        this._getCloudCredentialNames(clouds);
+      this.setState({loading: true}, () => {
+        const xhr = this.props.listClouds((error, clouds) => {
+          if (error) {
+            const message = 'Unable to list clouds';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
+            return;
+          }
+          this._getCloudCredentialNames(clouds);
+        });
+        this.xhrs.push(xhr);
       });
-      this.xhrs.push(xhr);
     },
 
     /**
@@ -82,36 +84,34 @@ YUI.add('account-credentials', function() {
       const pairs = Object.keys(clouds).map(cloud => {
         return [this.props.username, cloud];
       });
-      this.setState({loading: true}, () => {
-        const xhr = this.props.getCloudCredentialNames(
-          pairs, (error, names) => {
-            if (error) {
-              const message = 'Unable to get names for credentials';
-              this.props.addNotification({
-                title: message,
-                message: `${message}: ${error}`,
-                level: 'error'
-              });
-              console.error(message, error);
-              return;
-            }
-            let credentials = [];
-            names.forEach((cloud, i) => {
-              cloud.names.forEach(name => {
-                credentials.push({
-                  name: name,
-                  // Store the cloud for this name.
-                  cloud: pairs[i][1]
-                });
-              });
+      const xhr = this.props.getCloudCredentialNames(
+        pairs, (error, names) => {
+          if (error) {
+            const message = 'Unable to get names for credentials';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
             });
-            this.setState({
-              credentials: credentials,
-              loading: false,
+            console.error(message, error);
+            return;
+          }
+          let credentials = [];
+          names.forEach((cloud, i) => {
+            cloud.names.forEach(name => {
+              credentials.push({
+                name: name,
+                // Store the cloud for this name.
+                cloud: pairs[i][1]
+              });
             });
           });
-        this.xhrs.push(xhr);
-      });
+          this.setState({
+            credentials: credentials,
+            loading: false,
+          });
+        });
+      this.xhrs.push(xhr);
     },
 
     /**
