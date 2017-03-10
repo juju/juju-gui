@@ -27,11 +27,28 @@ YUI.add('account', function() {
       addNotification: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
-      getUser: React.PropTypes.func.isRequired,
+      getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       revokeCloudCredential: React.PropTypes.func.isRequired,
+      showPay: React.PropTypes.bool,
       user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired
+    },
+
+    /**
+      Generate the payment details section.
+
+      @method _generatePaymentDetails
+    */
+    _generatePaymentDetails: function() {
+      if (this.props.showPay) {
+        return (
+          <juju.components.AccountPaymentMethod
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getUser={this.props.getUser}
+            username={this.props.userInfo.profile} />);
+      }
     },
 
     render: function() {
@@ -56,11 +73,7 @@ YUI.add('account', function() {
                 revokeCloudCredential={this.props.revokeCloudCredential}
                 listClouds={this.props.listClouds}
                 username={this.props.user} />
-              <juju.components.AccountPaymentMethod
-                acl={this.props.acl}
-                addNotification={this.props.addNotification}
-                getUser={this.props.getUser}
-                username={this.props.userInfo.profile} />
+              {this._generatePaymentDetails()}
             </div>
           </div>
         </juju.components.Panel>
