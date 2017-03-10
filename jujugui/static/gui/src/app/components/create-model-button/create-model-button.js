@@ -26,6 +26,7 @@ YUI.add('create-model-button', function() {
       switchModel: React.PropTypes.func.isRequired,
       title: React.PropTypes.string,
       type: React.PropTypes.string,
+      action: React.PropTypes.func
     },
 
     getDefaultProps: function() {
@@ -41,11 +42,15 @@ YUI.add('create-model-button', function() {
       // model to resolve a race condition with the new model setup.
       props.changeState({profile: null});
       props.switchModel(null);
+
+      if (this.props.action) {
+        this.props.action();
+      }
     },
 
     render: function() {
       return (
-        <div className="user-profile__create-new">
+        <div className="create-new-model">
           <juju.components.GenericButton
             action={this._createNewModel}
             type={this.props.type}

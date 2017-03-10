@@ -24,9 +24,12 @@ YUI.add('env-list', function() {
 
     propTypes: {
       authDetails: React.PropTypes.object,
+      changeState: React.PropTypes.func.isRequired,
+      environmentName: React.PropTypes.string,
       envs: React.PropTypes.array.isRequired,
       handleModelClick: React.PropTypes.func.isRequired,
-      showProfile: React.PropTypes.func.isRequired
+      humanizeTimestamp: React.PropTypes.func.isRequired,
+      switchModel: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -47,18 +50,24 @@ YUI.add('env-list', function() {
     generateModelList: function() {
       const models = this.state.envs;
       if (!models.length) {
-        return (
-          <li className="env-list__environment" key="none">
-            No models available, click below to view your profile and create a
-            new model.
-          </li>
-        );
+        return false;
       }
       const auth = this.props.authDetails;
       const currentUser = auth ? auth.user : null;
-      return models.map(model => {
+      const modelsWithoutController = models.sort((a, b) => {
+        return b.lastConnection.getTime() - a.lastConnection.getTime();
+      }).filter(model => !model.isController);
+      if (modelsWithoutController.length === 1 &&
+          modelsWithoutController[0].name === this.props.environmentName) {
+        return '';
+      }
+      return modelsWithoutController.map(model => {
         let name = model.name;
         let owner = model.owner;
+        let lastConnected = this.props.humanizeTimestamp(model.lastConnection);
+        if (this.props.environmentName === model.name) {
+          lastConnected = 'just now';
+        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -80,6 +89,9 @@ YUI.add('env-list', function() {
             onClick={this._handleModelClick}
             key={model.uuid}>
             {name}
+            <div className="env-list__last-connected">
+              Last accessed {lastConnected}
+            </div>
           </li>
         );
       });
@@ -98,6 +110,15 @@ YUI.add('env-list', function() {
         name: currentTarget.getAttribute('data-name'),
         owner: currentTarget.getAttribute('data-owner')
       });
+    },
+
+    /**
+      When creating a new model, the dropdown needs to be closed.
+
+      @method _handleNewModelClick
+    */
+    _handleNewModelClick: function() {
+      this.props.handleModelClick(null);
     },
 
     /**
@@ -120,23 +141,21 @@ YUI.add('env-list', function() {
 
     render: function() {
       const auth = this.props.authDetails;
-      let buttonRow;
+      let createNew;
       if (auth && auth.rootUserName) {
-        const buttons = [{
-          title: 'Profile',
-          type: 'neutral',
-          action: () => {
-            this.props.showProfile(auth.rootUserName);
-          }
-        }];
-        buttonRow = <juju.components.ButtonRow buttons={buttons} />;
+        createNew = <juju.components.CreateModelButton
+          type="neutral"
+          title="Start a new model"
+          changeState={this.props.changeState}
+          switchModel={this.props.switchModel}
+          action={this._handleNewModelClick} />;
       }
       return (
         <juju.components.Panel
           instanceName="env-list-panel"
           visible={true}>
           {this._generateModels()}
-          {buttonRow}
+          {createNew}
         </juju.components.Panel>
       );
     }
@@ -144,5 +163,6 @@ YUI.add('env-list', function() {
 
 }, '0.1.0', { requires: [
   'button-row',
-  'panel-component'
+  'panel-component',
+  'create-model-button'
 ]});

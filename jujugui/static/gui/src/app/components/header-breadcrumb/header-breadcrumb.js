@@ -30,6 +30,8 @@ YUI.add('header-breadcrumb', function() {
     propTypes: {
       appState: React.PropTypes.object.isRequired,
       authDetails: React.PropTypes.object,
+      changeState: React.PropTypes.func.isRequired,
+      humanizeTimestamp: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func,
       modelName: React.PropTypes.string,
       modelOwner: React.PropTypes.string,
@@ -50,7 +52,9 @@ YUI.add('header-breadcrumb', function() {
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
               authDetails={this.props.authDetails}
+              changeState={this.props.changeState}
               environmentName={this.props.modelName}
+              humanizeTimestamp={this.props.humanizeTimestamp}
               listModelsWithInfo={this.props.listModelsWithInfo}
               showProfile={this.props.showProfile}
               switchModel={this.props.switchModel}

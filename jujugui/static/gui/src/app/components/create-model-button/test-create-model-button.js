@@ -34,7 +34,7 @@ describe('CreateModelButton', () => {
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="user-profile__create-new">
+      <div className="create-new-model">
         <juju.components.GenericButton
           action={output.props.children.props.action}
           type="inline-neutral"
@@ -53,7 +53,7 @@ describe('CreateModelButton', () => {
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="user-profile__create-new">
+      <div className="create-new-model">
         <juju.components.GenericButton
           action={output.props.children.props.action}
           type="positive"
