@@ -210,8 +210,6 @@ YUI.add('account-credentials', function() {
 
 }, '', {
   requires: [
-    'account-payment-method-card',
-    'expanding-row',
     'generic-button',
     'loading-spinner'
   ]

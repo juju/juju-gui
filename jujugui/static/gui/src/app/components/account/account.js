@@ -48,6 +48,8 @@ YUI.add('account', function() {
             addNotification={this.props.addNotification}
             getUser={this.props.getUser}
             username={this.props.userInfo.profile} />);
+      } else {
+        return null;
       }
     },
 

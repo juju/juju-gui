@@ -127,7 +127,7 @@ describe('Account', () => {
               revokeCloudCredential={revokeCloudCredential}
               listClouds={listClouds}
               username="spinach@external" />
-            {undefined}
+            {null}
           </div>
         </div>
       </juju.components.Panel>);
