@@ -1808,6 +1808,9 @@ YUI.add('juju-view-utils', function(Y) {
         title: 'Local'
       }
     };
+    if (providerName === 'aws') {
+      providerName = 'ec2';
+    }
     return providers[providerName];
   };
 

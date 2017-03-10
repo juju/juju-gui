@@ -68,9 +68,12 @@ YUI.add('account-payment-method', function() {
     */
     _generatePaymentMethods: function() {
       const user = this.state.user;
-      if (!user) {
+      if (this.state.loading) {
         return (
           <juju.components.Spinner />);
+      }
+      if (!user) {
+        return;
       }
       const classes = {
         'user-profile__list-row': true,
@@ -107,8 +110,8 @@ YUI.add('account-payment-method', function() {
 
     render: function() {
       return (
-        <div>
-          <h2 className="account__title2 twelve-col">
+        <div className="account__section">
+          <h2 className="account__title twelve-col">
             Payment details
           </h2>
           {this._generatePaymentMethods()}

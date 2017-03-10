@@ -25,7 +25,12 @@ YUI.add('account', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
+      getCloudProviderDetails: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
+      listClouds: React.PropTypes.func.isRequired,
+      revokeCloudCredential: React.PropTypes.func.isRequired,
+      user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired
     },
 
@@ -43,6 +48,14 @@ YUI.add('account', function() {
                 avatar=""
                 links={links}
                 userInfo={this.props.userInfo} />
+              <juju.components.AccountCredentials
+                acl={this.props.acl}
+                addNotification={this.props.addNotification}
+                getCloudCredentialNames={this.props.getCloudCredentialNames}
+                getCloudProviderDetails={this.props.getCloudProviderDetails}
+                revokeCloudCredential={this.props.revokeCloudCredential}
+                listClouds={this.props.listClouds}
+                username={this.props.user} />
               <juju.components.AccountPaymentMethod
                 acl={this.props.acl}
                 addNotification={this.props.addNotification}
@@ -58,6 +71,7 @@ YUI.add('account', function() {
 
 }, '', {
   requires: [
+    'account-credentials',
     'account-payment-method',
     'panel-component',
     'user-profile-header'
