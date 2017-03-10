@@ -72,8 +72,11 @@ YUI.add('account-payment-method', function() {
         return (
           <juju.components.Spinner />);
       }
-      if (!user) {
-        return;
+      if (!user || user.paymentMethods.length === 0) {
+        return (
+          <div>
+            No payment methods available.
+          </div>);
       }
       const classes = {
         'user-profile__list-row': true,
@@ -95,17 +98,10 @@ YUI.add('account-payment-method', function() {
             </div>
           </juju.components.ExpandingRow>);
       });
-      if (methods.length > 0) {
-        return (
-          <ul className="user-profile__list twelve-col">
-            {methods}
-          </ul>);
-      } else {
-        return (
-          <div>
-            No payment methods available.
-          </div>);
-      }
+      return (
+        <ul className="user-profile__list twelve-col">
+          {methods}
+        </ul>);
     },
 
     render: function() {
