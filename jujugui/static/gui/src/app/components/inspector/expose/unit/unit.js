@@ -42,43 +42,45 @@ YUI.add('inspector-expose-unit', function() {
 
       @method _getAddressList
       @param {String} address An IP address.
-      @param {Array} ports A list of ports.
+      @param {Array} portRanges A list of port ranges.
       @returns {String} HTML of list
     */
-    _getAddressList: function(address, ports) {
-      if (!ports || ports.length === 0 || !address) {
+    _getAddressList: function(address, portRanges) {
+      if (!portRanges || !portRanges.length || !address) {
         return (
           <div className="inspector-expose__unit-detail">
             No public address
           </div>);
       }
-      var items = [];
-      for (var i in ports) {
-        // The port can have the protocol e.g. "80/tcp" so we need to just get
-        // the port number.
-        var port = ports[i].toString().split('/')[0];
-        var protocol = port === '443' ? 'https' : 'http';
-        var href = `${protocol}://${address}:${port}`;
-        items.push(
-          <li className="inspector-expose__item"
-            key={href}>
-            <a href={href}
-              onClick={this._stopBubble}
-              target="_blank">
-              {address}:{port}
-            </a>
-          </li>);
-      }
-      return (
-        <ul className="inspector-expose__unit-list">
-          {items}
-        </ul>);
+      const items = portRanges.map(portRange => {
+        if (portRange.single) {
+          const port = portRange.from;
+          const label = `${address}:${port}`;
+          const protocol = port === 443 ? 'https' : 'http';
+          const href = `${protocol}://${label}`;
+          return (
+            <li className="inspector-expose__item" key={href}>
+              <a href={href} onClick={this._stopBubble} target="_blank">
+                {label}
+              </a>
+            </li>
+          );
+        }
+        const range = `${portRange.from}-${portRange.to}`;
+        const label = `${address}:${range}/${portRange.protocol}`;
+        return (
+          <li className="inspector-expose__item" key={label}>
+            <span>{label}</span>
+          </li>
+        );
+      });
+      return <ul className="inspector-expose__unit-list">{items}</ul>;
     },
 
     render: function() {
       var unit = this.props.unit;
       var publicList = this._getAddressList(
-        unit.public_address, unit.open_ports);
+        unit.public_address, unit.portRanges);
       return (
         <li className="inspector-expose__unit" tabIndex="0" role="button"
           data-id={unit.id}

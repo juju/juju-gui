@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorChangeVersionItem', function() {
-  var acl;
+  let acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -35,109 +35,88 @@ describe('InspectorChangeVersionItem', function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
-  it('can display the version item with a short name', function() {
-    var buttonAction = sinon.stub();
-    var itemAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersionItem
-          acl={acl}
-          key="cs:django-5"
-          downgrade={false}
-          itemAction={itemAction}
-          buttonAction={buttonAction}
-          id="cs:django-5" />);
+  it('can display the version item', function() {
+    const buttonAction = sinon.stub();
+    const itemAction = sinon.stub();
+    const url = window.jujulib.URL.fromString('django/xenial/5');
+    const output = jsTestUtils.shallowRender(
+      <juju.components.InspectorChangeVersionItem
+        acl={acl}
+        key="cs:django-5"
+        downgrade={false}
+        itemAction={itemAction}
+        buttonAction={buttonAction}
+        url={url}
+      />);
     assert.deepEqual(output,
-        <li className="inspector-current-version__item"
-          role="button" tabIndex="0"
-          onClick={itemAction}>
-          <span title="cs:django-5"
-            className="inspector-current-version__title">
-            django-5
-          </span>
-          <juju.components.GenericButton
-            disabled={false}
-            key="cs:django-5"
-            type="inline-neutral"
-            title="Upgrade"
-            action={buttonAction} />
-        </li>);
-  });
-
-  it('can shorten a long name', function() {
-    var buttonAction = sinon.stub();
-    var itemAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersionItem
-          acl={acl}
-          key="cs:django-django-pango-pongo-5"
-          downgrade={false}
-          itemAction={itemAction}
-          buttonAction={buttonAction}
-          id="cs:django-django-pango-pongo-5" />);
-    assert.deepEqual(output,
-        <li className="inspector-current-version__item"
-          role="button" tabIndex="0"
-          onClick={itemAction}>
-          <span title="cs:django-django-pango-pongo-5"
-            className="inspector-current-version__title">
-            djan...o-pongo-5
-          </span>
-          <juju.components.GenericButton
-            disabled={false}
-            key="cs:django-django-pango-pongo-5"
-            type="inline-neutral"
-            title="Upgrade"
-            action={buttonAction} />
-        </li>);
+      <li className="inspector-current-version__item"
+        role="button" tabIndex="0"
+        onClick={itemAction}>
+        <span title="django/xenial/5"
+          className="inspector-current-version__title">
+          version {5}
+        </span>
+        <juju.components.GenericButton
+          disabled={false}
+          key="django/xenial/5"
+          type="inline-neutral"
+          title="Upgrade"
+          action={buttonAction} />
+      </li>);
   });
 
   it('can show a downgrade label', function() {
-    var buttonAction = sinon.stub();
-    var itemAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersionItem
-          acl={acl}
-          key="cs:django-5"
-          downgrade={true}
-          itemAction={itemAction}
-          buttonAction={buttonAction}
-          id="cs:django-5" />);
+    const buttonAction = sinon.stub();
+    const itemAction = sinon.stub();
+    const url = window.jujulib.URL.fromString('django/trusty/42');
+    const output = jsTestUtils.shallowRender(
+      <juju.components.InspectorChangeVersionItem
+        acl={acl}
+        key="django/trusty/42"
+        downgrade={true}
+        itemAction={itemAction}
+        buttonAction={buttonAction}
+        url={url}
+      />);
     assert.deepEqual(output,
-        <li className="inspector-current-version__item"
-          role="button" tabIndex="0"
-          onClick={itemAction}>
-          <span title="cs:django-5"
-            className="inspector-current-version__title">
-            django-5
-          </span>
-          <juju.components.GenericButton
-            disabled={false}
-            key="cs:django-5"
-            type="inline-neutral"
-            title="Downgrade"
-            action={buttonAction} />
-        </li>);
+      <li className="inspector-current-version__item"
+        role="button" tabIndex="0"
+        onClick={itemAction}>
+        <span title="django/trusty/42"
+          className="inspector-current-version__title">
+          version {42}
+        </span>
+        <juju.components.GenericButton
+          disabled={false}
+          key="django/trusty/42"
+          type="inline-neutral"
+          title="Downgrade"
+          action={buttonAction} />
+      </li>);
   });
 
   it('can disable the button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var buttonAction = sinon.stub();
-    var itemAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersionItem
-          acl={acl}
-          key="cs:django-5"
-          downgrade={false}
-          itemAction={itemAction}
-          buttonAction={buttonAction}
-          id="cs:django-5" />);
-    var expected = (
+    const buttonAction = sinon.stub();
+    const itemAction = sinon.stub();
+    const url = window.jujulib.URL.fromString('django/47');
+    const output = jsTestUtils.shallowRender(
+      <juju.components.InspectorChangeVersionItem
+        acl={acl}
+        key="django/47"
+        downgrade={false}
+        itemAction={itemAction}
+        buttonAction={buttonAction}
+        url={url}
+      />);
+    const expected = (
       <juju.components.GenericButton
         disabled={true}
-        key="cs:django-5"
+        key="django/47"
         type="inline-neutral"
         title="Upgrade"
-        action={buttonAction} />);
+        action={buttonAction}
+      />);
     assert.deepEqual(output.props.children[1], expected);
   });
 });

@@ -67,7 +67,11 @@ describe('Juju legacy delta handlers', function() {
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
         assert.strictEqual(unit.subordinate, false, 'subordinate');
-        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
+        assert.deepEqual(unit.portRanges, [{
+          from: 80, to: 80, protocol: 'tcp', single: true
+        }, {
+          from: 42, to: 42, protocol: 'udp', single: true
+        }]);
       };
 
       it('creates a unit in the database (global list)', function() {

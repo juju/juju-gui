@@ -26,8 +26,8 @@ YUI.add('inspector-change-version-item', function() {
       acl: React.PropTypes.object.isRequired,
       buttonAction: React.PropTypes.func.isRequired,
       downgrade: React.PropTypes.bool.isRequired,
-      id: React.PropTypes.string.isRequired,
-      itemAction: React.PropTypes.func.isRequired
+      itemAction: React.PropTypes.func.isRequired,
+      url: React.PropTypes.object.isRequired
     },
 
     /**
@@ -40,39 +40,22 @@ YUI.add('inspector-change-version-item', function() {
       return this.props.downgrade ? 'Downgrade' : 'Upgrade';
     },
 
-    /**
-      Generate the title for the charm.
-
-      @method _generateTitle
-      @returns {String} The charm title.
-    */
-    _generateTitle: function() {
-      var charmId = this.props.id.replace('cs:', '');
-      var title = charmId;
-      var idLength = charmId.length;
-      if (idLength > 13) {
-        var start = charmId.slice(0, 4);
-        var end = charmId.slice(idLength - 9, idLength);
-        title = start + '...' + end;
-      }
-      return title;
-    },
-
     render: function() {
+      const path = this.props.url.path();
+      const props = this.props;
       return (
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
-          onClick={this.props.itemAction}>
-          <span title={this.props.id}
-           className="inspector-current-version__title">
-            {this._generateTitle()}
+          onClick={props.itemAction}>
+          <span title={path} className="inspector-current-version__title">
+            version {props.url.revision}
           </span>
           <juju.components.GenericButton
-            disabled={this.props.acl.isReadOnly()}
-            key={this.props.id}
+            disabled={props.acl.isReadOnly()}
+            key={path}
             type='inline-neutral'
             title={this._generateButtonLabel()}
-            action={this.props.buttonAction} />
+            action={props.buttonAction} />
         </li>
       );
     }

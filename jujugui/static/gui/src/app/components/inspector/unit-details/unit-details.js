@@ -64,67 +64,66 @@ YUI.add('unit-details', function() {
     },
 
     /**
-      Build a HTML list from an array of ports and an IP address.
+      Build a HTML list from an array of port ranges and an IP address.
 
       @method _getAddressList
       @param {String} address An IP address.
-      @param {Array} ports A list of ports.
+      @param {Array} portRanges A list of port ranges, each one being an object
+        with the following attributes:
+          - from: the initial port;
+          - to: the last port in the range;
+          - single: whether from === to (meaning it's not really a range);
+          - protocol: the IP protocol (like "tcp").
       @param {Boolean} clickabl Whether the addresses are clickable.
       @returns {String} HTML of list.
     */
-    _getAddressList: function(address, ports, clickable) {
-      if (!ports || ports.length === 0 || !address) {
+    _getAddressList: function(address, portRanges, clickable) {
+      if (!address) {
         return;
       }
-      var items = [];
-      for (var i in ports) {
-        // The port can have the protocol e.g. "80/tcp" so we need to just get
-        // the port number.
-        var port = ports[i].toString().split('/')[0];
-        var protocol = port === '443' ? 'https' : 'http';
-        var href = `${protocol}://${address}:${port}`;
-        var link;
-        if (clickable) {
-          var link = (
-            <a href={href} target="_blank">
-              {address}:{port}
-            </a>);
-        } else {
-          var link = (
-            <span>
-              {address}:{port}
-            </span>);
+      const createItem = (label, href) => {
+        let link = <span>{label}</span>;
+        if (href) {
+          link = <a href={href} target="_blank">{label}</a>;
         }
-        items.push(
-          <li className="unit-details__list-item"
-            key={href}>
-            {link}
-          </li>);
+        return <li className="unit-details__list-item" key={label}>{link}</li>;
+      };
+      if (!portRanges || !portRanges.length) {
+        return (
+          <ul className="unit-details__list">{createItem(address, '')}</ul>
+        );
       }
-      return (
-        <ul className="unit-details__list">
-          {items}
-        </ul>);
+      const items = portRanges.map(portRange => {
+        if (portRange.single) {
+          const port = portRange.from;
+          const label = `${address}:${port}`;
+          if (!clickable) {
+            return createItem(label, '');
+          }
+          const protocol = port === 443 ? 'https' : 'http';
+          const href = `${protocol}://${label}`;
+          return createItem(label, href);
+        }
+        const range = `${portRange.from}-${portRange.to}`;
+        const label = `${address}:${range}/${portRange.protocol}`;
+        return createItem(label, '');
+      });
+      return <ul className="unit-details__list">{items}</ul>;
     },
 
     render: function() {
-      var unit = this.props.unit;
-      var buttons = [{
-        disabled: this.props.acl.isReadOnly(),
+      const props = this.props;
+      const unit = props.unit;
+      const buttons = [{
+        disabled: props.acl.isReadOnly(),
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
-      var ports = unit.open_ports;
-      var privateList = this._getAddressList(
-        unit.private_address, ports, true);
-      var publicList = this._getAddressList(
-        unit.public_address, ports,
-        this.props.service.get('exposed'));
-      var unitStatus = this._getUnitStatus(unit.workloadStatusMessage);
-      var privatePlural = unit.private_address && ports && ports.length > 1 ?
-        'es' : '';
-      var publicPlural = unit.public_address && ports && ports.length > 1 ?
-        'es' : '';
+      const privateList = this._getAddressList(
+        unit.private_address, unit.portRanges, true);
+      const publicList = this._getAddressList(
+        unit.public_address, unit.portRanges, props.service.get('exposed'));
+      const unitStatus = this._getUnitStatus(unit.workloadStatusMessage);
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
@@ -132,13 +131,13 @@ YUI.add('unit-details', function() {
               Status: {unit.agent_state || 'uncommitted'} {unitStatus}
             </p>
             <p className="unit-details__property">
-              IP address{privatePlural}: {privateList ? null : 'none'}
-            </p>
-            {privateList}
-            <p className="unit-details__property">
-              Public address{publicPlural}: {publicList ? null : 'none'}
+              Public addresses: {publicList ? null : 'none'}
             </p>
             {publicList}
+            <p className="unit-details__property">
+              IP addresses: {privateList ? null : 'none'}
+            </p>
+            {privateList}
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />

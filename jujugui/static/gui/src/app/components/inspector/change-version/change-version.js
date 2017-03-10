@@ -66,13 +66,11 @@ YUI.add('inspector-change-version', function() {
       The callable to be passed to the version item to view the charm details.
 
       @method _viewCharmDetails
-      @param {String} charmId The charm id.
-      @param {Object} e The click event.
+      @param {Object} url The charm url as a window.jujulib.URL instance.
+      @param {Object} evt The click event.
     */
-    _viewCharmDetails: function(charmId, e) {
-      this.props.changeState({
-        store: charmId.replace('cs:', '')
-      });
+    _viewCharmDetails: function(url, evt) {
+      this.props.changeState({store: url.path()});
     },
 
     /**
@@ -178,19 +176,19 @@ YUI.add('inspector-change-version', function() {
         console.error(error);
         versions = null;
       }
-      var components = [];
+      let components = [];
       if (!versions || versions.length === 1) {
         components = <li className="inspector-change-version__none">
               No other versions found.
             </li>;
       } else {
-        var currentVersion = this._getVersionNumber(this.props.charmId);
+        const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
         versions.forEach(function(version) {
-          var thisVersion = this._getVersionNumber(version);
-          var downgrade = false;
-          if (thisVersion === currentVersion) {
+          const versionURL = window.jujulib.URL.fromLegacyString(version);
+          let downgrade = false;
+          if (versionURL.revision === url.revision) {
             return true;
-          } else if (thisVersion < currentVersion) {
+          } else if (versionURL.revision < url.revision) {
             downgrade = true;
           }
           components.push(
@@ -198,25 +196,14 @@ YUI.add('inspector-change-version', function() {
               acl={this.props.acl}
               key={version}
               downgrade={downgrade}
-              itemAction={this._viewCharmDetails.bind(this, version)}
+              itemAction={this._viewCharmDetails.bind(this, versionURL)}
               buttonAction={this._versionButtonAction.bind(this, version)}
-              id={version} />);
+              url={versionURL}
+            />);
         }, this);
       }
       this.setState({loading: false});
       this.setState({versionsList: components});
-    },
-
-    /**
-      Get the version number from the charm id.
-
-      @method _getVersionNumber
-      @param {String} charmId The charm id.
-      @returns {Integer} The version number.
-    */
-    _getVersionNumber: function(charmId) {
-      var parts = charmId.split('-');
-      return parseInt(parts[parts.length - 1]);
     },
 
     /**
@@ -241,15 +228,15 @@ YUI.add('inspector-change-version', function() {
     },
 
     render: function() {
-      var charmId = this.props.charmId;
+      const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
       return (
         <div className="inspector-change-version">
           <div className="inspector-change-version__current">
             Current version:
             <div className="inspector-change-version__current-version"
               role="button" tabIndex="0"
-              onClick={this._viewCharmDetails.bind(this, charmId)}>
-              {charmId}
+              onClick={this._viewCharmDetails.bind(this, url)}>
+              {url.path()}
             </div>
           </div>
           {this._displayVersionsList(this.state.loading,
