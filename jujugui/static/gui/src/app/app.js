@@ -120,7 +120,10 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-settings',
         toggle: true,
         callback: function(evt, target) {
-          Y.one('#shortcut-help').hide();
+          const shortcutHelp = Y.one('#shortcut-help');
+          if (shortcutHelp) {
+            shortcutHelp.hide();
+          }
 
           if (target && !target.getHTML().length) {
             ReactDOM.render(
@@ -166,7 +169,10 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-help',
         toggle: true,
         callback: function(evt, target) {
-          Y.one('#shortcut-settings').hide();
+          const shortcutSettings = Y.one('#shortcut-settings');
+          if (shortcutSettings) {
+            shortcutSettings.hide();
+          }
 
           // This could be its own view.
           if (target && !target.getHTML().length) {
