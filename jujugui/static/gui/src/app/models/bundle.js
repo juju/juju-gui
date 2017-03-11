@@ -235,7 +235,7 @@ YUI.add('juju-bundle-models', function(Y) {
 
          */
         validator: function(val) {
-          return Y.Lang.isNumber(val);
+          return !isNaN(val);
         }
       },
       /**

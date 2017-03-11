@@ -1357,8 +1357,8 @@ YUI.add('juju-topology-service', function(Y) {
             // these can automatically be ignored.
         if (boundingBox.model) {
           var annotations = boundingBox.model.get('annotations');
-          return ((!Y.Lang.isNumber(boundingBox.x) &&
-                  !(annotations && annotations['gui-x'])));
+          return (isNaN(boundingBox.x) &&
+                  !(annotations && annotations['gui-x']));
         }
         return false;
       });

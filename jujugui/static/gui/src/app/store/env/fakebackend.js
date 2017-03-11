@@ -951,7 +951,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (numUnits === undefined) {
         numUnits = isSubordinate ? 0 : 1;
       }
-      if (!Y.Lang.isNumber(numUnits) ||
+      if (isNaN(numUnits) ||
           (!isSubordinate && numUnits < 1 ||
           (isSubordinate && numUnits !== 0))) {
         return {
