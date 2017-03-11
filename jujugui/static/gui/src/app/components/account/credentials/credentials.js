@@ -25,18 +25,23 @@ YUI.add('account-credentials', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       revokeCloudCredential: React.PropTypes.func.isRequired,
-      username: React.PropTypes.string.isRequired
+      updateCloudCredential: React.PropTypes.func.isRequired,
+      username: React.PropTypes.string.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
       this.xhrs = [];
       return {
+        cloud: null,
         credentials: [],
-        loading: false
+        loading: false,
+        showAdd: false
       };
     },
 
@@ -195,12 +200,92 @@ YUI.add('account-credentials', function() {
       }
     },
 
+    /**
+      Show the add credentials form.
+
+      @method _toggleAdd
+    */
+    _toggleAdd: function() {
+      this.setState({showAdd: !this.state.showAdd});
+    },
+
+    /**
+      Store the selected cloud in state.
+
+      @method _setCloud
+      @param {String} cloud The selected cloud.
+    */
+    _setCloud: function(cloud) {
+      this.setState({cloud: cloud});
+    },
+
+    /**
+      Store the selected credential in state.
+
+      @method _setCredential
+      @param {String} credential The selected credential.
+    */
+    _setCredential: function(credential) {
+      this.setState({credential: credential});
+    },
+
+    /**
+      Generate a form to add credentials.
+
+      @method _generateAddCredentials
+    */
+    _generateAddCredentials: function() {
+      let content = null;
+      let addForm = null;
+      if (this.state.showAdd && this.state.cloud) {
+        addForm = (
+          <juju.components.DeploymentCredentialAdd
+            acl={this.props.acl}
+            close={this._toggleAdd}
+            cloud={this.state.cloud}
+            getCloudProviderDetails={this.props.getCloudProviderDetails}
+            generateCloudCredentialName={this.props.generateCloudCredentialName}
+            getCredentials={this._getClouds}
+            setCredential={this._setCredential}
+            updateCloudCredential={this.props.updateCloudCredential}
+            user={this.props.username}
+            validateForm={this.props.validateForm} />);
+      }
+      if (this.state.showAdd) {
+        content = (
+          <div>
+             <juju.components.DeploymentCloud
+               acl={this.props.acl}
+               cloud={this.state.cloud}
+               listClouds={this.props.listClouds}
+               getCloudProviderDetails={this.props.getCloudProviderDetails}
+               setCloud={this._setCloud} />
+             {addForm}
+          </div>);
+      }
+      return (
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={this.state.showAdd}>
+          <div></div>
+          <div>
+            {content}
+          </div>
+        </juju.components.ExpandingRow>);
+    },
+
     render: function() {
       return (
         <div className="account__section">
           <h2 className="account__title twelve-col">
             Cloud credentials
+            <juju.components.GenericButton
+              action={this._toggleAdd}
+              type="inline-base"
+              title="Add" />
           </h2>
+          {this._generateAddCredentials()}
           {this._generateCredentials()}
         </div>
       );
@@ -210,6 +295,8 @@ YUI.add('account-credentials', function() {
 
 }, '', {
   requires: [
+    'deployment-cloud',
+    'expanding-row',
     'generic-button',
     'loading-spinner'
   ]

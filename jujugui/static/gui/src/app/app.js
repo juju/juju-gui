@@ -1120,6 +1120,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
+          generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
@@ -1129,8 +1130,11 @@ YUI.add('juju-gui', function(Y) {
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
           showPay={window.juju_config.payFlag || false}
+          updateCloudCredential={
+            controllerAPI.updateCloudCredential.bind(controllerAPI)}
           user={controllerAPI.getCredentials().user}
-          userInfo={this._getUserInfo(state)} />,
+          userInfo={this._getUserInfo(state)}
+          validateForm={views.utils.validateForm.bind(views.utils)} />,
         document.getElementById('top-page-container'));
       next();
     },
@@ -1317,6 +1321,7 @@ YUI.add('juju-gui', function(Y) {
           storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          validateForm={utils.validateForm.bind(utils)}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },
