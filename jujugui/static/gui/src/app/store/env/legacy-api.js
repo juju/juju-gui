@@ -283,7 +283,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
       if (!op.Params) {
         op.Params = {};
       }
-      var msg = Y.JSON.stringify(op);
+      var msg = JSON.stringify(op);
       this.ws.send(msg);
     },
 

@@ -494,7 +494,7 @@ YUI.add('juju-env-base', function(Y) {
     */
     setCredentials: function(credentials) {
       module.sessionStorage.setItem(
-          'credentials', Y.JSON.stringify(credentials));
+          'credentials', JSON.stringify(credentials));
     },
 
     /**

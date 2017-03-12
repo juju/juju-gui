@@ -22,10 +22,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Base Environment', function() {
     var requires = ['juju-env-base', 'juju-env-sandbox', 'json-stringify'];
-    var environments, juju, Y, sandboxModule, ClientConnection;
+    var environments, juju, sandboxModule, ClientConnection;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         juju = Y.namespace('juju');
         environments = juju.environments;
         sandboxModule = Y.namespace('juju.environments.sandbox');
@@ -107,7 +107,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Try with a valid value.
       var value = {user: 'foo', password: 'kumquat', macaroons: ['macaroon']};
       env.setCredentials(value);
-      assert.deepEqual(setItemValue, {credentials: Y.JSON.stringify(value)});
+      assert.deepEqual(setItemValue, {credentials: JSON.stringify(value)});
       var creds = env.getCredentials();
       assert.strictEqual(creds.areAvailable, true);
       assert.strictEqual(creds.areExternal, false);

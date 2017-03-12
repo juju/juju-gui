@@ -22,10 +22,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('sandbox.ClientConnection', function() {
     var requires = ['juju-env-sandbox', 'json-stringify', 'juju-tests-factory'];
-    var Y, sandboxModule, ClientConnection, factory, state, juju;
+    var sandboxModule, ClientConnection, factory, state, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         ClientConnection = sandboxModule.ClientConnection;
         factory = Y.namespace('juju-tests.factory');
@@ -133,7 +133,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       conn.open();
-      conn.send(Y.JSON.stringify(sent));
+      conn.send(JSON.stringify(sent));
       assert.deepEqual(received, sent);
     });
 
@@ -210,7 +210,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('returns ConfigSkeleton responses', function(done) {
@@ -239,7 +239,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
   });

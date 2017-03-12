@@ -122,7 +122,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.msg = function(m) {
-        this.onmessage({'data': Y.JSON.stringify(m)});
+        this.onmessage({'data': JSON.stringify(m)});
       };
 
       this.last_message = function(back) {
