@@ -145,7 +145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.open();
       conn.receiveNow(data);
       assert.isString(received.data);
-      assert.deepEqual(Y.JSON.parse(received.data), data);
+      assert.deepEqual(JSON.parse(received.data), data);
     });
 
     it('receives messages from the API asynchronously.', function(done) {
@@ -154,7 +154,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var isAsync = false;
       conn.onmessage = function(received) {
         assert.isString(received.data);
-        assert.deepEqual(Y.JSON.parse(received.data), data);
+        assert.deepEqual(JSON.parse(received.data), data);
         assert.isTrue(isAsync);
         done();
       };
@@ -206,7 +206,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
         console.log(received.data);
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.deepEqual(JSON.parse(received.data), expected);
         done();
       };
       client.open();
@@ -235,7 +235,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }
         };
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.deepEqual(JSON.parse(received.data), expected);
         done();
       };
       client.open();

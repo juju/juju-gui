@@ -115,7 +115,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     send: function(data) {
       if (this.connected) {
-        this.get('juju').receive(Y.JSON.parse(data));
+        this.get('juju').receive(JSON.parse(data));
       } else {
         throw CLOSEDERROR;
       }
