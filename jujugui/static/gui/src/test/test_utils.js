@@ -53,10 +53,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 }) ();
 
 describe('utilities', function() {
-  var Y, views, models, utils;
+  var views, models, utils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'], function(Y) {
+    YUI(GlobalConfig).use(['juju-views', 'juju-models'], function(Y) {
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju.views.utils');
