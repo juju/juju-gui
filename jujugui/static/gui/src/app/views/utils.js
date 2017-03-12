@@ -212,7 +212,7 @@ YUI.add('juju-view-utils', function(Y) {
     var l = timestrings,
         prefix = l.prefixAgo,
         suffix = l.suffixAgo,
-        distanceMillis = Y.Lang.now() - t,
+        distanceMillis = new Date().getTime() - t,
         seconds = Math.abs(distanceMillis) / 1000,
         minutes = seconds / 60,
         hours = minutes / 60,

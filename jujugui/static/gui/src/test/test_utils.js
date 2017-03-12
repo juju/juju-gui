@@ -65,7 +65,7 @@ describe('utilities', function() {
   });
 
   it('must be able to display humanize time ago messages', function() {
-    var now = Y.Lang.now();
+    var now = new Date().getTime();
     // Javascript timestamps are in milliseconds
     views.humanizeTimestamp(now).should.equal('less than a minute ago');
     views.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');

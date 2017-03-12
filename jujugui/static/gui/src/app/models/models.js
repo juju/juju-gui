@@ -2075,7 +2075,7 @@ YUI.add('juju-models', function(Y) {
       seen: {value: false},
       timestamp: {
         valueFn: function() {
-          return Y.Lang.now();
+          return new Date().getTime();
         }
       },
 
