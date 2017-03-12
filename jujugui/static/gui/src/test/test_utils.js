@@ -1249,4 +1249,28 @@ describe('utilities', function() {
       assert.equal(provider.id, 'google');
     });
   });
+
+  describe('isValue', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can check a value is set and not null', function() {
+      assert.equal(utils.isValue('string'), true);
+      assert.equal(utils.isValue(''), true);
+      assert.equal(utils.isValue(1), true);
+      assert.equal(utils.isValue(0), true);
+      assert.equal(utils.isValue({key: 'value'}), true);
+      assert.equal(utils.isValue({}), true);
+      assert.equal(utils.isValue(['array']), true);
+      assert.equal(utils.isValue([]), true);
+      assert.equal(utils.isValue(undefined), false);
+      assert.equal(utils.isValue(null), false);
+    });
+  });
 })();

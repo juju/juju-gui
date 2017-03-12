@@ -335,7 +335,7 @@ YUI.add('juju-view-utils', function(Y) {
         return this.topology.serviceForBox(this);
       },
       set: function(value) {
-        if (Y.Lang.isValue(value)) {
+        if (utils.isValue(value)) {
           Y.mix(this, value.getAttrs(), true);
           this._modelName = value.name;
         }
@@ -497,7 +497,7 @@ YUI.add('juju-view-utils', function(Y) {
           const ep = connectors[key];
           // Take the distance of each XY pair
           var d = this._distance(source, ep);
-          if (!Y.Lang.isValue(result) || d < shortest_d) {
+          if (!utils.isValue(result) || d < shortest_d) {
             shortest_d = d;
             result = ep;
           }
@@ -524,7 +524,7 @@ YUI.add('juju-view-utils', function(Y) {
             const ep2 = oc[key];
             // Take the distance of each XY pair
             var d = this._distance(ep1, ep2);
-            if (!Y.Lang.isValue(result) || d < shortest_d) {
+            if (!utils.isValue(result) || d < shortest_d) {
               shortest_d = d;
               result = [ep1, ep2];
             }
@@ -566,7 +566,7 @@ YUI.add('juju-view-utils', function(Y) {
   views.toBoundingBoxes = function(module, services, existing, env) {
     var result = existing || {};
     Object.keys(result).forEach(key => {
-      if (!Y.Lang.isValue(services.getById(key))) {
+      if (!utils.isValue(services.getById(key))) {
         delete result[key];
       }
     });
@@ -1521,6 +1521,17 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.isRedirectError = function(error) {
     return error === 'authentication failed: redirection required';
+  };
+
+  /**
+    Check that a value is valid and not null.
+
+    @method generateCloudCredentialName
+    @param {Any} value The value to check
+    @returns {Boolean} Whether the value is not undefined, null or NaN.
+  */
+  utils.isValue = value => {
+    return value !== undefined && value !== null;
   };
 
   /**

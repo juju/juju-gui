@@ -27,7 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('d3-components', function(Y) {
   var d3 = Y.namespace('d3'),
-      ns = Y.namespace('d3-components');
+      ns = Y.namespace('d3-components'),
+      utils = Y.namespace('juju.views.utils');
 
   var Module = Y.Base.create('Module', Y.Base, [], {
     _defaultEvents: {
@@ -232,7 +233,7 @@ YUI.add('d3-components', function(Y) {
         Object.keys(handlers).forEach(trigger => {
           const handler = self._normalizeHandler(
             handlers[trigger], module, selector);
-          if (L.isValue(handler)) {
+          if (utils.isValue(handler)) {
             _bindEvent(trigger, handler.callback,
                        container, selector, handler.context);
           }
@@ -544,4 +545,6 @@ YUI.add('d3-components', function(Y) {
     'base',
     'array-extras',
     'event',
-    'event-resize']});
+    'event-resize',
+    'juju-view-utils'
+]});
