@@ -679,7 +679,7 @@ YUI.add('juju-gui', function(Y) {
         // You can then use the token once until it expires, within two
         // minutes of this writing.
         var querystring = this.location.search.substring(1);
-        var qs = Y.QueryString.parse(querystring);
+        var qs = views.utils.parseQueryString(querystring);
         var authtoken = qs.authtoken || '';
         if (authtoken || authtoken.length) {
           // De-dupe if necessary.
@@ -2841,7 +2841,7 @@ YUI.add('juju-gui', function(Y) {
       // Doing that is usually responsibility of a separate system
       // (most of the times, it is Juju Quickstart).
       var querystring = this.location.search.substring(1);
-      var qs = Y.QueryString.parse(querystring);
+      var qs = views.utils.parseQueryString(querystring);
       var changesToken = qs.changestoken || '';
       if (changesToken || changesToken.length) {
         // De-dupe if necessary.

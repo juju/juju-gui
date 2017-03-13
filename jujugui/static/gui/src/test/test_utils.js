@@ -1273,4 +1273,76 @@ describe('utilities', function() {
       assert.equal(utils.isValue(null), false);
     });
   });
+
+  describe('parseQueryString', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can return a parsed query string', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'http://example.com?one=1&two=2'), {
+          one: '1',
+          two: '2'
+        });
+    });
+
+    it('can handle being parsed only the querystring', function() {
+      assert.deepEqual(utils.parseQueryString(
+        '?one=1&two=2'), {
+          one: '1',
+          two: '2'
+        });
+    });
+
+    it('can handle being parsed a querystring without a "?"', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'one=1&two=2'), {
+          one: '1',
+          two: '2'
+        });
+    });
+
+    it('can handle a URL with no querystring', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'http://example.com'), {});
+    });
+
+    it('can handle a querystring with no values', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'http://example.com?'), {});
+    });
+
+    it('does not return empty values', function() {
+      assert.deepEqual(utils.parseQueryString('http://example.com?one=1&'), {
+        one: '1'
+      });
+    });
+
+    it('returns null when there is no set value', function() {
+      assert.deepEqual(utils.parseQueryString('http://example.com?one='), {
+        one: null
+      });
+    });
+
+    it('can handle unfinished values', function() {
+      assert.deepEqual(
+        utils.parseQueryString('http://example.com?one=&two=2'), {
+          one: null,
+          two: '2'
+        });
+    });
+
+    it('can handle duplicate keys', function() {
+      assert.deepEqual(
+        utils.parseQueryString('http://example.com?one=1&one=2'), {
+          one: ['1', '2'],
+        });
+    });
+  });
 })();

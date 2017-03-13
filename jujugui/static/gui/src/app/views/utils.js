@@ -1535,6 +1535,41 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Parse a URL for the querystring and return it as an object.
+
+    @method parseQueryString
+    @param {String} URL The URL to get the query string from.
+    @returns {Object} The parsed query string..
+  */
+  utils.parseQueryString = URL => {
+    const querystring = URL.split('?')[1];
+    const parsed = {};
+    if (querystring || URL.indexOf('=') > -1) {
+      // If the querystring doesn't exist then the URL must have a "=" so use
+      // the URL.
+      (querystring || URL).split('&').forEach(keyval => {
+        const pair = keyval.split('=');
+        const key = pair[0];
+        const value = pair[1] || null;
+        // Handle the case when the URL finishes with "&".
+        if (key !== '') {
+          const existing = parsed[key];
+          // If there are duplicate keys then store values as an array,
+          // otherwise create a new record.
+          if (!existing) {
+            parsed[key] = value;
+          } else if (typeof(existing) === Array) {
+            parsed[key].push(value);
+          } else {
+            parsed[key] = [existing, value];
+          }
+        }
+      });
+    }
+    return parsed;
+  };
+
+  /**
     Generates a valid cloud credential name using the supplied arguments.
     TODO frankban: why are we using this function? We should not double guess
     credential names, but retrieve them from Juju. This is broken.
