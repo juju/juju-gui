@@ -26,6 +26,8 @@ chai.config.truncateThreshold = 0;
 
 describe('EnvList', function() {
 
+  const humanizeTimestamp = sinon.stub().returns('less than a minute ago');
+
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
     YUI().use('env-list', function() { done(); });
@@ -46,13 +48,6 @@ describe('EnvList', function() {
         lastConnection: {a: 1, getTime: function(){}}
       }
     ];
-    const humanizeTimestamp = sinon.stub();
-    humanizeTimestamp.
-      withArgs(models[0].lastConnection).
-      returns('just now');
-    humanizeTimestamp.
-      withArgs(models[1].lastConnection).
-      returns('less than a minute ago');
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
@@ -66,19 +61,6 @@ describe('EnvList', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = [
-      <li className="env-list__environment"
-        role="menuitem"
-        tabIndex="0"
-        data-id={models[0].uuid}
-        data-name={models[0].name}
-        data-owner={models[0].owner}
-        onClick={instance._handleModelClick}
-        key={models[0].uuid}>
-        {models[0].name}
-        <div className="env-list__last-connected">
-          Last accessed {'just now'}
-        </div>
-      </li>,
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
@@ -113,13 +95,6 @@ describe('EnvList', function() {
         lastConnection: {a: 1, getTime: function(){}}
       }
     ];
-    const humanizeTimestamp = sinon.stub();
-    humanizeTimestamp.
-      withArgs(models[0].lastConnection).
-      returns('just now');
-    humanizeTimestamp.
-      withArgs(models[1].lastConnection).
-      returns('less than a minute ago');
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         authDetails={{user: 'who@local', rootUserName: 'who'}}
@@ -136,19 +111,6 @@ describe('EnvList', function() {
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
-        data-id={models[0].uuid}
-        data-name={models[0].name}
-        data-owner={models[0].owner}
-        onClick={instance._handleModelClick}
-        key={models[0].uuid}>
-        {models[0].name}
-        <div className="env-list__last-connected">
-          Last accessed {'just now'}
-        </div>
-      </li>,
-      <li className="env-list__environment"
-        role="menuitem"
-        tabIndex="0"
         data-id={models[1].uuid}
         data-name={models[1].name}
         data-owner={models[1].owner}
@@ -162,13 +124,13 @@ describe('EnvList', function() {
     ]);
   });
 
-  fit('displays only the create new button if there are no models', function() {
+  it('displays only the create new button if there are no models', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
-        handleModelClick={sinon.stub()}
-        showProfile={sinon.stub()} />);
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children, false);
   });
 
@@ -183,8 +145,8 @@ describe('EnvList', function() {
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
-        handleModelClick={handleModelClick}
-        showProfile={sinon.stub()} />);
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={handleModelClick} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
@@ -193,19 +155,21 @@ describe('EnvList', function() {
     assert.equal(handleModelClick.callCount, 1);
   });
 
-  it('showProfile call is made when clicking on buttonRow button', function() {
-    const showProfile = sinon.stub();
+  it('new model call is made when clicking on buttonRow button', function() {
+    const switchModel = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
         envs={models}
+        humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
-        showProfile={showProfile} />);
+        switchModel={switchModel} />);
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));
-    assert.equal(showProfile.callCount, 1);
+    assert.equal(switchModel.callCount, 1);
   });
 
 });

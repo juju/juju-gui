@@ -56,7 +56,6 @@ YUI.add('header-breadcrumb', function() {
               environmentName={this.props.modelName}
               humanizeTimestamp={this.props.humanizeTimestamp}
               listModelsWithInfo={this.props.listModelsWithInfo}
-              showProfile={this.props.showProfile}
               switchModel={this.props.switchModel}
             />
           </li>);

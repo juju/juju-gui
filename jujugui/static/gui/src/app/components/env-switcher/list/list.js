@@ -56,18 +56,18 @@ YUI.add('env-list', function() {
       const currentUser = auth ? auth.user : null;
       const modelsWithoutController = models.sort((a, b) => {
         return b.lastConnection.getTime() - a.lastConnection.getTime();
-      }).filter(model => !model.isController);
+      }).filter(model => {
+          return !model.isController &&
+            model.name !== this.props.environmentName;
+      });
       if (modelsWithoutController.length === 1 &&
           modelsWithoutController[0].name === this.props.environmentName) {
-        return '';
+        return false;
       }
       return modelsWithoutController.map(model => {
         let name = model.name;
         let owner = model.owner;
         let lastConnected = this.props.humanizeTimestamp(model.lastConnection);
-        if (this.props.environmentName === model.name) {
-          lastConnected = 'just now';
-        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -118,7 +118,7 @@ YUI.add('env-list', function() {
       @method _handleNewModelClick
     */
     _handleNewModelClick: function() {
-      this.props.handleModelClick(null);
+      this.props.handleModelClick();
     },
 
     /**

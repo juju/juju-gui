@@ -24,7 +24,8 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
-  let appState, listModelsWithInfo, showProfile, switchModel;
+  let appState, changeState, humanizeTimestamp,
+    listModelsWithInfo, showProfile, switchModel;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -38,6 +39,8 @@ describe('HeaderBreadcrumb', () => {
     listModelsWithInfo = sinon.stub();
     showProfile = sinon.stub();
     switchModel = sinon.stub();
+    changeState = sinon.stub();
+    humanizeTimestamp = sinon.stub();
   });
 
   // Render the component and return the instance and the output.
@@ -46,6 +49,8 @@ describe('HeaderBreadcrumb', () => {
       <juju.components.HeaderBreadcrumb
         appState={appState}
         authDetails={attrs.authDetails}
+        changeState={changeState}
+        humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={attrs.modelName}
         modelOwner={attrs.modelOwner}
@@ -71,7 +76,7 @@ describe('HeaderBreadcrumb', () => {
       authDetails: {user: 'who@external', rootUserName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
-      showEnvSwitcher: true
+      showEnvSwitcher: true,
     });
     const expectedOutput = (
       <ul className="header-breadcrumb" data-username="who">
@@ -82,10 +87,11 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
-            environmentName={'mymodel'}
             authDetails={{user: 'who@external', rootUserName: 'who'}}
+            changeState={changeState}
+            environmentName={'mymodel'}
+            humanizeTimestamp={humanizeTimestamp}
             listModelsWithInfo={listModelsWithInfo}
-            showProfile={showProfile}
             switchModel={switchModel} />
         </li>
       </ul>
@@ -109,10 +115,11 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
-            environmentName={'mymodel'}
             authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
+            changeState={changeState}
+            environmentName={'mymodel'}
+            humanizeTimestamp={humanizeTimestamp}
             listModelsWithInfo={listModelsWithInfo}
-            showProfile={showProfile}
             switchModel={switchModel} />
         </li>
       </ul>
