@@ -67,7 +67,8 @@ YUI.add('env-list', function() {
       return modelsWithoutController.map(model => {
         let name = model.name;
         let owner = model.owner;
-        let lastConnected = this.props.humanizeTimestamp(model.lastConnection);
+        const lastConnected = this.props.
+          humanizeTimestamp(model.lastConnection);
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
