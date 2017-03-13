@@ -109,7 +109,7 @@ describe('EnvSwitcher', function() {
       switchModel={switchModel}
     />;
 
-  assert.deepEqual(output.props.children[1], expected);
+    assert.deepEqual(output.props.children[1], expected);
   });
 
   it('fetches a list of environments on mount', function() {

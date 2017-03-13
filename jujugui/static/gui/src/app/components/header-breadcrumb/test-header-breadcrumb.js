@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
   let appState, changeState, humanizeTimestamp,
-    listModelsWithInfo, showProfile, switchModel;
+      listModelsWithInfo, showProfile, switchModel;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.

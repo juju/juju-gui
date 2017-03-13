@@ -22,11 +22,11 @@ YUI.add('create-model-button', function() {
 
   juju.components.CreateModelButton = React.createClass({
     propTypes: {
+      action: React.PropTypes.func,
       changeState: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       title: React.PropTypes.string,
-      type: React.PropTypes.string,
-      action: React.PropTypes.func
+      type: React.PropTypes.string
     },
 
     getDefaultProps: function() {

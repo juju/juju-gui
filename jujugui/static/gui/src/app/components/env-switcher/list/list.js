@@ -57,8 +57,8 @@ YUI.add('env-list', function() {
       const modelsWithoutController = models.sort((a, b) => {
         return b.lastConnection.getTime() - a.lastConnection.getTime();
       }).filter(model => {
-          return !model.isController &&
-            model.name !== this.props.environmentName;
+        return !model.isController &&
+          model.name !== this.props.environmentName;
       });
       if (modelsWithoutController.length === 1 &&
           modelsWithoutController[0].name === this.props.environmentName) {
