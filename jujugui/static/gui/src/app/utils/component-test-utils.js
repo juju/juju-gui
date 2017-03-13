@@ -339,41 +339,76 @@ var jsTestUtils = {
   },
 
   /**
-    While assert.deepEqual is great, if a nested child errors it's
-    hard to debug. This function goes to the deepest level and works
-    it's way out - giving an easier to debug error.
-    This code is not 100% tested, always follow up with a standard
-    assert.deepEqual(output,expected), Just incase this drops the ball.
+  	While assert.deepEqual is great, if a nested child errors it's
+  	hard to debug. This function goes to the deepest level and works
+  	it's way out - giving an easier to debug error.
+  	This code is not 100% tested, always follow up with a standard
+  	assert.deepEqual(output,expected), Just incase this drops the ball.
 
-    @method specificDeepEqual
+  	@method specificDeepEqual
   */
-  specificDeepEqual: function(output, expected) {
-    if (output && output.props &&
-      output.props.children &&
-      expected && expected.props &&
-      expected.props.children) {
-      if (Array.isArray(output.props.children)) {
-        for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
-          if (output.props &&
-            output.props.children &&
-            expected.props &&
-            expected.props.children) {
-            this.specificDeepEqual(
-              output.props.children[i],
-              expected.props.children[i]);
-          }
-        }
-      } else {
-        if (output.props &&
-          output.props.children &&
-          expected.props &&
-          expected.props.children) {
-          this.specificDeepEqual(
-            output.props.children,
-            expected.props.children);
-        }
-      }
-    }
-    assert.deepEqual(output, expected);
+  specificDeepEqual: function(output, expected, source = 'root') {
+  	assert.isDefined(output, `${source} > output is not defined`);
+  	assert.isDefined(expected, `${source} > expected is not defined`);
+  	if (output && expected) {
+  		if (output.props) {
+  			let _key;
+  			let output_props = [];
+  			let expected_props = [];
+  			for (_key in output.props) {
+  				if (output.props.hasOwnProperty(_key)) {
+  					output_props.push(_key);
+  				}
+  			}
+  			for (_key in expected.props) {
+  				if (expected.props.hasOwnProperty(_key)) {
+  					expected_props.push(_key);
+  				};
+  			}
+
+  			assert.deepEqual(output_props, expected_props,
+  				`${source} > prop list is different\
+  \noutput:\t${output_props.join('\n\t\t')}\
+  \nexpected:\t${expected_props.join('\n\t\t')}`);
+
+  			assert.isDefined(expected.props, `${source} > no expected props`);
+  			for(let _key in output.props) {
+  				if (output.props.hasOwnProperty(_key)) {
+  					assert.isDefined(expected.props[_key],
+  						`${source} > ${_key} is not defined`);
+  					assert.equal(
+  						typeof(output.props[_key]),
+  						typeof(expected.props[_key]),
+  						`${source} > ${_key} > type of \
+  '${typeof(output.props[_key])}' does \
+  not equal '${typeof(expected.props[_key])}'`
+  					);
+  				}
+  			}
+  			if (output.props.children) {
+  				if (Array.isArray(output.props.children)) {
+  					for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
+  						if (output.props &&
+  							output.props.children &&
+  							expected.props &&
+  							expected.props.children) {
+  							this.specificDeepEqual(
+  								output.props.children[i],
+  								expected.props.children[i],
+  								`${source} > children index: ${i}`
+  							);
+  						}
+  					}
+  				} else {
+  					this.specificDeepEqual(
+  						output.props.children,
+  						expected.props.children,
+  						`${source} > single child`
+  					);
+  				}
+  			}
+  		}
+  	}
+  	assert.deepEqual(output, expected, source);
   }
 };
