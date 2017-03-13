@@ -64,17 +64,17 @@ YUI.add('settings', function() {
                 id="save-settings" value="Save"/>
             </div>
           </div>
-        );
-      };
+    );
+  };
 
-      Settings.propTypes = {
-        disableAutoPlace: React.PropTypes.bool,
-        disableCookie: React.PropTypes.bool,
-        forceContainers: React.PropTypes.bool
-      };
+  Settings.propTypes = {
+    disableAutoPlace: React.PropTypes.bool,
+    disableCookie: React.PropTypes.bool,
+    forceContainers: React.PropTypes.bool
+  };
 
-      juju.components.Settings = Settings;
+  juju.components.Settings = Settings;
 
-    }, '0.1.0', { requires: [
-      'svg-icon'
-    ]});
+}, '0.1.0', { requires: [
+  'svg-icon'
+]});
