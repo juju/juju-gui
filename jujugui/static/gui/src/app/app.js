@@ -153,8 +153,6 @@ YUI.add('juju-gui', function(Y) {
                       node.getAttribute('name'), node.get('value'));
                 }
               });
-              // Force the GUI to reload so the settings take effect.
-              window.location.reload();
             });
 
             target.one('.close').on('click', function(ev) {

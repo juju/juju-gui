@@ -25,56 +25,56 @@ YUI.add('settings', function() {
       <div>
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close" tabIndex="0" role="button">
-            <juju.components.SvgIcon name="close_16"
-              size="16" />
-          </span>
-        </div>
-        <div className="content">
-					<p>
-		        <label htmlFor="disable-cookie">
-							<input type="checkbox" name="disable-cookie" id="disable-cookie"
-		            defaultChecked={props.disableCookie} />&nbsp;
-		          Disable the EU cookie warning.
-		        </label>
-					</p>
-					<p>
-	          <label htmlFor="force-containers">
-							<input type="checkbox" name="force-containers"
-	              id="force-containers"
-	              defaultChecked={props.forceContainers} />&nbsp;
-	            Enable container control for this provider.
-	          </label>
-					</p>
-					<p>
-	          <label htmlFor="auto-place-default">
-							<input type="checkbox" name="disable-auto-place"
-	              id="disable-auto-place"
-	              defaultChecked={props.disableAutoPlace} />&nbsp;
-	            Default to not automatically place units on commit.
-	          </label>
-					</p>
-					<p>
-						<small>
-							NOTE: You will need to reload for changes to take effect.
-						</small>
-					</p>
-          <input type="button" className="button--positive"
-						name="save-settings"
-            id="save-settings" value="Save"/>
-	        </div>
+        <span className="close" tabIndex="0" role="button">
+          <juju.components.SvgIcon name="close_16"
+            size="16" />
+        </span>
       </div>
-    );
-  };
+      <div className="content">
+        <p>
+          <label htmlFor="disable-cookie">
+            <input type="checkbox" name="disable-cookie" id="disable-cookie"
+              defaultChecked={props.disableCookie} />&nbsp;
+              Disable the EU cookie warning.
+            </label>
+          </p>
+          <p>
+            <label htmlFor="force-containers">
+              <input type="checkbox" name="force-containers"
+                id="force-containers"
+                defaultChecked={props.forceContainers} />&nbsp;
+                Enable container control for this provider.
+              </label>
+            </p>
+            <p>
+              <label htmlFor="auto-place-default">
+                <input type="checkbox" name="disable-auto-place"
+                  id="disable-auto-place"
+                  defaultChecked={props.disableAutoPlace} />&nbsp;
+                  Default to not automatically place units on commit.
+                </label>
+              </p>
+              <p>
+                <small>
+                  NOTE: You will need to reload for changes to take effect.
+                </small>
+              </p>
+              <input type="button" className="button--positive"
+                name="save-settings"
+                id="save-settings" value="Save"/>
+            </div>
+          </div>
+        );
+      };
 
-  Settings.propTypes = {
-    disableAutoPlace: React.PropTypes.bool,
-    disableCookie: React.PropTypes.bool,
-    forceContainers: React.PropTypes.bool
-  };
+      Settings.propTypes = {
+        disableAutoPlace: React.PropTypes.bool,
+        disableCookie: React.PropTypes.bool,
+        forceContainers: React.PropTypes.bool
+      };
 
-  juju.components.Settings = Settings;
+      juju.components.Settings = Settings;
 
-}, '0.1.0', { requires: [
-  'svg-icon'
-]});
+    }, '0.1.0', { requires: [
+      'svg-icon'
+    ]});
