@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -53,51 +53,9 @@ YUI.add('shortcuts', function() {
               size="16" />
           </span>
         </div>
-        <div className="six-col">
-          <h3 className="bordered">Actions</h3>
+        <div className="twelve-col">
           <div className="content">
             {_generateBindings(props.bindings)}
-          </div>
-        </div>
-        <div className="six-col last-col">
-          <h3 className="bordered">Custom GUI Settings</h3>
-          <div className="content">
-            <div className="two-col">
-                <input type="checkbox" name="disable-cookie" id="disable-cookie"
-                  defaultChecked={props.disableCookie} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="disable-cookie">
-                Disable the EU cookie warning.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="checkbox" name="force-containers"
-                id="force-containers"
-                defaultChecked={props.forceContainers} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="force-containers">
-                Enable container control for this provider.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="checkbox" name="disable-auto-place"
-                id="disable-auto-place"
-                defaultChecked={props.disableAutoPlace} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="auto-place-default">
-                Default to not automatically place units on commit.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="button" className="button" name="save-settings"
-                id="save-settings" value="Save"/>
-            </div>
-            <div className="three-col last-col">
-              NOTE: saving will reload the GUI so the settings take effect.
-            </div>
           </div>
         </div>
       </div>
@@ -105,10 +63,7 @@ YUI.add('shortcuts', function() {
   };
 
   Shortcuts.propTypes = {
-    bindings: React.PropTypes.array.isRequired,
-    disableAutoPlace: React.PropTypes.bool,
-    disableCookie: React.PropTypes.bool,
-    forceContainers: React.PropTypes.bool
+    bindings: React.PropTypes.array.isRequired
   };
 
   juju.components.Shortcuts = Shortcuts;

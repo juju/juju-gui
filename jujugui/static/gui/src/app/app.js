@@ -116,28 +116,18 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
-      'S-/': {
-        target: '#shortcut-help',
+      'S-1': {
+        target: '#shortcut-settings',
         toggle: true,
         callback: function(evt, target) {
-          // This could be its own view.
-          if (target && !target.getHTML().length) {
-            var bindings = [];
-            Object.keys(this.keybindings).forEach(k => {
-              const v = this.keybindings[k];
-              if (v.help && (v.condition === undefined ||
-                             v.condition.call(this) === true)) {
-                // TODO: translate keybindings to
-                // human <Alt> m
-                // <Control> <Shift> N (note caps)
-                // also 'g then i' style
-                bindings.push({key: k, label: v.label || k, help: v.help});
-              }
-            }, this);
+          const shortcutHelp = Y.one('#shortcut-help');
+          if (shortcutHelp) {
+            shortcutHelp.hide();
+          }
 
+          if (target && !target.getHTML().length) {
             ReactDOM.render(
-              <window.juju.components.Shortcuts
-                bindings={bindings}
+              <window.juju.components.Settings
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
                 forceContainers={localStorage.getItem('force-containers')} />,
@@ -163,9 +153,44 @@ YUI.add('juju-gui', function(Y) {
                       node.getAttribute('name'), node.get('value'));
                 }
               });
-              // Force the GUI to reload so the settings take effect.
-              window.location.reload();
             });
+
+            target.one('.close').on('click', function(ev) {
+              Y.one('#shortcut-settings').hide();
+            });
+          }
+        },
+        help: 'GUI Settings',
+        label: 'Shift + !'
+      },
+      'S-/': {
+        target: '#shortcut-help',
+        toggle: true,
+        callback: function(evt, target) {
+          const shortcutSettings = Y.one('#shortcut-settings');
+          if (shortcutSettings) {
+            shortcutSettings.hide();
+          }
+
+          // This could be its own view.
+          if (target && !target.getHTML().length) {
+            var bindings = [];
+            Object.keys(this.keybindings).forEach(k => {
+              const v = this.keybindings[k];
+              if (v.help && (v.condition === undefined ||
+                             v.condition.call(this) === true)) {
+                // TODO: translate keybindings to
+                // human <Alt> m
+                // <Control> <Shift> N (note caps)
+                // also 'g then i' style
+                bindings.push({key: k, label: v.label || k, help: v.help});
+              }
+            }, this);
+
+            ReactDOM.render(
+              <window.juju.components.Shortcuts
+                bindings={bindings} />,
+              target.getDOMNode());
 
             target.one('.close').on('click', function(ev) {
               Y.one('#shortcut-help').hide();
@@ -202,6 +227,7 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
+          Y.one('#shortcut-settings').hide();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -3395,6 +3421,7 @@ YUI.add('juju-gui', function(Y) {
     'logout-component',
     'notification-list',
     'panel-component',
+    'settings',
     'sharing',
     'shortcuts',
     'usso-login-link',

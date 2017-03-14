@@ -1,17 +1,23 @@
-// The keyboard shorcut panel
-// scss-lint:disable IdSelector
-#shortcut-help { // sass-lint:disable-line no-ids, id-name-format
-  // scss-lint:enable IdSelector
+.modal {
   box-shadow: (0 1px 4.85px .15px rgba(0, 0, 0, .2));
   position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 8%;
-  bottom: 8%;
+  left: 8%;
+  right: 8%;
+  top: 15%;
+  bottom: auto;
   z-index: index($z-indexed-elements, shortcut-help);
   background-color: $white;
   border-radius: $border-radius;
-  overflow: scroll;
+  overflow: auto;
+  min-width: 300px;
+
+  &--narrow {
+    width: 500px;
+    left: 50%;
+    margin-left: -250px;
+    right: auto;
+    height: auto;
+  }
 
   .bordered {
     border-bottom: 1px solid $light-mid-grey;
