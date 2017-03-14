@@ -99,7 +99,6 @@ describe('CreateModelButton', () => {
         disabled={false}
         changeState={sinon.stub()}
         switchModel={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
     const instance = component.getMountedInstance();
     instance._createNewModel();
     assert.isTrue(action.called);
@@ -115,7 +114,6 @@ describe('CreateModelButton', () => {
         disabled={true}
         changeState={sinon.stub()}
         switchModel={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
     const instance = component.getMountedInstance();
     instance._createNewModel();
     assert.isFalse(action.called);
