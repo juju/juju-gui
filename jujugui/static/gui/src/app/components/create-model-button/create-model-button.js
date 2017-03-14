@@ -24,6 +24,7 @@ YUI.add('create-model-button', function() {
     propTypes: {
       action: React.PropTypes.func,
       changeState: React.PropTypes.func.isRequired,
+      disabled: React.PropTypes.bool,
       switchModel: React.PropTypes.func.isRequired,
       title: React.PropTypes.string,
       type: React.PropTypes.string
@@ -38,6 +39,9 @@ YUI.add('create-model-button', function() {
 
     _createNewModel: function() {
       const props = this.props;
+      if (this.props.disabled) {
+        return;
+      }
       // We want to explicitly close the profile when switching to a new
       // model to resolve a race condition with the new model setup.
       props.changeState({profile: null});
@@ -49,10 +53,12 @@ YUI.add('create-model-button', function() {
     },
 
     render: function() {
+      const disabled = this.props.disabled || false;
       return (
         <div className="create-new-model">
           <juju.components.GenericButton
             action={this._createNewModel}
+            disabled={disabled}
             type={this.props.type}
             title={this.props.title} />
         </div>

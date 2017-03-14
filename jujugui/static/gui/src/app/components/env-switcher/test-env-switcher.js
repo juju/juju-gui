@@ -70,12 +70,14 @@ describe('EnvSwitcher', function() {
   });
 
   it('opens the list on click', function() {
+    const acl = sinon.stub();
     const changeState = sinon.stub();
     const humanizeTimestamp = sinon.stub();
     const switchModel = sinon.stub();
     const authDetails = {user: 'who@external', rootUserName: 'who'};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={acl}
         authDetails={authDetails}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
@@ -89,6 +91,7 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={acl}
         authDetails={authDetails}
         changeState={changeState}
         environmentName=""
@@ -100,6 +103,7 @@ describe('EnvSwitcher', function() {
     output = renderer.getRenderOutput();
 
     const expected = <juju.components.EnvList
+      acl={acl}
       authDetails={authDetails}
       changeState={changeState}
       environmentName=""

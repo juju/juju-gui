@@ -23,6 +23,7 @@ YUI.add('env-list', function() {
   juju.components.EnvList = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       authDetails: React.PropTypes.object,
       changeState: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string,
@@ -54,12 +55,18 @@ YUI.add('env-list', function() {
       }
       const auth = this.props.authDetails;
       const currentUser = auth ? auth.user : null;
-      const modelsWithoutController = models.sort((a, b) => {
-        return b.lastConnection.getTime() - a.lastConnection.getTime();
-      }).filter(model => {
+      // Remove the 'controller' model from the dropdown list, then sort by
+      // last connected (latest at the top).
+      // People shouldn't be editing the 'controller' model.
+      // They can still access it from their profile page.
+      const modelsWithoutController = models.filter(model => {
         return !model.isController &&
           model.name !== this.props.environmentName;
+      }).sort((a, b) => {
+        return b.lastConnection.getTime() - a.lastConnection.getTime();
       });
+      // If there is only one model left and it's the same name as the current
+      // environment - remove it.
       if (modelsWithoutController.length === 1 &&
           modelsWithoutController[0].name === this.props.environmentName) {
         return false;
@@ -147,6 +154,7 @@ YUI.add('env-list', function() {
         createNew = <juju.components.CreateModelButton
           type="neutral"
           title="Start a new model"
+          disabled={!this.props.acl.canAddModels()}
           changeState={this.props.changeState}
           switchModel={this.props.switchModel}
           action={this._handleNewModelClick} />;

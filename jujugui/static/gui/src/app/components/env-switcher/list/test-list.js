@@ -27,6 +27,7 @@ chai.config.truncateThreshold = 0;
 describe('EnvList', function() {
 
   const humanizeTimestamp = sinon.stub().returns('less than a minute ago');
+  const acl = {canAddModels: sinon.stub().returns(true)};
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -50,6 +51,7 @@ describe('EnvList', function() {
     ];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         environmentName="model-name-1"
@@ -97,6 +99,7 @@ describe('EnvList', function() {
     ];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@local', rootUserName: 'who'}}
         changeState={sinon.stub()}
         environmentName="model-name-1"
@@ -127,6 +130,7 @@ describe('EnvList', function() {
   it('displays only the create new button if there are no models', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
         humanizeTimestamp={humanizeTimestamp}
@@ -143,6 +147,7 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-owner').returns('who@external');
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
@@ -160,6 +165,7 @@ describe('EnvList', function() {
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         envs={models}
@@ -172,4 +178,22 @@ describe('EnvList', function() {
     assert.equal(switchModel.callCount, 1);
   });
 
+  it('new model is not made when user has incorrect permissions', () => {
+    const switchModel = sinon.stub();
+    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const _acl = {canAddModels: sinon.stub().returns(false)};
+    const component = testUtils.renderIntoDocument(
+      <juju.components.EnvList
+        acl={_acl}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
+        envs={models}
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={sinon.stub()}
+        switchModel={switchModel} />);
+    testUtils.Simulate.click(
+        ReactDOM.findDOMNode(component)
+                .querySelector('.button--neutral'));
+    assert.equal(switchModel.callCount, 0);
+  });
 });

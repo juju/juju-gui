@@ -67,6 +67,7 @@ YUI.add('app-renderer-extension', function(Y) {
       }
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
+          acl={this.acl}
           appState={this.state}
           authDetails={auth}
           changeState={this.state.changeState.bind(this.state)}

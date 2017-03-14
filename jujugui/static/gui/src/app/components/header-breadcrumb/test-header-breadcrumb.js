@@ -26,6 +26,7 @@ chai.config.truncateThreshold = 0;
 describe('HeaderBreadcrumb', () => {
   let appState, changeState, humanizeTimestamp,
       listModelsWithInfo, showProfile, switchModel;
+  const acl = sinon.stub();
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -47,6 +48,7 @@ describe('HeaderBreadcrumb', () => {
   const render = attrs => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
+        acl={acl}
         appState={appState}
         authDetails={attrs.authDetails}
         changeState={changeState}
@@ -87,6 +89,7 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
+            acl={acl}
             authDetails={{user: 'who@external', rootUserName: 'who'}}
             changeState={changeState}
             environmentName={'mymodel'}
@@ -115,6 +118,7 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
+            acl={acl}
             authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
             changeState={changeState}
             environmentName={'mymodel'}
