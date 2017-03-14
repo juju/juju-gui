@@ -392,11 +392,11 @@ var jsTestUtils = {
                 output.props.children &&
                 expected.props &&
                 expected.props.children) {
-                  this.specificDeepEqual(
-                    output.props.children[i],
-                    expected.props.children[i],
-                    `${source} > children index: ${i}`
-                  );
+                this.specificDeepEqual(
+                  output.props.children[i],
+                  expected.props.children[i],
+                  `${source} > children index: ${i}`
+                );
               }
             }
           } else {
