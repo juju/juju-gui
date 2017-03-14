@@ -1607,6 +1607,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} providerName Name of the provider.
     @return {Object} The details for the provider.
   */
+
   utils.getCloudProviderDetails = function(providerName) {
     const providers = {
       'gce': {
@@ -1849,8 +1850,13 @@ YUI.add('juju-view-utils', function(Y) {
       }
     };
     // Map the cloud id to provider type.
-    if (providerName === 'aws') {
-      providerName = 'ec2';
+    switch (providerName) {
+      case 'aws':
+        providerName = 'ec2';
+        break;
+      case 'google':
+        providerName = 'gce';
+        break;
     }
     return providers[providerName];
   };
