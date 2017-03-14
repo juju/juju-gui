@@ -93,7 +93,7 @@ $pre-background: #fdf6f2;
     border-radius: $border-radius;
 
     &:after {
-      background: transparent url('static/gui/build/app/assets/images/non-sprites/tick.svg') no-repeat center 2px;
+      background: transparent url('static/gui/build/app/assets/images/non-sprites/tick.svg') no-repeat center -1px;
     }
   }
 

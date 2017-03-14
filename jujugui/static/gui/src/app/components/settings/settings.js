@@ -47,7 +47,7 @@ YUI.add('settings', function() {
               </label>
             </p>
             <p>
-              <label htmlFor="auto-place-default">
+              <label htmlFor="disable-auto-place">
                 <input type="checkbox" name="disable-auto-place"
                   id="disable-auto-place"
                   defaultChecked={props.disableAutoPlace} />&nbsp;
