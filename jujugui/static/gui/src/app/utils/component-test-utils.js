@@ -347,33 +347,68 @@ var jsTestUtils = {
 
     @method specificDeepEqual
   */
-  specificDeepEqual: function(output, expected) {
-    if (output && output.props &&
-      output.props.children &&
-      expected && expected.props &&
-      expected.props.children) {
-      if (Array.isArray(output.props.children)) {
-        for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
-          if (output.props &&
-            output.props.children &&
-            expected.props &&
-            expected.props.children) {
-            this.specificDeepEqual(
-              output.props.children[i],
-              expected.props.children[i]);
+  specificDeepEqual: function(output, expected, source = 'root') {
+    assert.isDefined(output, `${source} > output is not defined`);
+    assert.isDefined(expected, `${source} > expected is not defined`);
+    if (output && expected) {
+      if (output.props) {
+        let _key;
+        let output_props = [];
+        let expected_props = [];
+        for (_key in output.props) {
+          if (output.props.hasOwnProperty(_key)) {
+            output_props.push(_key);
           }
         }
-      } else {
-        if (output.props &&
-          output.props.children &&
-          expected.props &&
-          expected.props.children) {
-          this.specificDeepEqual(
-            output.props.children,
-            expected.props.children);
+        for (_key in expected.props) {
+          if (expected.props.hasOwnProperty(_key)) {
+            expected_props.push(_key);
+          };
+        }
+
+        assert.deepEqual(output_props, expected_props,
+          `${source} > prop list is different\
+  \noutput:\t${output_props.join('\n\t\t')}\
+  \nexpected:\t${expected_props.join('\n\t\t')}`);
+
+        assert.isDefined(expected.props, `${source} > no expected props`);
+        for(let _key in output.props) {
+          if (output.props.hasOwnProperty(_key)) {
+            assert.isDefined(expected.props[_key],
+              `${source} > ${_key} is not defined`);
+            assert.equal(
+              typeof(output.props[_key]),
+              typeof(expected.props[_key]),
+              `${source} > ${_key} > type of \
+  '${typeof(output.props[_key])}' does \
+  not equal '${typeof(expected.props[_key])}'`
+            );
+          }
+        }
+        if (output.props.children) {
+          if (Array.isArray(output.props.children)) {
+            for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
+              if (output.props &&
+                output.props.children &&
+                expected.props &&
+                expected.props.children) {
+                this.specificDeepEqual(
+                  output.props.children[i],
+                  expected.props.children[i],
+                  `${source} > children index: ${i}`
+                );
+              }
+            }
+          } else {
+            this.specificDeepEqual(
+              output.props.children,
+              expected.props.children,
+              `${source} > single child`
+            );
+          }
         }
       }
     }
-    assert.deepEqual(output, expected);
+    assert.deepEqual(output, expected, source);
   }
 };
