@@ -1589,16 +1589,14 @@ YUI.add('juju-view-utils', function(Y) {
               href={'https://cloud.google.com/compute/docs/api/how-tos/' +
                 'authorization'}
               target="_blank">
-              https://cloud.google.com/compute/docs/api/how-tos/
-              authorization
+              authorizing requests to GCE
             </a>.
             The key information can be downloaded as a JSON file, or copied
             from
             &nbsp;<a className="deployment-panel__link"
-              href={'https://console.developers.google.com/project/apiui/' +
-                'credential'}
+              href={'https://console.developers.google.com/apis/credentials'}
               target="_blank">
-              https://console.developers.google.com/project/apiui/credential
+              the Google API credentials page
             </a>.
           </p>)
       },
