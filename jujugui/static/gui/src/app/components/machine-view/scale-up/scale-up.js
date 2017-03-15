@@ -47,7 +47,10 @@ YUI.add('machine-view-scale-up', function() {
             <img alt={service.get('name')}
               className="machine-view__scale-up-unit-icon"
               src={service.get('icon')} />
-            {service.get('name')}
+            <div className="machine-view__scale-up-unit-name"
+              title={service.get('name')}>
+              {service.get('name')}
+            </div>
             <input
               className="machine-view__scale-up-unit-input"
               disabled={this.props.acl.isReadOnly()}
