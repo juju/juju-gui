@@ -23,6 +23,7 @@ YUI.add('deployment-credential-add', function() {
   juju.components.DeploymentCredentialAdd = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
@@ -111,7 +112,11 @@ YUI.add('deployment-credential-add', function() {
     */
     _updateCloudCredentialCallback: function(credential, error) {
       if (error) {
-        console.error('Unable to add credential', error);
+        this.props.addNotification({
+          title: 'Could not add credential',
+          message: `Could not add the credential: ${error}`,
+          level: 'error'
+        });
         return;
       }
       // Load the credentials again so that the list will contain the newly

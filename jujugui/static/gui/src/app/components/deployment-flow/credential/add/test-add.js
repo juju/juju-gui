@@ -99,6 +99,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
+          addNotification={sinon.stub()}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
@@ -242,6 +243,7 @@ describe('DeploymentCredentialAdd', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
+          addNotification={sinon.stub()}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
@@ -255,6 +257,7 @@ describe('DeploymentCredentialAdd', function() {
     renderer.render(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
+          addNotification={sinon.stub()}
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={{name: 'aws', cloudType: 'ec2'}}
@@ -356,6 +359,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -500,6 +504,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -598,6 +603,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -743,6 +749,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
+          addNotification={sinon.stub()}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
@@ -798,6 +805,7 @@ describe('DeploymentCredentialAdd', function() {
     const renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -845,6 +853,7 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
+          addNotification={sinon.stub()}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
@@ -857,5 +866,56 @@ describe('DeploymentCredentialAdd', function() {
     var instance = renderer.getMountedInstance();
     instance._handleAddCredentials();
     assert.equal(updateCloudCredential.callCount, 0);
+  });
+
+  it('displays a notification when updating a credential errors', function() {
+    const error = 'Bad wolf';
+    const updateCloudCredential = sinon.stub().callsArgWith(3, error);
+    const addNotification = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          addNotification={addNotification}
+          updateCloudCredential={updateCloudCredential}
+          close={sinon.stub()}
+          cloud={{name: 'google', cloudType: 'gce'}}
+          getCloudProviderDetails={getCloudProviderDetails}
+          generateCloudCredentialName={sinon.stub().returns('new@test')}
+          getCredentials={sinon.stub()}
+          setCredential={sinon.stub()}
+          user="user-admin"
+          validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      'credentialName': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('new@test')
+      },
+      'client-id': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client id')
+      },
+      'client-email': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client email')
+      },
+      'private-key': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('private key')
+      },
+      'project-id': {
+        getValue: sinon.stub().returns('project id')
+      },
+      'password': {
+        getValue: sinon.stub().returns('password')
+      }
+    };
+    instance._handleAddCredentials();
+    assert.isTrue(addNotification.called, 'addNotification was not called');
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Could not add credential',
+      message: `Could not add the credential: ${error}`,
+      level: 'error'
+    }, 'Notification message does not match expected');
   });
 });

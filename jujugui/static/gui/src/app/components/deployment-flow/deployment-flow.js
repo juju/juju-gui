@@ -694,6 +694,7 @@ YUI.add('deployment-flow', function() {
           showCheck={false}>
           <juju.components.DeploymentCredential
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             credential={this.state.credential}
             cloud={cloud}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
