@@ -26,96 +26,14 @@ YUI.add('entity-content-revisions', function() {
       revisions: React.PropTypes.array.isRequired
     },
 
-    /**
-      Get the current state of the revisions panel.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      var state = {
-        showMore: false
-      };
-      return state;
-    },
-
-    /**
-      Handle clicks on accordion. Toggles the concealed class on the list node
-      which hides all the list items apart from the first.
-
-      @method _handleAccordionClick
-    */
-    _handleAccordionClick: function(conceal) {
-      this.setState({showMore: conceal});
-    },
-
-    /**
-      Generate the classname to apply based on the state.
-
-      @method _generateRevisions
-      @return {Object} The revisions markup.
-    */
-    _generateClassName: function() {
-      return classNames(
-        'revisions__list',
-        {
-          'list--concealed': !this.state.showMore
-        }
-      );
-    },
-
-    /**
-      Generate the list of revisions.
-
-      @method _generateRevisions
-      @return {Object} The revisions markup.
-    */
-    _generateRevisions: function() {
-      var components = [];
-      var revisions = this.props.revisions;
-      revisions.forEach((revision) => {
-        components.push(
-          <li className="revisions__list-item list-item" key={revision.revno}>
-            <p className="revisions__list-meta smaller">
-              by {revision.authors[0].name}
-              <span className="revisions__list-meta-date">
-                <juju.components.DateDisplay
-                  date={revision.date}
-                  relative={true} />
-              </span>
-            </p>
-            <p className="revisions__list-message">
-              {revision.message}
-            </p>
-          </li>
-        );
-      }, this);
-      return components;
-    },
-
     render: function() {
-      var revisions = this.props.revisions;
-      var revisionsCount = revisions.length;
+      const revisions = this.props.revisions;
       return (
         <div className="revisions section" id="revisions">
-          <h3 className="section__title">{revisionsCount} Revisions</h3>
-          <ol className={this._generateClassName()} ref="list" reversed>
-            {this._generateRevisions()}
-            <li className="list__controls">
-              <a href="" className="btn__see--more"
-                onClick={this._handleAccordionClick.bind(
-                  this, true)}>See more</a>
-              <a href="#revisions" className="btn__see--less"
-                onClick={this._handleAccordionClick.bind(
-                  this, false)}>See less</a>
-            </li>
-          </ol>
+          <h3 className="section__title">{revisions.length} Revisions</h3>
         </div>
       );
     }
   });
 
-}, '0.1.0', {requires: [
-  'date-display'
-]});
+}, '0.1.0', {requires: []});

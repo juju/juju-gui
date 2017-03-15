@@ -61,7 +61,6 @@ YUI.add('entity-extension', function(Y) {
         displayName: attrs.name.replace('-', ' '),
         downloads: attrs.downloads,
         id: attrs.id,
-        latest_revision: attrs.latest_revision,
         storeId: attrs.storeId,
         name: attrs.name,
         owner: attrs.owner || this.ownerFromId(),
