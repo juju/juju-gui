@@ -690,7 +690,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @method scheme.setter
          */
         setter: function(val) {
-          if (val === undefined && val === null && isNaN(val)) {
+          if (!utils.isValue(val)) {
             val = 'cs';
           }
           return val;

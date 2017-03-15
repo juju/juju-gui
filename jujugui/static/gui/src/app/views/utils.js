@@ -1526,12 +1526,24 @@ YUI.add('juju-view-utils', function(Y) {
   /**
     Check that a value is valid and not null.
 
-    @method generateCloudCredentialName
-    @param {Any} value The value to check
+    @method isValue
+    @param {Any} value The value to check.
     @returns {Boolean} Whether the value is not undefined, null or NaN.
   */
   utils.isValue = value => {
     return value !== undefined && value !== null;
+  };
+
+  /**
+    Check that a value is an object.
+
+    @method isObject
+    @param {Any} value The value to check.
+    @returns {Boolean} Whether the value is an object.
+  */
+  utils.isObject = value => {
+    return typeof(value) === 'object' && value !== null &&
+      !Array.isArray(value);
   };
 
   /**
@@ -1542,7 +1554,11 @@ YUI.add('juju-view-utils', function(Y) {
     @returns {Object} The parsed query string..
   */
   utils.parseQueryString = URL => {
-    const querystring = URL.split('?')[1];
+    const parts = URL.split('?');
+    // If the URL is broken and has multiple querystrings then join them
+    // together e.g. ?one=1&two=2?one=1&two=2.
+    parts.shift();
+    const querystring = parts.join('&');
     const parsed = {};
     if (querystring || URL.indexOf('=') > -1) {
       // If the querystring doesn't exist then the URL must have a "=" so use

@@ -167,7 +167,7 @@ YUI.add('d3-components', function(Y) {
         result.phase = 'on';
       }
 
-      if (typeof(handler) === 'object' && handler !== null) {
+      if (utils.isObject(handler)) {
         result.phase = handler.phase || 'on';
         result.callback = handler.callback;
       }

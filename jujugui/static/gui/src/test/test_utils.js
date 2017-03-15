@@ -1274,6 +1274,25 @@ describe('utilities', function() {
     });
   });
 
+  describe('isObject', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can check a value is an object', function() {
+      assert.equal(utils.isObject({key: 'value'}), true);
+      assert.equal(utils.isObject({}), true);
+      assert.equal(utils.isObject([]), false);
+      assert.equal(utils.isObject(undefined), false);
+      assert.equal(utils.isObject(null), false);
+    });
+  });
+
   describe('parseQueryString', function() {
     let utils;
 
@@ -1292,7 +1311,7 @@ describe('utilities', function() {
         });
     });
 
-    it('can handle being parsed only the querystring', function() {
+    it('can handle being passed only the querystring', function() {
       assert.deepEqual(utils.parseQueryString(
         '?one=1&two=2'), {
           one: '1',
@@ -1300,7 +1319,7 @@ describe('utilities', function() {
         });
     });
 
-    it('can handle being parsed a querystring without a "?"', function() {
+    it('can handle being passed a querystring without a "?"', function() {
       assert.deepEqual(utils.parseQueryString(
         'one=1&two=2'), {
           one: '1',
@@ -1316,6 +1335,22 @@ describe('utilities', function() {
     it('can handle a querystring with no values', function() {
       assert.deepEqual(utils.parseQueryString(
         'http://example.com?'), {});
+    });
+
+    it('can handle a URL with multiple question marks', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'http://example.com??one=1&two=2'), {
+          one: '1',
+          two: '2'
+        });
+    });
+
+    it('can handle a URL with multiple querystrings', function() {
+      assert.deepEqual(utils.parseQueryString(
+        'http://example.com?one=1&two=2?one=1&two=2'), {
+          one: ['1', '1'],
+          two: ['2', '2']
+        });
     });
 
     it('does not return empty values', function() {
