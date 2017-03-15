@@ -23,6 +23,7 @@ YUI.add('deployment-credential', function() {
   juju.components.DeploymentCredential = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       editable: React.PropTypes.bool,
@@ -270,6 +271,7 @@ YUI.add('deployment-credential', function() {
       return (
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           close={this._toggleAdd}
           cloud={this.props.cloud}
           getCloudProviderDetails={this.props.getCloudProviderDetails}

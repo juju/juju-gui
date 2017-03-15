@@ -176,6 +176,7 @@ describe('DeploymentFlow', function() {
           showCheck={false}>
           <juju.components.DeploymentCredential
             acl={props.acl}
+            addNotification={props.addNotification}
             credential={undefined}
             cloud={null}
             getCloudProviderDetails={props.getCloudProviderDetails}
