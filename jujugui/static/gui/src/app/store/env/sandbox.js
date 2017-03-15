@@ -84,7 +84,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     receiveNow: function(data, failSilently) {
       if (this.connected) {
-        this.onmessage({data: Y.JSON.stringify(data)});
+        this.onmessage({data: JSON.stringify(data)});
       } else if (!failSilently) {
         throw CLOSEDERROR;
       }
@@ -115,7 +115,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     send: function(data) {
       if (this.connected) {
-        this.get('juju').receive(Y.JSON.parse(data));
+        this.get('juju').receive(JSON.parse(data));
       } else {
         throw CLOSEDERROR;
       }

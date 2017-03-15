@@ -1050,7 +1050,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (dragData.dataType === 'token-drag-and-drop') {
         // The entiy (charm or bundle) data was JSON encoded because the
         // dataTransfer mechanism only allows for string values.
-        var entityData = Y.JSON.parse(dragData.data);
+        var entityData = JSON.parse(dragData.data);
         if (utils.determineEntityDataType(entityData) === 'charm') {
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
@@ -1357,8 +1357,8 @@ YUI.add('juju-topology-service', function(Y) {
             // these can automatically be ignored.
         if (boundingBox.model) {
           var annotations = boundingBox.model.get('annotations');
-          return ((!Y.Lang.isNumber(boundingBox.x) &&
-                  !(annotations && annotations['gui-x'])));
+          return (isNaN(boundingBox.x) &&
+                  !(annotations && annotations['gui-x']));
         }
         return false;
       });

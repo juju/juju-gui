@@ -212,7 +212,7 @@ YUI.add('juju-view-utils', function(Y) {
     var l = timestrings,
         prefix = l.prefixAgo,
         suffix = l.suffixAgo,
-        distanceMillis = Y.Lang.now() - t,
+        distanceMillis = new Date().getTime() - t,
         seconds = Math.abs(distanceMillis) / 1000,
         minutes = seconds / 60,
         hours = minutes / 60,
@@ -335,7 +335,7 @@ YUI.add('juju-view-utils', function(Y) {
         return this.topology.serviceForBox(this);
       },
       set: function(value) {
-        if (Y.Lang.isValue(value)) {
+        if (utils.isValue(value)) {
           Y.mix(this, value.getAttrs(), true);
           this._modelName = value.name;
         }
@@ -497,7 +497,7 @@ YUI.add('juju-view-utils', function(Y) {
           const ep = connectors[key];
           // Take the distance of each XY pair
           var d = this._distance(source, ep);
-          if (!Y.Lang.isValue(result) || d < shortest_d) {
+          if (!utils.isValue(result) || d < shortest_d) {
             shortest_d = d;
             result = ep;
           }
@@ -524,7 +524,7 @@ YUI.add('juju-view-utils', function(Y) {
             const ep2 = oc[key];
             // Take the distance of each XY pair
             var d = this._distance(ep1, ep2);
-            if (!Y.Lang.isValue(result) || d < shortest_d) {
+            if (!utils.isValue(result) || d < shortest_d) {
               shortest_d = d;
               result = [ep1, ep2];
             }
@@ -566,7 +566,7 @@ YUI.add('juju-view-utils', function(Y) {
   views.toBoundingBoxes = function(module, services, existing, env) {
     var result = existing || {};
     Object.keys(result).forEach(key => {
-      if (!Y.Lang.isValue(services.getById(key))) {
+      if (!utils.isValue(services.getById(key))) {
         delete result[key];
       }
     });
@@ -1521,6 +1521,68 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.isRedirectError = function(error) {
     return error === 'authentication failed: redirection required';
+  };
+
+  /**
+    Check that a value is valid and not null.
+
+    @method isValue
+    @param {Any} value The value to check.
+    @returns {Boolean} Whether the value is not undefined, null or NaN.
+  */
+  utils.isValue = value => {
+    return value !== undefined && value !== null;
+  };
+
+  /**
+    Check that a value is an object.
+
+    @method isObject
+    @param {Any} value The value to check.
+    @returns {Boolean} Whether the value is an object.
+  */
+  utils.isObject = value => {
+    return typeof(value) === 'object' && value !== null &&
+      !Array.isArray(value);
+  };
+
+  /**
+    Parse a URL for the querystring and return it as an object.
+
+    @method parseQueryString
+    @param {String} URL The URL to get the query string from.
+    @returns {Object} The parsed query string..
+  */
+  utils.parseQueryString = URL => {
+    const parts = URL.split('?');
+    // If the URL is broken and has multiple querystrings then join them
+    // together e.g. ?one=1&two=2?one=1&two=2.
+    parts.shift();
+    const querystring = parts.join('&');
+    const parsed = {};
+    if (querystring || URL.indexOf('=') > -1) {
+      // If the querystring doesn't exist then the URL must have a "=" so use
+      // the URL.
+      (querystring || URL).split('&').forEach(keyval => {
+        const pair = keyval.split('=');
+        const key = pair[0];
+        const value = pair[1] || null;
+        // Handle the case when the URL finishes with "&".
+        if (key !== '') {
+          const existing = parsed[key];
+          // If there are duplicate keys then store values as an array,
+          // otherwise create a new record.
+          if (!existing) {
+            parsed[key] = value;
+          } else if (typeof(existing) === Array) {
+            parsed[key].push(value);
+          } else {
+            parsed[key] = [existing, value];
+          }
+        }
+      });
+    }
+    return parsed;
   };
 
   /**

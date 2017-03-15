@@ -443,9 +443,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // means no NaN in the paths
           var line = container.one('.relation');
           ['x1', 'y1', 'x2', 'y2'].forEach(e => {
-            Y.Lang.isNumber(
-                parseInt(line.getAttribute(e), 10))
-                        .should.equal(true);
+            isNaN(parseInt(line.getAttribute(e), 10)).should.equal(false);
           });
 
           // Verify that the node id has been munged as expected from the

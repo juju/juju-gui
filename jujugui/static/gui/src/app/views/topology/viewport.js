@@ -117,7 +117,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       var svg = container.one('.the-canvas');
       var canvas = container.one('.topology-canvas');
       // Early out for tests that do not provide a full rendering environment.
-      if (!Y.Lang.isValue(canvas) || !Y.Lang.isValue(svg)) {
+      if (!utils.isValue(canvas) || !utils.isValue(svg)) {
         return;
       }
       var topo = this.get('component');

@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-endpoints-controller', function(Y) {
 
   var juju = Y.namespace('juju');
+  var utils = Y.namespace('juju.views.utils');
 
   /**
    * This controller manages the endpoints for services, handling the events
@@ -194,7 +195,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
         flatten: function(meta) {
           var result = [];
           var rel;
-          if (Y.Lang.isValue(meta)) {
+          if (utils.isValue(meta)) {
 
             Object.keys(meta).forEach(ko => {
               const vo = meta[ko];
@@ -255,5 +256,5 @@ YUI.add('juju-endpoints-controller', function(Y) {
   juju.EndpointsController = EndpointsController;
 
 }, '0.1.0', {
-  requires: ['juju-models']
+  requires: ['juju-models', 'juju-view-utils']
 });

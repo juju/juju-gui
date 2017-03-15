@@ -58,7 +58,7 @@ YUI.add('juju-models', function(Y) {
       return;
     }
     var instance = list.getById(instanceId),
-        exists = Y.Lang.isValue(instance);
+        exists = utils.isValue(instance);
 
     if (action === 'add' || action === 'change') {
       // Client-side requests may create temporary objects in the
@@ -1569,8 +1569,8 @@ YUI.add('juju-models', function(Y) {
       // XXX frankban 2014-03-04: PYJUJU DEPRECATION.
       // I suspect machine_id is something pyJuju used to provide. If this is
       // the case, we should remove this function when dropping pyJuju support.
-      // Using Y.Lang.isValue so that machine 0 is considered a good value.
-      if (!Y.Lang.isValue(result.id)) {
+      // Using utils.isValue so that machine 0 is considered a good value.
+      if (!utils.isValue(result.id)) {
         // machine_id shouldn't change, so this should be safe.
         result.id = result.machine_id;
       }
@@ -2075,7 +2075,7 @@ YUI.add('juju-models', function(Y) {
       seen: {value: false},
       timestamp: {
         valueFn: function() {
-          return Y.Lang.now();
+          return new Date().getTime();
         }
       },
 
@@ -2511,7 +2511,7 @@ YUI.add('juju-models', function(Y) {
         const config = service.get('config') || {};
         Object.keys(config).forEach(key => {
           let value = config[key];
-          if (Y.Lang.isValue(value)) {
+          if (utils.isValue(value)) {
             var optionData = charmOptions && charmOptions[key];
             switch (optionData.type) {
               case 'boolean':
@@ -2536,7 +2536,7 @@ YUI.add('juju-models', function(Y) {
                 break;
             }
             var defaultVal = optionData && optionData['default'];
-            var hasDefault = Y.Lang.isValue(defaultVal);
+            var hasDefault = utils.isValue(defaultVal);
             if (!hasDefault || value !== defaultVal) {
               serviceOptions[key] = value;
             }

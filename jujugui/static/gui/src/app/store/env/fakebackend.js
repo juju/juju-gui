@@ -30,6 +30,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var models = Y.namespace('juju.models');
   var ziputils = Y.namespace('juju.ziputils');
   var relationUtils = window.juju.utils.RelationUtils;
+  var utils = Y.namespace('juju.views.utils');
 
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
@@ -502,7 +503,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       var unitCount = options.unitCount;
-      if (!Y.Lang.isValue(unitCount) && !charm.get('is_subordinate')) {
+      if (!utils.isValue(unitCount) && !charm.get('is_subordinate')) {
         // This is the current behavior in both implementations.
         unitCount = 1;
       }
@@ -951,7 +952,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (numUnits === undefined) {
         numUnits = isSubordinate ? 0 : 1;
       }
-      if (!Y.Lang.isNumber(numUnits) ||
+      if (isNaN(numUnits) ||
           (!isSubordinate && numUnits < 1 ||
           (isSubordinate && numUnits !== 0))) {
         return {
@@ -959,11 +960,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
               '] for application: ' + applicationName
         };
       }
-      if (!Y.Lang.isValue(application.unitSequence)) {
+      if (!utils.isValue(application.unitSequence)) {
         application.unitSequence = 0;
       }
       var unit, machine, machines;
-      if (Y.Lang.isValue(toMachine)) {
+      if (utils.isValue(toMachine)) {
         if (numUnits > 1) {
           return {error: 'When deploying to a specific machine, the ' +
                 'number of units requested must be 1.'};
@@ -1034,7 +1035,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     _getUnitMachines: function(count) {
       var machines = [];
       var availableMachines = this._getAvailableMachines();
-      if (!Y.Lang.isValue(this.db.machines.sequence)) {
+      if (!utils.isValue(this.db.machines.sequence)) {
         this.db.machines.sequence = 0;
       }
       for (var i = 0; i < count; i += 1) {
@@ -1900,6 +1901,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     'base',
     'js-yaml',
     'juju-models',
+    'juju-view-utils',
     'promise',
     'relation-utils',
     'zip-utils',

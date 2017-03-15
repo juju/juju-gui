@@ -20,11 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('d3-components', function() {
   var Y, NS, TestModule, modA, state,
-      container, comp, utils;
+      container, comp, utils, viewUtils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
       'juju-tests-utils',
+      'juju-view-utils',
       'node',
       'node-event-simulate'],
     function(Y) {
@@ -52,6 +53,7 @@ describe('d3-components', function() {
         }
       });
       utils = Y.namespace('juju-tests.utils');
+      viewUtils = Y.namespace('juju.views.utils');
       done();
     });
   });
@@ -74,15 +76,15 @@ describe('d3-components', function() {
 
   it('should be able to create a component and add a module', function() {
     comp = new NS.Component();
-    Y.Lang.isValue(comp).should.equal(true);
+    viewUtils.isValue(comp).should.equal(true);
   });
 
   it('should be able to add and remove a module', function() {
     comp = new NS.Component();
     comp.setAttrs({container: container});
     comp.addModule(TestModule);
-    Y.Lang.isValue(comp.events).should.equal(true);
-    Y.Lang.isValue(comp.modules).should.equal(true);
+    viewUtils.isValue(comp.events).should.equal(true);
+    viewUtils.isValue(comp.modules).should.equal(true);
   });
 
   it('should be able to (un)bind module event subscriptions', function() {
@@ -207,8 +209,8 @@ describe('d3-components', function() {
         .addModule(modB);
 
        comp.render();
-       Y.Lang.isValue(Y.one('#fromA')).should.equal(true);
-       Y.Lang.isValue(Y.one('#fromB')).should.equal(true);
+       viewUtils.isValue(Y.one('#fromA')).should.equal(true);
+       viewUtils.isValue(Y.one('#fromB')).should.equal(true);
      });
 
   it('should support d3 event bindings post render', function() {
