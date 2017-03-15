@@ -208,7 +208,7 @@ describe('Relation endpoints logic', function() {
     var available = models.getEndpoints(service, app.endpointsController);
     var available_svcs = Object.keys(available);
     available_svcs.sort();
-    available_svcs.should.eql(['memcached']);
+    available_svcs.should.eql(['memcached', 'rsyslog-forwarder-ha']);
   });
 
   it('should find valid targets for subordinates', function() {

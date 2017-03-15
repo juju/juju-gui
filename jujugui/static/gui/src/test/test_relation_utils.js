@@ -849,7 +849,7 @@ describe('RelationUtils', function() {
       charmGet.withArgs('provides').returns({
         db: {
           interface: 'db',
-          scope: 'global'
+          scope: 'container'
         }
       });
       var serviceSet = sinon.stub();
@@ -901,7 +901,7 @@ describe('RelationUtils', function() {
         interface: 'db',
         endpoints: endpoints,
         pending: true,
-        scope: 'global',
+        scope: 'container',
         display_name: 'pending'
       });
       assert.equal(env.add_relation.callCount, 1);
@@ -925,98 +925,6 @@ describe('RelationUtils', function() {
       assert.equal(serviceSet.callCount, 1);
       assert.equal(serviceSet.args[0][0], 'series');
       assert.equal(serviceSet.args[0][1], 'trusty');
-    });
-
-    it('does not relate a multi-series subordinate with relation', function() {
-      var relationId = 'pending-19984570$:db23212464$:db';
-      var charmGet = sinon.stub();
-      charmGet.withArgs('requires').onFirstCall().returns({
-        db: {
-          interface: 'db',
-          scope: 'global'
-        }
-      });
-      charmGet.withArgs('requires').onSecondCall().returns({
-        misc: {
-          interface: 'misc',
-          scope: 'global'
-        }
-      });
-      charmGet.withArgs('provides').returns({
-        db: {
-          interface: 'db',
-          scope: 'global'
-        }
-      });
-      var serviceSet = sinon.stub();
-      var serviceGet = sinon.stub();
-      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
-      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
-      serviceGet.withArgs('series').onFirstCall().returns('trusty');
-      serviceGet.withArgs('series').onSecondCall().returns('xenial');
-      var db = {
-        charms: {
-          getById: sinon.stub().returns({
-            get: charmGet
-          }),
-          size: sinon.stub()
-        },
-        notifications: {
-          add: sinon.stub()
-        },
-        relations: {
-          add: sinon.stub(),
-          remove: sinon.stub(),
-          create: sinon.stub(),
-          getById: sinon.stub().returns(relationId),
-          get_relations_for_service: sinon.stub().returns([{
-            getAttrs: sinon.stub().returns({
-              endpoints: [[{
-                role: 'role',
-                name: 'name'
-              }, {
-                role: 'role',
-                name: 'name'
-              }], [{
-                role: 'role',
-                name: 'name'
-              }, {
-                role: 'role',
-                name: 'name'
-              }]],
-              relation_id: 'relid'
-            })
-          }])
-        },
-        services: {
-          getById: sinon.stub().returns({
-            get: serviceGet,
-            set: serviceSet
-          })
-        }
-      };
-      var env = {
-        add_relation: sinon.stub()
-      };
-      var endpoints = [[
-        '19984570$', {
-          name: 'db',
-          role: 'client'
-        }
-      ], [
-        '23212464$', {
-          name: 'db',
-          role: 'server'
-        }
-      ]];
-      relationUtils.createRelation(
-        db, env, endpoints, sinon.stub());
-      assert.equal(db.relations.add.callCount, 0);
-      assert.equal(env.add_relation.callCount, 0);
-      assert.equal(db.relations.remove.callCount, 0);
-      assert.equal(db.relations.create.callCount, 0);
-      assert.equal(serviceSet.callCount, 0);
-      assert.equal(db.notifications.add.callCount, 1);
     });
   });
 
