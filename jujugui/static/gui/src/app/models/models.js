@@ -2519,8 +2519,14 @@ YUI.add('juju-models', function(Y) {
                 // the db sometimes as booleans and other times as strings
                 // (e.g. "true")? As a quick fix, always convert to boolean
                 // type, but we need to find who writes in the services db and
-                // normalize the values.
-                value = (value + '' === 'true');
+                // normalize the values. Note that a more concise
+                // `value = (value  + '' === 'true');`` is not minified
+                // correctly and results in `value += 'true'` for some reason.
+                if (value === 'true') {
+                  value = true;
+                } else if (value === 'false') {
+                  value = false;
+                }
                 break;
               case 'float':
                 value = parseFloat(value);
