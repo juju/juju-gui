@@ -34,6 +34,7 @@ YUI.add('deployment-machines', function() {
       @returns {Object} The list of machines.
     */
     _generateMachines: function() {
+
       const machines = this.props.machines;
       if (!machines || Object.keys(machines).length === 0) {
         return;
@@ -100,15 +101,15 @@ YUI.add('deployment-machines', function() {
     },
 
     render: function() {
-      var chargeMessage = '';
-      if (this.props.cloud && this.props.cloud.name !== 'local') {
+      let chargeMessage = '';
+      const cloudName = this.props.cloud ? this.props.cloud.name : 'the cloud';
+      if (cloudName !== 'localhost') {
         chargeMessage = 'You will incur a charge from your cloud provider.';
       }
       return (
         <div>
           <p className="deployment-machines__message">
-            These machines will be provisioned on&nbsp;
-            {this.props.cloud && this.props.cloud.name}.
+            These machines will be provisioned on {cloudName}.&nbsp;
             {chargeMessage}
           </p>
           {this._generateMachines()}
