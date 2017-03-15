@@ -1662,14 +1662,13 @@ YUI.add('juju-view-utils', function(Y) {
         },
         message: (
           <p>
-            You can obtain your AWS credentials at:<br />
+            You can obtain your AWS credentials at&nbsp;
             <a className="deployment-panel__link"
               href={'https://console.aws.amazon.com/iam/home?region=' +
                 'eu-west-1#security_credential'}
               target="_blank">
-              https://console.aws.amazon.com/iam/home?region=eu-west-1#
-              security_credential
-            </a>
+              the AWS panel
+            </a>.
           </p>)
       },
       'openstack': {
