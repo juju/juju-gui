@@ -477,6 +477,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(env.get('modelAccess'), 'read');
       });
 
+      it('stores user information (legacy addmodel)', function() {
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({'request-id': 1, response: {
+          facades: [
+            {name: 'Client', versions: [0]},
+            {name: 'ModelManager', versions: [2]}
+          ],
+          'model-tag': 'model-42',
+          'user-info': {
+            'controller-access': 'addmodel',
+            'model-access': 'admin'
+          }
+        }});
+        assert.strictEqual(env.get('controllerAccess'), 'add-model');
+        assert.strictEqual(env.get('modelAccess'), 'admin');
+      });
     });
 
     describe('login with macaroons', function() {
