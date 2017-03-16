@@ -148,13 +148,19 @@ YUI.add('env-list', function() {
     },
 
     render: function() {
+      // TODO frankban: retrieving gisf from the global state is a bad
+      // practice and it is only done here as gisf is only required for a bug
+      // in the ACL returned by JIMM. Once the bug is fixed, we can remove
+      // mentions of gisf here.
+      const gisf = window.juju_config && window.juju_config.gisf;
+      const canAddModels = !!gisf || this.props.acl.canAddModels();
       const auth = this.props.authDetails;
       let createNew;
       if (auth && auth.rootUserName) {
         createNew = <juju.components.CreateModelButton
           type="neutral"
           title="Start a new model"
-          disabled={!this.props.acl.canAddModels()}
+          disabled={!canAddModels}
           changeState={this.props.changeState}
           switchModel={this.props.switchModel}
           action={this._handleNewModelClick} />;

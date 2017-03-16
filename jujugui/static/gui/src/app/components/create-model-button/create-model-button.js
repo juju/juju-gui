@@ -46,7 +46,6 @@ YUI.add('create-model-button', function() {
       // model to resolve a race condition with the new model setup.
       props.changeState({profile: null});
       props.switchModel(null);
-
       if (this.props.action) {
         this.props.action();
       }
