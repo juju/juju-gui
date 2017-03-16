@@ -34,9 +34,10 @@ describe('CreateModelButton', () => {
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="user-profile__create-new">
+      <div className="create-new-model">
         <juju.components.GenericButton
           action={output.props.children.props.action}
+          disabled={false}
           type="inline-neutral"
           title="Create new" />
       </div>
@@ -47,20 +48,75 @@ describe('CreateModelButton', () => {
   it('renders a button with provided values', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
+        action={sinon.stub()}
         type="positive"
         title="test"
+        disabled={false}
         changeState={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="user-profile__create-new">
+      <div className="create-new-model">
         <juju.components.GenericButton
           action={output.props.children.props.action}
+          disabled={false}
+          type="positive"
+          title="test" />
+      </div>
+    );
+    jsTestUtils.specificDeepEqual(output, expected);
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders a disabled button when provided with disabled state', () => {
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        type="positive"
+        title="test"
+        disabled={true}
+        changeState={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const output = component.getRenderOutput();
+    const expected = (
+      <div className="create-new-model">
+        <juju.components.GenericButton
+          action={output.props.children.props.action}
+          disabled={true}
           type="positive"
           title="test" />
       </div>
     );
     assert.deepEqual(output, expected);
+  });
+
+  it('calls the passed action', () => {
+    const action = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        action={action}
+        type="positive"
+        title="test"
+        disabled={false}
+        changeState={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
+    instance._createNewModel();
+    assert.isTrue(action.called);
+  });
+
+  it('the passed action isn\'t called if button is disabled', () => {
+    const action = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        action={action}
+        type="positive"
+        title="test"
+        disabled={true}
+        changeState={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
+    instance._createNewModel();
+    assert.isFalse(action.called);
   });
 
   it('closes the profile before switching to a new model', () => {

@@ -1,5 +1,5 @@
 .env-list-panel {
-  $width: 275px;
+  $width: 315px;
   box-sizing: border-box;
   width: $width;
   margin-left: -20px;
@@ -40,8 +40,16 @@
       cursor: pointer;
     }
 
+    &__last-connected {
+      color: $warm-grey;
+    }
+
     &__message {
       padding: 10px 10px 0;
     }
+  }
+
+  .create-new-model {
+    padding: 10px;
   }
 }

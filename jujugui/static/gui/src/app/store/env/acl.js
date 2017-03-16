@@ -29,7 +29,7 @@ YUI.add('acl', function(Y) {
     Note that the controller access is described by the following values:
     - "login": users can log into the controller and only list the models they
       own;
-    - "addmodel": users can add models;
+    - "add-model": users can add models;
     - "superuser": users can do everything they want with the controller,
       including listing/removing all models owned by any users.
     The model access holds the following values:
@@ -71,7 +71,7 @@ YUI.add('acl', function(Y) {
           modelAPI.get('controllerAccess') ||
           controllerAPI.get('controllerAccess')
         );
-        return access === 'addmodel' || access === 'superuser';
+        return access === 'add-model' || access === 'superuser';
       },
 
       /**

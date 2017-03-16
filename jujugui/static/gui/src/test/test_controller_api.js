@@ -280,9 +280,23 @@ describe('Controller API', function() {
           {name: 'ModelManager', versions: [2]}
         ],
         'controller-tag': 'controller-42',
+        'user-info': {'controller-access': 'add-model', 'model-access': ''}
+      }});
+      assert.strictEqual(controllerAPI.get('controllerAccess'), 'add-model');
+    });
+
+    it('stores user information (legacy addmodel)', function() {
+      controllerAPI.login();
+      // Assume login to be the first request.
+      conn.msg({'request-id': 1, response: {
+        facades: [
+          {name: 'Client', versions: [0]},
+          {name: 'ModelManager', versions: [2]}
+        ],
+        'controller-tag': 'controller-42',
         'user-info': {'controller-access': 'addmodel', 'model-access': ''}
       }});
-      assert.strictEqual(controllerAPI.get('controllerAccess'), 'addmodel');
+      assert.strictEqual(controllerAPI.get('controllerAccess'), 'add-model');
     });
   });
 

@@ -514,8 +514,13 @@ YUI.add('juju-env-api', function(Y) {
         this.setConnectedAttr('facades', facades);
         var userInfo = response['user-info'];
         this.setConnectedAttr('modelAccess', userInfo['model-access']);
-        this.setConnectedAttr(
-          'controllerAccess', userInfo['controller-access']);
+        let controllerAccess = userInfo['controller-access'];
+        // This permission's name changed between versions of Juju 2.
+        // The most recent incarnation is "add-model".
+        if (controllerAccess === 'addmodel') {
+          controllerAccess = 'add-model';
+        }
+        this.setConnectedAttr('controllerAccess', controllerAccess);
         if (response['controller-tag']) {
           this.setConnectedAttr(
             'controllerId',

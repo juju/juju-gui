@@ -76,9 +76,9 @@ describe('ACL', function() {
     assert.strictEqual(acl.canAddModels(), true);
     acl = makeACL('superuser', '', '');
     assert.strictEqual(acl.canAddModels(), true);
-    acl = makeACL('addmodel', 'addmodel', '');
+    acl = makeACL('add-model', 'add-model', '');
     assert.strictEqual(acl.canAddModels(), true);
-    acl = makeACL('', 'addmodel', '');
+    acl = makeACL('', 'add-model', '');
     assert.strictEqual(acl.canAddModels(), true);
     acl = makeACL('login', 'login', '');
     assert.strictEqual(acl.canAddModels(), false);
@@ -93,7 +93,7 @@ describe('ACL', function() {
     assert.strictEqual(acl.canAddModels(), true);
     acl = makeLegacyACL('', '');
     assert.strictEqual(acl.canAddModels(), false);
-    acl = makeLegacyACL('addmodel', '');
+    acl = makeLegacyACL('add-model', '');
     assert.strictEqual(acl.canAddModels(), true);
     acl = makeLegacyACL('login', '');
     assert.strictEqual(acl.canAddModels(), false);
