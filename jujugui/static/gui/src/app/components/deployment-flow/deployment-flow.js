@@ -140,12 +140,13 @@ YUI.add('deployment-flow', function() {
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = !this.state.loggedIn;
-          visible = this.state.loggedIn && !isLegacyJuju;
+          visible = this.state.loggedIn && !isLegacyJuju && (
+              willCreateModel || !completed);
           break;
         case 'credential':
           completed = false;
           disabled = !hasCloud;
-          visible = !isLegacyJuju;
+          visible = willCreateModel && !isLegacyJuju;
           break;
         case 'ssh-key':
           completed = false;

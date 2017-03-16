@@ -365,12 +365,23 @@ describe('DeploymentFlow', function() {
 
   it('can display the cloud section as complete', function() {
     const renderer = createDeploymentFlow({
+      credential: 'cred',
+      modelCommitted: false
+    });
+    const instance = renderer.getMountedInstance();
+    instance.setState({cloud: {name: 'cloud'}});
+    const output = renderer.getRenderOutput();
+    assert.strictEqual(output.props.children[1].props.completed, true);
+  });
+
+  it('does not display the cloud section if complete + committed', function() {
+    const renderer = createDeploymentFlow({
       cloud: {name: 'cloud'},
       credential: 'cred',
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    assert.isTrue(output.props.children[1].props.completed);
+    assert.strictEqual(output.props.children[1], undefined);
   });
 
   it('does not show the model name when comitting', function() {
@@ -406,12 +417,24 @@ describe('DeploymentFlow', function() {
 
   it('can enable the credential section', function() {
     const renderer = createDeploymentFlow({
-      cloud: {name: 'cloud'},
+      isLegacyJuju: false,
+      modelCommitted: false
+    });
+    const instance = renderer.getMountedInstance();
+    instance.setState({cloud: {name: 'cloud'}});
+    const output = renderer.getRenderOutput();
+    assert.strictEqual(output.props.children[2].props.disabled, false);
+  });
+
+  it('can hide the credential section', function() {
+    const renderer = createDeploymentFlow({
       isLegacyJuju: false,
       modelCommitted: true
     });
+    const instance = renderer.getMountedInstance();
+    instance.setState({cloud: {name: 'cloud'}});
     const output = renderer.getRenderOutput();
-    assert.isFalse(output.props.children[2].props.disabled);
+    assert.strictEqual(output.props.children[2], undefined);
   });
 
   it('can enable the machines section', function() {

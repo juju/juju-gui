@@ -225,8 +225,9 @@ describe('DeploymentCredentialAdd', function() {
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
               </p>
             </div>
           </div>
@@ -340,8 +341,9 @@ describe('DeploymentCredentialAdd', function() {
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
               </p>
             </div>
           </div>
@@ -485,8 +487,9 @@ describe('DeploymentCredentialAdd', function() {
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
               </p>
             </div>
           </div>
@@ -583,8 +586,9 @@ describe('DeploymentCredentialAdd', function() {
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
               </p>
             </div>
           </div>
@@ -729,8 +733,9 @@ describe('DeploymentCredentialAdd', function() {
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
               </p>
             </div>
           </div>
