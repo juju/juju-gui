@@ -33,7 +33,7 @@ YUI.add('bundle-importer', function(Y) {
     this.modelAPI = cfg.modelAPI;
     this._getBundleChanges = cfg.getBundleChanges;
     this.db = cfg.db;
-    this.fakebackend = cfg.fakebackend;
+    this.charmstore = cfg.charmstore;
     this.hideDragOverNotification = cfg.hideDragOverNotification;
     this.isLegacyJuju = cfg.isLegacyJuju;
     this._dryRunIndex = -1;
@@ -432,125 +432,138 @@ YUI.add('bundle-importer', function(Y) {
           }
         }
       });
-      this.fakebackend._loadCharm(record.args[0], {
-        'success': function(charm) {
-          var charmSeries = charm.get('series');
-          // If we're using legacy Juju the bundlechangeslib does not return
-          // the series of the charms so we need to consider that and munge the
-          // record arguments accordingly. When we decide to drop support for
-          // Juju 1, or if we update bundlechangeslib to supply the series this
-          // block can be removed.
-          if (this.isLegacyJuju) {
-            record.args.splice(1, 0, charmSeries);
-          }
-          // We have to set the name for the service because some bundles
-          // specify multiples of the same charms as different names.
-          var displayName = record.args[2];
-          var ghostService = this.db.services.ghostService(charm, displayName);
-          // The service name may have been updated to prevent collisions, so
-          // update the record with the new name.
-          record.args[2] = ghostService.get('name');
-          // If the series is not provided in the recordset returned from the
-          // bundle parsing then grab the preferred one from the charm.
-          var series = record.args[1];
-          if (!series) {
-            series = Array.isArray(charmSeries) ? charmSeries[0] : charmSeries;
-          }
-          ghostService.set('series', series);
-          if (record.annotations) {
-            ghostService.annotations['gui-x'] = record.annotations['gui-x'];
-            ghostService.annotations['gui-y'] = record.annotations['gui-y'];
-          }
-
-          // Build a config object for use in creating the ghost service.
-          // If config options are provided in the args, use those, fall
-          // back to the default if needed.
-          var config = {};
-          var charmOptions = charm.get('options');
-          if (charmOptions) {
-            Object.keys(charmOptions).forEach(function(key) {
-              // #2149: Need to be careful; checking for truthy/falsey isn't
-              // good enough here, as we want things like empty strings to be
-              // applied to the config.
-              if (record.args[3][key] !== undefined) {
-                config[key] = record.args[3][key];
-              } else {
-                var value = charmOptions[key];
-                config[key] = value['default'];
-              }
+      this.charmstore.getEntity(record.args[0],
+        (error, charm) => {
+          if (error) {
+            console.warn('error loading charm: ', error);
+            this.get('db').notifications.add({
+              title: 'Unable to load charm',
+              message: `Charm ${record.args[0]} was not able to be loaded.`,
+              level: 'error'
             });
+            return;
           }
-          ghostService.set('config', config);
+          this._deploy_addCharm_success(
+            Y.juju.makeEntityModel(charm[0]),
+            record, next);
+        });
+    },
 
-          const constraints = record.args[4] || {};
-          const deployCallback = function(ghostService, err, applicationName) {
-            if (err) {
-              this.db.notifications.add({
-                title: 'Error deploying ' + applicationName,
-                message: 'Could not deploy the requested application. Server ' +
-                    'responded with: ' + err,
-                level: 'error'
-              });
-              return;
-            }
-            const name = ghostService.get('name');
-            ghostService.setAttrs({
-              id: name,
-              displayName: undefined,
-              pending: false,
-              loading: false,
-              config: ghostService.get('config'),
-              constraints: constraints
-            });
-            this.modelAPI.update_annotations(
-              name, 'application', ghostService.get('annotations'));
-          }.bind(this, ghostService);
+    /**
+      Deploy success handler for the bundle import deploy command.
+      @param {Object} charm A charm entity instance.
+      @param {Object} record The bundle recordset record.
+      @param {Function} next The method to call once this command is finished.
+    */
+    _deploy_addCharm_success: function(charm, record, next) {
+      var charmSeries = charm.get('series');
+      // If we're using legacy Juju the bundlechangeslib does not return
+      // the series of the charms so we need to consider that and munge the
+      // record arguments accordingly. When we decide to drop support for
+      // Juju 1, or if we update bundlechangeslib to supply the series this
+      // block can be removed.
+      if (this.isLegacyJuju) {
+        record.args.splice(1, 0, charmSeries);
+      }
+      // We have to set the name for the service because some bundles
+      // specify multiples of the same charms as different names.
+      var displayName = record.args[2];
+      var ghostService = this.db.services.ghostService(charm, displayName);
+      // The service name may have been updated to prevent collisions, so
+      // update the record with the new name.
+      record.args[2] = ghostService.get('name');
+      // If the series is not provided in the recordset returned from the
+      // bundle parsing then grab the preferred one from the charm.
+      var series = record.args[1];
+      if (!series) {
+        series = Array.isArray(charmSeries) ? charmSeries[0] : charmSeries;
+      }
+      ghostService.set('series', series);
+      if (record.annotations) {
+        ghostService.annotations['gui-x'] = record.annotations['gui-x'];
+        ghostService.annotations['gui-y'] = record.annotations['gui-y'];
+      }
 
-          const charmURL = charm.get('id');
-
-          // Add the resources to the Juju controller if we have any.
-          const charmResources = charm.get('resources');
-          if (charmResources) {
-            this.modelAPI.addPendingResources({
-              applicationName: record.args[2],
-              charmURL: charmURL,
-              channel: 'stable',
-              resources: charmResources
-            }, (error, ids) => {
-              if (error !== null) {
-                this.db.notifications.add({
-                  title: 'Error adding resources',
-                  message: `Could not add requested resources for ${charmURL}. `
-                    + 'Server responded with: ' + error,
-                  level: 'error'
-                });
-                return;
-              }
-              // Store the id map in the application model for use by the ecs
-              // during deploy.
-              ghostService.set('resourceIds', ids);
-            });
+      // Build a config object for use in creating the ghost service.
+      // If config options are provided in the args, use those, fall
+      // back to the default if needed.
+      var config = {};
+      var charmOptions = charm.get('options');
+      if (charmOptions) {
+        Object.keys(charmOptions).forEach(function(key) {
+          // #2149: Need to be careful; checking for truthy/falsey isn't
+          // good enough here, as we want things like empty strings to be
+          // applied to the config.
+          if (record.args[3][key] !== undefined) {
+            config[key] = record.args[3][key];
+          } else {
+            var value = charmOptions[key];
+            config[key] = value['default'];
           }
+        });
+      }
+      ghostService.set('config', config);
 
-          this.modelAPI.deploy({
-            charmURL: charmURL,
-            applicationName: record.args[2],
-            series: series,
-            config: record.args[3],
-            constraints: constraints
-          }, deployCallback, {modelId: ghostService.get('id')});
-          this._saveModelToRequires(record.id, ghostService);
-          this._collectedServices.push(ghostService);
-          next();
-        }.bind(this),
-        'failure': function() {
+      const constraints = record.args[4] || {};
+      const deployCallback = function(ghostService, err, applicationName) {
+        if (err) {
           this.db.notifications.add({
-            title: 'Unable to load charm',
-            message: 'Charm ' + record.args[0] + ' was not able to be loaded.',
+            title: 'Error deploying ' + applicationName,
+            message: 'Could not deploy the requested application. Server ' +
+                'responded with: ' + err,
             level: 'error'
           });
+          return;
         }
-      });
+        const name = ghostService.get('name');
+        ghostService.setAttrs({
+          id: name,
+          displayName: undefined,
+          pending: false,
+          loading: false,
+          config: ghostService.get('config'),
+          constraints: constraints
+        });
+        this.modelAPI.update_annotations(
+          name, 'application', ghostService.get('annotations'));
+      }.bind(this, ghostService);
+
+      const charmURL = charm.get('id');
+
+      // Add the resources to the Juju controller if we have any.
+      const charmResources = charm.get('resources');
+      if (charmResources) {
+        this.modelAPI.addPendingResources({
+          applicationName: record.args[2],
+          charmURL: charmURL,
+          channel: 'stable',
+          resources: charmResources
+        }, (error, ids) => {
+          if (error !== null) {
+            this.db.notifications.add({
+              title: 'Error adding resources',
+              message: `Could not add requested resources for ${charmURL}. `
+                + 'Server responded with: ' + error,
+              level: 'error'
+            });
+            return;
+          }
+          // Store the id map in the application model for use by the ecs
+          // during deploy.
+          ghostService.set('resourceIds', ids);
+        });
+      }
+
+      this.modelAPI.deploy({
+        charmURL: charmURL,
+        applicationName: record.args[2],
+        series: series,
+        config: record.args[3],
+        constraints: constraints
+      }, deployCallback, {modelId: ghostService.get('id')});
+      this._saveModelToRequires(record.id, ghostService);
+      this._collectedServices.push(ghostService);
+      next();
     },
 
     /**
@@ -563,6 +576,7 @@ YUI.add('bundle-importer', function(Y) {
     */
     _execute_addCharm: function(record, next) {
       const db = this.db;
+      const charmstore = this.charmstore;
       const notify = msg => {
         db.notifications.add({
           title: 'Unable to load charm',
@@ -571,30 +585,28 @@ YUI.add('bundle-importer', function(Y) {
         });
       };
 
-      this.fakebackend
-          .get('charmstore')
-          .getCanonicalId(record.args[0], (err, charmId) => {
-            if (err) {
-              notify(`Invalid charm id: ${record.args[0]}`);
-              return;
-            }
-            this.fakebackend._loadCharm(charmId, {
-              'success': function(charm) {
-                if (db.charms.getById(charm.get('id')) === null) {
-                  // Mark the charm as loaded so that its endpoints get added
-                  // to the map of available endpoints.
-                  charm.loaded = true;
-                  db.charms.add(charm);
-                }
-                this.modelAPI.addCharm(charmId, null, () => {});
-                this._saveModelToRequires(record.id, charm);
-                next();
-              }.bind(this),
-              'failure': function() {
-                notify(`Charm ${charmId} was not able to be loaded.`);
-              }
-            });
-          });
+      charmstore.getCanonicalId(record.args[0], (err, charmId) => {
+        if (err) {
+          notify(`Invalid charm id: ${record.args[0]}`);
+          return;
+        }
+        charmstore.getEntity(charmId, (error, charmObj) => {
+          if (error) {
+            notify(`Charm ${charmId} was not able to be loaded.`);
+            return;
+          }
+          const charm = Y.juju.makeEntityModel(charmObj[0]);
+          if (db.charms.getById(charm.get('id')) === null) {
+            // Mark the charm as loaded so that its endpoints get added
+            // to the map of available endpoints.
+            charm.loaded = true;
+            db.charms.add(charm);
+          }
+          this.modelAPI.addCharm(charmId, null, () => {});
+          this._saveModelToRequires(record.id, charm);
+          next();
+        });
+      });
     },
 
     /**

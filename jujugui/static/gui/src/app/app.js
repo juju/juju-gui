@@ -566,14 +566,11 @@ YUI.add('juju-gui', function(Y) {
       this.modelController.set('env', this.env);
 
       // Create a Bundle Importer instance.
-      var environments = Y.namespace('juju.environments');
       this.bundleImporter = new Y.juju.BundleImporter({
         db: this.db,
         modelAPI: this.env,
         getBundleChanges: getBundleChanges,
-        fakebackend: new environments.FakeBackend({
-          charmstore: this.get('charmstore')
-        }),
+        charmstore: this.get('charmstore'),
         isLegacyJuju: this.isLegacyJuju(),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
