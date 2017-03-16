@@ -2,7 +2,7 @@
   "author": "Juju Developers",
   "name": "juju-gui",
   "description": "Juju GUI build dependencies",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "homepage": "http://launchpad.net/juju-gui",
   "repository": {
     "type": "git",
