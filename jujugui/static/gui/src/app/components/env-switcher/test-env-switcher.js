@@ -70,14 +70,19 @@ describe('EnvSwitcher', function() {
   });
 
   it('opens the list on click', function() {
-    const showProfile = sinon.stub();
+    const acl = sinon.stub();
+    const changeState = sinon.stub();
+    const humanizeTimestamp = sinon.stub();
+    const switchModel = sinon.stub();
     const authDetails = {user: 'who@external', rootUserName: 'who'};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={acl}
         authDetails={authDetails}
+        changeState={changeState}
+        humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
-        showProfile={showProfile}
-        switchModel={sinon.stub()} />, true);
+        switchModel={switchModel} />, true);
     let output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -86,21 +91,29 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={acl}
         authDetails={authDetails}
+        changeState={changeState}
+        environmentName=""
+        humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
-        showProfile={showProfile}
-        switchModel={sinon.stub()} />);
+        switchModel={switchModel} />);
 
     const instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
 
-    assert.deepEqual(output.props.children[1],
-      <juju.components.EnvList
-        authDetails={authDetails}
-        envs={[]}
-        handleModelClick={instance.handleModelClick}
-        showProfile={showProfile}
-      />);
+    const expected = <juju.components.EnvList
+      acl={acl}
+      authDetails={authDetails}
+      changeState={changeState}
+      environmentName=""
+      envs={[]}
+      handleModelClick={instance.handleModelClick}
+      humanizeTimestamp={humanizeTimestamp}
+      switchModel={switchModel}
+    />;
+
+    assert.deepEqual(output.props.children[1], expected);
   });
 
   it('fetches a list of environments on mount', function() {
@@ -172,21 +185,5 @@ describe('EnvSwitcher', function() {
     assert.equal(switchModel.callCount, 1);
     assert.deepEqual(instance.state, {showEnvList: false, envList: models});
     assert.deepEqual(switchModel.args[0], [model]);
-  });
-
-  it('can show the profile', function() {
-    // To view the user profile you click a button in a sub component. This
-    // excersizes the method that gets passed down.
-    var showProfile = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
-        listModelsWithInfo={sinon.stub()}
-        showProfile={showProfile}
-        switchModel={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.toggleEnvList({preventDefault: sinon.stub()});
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.showProfile();
-    assert.equal(showProfile.callCount, 1);
   });
 });

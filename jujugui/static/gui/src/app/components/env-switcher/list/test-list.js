@@ -26,6 +26,9 @@ chai.config.truncateThreshold = 0;
 
 describe('EnvList', function() {
 
+  const humanizeTimestamp = sinon.stub().returns('less than a minute ago');
+  const acl = {canAddModels: sinon.stub().returns(true)};
+
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
     YUI().use('env-list', function() { done(); });
@@ -33,29 +36,33 @@ describe('EnvList', function() {
 
   it('renders a list of environments', function() {
     const models = [
-      {uuid: 'model-uuid-1', name: 'model-name-1', owner: 'who@external'},
-      {uuid: 'model-uuid-2', name: 'model-name-2', owner: 'dalek@external'}
+      {
+        uuid: 'model-uuid-1',
+        name: 'model-name-1',
+        owner: 'who@external',
+        lastConnection: {a: 0, getTime: function(){}}
+      },
+      {
+        uuid: 'model-uuid-2',
+        name: 'model-name-2',
+        owner: 'dalek@external',
+        lastConnection: {a: 1, getTime: function(){}}
+      }
     ];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
+        environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
-        showProfile={sinon.stub()}
+        humanizeTimestamp={humanizeTimestamp}
+        switchModel={sinon.stub()}
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children, [
-      <li className="env-list__environment"
-        role="menuitem"
-        tabIndex="0"
-        data-id={models[0].uuid}
-        data-name={models[0].name}
-        data-owner={models[0].owner}
-        onClick={instance._handleModelClick}
-        key={models[0].uuid}>
-        {models[0].name}
-      </li>,
+    const expected = [
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
@@ -65,35 +72,45 @@ describe('EnvList', function() {
         onClick={instance._handleModelClick}
         key={models[1].uuid}>
         {'dalek/model-name-2'}
+        <div className="env-list__last-connected">
+          Last accessed {'less than a minute ago'}
+        </div>
       </li>
-    ]);
+    ];
+    assert.deepEqual(
+      output.props.children[0].props.children,
+      expected);
   });
 
   it('handles local model owners', function() {
     const models = [
-      {uuid: 'model-uuid-1', name: 'model-name-1', owner: 'who'},
-      {uuid: 'model-uuid-2', name: 'model-name-2', owner: 'dalek'}
+      {
+        uuid: 'model-uuid-1',
+        name: 'model-name-1',
+        owner: 'who',
+        lastConnection: {a: 0, getTime: function(){}}
+      },
+      {
+        uuid: 'model-uuid-2',
+        name: 'model-name-2',
+        owner: 'dalek',
+        lastConnection: {a: 1, getTime: function(){}}
+      }
     ];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@local', rootUserName: 'who'}}
+        changeState={sinon.stub()}
+        environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
-        showProfile={sinon.stub()}
+        humanizeTimestamp={humanizeTimestamp}
+        switchModel={sinon.stub()}
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.children, [
-      <li className="env-list__environment"
-        role="menuitem"
-        tabIndex="0"
-        data-id={models[0].uuid}
-        data-name={models[0].name}
-        data-owner={models[0].owner}
-        onClick={instance._handleModelClick}
-        key={models[0].uuid}>
-        {models[0].name}
-      </li>,
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
@@ -103,22 +120,22 @@ describe('EnvList', function() {
         onClick={instance._handleModelClick}
         key={models[1].uuid}>
         {'dalek/model-name-2'}
+        <div className="env-list__last-connected">
+          Last accessed {'less than a minute ago'}
+        </div>
       </li>
     ]);
   });
 
-  it('displays a message if there are no models', function() {
+  it('displays only the create new button if there are no models', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
-        handleModelClick={sinon.stub()}
-        showProfile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children,
-      <li className="env-list__environment" key="none">
-        No models available, click below to view your profile and create a new
-        model.
-      </li>);
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={sinon.stub()} />);
+    assert.deepEqual(output.props.children[0].props.children, false);
   });
 
   it('clicking a model calls the handleModelClick prop', function() {
@@ -130,10 +147,11 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-owner').returns('who@external');
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
-        handleModelClick={handleModelClick}
-        showProfile={sinon.stub()} />);
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={handleModelClick} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
@@ -142,19 +160,40 @@ describe('EnvList', function() {
     assert.equal(handleModelClick.callCount, 1);
   });
 
-  it('showProfile call is made when clicking on buttonRow button', function() {
-    const showProfile = sinon.stub();
+  it('new model call is made when clicking on buttonRow button', function() {
+    const switchModel = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
+        acl={acl}
         authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
         envs={models}
+        humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
-        showProfile={showProfile} />);
+        switchModel={switchModel} />);
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));
-    assert.equal(showProfile.callCount, 1);
+    assert.equal(switchModel.callCount, 1);
   });
 
+  it('new model is not made when user has incorrect permissions', () => {
+    const switchModel = sinon.stub();
+    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const _acl = {canAddModels: sinon.stub().returns(false)};
+    const component = testUtils.renderIntoDocument(
+      <juju.components.EnvList
+        acl={_acl}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
+        envs={models}
+        humanizeTimestamp={humanizeTimestamp}
+        handleModelClick={sinon.stub()}
+        switchModel={switchModel} />);
+    testUtils.Simulate.click(
+        ReactDOM.findDOMNode(component)
+                .querySelector('.button--neutral'));
+    assert.equal(switchModel.callCount, 0);
+  });
 });
