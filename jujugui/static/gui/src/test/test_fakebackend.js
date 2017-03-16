@@ -652,8 +652,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [{parentId: '1', containerType: 'no-such'}]);
       assert.isUndefined(response.error);
       assert.deepEqual(
-          response.machines,
-          [{error: 'cannot add a new machine: machine 1 cannot host no-such ' +
+        response.machines,
+        [{error: 'cannot add a new machine: machine 1 cannot host no-such ' +
              'containers'}]);
       // No machines have been added.
       assert.strictEqual(machines.size(), machinesCount);
@@ -1982,35 +1982,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can create a relation with a explicit interfaces', function(done) {
       createRelation(
-          ['cs:wordpress', 'cs:mysql'],
-          ['wordpress:db', 'mysql:db'],
-          { type: 'mysql', scope: 'global',
-            endpoints:
-                [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-          done);
+        ['cs:wordpress', 'cs:mysql'],
+        ['wordpress:db', 'mysql:db'],
+        { type: 'mysql', scope: 'global',
+          endpoints:
+              [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+        done);
     });
 
     it('can create a relation with double explicit interface (reverse)',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['mysql:db', 'wordpress:db'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-              done);
+            ['cs:wordpress', 'cs:mysql'],
+            ['mysql:db', 'wordpress:db'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            done);
         });
 
     it('can create a relation with a double explicit interface and a ' +
         'subordinate charm', function(done) {
       createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['wordpress:juju-info', 'puppet:juju-info'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
+        ['cs:wordpress', 'cs:puppet'],
+        ['wordpress:juju-info', 'puppet:juju-info'],
+        { type: 'juju-info', scope: 'container',
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
+        done);
     });
 
     it('can create a relation with a double explicit interface and a ' +
@@ -2019,44 +2019,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['cs:wordpress', 'cs:puppet'],
         ['puppet:juju-info', 'wordpress:juju-info'],
         { type: 'juju-info', scope: 'container',
-          endpoints:
-            [['puppet', {name: 'juju-info'}],
-              ['wordpress', {name: 'juju-info'}]]},
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
         done);
     });
 
     it('can create a relation with a single explicit interface',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['wordpress:db', 'mysql'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}],
-                     ['mysql', {name: 'db'}]]},
-              done);
+            ['cs:wordpress', 'cs:mysql'],
+            ['wordpress:db', 'mysql'],
+            { type: 'mysql', scope: 'global',
+              endpoints: [
+                ['wordpress', {name: 'db'}],
+                ['mysql', {name: 'db'}]]},
+            done);
         });
 
     it('can create a relation with a single explicit interface (reverse)',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['mysql', 'wordpress:db'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-              done);
+            ['cs:wordpress', 'cs:mysql'],
+            ['mysql', 'wordpress:db'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            done);
         });
 
     it('can create a relation with a single explicit interface (other)',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['wordpress', 'mysql:db'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-              done);
+            ['cs:wordpress', 'cs:mysql'],
+            ['wordpress', 'mysql:db'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            done);
         });
 
     it('can create a relation with a single explicit interface (other,' +
@@ -2076,9 +2076,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['cs:wordpress', 'cs:puppet'],
         ['puppet:juju-info', 'wordpress'],
         { type: 'juju-info', scope: 'container',
-          endpoints:
-              [['puppet', {name: 'juju-info'}],
-                ['wordpress', {name: 'juju-info'}]]},
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
         done);
     });
 
@@ -2088,9 +2088,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['cs:wordpress', 'cs:puppet'],
         ['wordpress', 'puppet:juju-info'],
         { type: 'juju-info', scope: 'container',
-          endpoints:
-              [['puppet', {name: 'juju-info'}],
-                ['wordpress', {name: 'juju-info'}]]},
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
         done);
     });
 
@@ -2100,9 +2100,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['cs:wordpress', 'cs:puppet'],
         ['puppet', 'wordpress:juju-info'],
         { type: 'juju-info', scope: 'container',
-          endpoints:
-              [['puppet', {name: 'juju-info'}],
-                ['wordpress', {name: 'juju-info'}]]},
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
         done);
     });
 
@@ -2112,55 +2112,55 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['cs:wordpress', 'cs:puppet'],
         ['wordpress:juju-info', 'puppet'],
         { type: 'juju-info', scope: 'container',
-          endpoints:
-              [['puppet', {name: 'juju-info'}],
-                ['wordpress', {name: 'juju-info'}]]},
+          endpoints: [
+            ['puppet', {name: 'juju-info'}],
+            ['wordpress', {name: 'juju-info'}]]},
         done);
     });
 
     it('can create a relation with an inferred interface', function(done) {
       createRelation(
-          ['cs:wordpress', 'cs:mysql'],
-          ['wordpress', 'mysql'],
-          { type: 'mysql', scope: 'global',
-            endpoints:
-                [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-          done);
+        ['cs:wordpress', 'cs:mysql'],
+        ['wordpress', 'mysql'],
+        { type: 'mysql', scope: 'global',
+          endpoints:
+              [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+        done);
     });
 
     it('can create a relation with an inferred interface (reverse)',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['mysql', 'wordpress'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-              done);
+            ['cs:wordpress', 'cs:mysql'],
+            ['mysql', 'wordpress'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            done);
         });
 
     it('can create a relation with an inferred subordinate charm',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['wordpress', 'puppet'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
+            ['cs:wordpress', 'cs:puppet'],
+            ['wordpress', 'puppet'],
+            { type: 'juju-info', scope: 'container',
+              endpoints: [
+                ['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+            done);
         });
 
     it('can create a relation with an inferred subordinate charm (reverse)',
         function(done) {
           createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['puppet', 'wordpress'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
+            ['cs:wordpress', 'cs:puppet'],
+            ['puppet', 'wordpress'],
+            { type: 'juju-info', scope: 'container',
+              endpoints: [
+                ['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+            done);
         });
 
   });

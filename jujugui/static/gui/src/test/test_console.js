@@ -21,9 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('application console', function() {
   var consoleManager;
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-views',
-                               'juju-view-utils',
-                               'juju-tests-utils'],
+    YUI(GlobalConfig).use(['juju-views', 'juju-view-utils', 'juju-tests-utils'],
     function(Y) {
       consoleManager = Y.namespace('juju.views.utils')
                           .consoleManager();

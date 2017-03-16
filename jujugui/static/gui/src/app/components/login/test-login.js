@@ -85,8 +85,8 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={"Login"}
-              type={"positive"} />
+              title={'Login'}
+              type={'positive'} />
             <juju.components.USSOLoginLink
               callback={hideSpinner}
               charmstore={charmstore}
@@ -173,8 +173,8 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={"Login"}
-              type={"positive"} />
+              title={'Login'}
+              type={'positive'} />
             <juju.components.USSOLoginLink
               charmstore={charmstore}
               callback={hideSpinner}
@@ -245,8 +245,8 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={"Login"}
-              type={"positive"} />
+              title={'Login'}
+              type={'positive'} />
             {undefined}
           </form>
         </div>

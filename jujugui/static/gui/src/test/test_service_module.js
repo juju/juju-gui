@@ -44,8 +44,7 @@ describe('service module annotations', function() {
     db = new models.Database();
     called = false;
     location =
-        { 'gui-x': 0,
-          'gui-y': 0};
+        { 'gui-x': 0, 'gui-y': 0};
     var env = {
       update_annotations: function(name, type, data) {
         called = true;
@@ -53,9 +52,7 @@ describe('service module annotations', function() {
         location['gui-y'] = data['gui-y'];},
       get: function() {}};
     var view = new views.environment(
-        { container: viewContainer,
-          db: db,
-          env: env});
+      { container: viewContainer, db: db, env: env});
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -141,11 +138,11 @@ describe('service updates', function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database();
     var view = new views.environment(
-        { container: viewContainer,
-          db: db,
-          env: {
-            update_annotations: function() {}
-          }});
+      { container: viewContainer,
+        db: db,
+        env: {
+          update_annotations: function() {}
+        }});
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;

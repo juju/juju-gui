@@ -60,14 +60,14 @@ describe('InspectorExposeUnit', function() {
           <ul className="inspector-expose__unit-list">
             <li className="inspector-expose__item"
               key="20.20.20.199:9000-10000/udp">
-              <span>{"20.20.20.199:9000-10000/udp"}</span>
+              <span>{'20.20.20.199:9000-10000/udp'}</span>
             </li>
             <li className="inspector-expose__item"
               key="https://20.20.20.199:443">
               <a href="https://20.20.20.199:443"
                 onClick={instance._stopBubble}
                 target="_blank">
-                {"20.20.20.199:443"}
+                {'20.20.20.199:443'}
               </a>
             </li>
             <li className="inspector-expose__item"
@@ -75,7 +75,7 @@ describe('InspectorExposeUnit', function() {
               <a href="http://20.20.20.199:8080"
                 onClick={instance._stopBubble}
                 target="_blank">
-                {"20.20.20.199:8080"}
+                {'20.20.20.199:8080'}
               </a>
             </li>
           </ul>

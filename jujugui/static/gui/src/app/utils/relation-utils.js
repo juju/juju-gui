@@ -213,8 +213,7 @@ YUI.add('relation-utils', function(Y) {
           requiringEndpoint = endpoints[!providedIndex + 0],
           requires = Object.assign({}, requiringEndpoint.charm.get('requires'));
       if (!provides['juju-info']) {
-        provides['juju-info'] = {'interface': 'juju-info',
-                                  scope: 'container'};
+        provides['juju-info'] = {'interface': 'juju-info', scope: 'container'};
       }
       // Restrict candidate types as tightly as possible.
       var candidateProvideTypes, candidateRequireTypes;

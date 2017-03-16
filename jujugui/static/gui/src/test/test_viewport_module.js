@@ -22,7 +22,7 @@ describe('views.ViewportModule (Topology module)', function() {
   var views, Y, testUtils;
   before(function(done) {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
-                   'juju-topology-viewport'];
+      'juju-topology-viewport'];
     Y = YUI(GlobalConfig).use(modules,
         function(Y) {
           views = Y.namespace('juju.views');
@@ -88,9 +88,9 @@ describe('views.ViewportModule (Topology module)', function() {
     view.set('component', topo);
     view.resized();
     events.should.eql(
-        ['beforePageSizeRecalculation',
-         'setAllTheDimensions called',
-         'afterPageSizeRecalculation']);
+      ['beforePageSizeRecalculation',
+        'setAllTheDimensions called',
+        'afterPageSizeRecalculation']);
   });
 });
 
@@ -99,7 +99,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
       eventFired, dimentions;
   before(function(done) {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
-                   'juju-topology-viewport'];
+      'juju-topology-viewport'];
     Y = YUI(GlobalConfig).use(modules,
         function(Y) {
           views = Y.namespace('juju.views');

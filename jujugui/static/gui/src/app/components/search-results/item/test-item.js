@@ -81,14 +81,16 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="series__column four-col">
           <ul className="list-series">
-            {[<li className="list-series__item"
-              key="vivid">
-              <a onClick={series[0].props.children.props.onClick}>vivid</a>
-            </li>,
-            <li className="list-series__item"
-              key="wily">
-              <a onClick={series[1].props.children.props.onClick}>wily</a>
-            </li>]}
+            {[
+              <li className="list-series__item"
+                key="vivid">
+                <a onClick={series[0].props.children.props.onClick}>vivid</a>
+              </li>,
+              <li className="list-series__item"
+                key="wily">
+                <a onClick={series[1].props.children.props.onClick}>wily</a>
+              </li>
+            ]}
           </ul>
         </div>
         <div className="charm-logos__column list-block__column one-col">

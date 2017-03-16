@@ -46,7 +46,7 @@ describe('EntityContentConfigOption', function() {
           <dd className="entity-content__config-description">
             <p>
               <span className="entity-content__config-type">
-                ({"string"})
+                ({'string'})
               </span>
               {' '}
               Required password
@@ -76,7 +76,7 @@ describe('EntityContentConfigOption', function() {
           <dd className="entity-content__config-description">
             <p>
               <span className="entity-content__config-type">
-                ({"string"})
+                ({'string'})
               </span>
               {' '}
               Required password

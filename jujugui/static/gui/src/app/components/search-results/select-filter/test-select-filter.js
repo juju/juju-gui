@@ -48,7 +48,7 @@ describe('SearchResultsSelectFilter', function() {
         currentValue={null} />);
     assert.deepEqual(output,
       <div className="list-block__sort">
-        {"Sort by"}:
+        {'Sort by'}:
         <select onChange={output.props.children[2].props.onChange}
           defaultValue={null}>
             <option value="-downloads" key="-downloads">Most popular</option>
@@ -75,7 +75,7 @@ describe('SearchResultsSelectFilter', function() {
         currentValue="downloads" />);
     assert.deepEqual(output,
       <div className="list-block__sort">
-        {"Sort by"}:
+        {'Sort by'}:
         <select onChange={output.props.children[2].props.onChange}
           defaultValue="downloads">
             <option value="-downloads" key="-downloads">Most popular</option>

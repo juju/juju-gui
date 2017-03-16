@@ -56,14 +56,14 @@ describe('EntityContentRelations', function() {
             tabIndex="0"
             onClick={output.props.children[1].props.children[0].props.onClick}
             key="http">
-            {"http"}: {"http"}
+            {'http'}: {'http'}
           </li>
           <li className="link section__list-item"
             role="button"
             tabIndex="0"
             onClick={output.props.children[1].props.children[1].props.onClick}
             key="cache">
-            {"cache"}: {"cache"}
+            {'cache'}: {'cache'}
           </li>
         </ul>
       </div>);

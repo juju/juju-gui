@@ -899,11 +899,11 @@ YUI.add('juju-topology-relation', function(Y) {
         var ep = endpoints[0];
         var endpoints_item = [
           [ep[0].service,
-           { name: ep[0].name,
-             role: 'server' }],
+            { name: ep[0].name,
+              role: 'server' }],
           [ep[1].service,
-           { name: ep[1].name,
-             role: 'client' }]];
+            { name: ep[1].name,
+              role: 'client' }]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }

@@ -176,10 +176,10 @@ describe('Autodeploy Extension', function() {
         [{}, 'test/lxc/0', true]);
     assert.equal(setAttrsStub.callCount, 1);
     assert.deepEqual(
-        setAttrsStub.lastCall.args,
-        [{
-          displayName: 'test/lxc/0',
-          parentId: 'test'
-        }]);
+      setAttrsStub.lastCall.args,
+      [{
+        displayName: 'test/lxc/0',
+        parentId: 'test'
+      }]);
   });
 });

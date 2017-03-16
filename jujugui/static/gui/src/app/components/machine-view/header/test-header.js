@@ -50,7 +50,7 @@ describe('MachineViewHeader', function() {
           {undefined}
           <div className="machine-view__header-drop-target">
             <div className="machine-view__header-drop-message">
-              Create new {"machine"}
+              Create new {'machine'}
             </div>
           </div>
         </div>);
@@ -112,7 +112,7 @@ describe('MachineViewHeader', function() {
             items={menuItems} />
           <div className="machine-view__header-drop-target">
             <div className="machine-view__header-drop-message">
-              Create new {"machine"}
+              Create new {'machine'}
             </div>
           </div>
         </div>);
@@ -145,7 +145,7 @@ describe('MachineViewHeader', function() {
             icon="close_16_white" />
           <div className="machine-view__header-drop-target">
             <div className="machine-view__header-drop-message">
-              Create new {"machine"}
+              Create new {'machine'}
             </div>
           </div>
         </div>);

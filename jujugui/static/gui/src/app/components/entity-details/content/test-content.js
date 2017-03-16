@@ -355,28 +355,30 @@ describe('EntityContent', function() {
                     </div>
                   </div>
                   <dl className="entity-content__bundle-config-options">
-                    {[<div className="entity-content__config-option"
-                      key="name0">
-                      <dt className="entity-content__config-name">
-                        name
-                      </dt>
-                      <dd className="entity-content__config-description">
-                        <p>
-                          title
-                        </p>
-                      </dd>
-                    </div>,
-                    <div className="entity-content__config-option"
-                      key="active1">
-                      <dt className="entity-content__config-name">
-                        active
-                      </dt>
-                      <dd className="entity-content__config-description">
-                        <p>
-                          {true}
-                        </p>
-                      </dd>
-                    </div>]}
+                    {[
+                      <div className="entity-content__config-option"
+                        key="name0">
+                        <dt className="entity-content__config-name">
+                          name
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>
+                            title
+                          </p>
+                        </dd>
+                      </div>,
+                      <div className="entity-content__config-option"
+                        key="active1">
+                        <dt className="entity-content__config-name">
+                          active
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>
+                            {true}
+                          </p>
+                        </dd>
+                      </div>
+                    ]}
                   </dl>
                 </juju.components.ExpandingRow>
                 <juju.components.ExpandingRow
@@ -498,28 +500,30 @@ describe('EntityContent', function() {
                     </div>
                   </div>
                   <dl className="entity-content__bundle-config-options">
-                    {[<div className="entity-content__config-option"
-                      key="name0">
-                      <dt className="entity-content__config-name">
-                        name
-                      </dt>
-                      <dd className="entity-content__config-description">
-                        <p>
-                          title
-                        </p>
-                      </dd>
-                    </div>,
-                    <div className="entity-content__config-option"
-                      key="active1">
-                      <dt className="entity-content__config-name">
-                        active
-                      </dt>
-                      <dd className="entity-content__config-description">
-                        <p>
-                          {true}
-                        </p>
-                      </dd>
-                    </div>]}
+                    {[
+                      <div className="entity-content__config-option"
+                        key="name0">
+                        <dt className="entity-content__config-name">
+                          name
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>
+                            title
+                          </p>
+                        </dd>
+                      </div>,
+                      <div className="entity-content__config-option"
+                        key="active1">
+                        <dt className="entity-content__config-name">
+                          active
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>
+                            {true}
+                          </p>
+                        </dd>
+                      </div>
+                    ]}
                   </dl>
                 </juju.components.ExpandingRow>
                 <juju.components.ExpandingRow
@@ -658,77 +662,79 @@ describe('EntityContent', function() {
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
             <div className="equal-height">
-              {[<div className="entity-content__plan four-col"
-                key="plan10">
-                <div className="entity-content__plan-content">
-                  <h3 className="entity-content__plan-title">
-                    plan1
-                  </h3>
-                  <ul className="entity-content__plan-price">
-                    {[<li className="entity-content__plan-price-item"
-                      key="testprice10">
-                      <span className="entity-content__plan-price-amount">
-                        test
-                      </span>
-                      <span className="entity-content__plan-price-quantity">
-                        / {'price1'}
-                      </span>
-                    </li>]}
-                  </ul>
-                  <p className="entity-content__plan-description">
-                    description1
-                  </p>
+              {[
+                <div className="entity-content__plan four-col"
+                  key="plan10">
+                  <div className="entity-content__plan-content">
+                    <h3 className="entity-content__plan-title">
+                      plan1
+                    </h3>
+                    <ul className="entity-content__plan-price">
+                      {[<li className="entity-content__plan-price-item"
+                        key="testprice10">
+                        <span className="entity-content__plan-price-amount">
+                          test
+                        </span>
+                        <span className="entity-content__plan-price-quantity">
+                          / {'price1'}
+                        </span>
+                      </li>]}
+                    </ul>
+                    <p className="entity-content__plan-description">
+                      description1
+                    </p>
+                  </div>
+                </div>,
+                <div className="entity-content__plan four-col"
+                  key="plan21">
+                  <div className="entity-content__plan-content">
+                    <h3 className="entity-content__plan-title">
+                      plan2
+                    </h3>
+                    <ul className="entity-content__plan-price">
+                      {[<li className="entity-content__plan-price-item"
+                        key="price20">
+                        <span className="entity-content__plan-price-amount">
+                          price2
+                        </span>
+                        {undefined}
+                      </li>]}
+                    </ul>
+                    <p className="entity-content__plan-description">
+                      description2
+                    </p>
+                  </div>
+                </div>,
+                <div className="entity-content__plan four-col last-col"
+                  key="plan32">
+                  <div className="entity-content__plan-content">
+                    <h3 className="entity-content__plan-title">
+                      plan3
+                    </h3>
+                    <ul className="entity-content__plan-price">
+                      <li className="entity-content__plan-price-item"
+                        key="testprice30">
+                        <span className="entity-content__plan-price-amount">
+                          test
+                        </span>
+                        <span className="entity-content__plan-price-quantity">
+                          / {'price3'}
+                        </span>
+                      </li>
+                      <li className="entity-content__plan-price-item"
+                        key="price3b1">
+                        <span className="entity-content__plan-price-amount">
+                          price3b
+                        </span>
+                        {undefined}
+                      </li>
+                    </ul>
+                    <p className="entity-content__plan-description">
+                      description3
+                    </p>
+                  </div>
                 </div>
-              </div>,
-              <div className="entity-content__plan four-col"
-                key="plan21">
-                <div className="entity-content__plan-content">
-                  <h3 className="entity-content__plan-title">
-                    plan2
-                  </h3>
-                  <ul className="entity-content__plan-price">
-                    {[<li className="entity-content__plan-price-item"
-                      key="price20">
-                      <span className="entity-content__plan-price-amount">
-                        price2
-                      </span>
-                      {undefined}
-                    </li>]}
-                  </ul>
-                  <p className="entity-content__plan-description">
-                    description2
-                  </p>
-                </div>
-              </div>,
-              <div className="entity-content__plan four-col last-col"
-                key="plan32">
-                <div className="entity-content__plan-content">
-                  <h3 className="entity-content__plan-title">
-                    plan3
-                  </h3>
-                  <ul className="entity-content__plan-price">
-                    <li className="entity-content__plan-price-item"
-                      key="testprice30">
-                      <span className="entity-content__plan-price-amount">
-                        test
-                      </span>
-                      <span className="entity-content__plan-price-quantity">
-                        / {'price3'}
-                      </span>
-                    </li>
-                    <li className="entity-content__plan-price-item"
-                      key="price3b1">
-                      <span className="entity-content__plan-price-amount">
-                        price3b
-                      </span>
-                      {undefined}
-                    </li>
-                  </ul>
-                  <p className="entity-content__plan-description">
-                    description3
-                  </p>
-                </div>
-              </div>]}
+              ]}
             </div>
           </div>
         </div>

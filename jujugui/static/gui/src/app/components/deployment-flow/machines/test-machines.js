@@ -116,54 +116,56 @@ describe('DeploymentMachines', function() {
               Quantity
             </div>
           </li>
-          {[<li className="deployment-flow__row twelve-col"
-            key="xenial (constraints not set)">
-            <div className="eight-col">
-              xenial (constraints not set)
-            </div>
-            <div className="three-col">
-              My cloud
-            </div>
-            <div className="one-col last-col">
-              {1}
-            </div>
-          </li>,
-          <li className="deployment-flow__row twelve-col"
-            key="2x0.03GHz, 1024, 4096">
-            <div className="eight-col">
-              2x0.03GHz, 1024, 4096
-            </div>
-            <div className="three-col">
-              My cloud
-            </div>
-            <div className="one-col last-col">
-              {2}
-            </div>
-          </li>,
-          <li className="deployment-flow__row twelve-col"
-            key="trusty, 2x0.03GHz, 1024, 4096">
-            <div className="eight-col">
-              trusty, 2x0.03GHz, 1024, 4096
-            </div>
-            <div className="three-col">
-              My cloud
-            </div>
-            <div className="one-col last-col">
-              {1}
-            </div>
-          </li>,
-          <li className="deployment-flow__row twelve-col"
-            key="(constraints not set)">
-            <div className="eight-col">
-              (constraints not set)
-            </div>
-            <div className="three-col">
-              My cloud
-            </div>
-            <div className="one-col last-col">
-              {1}
-            </div>
-          </li>]}
+          {[
+            <li className="deployment-flow__row twelve-col"
+              key="xenial (constraints not set)">
+              <div className="eight-col">
+                xenial (constraints not set)
+              </div>
+              <div className="three-col">
+                My cloud
+              </div>
+              <div className="one-col last-col">
+                {1}
+              </div>
+            </li>,
+            <li className="deployment-flow__row twelve-col"
+              key="2x0.03GHz, 1024, 4096">
+              <div className="eight-col">
+                2x0.03GHz, 1024, 4096
+              </div>
+              <div className="three-col">
+                My cloud
+              </div>
+              <div className="one-col last-col">
+                {2}
+              </div>
+            </li>,
+            <li className="deployment-flow__row twelve-col"
+              key="trusty, 2x0.03GHz, 1024, 4096">
+              <div className="eight-col">
+                trusty, 2x0.03GHz, 1024, 4096
+              </div>
+              <div className="three-col">
+                My cloud
+              </div>
+              <div className="one-col last-col">
+                {1}
+              </div>
+            </li>,
+            <li className="deployment-flow__row twelve-col"
+              key="(constraints not set)">
+              <div className="eight-col">
+                (constraints not set)
+              </div>
+              <div className="three-col">
+                My cloud
+              </div>
+              <div className="one-col last-col">
+                {1}
+              </div>
+            </li>
+          ]}
         </ul>
       </div>);
     assert.deepEqual(output, expected);

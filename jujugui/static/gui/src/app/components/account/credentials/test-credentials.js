@@ -91,8 +91,9 @@ describe('AccountCredentials', () => {
               Provider
             </div>
           </li>
-          {[<li className="user-profile__list-row twelve-col"
-            key="aws_spinach@external_test1">
+          {[
+            <li className="user-profile__list-row twelve-col"
+              key="aws_spinach@external_test1">
               <div className="six-col no-margin-bottom">
                 aws_spinach@external_test1
               </div>
@@ -107,24 +108,24 @@ describe('AccountCredentials', () => {
                   type="neutral"
                   title="Remove" />
               </div>
-          </li>,
-          <li className="user-profile__list-row twelve-col"
-            key="gce_spinach@external_test2">
-              <div className="six-col no-margin-bottom">
-                gce_spinach@external_test2
-              </div>
-              <div className="four-col no-margin-bottom">
-                Google
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <juju.components.GenericButton
-                  action={
-                    credentials[1].props.children[2].props.children
-                      .props.action}
-                  type="neutral"
-                  title="Remove" />
-              </div>
-          </li>]}
+            </li>,
+            <li className="user-profile__list-row twelve-col"
+              key="gce_spinach@external_test2">
+                <div className="six-col no-margin-bottom">
+                  gce_spinach@external_test2
+                </div>
+                <div className="four-col no-margin-bottom">
+                  Google
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <juju.components.GenericButton
+                    action={
+                      credentials[1].props.children[2].props.children
+                        .props.action}
+                    type="neutral"
+                    title="Remove" />
+                </div>
+            </li>]}
         </ul>
       </div>);
     assert.deepEqual(output, expected);

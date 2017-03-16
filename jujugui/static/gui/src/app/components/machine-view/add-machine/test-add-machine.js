@@ -294,7 +294,7 @@ describe('MachineViewAddMachine', function() {
           <option
             key="root"
             value="new0">
-            {"new0"}/root-container
+            {'new0'}/root-container
           </option>,
           <option
             key="new0/lxc/new0"

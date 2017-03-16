@@ -392,10 +392,10 @@ describe('test_model.js', function() {
           [{'pending': 2}, {}]);
       assert.deepEqual(wordpress.get('units')
                        .get_informative_states_for_service(wordpress),
-          [{'pending': 1, 'error': 3}, {
-            mysql: 'db-relation-changed',
-            wordpress: 'peer-relation-broken'
-          }]);
+        [{'pending': 1, 'error': 3}, {
+          mysql: 'db-relation-changed',
+          wordpress: 'peer-relation-broken'
+        }]);
     });
 
     it('service unit list should update analytics when units are added',
@@ -785,7 +785,7 @@ describe('test_model.js', function() {
                  endpoints:
                  [['something', {name: 'foo', role: 'bar'}],
                   ['mysql', {name: 'la', role: 'lee'}]],
-                        'interface': 'thing' });
+                 'interface': 'thing' });
          db.relations.add([rel0, rel1, rel2, rel3, rel4]);
          db.relations.get_relations_for_service(service).map(
          function(r) { return r.get('id'); })
@@ -1863,17 +1863,17 @@ describe('test_model.js', function() {
 
       // Add the charms so we can resolve them in the export.
       db.charms.add([{id: 'precise/mysql-1'},
-            {id: 'precise/wordpress-1',
-              options: {
-                debug: {
-                  'default': 'no'
-                },
-                username: {
-                  'default': 'root'
-                }
-              }
+        {id: 'precise/wordpress-1',
+          options: {
+            debug: {
+              'default': 'no'
+            },
+            username: {
+              'default': 'root'
             }
-          ]);
+          }
+        }
+      ]);
       var result = db.exportDeployer(true);
 
       assert.strictEqual(result.relations.length, 1);
@@ -2054,26 +2054,26 @@ describe('test_model.js', function() {
         annotations: {'gui-x': 100, 'gui-y': 200}
       });
       db.charms.add([{id: 'precise/mysql-1'},
-            {id: 'precise/wordpress-1',
-              options: {
-                one: {
-                  'default': ''
-                },
-                two: {
-                  'default': null
-                },
-                three: {
-                  'default': undefined
-                },
-                four: {
-                  'default': '0'
-                },
-                five: {
-                  'default': false
-                }
-              }
+        {id: 'precise/wordpress-1',
+          options: {
+            one: {
+              'default': ''
+            },
+            two: {
+              'default': null
+            },
+            three: {
+              'default': undefined
+            },
+            four: {
+              'default': '0'
+            },
+            five: {
+              'default': false
             }
-          ]);
+          }
+        }
+      ]);
       var result = db.exportDeployer(true);
       assert.equal(result.services.wordpress.options.one, '1');
       assert.equal(result.services.wordpress.options.two, '2');
