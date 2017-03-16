@@ -48,7 +48,7 @@ describe('UnitDetails', function() {
   });
 
   it('shows the unit properties', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         changeState={sinon.stub()}
@@ -56,22 +56,36 @@ describe('UnitDetails', function() {
         service={service}
         previousComponent='units'
         unitStatus='error'
-        unit={fakeUnit} />);
-
-    assert.deepEqual(output.props.children[0],
-        <div className='unit-details__properties'>
-          <p className='unit-details__property'>
-            Status: {fakeUnit.agent_state} {undefined}
-          </p>
-          <p className='unit-details__property'>
-            IP address{''}: {"none"}
-          </p>
-          {undefined}
-          <p className='unit-details__property'>
-            Public address{''}: {"none"}
-          </p>
-          {undefined}
-        </div>);
+        unit={fakeUnit}
+      />);
+    const expectedOutput = (
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
+          Status: {fakeUnit.agent_state} {undefined}
+        </p>
+        <p className='unit-details__property'>
+          Public addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="93.20.93.20">
+            <span>
+              {"93.20.93.20"}
+            </span>
+          </li>
+        </ul>
+        <p className='unit-details__property'>
+          IP addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="192.168.0.1">
+            <span>
+              {"192.168.0.1"}
+            </span>
+          </li>
+        </ul>
+      </div>
+    );
+    assert.deepEqual(output.props.children[0], expectedOutput);
   });
 
   it('renders workload status when provided', function() {
@@ -91,13 +105,25 @@ describe('UnitDetails', function() {
             Status: {fakeUnit.agent_state} {' - Installing software'}
           </p>
           <p className='unit-details__property'>
-            IP address{''}: {"none"}
+            Public addresses: {null}
           </p>
-          {undefined}
+          <ul className="unit-details__list">
+            <li className="unit-details__list-item" key="93.20.93.20">
+              <span>
+                {"93.20.93.20"}
+              </span>
+            </li>
+          </ul>
           <p className='unit-details__property'>
-            Public address{''}: {"none"}
+            IP addresses: {null}
           </p>
-          {undefined}
+          <ul className="unit-details__list">
+            <li className="unit-details__list-item" key="192.168.0.1">
+              <span>
+                {"192.168.0.1"}
+              </span>
+            </li>
+          </ul>
         </div>);
   });
 
@@ -105,12 +131,17 @@ describe('UnitDetails', function() {
     fakeUnit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
-      open_ports: ['80/tcp', 443],
+      portRanges: [{
+        from: 9000, to: 10000, protocol: 'udp', single: false
+      }, {
+        from: 443, to: 443, protocol: 'tcp', single: true
+      }, {
+        from: 8080, to: 8080, protocol: 'tcp', single: true
+      }],
       agent_state: 'started',
       id: 'unit1'
     };
-
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
@@ -119,40 +150,51 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-
-    var expected = (
+    const expected = (
       <div className="unit-details__properties">
         <p className="unit-details__property">
           Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className="unit-details__property">
-          IP address{'es'}: {null}
+          Public addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://192.168.0.1:80">
-            <a href="http://192.168.0.1:80" target="_blank">
-              {"192.168.0.1"}:{"80"}
-            </a>
+          <li className="unit-details__list-item"
+            key="93.20.93.20:9000-10000/udp">
+            <span>
+              {"93.20.93.20:9000-10000/udp"}
+            </span>
           </li>
-          <li className="unit-details__list-item" key="https://192.168.0.1:443">
-            <a href="https://192.168.0.1:443" target="_blank">
-              {"192.168.0.1"}:{"443"}
-            </a>
+          <li className="unit-details__list-item" key="93.20.93.20:443">
+            <span>
+              {"93.20.93.20:443"}
+            </span>
+          </li>
+          <li className="unit-details__list-item" key="93.20.93.20:8080">
+            <span>
+              {"93.20.93.20:8080"}
+            </span>
           </li>
         </ul>
         <p className="unit-details__property">
-          Public address{'es'}: {null}
+          IP addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://93.20.93.20:80">
+          <li className="unit-details__list-item"
+            key="192.168.0.1:9000-10000/udp">
             <span>
-              {"93.20.93.20"}:{"80"}
+              {"192.168.0.1:9000-10000/udp"}
             </span>
           </li>
-          <li className="unit-details__list-item" key="https://93.20.93.20:443">
-            <span>
-              {"93.20.93.20"}:{"443"}
-            </span>
+          <li className="unit-details__list-item" key="192.168.0.1:443">
+            <a href="https://192.168.0.1:443" target="_blank">
+              {"192.168.0.1:443"}
+            </a>
+          </li>
+          <li className="unit-details__list-item" key="192.168.0.1:8080">
+            <a href="http://192.168.0.1:8080" target="_blank">
+              {"192.168.0.1:8080"}
+            </a>
           </li>
         </ul>
       </div>);
@@ -163,7 +205,13 @@ describe('UnitDetails', function() {
     fakeUnit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
-      open_ports: ['80/tcp', 443],
+      portRanges: [{
+        from: 9000, to: 10000, protocol: 'udp', single: false
+      }, {
+        from: 443, to: 443, protocol: 'tcp', single: true
+      }, {
+        from: 8080, to: 8080, protocol: 'tcp', single: true
+      }],
       agent_state: 'started',
       id: 'unit1'
     };
@@ -176,7 +224,7 @@ describe('UnitDetails', function() {
         }
       }
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
@@ -185,39 +233,50 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-
-    var expected = (
+    const expected = (
       <div className="unit-details__properties">
         <p className="unit-details__property">
           Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className="unit-details__property">
-          IP address{'es'}: {null}
+          Public addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://192.168.0.1:80">
-            <a href="http://192.168.0.1:80" target="_blank">
-              {"192.168.0.1"}:{"80"}
+          <li className="unit-details__list-item"
+            key="93.20.93.20:9000-10000/udp">
+            <span>
+              {"93.20.93.20:9000-10000/udp"}
+            </span>
+          </li>
+          <li className="unit-details__list-item" key="93.20.93.20:443">
+            <a href="https://93.20.93.20:443" target="_blank">
+              {"93.20.93.20:443"}
             </a>
           </li>
-          <li className="unit-details__list-item" key="https://192.168.0.1:443">
-            <a href="https://192.168.0.1:443" target="_blank">
-              {"192.168.0.1"}:{"443"}
+          <li className="unit-details__list-item" key="93.20.93.20:8080">
+            <a href="http://93.20.93.20:8080" target="_blank">
+              {"93.20.93.20:8080"}
             </a>
           </li>
         </ul>
         <p className="unit-details__property">
-          Public address{'es'}: {null}
+          IP addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://93.20.93.20:80">
-            <a href="http://93.20.93.20:80" target="_blank">
-              {"93.20.93.20"}:{"80"}
+          <li className="unit-details__list-item"
+            key="192.168.0.1:9000-10000/udp">
+            <span>
+              {"192.168.0.1:9000-10000/udp"}
+            </span>
+          </li>
+          <li className="unit-details__list-item" key="192.168.0.1:443">
+            <a href="https://192.168.0.1:443" target="_blank">
+              {"192.168.0.1:443"}
             </a>
           </li>
-          <li className="unit-details__list-item" key="https://93.20.93.20:443">
-            <a href="https://93.20.93.20:443" target="_blank">
-              {"93.20.93.20"}:{"443"}
+          <li className="unit-details__list-item" key="192.168.0.1:8080">
+            <a href="http://192.168.0.1:8080" target="_blank">
+              {"192.168.0.1:8080"}
             </a>
           </li>
         </ul>
@@ -225,15 +284,9 @@ describe('UnitDetails', function() {
     assert.deepEqual(output.props.children[0], expected);
   });
 
-  it('shows no addresses if ports are unavailable', function() {
-    fakeUnit = {
-      private_address: '192.168.0.1',
-      public_address: '93.20.93.20',
-      agent_state: 'started',
-      id: 'unit1'
-    };
-
-    var output = jsTestUtils.shallowRender(
+  it('shows no addresses if no addresses are unavailable', function() {
+    fakeUnit = {agent_state: 'started', id: 'unit1'};
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
@@ -249,11 +302,11 @@ describe('UnitDetails', function() {
           Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className='unit-details__property'>
-          IP address{''}: {"none"}
+          Public addresses: {"none"}
         </p>
         {undefined}
         <p className='unit-details__property'>
-          Public address{''}: {"none"}
+          IP addresses: {"none"}
         </p>
         {undefined}
       </div>);
@@ -262,12 +315,17 @@ describe('UnitDetails', function() {
   it('shows only public address if available', function() {
     fakeUnit = {
       public_address: '93.20.93.20',
-      open_ports: [80, 443],
+      portRanges: [{
+        from: 9000, to: 10000, protocol: 'udp', single: false
+      }, {
+        from: 443, to: 443, protocol: 'tcp', single: true
+      }, {
+        from: 8080, to: 8080, protocol: 'tcp', single: true
+      }],
       agent_state: 'started',
       id: 'unit1'
     };
-
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
@@ -276,44 +334,54 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-
-    var expect = (
-      <div className='unit-details__properties'>
-        <p className='unit-details__property'>
+    const expected = (
+      <div className="unit-details__properties">
+        <p className="unit-details__property">
           Status: {fakeUnit.agent_state} {undefined}
         </p>
-        <p className='unit-details__property'>
-          IP address{''}: {"none"}
-        </p>
-        {undefined}
-        <p className='unit-details__property'>
-          Public address{'es'}: {null}
+        <p className="unit-details__property">
+          Public addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://93.20.93.20:80">
+          <li className="unit-details__list-item"
+            key="93.20.93.20:9000-10000/udp">
             <span>
-              {"93.20.93.20"}:{"80"}
+              {"93.20.93.20:9000-10000/udp"}
             </span>
           </li>
-          <li className="unit-details__list-item" key="https://93.20.93.20:443">
+          <li className="unit-details__list-item" key="93.20.93.20:443">
             <span>
-              {"93.20.93.20"}:{"443"}
+              {"93.20.93.20:443"}
+            </span>
+          </li>
+          <li className="unit-details__list-item" key="93.20.93.20:8080">
+            <span>
+              {"93.20.93.20:8080"}
             </span>
           </li>
         </ul>
+        <p className='unit-details__property'>
+          IP addresses: {"none"}
+        </p>
+        {undefined}
       </div>);
-    assert.deepEqual(output.props.children[0], expect);
+    assert.deepEqual(output.props.children[0], expected);
   });
 
   it('shows only private address if available', function() {
     fakeUnit = {
-      private_address: '93.20.93.20',
-      open_ports: [80, 443],
+      private_address: '192.168.0.1',
+      portRanges: [{
+        from: 9000, to: 10000, protocol: 'udp', single: false
+      }, {
+        from: 443, to: 443, protocol: 'tcp', single: true
+      }, {
+        from: 8080, to: 8080, protocol: 'tcp', single: true
+      }],
       agent_state: 'started',
       id: 'unit1'
     };
-
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
@@ -322,31 +390,36 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-
-    var expected = (
-      <div className='unit-details__properties'>
-        <p className='unit-details__property'>
+    const expected = (
+      <div className="unit-details__properties">
+        <p className="unit-details__property">
           Status: {fakeUnit.agent_state} {undefined}
         </p>
+        <p className='unit-details__property'>
+          Public addresses: {"none"}
+        </p>
+        {undefined}
         <p className="unit-details__property">
-          IP address{'es'}: {null}
+          IP addresses: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://93.20.93.20:80">
-            <a href="http://93.20.93.20:80" target="_blank">
-              {"93.20.93.20"}:{"80"}
+          <li className="unit-details__list-item"
+            key="192.168.0.1:9000-10000/udp">
+            <span>
+              {"192.168.0.1:9000-10000/udp"}
+            </span>
+          </li>
+          <li className="unit-details__list-item" key="192.168.0.1:443">
+            <a href="https://192.168.0.1:443" target="_blank">
+              {"192.168.0.1:443"}
             </a>
           </li>
-          <li className="unit-details__list-item" key="https://93.20.93.20:443">
-            <a href="https://93.20.93.20:443" target="_blank">
-              {"93.20.93.20"}:{"443"}
+          <li className="unit-details__list-item" key="192.168.0.1:8080">
+            <a href="http://192.168.0.1:8080" target="_blank">
+              {"192.168.0.1:8080"}
             </a>
           </li>
         </ul>
-        <p className='unit-details__property'>
-          Public address{''}: {"none"}
-        </p>
-        {undefined}
       </div>);
     assert.deepEqual(output.props.children[0], expected);
   });

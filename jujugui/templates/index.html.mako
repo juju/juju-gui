@@ -128,11 +128,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <use xlink:href="#juju-logo" />
           </svg>
           <div class="panel">
+            <div id="loading-indicator"></div>
             <div id="loading-message-text" class="header">
-              Loading the Juju GUI
-            </div>
-            <div id="loading-spinner">
-              <span class="spinner-loading"></span>
+              Hello, world.
             </div>
           </div>
         </div>
@@ -162,7 +160,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <div id="viewport">
         <div id="content">
-            <div id="shortcut-help" style="display:none"></div>
+            <div id="shortcut-help" class="modal" style="display:none"></div>
+            <div id="shortcut-settings" class="modal modal--narrow" style="display:none"></div>
             <div id="main">
             </div> <!-- /container -->
             <div id="drag-over-notification-container"></div>
@@ -179,13 +178,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       var flags = {}; // Declare an empty set of feature flags.
 
+      // Note that any changes to MessageRotator need to be made in both
+      // index.html.go and index.html.mako.
+      class MessageRotator {
+        constructor() {
+          this.messages = [
+            'Requesting code...',
+            'Reading the configuration...',
+            'Connecting to the backend...',
+            'Reticulating splines...',
+            'Establishing API connections...',
+            'Verifying identity...',
+            'Checking controller information...',
+            'Setting phasers to stun...',
+            'Querying the charm store...',
+            'Rendering the GUI...'
+          ];
+          this.interval = 1000;
+          this.index = 0;
+          this.maxIndex = this.messages.length - 1;
+        }
+
+        advance() {
+          // Display the next message.
+          const message = this.messages[this.index];
+          document.getElementById('loading-message-text').innerHTML = message;
+          // If we're at the end of the messages, loop back to the beginning.
+          // Else, advance to the next message.
+          if (this.index === this.maxIndex) {
+            this.index = 0;
+          } else {
+            this.index += 1;
+          }
+        }
+
+        start() {
+          // Display the first message.
+          this.advance();
+          // Setup the timer for subsequent messages.
+          this.timerId = window.setInterval(() => this.advance(), this.interval);
+        }
+
+        stop() {
+          if (this.timerId) {
+            window.clearInterval(this.timerId);
+          }
+        }
+      }
+
+      messageRotator = new MessageRotator();
+      messageRotator.start();
+
       getDocument = function() {
         return document;
-      };
-
-      setLoadingMessageText = function(newText) {
-        getDocument()
-          .getElementById('loading-message-text').innerHTML = newText;
       };
 
       isBrowserSupported = function(agent) {
@@ -356,8 +401,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
-        setLoadingMessageText('Connecting to the Juju model');
-
         window.flags = featureFlags(
             window.location.href,
             window.juju_config.flags || {}
@@ -370,6 +413,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'body')[0].className += ' flag-' + flag;
           }
         }
+
 
         var GlobalConfig = {
           combine: true,
@@ -401,8 +445,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
+          const model = app.controllerAPI ? app.controllerAPI : app.env;
+          model.once('login', () => messageRotator.stop());
         });
-
       };
     </script>
 

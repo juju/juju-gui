@@ -84,7 +84,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     receiveNow: function(data, failSilently) {
       if (this.connected) {
-        this.onmessage({data: Y.JSON.stringify(data)});
+        this.onmessage({data: JSON.stringify(data)});
       } else if (!failSilently) {
         throw CLOSEDERROR;
       }
@@ -115,7 +115,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     send: function(data) {
       if (this.connected) {
-        this.get('juju').receive(Y.JSON.parse(data));
+        this.get('juju').receive(JSON.parse(data));
       } else {
         throw CLOSEDERROR;
       }
@@ -593,7 +593,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         'public-address': 'public_address',
         'private-address': 'private_address',
         'machine-id': 'machine',
-        ports: 'open_ports',
+        'port-ranges': 'portRanges',
         'agent-status': function(attrs) {
           // TODO frankban: handle unit agent status.
           return {

@@ -20,12 +20,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('topology', function() {
   var NS, TestModule, container, db, models, state, topo,
-      utils, views, Y;
+      utils, views, viewUtils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
                                'juju-tests-utils',
+                               'juju-view-utils',
                                'node',
                                'node-event-simulate'],
     function(Y) {
@@ -33,6 +34,7 @@ describe('topology', function() {
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
+      viewUtils = Y.namespace('juju.views.utils');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {
         events: {
@@ -85,7 +87,7 @@ describe('topology', function() {
     topo.render();
 
     // Verify that we have built the default scene.
-    Y.Lang.isValue(topo.vis).should.equal(true);
+    viewUtils.isValue(topo.vis).should.equal(true);
   });
 
   function createStandardTopo() {
@@ -104,7 +106,7 @@ describe('topology', function() {
        topo = createStandardTopo();
        topo.render();
        // Verify that we have built the default scene.
-       Y.Lang.isValue(topo.vis).should.equal(true);
+       viewUtils.isValue(topo.vis).should.equal(true);
      });
 
   describe('servicePointOutside', function() {

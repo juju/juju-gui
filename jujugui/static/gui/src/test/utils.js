@@ -122,7 +122,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.msg = function(m) {
-        this.onmessage({'data': Y.JSON.stringify(m)});
+        this.onmessage({'data': JSON.stringify(m)});
       };
 
       this.last_message = function(back) {
@@ -133,7 +133,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.send = function(m) {
-        this.messages.push(Y.JSON.parse(m));
+        this.messages.push(JSON.parse(m));
       };
 
       this.onclose = function() {};
@@ -175,7 +175,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         try {
           response = Y.io(url, {sync: true}).responseText;
           if (parseJson) {
-            response = Y.JSON.parse(response);
+            response = JSON.parse(response);
           }
           break;
         } catch (e) {

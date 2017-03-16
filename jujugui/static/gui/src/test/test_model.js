@@ -39,8 +39,6 @@ describe('test_model.js', function() {
       charm.get('revision').should.equal(0);
       charm.get('full_name').should.equal(
           '~alt-bac/precise/openstack-dashboard');
-      charm.get('charm_path').should.equal(
-          '~alt-bac/precise/openstack-dashboard-0/json');
     });
 
     it('must not set "owner" for promulgated charms', function() {
@@ -54,24 +52,18 @@ describe('test_model.js', function() {
       var charm = new models.Charm(
           {id: 'cs:~alt-bac/precise/openstack-dashboard'});
       assert.isUndefined(charm.get('revision'));
-      assert.equal(charm.get('charm_path'),
-          '~alt-bac/precise/openstack-dashboard/json');
     });
 
     it('must accept charm ids with periods.', function() {
       var charm = new models.Charm(
           {id: 'cs:~alt.bac/precise/openstack-dashboard-0'});
       assert.equal(charm.get('owner'), 'alt.bac');
-      assert.equal(charm.get('charm_path'),
-          '~alt.bac/precise/openstack-dashboard-0/json');
     });
 
     it('must accept charm ids without series.', function() {
       var charm = new models.Charm(
           {id: 'cs:~alt-bac/openstack-dashboard'});
       assert.isUndefined(charm.get('series'));
-      assert.equal(charm.get('charm_path'),
-          '~alt-bac/openstack-dashboard/json');
     });
 
     it('generates a proper full_name for multi-series charms', () => {

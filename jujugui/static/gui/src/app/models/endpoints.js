@@ -53,36 +53,29 @@ YUI.add('juju-endpoints', function(Y) {
   },
 
   /**
-   * Find available relation targets for a service.
-   *
-   * @method getEndpoints
-   * @param {Object} application A service object.
-   * @param {Object} controller The endpoints controller.
-   *
-   * @return {Object} A mapping with keys of valid relation service targets
-   *   and values consisting of a list of valid endpoints for each.
-   */
+    Find available relation targets for an application.
+    @param {Object} application An application object.
+    @param {Object} controller The endpoints controller.
+    @return {Object} A mapping with keys of valid relation application targets
+      and values consisting of a list of valid endpoints for each.
+  */
   models.getEndpoints = function(application, controller) {
-    const targets = {},
-        requires = [],
-        provides = [],
-        appId = application.get('id'),
-        db = controller.get('db'),
-        endpointsMap = controller.endpointsMap;
+    const targets = {};
+    const appId = application.get('id');
+    const db = controller.get('db');
+    const endpointsMap = controller.endpointsMap;
+    const appEndpoints = endpointsMap[appId];
     const appIsSubordinate = application.get('subordinate');
     const appSeries = models._getSeries(db, application);
-
-    // Bail out if the map doesn't yet exist for this service.  The charm may
+    // Bail out if the map doesn't yet exist for this application. The charm may
     // not be loaded yet.
-    if (!endpointsMap[appId]) {
-      return targets;
+    if (!appEndpoints) {
+      return {};
     }
     /**
-     * Convert a service name and its relation endpoint info into a
-     * valid relation target endpoint, ie. including service name.
-     *
-     * @method getEndpoints.convert
-     */
+      Convert an application name and its relation endpoint info into a
+      valid relation target endpoint, ie. including application name.
+    */
     function convert(applicationName, relInfo) {
       return {
         service: applicationName,
@@ -90,90 +83,53 @@ YUI.add('juju-endpoints', function(Y) {
         type: relInfo['interface']
       };
     }
-
     /**
-     * Store endpoints for a relation to target the given service.
-     *
-     * @method getEndpoints.add
-     * @param {Object} targetEndpoint Target endpoint.
-     * @param {Object} originEndpoint Origin endpoint.
-     */
+      Store endpoints for a relation to target the given application.
+      @param {Object} targetEndpoint Target endpoint.
+      @param {Object} originEndpoint Origin endpoint.
+    */
     function add(applicationName, originEndpoint, targetEndpoint) {
       if (!targets.hasOwnProperty(applicationName)) {
         targets[applicationName] = [];
       }
       targets[applicationName].push([originEndpoint, targetEndpoint]);
     }
-
-    // First we process all the endpoints of the origin service.
-    //
-    // For required interfaces, we consider them valid for new relations
-    // only if they are not already satisfied by an existing relation.
-    endpointsMap[appId].requires.forEach(rdata => {
-      const endpoint = convert(appId, rdata);
-      // Subordinate relations are slightly different:
-      // a subordinate typically acts as a client to many services,
-      // against the implicitly provided juju-info interface.
-      if (application.get('subordinate') &&
-        relationUtils.isSubordinateRelation(rdata)) {
-        return requires.push(endpoint);
-      }
-      if (db.relations.has_relation_for_endpoint(endpoint)) {
-        return;
-      }
-      requires.push(endpoint);
-    });
-
-    // Process origin provides endpoints, a bit simpler, as they are
-    // always one to many.
-    endpointsMap[appId].provides.forEach(pdata => {
-      provides.push(convert(appId, pdata));
-    });
-
+    // First we process all the endpoints of the origin application to use a
+    // legacy format because this is what other legacy utils require.
+    const requires = appEndpoints.requires.map(rdata => convert(appId, rdata));
+    const provides = appEndpoints.provides.map(pdata => convert(appId, pdata));
     // Every non subordinate service implicitly provides this.
     if (!appIsSubordinate) {
       provides.push(convert(
           appId, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
-
-    // Now check every other service to see if it can be a valid target.
+    // Now check every other application to see if it can be a valid target.
     db.services.each(target => {
-      const targetId = target.get('id'),
-          targetProvides = endpointsMap[targetId].provides.concat();
+      const targetId = target.get('id');
+      const targetProvides = endpointsMap[targetId].provides.concat();
       const targetIsSubordinate = target.get('subordinate');
-      const targetSeries = models._getSeries(db, target);
-
-      // Ignore ourselves, peer relations are automatically
-      // established when a service is dendpointloyed. The gui only needs to
-      // concern itself with client/server relations.
-      if (targetId === appId) {
-        return;
-      }
-      // If the provided service is a subordinate it should only match targets
-      // with the same series. Or, if the target is a subordinate it needs to
-      // have a matching series to the provided app.
-      if (targetIsSubordinate || appIsSubordinate) {
-        // If there is no match beween the app and target series then exit out
-        // so this target does not get included in the list.
-        if (!appSeries.some(series => targetSeries.indexOf(series) > -1)) {
-          return;
-        }
-      }
-      // Process each of the service's required endpoints. It is only
-      // considered a valid target if it is not satisfied by an existing
-      // relation.
+      // Ignore ourselves, peer relations are automatically established when an
+      // application is deployed. The GUI only needs to concern itself with
+      // client/server relations.
+      if (targetId === appId) { return; }
+      // Process each of the application's required endpoints.
       endpointsMap[targetId].requires.forEach(rdata => {
         const endpoint = convert(targetId, rdata);
-        // Subordinates are excendpointtions again as they are a client
-        // to many services. We check if a subordinate relation
-        // exists between this subordinate endpoint and the origin
-        // service.
-        if (targetIsSubordinate &&
-          relationUtils.isSubordinateRelation(rdata)) {
-          if (db.relations.has_relation_for_endpoint(endpoint, appId)) {
+        // Subordinate relations are handled differently because they can be
+        // installed on the target machine depending on the defined scope.
+        if (targetIsSubordinate && relationUtils.isSubordinateRelation(rdata)) {
+          // In addition to checking if the relation is of type `subordinate`
+          // The `isSubordinateRelation` function also checks that the
+          // subordinate relation is of scope 'container' which means that
+          // the series must match between the target and source.
+          const targetSeries = models._getSeries(db, target);
+          if (!appSeries.some(series => targetSeries.indexOf(series) > -1)) {
             return;
           }
-        } else if (db.relations.has_relation_for_endpoint(endpoint)) {
+        }
+        // A relation between two applications can only be completed once on
+        // the same interface.
+        if (db.relations.has_relation_for_endpoint(endpoint, appId)) {
           return;
         }
         // If the origin provides it then it is a valid target.

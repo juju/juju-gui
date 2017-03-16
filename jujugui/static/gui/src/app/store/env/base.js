@@ -441,7 +441,7 @@ YUI.add('juju-env-base', function(Y) {
      * @return {undefined} Fire an event only.
      */
     on_message: function(evt) {
-      this.fire('msg', Y.JSON.parse(evt.data));
+      this.fire('msg', JSON.parse(evt.data));
     },
 
     /**
@@ -494,7 +494,7 @@ YUI.add('juju-env-base', function(Y) {
     */
     setCredentials: function(credentials) {
       module.sessionStorage.setItem(
-          'credentials', Y.JSON.stringify(credentials));
+          'credentials', JSON.stringify(credentials));
     },
 
     /**

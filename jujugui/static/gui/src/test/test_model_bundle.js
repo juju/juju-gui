@@ -169,36 +169,6 @@ describe('The bundle model', function() {
     assert.equal(instance.constructor.entityType, 'bundle');
   });
 
-  it('parses author name correctly', function() {
-    instance = new models.Bundle(data);
-    var revisions = instance.get('revisions');
-    assert.equal('Jorge O. Castro', revisions[1].authors[0].name);
-    assert.equal('jorge@ubuntu.com', revisions[1].authors[0].email);
-  });
-
-  it('has the revnos in reverse order', function() {
-    instance = new models.Bundle(data);
-    var commits = instance.get('revisions');
-    assert.equal(4, commits[0].revno);
-    assert.equal(3, commits[1].revno);
-    assert.equal(2, commits[2].revno);
-  });
-
-  it('has the correct date in GMT', function() {
-    instance = new models.Bundle(data);
-    // IE doesn't format 03 but as just 3. They also end in UTC vs GMT. So we
-    // regex the match to say this is close enough to work in each browser.
-    var expected = 'Thu 2014-03-06 11:39:13 -0500';
-    var commits = instance.get('revisions');
-    assert.equal(commits[0].date, expected);
-  });
-
-  it('has the commit message', function() {
-    instance = new models.Bundle(data);
-    var commits = instance.get('revisions');
-    assert.equal(commits[0].message, '  Bump charm revision.\n');
-  });
-
   it('parses full name-email string', function() {
     instance = new models.Bundle();
     var parts = instance.parseNameEmail(

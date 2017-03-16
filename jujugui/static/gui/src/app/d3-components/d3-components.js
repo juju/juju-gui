@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('d3-components', function(Y) {
   var d3 = Y.namespace('d3'),
       ns = Y.namespace('d3-components'),
-      L = Y.Lang;
+      utils = Y.namespace('juju.views.utils');
 
   var Module = Y.Base.create('Module', Y.Base, [], {
     _defaultEvents: {
@@ -162,17 +162,17 @@ YUI.add('d3-components', function(Y) {
     _normalizeHandler: function(handler, module, selector) {
       var result = {};
 
-      if (L.isString(handler)) {
+      if (typeof(handler) === 'string') {
         result.callback = module[handler];
         result.phase = 'on';
       }
 
-      if (L.isObject(handler)) {
+      if (utils.isObject(handler)) {
         result.phase = handler.phase || 'on';
         result.callback = handler.callback;
       }
 
-      if (L.isString(result.callback)) {
+      if (typeof(result.callback) === 'string') {
         result.callback = module[result.callback];
       }
 
@@ -180,7 +180,7 @@ YUI.add('d3-components', function(Y) {
         //console.error('No Event handler for', selector, module.name);
         return;
       }
-      if (!L.isFunction(result.callback)) {
+      if (typeof(result.callback) !== 'function') {
         console.error('Unable to resolve a proper callback for',
                       selector, handler, module.name, result);
         return;
@@ -233,7 +233,7 @@ YUI.add('d3-components', function(Y) {
         Object.keys(handlers).forEach(trigger => {
           const handler = self._normalizeHandler(
             handlers[trigger], module, selector);
-          if (L.isValue(handler)) {
+          if (utils.isValue(handler)) {
             _bindEvent(trigger, handler.callback,
                        container, selector, handler.context);
           }
@@ -545,4 +545,6 @@ YUI.add('d3-components', function(Y) {
     'base',
     'array-extras',
     'event',
-    'event-resize']});
+    'event-resize',
+    'juju-view-utils'
+]});

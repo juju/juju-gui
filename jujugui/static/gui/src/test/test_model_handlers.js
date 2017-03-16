@@ -58,6 +58,11 @@ describe('Juju delta handlers', function() {
           'public-address': 'example.com',
           'private-address': '10.0.0.1',
           subordinate: false,
+          'port-ranges': [{
+            'from-port': 9000, 'to-port': 10000, protocol: 'udp'
+          }, {
+            'from-port': 443, 'to-port': 443, protocol: 'tcp'
+          }],
           ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
@@ -71,7 +76,11 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
         assert.strictEqual(unit.subordinate, false, 'subordinate');
-        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
+        assert.deepEqual(unit.portRanges, [{
+          from: 9000, to: 10000, protocol: 'udp', single: false
+        }, {
+          from: 443, to: 443, protocol: 'tcp', single: true
+        }]);
       };
 
       it('creates a unit in the database (global list)', function() {
@@ -1007,29 +1016,6 @@ describe('Juju delta handlers utilities', function() {
       data.forEach(item => {
         assert.equal(item, cleanUpEntityTags(item));
       });
-    });
-
-  });
-
-  describe('Go Juju ports converter', function() {
-    var convertOpenPorts;
-
-    before(function() {
-      convertOpenPorts = utils.convertOpenPorts;
-    });
-
-    it('correctly returns a list of ports', function() {
-      var ports = [
-        {number: 80, protocol: 'tcp'},
-        {number: 42, protocol: 'udp'}
-      ];
-      assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
-    });
-
-    it('returns an empty list if there are no ports', function() {
-      assert.deepEqual([], convertOpenPorts([]));
-      assert.deepEqual([], convertOpenPorts(null));
-      assert.deepEqual([], convertOpenPorts(undefined));
     });
 
   });

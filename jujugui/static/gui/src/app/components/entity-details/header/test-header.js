@@ -82,9 +82,6 @@ describe('EntityHeader', function() {
                     className="link"
                     target="_blank">test-owner</a>
                 </li>
-                <li>
-                  {'Latest version (#'}{123}{')'}
-                </li>
                 {[<li key="trusty" className="entity-header__series">
                   trusty
                 </li>]}
@@ -268,7 +265,7 @@ describe('EntityHeader', function() {
       </li>);
     assert.deepEqual(
       output.props.children.props.children.props.children[0]
-        .props.children[2].props.children[3], expected);
+        .props.children[2].props.children[2], expected);
   });
 
   it('displays an add to model button', function() {

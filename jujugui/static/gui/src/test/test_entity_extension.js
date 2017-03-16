@@ -43,11 +43,6 @@ describe('Entity Extension', function() {
       name: 'foo-bar',
       description: 'A test description.',
       revision_id: 132,
-      latest_revision: {
-        id: 132,
-        url: '/foobar-132',
-        full_id: 'foobar-123'
-      },
       downloads: '0',
       is_approved: false,
       revisions: [],
@@ -88,11 +83,6 @@ describe('Entity Extension', function() {
       downloads: '0',
       id: '~owner/foobar',
       revision_id: 132,
-      latest_revision: {
-        id: 132,
-        url: '/foobar-132',
-        full_id: 'foobar-123'
-      },
       storeId: 'cs:~owner/foobar-132',
       name: 'foo-bar',
       owner: 'owner',
@@ -117,11 +107,6 @@ describe('Entity Extension', function() {
       owner: 'foobar-charmers',
       entityType: 'bundle',
       revision_id: '132',
-      latest_revision: {
-        id: 132,
-        url: '/foobar-132',
-        full_id: 'foobar-123'
-      },
       applications: [],
       machineCount: 2,
       serviceCount: 3,
@@ -135,11 +120,6 @@ describe('Entity Extension', function() {
       downloads: '0',
       id: 'foobar',
       revision_id: '132',
-      latest_revision: {
-        id: 132,
-        url: '/foobar-132',
-        full_id: 'foobar-123'
-      },
       storeId: 'cs:~owner/foobar-132',
       machineCount: 2,
       name: 'foo-bar',

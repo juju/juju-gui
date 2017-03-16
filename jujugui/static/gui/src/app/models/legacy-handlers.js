@@ -65,24 +65,22 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     unitLegacyInfo: function(db, action, change) {
-      // Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
-      var convertOpenPorts = function(ports) {
-        if (!ports) {
-          return [];
-        }
-        return ports.map(port => {
-          return port.Number + '/' + port.Protocol;
-        });
-      };
-
-      var unitData = {
+      const ports = change.Ports || [];
+      const unitData = {
         id: change.Name,
         charmUrl: change.CharmURL,
         service: change.Application || change.Service,
         machine: change.MachineId,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
-        open_ports: convertOpenPorts(change.Ports),
+        portRanges: ports.map(port => {
+          return {
+            from: port.Number,
+            to: port.Number,
+            protocol: port.Protocol,
+            single: true
+          };
+        }),
         // Since less recent versions of juju-core (<= 1.20.7) do not include
         // the Subordinate field in the mega-watcher for units, the following
         // attribute could be undefined.

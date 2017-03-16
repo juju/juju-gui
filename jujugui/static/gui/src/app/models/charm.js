@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
+  var utils = Y.namespace('juju.views.utils');
   var charmIdRe = /^(?:(\w+):)?(?:~([\w-\.]+)\/)?(?:(\w+)\/)?([\w-\.]+?)(?:-(\d+|HEAD))?$/;  // eslint-disable-line max-len
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
@@ -181,7 +182,7 @@ YUI.add('juju-charm-models', function(Y) {
         throw (
             'Only use the "read" action; "' + action + '" not supported.');
       }
-      if (Y.Lang.isValue(options.get_charm)) {
+      if (utils.isValue(options.get_charm)) {
         // This is an env.
         options.get_charm(this.get('id'), function(response) {
           if (response.err) {
@@ -222,9 +223,9 @@ YUI.add('juju-charm-models', function(Y) {
       }
       Object.keys(data).forEach(key => {
         const value = data[key];
-        if (!Y.Lang.isValue(value) ||
+        if (!utils.isValue(value) ||
             !self.attrAdded(key) ||
-            Y.Lang.isValue(self.get(key))) {
+            utils.isValue(self.get(key))) {
           delete data[key];
         }
       });
@@ -402,29 +403,6 @@ YUI.add('juju-charm-models', function(Y) {
       changelog: {
         value: {}
       },
-      //XXX jcsackett Aug 7 2013 This attribute is only needed until we turn
-      // on the service inspector. It's just used by the charm view you get when
-      // inspecting a service, and should be ripped out (along with tests) when
-      // we remove that view.
-      charm_path: {
-        /**
-         * Generate the charm store path from the attributes of the charm.
-         *
-         * @method getter
-         *
-         */
-        getter: function() {
-          var owner = this.get('owner');
-          var revision = this.get('revision');
-          revision = Y.Lang.isValue(revision) ? '-' + revision : '';
-          return [
-            (owner ? '~' + owner : 'charms'),
-            this.get('series'),
-            (this.get('package_name') + revision),
-            'json'
-          ].filter(function(val) { return val; }).join('/');
-        }
-      },
       /**
        * Object of data about the source for this charm including bugs link,
        * log, revisions, etc.
@@ -592,7 +570,6 @@ YUI.add('juju-charm-models', function(Y) {
       },
       is_approved: {},
       is_subordinate: {},
-      latest_revision: {},
       maintainer: {},
       /*
         API related metadata information for this charm object.
@@ -712,7 +689,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @method scheme.setter
          */
         setter: function(val) {
-          if (!Y.Lang.isValue(val)) {
+          if (!utils.isValue(val)) {
             val = 'cs';
           }
           return val;
@@ -733,7 +710,7 @@ YUI.add('juju-charm-models', function(Y) {
         getter: function() {
           var owner = this.get('owner');
           var revision = this.get('revision');
-          revision = Y.Lang.isValue(revision) ? '-' + revision : '';
+          revision = utils.isValue(revision) ? '-' + revision : '';
           return [
             (owner ? '~' + owner : ''),
             this.get('series'),
@@ -876,6 +853,7 @@ YUI.add('juju-charm-models', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'juju-view-utils',
     'model',
     'model-list',
     'entity-extension'

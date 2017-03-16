@@ -48,6 +48,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -78,6 +79,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -92,6 +94,7 @@ describe('DeploymentCredential', function() {
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const props = instance.props;
     var expected = (
       <div>
         <juju.components.ExpandingRow
@@ -101,6 +104,7 @@ describe('DeploymentCredential', function() {
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
+            addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
@@ -123,6 +127,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         credential="lxd_admin@local_default"
@@ -189,6 +194,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={null}
         editable={true}
@@ -203,6 +209,7 @@ describe('DeploymentCredential', function() {
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const props = instance.props;
     var expected = (
       <div>
         <juju.components.ExpandingRow
@@ -212,6 +219,7 @@ describe('DeploymentCredential', function() {
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
+            addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={null}
@@ -232,6 +240,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -292,6 +301,7 @@ describe('DeploymentCredential', function() {
     jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -317,6 +327,7 @@ describe('DeploymentCredential', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -345,6 +356,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -405,6 +417,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -442,6 +455,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -457,6 +471,7 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     instance._handleCredentialChange('add-credential');
     var output = renderer.getRenderOutput();
+    const props = instance.props;
     var expected = (
       <div>
         <juju.components.ExpandingRow
@@ -466,6 +481,7 @@ describe('DeploymentCredential', function() {
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
+            addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
@@ -490,6 +506,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -514,6 +531,7 @@ describe('DeploymentCredential', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         credential={credential}

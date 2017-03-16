@@ -111,7 +111,10 @@ describe('MachineViewScaleUp', function() {
             <img alt="django"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            django
+            <div className="machine-view__scale-up-unit-name"
+              title="django">
+              django
+            </div>
             <input
               className="machine-view__scale-up-unit-input"
               disabled={false}
@@ -126,7 +129,10 @@ describe('MachineViewScaleUp', function() {
             <img alt="mysql"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            mysql
+            <div className="machine-view__scale-up-unit-name"
+              title="mysql">
+              mysql
+            </div>
             <input
               className="machine-view__scale-up-unit-input"
               disabled={false}
@@ -172,7 +178,10 @@ describe('MachineViewScaleUp', function() {
             <img alt="django"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            django
+            <div className="machine-view__scale-up-unit-name"
+              title="django">
+              django
+            </div>
             <input
               className="machine-view__scale-up-unit-input"
               disabled={true}
@@ -187,7 +196,10 @@ describe('MachineViewScaleUp', function() {
             <img alt="mysql"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            mysql
+            <div className="machine-view__scale-up-unit-name"
+              title="mysql">
+              mysql
+            </div>
             <input
               className="machine-view__scale-up-unit-input"
               disabled={true}

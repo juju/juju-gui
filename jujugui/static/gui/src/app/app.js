@@ -116,28 +116,18 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
-      'S-/': {
-        target: '#shortcut-help',
+      'S-1': {
+        target: '#shortcut-settings',
         toggle: true,
         callback: function(evt, target) {
-          // This could be its own view.
-          if (target && !target.getHTML().length) {
-            var bindings = [];
-            Object.keys(this.keybindings).forEach(k => {
-              const v = this.keybindings[k];
-              if (v.help && (v.condition === undefined ||
-                             v.condition.call(this) === true)) {
-                // TODO: translate keybindings to
-                // human <Alt> m
-                // <Control> <Shift> N (note caps)
-                // also 'g then i' style
-                bindings.push({key: k, label: v.label || k, help: v.help});
-              }
-            }, this);
+          const shortcutHelp = Y.one('#shortcut-help');
+          if (shortcutHelp) {
+            shortcutHelp.hide();
+          }
 
+          if (target && !target.getHTML().length) {
             ReactDOM.render(
-              <window.juju.components.Shortcuts
-                bindings={bindings}
+              <window.juju.components.Settings
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
                 forceContainers={localStorage.getItem('force-containers')} />,
@@ -163,9 +153,44 @@ YUI.add('juju-gui', function(Y) {
                       node.getAttribute('name'), node.get('value'));
                 }
               });
-              // Force the GUI to reload so the settings take effect.
-              window.location.reload();
             });
+
+            target.one('.close').on('click', function(ev) {
+              Y.one('#shortcut-settings').hide();
+            });
+          }
+        },
+        help: 'GUI Settings',
+        label: 'Shift + !'
+      },
+      'S-/': {
+        target: '#shortcut-help',
+        toggle: true,
+        callback: function(evt, target) {
+          const shortcutSettings = Y.one('#shortcut-settings');
+          if (shortcutSettings) {
+            shortcutSettings.hide();
+          }
+
+          // This could be its own view.
+          if (target && !target.getHTML().length) {
+            var bindings = [];
+            Object.keys(this.keybindings).forEach(k => {
+              const v = this.keybindings[k];
+              if (v.help && (v.condition === undefined ||
+                             v.condition.call(this) === true)) {
+                // TODO: translate keybindings to
+                // human <Alt> m
+                // <Control> <Shift> N (note caps)
+                // also 'g then i' style
+                bindings.push({key: k, label: v.label || k, help: v.help});
+              }
+            }, this);
+
+            ReactDOM.render(
+              <window.juju.components.Shortcuts
+                bindings={bindings} />,
+              target.getDOMNode());
 
             target.one('.close').on('click', function(ev) {
               Y.one('#shortcut-help').hide();
@@ -202,6 +227,7 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
+          Y.one('#shortcut-settings').hide();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -653,7 +679,7 @@ YUI.add('juju-gui', function(Y) {
         // You can then use the token once until it expires, within two
         // minutes of this writing.
         var querystring = this.location.search.substring(1);
-        var qs = Y.QueryString.parse(querystring);
+        var qs = views.utils.parseQueryString(querystring);
         var authtoken = qs.authtoken || '';
         if (authtoken || authtoken.length) {
           // De-dupe if necessary.
@@ -1009,8 +1035,10 @@ YUI.add('juju-gui', function(Y) {
           this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = () => {
-        return legacy ? this.env.get('connected') :
-          this.controllerAPI.get('connected');
+        if (legacy) {
+          return this.env && this.env.get('connected');
+        }
+        return this.controllerAPI && this.controllerAPI.get('connected');
       };
       const getDischargeToken = () => {
         return window.localStorage.getItem('discharge-token');
@@ -1230,12 +1258,26 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _renderAccount: function(state, next) {
+      const controllerAPI = this.controllerAPI;
+      if (!controllerAPI || !controllerAPI.userIsAuthenticated) {
+        // If the controller isn't ready yet then don't render anything.
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
-          getUser={this.payment.getUser.bind(this.payment)}
+          getUser={this.payment && this.payment.getUser.bind(this.payment)}
+          getCloudCredentialNames={
+            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
+          getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
+            views.utils)}
+          listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          revokeCloudCredential={
+            controllerAPI.revokeCloudCredential.bind(controllerAPI)}
+          showPay={window.juju_config.payFlag || false}
+          user={controllerAPI.getCredentials().user}
           userInfo={this._getUserInfo(state)} />,
         document.getElementById('top-page-container'));
       next();
@@ -2799,7 +2841,7 @@ YUI.add('juju-gui', function(Y) {
       // Doing that is usually responsibility of a separate system
       // (most of the times, it is Juju Quickstart).
       var querystring = this.location.search.substring(1);
-      var qs = Y.QueryString.parse(querystring);
+      var qs = views.utils.parseQueryString(querystring);
       var changesToken = qs.changestoken || '';
       if (changesToken || changesToken.length) {
         // De-dupe if necessary.
@@ -3379,6 +3421,7 @@ YUI.add('juju-gui', function(Y) {
     'logout-component',
     'notification-list',
     'panel-component',
+    'settings',
     'sharing',
     'shortcuts',
     'usso-login-link',

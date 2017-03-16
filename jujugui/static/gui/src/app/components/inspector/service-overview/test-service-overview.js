@@ -33,6 +33,7 @@ describe('ServiceOverview', function() {
     fakeService = {
       get: sinon.stub()
     };
+    fakeService.get.withArgs('charm').returns('cs:django');
     fakeService.get.withArgs('units').returns({ toArray: () => [] });
     fakeService.get.withArgs('deleted').returns(false);
     fakeService.get.withArgs('pending').returns(false);
@@ -61,6 +62,7 @@ describe('ServiceOverview', function() {
     const getStub = sinon.stub();
     getStub.withArgs('activePlan')
       .throws('it should not fetch this if no metrics');
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('name').throws('it should not fetch this if no metrics');
     getStub.withArgs('plans').throws('it should not fetch this if no metrics');
     getStub.withArgs('units').returns({
@@ -104,6 +106,7 @@ describe('ServiceOverview', function() {
     const setStub = sinon.stub();
     const getStub = sinon.stub();
     getStub.withArgs('activePlan').returns(undefined);
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('name').returns('servicename');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
@@ -153,6 +156,7 @@ describe('ServiceOverview', function() {
     const planList = [{plan: 'list'}];
     const getStub = sinon.stub();
     getStub.withArgs('activePlan').returns(activePlan);
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('name').throws('it should not request the service name');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
@@ -192,6 +196,7 @@ describe('ServiceOverview', function() {
     const getStub = sinon.stub();
     getStub.withArgs('activePlan')
       .throws('it should not fetch this for Juju 1');
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('name').throws('it should not fetch this for Juju 1');
     getStub.withArgs('plans').throws('it should not fetch this for Juju 1');
     getStub.withArgs('units').returns({
@@ -476,6 +481,7 @@ describe('ServiceOverview', function() {
 
   it('shows the relations action if there are relations', function() {
     const getStub = sinon.stub();
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
@@ -622,7 +628,7 @@ describe('ServiceOverview', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
-    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('charm').returns('cs:xenial/django-42');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
@@ -647,7 +653,7 @@ describe('ServiceOverview', function() {
         key="Change version"
         title="Change version"
         linkAction={output.props.children[1].props.children[5].props.linkAction}
-        linkTitle="cs:demo"
+        linkTitle="django/xenial/42"
         icon="change-version"
         action={output.props.children[1].props.children[5].props.action}
         valueType={undefined}
@@ -718,6 +724,7 @@ describe('ServiceOverview', function() {
   it('shows the plans action if there are plans', function() {
     const setAttrs = sinon.stub();
     const getStub = sinon.stub();
+    getStub.withArgs('charm').returns('cs:django');
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])

@@ -13,18 +13,27 @@
   }
 
   &-unit-icon {
-    width: 24px;
+    width: 24px;  // Connected to the unit name width calc.
     height: 24px;
-    margin-right: 10px;
-    vertical-align: bottom;
+    margin-right: 10px;  // Connected to the unit name width calc.
+  }
+
+  &-unit-name {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    // Leave space for width + padding/margin of icon and input.
+    width: calc(100% - 34px - 67px);
   }
 
   &-unit-input[type="number"] {
     float: right;
     margin-top: -2px;
+    margin-left: 10px;  // Connected to the unit name width calc.
     padding-bottom: 4px;
     padding-top: 4px;
     text-align: right;
-    width: 57px;
+    width: 57px;  // Connected to the unit name width calc.
   }
 }

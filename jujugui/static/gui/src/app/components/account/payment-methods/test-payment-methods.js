@@ -42,8 +42,8 @@ describe('AccountPaymentMethod', () => {
         username="spinach" />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div>
-        <h2 className="account__title2 twelve-col">
+      <div className="account__section">
+        <h2 className="account__title twelve-col">
           Payment details
         </h2>
         <juju.components.Spinner />
@@ -65,8 +65,8 @@ describe('AccountPaymentMethod', () => {
         username="spinach" />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div>
-        <h2 className="account__title2 twelve-col">
+      <div className="account__section">
+        <h2 className="account__title twelve-col">
           Payment details
         </h2>
         <ul className="user-profile__list twelve-col">
@@ -91,6 +91,27 @@ describe('AccountPaymentMethod', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('can render when there is no user', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, null);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={sinon.stub()}
+        getUser={getUser}
+        username="spinach" />, true);
+    const output = component.getRenderOutput();
+    const expected = (
+      <div className="account__section">
+        <h2 className="account__title twelve-col">
+          Payment details
+        </h2>
+        <div>
+          No payment methods available.
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render when there are no payment methods', () => {
     const getUser = sinon.stub().callsArgWith(1, null, {
       paymentMethods: []
@@ -103,8 +124,8 @@ describe('AccountPaymentMethod', () => {
         username="spinach" />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div>
-        <h2 className="account__title2 twelve-col">
+      <div className="account__section">
+        <h2 className="account__title twelve-col">
           Payment details
         </h2>
         <div>
