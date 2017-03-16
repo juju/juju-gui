@@ -39,7 +39,7 @@ YUI.add('create-model-button', function() {
 
     _createNewModel: function() {
       const props = this.props;
-      if (this.props.disabled) {
+      if (props.disabled) {
         return;
       }
       // We want to explicitly close the profile when switching to a new

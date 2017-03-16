@@ -163,7 +163,8 @@ YUI.add('env-list', function() {
           disabled={!canAddModels}
           changeState={this.props.changeState}
           switchModel={this.props.switchModel}
-          action={this._handleNewModelClick} />;
+          action={this._handleNewModelClick}
+        />;
       }
       return (
         <juju.components.Panel
