@@ -1,3 +1,23 @@
+- 2.4.4:
+
+   - New model switcher which sorts based on last accessed.
+   ->
+     If a large number of ports are opened by a charm the inspector now shows
+     them as ranges instead of individual ports.
+   - New loading indicator for the GUI startup sequence.
+   - Keyboard shortcuts have been moved to `Shift + ?`.
+   - GUI Settings config has been moved to `Shift + !`.
+   ->
+     (Fix) Subordinates relation scope is properly respected when creating
+     relations with both a global and container scopes.
+   - (Fix) Requires relation endpoints can now be satisfied multiple times.
+   - (Fix) Bundle exports will no longer improperly export boolean values.
+   - (Fix) Show IP address in inspector even if no ports are available.
+   - (Fix) Changing charm versions in the inspector now uses the new charm ids.
+   - (Fix) Assumes @external domain if none is supplied while sharing.
+   - (Fix) Hitting escape now closes the store.
+   - (Fix) Do not show the sharing icon unless sharing is available.
+
 - 2.4.3:
 
     - (Fix) Header links now correctly show the appropriate user profiles.
