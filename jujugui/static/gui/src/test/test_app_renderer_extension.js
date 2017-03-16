@@ -69,7 +69,6 @@ describe('App Renderer Extension', function() {
       listModelsWithInfo: sinon.stub()
     };
 
-    renderer.set('sandbox', false);
     renderer._getAuth = sinon.stub().returns({user: 'test'});
 
     renderer.state = {
@@ -129,14 +128,6 @@ describe('App Renderer Extension', function() {
 
     it('hides the switcher when facade versions are not set', function() {
       renderer.controllerAPI.findFacadeVersion = sinon.stub().returns(null);
-      renderer._renderBreadcrumb();
-      var props = createElementStub.lastCall.args[1];
-      assert.equal(props['showEnvSwitcher'], false,
-                   'The showEnvSwitcher prop was not set properly.');
-    });
-
-    it('hides the switcher when in sandbox mode', function() {
-      renderer.set('sandbox', true);
       renderer._renderBreadcrumb();
       var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,

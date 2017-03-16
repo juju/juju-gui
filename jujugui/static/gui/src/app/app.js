@@ -53,15 +53,6 @@ YUI.add('juju-gui', function(Y) {
     Y.Event.EventTracker
   ];
   var JujuGUI = Y.Base.create('juju-gui', Y.App, extensions, {
-    /*
-      Extension properties
-    */
-
-    defaultNamespace: 'charmbrowser',
-    /*
-      End extension properties
-    */
-
     /**
      * Views
      *
@@ -493,16 +484,7 @@ YUI.add('juju-gui', function(Y) {
         bundleService: this.get('bundleService')
       };
       let controllerOptions = Object.assign({}, modelOptions);
-      if (this.get('sandbox')) {
-        modelOptions = this.createSandboxConnection(
-          Object.assign({}, modelOptions));
-        controllerOptions = this.createSandboxConnection(
-          Object.assign({}, controllerOptions));
-      } else {
-        // The GUI is connected to a real Juju environment. Instantiate a Web
-        // handler allowing to perform asynchronous HTTPS requests to Juju.
-        modelOptions.webHandler = new environments.web.WebHandler();
-      }
+      modelOptions.webHandler = new environments.web.WebHandler();
       let modelAPI, controllerAPI;
       if (this.isLegacyJuju()) {
         modelAPI = new environments.GoLegacyEnvironment(modelOptions);
@@ -748,42 +730,6 @@ YUI.add('juju-gui', function(Y) {
       }
       this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       this.state.bootstrap();
-    },
-
-    /**
-      Creates a sandbox connection backend for use with the GoJujuAPI.
-
-      @method createSandboxConnection
-      @param {Object} cfg The configuration object to use and modify with the
-        sandbox connection instance.
-      @return {Object} A modified version of the passed in cfg which
-        contains the sandbox connection.
-    */
-    createSandboxConnection: function(cfg) {
-      cfg.socket_url = this.get('sandboxSocketURL');
-      let environments = juju.environments;
-      let sandboxModule = environments.sandbox;
-      const fakebackend = new environments.FakeBackend({
-        charmstore: this.get('charmstore')
-      });
-      if (cfg.user && cfg.password) {
-        let credentials = fakebackend.get('authorizedUsers');
-        credentials['user-' + cfg.user] = cfg.password;
-        fakebackend.set('authorizedUsers', credentials);
-      }
-      cfg.conn = new sandboxModule.ClientConnection({
-        juju: new sandboxModule.GoJujuAPI({
-          state: fakebackend,
-          socket_url: cfg.socket_url,
-          bundleService: cfg.bundleService
-        })
-      });
-      // Instantiate a fake Web handler, which simulates the
-      // request/response communication between the GUI and the juju-core
-      // HTTPS API.
-      cfg.webHandler =
-        new environments.web.WebSandbox({state: fakebackend});
-      return cfg;
     },
 
     /**
@@ -1067,10 +1013,6 @@ YUI.add('juju-gui', function(Y) {
       environment the GUI is executing in.
     */
     _renderLoginOutLink: function() {
-      if (this.get('sandbox')) {
-        // Do not show the logout link if the user is in sandbox mode.
-        return;
-      }
       const controllerAPI = this.controllerAPI;
       const linkContainerId = 'profile-link-container';
       const linkContainer = document.getElementById(linkContainerId);
@@ -1393,23 +1335,6 @@ YUI.add('juju-gui', function(Y) {
             deploy: null
           }
         });
-        return;
-      }
-      // The beta sign-up component is displayed in sandbox mode at the
-      // beginning of the deployment flow.
-      const flowDisplayed = state.gui.deploy === 'flow';
-      const cookieExists =
-          document.cookie.indexOf('beta-signup-seen=true') > -1;
-      if (!flowDisplayed && this.get('sandbox') && !cookieExists) {
-        ReactDOM.render(
-          <window.juju.components.DeploymentSignup
-            changeState={this.state.changeState.bind(this.state)}
-            exportEnvironmentFile={
-              utils.exportEnvironmentFile.bind(utils, db,
-                env.findFacadeVersion('Application') === null)}
-            modelName={modelName}
-            staticURL={window.juju_config.staticURL} />,
-          document.getElementById('deployment-container'));
         return;
       }
       const changesUtils = this.changesUtils;
@@ -2877,22 +2802,12 @@ YUI.add('juju-gui', function(Y) {
     */
     createSocketURL: function(template, uuid, server, port) {
       let baseUrl = '';
-      const sandbox = this.get('sandbox');
-      if (template[0] === '/' || sandbox) {
-        // We either are in sandbox mode or only the WebSocket path is passed.
-        // In both cases, we need to calculate the base URL.
+      if (template[0] === '/') {
+        // The WebSocket path is passed so we need to calculate the base URL.
         const schema = this.get('socket_protocol') || 'wss';
         baseUrl = schema + '://' + window.location.hostname;
         if (window.location.port !== '') {
           baseUrl += ':' + window.location.port;
-        }
-        if (sandbox) {
-          // We don't actually use a WebSocket in sandbox mode; create a
-          // placeholder that makes it reasonably clear that this isn't real.
-          if (template === this.get('controllerSocketTemplate')) {
-            return baseUrl + '/sandbox-controller';
-          }
-          return baseUrl + '/sandbox';
         }
       }
       const defaults = this.get('apiAddress').replace('wss://', '').split(':');
@@ -2923,9 +2838,6 @@ YUI.add('juju-gui', function(Y) {
       // clearDB=true should really be preserveDB=false by default.
       socketUrl, username, password, callback, reconnect=!!socketUrl,
       clearDB=true) {
-      if (this.get('sandbox')) {
-        console.log('switching models is not supported in sandbox');
-      }
       console.log('switching model connection');
       if (username && password) {
         // We don't always get a new username and password when switching
@@ -3390,12 +3302,9 @@ YUI.add('juju-gui', function(Y) {
     'juju-endpoints-controller',
     'juju-env-bakery',
     'juju-env-base',
-    'juju-env-fakebackend',
     'juju-env-api',
     'juju-env-legacy-api',
-    'juju-env-sandbox',
     'juju-env-web-handler',
-    'juju-env-web-sandbox',
     'juju-models',
     'jujulib-utils',
     'net-utils',

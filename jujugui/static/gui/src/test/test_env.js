@@ -21,43 +21,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Base Environment', function() {
-    var requires = ['juju-env-base', 'juju-env-sandbox', 'json-stringify'];
-    var environments, juju, sandboxModule, ClientConnection;
+    var environments, juju;
 
     before(function(done) {
-      YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use('juju-env-base', function(Y) {
         juju = Y.namespace('juju');
         environments = juju.environments;
-        sandboxModule = Y.namespace('juju.environments.sandbox');
-        ClientConnection = sandboxModule.ClientConnection;
         done();
       });
     });
 
     it('calls "open" on connection if available.', function() {
-      var conn = new ClientConnection({
-        juju: {open: function() {}, close: function() {}}
-      });
-      var env = new environments.BaseEnvironment({conn: conn});
-      assert.isFalse(conn.connected);
-      assert.isFalse(env.get('connected'));
+      const conn= {
+        open: sinon.stub(),
+        close: sinon.stub()
+      };
+      const env = new environments.BaseEnvironment({conn: conn});
       env.connect();
-      assert.isTrue(conn.connected);
-      assert.isTrue(env.get('connected'));
-      env.close();
+      assert.equal(conn.open.callCount, 1);
       env.destroy();
     });
 
     it('calls "cleanup" when the connection is closed', function() {
-      let closed = false;
-      const conn = new ClientConnection({
-        juju: {
-          open: function() {},
-          close: function() {
-            closed = true;
-          }
-        }
-      });
+      const conn = {
+        open: sinon.stub(),
+        close: sinon.stub()
+      };
       const env = new environments.BaseEnvironment({conn: conn});
       env.connect();
       // Simulate the connection is authenticated.
@@ -67,12 +56,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.cleanup = function(done) {
         called = true;
         // The connection is still open.
-        assert.strictEqual(closed, false, 'connection unexpectedly closed');
+        assert.strictEqual(
+          conn.close.callCount, 0, 'connection unexpectedly closed');
         // Close the connection.
         done();
         // The underlaying WebSocket connection has been closed as well, and
         // login data has been properly cleaned up.
-        assert.strictEqual(closed, true, 'connection not closed');
+        assert.strictEqual(conn.close.callCount, 1, 'connection not closed');
         assert.strictEqual(env.userIsAuthenticated, false);
         assert.strictEqual(env.getCredentials().areAvailable, false);
       };
@@ -92,7 +82,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('uses the module-defined sessionStorage.', function() {
-      var conn = new ClientConnection({juju: {open: function() {}}});
+      const conn = {
+        open: sinon.stub(),
+        close: sinon.stub()
+      };
       var env = new environments.BaseEnvironment({conn: conn});
       var original = environments.sessionStorage;
       var setItemValue = {};
@@ -138,9 +131,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       let baseModel;
 
       beforeEach(() => {
-        const conn = new ClientConnection({
-          juju: {open: function() {}, close: function() {}}
-        });
+        const conn = {
+          open: sinon.stub(),
+          close: sinon.stub()
+        };
         baseModel = new environments.BaseEnvironment({conn: conn});
       });
 
