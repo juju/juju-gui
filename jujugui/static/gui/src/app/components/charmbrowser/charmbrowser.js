@@ -156,6 +156,7 @@ YUI.add('charmbrowser-component', function() {
                 type={search.type}
                 sort={search.sort}
                 series={search.series}
+                promulgatedOnly={true}
                 provides={search.provides}
                 requires={search.requires}
                 owner={search.owner}

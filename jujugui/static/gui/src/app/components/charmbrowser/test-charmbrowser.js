@@ -73,8 +73,8 @@ describe('Charmbrowser', function() {
     var output = renderer.getRenderOutput();
     var expected = (
         <juju.components.Panel
-          instanceName="white-box"
           clickAction={instance._close}
+          instanceName="white-box"
           focus={false}
           visible={true}>
           <div className="charmbrowser"
@@ -90,6 +90,7 @@ describe('Charmbrowser', function() {
               sort={undefined}
               type={undefined}
               series={undefined}
+              promulgatedOnly={true}
               provides={undefined}
               requires={undefined}
               owner={undefined}

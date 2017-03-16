@@ -27,6 +27,7 @@ YUI.add('search-results', function(Y) {
       getName: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       owner: React.PropTypes.string,
+      promulgatedOnly: React.PropTypes.bool,
       provides: React.PropTypes.string,
       query: React.PropTypes.string,
       requires: React.PropTypes.string,
@@ -181,12 +182,43 @@ YUI.add('search-results', function(Y) {
       } else {
         activeComponent = 'search-results';
       }
+
+      // Splitting everything is great however we need to keep community charms
+      // that do not have a promulgated version
+      const communityOutliers = communityResults.filter(
+        function(communityResult) {
+          let communitySeriesLength = communityResult.series ?
+            communityResult.series.length : 0;
+          let promulgatedResult = promulgatedResults.filter(
+            function(promulgatedResult) {
+              let promulgatedSeriesLength = promulgatedResult.series ?
+                promulgatedResult.series.length : 0;
+              // If name, type and number of series match
+              // This is your promulgatedResult
+              if (promulgatedResult.name === communityResult.name &&
+                  promulgatedResult.type === communityResult.type &&
+                  promulgatedSeriesLength === communitySeriesLength){
+                return true;
+              }
+            }
+          );
+
+          return (promulgatedResult.length === 0 ? true : false);
+        }
+      );
+
+      const mergedResults = promulgatedResults.concat(
+        communityOutliers
+      );
+
       var data = {
         text: this.props.query,
         solutionsCount: results.length,
         communityResults: communityResults,
-        promulgatedResults: promulgatedResults
+        promulgatedResults: promulgatedResults,
+        mergedResults: mergedResults
       };
+
       // These need to be set separately, seemingly due to a React quirk.
       this.setState({waitingForSearch: false});
       this.setState({data: data});
@@ -375,7 +407,9 @@ YUI.add('search-results', function(Y) {
                   </div>
                   <div className="entity-search-results">
                     {this._generateResultsList(
-                      data.promulgatedResults, data.communityResults)}
+                      data.promulgatedResults,
+                      data.communityResults,
+                      data.mergedResults)}
                   </div>
                 </div>
               </div>
@@ -476,10 +510,17 @@ YUI.add('search-results', function(Y) {
       @param {Boolean} promulgated Whether to show a promulgated list.
       @returns {String} The collection of class names.
     */
-    _generateResultsList: function(promulgated, community) {
+    _generateResultsList: function(promulgated, community, merged) {
       let title = 'Recommended';
-      let results = promulgated;
-      if (!promulgated.length) {
+      let results = [];
+
+      if (this.props.promulgatedOnly) {
+        results = promulgated;
+      } else {
+        results = merged.length ? merged : results;
+      }
+
+      if (!results.length) {
         title = 'Community';
         results = community;
       }
