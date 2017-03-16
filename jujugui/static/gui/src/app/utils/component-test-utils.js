@@ -189,11 +189,6 @@ var jsTestUtils = {
         promulgated: true,
         id: 'django-cluster',
         revision_id: 123,
-        latest_revision: {
-          id: 123,
-          url: 'django-cluster/123',
-          full_id: 'cs:django-cluster-123'
-        },
         type: 'bundle',
         entityType: 'bundle',
         iconPath: 'data:image/gif;base64,',
@@ -235,11 +230,6 @@ var jsTestUtils = {
         promulgated: true,
         id: 'cs:django',
         revision_id: 123,
-        latest_revision: {
-          id: 123,
-          url: 'django/123',
-          full_id: 'cs:django-123'
-        },
         type: 'charm',
         entityType: 'charm',
         iconPath: 'data:image/gif;base64,',

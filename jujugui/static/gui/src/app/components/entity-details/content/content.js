@@ -426,7 +426,7 @@ YUI.add('entity-content', function() {
     },
 
     render: function() {
-      var entityModel = this.props.entityModel;
+      const entityModel = this.props.entityModel;
       return (
         <div className="entity-content">
           {this._generateDescription(entityModel)}

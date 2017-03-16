@@ -258,38 +258,6 @@ YUI.add('entity-header', function() {
         </li>);
     },
 
-    /**
-     When the latest version link is click, go to that version.
-   */
-    _handleRevisionClick: function(evt) {
-      evt.stopPropagation();
-      this.props.changeState({
-        search: null,
-        store: this.props.entityModel.get('latest_revision').url
-      });
-    },
-
-    /**
-      Generates the list item to link to the latest version
-      or display the latest version
-   */
-    _generateLatestRevision: function() {
-      const entityModel = this.props.entityModel;
-      const latest_revision = entityModel.get('latest_revision');
-      const revision_id = entityModel.get('revision_id');
-
-      if (latest_revision.id !== revision_id) {
-        return (<li>
-          <a className="link" onClick={this._handleRevisionClick}>
-            Latest version (#{latest_revision.id})
-          </a>
-        </li>);
-      } else {
-        return (<li>
-          Latest version (#{latest_revision.id})
-        </li>);
-      }
-    },
 
     /**
       Generates the list of series. Supports bundles, multi-series and
@@ -344,7 +312,6 @@ YUI.add('entity-header', function() {
                     <a href={ownerUrl} className="link"
                       target="_blank">{entity.owner}</a>
                   </li>
-                  {this._generateLatestRevision()}
                   {this._generateSeriesList()}
                   {this._generateCounts()}
                 </ul>

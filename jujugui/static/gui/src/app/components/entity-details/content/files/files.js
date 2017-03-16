@@ -178,11 +178,10 @@ YUI.add('entity-files', function() {
     },
 
     render: function() {
-      var entityModel = this.props.entityModel;
-      var files = entityModel.get('files');
-      var name = (entityModel.get('entityType') === 'bundle')?
-        entityModel.get('name'):entityModel.get('full_name');
-      var archiveUrl = `${this.props.apiUrl}/${name}/archive`;
+      const entityModel = this.props.entityModel;
+      const files = entityModel.get('files');
+      const url = window.jujulib.URL.fromLegacyString(entityModel.get('id'));
+      const archiveUrl = `${this.props.apiUrl}/${url.legacyPath()}/archive`;
       return (
         <div className="entity-files section" id="files">
           <h3 className="section__title">

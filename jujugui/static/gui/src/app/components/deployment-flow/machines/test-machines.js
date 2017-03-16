@@ -101,8 +101,7 @@ describe('DeploymentMachines', function() {
     var expected = (
       <div>
         <p className="deployment-machines__message">
-          These machines will be provisioned on&nbsp;
-          {'My cloud'}.
+          These machines will be provisioned on {'My cloud'}.&nbsp;
           {'You will incur a charge from your cloud provider.'}
         </p>
         <ul className="deployment-machines__list">
@@ -174,14 +173,27 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{name: 'local'}}
+        cloud={{name: 'localhost'}}
         machines={machines} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <p className="deployment-machines__message">
-        These machines will be provisioned on&nbsp;
-        {'local'}.
+        These machines will be provisioned on {'localhost'}.&nbsp;
         {''}
+      </p>);
+    assert.deepEqual(output.props.children[0], expected);
+  });
+
+  it('can render with unknown cloud', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentMachines
+        acl={acl}
+        machines={machines} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <p className="deployment-machines__message">
+        These machines will be provisioned on {'the cloud'}.&nbsp;
+        {'You will incur a charge from your cloud provider.'}
       </p>);
     assert.deepEqual(output.props.children[0], expected);
   });

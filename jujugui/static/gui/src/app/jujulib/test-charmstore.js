@@ -133,8 +133,10 @@ describe('jujulib charmstore', function() {
             User: 'hatch'
           },
           'extra-info': {
-            'bzr-revisions': 5,
             'bzr-url': 'cs:precise/mongodb'
+          },
+          'revision-info': {
+            Revisions: ['rev1', 'rev2', 'rev4']
           },
           'charm-config': {
             Options: {
@@ -177,7 +179,7 @@ describe('jujulib charmstore', function() {
           metric: 'metric'
         },
         owner: 'hatch',
-        revisions: 5,
+        revisions: ['rev1', 'rev2', 'rev4'],
         code_source: {
           location: 'cs:precise/mongodb'
         },
@@ -244,8 +246,10 @@ describe('jujulib charmstore', function() {
             User: 'hatch'
           },
           'extra-info': {
-            'bzr-revisions': 5,
             'bzr-url': 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
+          },
+          'revision-info': {
+            Revisions: ['rev1', 'rev2']
           },
           stats: {
             ArchiveDownloadCount: 10
@@ -265,7 +269,7 @@ describe('jujulib charmstore', function() {
         is_approved: false,
         name: 'mongodb-cluster',
         owner: 'hatch',
-        revisions: 5,
+        revisions: ['rev1', 'rev2'],
         services: '',
         unitCount: 7
       });

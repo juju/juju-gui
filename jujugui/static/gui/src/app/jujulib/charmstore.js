@@ -147,20 +147,6 @@ var module = module;
     },
 
     /**
-     * Parse a revision string to create an object of info
-     * @param  {String} revision e.g. 'cs:openstack-dashboard-243'
-     * @return {Object}          id: number,
-     */
-    _expandRevision: function(revision_id, charm_name) {
-      const id = parseInt(revision_id.split('-').pop());
-      return {
-        id: id,
-        full_id: revision_id,
-        url: `${charm_name}/${id}`
-      };
-    },
-
-    /**
       The response object returned from the apiv4 search endpoint is a complex
       object with golang style keys. This parses the complex object and
       returns something that we use to instantiate new charm and bundle models.
@@ -175,6 +161,7 @@ var module = module;
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
           commonInfo = meta['common-info'],
+          revisionInfo = meta['revision-info'] || {},
           bundleMeta = meta['bundle-metadata'],
           owner = meta.owner && meta.owner.User;
 
@@ -186,7 +173,7 @@ var module = module;
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
         owner: owner,
-        revisions: extraInfo['bzr-revisions'] || [],
+        revisions: revisionInfo.Revisions || [],
         code_source: {
           location: extraInfo['bzr-url']
         }
@@ -255,12 +242,6 @@ var module = module;
       // for the addPendingResources call.
       if (meta.resources && meta.resources.length) {
         processed.resources = meta.resources;
-      }
-
-      if (meta['revision-info']) {
-        processed['latest_revision'] =
-          this._expandRevision(meta['revision-info']['Revisions'][0],
-          processed.name);
       }
 
       if (meta['id-revision']) {
