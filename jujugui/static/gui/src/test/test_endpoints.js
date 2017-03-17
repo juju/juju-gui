@@ -26,16 +26,9 @@ describe('Relation endpoints logic', function() {
       env, ecs, sample_env;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['array-extras',
-                               'io',
-                               'json-parse',
-                               'juju-tests-utils',
-                               'juju-views',
-                               'juju-models',
-                               'juju-gui',
-                               'juju-tests-utils',
-                               'juju-controllers',
-                               'environment-change-set'],
+    Y = YUI(GlobalConfig).use(['array-extras', 'io', 'json-parse',
+      'juju-tests-utils', 'juju-views', 'juju-models', 'juju-gui',
+      'juju-tests-utils', 'juju-controllers', 'environment-change-set'],
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
@@ -219,8 +212,8 @@ describe('Relation endpoints logic', function() {
     var available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-        ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
-         'rsyslog-forwarder-ha', 'wordpress']);
+      ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
+        'rsyslog-forwarder-ha', 'wordpress']);
 
     service = db.services.getById('rsyslog-forwarder-ha');
     available = models.getEndpoints(service, app.endpointsController);
@@ -228,8 +221,8 @@ describe('Relation endpoints logic', function() {
 
     available_svcs.sort();
     available_svcs.should.eql(
-        ['mediawiki', 'memcached', 'mysql', 'puppet',
-         'puppetmaster', 'rsyslog', 'wordpress']);
+      ['mediawiki', 'memcached', 'mysql', 'puppet',
+        'puppetmaster', 'rsyslog', 'wordpress']);
   });
 
 });
@@ -239,10 +232,8 @@ describe('Endpoints map', function() {
   var models, controller, EndpointsController, charm;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-models',
-                               'juju-tests-utils',
-                               'juju-endpoints-controller',
-                               'juju-controllers'],
+    YUI(GlobalConfig).use(['juju-models', 'juju-tests-utils',
+      'juju-endpoints-controller', 'juju-controllers'],
     function(Y) {
       models = Y.namespace('juju.models');
       EndpointsController = Y.namespace('juju.EndpointsController');
@@ -397,12 +388,9 @@ describe('Endpoints map handlers', function() {
       env, factory, juju, jujuConfig, utils, Y, _renderComponents;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui',
-                               'juju-tests-utils',
-                               'juju-tests-factory',
-                               'juju-endpoints-controller',
-                               'juju-controllers',
-                               'datasource-local'],
+    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',
+      'juju-tests-factory', 'juju-endpoints-controller',
+      'juju-controllers', 'datasource-local'],
     function(Y) {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
@@ -617,12 +605,9 @@ describe('Application config handlers', function() {
       destroyMe;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui',
-                               'juju-tests-utils',
-                               'juju-endpoints-controller',
-                               'juju-controllers',
-                               'datasource-local',
-                               'environment-change-set'],
+    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',
+      'juju-endpoints-controller', 'juju-controllers',
+      'datasource-local', 'environment-change-set'],
     function(Y) {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');

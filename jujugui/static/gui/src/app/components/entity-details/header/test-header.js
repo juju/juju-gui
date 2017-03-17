@@ -257,11 +257,11 @@ describe('EntityHeader', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <li>
-        {3} {"applications"},
+        {3} {'applications'},
         &nbsp;
-        {2} {"machines"},
+        {2} {'machines'},
         &nbsp;
-        {5} {"units"}
+        {5} {'units'}
       </li>);
     assert.deepEqual(
       output.props.children.props.children.props.children[0]

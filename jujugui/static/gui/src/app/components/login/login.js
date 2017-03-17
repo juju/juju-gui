@@ -163,8 +163,8 @@ YUI.add('login-component', function() {
               </label>
               <juju.components.GenericButton
                 submit={true}
-                title={"Login"}
-                type={"positive"} />
+                title={'Login'}
+                type={'positive'} />
               {this._generateUSSOLink()}
             </form>
           </div>

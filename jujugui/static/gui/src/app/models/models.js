@@ -2086,8 +2086,8 @@ YUI.add('juju-models', function(Y) {
           if (!model) {return null;}
           if (Array.isArray(model)) {return model;}
           return Y.mix(
-              [model.name,
-               (model instanceof Y.Model) ? model.get('id') : model.id]);
+            [model.name,
+              (model instanceof Y.Model) ? model.get('id') : model.id]);
         }},
       // Whether or not the notification is related to the delta stream.
       isDelta: {value: false},

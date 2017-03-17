@@ -306,13 +306,13 @@ YUI.add('juju-topology-service', function(Y) {
           return 'font-size:' + d.h *
               (name_size / service_height) + 'px';
         },
-        'x': function(d) { return d.w / 2; },
-        'y': function(d) {
-          // Number derived from service assets:
-          // padding-top 26px when asset is 224px.
-          return d.h * (name_padding / service_height) + d.h *
-              (name_size / service_height) / 2;
-        }
+          'x': function(d) { return d.w / 2; },
+          'y': function(d) {
+            // Number derived from service assets:
+            // padding-top 26px when asset is 224px.
+            return d.h * (name_padding / service_height) + d.h *
+                (name_size / service_height) / 2;
+          }
         });
 
     node.select('.name').text(

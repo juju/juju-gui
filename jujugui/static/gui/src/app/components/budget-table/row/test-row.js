@@ -459,46 +459,46 @@ describe('BudgetTableRow', function() {
                 </div>
               </div>
               <ul className="budget-table__plans twelve-col no-margin-bottom">
-                {[<li className="budget-table__plan twelve-col"
-                  key={0}>
-                  <div className="six-col">
-                    <h4>plan 1</h4>
-                    <p>The basic support plan</p>
-                  </div>
-                  <div className="two-col">
-                    $5
-                  </div>
-                  <div className="two-col">
-                    Recommended allocation: $550.
-                  </div>
-                  <div className="two-col last-col">
-                    <juju.components.GenericButton
-                      action={instance._toggle}
-                      disabled={false}
-                      type="neutral"
-                      title="Select plan" />
-                  </div>
-                </li>,
-                <li className="budget-table__plan twelve-col"
-                  key={1}>
-                  <div className="six-col">
-                    <h4>plan 2</h4>
-                    <p>The expensive support plan</p>
-                  </div>
-                  <div className="two-col">
-                    $1,000,000
-                  </div>
-                  <div className="two-col">
-                    Recommended allocation: $550.
-                  </div>
-                  <div className="two-col last-col">
-                    <juju.components.GenericButton
-                      action={instance._toggle}
-                      disabled={false}
-                      type="neutral"
-                      title="Select plan" />
-                  </div>
-                </li>]}
+                {[
+                  <li className="budget-table__plan twelve-col" key={0}>
+                    <div className="six-col">
+                      <h4>plan 1</h4>
+                      <p>The basic support plan</p>
+                    </div>
+                    <div className="two-col">
+                      $5
+                    </div>
+                    <div className="two-col">
+                      Recommended allocation: $550.
+                    </div>
+                    <div className="two-col last-col">
+                      <juju.components.GenericButton
+                        action={instance._toggle}
+                        disabled={false}
+                        type="neutral"
+                        title="Select plan" />
+                    </div>
+                  </li>,
+                  <li className="budget-table__plan twelve-col" key={1}>
+                    <div className="six-col">
+                      <h4>plan 2</h4>
+                      <p>The expensive support plan</p>
+                    </div>
+                    <div className="two-col">
+                      $1,000,000
+                    </div>
+                    <div className="two-col">
+                      Recommended allocation: $550.
+                    </div>
+                    <div className="two-col last-col">
+                      <juju.components.GenericButton
+                        action={instance._toggle}
+                        disabled={false}
+                        type="neutral"
+                        title="Select plan" />
+                    </div>
+                  </li>
+                ]}
               </ul>
               <p className="budget-table__plan-notice twelve-col">
                 By setting an allocation and selecting a plan you agree to the
@@ -586,46 +586,46 @@ describe('BudgetTableRow', function() {
                 </div>
               </div>
               <ul className="budget-table__plans twelve-col no-margin-bottom">
-                {[<li className="budget-table__plan twelve-col"
-                  key={0}>
-                  <div className="six-col">
-                    <h4>plan 1</h4>
-                    <p>The basic support plan</p>
-                  </div>
-                  <div className="two-col">
-                    $5
-                  </div>
-                  <div className="two-col">
-                    Recommended allocation: $550.
-                  </div>
-                  <div className="two-col last-col">
-                    <juju.components.GenericButton
-                      action={instance._toggle}
-                      disabled={true}
-                      type="neutral"
-                      title="Select plan" />
-                  </div>
-                </li>,
-                <li className="budget-table__plan twelve-col"
-                  key={1}>
-                  <div className="six-col">
-                    <h4>plan 2</h4>
-                    <p>The expensive support plan</p>
-                  </div>
-                  <div className="two-col">
-                    $1,000,000
-                  </div>
-                  <div className="two-col">
-                    Recommended allocation: $550.
-                  </div>
-                  <div className="two-col last-col">
-                    <juju.components.GenericButton
-                      action={instance._toggle}
-                      disabled={true}
-                      type="neutral"
-                      title="Select plan" />
-                  </div>
-                </li>]}
+                {[
+                  <li className="budget-table__plan twelve-col" key={0}>
+                    <div className="six-col">
+                      <h4>plan 1</h4>
+                      <p>The basic support plan</p>
+                    </div>
+                    <div className="two-col">
+                      $5
+                    </div>
+                    <div className="two-col">
+                      Recommended allocation: $550.
+                    </div>
+                    <div className="two-col last-col">
+                      <juju.components.GenericButton
+                        action={instance._toggle}
+                        disabled={true}
+                        type="neutral"
+                        title="Select plan" />
+                    </div>
+                  </li>,
+                  <li className="budget-table__plan twelve-col" key={1}>
+                    <div className="six-col">
+                      <h4>plan 2</h4>
+                      <p>The expensive support plan</p>
+                    </div>
+                    <div className="two-col">
+                      $1,000,000
+                    </div>
+                    <div className="two-col">
+                      Recommended allocation: $550.
+                    </div>
+                    <div className="two-col last-col">
+                      <juju.components.GenericButton
+                        action={instance._toggle}
+                        disabled={true}
+                        type="neutral"
+                        title="Select plan" />
+                    </div>
+                  </li>
+                ]}
               </ul>
               <p className="budget-table__plan-notice twelve-col">
                 By setting an allocation and selecting a plan you agree to the

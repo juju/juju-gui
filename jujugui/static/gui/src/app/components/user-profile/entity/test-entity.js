@@ -66,7 +66,7 @@ describe('UserProfileEntity', () => {
         <div>
           <div className="expanding-row__expanded-header twelve-col">
             <div className="six-col no-margin-bottom">
-              {undefined}{"sandbox"}
+              {undefined}{'sandbox'}
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
@@ -85,7 +85,7 @@ describe('UserProfileEntity', () => {
             {undefined}
             {undefined}
             <div className="three-col last-col">
-              Owner: {"test-owner"}
+              Owner: {'test-owner'}
             </div>
             {undefined}
             {undefined}
@@ -127,7 +127,7 @@ describe('UserProfileEntity', () => {
         <div>
           <div className="expanding-row__expanded-header twelve-col">
             <div className="six-col no-margin-bottom">
-              {undefined}{"django-cluster"}
+              {undefined}{'django-cluster'}
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
@@ -218,7 +218,7 @@ describe('UserProfileEntity', () => {
         <div>
           <div className="expanding-row__expanded-header twelve-col">
             <div className="six-col no-margin-bottom">
-              {undefined}{"django-cluster"}
+              {undefined}{'django-cluster'}
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
@@ -319,7 +319,7 @@ describe('UserProfileEntity', () => {
           <div className={'expanding-row__expanded-content twelve-col ' +
             'no-margin-bottom'}>
             <div className="twelve-col last-col">
-              Series: {"trusty"}
+              Series: {'trusty'}
             </div>
             {undefined}
             {undefined}

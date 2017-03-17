@@ -1899,11 +1899,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {containerType: 'lxc', parentId: '1'}
       ], null, {immediate: true});
       var expectedMachineParams = [
-          {jobs: [machineJobs.HOST_UNITS]},
-          {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
-          {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
-          {jobs: [machineJobs.HOST_UNITS],
-           'container-type': 'lxc', 'parent-id': '1' }
+        {jobs: [machineJobs.HOST_UNITS]},
+        {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
+        {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
+        {jobs: [machineJobs.HOST_UNITS],
+          'container-type': 'lxc', 'parent-id': '1' }
       ];
       var expectedMsg = {
         'request-id': 1,

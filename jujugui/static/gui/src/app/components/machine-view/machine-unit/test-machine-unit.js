@@ -104,7 +104,7 @@ describe('MachineViewMachineUnit', function() {
             src="icon.svg"
             title="django/7" />
         </span>
-        {"django/7"}
+        {'django/7'}
         <juju.components.MoreMenu
           items={[{
             label: 'Destroy',

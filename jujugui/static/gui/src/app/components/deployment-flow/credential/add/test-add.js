@@ -159,65 +159,67 @@ describe('DeploymentCredentialAdd', function() {
                   label: 'jsonfile',
                   value: 'jsonfile'
                 }]} />
-              {[<juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-id"
-                label="Client ID"
-                multiLine={undefined}
-                required={true}
-                ref="client-id"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-email"
-                label="Client e-mail address"
-                multiLine={undefined}
-                required={true}
-                ref="client-email"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="private-key"
-                label="Private key"
-                multiLine={true}
-                required={true}
-                ref="private-key"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="project-id"
-                label="Project ID"
-                multiLine={undefined}
-                required={false}
-                ref="project-id"
-                type={undefined}
-                validate={undefined} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="password"
-                label="Password"
-                multiLine={undefined}
-                required={false}
-                ref="password"
-                type="password"
-                validate={undefined} />]}
+              {[
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="client-id"
+                  label="Client ID"
+                  multiLine={undefined}
+                  required={true}
+                  ref="client-id"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="client-email"
+                  label="Client e-mail address"
+                  multiLine={undefined}
+                  required={true}
+                  ref="client-email"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="private-key"
+                  label="Private key"
+                  multiLine={true}
+                  required={true}
+                  ref="private-key"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="project-id"
+                  label="Project ID"
+                  multiLine={undefined}
+                  required={false}
+                  ref="project-id"
+                  type={undefined}
+                  validate={undefined} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="password"
+                  label="Password"
+                  multiLine={undefined}
+                  required={false}
+                  ref="password"
+                  type="password"
+                  validate={undefined} />
+              ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -308,32 +310,34 @@ describe('DeploymentCredentialAdd', function() {
             <div className="six-col">
               a message
               {undefined}
-              {[<juju.components.GenericInput
-                autocomplete={true}
-                disabled={false}
-                key="access-key"
-                label="The EC2 access key"
-                multiLine={undefined}
-                required={true}
-                ref="access-key"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={false}
-                disabled={false}
-                key="secret-key"
-                label="The EC2 secret key"
-                multiLine={undefined}
-                required={true}
-                ref="secret-key"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />]}
+              {[
+                <juju.components.GenericInput
+                  autocomplete={true}
+                  disabled={false}
+                  key="access-key"
+                  label="The EC2 access key"
+                  multiLine={undefined}
+                  required={true}
+                  ref="access-key"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={false}
+                  disabled={false}
+                  key="secret-key"
+                  label="The EC2 secret key"
+                  multiLine={undefined}
+                  required={true}
+                  ref="secret-key"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />
+              ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -434,52 +438,53 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-email"
-                label="Client e-mail address"
-                multiLine={undefined}
-                required={true}
-                ref="client-email"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="private-key"
-                label="Private key"
-                multiLine={true}
-                required={true}
-                ref="private-key"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="project-id"
-                label="Project ID"
-                multiLine={undefined}
-                required={false}
-                ref="project-id"
-                type={undefined}
-                validate={undefined} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="password"
-                label="Password"
-                multiLine={undefined}
-                required={false}
-                ref="password"
-                type="password"
-                validate={undefined} />]}
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="client-email"
+                  label="Client e-mail address"
+                  multiLine={undefined}
+                  required={true}
+                  ref="client-email"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="private-key"
+                  label="Private key"
+                  multiLine={true}
+                  required={true}
+                  ref="private-key"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="project-id"
+                  label="Project ID"
+                  multiLine={undefined}
+                  required={false}
+                  ref="project-id"
+                  type={undefined}
+                  validate={undefined} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={false}
+                  key="password"
+                  label="Password"
+                  multiLine={undefined}
+                  required={false}
+                  ref="password"
+                  type="password"
+                  validate={undefined} />
+              ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -667,65 +672,67 @@ describe('DeploymentCredentialAdd', function() {
                   label: 'jsonfile',
                   value: 'jsonfile'
                 }]} />
-              {[<juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={true}
-                key="client-id"
-                label="Client ID"
-                multiLine={undefined}
-                required={true}
-                ref="client-id"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={true}
-                key="client-email"
-                label="Client e-mail address"
-                multiLine={undefined}
-                required={true}
-                ref="client-email"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={true}
-                key="private-key"
-                label="Private key"
-                multiLine={true}
-                required={true}
-                ref="private-key"
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={true}
-                key="project-id"
-                label="Project ID"
-                multiLine={undefined}
-                required={false}
-                ref="project-id"
-                type={undefined}
-                validate={undefined} />,
-              <juju.components.GenericInput
-                autocomplete={undefined}
-                disabled={true}
-                key="password"
-                label="Password"
-                multiLine={undefined}
-                required={false}
-                ref="password"
-                type="password"
-                validate={undefined} />]}
+              {[
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={true}
+                  key="client-id"
+                  label="Client ID"
+                  multiLine={undefined}
+                  required={true}
+                  ref="client-id"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={true}
+                  key="client-email"
+                  label="Client e-mail address"
+                  multiLine={undefined}
+                  required={true}
+                  ref="client-email"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={true}
+                  key="private-key"
+                  label="Private key"
+                  multiLine={true}
+                  required={true}
+                  ref="private-key"
+                  type={undefined}
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={true}
+                  key="project-id"
+                  label="Project ID"
+                  multiLine={undefined}
+                  required={false}
+                  ref="project-id"
+                  type={undefined}
+                  validate={undefined} />,
+                <juju.components.GenericInput
+                  autocomplete={undefined}
+                  disabled={true}
+                  key="password"
+                  label="Password"
+                  multiLine={undefined}
+                  required={false}
+                  ref="password"
+                  type="password"
+                  validate={undefined} />
+              ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">

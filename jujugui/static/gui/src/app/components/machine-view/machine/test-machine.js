@@ -107,7 +107,7 @@ describe('MachineViewMachine', function() {
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          {2} unit{"s"}, {"wily, "} {"2x2GHz, 4.00GB, 2.00GB"}
+          {2} unit{'s'}, {'wily, '} {'2x2GHz, 4.00GB, 2.00GB'}
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
@@ -133,7 +133,7 @@ describe('MachineViewMachine', function() {
         </ul>
         <div className="machine-view__machine-drop-target">
           <div className="machine-view__machine-drop-message">
-            Add to {"new0"}
+            Add to {'new0'}
           </div>
         </div>
       </div>);
@@ -447,7 +447,7 @@ describe('MachineViewMachine', function() {
         </ul>
         <div className="machine-view__machine-drop-target">
           <div className="machine-view__machine-drop-message">
-            Add to {"new0"}
+            Add to {'new0'}
           </div>
         </div>
       </div>);
@@ -488,7 +488,7 @@ describe('MachineViewMachine', function() {
         units={units}/>);
     var expected = (
       <div className="machine-view__machine-hardware">
-        {2} unit{"s"}, {undefined} {"hardware details not available"}
+        {2} unit{'s'}, {undefined} {'hardware details not available'}
       </div>);
     assert.deepEqual(output.props.children[2], expected);
   });
@@ -565,7 +565,7 @@ describe('MachineViewMachine', function() {
         </ul>
         <div className="machine-view__machine-drop-target">
           <div className="machine-view__machine-drop-message">
-            Add to {"new0/lxc/0"}
+            Add to {'new0/lxc/0'}
           </div>
         </div>
       </div>);

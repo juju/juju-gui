@@ -844,19 +844,21 @@ describe('Configuration', function() {
           <div className="inspector-config__config-file">
             <juju.components.ButtonRow buttons={importButton} />
           </div>
-          {[<juju.components.StringConfig
-            disabled={true}
-            key="Config-option1"
-            ref="Config-option1"
-            option={option1}
-            config={option1key} />,
-          <juju.components.BooleanConfig
-            disabled={true}
-            key="Config-option2"
-            ref="Config-option2"
-            option={option2}
-            label="option2:"
-            config={option2key} />]}
+          {[
+            <juju.components.StringConfig
+              disabled={true}
+              key="Config-option1"
+              ref="Config-option1"
+              option={option1}
+              config={option1key} />,
+            <juju.components.BooleanConfig
+              disabled={true}
+              key="Config-option2"
+              ref="Config-option2"
+              option={option2}
+              label="option2:"
+              config={option2key} />
+          ]}
         </div>
         <juju.components.ButtonRow buttons={actionButtons} />
       </div>);

@@ -273,7 +273,7 @@ describe('SearchResults', function() {
           <div className="row no-padding-top">
             <div className="inner-wrapper list-block">
               <div className="twelve-col list-block__title no-margin-bottom">
-                Your search for &lsquo;{"mysql"}&rsquo; returned {4}{' '}
+                Your search for &lsquo;{'mysql'}&rsquo; returned {4}{' '}
                 results.
               </div>
               <div className="list-block__filters">
@@ -302,7 +302,7 @@ describe('SearchResults', function() {
               <div className="entity-search-results">
                 <div>
                   <h4>
-                    {"Recommended"}{' '}
+                    {'Recommended'}{' '}
                     <span className="count">({2})</span>
                   </h4>
                   <ul className="list-block__list">

@@ -1637,8 +1637,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           relationList = this.db.relations,
           result = {meta: {
             exportFormat: 1.0
-          },
-          applications: [], relations: []},
+          }, applications: [], relations: []},
           blackLists = {
             application: ['id', 'aggregated_status', 'clientId', 'initialized',
               'constraintsStr', 'destroyed', 'pending'],

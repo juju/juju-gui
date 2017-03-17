@@ -547,4 +547,4 @@ YUI.add('d3-components', function(Y) {
     'event',
     'event-resize',
     'juju-view-utils'
-]});
+  ]});

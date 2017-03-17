@@ -69,7 +69,7 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="93.20.93.20">
             <span>
-              {"93.20.93.20"}
+              {'93.20.93.20'}
             </span>
           </li>
         </ul>
@@ -79,7 +79,7 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="192.168.0.1">
             <span>
-              {"192.168.0.1"}
+              {'192.168.0.1'}
             </span>
           </li>
         </ul>
@@ -110,7 +110,7 @@ describe('UnitDetails', function() {
           <ul className="unit-details__list">
             <li className="unit-details__list-item" key="93.20.93.20">
               <span>
-                {"93.20.93.20"}
+                {'93.20.93.20'}
               </span>
             </li>
           </ul>
@@ -120,7 +120,7 @@ describe('UnitDetails', function() {
           <ul className="unit-details__list">
             <li className="unit-details__list-item" key="192.168.0.1">
               <span>
-                {"192.168.0.1"}
+                {'192.168.0.1'}
               </span>
             </li>
           </ul>
@@ -162,17 +162,17 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="93.20.93.20:9000-10000/udp">
             <span>
-              {"93.20.93.20:9000-10000/udp"}
+              {'93.20.93.20:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:443">
             <span>
-              {"93.20.93.20:443"}
+              {'93.20.93.20:443'}
             </span>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:8080">
             <span>
-              {"93.20.93.20:8080"}
+              {'93.20.93.20:8080'}
             </span>
           </li>
         </ul>
@@ -183,17 +183,17 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="192.168.0.1:9000-10000/udp">
             <span>
-              {"192.168.0.1:9000-10000/udp"}
+              {'192.168.0.1:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:443">
             <a href="https://192.168.0.1:443" target="_blank">
-              {"192.168.0.1:443"}
+              {'192.168.0.1:443'}
             </a>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:8080">
             <a href="http://192.168.0.1:8080" target="_blank">
-              {"192.168.0.1:8080"}
+              {'192.168.0.1:8080'}
             </a>
           </li>
         </ul>
@@ -245,17 +245,17 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="93.20.93.20:9000-10000/udp">
             <span>
-              {"93.20.93.20:9000-10000/udp"}
+              {'93.20.93.20:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:443">
             <a href="https://93.20.93.20:443" target="_blank">
-              {"93.20.93.20:443"}
+              {'93.20.93.20:443'}
             </a>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:8080">
             <a href="http://93.20.93.20:8080" target="_blank">
-              {"93.20.93.20:8080"}
+              {'93.20.93.20:8080'}
             </a>
           </li>
         </ul>
@@ -266,17 +266,17 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="192.168.0.1:9000-10000/udp">
             <span>
-              {"192.168.0.1:9000-10000/udp"}
+              {'192.168.0.1:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:443">
             <a href="https://192.168.0.1:443" target="_blank">
-              {"192.168.0.1:443"}
+              {'192.168.0.1:443'}
             </a>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:8080">
             <a href="http://192.168.0.1:8080" target="_blank">
-              {"192.168.0.1:8080"}
+              {'192.168.0.1:8080'}
             </a>
           </li>
         </ul>
@@ -302,11 +302,11 @@ describe('UnitDetails', function() {
           Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className='unit-details__property'>
-          Public addresses: {"none"}
+          Public addresses: {'none'}
         </p>
         {undefined}
         <p className='unit-details__property'>
-          IP addresses: {"none"}
+          IP addresses: {'none'}
         </p>
         {undefined}
       </div>);
@@ -346,22 +346,22 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="93.20.93.20:9000-10000/udp">
             <span>
-              {"93.20.93.20:9000-10000/udp"}
+              {'93.20.93.20:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:443">
             <span>
-              {"93.20.93.20:443"}
+              {'93.20.93.20:443'}
             </span>
           </li>
           <li className="unit-details__list-item" key="93.20.93.20:8080">
             <span>
-              {"93.20.93.20:8080"}
+              {'93.20.93.20:8080'}
             </span>
           </li>
         </ul>
         <p className='unit-details__property'>
-          IP addresses: {"none"}
+          IP addresses: {'none'}
         </p>
         {undefined}
       </div>);
@@ -396,7 +396,7 @@ describe('UnitDetails', function() {
           Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className='unit-details__property'>
-          Public addresses: {"none"}
+          Public addresses: {'none'}
         </p>
         {undefined}
         <p className="unit-details__property">
@@ -406,17 +406,17 @@ describe('UnitDetails', function() {
           <li className="unit-details__list-item"
             key="192.168.0.1:9000-10000/udp">
             <span>
-              {"192.168.0.1:9000-10000/udp"}
+              {'192.168.0.1:9000-10000/udp'}
             </span>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:443">
             <a href="https://192.168.0.1:443" target="_blank">
-              {"192.168.0.1:443"}
+              {'192.168.0.1:443'}
             </a>
           </li>
           <li className="unit-details__list-item" key="192.168.0.1:8080">
             <a href="http://192.168.0.1:8080" target="_blank">
-              {"192.168.0.1:8080"}
+              {'192.168.0.1:8080'}
             </a>
           </li>
         </ul>

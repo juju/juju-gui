@@ -1354,13 +1354,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           fauxController.endpointsMap = endpointsMap;
           fauxController.set('db', db);
           var view = new views.environment(
-              { container: container,
-                db: db,
-                endpointsController: fauxController,
-                env: env,
-                charmstore: fakeStore,
-                state: {changeState: sinon.stub()}
-              });
+            { container: container,
+              db: db,
+              endpointsController: fauxController,
+              env: env,
+              charmstore: fakeStore,
+              state: {changeState: sinon.stub()}
+            });
           var service = new models.Service({
             id: 'service-1',
             charm: 'precise/mysql-1'
@@ -1457,8 +1457,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-api',
-          'juju-view-utils'],
+        ['juju-views', 'juju-models', 'charmstore-api', 'juju-view-utils'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');

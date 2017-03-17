@@ -78,8 +78,8 @@ describe('LocalInspector', function() {
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
-            <p>File: {"apache2.zip"}</p>
-            <p>Size: {"2.00"}kb</p>
+            <p>File: {'apache2.zip'}</p>
+            <p>Size: {'2.00'}kb</p>
           </div>
           <ul className="local-inspector__list">
             <li>
@@ -168,8 +168,8 @@ describe('LocalInspector', function() {
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
-            <p>File: {"apache2.zip"}</p>
-            <p>Size: {"2.00"}kb</p>
+            <p>File: {'apache2.zip'}</p>
+            <p>Size: {'2.00'}kb</p>
           </div>
           <ul className="local-inspector__list">
             <li>
@@ -422,8 +422,8 @@ describe('LocalInspector', function() {
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
-            <p>File: {"apache2.zip"}</p>
-            <p>Size: {"2.00"}kb</p>
+            <p>File: {'apache2.zip'}</p>
+            <p>Size: {'2.00'}kb</p>
           </div>
           <ul className="local-inspector__list">
             <li>
