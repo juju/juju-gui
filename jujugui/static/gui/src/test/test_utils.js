@@ -928,14 +928,12 @@ describe('utilities', function() {
     it('can switch models', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        showConnectingMask: sinon.stub().withArgs(),
         state: {changeState: sinon.stub()}
       };
       const env = {set: sinon.stub()};
       const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel.call(app, env, model);
       assert.equal(utils._hidePopup.callCount, 1, '_hidePopup');
-      assert.equal(app.showConnectingMask.callCount, 1, 'showConnectingMask');
       assert.equal(app.state.changeState.callCount, 1, 'changeState');
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
@@ -952,7 +950,6 @@ describe('utilities', function() {
     it('changes to disconnected mode if model is missing', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        showConnectingMask: sinon.stub().withArgs(),
         state: {changeState: sinon.stub()}
       };
       const env = {set: sinon.stub()};
@@ -968,7 +965,6 @@ describe('utilities', function() {
     it('does not set root state to new if profile state exists', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        showConnectingMask: sinon.stub().withArgs(),
         state: {current: {profile: 'animal'}, changeState: sinon.stub()}
       };
       const env = {set: sinon.stub()};
@@ -1081,8 +1077,6 @@ describe('utilities', function() {
         createSocketURL: sinon.stub().returns('wss://socket-url'),
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
-        showConnectingMask: sinon.stub(),
-        hideConnectingMask: sinon.stub(),
         state: {
           changeState: sinon.stub()
         }

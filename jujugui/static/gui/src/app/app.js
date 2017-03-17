@@ -1051,13 +1051,11 @@ YUI.add('juju-gui', function(Y) {
           errorMessage={err}
           getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
-          hideSpinner={this.hideConnectingMask.bind(this)}
           isLegacyJuju={legacy}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          showSpinner={this.showConnectingMask.bind(this)}
           storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
@@ -2981,7 +2979,6 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
         this.db.fire('update');
@@ -3036,31 +3033,6 @@ YUI.add('juju-gui', function(Y) {
       var display = visibility ? 'block' : 'none';
       if (mask) {
         mask.style.display = display;
-      }
-    },
-
-    /**
-      Shows the connecting to Juju environment mask.
-
-      @method showConnectingMask
-    */
-    showConnectingMask: function() {
-      this.maskVisibility(true);
-      var msg = document.getElementById('loading-message');
-      if (msg) {
-        msg.style.display = 'block';
-      }
-    },
-
-    /**
-      Hides the connecting to Juju model mask.
-      @method hideConnectingMask
-    */
-    hideConnectingMask: function() {
-      this.maskVisibility(false);
-      var msg = document.getElementById('loading-message');
-      if (msg) {
-        msg.style.display = 'none';
       }
     },
 

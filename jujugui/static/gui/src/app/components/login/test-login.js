@@ -32,8 +32,6 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub();
     const sendPost = sinon.stub();
     const getDischargeToken = sinon.stub();
-    const showSpinner = sinon.stub();
-    const hideSpinner = sinon.stub();
     const charmstore = sinon.stub();
     const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -42,12 +40,10 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={false}
-        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
-        showSpinner={showSpinner}
       storeUser={storeUser} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -88,7 +84,6 @@ describe('LoginComponent', function() {
               title={'Login'}
               type={'positive'} />
             <juju.components.USSOLoginLink
-              callback={hideSpinner}
               charmstore={charmstore}
               displayType="button"
               getDischargeToken={getDischargeToken}
@@ -120,8 +115,6 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub();
     const sendPost = sinon.stub();
     const getDischargeToken = sinon.stub();
-    const showSpinner = sinon.stub();
-    const hideSpinner = sinon.stub();
     const charmstore = sinon.stub();
     const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -130,12 +123,10 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
-        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
-        showSpinner={showSpinner}
         storeUser={storeUser}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -177,7 +168,6 @@ describe('LoginComponent', function() {
               type={'positive'} />
             <juju.components.USSOLoginLink
               charmstore={charmstore}
-              callback={hideSpinner}
               displayType="button"
               getDischargeToken={getDischargeToken}
               gisf={true}
@@ -298,8 +288,6 @@ describe('LoginComponent', function() {
     const loginToController = sinon.stub().callsArg(0);
     const controllerIsConnected = sinon.stub().returns(true);
     const sendPost = sinon.stub();
-    const showSpinner = sinon.stub();
-    const hideSpinner = sinon.stub();
     const getDischargeToken = sinon.stub().returns('foo');
     const charmstore = sinon.stub();
     charmstore.bakery = sinon.stub();
@@ -311,35 +299,27 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
-        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
         sendPost={sendPost}
-        showSpinner={showSpinner}
         storeUser={storeUser} />);
     assert.equal(
       loginToController.callCount, 1, 'loginToController not called');
-    assert.equal(showSpinner.callCount, 1, 'spinner not shown');
-    assert.equal(hideSpinner.callCount, 1, 'spinner not stopped');
   });
 
   it('eventually fails auto login if controller does not connect', function() {
     var loginToController = sinon.stub();
     var controllerIsConnected = sinon.stub().returns(false);
     var sendPost = sinon.stub();
-    const showSpinner = sinon.stub();
-    const hideSpinner = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
         controllerIsConnected={controllerIsConnected}
         gisf={true}
-        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
-        sendPost={sendPost}
-        showSpinner={showSpinner} />);
+        sendPost={sendPost} />);
     assert.equal(
       loginToController.callCount, 0, 'loginToController not called');
   });

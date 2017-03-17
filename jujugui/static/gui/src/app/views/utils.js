@@ -1498,7 +1498,6 @@ YUI.add('juju-view-utils', function(Y) {
           name: model.name,
           owner: model.owner
         });
-        app.hideConnectingMask();
         callback(null);
       };
       app.set('modelUUID', model.uuid);
