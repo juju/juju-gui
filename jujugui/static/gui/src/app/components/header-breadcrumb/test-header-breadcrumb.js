@@ -53,6 +53,7 @@ describe('HeaderBreadcrumb', () => {
         authDetails={attrs.authDetails}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
+        loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
         modelName={attrs.modelName}
         modelOwner={attrs.modelOwner}
@@ -61,7 +62,7 @@ describe('HeaderBreadcrumb', () => {
         switchModel={switchModel}
       />, true);
     const output = renderer.getRenderOutput();
-    const userSection = output.props.children[0];
+    const userSection = output.props.children[1].props.children[0];
     let clickUser = null;
     if (userSection) {
       clickUser = userSection.props.children.props.onClick;
@@ -81,23 +82,26 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true,
     });
     const expectedOutput = (
-      <ul className="header-breadcrumb" data-username="who">
-        <li className="header-breadcrumb__list-item">
-          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
-            who
-          </a>
-        </li>
-        <li className="header-breadcrumb__list-item">
-          <window.juju.components.EnvSwitcher
-            acl={acl}
-            authDetails={{user: 'who@external', rootUserName: 'who'}}
-            changeState={changeState}
-            environmentName={'mymodel'}
-            humanizeTimestamp={humanizeTimestamp}
-            listModelsWithInfo={listModelsWithInfo}
-            switchModel={switchModel} />
-        </li>
-      </ul>
+      <div className="header-breadcrumb">
+        <div className="header-breadcrumb__loading">Loading model</div>
+        <ul className="header-breadcrumb__list" data-username="who">
+          <li className="header-breadcrumb__list-item">
+            <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+              who
+            </a>
+          </li>
+          <li className="header-breadcrumb__list-item">
+            <window.juju.components.EnvSwitcher
+              acl={acl}
+              authDetails={{user: 'who@external', rootUserName: 'who'}}
+              changeState={changeState}
+              environmentName={'mymodel'}
+              humanizeTimestamp={humanizeTimestamp}
+              listModelsWithInfo={listModelsWithInfo}
+              switchModel={switchModel} />
+          </li>
+        </ul>
+      </div>
     );
     assert.deepEqual(comp.output, expectedOutput);
   });
@@ -110,23 +114,26 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true
     });
     const expectedOutput = (
-      <ul className="header-breadcrumb" data-username="dalek">
-        <li className="header-breadcrumb__list-item">
-          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
-            rose
-          </a>
-        </li>
-        <li className="header-breadcrumb__list-item">
-          <window.juju.components.EnvSwitcher
-            acl={acl}
-            authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
-            changeState={changeState}
-            environmentName={'mymodel'}
-            humanizeTimestamp={humanizeTimestamp}
-            listModelsWithInfo={listModelsWithInfo}
-            switchModel={switchModel} />
-        </li>
-      </ul>
+      <div className="header-breadcrumb">
+        <div className="header-breadcrumb__loading">Loading model</div>
+        <ul className="header-breadcrumb__list" data-username="dalek">
+          <li className="header-breadcrumb__list-item">
+            <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+              rose
+            </a>
+          </li>
+          <li className="header-breadcrumb__list-item">
+            <window.juju.components.EnvSwitcher
+              acl={acl}
+              authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
+              changeState={changeState}
+              environmentName={'mymodel'}
+              humanizeTimestamp={humanizeTimestamp}
+              listModelsWithInfo={listModelsWithInfo}
+              switchModel={switchModel} />
+          </li>
+        </ul>
+      </div>
     );
     assert.deepEqual(comp.output, expectedOutput);
   });
@@ -140,14 +147,17 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true
     });
     const expectedOutput = (
-      <ul className="header-breadcrumb" data-username="dalek">
-        <li className="header-breadcrumb__list-item">
-          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
-            cyberman
-          </a>
-        </li>
-        {undefined}
-      </ul>
+      <div className="header-breadcrumb">
+        <div className="header-breadcrumb__loading">Loading model</div>
+        <ul className="header-breadcrumb__list" data-username="dalek">
+          <li className="header-breadcrumb__list-item">
+            <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+              cyberman
+            </a>
+          </li>
+          {null}
+        </ul>
+      </div>
     );
     assert.deepEqual(comp.output, expectedOutput);
   });
@@ -158,7 +168,8 @@ describe('HeaderBreadcrumb', () => {
       modelOwner: '',
       showEnvSwitcher: true
     });
-    assert.strictEqual(comp.output.props.children[0], undefined);
+    assert.strictEqual(comp.output.props.children[1].props.children[0],
+      null);
   });
 
   it('does not render the model switcher if told not to', () => {
@@ -168,7 +179,8 @@ describe('HeaderBreadcrumb', () => {
       modelOwner: '',
       showEnvSwitcher: false
     });
-    assert.strictEqual(comp.output.props.children[1], undefined);
+    assert.strictEqual(comp.output.props.children[1].props.children[1],
+      null);
   });
 
   it('does not render the model switcher when profile is visible', () => {
@@ -182,7 +194,8 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true
     });
     // There will be no third child if the envSwitcher is rendered
-    assert.equal(comp.output.props.children[1], undefined);
+    assert.strictEqual(comp.output.props.children[1].props.children[1],
+      null);
   });
 
   it('does not make the username linkable if we hide model switcher', () => {
@@ -192,7 +205,7 @@ describe('HeaderBreadcrumb', () => {
       modelOwner: '',
       showEnvSwitcher: false
     });
-    const userSection = comp.output.props.children[0];
+    const userSection = comp.output.props.children[1].props.children[0];
     assert.equal(
       userSection.props.children.props.className,
       'header-breadcrumb--link profile-disabled');
@@ -235,4 +248,16 @@ describe('HeaderBreadcrumb', () => {
     assert.strictEqual(args[0], username, 'showProfile user');
   };
 
+  it('applies the correct class when loading a model', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: 'dalek',
+      showEnvSwitcher: true,
+      loadingModel: true
+    });
+    const className = 'header-breadcrumb--loading-model';
+    const classPresent = comp.output.props.className.indexOf(className) >= 0;
+    assert.isTrue(classPresent);
+  });
 });

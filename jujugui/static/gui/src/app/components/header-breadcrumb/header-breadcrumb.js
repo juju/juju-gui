@@ -34,12 +34,12 @@ YUI.add('header-breadcrumb', function() {
       changeState: React.PropTypes.func.isRequired,
       humanizeTimestamp: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func,
+      loadingModel: React.PropTypes.bool,
       modelName: React.PropTypes.string,
       modelOwner: React.PropTypes.string,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,
-      switchModel: React.PropTypes.func.isRequired,
-      loadingModel: React.PropTypes.bool
+      switchModel: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function() {
@@ -140,6 +140,7 @@ YUI.add('header-breadcrumb', function() {
       if (auth && (auth.user || auth.loading)) {
         return this._buildProfile(auth.loading ? '...' : auth.rootUserName);
       }
+      return null;
     },
 
     /**

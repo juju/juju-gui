@@ -1,8 +1,8 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
 
+Copyright (C) 2015 Canonical Ltd.
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
 the Free Software Foundation.
@@ -30,9 +30,9 @@ YUI.add('model-actions', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      loadingModel: React.PropTypes.bool,
       renderDragOverNotification: React.PropTypes.func.isRequired,
       sharingVisibility: React.PropTypes.func.isRequired,
-      loadingModel: React.PropTypes.bool,
       userIsAuthenticated: React.PropTypes.bool
     },
 
