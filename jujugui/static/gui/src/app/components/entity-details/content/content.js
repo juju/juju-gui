@@ -243,7 +243,9 @@ YUI.add('entity-content', function() {
           <div className="row row--grey entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
-                <div className="intro" dangerouslySetInnerHTML={{__html: htmlDescription}}></div>
+                <div className="intro"
+                  dangerouslySetInnerHTML={{__html: htmlDescription}}>
+                </div>
               </div>
               {this._generateTags()}
             </div>

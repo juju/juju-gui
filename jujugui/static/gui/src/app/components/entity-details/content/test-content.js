@@ -49,7 +49,8 @@ describe('EntityContent', function() {
 
   it('can display a charm', function() {
     var apiUrl = 'http://example.com';
-    var renderMarkdown = sinon.spy();
+    const description = mockEntity.get('description');
+    var renderMarkdown = sinon.stub().returns(description);
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
@@ -82,7 +83,8 @@ describe('EntityContent', function() {
         <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <div className="intro">Django framework.</div>
+              <div className="intro"
+                dangerouslySetInnerHTML={{__html: description}}/>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
@@ -194,8 +196,9 @@ describe('EntityContent', function() {
 
   it('can display a charm with no options', function() {
     mockEntity.set('options', null);
+    const description = mockEntity.get('description');
     var apiUrl = 'http://example.com';
-    var renderMarkdown = sinon.spy();
+    var renderMarkdown = sinon.stub().returns(description);
     var getFile = sinon.spy();
     var pluralize = sinon.spy();
     var changeState = sinon.spy();
@@ -215,7 +218,8 @@ describe('EntityContent', function() {
         <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <div className="intro">Django framework.</div>
+              <div className="intro"
+                dangerouslySetInnerHTML={{__html: description}}/>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
