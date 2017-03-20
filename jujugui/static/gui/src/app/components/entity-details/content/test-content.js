@@ -790,4 +790,24 @@ describe('EntityContent', function() {
     const expected = (undefined);
     assert.deepEqual(output.props.children[1], expected);
   });
+
+  it('can render markdown in the description', function() {
+    // Note that this functional test is just a sanity check, not a
+    // comprehensive test of the markdown syntax.
+    mockEntity.set('description', 'A simple [link](http://google.com/).');
+    const output = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        apiUrl='http://example.com'
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={marked} />);
+    const description = output.props.children[0].props.children.props
+      .children[0].props.children;
+    const markupObject = description.props.dangerouslySetInnerHTML;
+    assert.equal(markupObject.__html,
+      '<p>A simple <a href="http://google.com/">link</a>.</p>\n');
+  })
 });
