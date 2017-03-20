@@ -240,14 +240,25 @@
   // scss-lint:disable IdSelector
   #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
     // scss-lint:enable IdSelector
-    bottom: 25px;
+    bottom: 20px !important;
     left: 10px;
     position: fixed;
   }
 
-  .model-actions__export,
-  .model-actions__import {
-    top: -6px;
+  .header-search--active {
+    .header-search__input {
+      width: 74%;
+    }
+  }
+
+  // scss-lint:disable IdSelector
+  #zoom-container { // sass-lint:disable-line no-ids, id-name-format
+    // scss-lint:enable IdSelector
+    display: none;
+  }
+
+  .popup__panel--narrow {
+    width: 100%;
     left: 0;
   }
 }
