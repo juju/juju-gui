@@ -113,7 +113,7 @@ describe('jujulib charmstore', function() {
   describe('_processEntityQueryData', function() {
 
     it('can properly transform v5 charm data', function() {
-      var data = {
+      const data = {
         Id: 'cs:trusty/mongodb-9',
         Meta: {
           'charm-metadata': {
@@ -157,6 +157,10 @@ describe('jujulib charmstore', function() {
               metric: 'metric'
             }
           },
+          published: {Info: [
+            {Channel: 'stable', Current: true},
+            {Channel: 'edge', Current: false},
+          ]},
           stats: {
             ArchiveDownloadCount: 10
           },
@@ -168,9 +172,14 @@ describe('jujulib charmstore', function() {
           }
         }
       };
-      var processed = charmstore._processEntityQueryData(data);
+      const processed = charmstore._processEntityQueryData(data);
       assert.deepEqual(processed, {
         id: 'cs:trusty/mongodb-9',
+        channels: [{
+          name: 'stable', current: true
+        }, {
+          name: 'edge', current: false
+        }],
         downloads: 10,
         entityType: 'charm',
         is_approved: true,
@@ -233,7 +242,7 @@ describe('jujulib charmstore', function() {
     });
 
     it('can properly transform v4 bundle data', function() {
-      var data = {
+      const data = {
         Id: 'cs:~charmers/bundle/mongodb-cluster-4',
         Meta: {
           'bundle-metadata': {
@@ -256,11 +265,12 @@ describe('jujulib charmstore', function() {
           }
         }
       };
-      var processed = charmstore._processEntityQueryData(data);
+      const processed = charmstore._processEntityQueryData(data);
       assert.deepEqual(processed, {
         code_source: {
           location: 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
         },
+        channels: [],
         deployerFileUrl: 'local/v5/~charmers/bundle/mongodb-cluster-4/' +
             'archive/bundle.yaml',
         downloads: 10,
@@ -544,14 +554,27 @@ describe('jujulib charmstore', function() {
 
     it('calls the correct path', function() {
       charmstore.getEntity('cs:foobar', sinon.stub());
-      var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
-      assert.equal(
-        path, 'local/v5/foobar/meta/any?include=bundle-metadata' +
+      const path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      const expectedPath = (
+        'local/v5/foobar/meta/any' +
+        '?include=bundle-metadata' +
         '&include=bundle-machine-count' +
-        '&include=charm-metadata&include=charm-config&include=common-info' +
-        '&include=id-revision&include=revision-info&include=manifest' +
-        '&include=stats&include=extra-info&include=tags&include=charm-metrics' +
-        '&include=owner&include=resources&include=supported-series');
+        '&include=charm-config' +
+        '&include=charm-metadata' +
+        '&include=charm-metrics' +
+        '&include=common-info' +
+        '&include=extra-info' +
+        '&include=id-revision' +
+        '&include=manifest' +
+        '&include=owner' +
+        '&include=published' +
+        '&include=resources' +
+        '&include=revision-info' +
+        '&include=stats' +
+        '&include=supported-series' +
+        '&include=tags'
+      );
+      assert.strictEqual(path, expectedPath);
     });
   });
 

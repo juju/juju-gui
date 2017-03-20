@@ -184,6 +184,7 @@ var jsTestUtils = {
         url: 'http://example.com/django-cluster',
         code_source: {location: 'lp:django-cluster/code'},
         downloads: 1000,
+        channels: [],
         machineCount: 2,
         owner: 'test-owner',
         promulgated: true,
@@ -226,6 +227,13 @@ var jsTestUtils = {
         url: 'http://example.com/django',
         code_source: {location: 'lp:django/code'},
         downloads: 1000,
+        channels: [{
+          name: 'stable', current: true
+        }, {
+          name: 'beta', current: false
+        }, {
+          name: 'candidate', current: true
+        }],
         owner: 'test-owner',
         promulgated: true,
         id: 'cs:django',

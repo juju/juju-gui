@@ -263,7 +263,7 @@ YUI.add('entity-header', function() {
       Generates the list of series. Supports bundles, multi-series and
       single-series charms.
 
-      @method_generateSeriesList
+      @return {Object} A react "li" element for each series.
     */
     _generateSeriesList: function() {
       var series = this.props.entityModel.get('series');
@@ -273,6 +273,23 @@ YUI.add('entity-header', function() {
       series = !Array.isArray(series) ? [series] : series;
       return series.map(series =>
         <li key={series} className="entity-header__series">{series}</li>);
+    },
+
+    /**
+      Generates the list of channels. Only currently active channels are shown.
+
+      @return {Object} A react "li" element for each active channel.
+    */
+    _generateChannelList: function() {
+      const channels = this.props.entityModel.get('channels').filter(ch => {
+        return ch.current;
+      });
+      const names = channels.map(ch => {
+        const name = ch.name;
+        // Capitalize channel names.
+        return name.charAt(0).toUpperCase() + name.slice(1);
+      }).join(', ');
+      return <li key={names} className="entity-header__channels">{names}</li>;
     },
 
     render: function() {
@@ -314,6 +331,7 @@ YUI.add('entity-header', function() {
                   </li>
                   {this._generateSeriesList()}
                   {this._generateCounts()}
+                  {this._generateChannelList()}
                 </ul>
                 <ul className="entity-header__social-list">
                   <li>

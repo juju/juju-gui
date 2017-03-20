@@ -163,11 +163,13 @@ var module = module;
           commonInfo = meta['common-info'],
           revisionInfo = meta['revision-info'] || {},
           bundleMeta = meta['bundle-metadata'],
+          published = meta['published'] || {},
           owner = meta.owner && meta.owner.User;
 
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
+        channels: [],
         downloads: meta.stats && meta.stats.ArchiveDownloadCount,
         entityType: (charmMeta) ? 'charm' : 'bundle',
         // If the id has a user segment then it has not been promulgated.
@@ -189,6 +191,11 @@ var module = module;
       }
       if (commonInfo && commonInfo.homepage) {
         processed.homepage = commonInfo.homepage;
+      }
+      if (published.Info) {
+        processed.channels = published.Info.map(info => {
+          return {name: info.Channel, current: info.Current};
+        });
       }
 
       // Convert the options keys to lowercase.
@@ -324,19 +331,20 @@ var module = module;
       var endpoints = 'include=' + [
         'bundle-metadata',
         'bundle-machine-count',
-        'charm-metadata',
         'charm-config',
-        'common-info',
-        'id-revision',
-        'revision-info',
-        'manifest',
-        'stats',
-        'extra-info',
-        'tags',
+        'charm-metadata',
         'charm-metrics',
+        'common-info',
+        'extra-info',
+        'id-revision',
+        'manifest',
         'owner',
+        'published',
         'resources',
-        'supported-series'
+        'revision-info',
+        'stats',
+        'supported-series',
+        'tags'
       ].join('&include=');
       return jujulib._makeRequest(
           this.bakery,

@@ -42,7 +42,7 @@ describe('EntityHeader', function() {
   });
 
   it('renders the latest entity properly', function() {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
           acl={acl}
           addNotification={sinon.stub()}
@@ -54,10 +54,11 @@ describe('EntityHeader', function() {
           hasPlans={false}
           importBundleYAML={sinon.stub()}
           pluralize={sinon.stub()}
-          scrollPosition={0} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+          scrollPosition={0}
+        />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="row-hero"
         ref="headerWrapper"
         style={{}}>
@@ -86,6 +87,10 @@ describe('EntityHeader', function() {
                   trusty
                 </li>]}
                 {undefined}
+                {<li key="Stable, Candidate"
+                  className="entity-header__channels">
+                  Stable, Candidate
+                </li>}
               </ul>
               <ul className="entity-header__social-list">
                 <li>
