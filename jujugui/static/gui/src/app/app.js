@@ -1191,12 +1191,6 @@ YUI.add('juju-gui', function(Y) {
           userInfo={this._getUserInfo(state)}
         />,
         document.getElementById('top-page-container'));
-      // The model name should not be visible when viewing the profile.
-      //this._renderBreadcrumb({ showEnvSwitcher: false });
-      // Model actions should not be visible when viewing the profile.
-      //this._clearModelActions();
-      // Provider logo should not be visible when viewing the profile.
-      //this._clearProviderLogo();
     },
 
     /**
@@ -1601,16 +1595,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Unmounts the model action components.
-
-      @method _clearModelActions
-    */
-    _clearModelActions: function() {
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('model-actions-container'));
-    },
-
-    /**
       Renders the logo for the current cloud provider.
 
       @method _renderProviderLogo
@@ -1638,16 +1622,6 @@ YUI.add('juju-gui', function(Y) {
             width={providerDetails.svgWidth * scale} />
         </div>,
         container);
-    },
-
-    /**
-      Unmounts the logo for the current cloud provider.
-
-      @method _clearProviderLogo
-    */
-    _clearProviderLogo: function() {
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('provider-logo-container'));
     },
 
     /**
