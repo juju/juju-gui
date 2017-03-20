@@ -284,9 +284,12 @@ YUI.add('entity-header', function() {
       const channels = this.props.entityModel.get('channels').filter(ch => {
         return ch.current;
       });
-      return channels.map(ch =>
-        <li key={ch.name} className="entity-header__channel">{ch.name}</li>
-      );
+      const names = channels.map(ch => {
+        const name = ch.name;
+        // Capitalize channel names.
+        return name.charAt(0).toUpperCase() + name.slice(1);
+      }).join(', ');
+      return <li key={names} className="entity-header__channels">{names}</li>;
     },
 
     render: function() {

@@ -231,6 +231,8 @@ var jsTestUtils = {
           name: 'stable', current: true
         }, {
           name: 'beta', current: false
+        }, {
+          name: 'candidate', current: true
         }],
         owner: 'test-owner',
         promulgated: true,

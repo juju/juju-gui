@@ -87,9 +87,10 @@ describe('EntityHeader', function() {
                   trusty
                 </li>]}
                 {undefined}
-                {[<li key="stable" className="entity-header__channel">
-                  stable
-                </li>]}
+                {<li key="Stable, Candidate"
+                  className="entity-header__channels">
+                  Stable, Candidate
+                </li>}
               </ul>
               <ul className="entity-header__social-list">
                 <li>
