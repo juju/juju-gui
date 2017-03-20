@@ -809,5 +809,5 @@ describe('EntityContent', function() {
     const markupObject = description.props.dangerouslySetInnerHTML;
     assert.equal(markupObject.__html,
       '<p>A simple <a href="http://google.com/">link</a>.</p>\n');
-  })
+  });
 });

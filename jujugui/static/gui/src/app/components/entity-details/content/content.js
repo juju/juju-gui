@@ -237,7 +237,8 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        const description = entityModel.get('description') || 'No description provided.';
+        const description = entityModel.get('description')
+          || 'No description provided.';
         const htmlDescription = this.props.renderMarkdown(description);
         return (
           <div className="row row--grey entity-content__description">
