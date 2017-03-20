@@ -305,6 +305,7 @@ YUI.add('account-credentials', function() {
 }, '', {
   requires: [
     'deployment-cloud',
+    'deployment-credential-add',
     'expanding-row',
     'generic-button',
     'loading-spinner'

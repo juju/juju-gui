@@ -77,11 +77,11 @@ YUI.add('account', function() {
                   this.props.generateCloudCredentialName}
                 getCloudCredentialNames={this.props.getCloudCredentialNames}
                 getCloudProviderDetails={this.props.getCloudProviderDetails}
+                listClouds={this.props.listClouds}
                 revokeCloudCredential={this.props.revokeCloudCredential}
                 updateCloudCredential={this.props.updateCloudCredential}
-                listClouds={this.props.listClouds}
-                validateForm={this.props.validateForm}
-                username={this.props.user} />
+                username={this.props.user}
+                validateForm={this.props.validateForm} />
               {this._generatePaymentDetails()}
             </div>
           </div>
