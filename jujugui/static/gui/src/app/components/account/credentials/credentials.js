@@ -237,6 +237,7 @@ YUI.add('account-credentials', function() {
     _generateAddCredentials: function() {
       let content = null;
       let addForm = null;
+      let chooseCloud = null;
       if (this.state.showAdd && this.state.cloud) {
         addForm = (
           <juju.components.DeploymentCredentialAdd
@@ -250,10 +251,18 @@ YUI.add('account-credentials', function() {
             updateCloudCredential={this.props.updateCloudCredential}
             user={this.props.username}
             validateForm={this.props.validateForm} />);
+        chooseCloud = (
+          <div className="account__credentials-choose-cloud">
+            <juju.components.GenericButton
+              action={this._setCloud.bind(this, null)}
+              type="inline-neutral"
+              title="Change cloud" />
+          </div>);
       }
       if (this.state.showAdd) {
         content = (
           <div>
+            {chooseCloud}
              <juju.components.DeploymentCloud
                acl={this.props.acl}
                cloud={this.state.cloud}
@@ -269,7 +278,7 @@ YUI.add('account-credentials', function() {
           clickable={false}
           expanded={this.state.showAdd}>
           <div></div>
-          <div>
+          <div className="twelve-col">
             {content}
           </div>
         </juju.components.ExpandingRow>);
@@ -277,7 +286,7 @@ YUI.add('account-credentials', function() {
 
     render: function() {
       return (
-        <div className="account__section">
+        <div className="account__section account__credentials">
           <h2 className="account__title twelve-col">
             Cloud credentials
             <juju.components.GenericButton
