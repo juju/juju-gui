@@ -51,8 +51,8 @@ module.exports = function(config) {
 
       'jujugui/static/gui/src/app/components/**/*.js',
 
-      'jujugui/static/gui/build/app/models/user.js',
-      'jujugui/static/gui/build/app/models/test-user.js',
+      'jujugui/static/gui/build/app/user/user.js',
+      'jujugui/static/gui/build/app/user/test-user.js',
 
       'jujugui/static/gui/build/app/store/env/acl.js',
       'jujugui/static/gui/build/app/store/env/test-acl.js',
