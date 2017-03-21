@@ -206,7 +206,9 @@ YUI.add('account-credentials', function() {
       @method _toggleAdd
     */
     _toggleAdd: function() {
-      this.setState({showAdd: !this.state.showAdd});
+      // The cloud needs to be reset so that when the form is shown it doesn't
+      // show the last selected cloud.
+      this.setState({showAdd: !this.state.showAdd, cloud: null});
     },
 
     /**
@@ -242,6 +244,7 @@ YUI.add('account-credentials', function() {
         addForm = (
           <juju.components.DeploymentCredentialAdd
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             close={this._toggleAdd}
             cloud={this.state.cloud}
             getCloudProviderDetails={this.props.getCloudProviderDetails}

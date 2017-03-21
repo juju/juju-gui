@@ -443,13 +443,14 @@ describe('AccountCredentials', () => {
 
   it('can display correctly with a chosen cloud', () => {
     getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const addNotification = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountCredentials
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -495,6 +496,7 @@ describe('AccountCredentials', () => {
                 setCloud={instance._setCloud} />
               <juju.components.DeploymentCredentialAdd
                 acl={acl}
+                addNotification={addNotification}
                 close={instance._toggleAdd}
                 cloud="aws"
                 getCloudProviderDetails={getCloudProviderDetails}
@@ -512,5 +514,35 @@ describe('AccountCredentials', () => {
         </div>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('clears the cloud when the form is closed', () => {
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const addNotification = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const validateForm = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={addNotification}
+        generateCloudCredentialName={generateCloudCredentialName}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={sinon.stub()}
+        updateCloudCredential={updateCloudCredential}
+        username="spinach@external"
+        validateForm={validateForm} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    // Open the form.
+    output.props.children[0].props.children[1].props.action();
+    instance._setCloud('aws');
+    // Close the form.
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children
+      .props.children[2].props.close();
+    assert.isNull(instance.state.cloud);
   });
 });
