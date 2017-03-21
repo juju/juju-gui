@@ -69,14 +69,6 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;
-    },
-
-    makeFakeBackend: function() {
-      var fakebackend = new Y.juju.environments.FakeBackend({
-        charmstore: this.makeFakeCharmstore()
-      });
-      fakebackend.login('user-admin', 'password');
-      return fakebackend;
     }
 
   };

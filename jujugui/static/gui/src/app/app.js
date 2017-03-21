@@ -570,6 +570,7 @@ YUI.add('juju-gui', function(Y) {
         db: this.db,
         modelAPI: this.env,
         getBundleChanges: getBundleChanges,
+        makeEntityModel: Y.juju.makeEntityModel,
         charmstore: this.get('charmstore'),
         isLegacyJuju: this.isLegacyJuju(),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)

@@ -19,13 +19,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  let bundleImporter, BundleImporter, db, getBundleChanges, modelAPI,
-      fakebackend, models, utils, yui;
+  let bundleImporter, BundleImporter, charmstore, db, getBundleChanges,
+      modelAPI, models, utils, yui;
 
   before(function(done) {
     const requires = [
       'bundle-importer', 'juju-tests-utils', 'juju-models', 'juju-env-api',
-      'juju-tests-factory', 'environment-change-set'];
+      'juju-tests-factory', 'environment-change-set', 'jujulib-utils'];
     YUI(GlobalConfig).use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;
       utils = Y['juju-tests'].utils;
@@ -42,27 +42,27 @@ describe('Bundle Importer', function() {
         db: db
       })
     });
-    fakebackend = yui['juju-tests'].factory.makeFakeBackend();
+    charmstore = yui['juju-tests'].factory.makeFakeCharmstore();
     getBundleChanges = sinon.stub();
     bundleImporter = new BundleImporter({
-      modelAPI: modelAPI,
+      charmstore,
+      db,
       getBundleChanges: getBundleChanges,
-      db: db,
-      fakebackend: fakebackend
+      makeEntityModel: yui.juju.makeEntityModel,
+      modelAPI
     });
   });
 
   afterEach(function() {
     db.destroy();
     modelAPI.destroy();
-    fakebackend.destroy();
   });
 
   it('can be instantiated', function() {
     assert.equal(bundleImporter instanceof BundleImporter, true);
     assert.equal(typeof bundleImporter.modelAPI === 'object', true);
     assert.equal(typeof bundleImporter.db === 'object', true);
-    assert.equal(typeof bundleImporter.fakebackend === 'object', true);
+    assert.equal(typeof bundleImporter.charmstore === 'object', true);
   });
 
   describe('Public methods', function() {
@@ -206,7 +206,7 @@ describe('Bundle Importer', function() {
       });
 
       it('ensures v4 format on import', function() {
-        const yaml = '{"foo":{"services":{}}}';
+        const yaml = '{"bundle":{"services":{}}}';
         bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getBundleChanges.callCount, 1);
         const args = getBundleChanges.lastCall.args;
@@ -331,7 +331,7 @@ describe('Bundle Importer', function() {
 
     it('sets up the correct model (v5 Integration)', function(done) {
       let getCanonicalIdCount = 0;
-      fakebackend.get('charmstore').getCanonicalId = (entityId, callback) => {
+      charmstore.getCanonicalId = (entityId, callback) => {
         getCanonicalIdCount += 1;
         callback(null, entityId);
       };
@@ -452,17 +452,6 @@ describe('Bundle Importer', function() {
         method: 'deploy',
         requires: [ 'addCharm-0' ]
       };
-      class MockModel {
-        constructor(attrs) {
-          this.attrs = attrs;
-        }
-        get(key) {
-          return this.attrs[key];
-        }
-        set(key, value) {
-          this.attrs[key] = value;
-        }
-      }
       const options = {
         services: {
           default: 'foo',
@@ -485,17 +474,17 @@ describe('Bundle Importer', function() {
           type: 'string'
         }
       };
-      const charm = new MockModel({
+      const charm = {
         options: options,
         id: id,
         series: 'trusty'
-      });
+      };
       const next = sinon.stub();
-      bundleImporter.fakebackend._loadCharm = (id, callbacks) => {
-        callbacks.success(charm);
+      charmstore.getEntity = (id, callback) => {
+        callback(null, [charm]);
       };
       bundleImporter.modelAPI.deploy = sinon.stub();
-      const ghostService = new MockModel({
+      const ghostService = new models.Service({
         id: id,
         name: name
       });
@@ -510,7 +499,7 @@ describe('Bundle Importer', function() {
         default_log: 'global'
       };
       const actualConfig = ghostService.get('config');
-      assert.deepEqual(expectedConfig, actualConfig);
+      assert.deepEqual(actualConfig, expectedConfig);
     });
   });
 });

@@ -38,6 +38,7 @@ YUI.add('bundle-importer', function(Y) {
     this.isLegacyJuju = cfg.isLegacyJuju;
     this._dryRunIndex = -1;
     this._collectedServices = [];
+    this.makeEntityModel = cfg.makeEntityModel;
   }
 
   BundleImporter.prototype = {
@@ -436,7 +437,7 @@ YUI.add('bundle-importer', function(Y) {
         (error, charm) => {
           if (error) {
             console.warn('error loading charm: ', error);
-            this.get('db').notifications.add({
+            this.db.notifications.add({
               title: 'Unable to load charm',
               message: `Charm ${record.args[0]} was not able to be loaded.`,
               level: 'error'
@@ -444,8 +445,7 @@ YUI.add('bundle-importer', function(Y) {
             return;
           }
           this._deploy_addCharm_success(
-            Y.juju.makeEntityModel(charm[0]),
-            record, next);
+            this.makeEntityModel(charm[0]), record, next);
         });
     },
 
@@ -595,7 +595,7 @@ YUI.add('bundle-importer', function(Y) {
             notify(`Charm ${charmId} was not able to be loaded.`);
             return;
           }
-          const charm = Y.juju.makeEntityModel(charmObj[0]);
+          const charm = this.makeEntityModel(charmObj[0]);
           if (db.charms.getById(charm.get('id')) === null) {
             // Mark the charm as loaded so that its endpoints get added
             // to the map of available endpoints.
@@ -768,6 +768,7 @@ YUI.add('bundle-importer', function(Y) {
 }, '', {
   requires: [
     'juju-env-api',
-    'environment-change-set'
+    'environment-change-set',
+    'js-yaml'
   ]
 });
