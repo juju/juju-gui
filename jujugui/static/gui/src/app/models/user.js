@@ -18,40 +18,29 @@
 
 'use strict';
 
-YUI.add('user', function() {
+if (typeof this.jujugui === 'undefined') {
+  this.jujugui = {};
+}
 
-  const User = class User {
+/** Class representing a user's authorizations in the GUI **/
+const User = class User {
 
-    constructor(cfg) {
-      this.macaroons = {};
-      this.storage = cfg.storage || sessionStorage;
-    }
+  constructor(cfg) {
+    this.storage = cfg.storage || sessionStorage;
+  }
 
-    get name() {}
+  // TODO get username
 
-    get identity() {
-      return this.macaroons['identity'];
-    }
+  // TODO get/set identity creds
 
-    set identity(token) {
-      return this.macaroons['identity']
-    }
+  // TODO get/set charmstore creds
 
-    get charmstore() {
-      return this.macaroons['charmstore'];
-    }
+  get controller() {
+  }
 
-    set charmstore(token) {
-      return this.macaroons['charmstore']
-    }
+  set controller(auth) {
+    this.storage.setItem(auth);
+  }
+};
 
-    get controller() {
-      return this.macaroons['controller'];
-    }
-
-    set controller(token) {
-      return this.macaroons['controller']
-    }
-  };
-
-}, '0.1.0', { requires: []});
+this.jujugui.User = User;
