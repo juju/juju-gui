@@ -27,6 +27,14 @@ describe('LoginComponent', function() {
     YUI().use('login-component', function() { done(); });
   });
 
+  afterEach(function() {
+    // Clear any timeouts created when rendering the component.
+    let id = window.setTimeout(function() {}, 0);
+    while (id--) {
+      window.clearTimeout(id);
+    }
+  });
+
   it('renders', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
