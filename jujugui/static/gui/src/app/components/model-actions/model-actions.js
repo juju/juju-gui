@@ -25,9 +25,7 @@ YUI.add('model-actions', function() {
       acl: React.PropTypes.object.isRequired,
       appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
-      hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
       loadingModel: React.PropTypes.bool,
@@ -101,13 +99,32 @@ YUI.add('model-actions', function() {
 
     render: function() {
       const props = this.props;
-      const shareClasses = classNames(
-        'model-actions__share',
-        'model-actions__button',
-        {
-          'model-actions__share--disabled': !props.userIsAuthenticated
-        }
-      );
+      // Disable sharing if the user is anonymous or we're creating a new
+      // model.
+      const sharingEnabled = props.userIsAuthenticated &&
+        props.appState.current.root !== 'new';
+      let shareAction = null;
+      if (sharingEnabled) {
+        const shareClasses = classNames(
+          'model-actions__share',
+          'model-actions__button'
+        );
+        shareAction = (
+          <span className={shareClasses}
+            onClick={props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
+            </span>
+          </span>
+        );
+      }
       const isReadOnly = props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
@@ -138,19 +155,7 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            <span className={shareClasses}
-              onClick={props.sharingVisibility}
-              role="button"
-              tabIndex="0">
-              <juju.components.SvgIcon name="share_16"
-                className="model-actions__icon"
-                size="16" />
-              <span className="tooltip__tooltip--below">
-                <span className="tooltip__inner tooltip__inner--up">
-                  Share
-                </span>
-              </span>
-            </span>
+            {shareAction}
           </div>
           <input className="model-actions__file"
             type="file"
