@@ -736,51 +736,6 @@ describe('App', function() {
         'navigate should not be called in gisf mode here');
     });
 
-    // XXX This test causes intermittent cascading failures when run in CI.
-    // When the notification system gets refactored this test can be un-skipped.
-    it.skip('creates a notification if logged in with a token', function(done) {
-      // We need to change the prototype before we instantiate.
-      // See the "this.restore()" call in the callback below that cleans up.
-      var stub = sinon.stub(Y.juju.App.prototype, 'onLogin');
-      sinon.stub(app, 'maskVisibility');
-      app.redirectPath = '/foo/bar/';
-      app.location = {
-        toString: function() {return '/login/';},
-        search: '?authtoken=demoToken'};
-      sinon.stub(app.env, 'onceAfter');
-      sinon.stub(app, 'navigate');
-      stub.addCallback(function() {
-        // Clean up.
-        this.restore();
-        // Begin assertions.
-        var e = this.lastCall.args[0];
-        // These two really simply verify that our test prep did what we
-        // expected.
-        assert.equal(e.data.result, true);
-        assert.equal(e.data.fromToken, true);
-        this.passThroughToOriginalMethod(app);
-        assert.equal(app.maskVisibility.calledOnce, true);
-        assert.equal(app.env.onceAfter.calledOnce, true);
-        var onceAfterArgs = app.env.onceAfter.lastCall.args;
-        assert.equal(onceAfterArgs[0], 'environmentNameChange');
-        // Call the event handler so we can verify what it does.
-        onceAfterArgs[1].call(onceAfterArgs[2]);
-        assert.equal(
-            app.db.notifications.item(0).get('title'),
-            'Logged in with Token');
-        assert.equal(app.navigate.calledOnce, true);
-        var navigateArgs = app.navigate.lastCall.args;
-        assert.equal(navigateArgs[0], '/foo/bar/');
-        assert.deepEqual(navigateArgs[1], {overrideAllNamespaces: true});
-        done();
-      });
-      env.setCredentials(null);
-      env.connect();
-      conn.msg({
-        'request-id': conn.last_message()['request-id'],
-        Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
-    });
-
     it('tries to log in on first connection', function() {
       // This is the case when credential are stashed.
       env.connect();
@@ -1741,54 +1696,6 @@ describe('App', function() {
       app.loginToAPIs(credentials, useMacaroons, [controller, model]);
       checkLoggedInWithMacaroons(controller, true);
       checkLoggedInWithMacaroons(model, false);
-    });
-  });
-
-  describe('isLegacyJuju', function() {
-    var app, juju, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        juju = juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      app = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: new juju.ControllerAPI({
-          conn: new testUtils.SocketStub()
-        }),
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet(),
-          user: 'user',
-          password: 'password'
-        }),
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-    });
-
-    afterEach(function() {
-      app.destroy();
-    });
-
-    it('reports legacy Juju versions', function() {
-      ['1.26.0', '0.8.0', '1.9', '1'].forEach(function(version) {
-        app.set('jujuCoreVersion', version);
-        assert.strictEqual(app.isLegacyJuju(), true, version);
-      });
-    });
-
-    it('reports non-legacy Juju versions', function() {
-      ['2.0.1', '2.0-beta42.47', '3.5', '2'].forEach(function(version) {
-        app.set('jujuCoreVersion', version);
-        assert.strictEqual(app.isLegacyJuju(), false, version);
-      });
     });
   });
 

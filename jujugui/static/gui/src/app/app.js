@@ -554,7 +554,6 @@ YUI.add('juju-gui', function(Y) {
         getBundleChanges: getBundleChanges,
         makeEntityModel: Y.juju.makeEntityModel,
         charmstore: this.get('charmstore'),
-        isLegacyJuju: this.isLegacyJuju(),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
 
@@ -899,17 +898,11 @@ YUI.add('juju-gui', function(Y) {
       // XXX j.c.sackett 2017-01-30 Right now USSO link is using
       // loginToController, while loginToAPIs is used by the login form.
       // We want to use loginToAPIs everywhere since it handles more.
-      let legacy = this.isLegacyJuju();
-      const loginToController = legacy ?
-        this.env.loginWithMacaroon.bind(
-          this.env, this.bakeryFactory.get('juju')) :
+      const loginToController =
         this.controllerAPI.loginWithMacaroon.bind(
           this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = () => {
-        if (legacy) {
-          return this.env && this.env.get('connected');
-        }
         return this.controllerAPI && this.controllerAPI.get('connected');
       };
       const getDischargeToken = () => {
@@ -923,7 +916,6 @@ YUI.add('juju-gui', function(Y) {
           errorMessage={err}
           getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
-          isLegacyJuju={legacy}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
@@ -1257,7 +1249,6 @@ YUI.add('juju-gui', function(Y) {
       }
       const changesUtils = this.changesUtils;
       const controllerAPI = this.controllerAPI;
-      const legacy = this.isLegacyJuju();
       const services = db.services;
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
@@ -1270,14 +1261,12 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = !legacy && controllerAPI.getCredentials();
+        const credentials = controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
-      const loginToController = !legacy ?
+      const loginToController =
         controllerAPI.loginWithMacaroon.bind(
-          controllerAPI, this.bakeryFactory.get('juju')) :
-        this.env.loginWithMacaroon.bind(
-          this.env, this.bakeryFactory.get('juju'));
+          controllerAPI, this.bakeryFactory.get('juju'));
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
@@ -1307,20 +1296,16 @@ YUI.add('juju-gui', function(Y) {
               this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
-            !legacy && controllerAPI.getCloudCredentials.bind(
-              controllerAPI)}
+            controllerAPI.getCloudCredentials.bind(controllerAPI)}
           getCloudCredentialNames={
-            !legacy && controllerAPI.getCloudCredentialNames.bind(
-              controllerAPI)}
+            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getDischargeToken={getDischargeToken}
           getUserName={getUserName}
           gisf={this.get('gisf')}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
-          isLegacyJuju={legacy}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listClouds={
-            !legacy && controllerAPI.listClouds.bind(controllerAPI)}
+          listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           loginToController={loginToController}
           modelCommitted={connected}
@@ -1331,8 +1316,7 @@ YUI.add('juju-gui', function(Y) {
           showTerms={this.terms.showTerms.bind(this.terms)}
           storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
-            !legacy && controllerAPI.updateCloudCredential.bind(
-              controllerAPI)}
+            controllerAPI.updateCloudCredential.bind(controllerAPI)}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },
@@ -1694,7 +1678,6 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
-          displayPlans={!this.isLegacyJuju()}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
@@ -1703,7 +1686,6 @@ YUI.add('juju-gui', function(Y) {
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           getModelName={getModelName}
-          isLegacyJuju={this.isLegacyJuju()}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
@@ -1761,7 +1743,6 @@ YUI.add('juju-gui', function(Y) {
           createMachine={this._createMachine.bind(this)}
           destroyMachines={this.env.destroyMachines.bind(this.env)}
           environmentName={db.environment.get('name')}
-          jujuCoreVersion={this.get('jujuCoreVersion')}
           machines={db.machines}
           placeUnit={this.env.placeUnit.bind(this.env)}
           removeUnits={this.env.remove_units.bind(this.env)}
@@ -2500,23 +2481,10 @@ YUI.add('juju-gui', function(Y) {
       }
       this.set('modelUUID', '');
       this.set('loggedIn', false);
-      // Close both controller and model API connections.
-      let closeController = callback => {
-        callback();
-      };
       const controllerAPI = this.controllerAPI;
-      if (controllerAPI) {
-        closeController = controllerAPI.close.bind(controllerAPI);
-      }
       this.env.close(() => {
-        closeController(() => {
-          if (controllerAPI) {
-            // Juju 2 connects to the controller and gets models from there.
-            controllerAPI.connect();
-          } else {
-            // Juju 1 is just connected to a model.
-            this.env.connect();
-          }
+        controllerAPI.close(() => {
+          controllerAPI.connect();
           this.maskVisibility(true);
           this.env.get('ecs').clear();
           this.db.reset();
@@ -2528,7 +2496,7 @@ YUI.add('juju-gui', function(Y) {
             store: null
           });
           this._renderLogin(null);
-        });
+        }).bind(controllerAPI);
       });
     },
 
@@ -2572,26 +2540,6 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       next();
-    },
-
-    /**
-     * Notify with an error when the user tries to change the environment
-     * without permission.
-     *
-     * @method onEnvPermissionDenied
-     * @private
-     * @param {Object} evt An event object (with "title" and "message"
-         attributes).
-     * @return {undefined} Mutates only.
-     */
-    onEnvPermissionDenied: function(evt) {
-      this.db.notifications.add(
-          new models.Notification({
-            title: evt.title,
-            message: evt.message,
-            level: 'error'
-          })
-      );
     },
 
     /**
@@ -2642,22 +2590,6 @@ YUI.add('juju-gui', function(Y) {
       this.set('loggedIn', true);
       if (this.state.current.root === 'login') {
         this.state.changeState({root: null});
-      }
-      // Handle token authentication.
-      if (evt.fromToken) {
-        // Alert the user.  In the future, we might want to call out the
-        // password so the user can note it.  That will probably want a
-        // modal or similar.
-        this.env.onceAfter('environmentNameChange', function() {
-          this.db.notifications.add(
-              new models.Notification({
-                title: 'Logged in with Token',
-                message: ('You have successfully logged in with a ' +
-                          'single-use authentication token.'),
-                level: 'important'
-              })
-          );
-        }, this);
       }
       // Handle the change set token if provided in the query.
       // The change set token identifies a collections of changes required
@@ -3111,7 +3043,6 @@ YUI.add('juju-gui', function(Y) {
   }, {
     ATTRS: {
       html5: true,
-      charmworldURL: {},
       /**
         A flag to indicate if the user is actually logged into the environment.
 
@@ -3194,7 +3125,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-bakery',
     'juju-env-base',
     'juju-env-api',
-    'juju-env-legacy-api',
     'juju-env-web-handler',
     'juju-models',
     'jujulib-utils',

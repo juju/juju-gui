@@ -35,7 +35,6 @@ YUI.add('bundle-importer', function(Y) {
     this.db = cfg.db;
     this.charmstore = cfg.charmstore;
     this.hideDragOverNotification = cfg.hideDragOverNotification;
-    this.isLegacyJuju = cfg.isLegacyJuju;
     this._dryRunIndex = -1;
     this._collectedServices = [];
     this.makeEntityModel = cfg.makeEntityModel;
@@ -393,7 +392,7 @@ YUI.add('bundle-importer', function(Y) {
         }
         record.args[0].parentId = parentId;
       }
-      if (record.args[0].containerType === 'lxc' && !this.isLegacyJuju) {
+      if (record.args[0].containerType === 'lxc') {
         record.args[0].containerType = 'lxd';
       }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
@@ -457,14 +456,6 @@ YUI.add('bundle-importer', function(Y) {
     */
     _deploy_addCharm_success: function(charm, record, next) {
       var charmSeries = charm.get('series');
-      // If we're using legacy Juju the bundlechangeslib does not return
-      // the series of the charms so we need to consider that and munge the
-      // record arguments accordingly. When we decide to drop support for
-      // Juju 1, or if we update bundlechangeslib to supply the series this
-      // block can be removed.
-      if (this.isLegacyJuju) {
-        record.args.splice(1, 0, charmSeries);
-      }
       // We have to set the name for the service because some bundles
       // specify multiples of the same charms as different names.
       var displayName = record.args[2];
