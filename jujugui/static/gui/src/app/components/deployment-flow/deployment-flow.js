@@ -45,7 +45,6 @@ YUI.add('deployment-flow', function() {
       getUserName: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
       groupedChanges: React.PropTypes.object.isRequired,
-      isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -128,51 +127,49 @@ YUI.add('deployment-flow', function() {
       let visible;
       const hasCloud = !!this.state.cloud;
       const hasCredential = !!this.state.credential;
-      const isLegacyJuju = this.props.isLegacyJuju;
       const willCreateModel = !this.props.modelCommitted;
       const groupedChanges = this.props.groupedChanges;
       switch (section) {
         case 'model-name':
           completed = false;
           disabled = false;
-          visible = !isLegacyJuju && willCreateModel;
+          visible = willCreateModel;
           break;
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = !this.state.loggedIn;
-          visible = this.state.loggedIn && !isLegacyJuju && (
-              willCreateModel || !completed);
+          visible = this.state.loggedIn && (willCreateModel || !completed);
           break;
         case 'credential':
           completed = false;
           disabled = !hasCloud;
-          visible = willCreateModel && !isLegacyJuju;
+          visible = willCreateModel;
           break;
         case 'ssh-key':
           completed = false;
           disabled = !hasCloud;
-          visible = willCreateModel && !isLegacyJuju;
+          visible = willCreateModel;
           break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = addMachines && Object.keys(addMachines).length > 0;
           break;
         case 'services':
           const deploys = groupedChanges._deploy;
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = deploys && Object.keys(deploys).length > 0;
           break;
         case 'budget':
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
-          visible = !isLegacyJuju && this.props.withPlans;
+          disabled = !hasCloud || !hasCredential;
+          visible = this.props.withPlans;
           break;
         case 'changes':
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = true;
           break;
         case 'agreements':
@@ -629,7 +626,7 @@ YUI.add('deployment-flow', function() {
               </juju.components.USSOLoginLink>
             </div>
             <div className="deployment-login__signup">
-              Don't have an account?
+              Do not have an account?
               <juju.components.USSOLoginLink
                 gisf={this.props.gisf}
                 charmstore={this.props.charmstore}
@@ -875,10 +872,6 @@ YUI.add('deployment-flow', function() {
       if (!this.state.modelName) {
         return false;
       }
-      if (this.props.isLegacyJuju) {
-        // On legacy Juju having the model name is sufficient for proceeding.
-        return true;
-      }
       // Check that we have a cloud where to deploy to.
       if (!this.state.cloud) {
         return false;
@@ -917,7 +910,7 @@ YUI.add('deployment-flow', function() {
 
     render: function() {
       const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
-      if (this.props.isLegacyJuju || this.state.loggedIn) {
+      if (this.state.loggedIn) {
         return (
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
