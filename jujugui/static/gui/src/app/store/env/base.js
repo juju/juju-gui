@@ -201,20 +201,6 @@ YUI.add('juju-env-base', function(Y) {
     */
     'ecs': {},
     /**
-      The username used to connect.
-
-      @attribute user
-      @type {string}
-    */
-    'user': {},
-    /**
-      The password used to connect.
-
-      @attribute password
-      @type {string}
-    */
-    'password': {},
-    /**
       Whether or not the connection is open.
 
       @attribute connected
@@ -337,13 +323,6 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
-      // Populate our credentials if they don't already exist.
-      const credentials = this.getCredentials();
-      if (!credentials.areAvailable) {
-        credentials.user = this.get('user') || '';
-        credentials.password = this.get('password') || '';
-        this.setCredentials(credentials);
-      }
     },
 
     destructor: function() {

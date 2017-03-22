@@ -491,8 +491,6 @@ YUI.add('juju-gui', function(Y) {
 
       let modelOptions = {
         ecs: ecs,
-        user: this.get('user'),
-        password: this.get('password'),
         conn: this.get('conn'),
         jujuCoreVersion: this.get('jujuCoreVersion'),
         bundleService: this.get('bundleService')
@@ -531,18 +529,14 @@ YUI.add('juju-gui', function(Y) {
       // their default then it would show them the login screen. This sets
       // the credentials to the environment that they are logging into
       // initially.
-      var user = modelAPI.get('user');
-      var password = modelAPI.get('password');
+      var user = null;
+      var password = null;
       var macaroons = null;
-      if (!user || !password) {
-        // No user and password credentials provided in config: proceed with
-        // usual credentials handling.
-        var credentials = modelAPI.getCredentials();
-        if (credentials.areAvailable) {
-          user = credentials.user;
-          password = credentials.password;
-          macaroons = credentials.macaroons;
-        }
+      var credentials = modelAPI.getCredentials();
+      if (credentials.areAvailable) {
+        user = credentials.user;
+        password = credentials.password;
+        macaroons = credentials.macaroons;
       }
       modelAPI.setCredentials({ user, password, macaroons });
       this.env = modelAPI;
@@ -2703,7 +2697,6 @@ YUI.add('juju-gui', function(Y) {
       clearDB=true) {
       console.log('switching model connection');
       this.env.loading = true;
-      // TODO we need an experiment here to see if this ever comes up in gisf or gijoe
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
