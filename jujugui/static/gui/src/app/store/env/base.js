@@ -462,74 +462,25 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-      Store the user's credentials in session storage.
-
-      @method setCredentials
-      @param {Object} The credentials to store.
-        Possible properties
-          { user: string, password: string, macaroons: object, external: any }.
-        The user must be a user name, not a user tag.
-      @return {undefined} Stores data only.
-    */
-    setCredentials: function(credentials) {
-      module.sessionStorage.setItem(
-          'credentials', JSON.stringify(credentials));
-    },
-
-    /**
-     * Retrieve the stored user credentials.
+     * Fire a "permissionDenied" event passing the attempted operation.
      *
-     * @method getCredentials
-     * @return {Object} The stored user credentials with "user", "password" and
-     *   "macaroons" attributes. This object also exposes the "areAvailable"
-     *   property holding whether either user/password or macaroons credentials
-     *   are actually available.
+     * @method _firePermissionDenied
+     * @private
+     * @param {Object} op The attempted operation (with an "op" attr).
+     * @return {undefined} Fires an event only.
      */
-    getCredentials: function() {
-      var credentials = JSON.parse(
-        module.sessionStorage.getItem('credentials'));
-      if (!credentials) {
-        credentials = {};
-      }
-      if (credentials.user) {
-        // User names without a "@something" part are local Juju users.
-        if (credentials.user.indexOf('@') === -1) {
-          credentials.user += '@local';
-        }
-      } else {
-        credentials.user = '';
-      }
-      if (!credentials.password) {
-        credentials.password = '';
-      }
-      if (!credentials.macaroons) {
-        credentials.macaroons = null;
-      }
-      Object.defineProperties(credentials, {
-        areAvailable: {
-          /**
-           * Reports whether or not credentials are populated.
-           *
-           * @method get
-           * @return {Boolean} Whether or not either user and password or
-           *   macaroons are set.
-           */
-          get: function() {
-            const creds = !!((this.user && this.password) || this.macaroons);
-            // In typical deploys this is sufficient however in HJC or when
-            // external auth values are provided we have to be more resilient.
-            return creds || this.areExternal;
-          }
-        },
-        areExternal: {
-          get: function() {
-            return !!(this.external);
-          }
-        }
+    _firePermissionDenied: function(op) {
+      var title = 'Permission denied';
+      var message = ('GUI is in read-only mode and this operation ' +
+          'requires a model modification');
+      var silent = this.get('_silentFailureOps').some(v => {
+        return v === op.op;
       });
-      return credentials;
+      console.warn(title + ': ' + message + '. Attempted operation: ', op);
+      if (!silent) {
+        this.fire('permissionDenied', {title: title, message: message, op: op});
+      }
     }
-
   });
 
   module.BaseEnvironment = BaseEnvironment;

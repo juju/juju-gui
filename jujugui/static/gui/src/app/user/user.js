@@ -25,7 +25,7 @@ if (typeof this.jujugui === 'undefined') {
 /** Class representing a user's authorizations in the GUI **/
 const User = class User {
 
-  constructor(cfg) {
+  constructor(cfg = {}) {
     this.storage = cfg.storage || sessionStorage;
   }
 
@@ -36,10 +36,52 @@ const User = class User {
   // TODO get/set charmstore creds
 
   get controller() {
+    let credentials = JSON.parse(
+      this.sessionStorage.getItem('credentials'));
+    if (!credentials) {
+      credentials = {};
+    }
+    if (credentials.user) {
+      // User names without a "@something" part are local Juju users.
+      if (credentials.user.indexOf('@') === -1) {
+        credentials.user += '@local';
+      }
+    } else {
+      credentials.user = '';
+    }
+    if (!credentials.password) {
+      credentials.password = '';
+    }
+    if (!credentials.macaroons) {
+      credentials.macaroons = null;
+    }
+    Object.defineProperties(credentials, {
+      areAvailable: {
+        /**
+          * Reports whether or not credentials are populated.
+          *
+          * @method get
+          * @return {Boolean} Whether or not either user and password or
+          *   macaroons are set.
+          */
+        get: function() {
+          const creds = !!((this.user && this.password) || this.macaroons);
+          // In typical deploys this is sufficient however in HJC or when
+          // external auth values are provided we have to be more resilient.
+          return creds || this.areExternal;
+        }
+      },
+      areExternal: {
+        get: function() {
+          return !!(this.external);
+        }
+      }
+    });
+    return credentials;
   }
 
-  set controller(auth) {
-    this.storage.setItem(auth);
+  set controller(credentials) {
+    this.storage.setItem('credentials', JSON.stringify(credentials));
   }
 };
 
