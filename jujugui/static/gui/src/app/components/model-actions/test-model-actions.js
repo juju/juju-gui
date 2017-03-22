@@ -36,14 +36,12 @@ describe('ModelActions', function() {
   });
 
   it('can render and pass the correct props', function() {
-    var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
-        hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -104,56 +102,14 @@ describe('ModelActions', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('sets the initial class if there are no changes or entites', function() {
-    var currentChangeSet = {};
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
-        acl={acl}
-        changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
-        exportEnvironmentFile={sinon.stub()}
-        hasEntities={false}
-        hideDragOverNotification={sinon.stub()}
-        importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
-        renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
-    var output = renderer.getRenderOutput();
-    assert.equal(output.props.className,
-      'model-actions model-actions--initial');
-  });
-
-  it('does not set the initial class if there are entites', function() {
-    var currentChangeSet = {};
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
-        acl={acl}
-        changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
-        exportEnvironmentFile={sinon.stub()}
-        hasEntities={true}
-        hideDragOverNotification={sinon.stub()}
-        importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
-        renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
-    var output = renderer.getRenderOutput();
-    assert.equal(output.props.className,
-      'model-actions');
-  });
-
   it('can export the env', function() {
-    var currentChangeSet = {one: 1, two: 2};
     var exportEnvironmentFile = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
         exportEnvironmentFile={exportEnvironmentFile}
-        hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -165,7 +121,6 @@ describe('ModelActions', function() {
   });
 
   it('can open the file dialog when import is clicked', function() {
-    var currentChangeSet = {one: 1, two: 2};
     var fileClick = sinon.stub();
     var importBundleFile = sinon.stub();
     var hideDragOverNotification = sinon.stub();
@@ -174,14 +129,13 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
-        hasEntities={false}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         userIsAuthenticated={true}
-        currentChangeSet={currentChangeSet}
         sharingVisibility={sinon.stub()}
       />, true);
     var instance = shallowRenderer.getMountedInstance();
@@ -192,7 +146,6 @@ describe('ModelActions', function() {
   });
 
   it('can get a file when a file is selected', function() {
-    var currentChangeSet = {one: 1, two: 2};
     var importBundleFile = sinon.stub();
     var hideDragOverNotification = sinon.stub();
     var renderDragOverNotification = sinon.stub();
@@ -200,14 +153,13 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
-        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         userIsAuthenticated={true}
-        currentChangeSet={currentChangeSet}
         sharingVisibility={sinon.stub()}
       />, true);
     var instance = shallowRenderer.getMountedInstance();
@@ -222,14 +174,12 @@ describe('ModelActions', function() {
 
   it('can disable importing when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
-        hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -294,67 +244,46 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
-        currentChangeSet={{one: 1, two: 2}}
         exportEnvironmentFile={sinon.stub()}
-        hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
-    const instance = renderer.getMountedInstance();
-    const expected = (
-      <div className="model-actions">
-        <div className="model-actions__buttons">
-          <span className="model-actions__export model-actions__button"
-            onClick={instance._handleExport}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="export_16"
-              className="model-actions__icon"
-              size="16" />
-            <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Export
-              </span>
-            </span>
-          </span>
-          <span className="model-actions__import model-actions__button"
-            onClick={instance._handleImportClick}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="import_16"
-              className="model-actions__icon"
-              size="16" />
-            <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Import
-              </span>
-            </span>
-          </span>
-          {undefined}
-        </div>
-        <input className="model-actions__file"
-          type="file"
-          onChange={instance._handleImportFile}
-          accept=".zip,.yaml,.yml"
-          ref="file-input" />
-      </div>);
-    assert.deepEqual(renderer.getRenderOutput(), expected);
+    const output = renderer.getRenderOutput();
+    const sharing = output.props.children[0].props.children[2];
+    assert.isNull(sharing);
+  });
+
+  it('disables sharing when creating a new model', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        appState={{current: {root: 'new'}}}
+        changeState={sinon.stub()}
+        exportEnvironmentFile={sinon.stub()}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        userIsAuthenticated={true}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    const output = renderer.getRenderOutput();
+    const sharing = output.props.children[0].props.children[2];
+    assert.isNull(sharing);
   });
 
   it('can trigger the sharing UI', function() {
-    const currentChangeSet = {one: 1, two: 2};
     const sharingVisibility = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
+        appState={{current: {}}}
         changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
-        hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -365,5 +294,45 @@ describe('ModelActions', function() {
     assert.notEqual(sharingButton, undefined);
     sharingButton.props.onClick();
     assert.equal(sharingVisibility.callCount, 1);
+  });
+
+  it('applies the correct class when model is loading', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        appState={{current: {}}}
+        changeState={sinon.stub()}
+        exportEnvironmentFile={sinon.stub()}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        loadingModel={true}
+        userIsAuthenticated={false}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    const output = renderer.getRenderOutput();
+    const className = 'model-actions--loading-model';
+    const classFound = output.props.className.indexOf(className) >= 0;
+    assert.isTrue(classFound);
+  });
+
+  it('applies the correct class when on a user profile', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        appState={{current: {profile: 'foo'}}}
+        changeState={sinon.stub()}
+        exportEnvironmentFile={sinon.stub()}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        loadingModel={false}
+        userIsAuthenticated={false}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    const output = renderer.getRenderOutput();
+    const className = 'model-actions--loading-model';
+    const classFound = output.props.className.indexOf(className) >= 0;
+    assert.isTrue(classFound);
   });
 });

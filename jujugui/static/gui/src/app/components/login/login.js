@@ -28,18 +28,15 @@ YUI.add('login-component', function() {
       errorMessage: React.PropTypes.string,
       getDischargeToken: React.PropTypes.func,
       gisf: React.PropTypes.bool.isRequired,
-      hideSpinner: React.PropTypes.func,
       isLegacyJuju: React.PropTypes.bool.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func,
-      showSpinner: React.PropTypes.func,
       storeUser: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
       if (this.props.gisf) {
-        this.props.showSpinner();
         const bounce = (startTime) => {
           if (this.props.controllerIsConnected()) {
             if (this.refs.USSOLoginLink) {
@@ -113,7 +110,6 @@ YUI.add('login-component', function() {
         return (
           <juju.components.USSOLoginLink
             charmstore={this.props.charmstore}
-            callback={this.props.hideSpinner}
             displayType="button"
             getDischargeToken={this.props.getDischargeToken}
             gisf={this.props.gisf}

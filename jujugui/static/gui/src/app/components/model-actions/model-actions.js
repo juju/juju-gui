@@ -1,8 +1,8 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
 
+Copyright (C) 2015 Canonical Ltd.
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
 the Free Software Foundation.
@@ -23,22 +23,24 @@ YUI.add('model-actions', function() {
   juju.components.ModelActions = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
-      hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      loadingModel: React.PropTypes.bool,
       renderDragOverNotification: React.PropTypes.func.isRequired,
       sharingVisibility: React.PropTypes.func.isRequired,
-      userIsAuthenticated: React.PropTypes.bool.isRequired
+      userIsAuthenticated: React.PropTypes.bool
     },
 
     getDefaultProps: function() {
       return {
         sharingVisibility: () => {
           console.log('No sharingVisibility function was provided.');
-        }
+        },
+        loadingModel: false,
+        userIsAuthenticated: false
       };
     },
 
@@ -85,21 +87,31 @@ YUI.add('model-actions', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      const props = this.props;
       return classNames(
         'model-actions',
         {
-          'model-actions--initial': !this.props.hasEntities &&
-            Object.keys(this.props.currentChangeSet).length === 0
+          'model-actions--loading-model': props.appState.current.profile ||
+            props.loadingModel
         }
       );
     },
 
     render: function() {
-      let shareAction;
-      if (this.props.userIsAuthenticated) {
+      const props = this.props;
+      // Disable sharing if the user is anonymous or we're creating a new
+      // model.
+      const sharingEnabled = props.userIsAuthenticated &&
+        props.appState.current.root !== 'new';
+      let shareAction = null;
+      if (sharingEnabled) {
+        const shareClasses = classNames(
+          'model-actions__share',
+          'model-actions__button'
+        );
         shareAction = (
-          <span className="model-actions__share model-actions__button"
-            onClick={this.props.sharingVisibility}
+          <span className={shareClasses}
+            onClick={props.sharingVisibility}
             role="button"
             tabIndex="0">
             <juju.components.SvgIcon name="share_16"
@@ -113,7 +125,7 @@ YUI.add('model-actions', function() {
           </span>
         );
       }
-      var isReadOnly = this.props.acl.isReadOnly();
+      const isReadOnly = props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
           <div className="model-actions__buttons">

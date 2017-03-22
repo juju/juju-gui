@@ -62,4 +62,15 @@
       }
     }
   }
+
+  .provider-logo {
+    // A delay here means the provider logo will show up at the same time as
+    // the breadcrumbs. The breadcrumbs have a delay because they first have
+    // to hide the loading model message.
+    @include visible($delay: 0.5s);
+
+    &--disabled {
+      @include hidden;
+    }
+  }
 }

@@ -46,6 +46,19 @@
   text-align: center;
 }
 
+@mixin visible($duration: 0.5s, $delay: 0s) {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity $duration $delay;
+}
+
+@mixin hidden($duration: 0.5s, $delay: 0s) {
+  opacity: 0;
+  visibility: hidden;
+  // We want visibility to flip off only after opacity has finished changing.
+  transition: visibility 0s ($duration + $delay), opacity $duration $delay;
+}
+
 %floating-panel {
   background-color: $white;
   border-radius: $border-radius;

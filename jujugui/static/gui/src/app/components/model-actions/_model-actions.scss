@@ -7,6 +7,11 @@
 // scss-lint:enable IdSelector
 
 .model-actions {
+  // A delay here means the model actions will show up at the same time as the
+  // breadcrumbs. The breadcrumbs have a delay because they first have to hide
+  // the loading model message.
+  @include visible($delay: 0.5s);
+
   &__export,
   &__import,
   &__share {
@@ -26,11 +31,6 @@
     }
   }
 
-  &__export,
-  &__share {
-    @extend %fade-in;
-  }
-
   &__file {
     position: absolute;
     top: -99999;
@@ -39,11 +39,8 @@
     width: 0;
   }
 
-  &--initial {
-    &__export,
-    &__share {
-      display: none;
-    }
+  &--loading-model {
+    @include hidden;
   }
 
   &__button {
