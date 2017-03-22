@@ -48,7 +48,6 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={false}
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
@@ -131,7 +130,6 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
@@ -201,74 +199,10 @@ describe('LoginComponent', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('renders for legacy Juju', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
-        isLegacyJuju={true}
-        loginToAPIs={sinon.stub()}
-        loginToController={sinon.stub()}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="login">
-        <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
-        </div>
-        <div className="login__full-form">
-          <div className="login__env-name">
-            Login
-          </div>
-          {undefined}
-          <form
-            className="login__form"
-            ref="form"
-            onSubmit={instance._handleLoginSubmit}>
-            <label
-              className="login__label">
-              Username
-              <input
-                className="login__input"
-                type="text"
-                name="username"
-                ref="username" />
-            </label>
-            <label
-              className="login__label">
-              Password
-              <input
-                className="login__input"
-                type="password"
-                name="password"
-                ref="password" />
-            </label>
-            <juju.components.GenericButton
-              submit={true}
-              title={'Login'}
-              type={'positive'} />
-            {undefined}
-          </form>
-        </div>
-        <div className="login__message">
-          <p>
-            Find your password with<br />
-            <code>juju api-info --password password</code>
-          </p>
-          <div className="login__message-link">
-            <a href="https://jujucharms.com" target="_blank">
-              jujucharms.com
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-    assert.deepEqual(output, expected);
-  });
-
   it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
         errorMessage='bad wolf'
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}/>);
     var expected = <div className="login__failure-message">bad wolf</div>;
     assert.deepEqual(output.props.children[1].props.children[1], expected);
@@ -278,7 +212,6 @@ describe('LoginComponent', function() {
     var loginToAPIs = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
-        isLegacyJuju={false}
         loginToAPIs={loginToAPIs}/>);
     component.refs.username.value = 'foo';
     component.refs.password.value = 'bar';
@@ -307,7 +240,6 @@ describe('LoginComponent', function() {
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
         sendPost={sendPost}
@@ -324,7 +256,6 @@ describe('LoginComponent', function() {
       <juju.components.Login
         controllerIsConnected={controllerIsConnected}
         gisf={true}
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
         sendPost={sendPost} />);
@@ -336,7 +267,6 @@ describe('LoginComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        isLegacyJuju={false}
         loginToAPIs={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};
