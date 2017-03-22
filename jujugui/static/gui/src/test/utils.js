@@ -194,8 +194,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     'io',
     'node',
     'promise',
-    'json-parse',
-    'datasource-local',
-    'juju-env-fakebackend'
+    'datasource-local'
   ]
 });

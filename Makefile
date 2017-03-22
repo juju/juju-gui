@@ -115,6 +115,12 @@ qa-server: gui
 
 .PHONY: run
 run: gui
+	@echo
+	@echo "=============================================================="
+	@echo "To run the GUI you must point it at a running Juju controller."
+	@echo "The accepted way of doing this is via the GUIProxy project: https://github.com/frankban/guiproxy"
+	@echo "=============================================================="
+	@echo
 	$(MAKE) -j2 server watch
 
 

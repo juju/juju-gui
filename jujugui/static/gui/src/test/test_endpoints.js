@@ -422,6 +422,7 @@ describe('Endpoints map handlers', function() {
     app = new Y.juju.App({
       baseUrl: 'http://example.com/',
       env: env,
+      apiAddress: 'wss://1.2.3.4:1234',
       controllerAPI: new juju.ControllerAPI({
         conn: utils.SocketStub(),
         user: 'user',

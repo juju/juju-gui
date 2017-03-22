@@ -73,6 +73,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use([
         'environment-change-set',
         'juju-tests-utils',
+        'juju-env-api',
         'juju-env-legacy-api'
       ], function(Y) {
         juju = Y.namespace('juju');
