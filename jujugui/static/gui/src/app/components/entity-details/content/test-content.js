@@ -275,151 +275,6 @@ describe('EntityContent', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can display a bundle for Juju 1', function() {
-    const apiUrl = 'http://example.com';
-    const renderMarkdown = sinon.spy();
-    const getFile = sinon.spy();
-    const changeState = sinon.spy();
-    const pluralize = sinon.spy();
-    const mockEntity = jsTestUtils.makeEntity(true, null, true);
-    const output = jsTestUtils.shallowRender(
-        <juju.components.EntityContent
-          apiUrl={apiUrl}
-          changeState={changeState}
-          entityModel={mockEntity}
-          getFile={getFile}
-          hasPlans={false}
-          isLegacyJuju={true}
-          pluralize={pluralize}
-          renderMarkdown={renderMarkdown} />);
-    const expected = (
-      <div className="entity-content">
-        {undefined}
-        {undefined}
-        <div className="row">
-          <div className="inner-wrapper">
-            <div className="seven-col append-one">
-              <juju.components.EntityContentReadme
-                entityModel={mockEntity}
-                renderMarkdown={renderMarkdown}
-                getFile={getFile} />
-            </div>
-            <div className="four-col">
-              <div className="section">
-                <h3 className="section__title">
-                  Contribute
-                </h3>
-                <ul className="section__links">
-                  {undefined}
-                  <li>
-                    <a href={'https://code.launchpad.net/~charmers/charms/' +
-                      'bundles/django-cluster/bundle'}
-                      className="link"
-                      target="_blank">
-                      Project homepage
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {undefined}
-              {undefined}
-              <juju.components.EntityFiles
-                apiUrl={apiUrl}
-                entityModel={mockEntity}
-                pluralize={pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={mockEntity.get('revisions')} />
-            </div>
-          </div>
-        </div>
-        <div id="configuration"
-          className="row row--grey entity-content__configuration">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <h2 className="entity-content__header">Configuration</h2>
-              <ul>
-                <juju.components.ExpandingRow
-                  classes={{
-                    'entity-content__bundle-config': true
-                  }}
-                  key="gunicorn">
-                  <div className="entity-content__bundle-config-title">
-                    gunicorn
-                    <div className="entity-content__bundle-config-chevron">
-                      <div className="entity-content__bundle-config-expand">
-                        <juju.components.SvgIcon
-                          name="chevron_down_16"
-                          size="16" />
-                      </div>
-                      <div className="entity-content__bundle-config-contract">
-                        <juju.components.SvgIcon
-                          name="chevron_up_16"
-                          size="16" />
-                      </div>
-                    </div>
-                  </div>
-                  <dl className="entity-content__bundle-config-options">
-                    {[
-                      <div className="entity-content__config-option"
-                        key="name0">
-                        <dt className="entity-content__config-name">
-                          name
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p>
-                            title
-                          </p>
-                        </dd>
-                      </div>,
-                      <div className="entity-content__config-option"
-                        key="active1">
-                        <dt className="entity-content__config-name">
-                          active
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p>
-                            {true}
-                          </p>
-                        </dd>
-                      </div>
-                    ]}
-                  </dl>
-                </juju.components.ExpandingRow>
-                <juju.components.ExpandingRow
-                  classes={{
-                    'entity-content__bundle-config': true
-                  }}
-                  key="django">
-                  <div className="entity-content__bundle-config-title">
-                    django
-                    <div className="entity-content__bundle-config-chevron">
-                      <div className="entity-content__bundle-config-expand">
-                        <juju.components.SvgIcon
-                          name="chevron_down_16"
-                          size="16" />
-                      </div>
-                      <div className="entity-content__bundle-config-contract">
-                        <juju.components.SvgIcon
-                          name="chevron_up_16"
-                          size="16" />
-                      </div>
-                    </div>
-                  </div>
-                  <dl className="entity-content__bundle-config-options">
-                    {[<div key="none">
-                      Config options not modified in this bundle.
-                    </div>]}
-                  </dl>
-                </juju.components.ExpandingRow>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-    assert.deepEqual(output, expected);
-  });
-
   it('can display a bundle for Juju 2', function() {
     const apiUrl = 'http://example.com';
     const renderMarkdown = sinon.spy();
@@ -434,7 +289,6 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
-          isLegacyJuju={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />);
     const expected = (
@@ -576,7 +430,6 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={sinon.stub()}
           hasPlans={false}
-          isLegacyJuju={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
