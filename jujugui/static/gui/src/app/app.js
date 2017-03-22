@@ -837,6 +837,7 @@ YUI.add('juju-gui', function(Y) {
         if (!api) {
           return;
         }
+        //TODO this bit we can move outside of the forEach loop and just set it once on the user
         if (credentials) {
           // We set credentials even if the API is not connected: they will be
           // used when the connection is eventually established.
@@ -929,6 +930,7 @@ YUI.add('juju-gui', function(Y) {
         return window.localStorage.getItem('discharge-token');
       };
       const charmstore = this.get('charmstore');
+      // TODO we should pass in a func that does the user.setcredentials here
       ReactDOM.render(
         <window.juju.components.Login
           charmstore={charmstore}
@@ -2701,6 +2703,7 @@ YUI.add('juju-gui', function(Y) {
       clearDB=true) {
       console.log('switching model connection');
       this.env.loading = true;
+      // TODO we need an experiment here to see if this ever comes up in gisf or gijoe
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
