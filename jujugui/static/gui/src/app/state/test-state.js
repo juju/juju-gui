@@ -1147,10 +1147,12 @@ describe('State', () => {
 
   describe('State.changeState()', () => {
     it('can update state', () => {
+      const sendAnalytics = sinon.stub();
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
-        location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
+        location: {href: '/u/hatch/staging/i/applications/inspector/ghost'},
+        sendAnalytics: sendAnalytics
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch([], true, false, true);
@@ -1175,6 +1177,12 @@ describe('State', () => {
       }]);
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
+      assert.equal(sendAnalytics.callCount, 1);
+      assert.equal(sendAnalytics.args[0][0], 'Navigation');
+      assert.equal(sendAnalytics.args[0][1], 'State change');
+      assert.equal(
+        sendAnalytics.args[0][2], 
+        '/u/hatch/staging/i/applications/inspector/ghost');
     });
 
     it('prunes null values when removing states', () => {

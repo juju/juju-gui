@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredentialAdd', function() {
-  var acl, analytics, getCloudProviderDetails;
+  let acl, sendAnalytics, getCloudProviderDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,7 +33,7 @@ describe('DeploymentCredentialAdd', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    analytics = {send: sinon.stub()};
+    sendAnalytics = sinon.stub();
     getCloudProviderDetails = sinon.stub();
     getCloudProviderDetails.withArgs('gce').returns({
       id: 'google',
@@ -101,13 +101,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
-          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />, true);
@@ -249,13 +249,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
-          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />, true);
@@ -264,13 +264,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
-          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={{name: 'aws', cloudType: 'ec2'}}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />);
@@ -370,13 +370,13 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
-        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -518,13 +518,13 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
-        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -619,13 +619,13 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
-        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -769,13 +769,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
-          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);
@@ -805,6 +805,10 @@ describe('DeploymentCredentialAdd', function() {
       }
     };
     instance._handleAddCredentials();
+    assert.equal(sendAnalytics.callCount, 1);
+    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(sendAnalytics.args[0][1], 'Button click');
+    assert.equal(sendAnalytics.args[0][2], 'Add credentials');
     assert.equal(updateCloudCredential.callCount, 1);
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'new@test');
@@ -826,13 +830,13 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
-        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -875,13 +879,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
-          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(false)} />, true);
@@ -898,13 +902,13 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={addNotification}
-          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);

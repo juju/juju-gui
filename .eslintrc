@@ -13,6 +13,7 @@ rules:
   max-len: [2, 80, 2]
   no-const-assign: 2
   no-debugger: 2
+  no-multi-spaces: 2
   no-shadow: 0
   no-single-tests: 2
   no-sparse-arrays: 2
@@ -26,6 +27,7 @@ rules:
   react/prop-types: 2
   react/sort-prop-types: 2
   semi: [2, "always"]
+  space-before-blocks: 2
   strict: [2, "global"]
 globals:
   after: true

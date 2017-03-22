@@ -25,14 +25,17 @@ YUI.add('account', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       revokeCloudCredential: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
+      updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string.isRequired,
-      userInfo: React.PropTypes.object.isRequired
+      userInfo: React.PropTypes.object.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     /**
@@ -70,11 +73,15 @@ YUI.add('account', function() {
               <juju.components.AccountCredentials
                 acl={this.props.acl}
                 addNotification={this.props.addNotification}
+                generateCloudCredentialName={
+                  this.props.generateCloudCredentialName}
                 getCloudCredentialNames={this.props.getCloudCredentialNames}
                 getCloudProviderDetails={this.props.getCloudProviderDetails}
-                revokeCloudCredential={this.props.revokeCloudCredential}
                 listClouds={this.props.listClouds}
-                username={this.props.user} />
+                revokeCloudCredential={this.props.revokeCloudCredential}
+                updateCloudCredential={this.props.updateCloudCredential}
+                username={this.props.user}
+                validateForm={this.props.validateForm} />
               {this._generatePaymentDetails()}
             </div>
           </div>

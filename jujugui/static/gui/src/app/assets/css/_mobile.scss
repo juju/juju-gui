@@ -13,9 +13,14 @@
     width: 100%;
   }
 
+  .env-size-display {
+    top: 100px;
+  }
+
   // Update to show deployment buttons at the bottom
   .inspector-view {
-    max-height: calc(100% - 200px);
+    top: 150px;
+    max-height: calc(100% - 230px);
   }
 
   .overview-action__link:not(.hidden) {
@@ -27,8 +32,46 @@
     display: none;
   }
 
+  #header-help {
+    display: none;
+  }
+
+  #header-logo {
+    width: 32px;
+    overflow: hidden;
+  }
+
+  .header-breadcrumb {
+    top: 15px;
+    position: relative;
+  }
+
+  .header-breadcrumb__list-item {
+    float: none;
+    padding-left: 8px;
+  }
+
+  .header-breadcrumb--link:before,
+  .env-switcher__name:before {
+    content: '';
+  }
+
+  .env-switcher__toggle {
+    margin-left: 0;
+  }
+
   .header-search--active .header-search__form {
     display: inline;
+  }
+
+  .panel-component.env-list-panel {
+    width: auto;
+    right: -70px;
+    top: 90px;
+
+    &:before {
+      left: 104px;
+    }
   }
 
   // Inspector - change version
@@ -82,7 +125,7 @@
 
   .machine-view__content {
     display: block;
-    top: $navbar-height * 2;
+    top: 150px;
     left: 0;
     bottom: 80px;
     overflow-y: auto;
@@ -191,6 +234,10 @@
     .expanding-row__expanded-content {
       padding-bottom: 10px;
     }
+
+    .expanding-row--expanded .expanding-row__initial {
+      display: none;
+    }
   }
 
   .user-profile-header__username {
@@ -240,14 +287,25 @@
   // scss-lint:disable IdSelector
   #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
     // scss-lint:enable IdSelector
-    bottom: 25px;
+    bottom: 20px;
     left: 10px;
     position: fixed;
   }
 
-  .model-actions__export,
-  .model-actions__import {
-    top: -6px;
+  .header-search--active {
+    .header-search__input {
+      width: 74%;
+    }
+  }
+
+  // scss-lint:disable IdSelector
+  #zoom-container { // sass-lint:disable-line no-ids, id-name-format
+    // scss-lint:enable IdSelector
+    display: none;
+  }
+
+  .popup__panel--narrow {
+    width: 100%;
     left: 0;
   }
 }

@@ -137,7 +137,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       cleanups = [];
     });
 
-    afterEach(function()  {
+    afterEach(function() {
       cleanups.forEach(function(action) {action();});
       // We need to clear any credentials stored in sessionStorage.
       env.setCredentials(null);

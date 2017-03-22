@@ -107,7 +107,7 @@ describe('ScaleService', function() {
     ram.value = 'r a m';
     testUtils.Simulate.change(ram);
 
-    var disk  = constraintsContainer.querySelector(
+    var disk = constraintsContainer.querySelector(
       'input[name="disk-constraint"]');
     disk.value = 'd i s k';
     testUtils.Simulate.change(disk);

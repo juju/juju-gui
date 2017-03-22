@@ -49,17 +49,34 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
+      <div className="account__section account__credentials">
         <h2 className="account__title twelve-col">
           Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
         </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <div></div>
+          <div className="twelve-col">
+            {null}
+          </div>
+        </juju.components.ExpandingRow>
         <juju.components.Spinner />
       </div>);
     assert.deepEqual(output, expected);
@@ -70,18 +87,35 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
-    const credentials = output.props.children[1].props.children[1];
+    const credentials = output.props.children[2].props.children[1];
     const expected = (
-      <div className="account__section">
+      <div className="account__section account__credentials">
         <h2 className="account__title twelve-col">
           Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
         </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <div></div>
+          <div className="twelve-col">
+            {null}
+          </div>
+        </juju.components.ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
             <div className="six-col no-margin-bottom">
@@ -137,17 +171,34 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
+      <div className="account__section account__credentials">
         <h2 className="account__title twelve-col">
           Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
         </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <div></div>
+          <div className="twelve-col">
+            {null}
+          </div>
+        </juju.components.ExpandingRow>
         <div>
           No credentials available.
         </div>
@@ -162,11 +213,14 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to list clouds',
@@ -183,11 +237,14 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to get names for credentials',
@@ -202,13 +259,16 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
     const output = component.getRenderOutput();
-    output.props.children[1].props.children[1][0].props
+    output.props.children[2].props.children[1][0].props
       .children[2].props.children.props.action();
     assert.equal(revokeCloudCredential.callCount, 1);
     assert.equal(
@@ -222,13 +282,16 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
     const output = component.getRenderOutput();
-    output.props.children[1].props.children[1][0].props
+    output.props.children[2].props.children[1][0].props
       .children[2].props.children.props.action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -244,21 +307,38 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     let output = component.getRenderOutput();
-    let credentials = output.props.children[1].props.children[1];
+    let credentials = output.props.children[2].props.children[1];
     credentials[0].props.children[2].props.children.props.action();
     output = component.getRenderOutput();
-    credentials = output.props.children[1].props.children[1];
+    credentials = output.props.children[2].props.children[1];
     const expected = (
-      <div className="account__section">
+      <div className="account__section account__credentials">
         <h2 className="account__title twelve-col">
           Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
         </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <div></div>
+          <div className="twelve-col">
+            {null}
+          </div>
+        </juju.components.ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
             <div className="six-col no-margin-bottom">
@@ -297,12 +377,172 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
-        username="spinach@external" />, true);
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
     component.unmount();
     assert.equal(abort.callCount, 1);
+  });
+
+  it('can show the add credentials form', () => {
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    output.props.children[0].props.children[1].props.action();
+    output = component.getRenderOutput();
+    const expected = (
+      <div className="account__section account__credentials">
+        <h2 className="account__title twelve-col">
+          Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
+        </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          <div></div>
+          <div className="twelve-col">
+            <div>
+              {null}
+               <juju.components.DeploymentCloud
+                 acl={acl}
+                 cloud={null}
+                 listClouds={listClouds}
+                 getCloudProviderDetails={getCloudProviderDetails}
+                 setCloud={instance._setCloud} />
+               {null}
+            </div>
+          </div>
+        </juju.components.ExpandingRow>
+        <div>
+          No credentials available.
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display correctly with a chosen cloud', () => {
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const addNotification = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const validateForm = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={addNotification}
+        generateCloudCredentialName={generateCloudCredentialName}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={sinon.stub()}
+        updateCloudCredential={updateCloudCredential}
+        username="spinach@external"
+        validateForm={validateForm} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    output.props.children[0].props.children[1].props.action();
+    instance._setCloud('aws');
+    output = component.getRenderOutput();
+    const expected = (
+      <div className="account__section account__credentials">
+        <h2 className="account__title twelve-col">
+          Cloud credentials
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-base"
+            title="Add" />
+        </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          <div></div>
+          <div className="twelve-col">
+            <div>
+              <div className="account__credentials-choose-cloud">
+                <juju.components.GenericButton
+                  action={
+                    output.props.children[1].props.children[1].props.children
+                    .props.children[0].props.children.props.action}
+                  type="inline-neutral"
+                  title="Change cloud" />
+              </div>
+              <juju.components.DeploymentCloud
+                acl={acl}
+                cloud="aws"
+                listClouds={listClouds}
+                getCloudProviderDetails={getCloudProviderDetails}
+                setCloud={instance._setCloud} />
+              <juju.components.DeploymentCredentialAdd
+                acl={acl}
+                addNotification={addNotification}
+                close={instance._toggleAdd}
+                cloud="aws"
+                getCloudProviderDetails={getCloudProviderDetails}
+                generateCloudCredentialName={generateCloudCredentialName}
+                getCredentials={instance._getClouds}
+                setCredential={instance._setCredential}
+                updateCloudCredential={updateCloudCredential}
+                user="spinach@external"
+                validateForm={validateForm} />
+            </div>
+          </div>
+        </juju.components.ExpandingRow>
+        <div>
+          No credentials available.
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('clears the cloud when the form is closed', () => {
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const addNotification = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const validateForm = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={addNotification}
+        generateCloudCredentialName={generateCloudCredentialName}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={sinon.stub()}
+        updateCloudCredential={updateCloudCredential}
+        username="spinach@external"
+        validateForm={validateForm} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    // Open the form.
+    output.props.children[0].props.children[1].props.action();
+    instance._setCloud('aws');
+    // Close the form.
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children
+      .props.children[2].props.close();
+    assert.isNull(instance.state.cloud);
   });
 });

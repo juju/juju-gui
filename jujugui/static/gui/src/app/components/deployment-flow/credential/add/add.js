@@ -24,12 +24,12 @@ YUI.add('deployment-credential-add', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
-      analytics: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      sendAnalytics: React.PropTypes.func.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
@@ -94,7 +94,7 @@ YUI.add('deployment-credential-add', function() {
         return;
       }
       const credentialName = this.refs.credentialName.getValue();
-      this.props.analytics.send(
+      this.props.sendAnalytics(
         'Deployment Flow',
         'Button click',
         'Add credentials'

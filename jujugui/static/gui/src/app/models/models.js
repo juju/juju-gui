@@ -30,7 +30,6 @@ YUI.add('juju-models', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       environments = Y.namespace('juju.environments'),
       handlers = models.handlers,
-      legacyHandlers = models.legacyHandlers,
       relationUtils = window.juju.utils.RelationUtils;
 
   // Define strings representing juju-core entities' Life state.
@@ -2322,9 +2321,6 @@ YUI.add('juju-models', function(Y) {
         if (handlers.hasOwnProperty(kind)) {
           // Juju >= 2 mega-watcher information.
           handler = handlers[kind];
-        } else if (legacyHandlers.hasOwnProperty(kind)) {
-          // Legacy Juju 1 mega-watcher data.
-          handler = legacyHandlers[kind];
         }
         handler(self, action, data, kind);
       });
@@ -3019,7 +3015,6 @@ YUI.add('juju-models', function(Y) {
     'io-base',
     'json-parse',
     'juju-delta-handlers',
-    'juju-legacy-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models',

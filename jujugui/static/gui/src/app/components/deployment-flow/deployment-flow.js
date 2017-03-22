@@ -25,7 +25,6 @@ YUI.add('deployment-flow', function() {
       acl: React.PropTypes.object.isRequired,
       addAgreement: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
-      analytics: React.PropTypes.object.isRequired,
       applications: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
@@ -43,24 +42,28 @@ YUI.add('deployment-flow', function() {
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getDischargeToken: React.PropTypes.func,
+      getUser: React.PropTypes.func.isRequired,
       getUserName: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
       groupedChanges: React.PropTypes.object.isRequired,
-      isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func,
       listPlansForCharm: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
+      profileUsername: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
+      sendAnalytics: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       setModelName: React.PropTypes.func.isRequired,
+      showPay: React.PropTypes.bool,
       showTerms: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
+      validateForm: React.PropTypes.func.isRequired,
       withPlans: React.PropTypes.bool
     },
 
@@ -77,6 +80,7 @@ YUI.add('deployment-flow', function() {
         loggedIn: !!this.props.getAuth(),
         modelName: this.props.modelName,
         newTerms: [],
+        paymentUser: null,
         region: this.props.region,
         showChangelogs: false,
         sshKey: null,
@@ -129,51 +133,54 @@ YUI.add('deployment-flow', function() {
       let visible;
       const hasCloud = !!this.state.cloud;
       const hasCredential = !!this.state.credential;
-      const isLegacyJuju = this.props.isLegacyJuju;
       const willCreateModel = !this.props.modelCommitted;
       const groupedChanges = this.props.groupedChanges;
       switch (section) {
         case 'model-name':
           completed = false;
           disabled = false;
-          visible = !isLegacyJuju && willCreateModel;
+          visible = willCreateModel;
           break;
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = !this.state.loggedIn;
-          visible = this.state.loggedIn && !isLegacyJuju && (
-              willCreateModel || !completed);
+          visible = this.state.loggedIn && (willCreateModel || !completed);
           break;
         case 'credential':
           completed = false;
           disabled = !hasCloud;
-          visible = willCreateModel && !isLegacyJuju;
+          visible = willCreateModel;
           break;
         case 'ssh-key':
           completed = false;
           disabled = !hasCloud;
-          visible = willCreateModel && !isLegacyJuju;
+          visible = willCreateModel;
           break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = addMachines && Object.keys(addMachines).length > 0;
           break;
         case 'services':
           const deploys = groupedChanges._deploy;
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = deploys && Object.keys(deploys).length > 0;
           break;
         case 'budget':
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
-          visible = !isLegacyJuju && this.props.withPlans;
+          disabled = !hasCloud || !hasCredential;
+          visible = this.props.withPlans;
+          break;
+        case 'payment':
+          completed = !!this.state.paymentUser;
+          disabled = false;
+          visible = this.props.showPay;
           break;
         case 'changes':
           completed = false;
-          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
+          disabled = !hasCloud || !hasCredential;
           visible = true;
           break;
         case 'agreements':
@@ -198,7 +205,7 @@ YUI.add('deployment-flow', function() {
     */
     _setCloud: function(cloud) {
       if (cloud) {
-        this.props.analytics.send(
+        this.props.sendAnalytics(
           'Deployment Flow',
           'Select cloud',
           cloud.name
@@ -248,37 +255,22 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Store the payment user in state.
+
+      @method _setPaymentUser
+      @param {String} user The user deetails.
+    */
+    _setPaymentUser: function(user) {
+      this.setState({paymentUser: user});
+    },
+
+    /**
       Toggle the visibility of the changelogs.
 
       @method _toggleChangelogs
     */
     _toggleChangelogs: function() {
       this.setState({showChangelogs: !this.state.showChangelogs});
-    },
-
-    /**
-      Validate the form fields.
-
-      @method _validateForm
-      @param {Array} fields A list of field ref names.
-      @param {Object} refs The refs for a component.
-      @returns {Boolean} Whether the form is valid.
-    */
-    _validateForm: function(fields, refs) {
-      var formValid = true;
-      fields.forEach(field => {
-        const ref = refs[field];
-        if (!ref || !ref.validate) {
-          return;
-        }
-        var valid = ref.validate();
-        // If there is an error then mark that. We don't want to exit the loop
-        // at this point so that each field gets validated.
-        if (!valid) {
-          formValid = false;
-        }
-      });
-      return formValid;
     },
 
     /**
@@ -294,10 +286,10 @@ YUI.add('deployment-flow', function() {
         // Here we need to just prevent the deployment flow to close.
         return;
       }
-      this.props.analytics.send(
+      this.props.sendAnalytics(
         'Deployment Flow',
         'Button click',
-        'close'
+        'Close - Exit deployment'
       );
       this.props.changeState({
         gui: {
@@ -642,12 +634,12 @@ YUI.add('deployment-flow', function() {
               </juju.components.USSOLoginLink>
             </div>
             <div className="deployment-login__signup">
-              Don't have an account?
+              Do not have an account?
               <juju.components.USSOLoginLink
                 gisf={this.props.gisf}
                 charmstore={this.props.charmstore}
                 callback={callback}
-                displayType={'text'}
+                displayType="text"
                 sendPost={this.props.sendPost}
                 storeUser={this.props.storeUser}
                 getDischargeToken={this.props.getDischargeToken}
@@ -717,11 +709,12 @@ YUI.add('deployment-flow', function() {
             getCloudCredentials={this.props.getCloudCredentials}
             getCloudCredentialNames={this.props.getCloudCredentialNames}
             region={this.state.region}
+            sendAnalytics={this.props.sendAnalytics}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
             updateCloudCredential={this.props.updateCloudCredential}
             user={this.props.getUserName()}
-            validateForm={this._validateForm} />
+            validateForm={this.props.validateForm} />
         </juju.components.DeploymentSection>);
     },
 
@@ -812,6 +805,34 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the payment details section.
+
+      @method _generatePaymentSection
+      @returns {Object} The markup.
+    */
+    _generatePaymentSection: function() {
+      const status = this._getSectionStatus('payment');
+      if (!this.props.showPay || !status.visible) {
+        return null;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-payment"
+          showCheck={true}
+          title="Payment details">
+          <juju.components.DeploymentPayment
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getUser={this.props.getUser}
+            paymentUser={this.state.paymentUser}
+            setPaymentUser={this._setPaymentUser}
+            username={this.props.profileUsername} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
       Generate the changes section.
 
       @method _generateChangeSection
@@ -888,10 +909,6 @@ YUI.add('deployment-flow', function() {
       if (!this.state.modelName) {
         return false;
       }
-      if (this.props.isLegacyJuju) {
-        // On legacy Juju having the model name is sufficient for proceeding.
-        return true;
-      }
       // Check that we have a cloud where to deploy to.
       if (!this.state.cloud) {
         return false;
@@ -913,6 +930,12 @@ YUI.add('deployment-flow', function() {
       if (this.state.loadingTerms) {
         return false;
       }
+      // Can't deploy if there is no user.
+      // TODO: when the user creation is implemented this should be updated to
+      // check if the form has been filled out.
+      if (this.props.showPay && !this.state.paymentUser) {
+        return false;
+      }
       // That's all we need if the model already exists.
       if (this.props.modelCommitted) {
         return true;
@@ -930,7 +953,7 @@ YUI.add('deployment-flow', function() {
 
     render: function() {
       const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
-      if (this.props.isLegacyJuju || this.state.loggedIn) {
+      if (this.state.loggedIn) {
         return (
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
@@ -943,6 +966,7 @@ YUI.add('deployment-flow', function() {
             {this._generateServicesSection()}
             {this._generateBudgetSection()}
             {this._generateChangeSection()}
+            {this._generatePaymentSection()}
             <div className="twelve-col">
               <div className="deployment-flow__deploy">
                 {this._generateAgreementsSection()}
@@ -978,6 +1002,7 @@ YUI.add('deployment-flow', function() {
     'deployment-credential',
     'deployment-machines',
     'deployment-panel',
+    'deployment-payment',
     'deployment-section',
     'deployment-services',
     'deployment-ssh-key',

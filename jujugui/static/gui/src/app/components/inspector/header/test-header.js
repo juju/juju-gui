@@ -36,7 +36,7 @@ describe('InspectorHeader', function() {
     shallowRenderer.render(
         <juju.components.InspectorHeader
           backCallback={sinon.stub()}
-          title="Juju GUI"  />);
+          title="Juju GUI" />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[1].props.children, 'Juju GUI');
   });

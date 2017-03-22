@@ -234,7 +234,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    after(function(done)  {
+    after(function(done) {
       env.close(() => {
         env.destroy();
         done();
@@ -261,7 +261,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           get: function() {}
         },
         charmstore: fakeStore,
-        state: {changeState: sinon.stub()}
+        state: {changeState: sinon.stub()},
+        sendAnalytics: sinon.stub()
       });
     });
 
