@@ -475,6 +475,11 @@ YUI.add('juju-gui', function(Y) {
       ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
 
+      if (this.get('gisf')) {
+        document.body.classList.add('u-is-beta');
+      }
+      this.defaultPageTitle = 'Juju GUI';
+
       let modelOptions = {
         ecs: ecs,
         user: this.get('user'),
@@ -485,18 +490,8 @@ YUI.add('juju-gui', function(Y) {
       };
       let controllerOptions = Object.assign({}, modelOptions);
       modelOptions.webHandler = new environments.web.WebHandler();
-      let modelAPI, controllerAPI;
-      if (this.isLegacyJuju()) {
-        modelAPI = new environments.GoLegacyEnvironment(modelOptions);
-      } else {
-        modelAPI = new environments.GoEnvironment(modelOptions);
-        controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
-      }
-      if (this.get('gisf')) {
-        document.body.classList.add('u-is-beta');
-      }
-
-      this.defaultPageTitle = 'Juju GUI';
+      const modelAPI = new environments.GoEnvironment(modelOptions);
+      const controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
       this._init(cfg, modelAPI, controllerAPI);
     },
 
@@ -541,26 +536,13 @@ YUI.add('juju-gui', function(Y) {
         // represents a charm store entity.
         entityPromise = this._fetchEntityFromUserState(pathState.state.user);
       }
-
-      let getBundleChanges;
-      if (controllerAPI) {
-        // In Juju >= 2 we establish the controller API connection first, then
-        // the model one. Also, bundle changes are always retrieved using the
-        // controller connection.
-        this.controllerAPI = this.setUpControllerAPI(
-          controllerAPI, user, password, macaroons, entityPromise);
-        getBundleChanges = this.controllerAPI.getBundleChanges.bind(
-          this.controllerAPI);
-        // Create Romulus API client instances.
-        this._setupRomulusServices(
-          window.juju_config, window.jujulib, window.localStorage);
-      } else {
-        // In legacy Juju, we only connect to the model, and therefore bundle
-        // changes are retrieved from that single WebSocket connection.
-        modelAPI.set('socket_url',
-          this.createSocketURL(this.get('socketTemplate'), modelUUID));
-        getBundleChanges = this.env.getBundleChanges.bind(this.env);
-      }
+      this.controllerAPI = this.setUpControllerAPI(
+        controllerAPI, user, password, macaroons, entityPromise);
+      const getBundleChanges = this.controllerAPI.getBundleChanges.bind(
+        this.controllerAPI);
+      // Create Romulus API client instances.
+      this._setupRomulusServices(
+        window.juju_config, window.jujulib, window.localStorage);
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
@@ -588,9 +570,6 @@ YUI.add('juju-gui', function(Y) {
       this.on('*:navigateTo', function(e) {
         this.navigate(e.url);
       }, this);
-
-      // Notify user attempts to modify the environment without permission.
-      this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
       // When the environment name becomes available, display it.
       this.env.after('environmentNameChange',
@@ -644,38 +623,6 @@ YUI.add('juju-gui', function(Y) {
           this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
           return;
         }
-        // The user can also try to log in with an authentication token.
-        // This will look like ?authtoken=AUTHTOKEN.  For instance,
-        // in the sandbox, try logging in with ?authtoken=demoToken.
-        // To get a real token from the Juju GUI charm's environment
-        // proxy, within an authenticated websocket session, use a
-        // request like this:
-        // {
-        //   'RequestId': 42,
-        //   'Type': 'GUIToken',
-        //   'Request': 'Create',
-        //   'Params': {},
-        // }
-        // You can then use the token once until it expires, within two
-        // minutes of this writing.
-        var querystring = this.location.search.substring(1);
-        var qs = views.utils.parseQueryString(querystring);
-        var authtoken = qs.authtoken || '';
-        if (authtoken || authtoken.length) {
-          // De-dupe if necessary.
-          if (Array.isArray(authtoken)) {
-            authtoken = authtoken[0];
-          }
-          // Try a token login.
-          this.env.tokenLogin(authtoken);
-        }
-        // There are no credentials. Do nothing in this case if we are on Juju
-        // >= 2 as the controller login check will have kicked the user to the
-        // login prompt already and we can wait until they have provided the
-        // credentials there. In Juju 1 though we need to display the login.
-        if (!this.controllerAPI) {
-          this._displayLogin();
-        }
       });
 
       // If the database updates, redraw the view (distinct from model updates).
@@ -717,15 +664,8 @@ YUI.add('juju-gui', function(Y) {
         document.addEventListener(
           eventName, this._boundAppDragOverHandler);
       });
-
-      // We are now ready to connect the environment and bootstrap the app.
-      if (this.controllerAPI) {
-        // In Juju >= 2 we connect to the controller and then to the model.
-        this.controllerAPI.connect();
-      } else {
-        // We won't have a controller API connection in Juju 1.
-        this.env.connect();
-      }
+      // In Juju >= 2 we connect to the controller and then to the model.
+      this.controllerAPI.connect();
       this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       this.state.bootstrap();
     },
@@ -846,18 +786,6 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.set('socket_url',
         this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
-    },
-
-    /**
-      Reports whether the currently connected controller is a legacy Juju
-      (with version < 2).
-
-      @method isLegacyJuju
-      @return {Boolean} Whether a legacy Juju version is being used.
-    */
-    isLegacyJuju: function() {
-      var jujuVersion = this.get('jujuCoreVersion');
-      return views.utils.compareSemver(jujuVersion, '2') === -1;
     },
 
     /**
