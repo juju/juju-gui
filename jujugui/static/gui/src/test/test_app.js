@@ -1736,6 +1736,7 @@ describe('App', function() {
       YUI(GlobalConfig).use(['juju-gui'], Y => {
         app = new Y.juju.App({
           baseUrl: 'http://example.com/',
+          apiAddress: 'wss://1.2.3.4:1234',
           consoleEnabled: true,
           jujuCoreVersion: '2.0.0',
           viewContainer: container,
