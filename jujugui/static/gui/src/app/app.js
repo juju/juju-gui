@@ -2482,8 +2482,9 @@ YUI.add('juju-gui', function(Y) {
       this.set('modelUUID', '');
       this.set('loggedIn', false);
       const controllerAPI = this.controllerAPI;
+      const closeController = controllerAPI.close.bind(controllerAPI);
       this.env.close(() => {
-        controllerAPI.close(() => {
+        closeController(() => {
           controllerAPI.connect();
           this.maskVisibility(true);
           this.env.get('ecs').clear();
@@ -2496,7 +2497,7 @@ YUI.add('juju-gui', function(Y) {
             store: null
           });
           this._renderLogin(null);
-        }).bind(controllerAPI);
+        });
       });
     },
 

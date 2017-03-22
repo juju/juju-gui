@@ -502,7 +502,7 @@ describe('DeploymentFlow', function() {
             </juju.components.USSOLoginLink>
           </div>
           <div className="deployment-login__signup">
-            Don't have an account?
+            Do not have an account?
             <juju.components.USSOLoginLink
               gisf={instance.props.gisf}
               charmstore={instance.props.charmstore}

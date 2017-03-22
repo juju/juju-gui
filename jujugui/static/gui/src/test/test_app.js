@@ -831,6 +831,7 @@ describe('App', function() {
       const noop = function() {return this;};
       const app = new juju.App({
         baseUrl: 'http://example.com/',
+        apiAddress: 'wss://1.2.3.4:1234',
         env: model,
         controllerAPI: controller,
         consoleEnabled: true,
@@ -993,25 +994,24 @@ describe('App', function() {
         });
       });
 
-    it('clears the db changed timer when the app is destroyed', function() {
-      // Set up the application instance.
-      app = constructAppInstance();
-      app.dbChangedTimer = 'I am the timer!';
-      // Mock the clearTimeout builtin function.
-      const original = clearTimeout;
-      clearTimeout = sinon.stub();
-      this._cleanups.push(() => {
-        clearTimeout = original;
+      it('clears the db changed timer when the app is destroyed', function() {
+        // Set up the application instance.
+        app = constructAppInstance();
+        app.dbChangedTimer = 'I am the timer!';
+        // Mock the clearTimeout builtin function.
+        const original = clearTimeout;
+        clearTimeout = sinon.stub();
+        this._cleanups.push(() => {
+          clearTimeout = original;
+        });
+        // Destroy the application.
+        app.destroy();
+        // The timer has been canceled.
+        assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
+        assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
       });
-      // Destroy the application.
-      app.destroy();
-      // The timer has been canceled.
-      assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
-      assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
     });
-
   });
-
 
   describe('switchEnv', function() {
     var Y, app;
@@ -1025,6 +1025,7 @@ describe('App', function() {
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         password: 'admin',
         socketTemplate: '/environment/$uuid/api',
+        controllerSocketTemplate: '/$uuid/api',
         user: 'admin',
         viewContainer: container
       });
@@ -1205,7 +1206,6 @@ describe('App', function() {
       });
       assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
     });
-
   });
 
   describe('clearUser', function() {
@@ -1262,7 +1262,6 @@ describe('App', function() {
       app.clearUser('charmstore');
       assert.equal(app.getUser('charmstore'), undefined);
     });
-
   });
 
   describe('storeUser', function() {
@@ -1328,9 +1327,7 @@ describe('App', function() {
       assert.equal(app._renderBreadcrumb.callCount, 1);
       assert.deepEqual(app.get('users')['charmstore'], user);
     });
-
   });
-
 
   describe('_getAuth', function() {
     var Y, app, controllerCredStub, modelCredStub, juju;
@@ -2290,41 +2287,6 @@ describe('App', function() {
     });
   });
 
-  describe('_sharingVisibility', function() {
-    let app, juju, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        juju = juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      app = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: new juju.ControllerAPI({
-          conn: new testUtils.SocketStub()
-        }),
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet(),
-          user: 'user',
-          password: 'password'
-        }),
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-
-    });
-
-    afterEach(function() {
-      app.destroy();
-    });
-  });
-
   describe('setPageTitle', function () {
     let app, juju, Y;
 
@@ -2371,4 +2333,5 @@ describe('App', function() {
       assert.equal(document.title, 'Juju GUI');
     });
   });
+
 });

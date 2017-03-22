@@ -558,15 +558,6 @@ describe('test_model.js', function() {
         assert.equal(mysql.get('units').size(), 1);
       });
 
-      it('should handle messages from legacy Juju versions', function() {
-        var db = new models.Database();
-        db.onDelta({data: {result: [
-          ['serviceLegacyInfo', 'add', {Name: 'django'}]
-        ]}});
-        assert.strictEqual(db.services.size(), 1);
-        assert.strictEqual(db.services.item(0).get('id'), 'django');
-      });
-
       it('should create non-existing machines on change', function() {
         // Sometimes we may try to change a machine that doesn't exist yet;
         // for example, a unit change needs to trigger a machine delta
