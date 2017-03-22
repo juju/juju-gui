@@ -27,7 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-view-environment', function(Y) {
 
-  var views = Y.namespace('juju.views');
+  let views = Y.namespace('juju.views');
+  let analytics = Y.juju.analytics;
 
   /**
    * Display an environment.
@@ -208,6 +209,11 @@ YUI.add('juju-view-environment', function(Y) {
       @param {Object} e The click event
     */
     _handlePlusClick: function(e) {
+      analytics.send(
+        'Onboarding',
+        'Click',
+        'Onboarding plus'
+      );
       this.get('state').changeState({
         root: 'store'
       });

@@ -63,6 +63,7 @@ const createDeploymentFlow = (props = {}) => {
     acl: {isReadOnly: sinon.stub().returns(false)},
     addAgreement: sinon.stub(),
     addNotification: sinon.stub(),
+    analytics: {send: sinon.stub()},
     applications: [],
     changeState: sinon.stub(),
     changes: {},

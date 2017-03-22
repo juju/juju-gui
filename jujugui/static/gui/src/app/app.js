@@ -1361,6 +1361,7 @@ YUI.add('juju-gui', function(Y) {
           addAgreement={this.terms.addAgreement.bind(this.terms)}
           addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
+          analytics={juju.analytics}
           charmstore={charmstore}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
@@ -1438,6 +1439,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.DeploymentBar
           acl={this.acl}
+          analytics={juju.analytics}
           changeState={this.state.changeState.bind(this.state)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={
@@ -2064,7 +2066,8 @@ YUI.add('juju-gui', function(Y) {
     _setupState: function(baseURL) {
       const state = new window.jujugui.State({
         baseURL: baseURL,
-        seriesList: window.jujulib.SERIES
+        seriesList: window.jujulib.SERIES,
+        analytics: juju.analytics
       });
 
       state.register([
@@ -3258,6 +3261,7 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'acl',
+    'analytics',
     'changes-utils',
     'juju-charm-models',
     'juju-bundle-models',

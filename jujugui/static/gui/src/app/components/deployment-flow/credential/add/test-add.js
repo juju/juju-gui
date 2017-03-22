@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredentialAdd', function() {
-  var acl, getCloudProviderDetails;
+  var acl, analytics, getCloudProviderDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('DeploymentCredentialAdd', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    analytics = {send: sinon.stub()};
     getCloudProviderDetails = sinon.stub();
     getCloudProviderDetails.withArgs('gce').returns({
       id: 'google',
@@ -100,6 +101,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
@@ -247,6 +249,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
@@ -261,6 +264,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={analytics}
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={{name: 'aws', cloudType: 'ec2'}}
@@ -366,6 +370,7 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -513,6 +518,7 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -613,6 +619,7 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -762,6 +769,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
@@ -818,6 +826,7 @@ describe('DeploymentCredentialAdd', function() {
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -866,6 +875,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
@@ -888,6 +898,7 @@ describe('DeploymentCredentialAdd', function() {
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           addNotification={addNotification}
+          analytics={analytics}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}

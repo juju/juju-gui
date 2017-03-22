@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, cloud, credentials, regions, tags, user;
+  var acl, analytics, cloud, credentials, regions, tags, user;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('DeploymentCredential', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    analytics = {send: sinon.stub()};
     regions = [{name: 'test-region'}];
     cloud = {id: 'azure', id: 'azure', regions: regions};
     credentials = {
@@ -49,6 +50,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -80,6 +82,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -105,6 +108,7 @@ describe('DeploymentCredential', function() {
           <juju.components.DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
+            analytics={analytics}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
@@ -128,6 +132,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         credential="lxd_admin@local_default"
@@ -195,6 +200,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         cloud={null}
         editable={true}
@@ -220,6 +226,7 @@ describe('DeploymentCredential', function() {
           <juju.components.DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
+            analytics={analytics}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={null}
@@ -241,6 +248,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -302,6 +310,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -328,6 +337,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -357,6 +367,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -418,6 +429,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         editable={true}
@@ -456,6 +468,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -482,6 +495,7 @@ describe('DeploymentCredential', function() {
           <juju.components.DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
+            analytics={analytics}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
@@ -507,6 +521,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         editable={true}
@@ -532,6 +547,7 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
+        analytics={analytics}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         credential={credential}

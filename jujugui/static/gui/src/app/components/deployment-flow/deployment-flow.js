@@ -25,6 +25,7 @@ YUI.add('deployment-flow', function() {
       acl: React.PropTypes.object.isRequired,
       addAgreement: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      analytics: React.PropTypes.object.isRequired,
       applications: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
@@ -196,6 +197,13 @@ YUI.add('deployment-flow', function() {
       @param {String} cloud The selected cloud.
     */
     _setCloud: function(cloud) {
+      if (cloud) {
+        this.props.analytics.send(
+          'Deployment Flow',
+          'Select cloud',
+          cloud.name
+        );
+      }
       this.setState({cloud: cloud});
     },
 
@@ -286,6 +294,11 @@ YUI.add('deployment-flow', function() {
         // Here we need to just prevent the deployment flow to close.
         return;
       }
+      this.props.analytics.send(
+        'Deployment Flow',
+        'Button click',
+        'close'
+      );
       this.props.changeState({
         gui: {
           deploy: null

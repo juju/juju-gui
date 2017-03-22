@@ -23,6 +23,7 @@ YUI.add('deployment-bar', function() {
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      analytics: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       currentChangeSet: React.PropTypes.object.isRequired,
       generateChangeDescription: React.PropTypes.func.isRequired,
@@ -105,6 +106,11 @@ YUI.add('deployment-bar', function() {
       @method _deployAction
     */
     _deployAction: function() {
+      this.props.analytics.send(
+        'Deployment Flow',
+        'Button click',
+        'deploy'
+      );
       this.props.changeState({
         gui: {
           deploy: ''

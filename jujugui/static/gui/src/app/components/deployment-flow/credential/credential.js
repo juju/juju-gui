@@ -24,6 +24,7 @@ YUI.add('deployment-credential', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      analytics: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       editable: React.PropTypes.bool,
@@ -158,6 +159,11 @@ YUI.add('deployment-credential', function() {
         this.setState({savedCredential: this.props.credential});
         this.props.setCredential(null);
       } else if (cancel) {
+        this.props.analytics.send(
+          'Deployment Flow',
+          'Button click',
+          'Cancel add credential'
+        );
         // Restore previous credentials.
         this.props.setCredential(this.state.savedCredential);
       }
@@ -272,6 +278,7 @@ YUI.add('deployment-credential', function() {
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.props.analytics}
           close={this._toggleAdd}
           cloud={this.props.cloud}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
