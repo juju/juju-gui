@@ -25,7 +25,6 @@ YUI.add('machine-view-add-machine', function() {
       acl: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
-      jujuCoreVersion: React.PropTypes.string,
       machines: React.PropTypes.object,
       parentId: React.PropTypes.string,
       placeUnit: React.PropTypes.func,
@@ -141,8 +140,6 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateSelectContainer
     */
     _generateSelectContainer: function() {
-      var lxxOption = this.props.jujuCoreVersion.lastIndexOf('1.', 0) === 0 ?
-        <option value="lxc">LXC</option> : <option value="lxd">LXD</option>;
       return (
         <select className="add-machine__container"
           defaultValue=""
@@ -153,7 +150,7 @@ YUI.add('machine-view-add-machine', function() {
             Choose container type...
           </option>
           {this._generateContainerOptions()}
-          {lxxOption}
+          <option value="lxd">LXD</option>
           <option value="kvm">KVM</option>
         </select>);
     },
