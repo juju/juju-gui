@@ -2800,6 +2800,17 @@ YUI.add('juju-gui', function(Y) {
     */
     createSocketURL: function(template, uuid, server, port) {
       let baseUrl = '';
+      const apiAddress = this.get('apiAddress');
+      if (!apiAddress) {
+        // It should not ever be possible to get here unless you're running the
+        // gui in dev mode without pointing it to a proxy/server supplying
+        // the necessary config values.
+        alert(
+          'Unable to create socketURL, no apiAddress provided. The GUI must ' +
+          'be loaded with a valid configuration. Try GUIProxy if ' +
+          'running in development mode: https://github.com/frankban/guiproxy');
+        return;
+      }
       if (template[0] === '/') {
         // The WebSocket path is passed so we need to calculate the base URL.
         const schema = this.get('socket_protocol') || 'wss';
@@ -2808,7 +2819,7 @@ YUI.add('juju-gui', function(Y) {
           baseUrl += ':' + window.location.port;
         }
       }
-      const defaults = this.get('apiAddress').replace('wss://', '').split(':');
+      const defaults = apiAddress.replace('wss://', '').split(':');
       template = template.replace('$uuid', uuid);
       template = template.replace('$server', server || defaults[0]);
       template = template.replace('$port', port || defaults[1]);
