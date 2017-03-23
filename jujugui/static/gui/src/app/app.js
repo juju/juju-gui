@@ -932,7 +932,6 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           setCredentials={setCreds}
-          showSpinner={this.showConnectingMask.bind(this)}
           storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
@@ -1281,7 +1280,7 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = controllerAPI.getCredentials();
+        const credentials = this.user.controller;
         return credentials ? credentials.user : undefined;
       };
       const loginToController =
