@@ -36,22 +36,28 @@ describe('Account', () => {
     const userInfo = {profile: 'spinach'};
     const getUser = sinon.stub();
     const addNotification = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
     const getCloudCredentialNames = sinon.stub();
     const getCloudProviderDetails = sinon.stub();
     const listClouds = sinon.stub();
     const revokeCloudCredential = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
+        generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         getUser={getUser}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
+        updateCloudCredential={updateCloudCredential}
         showPay={true}
         user="spinach@external"
-        userInfo={userInfo} />, true);
+        userInfo={userInfo}
+        validateForm={validateForm} />, true);
     const output = component.getRenderOutput();
     const links = [{
       label: 'Primary account'
@@ -69,11 +75,14 @@ describe('Account', () => {
             <juju.components.AccountCredentials
               acl={acl}
               addNotification={addNotification}
+              generateCloudCredentialName={generateCloudCredentialName}
               getCloudCredentialNames={getCloudCredentialNames}
               getCloudProviderDetails={getCloudProviderDetails}
-              revokeCloudCredential={revokeCloudCredential}
               listClouds={listClouds}
-              username="spinach@external" />
+              revokeCloudCredential={revokeCloudCredential}
+              updateCloudCredential={updateCloudCredential}
+              username="spinach@external"
+              validateForm={validateForm} />
             <juju.components.AccountPaymentMethod
               acl={acl}
               addNotification={addNotification}
@@ -89,22 +98,28 @@ describe('Account', () => {
     const userInfo = {profile: 'spinach'};
     const getUser = sinon.stub();
     const addNotification = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
     const getCloudCredentialNames = sinon.stub();
     const getCloudProviderDetails = sinon.stub();
     const listClouds = sinon.stub();
     const revokeCloudCredential = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
+        generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         getUser={getUser}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
+        updateCloudCredential={updateCloudCredential}
         showPay={false}
         user="spinach@external"
-        userInfo={userInfo} />, true);
+        userInfo={userInfo}
+        validateForm={validateForm} />, true);
     const output = component.getRenderOutput();
     const links = [{
       label: 'Primary account'
@@ -122,11 +137,14 @@ describe('Account', () => {
             <juju.components.AccountCredentials
               acl={acl}
               addNotification={addNotification}
+              generateCloudCredentialName={generateCloudCredentialName}
               getCloudCredentialNames={getCloudCredentialNames}
               getCloudProviderDetails={getCloudProviderDetails}
-              revokeCloudCredential={revokeCloudCredential}
               listClouds={listClouds}
-              username="spinach@external" />
+              revokeCloudCredential={revokeCloudCredential}
+              updateCloudCredential={updateCloudCredential}
+              username="spinach@external"
+              validateForm={validateForm} />
             {null}
           </div>
         </div>

@@ -1368,4 +1368,44 @@ describe('utilities', function() {
         });
     });
   });
+
+  describe('validateForm', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can validate a form with an invalid field', function() {
+      const refs = {
+        one: {validate: sinon.stub().returns(false)},
+        two: {validate: sinon.stub().returns(true)}
+      };
+      const fields = ['one', 'two'];
+      assert.isFalse(utils.validateForm(fields, refs));
+    });
+
+    it('can validate a form with valid fields', function() {
+      const refs = {
+        one: {validate: sinon.stub().returns(true)},
+        two: {validate: sinon.stub().returns(true)}
+      };
+      const fields = ['one', 'two'];
+      assert.isTrue(utils.validateForm(fields, refs));
+    });
+
+    it('validates all fields even if one field is invalid', function() {
+      const refs = {
+        one: {validate: sinon.stub().returns(false)},
+        two: {validate: sinon.stub().returns(true)}
+      };
+      const fields = ['one', 'two'];
+      utils.validateForm(fields, refs);
+      assert.equal(refs.one.validate.callCount, 1);
+      assert.equal(refs.two.validate.callCount, 1);
+    });
+  });
 })();

@@ -5,5 +5,10 @@
 
   &__title {
     font-size: 24px;
+
+    .button--inline-base {
+      margin-left: 20px;
+      font-size: $base;
+    }
   }
 }

@@ -59,6 +59,7 @@ YUI.add('deployment-flow', function() {
       storeUser: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
+      validateForm: React.PropTypes.func.isRequired,
       withPlans: React.PropTypes.bool
     },
 
@@ -243,31 +244,6 @@ YUI.add('deployment-flow', function() {
     */
     _toggleChangelogs: function() {
       this.setState({showChangelogs: !this.state.showChangelogs});
-    },
-
-    /**
-      Validate the form fields.
-
-      @method _validateForm
-      @param {Array} fields A list of field ref names.
-      @param {Object} refs The refs for a component.
-      @returns {Boolean} Whether the form is valid.
-    */
-    _validateForm: function(fields, refs) {
-      var formValid = true;
-      fields.forEach(field => {
-        const ref = refs[field];
-        if (!ref || !ref.validate) {
-          return;
-        }
-        var valid = ref.validate();
-        // If there is an error then mark that. We don't want to exit the loop
-        // at this point so that each field gets validated.
-        if (!valid) {
-          formValid = false;
-        }
-      });
-      return formValid;
     },
 
     /**
@@ -705,7 +681,7 @@ YUI.add('deployment-flow', function() {
             setRegion={this._setRegion}
             updateCloudCredential={this.props.updateCloudCredential}
             user={this.props.getUserName()}
-            validateForm={this._validateForm} />
+            validateForm={this.props.validateForm} />
         </juju.components.DeploymentSection>);
     },
 

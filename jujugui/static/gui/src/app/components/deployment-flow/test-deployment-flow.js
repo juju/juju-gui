@@ -85,6 +85,7 @@ const createDeploymentFlow = (props = {}) => {
     setModelName: sinon.stub(),
     showTerms: sinon.stub(),
     storeUser: sinon.stub(),
+    validateForm: sinon.stub(),
     withPlans: true
   };
   // Merge the user-specified props with the default props.
@@ -119,9 +120,11 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
       modelCommitted: false,
+      validateForm: validateForm,
       withPlans: true
     });
     const instance = renderer.getMountedInstance();
@@ -189,7 +192,7 @@ describe('DeploymentFlow', function() {
             setRegion={instance._setRegion}
             updateCloudCredential={props.updateCloudCredential}
             user="dalek"
-            validateForm={instance._validateForm} />
+            validateForm={validateForm} />
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
           completed={false}
