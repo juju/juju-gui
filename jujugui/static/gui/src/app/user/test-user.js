@@ -21,7 +21,7 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-fdescribe('user auth class', () => {
+describe('user auth class', () => {
   it('exists', () => {
     const user = new window.jujugui.User({storage: {}});
     assert.isObject(user);
