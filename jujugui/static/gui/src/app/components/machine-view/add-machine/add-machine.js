@@ -29,6 +29,7 @@ YUI.add('machine-view-add-machine', function() {
       machines: React.PropTypes.object,
       parentId: React.PropTypes.string,
       placeUnit: React.PropTypes.func,
+      providerType: React.PropTypes.string,
       selectMachine: React.PropTypes.func,
       unit: React.PropTypes.object
     },
@@ -64,24 +65,30 @@ YUI.add('machine-view-add-machine', function() {
       @method _submitForm
     */
     _submitForm: function() {
-      var props = this.props;
-      var state = this.state;
-      var machineId = this._getParentId();
-      var selectedContainer = state.selectedContainer;
-      var selectedMachine = state.selectedMachine;
-      var constraints = state.constraints;
-      var machine;
+      const props = this.props;
+      const state = this.state;
+      const machineId = this._getParentId();
+      const selectedContainer = state.selectedContainer;
       if (machineId && machineId !== 'new' && !selectedContainer) {
         // Don't try and create a container if the container type has not been
         // selected.
         return;
       }
+      const selectedMachine = state.selectedMachine;
+      let machine = {};
       // If the state is set for a new machine or container then actually add
       // the machine/container.
-      if (selectedMachine === 'new' || selectedContainer === 'lxc' ||
-          selectedContainer === 'lxd' || selectedContainer === 'kvm') {
-        var machine = this.props.createMachine(
-          selectedContainer, machineId, null, constraints);
+      if (
+        selectedMachine === 'new' ||
+        selectedContainer === 'lxc' ||
+        selectedContainer === 'lxd' ||
+        selectedContainer === 'kvm'
+      ) {
+        const constraints = state.constraints || {};
+        const series = constraints.series || null;
+        delete constraints.series;
+        machine = this.props.createMachine(
+          selectedContainer, machineId, series, constraints);
         if (this.props.selectMachine && !machineId) {
           this.props.selectMachine(machine.id);
         }
@@ -89,8 +96,8 @@ YUI.add('machine-view-add-machine', function() {
       // If the component has been provided a unit then we need to place the
       // unit on the machine/container.
       if (props.unit) {
-        var id = machine && machine.id;
-        props.placeUnit(props.unit, id || selectedContainer || selectedMachine);
+        props.placeUnit(
+          props.unit, machine.id || selectedContainer || selectedMachine);
       }
       this.props.close();
     },
@@ -114,14 +121,19 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateConstraints
     */
     _generateConstraints: function() {
+      const props = this.props;
       return (
         <div className="add-machine__constraints" key='constraints'>
           <h4 className="add-machine__title">
             Define constraints
           </h4>
           <juju.components.Constraints
-            disabled={this.props.acl.isReadOnly()}
-            valuesChanged={this._updateConstraints} />
+            containerType={this.state.selectedContainer || ''}
+            disabled={props.acl.isReadOnly()}
+            hasUnit={!!props.unit}
+            providerType={props.providerType}
+            valuesChanged={this._updateConstraints}
+          />
         </div>);
     },
 
@@ -254,8 +266,8 @@ YUI.add('machine-view-add-machine', function() {
       @return {Object} The buttons.
     */
     _generateButtons: function() {
-      var props = this.props;
-      var buttons = [{
+      const props = this.props;
+      const buttons = [{
         title: 'Cancel',
         action: props.close,
         type: 'base'
@@ -275,39 +287,31 @@ YUI.add('machine-view-add-machine', function() {
     },
 
     render: function() {
-      var components = [];
-      var props = this.props;
-      var state = this.state;
-      var machines = props.machines;
-      var parentId = props.parentId;
-      var selectedContainer = state.selectedContainer;
-      var selectedMachine = state.selectedMachine;
-      var unit = props.unit;
-      if (unit && machines) {
+      const components = [];
+      const props = this.props;
+      const state = this.state;
+      if (props.unit && props.machines) {
         components.push(this._generateSelectMachine());
-        if (selectedMachine) {
-          if (selectedMachine !== 'new') {
+        if (state.selectedMachine) {
+          if (state.selectedMachine !== 'new') {
             components.push(this._generateSelectContainer());
           }
-          if (selectedMachine === 'new' || selectedContainer === 'kvm') {
-            components.push(this._generateConstraints());
-          }
+          components.push(this._generateConstraints());
           components.push(this._generateButtons());
         }
-      } else if (!machines) {
-        if (parentId) {
+      } else if (!props.machines) {
+        if (props.parentId) {
           components.push(this._generateSelectContainer());
-        }
-        if (!parentId || selectedContainer === 'kvm') {
+          if (state.selectedContainer) {
+            components.push(this._generateConstraints());
+            components.push(this._generateButtons());
+          }
+        } else {
           components.push(this._generateConstraints());
+          components.push(this._generateButtons());
         }
-        components.push(this._generateButtons());
       }
-      return (
-        <div className="add-machine">
-          {components}
-        </div>
-      );
+      return <div className="add-machine">{components}</div>;
     }
   });
 }, '0.1.0', {

@@ -11,4 +11,9 @@
     margin: 5px 10px 10px;
     width: calc(100% - 20px);
   }
+
+  &__select {
+    margin: 5px 10px 10px 10px !important;
+    width: calc(100% - 20px) !important;
+  }
 }

@@ -284,6 +284,9 @@ YUI.add('entity-header', function() {
       const channels = this.props.entityModel.get('channels').filter(ch => {
         return ch.current;
       });
+      if (!channels.length) {
+        return null;
+      }
       const names = channels.map(ch => {
         const name = ch.name;
         // Capitalize channel names.

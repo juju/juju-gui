@@ -329,6 +329,7 @@ describe('MachineView', function() {
         jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={removeUnits}
         services={services}
         units={units} />, true);
@@ -344,6 +345,7 @@ describe('MachineView', function() {
           machines={machines}
           removeUnit={instance._removeUnit}
           placeUnit={placeUnit}
+          providerType={'azure'}
           selectMachine={instance.selectMachine}
           unit={unitList[0]} />
         <juju.components.MachineViewUnplacedUnit
@@ -353,6 +355,7 @@ describe('MachineView', function() {
           key="django/1"
           machines={machines}
           placeUnit={placeUnit}
+          providerType={'azure'}
           removeUnit={instance._removeUnit}
           selectMachine={instance.selectMachine}
           unit={unitList[1]} />
@@ -400,6 +403,7 @@ describe('MachineView', function() {
         jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={removeUnits}
         services={services}
         units={units} />, true);
@@ -413,6 +417,7 @@ describe('MachineView', function() {
           icon="django.svg"
           key="django/0"
           machines={machines}
+          providerType={'azure'}
           removeUnit={instance._removeUnit}
           placeUnit={placeUnit}
           selectMachine={instance.selectMachine}
@@ -899,6 +904,7 @@ describe('MachineView', function() {
         jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={sinon.stub()}
         services={services}
         units={units} />, true);
@@ -911,6 +917,7 @@ describe('MachineView', function() {
         close={instance._closeAddMachine}
         createMachine={createMachine}
         placeUnit={placeUnit}
+        providerType={'azure'}
         selectMachine={instance.selectMachine}
         unit={null} />);
     assert.deepEqual(
@@ -1169,6 +1176,7 @@ describe('MachineView', function() {
         jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'gce'}
         removeUnits={removeUnits}
         services={services}
         units={units} />, true);
@@ -1183,6 +1191,7 @@ describe('MachineView', function() {
         jujuCoreVersion="2.4"
         parentId="new0"
         placeUnit={placeUnit}
+        providerType={'gce'}
         unit={null} />);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[0], expected);

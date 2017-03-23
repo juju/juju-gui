@@ -5,8 +5,8 @@
   }
 
   &__container {
-    margin: 0 10px 10px;
-    width: calc(100% - 20px);
+    margin: 0 10px 10px !important;
+    width: calc(100% - 20px) !important;
   }
 
   &__constraints {

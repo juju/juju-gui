@@ -1634,6 +1634,8 @@ YUI.add('juju-gui', function(Y) {
       if (this.hoverService) {
         this.hoverService.detach();
       }
+      const model = this.env;
+      const db = this.db;
       // If the url was provided with a service id which isn't in the localType
       // db then change state back to the added services list. This usually
       // happens if the user tries to visit the inspector of a ghost service
@@ -1641,84 +1643,82 @@ YUI.add('juju-gui', function(Y) {
       if (service) {
         // Select the service token.
         topo.modules.ServiceModule.selectService(service.get('id'));
-        var charm = this.db.charms.getById(service.get('charm'));
-        var relatableApplications = relationUtils.getRelatableApplications(
-          this.db, models.getEndpoints(service, this.endpointsController));
-        const ecs = this.env.get('ecs');
+        const charm = db.charms.getById(service.get('charm'));
+        const relatableApplications = relationUtils.getRelatableApplications(
+          db, models.getEndpoints(service, this.endpointsController));
+        const ecs = model.get('ecs');
         inspector = (
           <window.juju.components.Inspector
             acl={this.acl}
-            service={service}
-            charm={charm}
-            addNotification=
-              {this.db.notifications.add.bind(this.db.notifications)}
-            setConfig={this.env.set_config.bind(this.env)}
-            envResolved={this.env.resolved.bind(this.env)}
-            serviceRelations={
-              relationUtils.getRelationDataForService(this.db, service)}
+            addCharm={model.addCharm.bind(model)}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
-                this, this.db, this.env, service)}
-            createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
-                this, this.db, this.env, service)}
-            destroyService={utils.destroyService.bind(
-                this, this.db, this.env, service)}
-            destroyUnits={utils.destroyUnits.bind(this, this.env)}
-            destroyRelations={this.relationUtils.destroyRelations.bind(
-              this, this.db, this.env)}
-            relatableApplications={relatableApplications}
+              this, db, model, service)}
+            addNotification={db.notifications.add.bind(db.notifications)}
+            appState={this.state}
+            charm={charm}
             clearState={utils.clearState.bind(this, topo)}
-            createRelation={
-              relationUtils.createRelation.bind(this, this.db, this.env)}
-            getYAMLConfig={utils.getYAMLConfig.bind(this)}
-            exposeService={this.env.expose.bind(this.env)}
-            unexposeService={this.env.unexpose.bind(this.env)}
-            unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
-            getAvailableVersions={charmstore.getAvailableVersions.bind(
-                charmstore)}
-            getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
-              this, this.endpointsController, this.db, models.getEndpoints)}
-            getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
-            addCharm={this.env.addCharm.bind(this.env)}
+            createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
+              this, db, model, service)}
+            createRelation={relationUtils.createRelation.bind(this, db, model)}
+            destroyService={utils.destroyService.bind(
+              this, db, model, service)}
+            destroyRelations={this.relationUtils.destroyRelations.bind(
+              this, db, model)}
+            destroyUnits={utils.destroyUnits.bind(this, model)}
             displayPlans={utils.compareSemver(
               this.get('jujuCoreVersion'), '2') > -1}
-            modelUUID={this.get('modelUUID') || ''}
-            showActivePlan={this.plans.showActivePlan.bind(this.plans)}
-            setCharm={this.env.setCharm.bind(this.env)}
-            getCharm={this.env.get_charm.bind(this.env)}
+            getCharm={model.get_charm.bind(model)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
-            updateServiceUnitsDisplayname=
-              {this.db.updateServiceUnitsDisplayname.bind(this.db)}
-            getServiceById={this.db.services.getById.bind(this.db.services)}
-            getServiceByName=
-              {this.db.services.getServiceByName.bind(this.db.services)}
+            getYAMLConfig={utils.getYAMLConfig.bind(this)}
+            envResolved={model.resolved.bind(model)}
+            exposeService={model.expose.bind(model)}
+            getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
+              this, this.endpointsController, db, models.getEndpoints)}
+            getAvailableVersions={charmstore.getAvailableVersions.bind(
+              charmstore)}
+            getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
+            getServiceById={db.services.getById.bind(db.services)}
+            getServiceByName={db.services.getServiceByName.bind(db.services)}
             linkify={utils.linkify}
-            appState={this.state} />
+            modelUUID={this.get('modelUUID') || ''}
+            providerType={model.get('providerType') || ''}
+            relatableApplications={relatableApplications}
+            service={service}
+            serviceRelations={
+              relationUtils.getRelationDataForService(db, service)}
+            setCharm={model.setCharm.bind(model)}
+            setConfig={model.set_config.bind(model)}
+            showActivePlan={this.plans.showActivePlan.bind(this.plans)}
+            unexposeService={model.unexpose.bind(model)}
+            unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
+            updateServiceUnitsDisplayname={
+              db.updateServiceUnitsDisplayname.bind(db)}
+          />
         );
       } else if (localType && window.localCharmFile) {
         // When dragging a local charm zip over the canvas it animates the
         // drag over notification which needs to be closed when the inspector
         // is opened.
         this._hideDragOverNotification();
-        var localCharmHelpers = juju.localCharmHelpers;
+        const localCharmHelpers = juju.localCharmHelpers;
         inspector = (
           <window.juju.components.LocalInspector
             acl={this.acl}
+            changeState={this.state.changeState.bind(this.state)}
             file={window.localCharmFile}
             localType={localType}
-            services={this.db.services}
+            services={db.services}
             series={utils.getSeriesList()}
-            uploadLocalCharm={
-                localCharmHelpers.uploadLocalCharm.bind(
-                this, this.env, this.db)}
             upgradeServiceUsingLocalCharm={
-                localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
-                this, this.env, this.db)}
-            changeState={this.state.changeState.bind(this.state)} />
+              localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
+              this, model, db)}
+            uploadLocalCharm={
+              localCharmHelpers.uploadLocalCharm.bind(
+              this, model, db)}
+          />
         );
       } else {
-        this.state.changeState({
-          gui: {
-            inspector: null}});
+        this.state.changeState({gui: {inspector: null}});
         return;
       }
       ReactDOM.render(
@@ -1836,6 +1836,7 @@ YUI.add('juju-gui', function(Y) {
           jujuCoreVersion={this.get('jujuCoreVersion')}
           machines={db.machines}
           placeUnit={this.env.placeUnit.bind(this.env)}
+          providerType={this.env.get('providerType') || ''}
           removeUnits={this.env.remove_units.bind(this.env)}
           services={db.services}
           units={db.units} />,
