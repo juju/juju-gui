@@ -77,7 +77,7 @@ YUI.add('deployment-bar', function() {
     _getDeployButtonLabel: function() {
       var label = this.props.modelCommitted ? 'Commit changes'
         : 'Deploy changes';
-      return label  + ' (' +
+      return label + ' (' +
         Object.keys(this.props.currentChangeSet).length + ')';
     },
 

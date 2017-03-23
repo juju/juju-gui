@@ -839,7 +839,7 @@ describe('Configuration', function() {
               disabled={true}
               onChange={instance._importConfig}
               ref="file"
-              type="file"  />
+              type="file" />
           </form>
           <div className="inspector-config__config-file">
             <juju.components.ButtonRow buttons={importButton} />

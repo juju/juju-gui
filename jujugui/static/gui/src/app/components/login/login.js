@@ -64,7 +64,7 @@ YUI.add('login-component', function() {
       @param {Object} evt The submit event.
     */
     _handleLoginSubmit: function(evt) {
-      if (evt && evt.preventDefault){
+      if (evt && evt.preventDefault) {
         evt.preventDefault();
       }
       this.props.loginToAPIs({

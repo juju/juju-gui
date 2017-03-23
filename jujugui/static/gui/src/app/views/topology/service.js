@@ -1187,7 +1187,7 @@ YUI.add('juju-topology-service', function(Y) {
       }, 100);
     },
 
-    dragend: function(box,  self) {
+    dragend: function(box, self) {
       var topo = self.get('component');
       if (box.tapped) {
         box.tapped = false;
