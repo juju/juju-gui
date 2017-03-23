@@ -47,19 +47,6 @@ describe('ACL', function() {
     return Y.juju.generateAcl(controllerAPI, modelAPI);
   };
 
-  // Create and return a legacy Juju ACL instance.
-  const makeLegacyACL = (controllerAccess, modelAccess) => {
-    const modelAPI = {
-      get: name => {
-        return {
-          controllerAccess: controllerAccess,
-          modelAccess: modelAccess
-        }[name];
-      }
-    };
-    return Y.juju.generateAcl(null, modelAPI);
-  };
-
   it('isReadOnly', () => {
     let acl = makeACL('', '', 'read');
     assert.strictEqual(acl.isReadOnly(), true);
@@ -85,17 +72,6 @@ describe('ACL', function() {
     acl = makeACL('login', '', '');
     assert.strictEqual(acl.canAddModels(), false);
     acl = makeACL('', '', '');
-    assert.strictEqual(acl.canAddModels(), false);
-  });
-
-  it('canAddModels (legacy Juju)', () => {
-    let acl = makeLegacyACL('superuser', '');
-    assert.strictEqual(acl.canAddModels(), true);
-    acl = makeLegacyACL('', '');
-    assert.strictEqual(acl.canAddModels(), false);
-    acl = makeLegacyACL('add-model', '');
-    assert.strictEqual(acl.canAddModels(), true);
-    acl = makeLegacyACL('login', '');
     assert.strictEqual(acl.canAddModels(), false);
   });
 

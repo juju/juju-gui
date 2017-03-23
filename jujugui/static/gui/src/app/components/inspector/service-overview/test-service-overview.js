@@ -191,41 +191,6 @@ describe('ServiceOverview', function() {
     assert.equal(instance.state.activePlan, activePlan);
   });
 
-  it('does not make the plans request for Juju 1', function() {
-    const setAttrs = sinon.stub();
-    const getStub = sinon.stub();
-    getStub.withArgs('activePlan')
-      .throws('it should not fetch this for Juju 1');
-    getStub.withArgs('charm').returns('cs:django');
-    getStub.withArgs('name').throws('it should not fetch this for Juju 1');
-    getStub.withArgs('plans').throws('it should not fetch this for Juju 1');
-    getStub.withArgs('units').returns({
-      toArray: sinon.stub().returns([])
-    });
-    const service = {
-      setAttrs: setAttrs,
-      get: getStub
-    };
-    const showActivePlan = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
-        acl={acl}
-        changeState={sinon.stub()}
-        charm={fakeCharm}
-        clearState={sinon.stub()}
-        destroyService={sinon.stub()}
-        displayPlans={false}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID={'abc123'}
-        service={service}
-        serviceRelations={[1]}
-        showActivePlan={showActivePlan} />, true);
-    const instance = renderer.getMountedInstance();
-    assert.equal(showActivePlan.callCount, 0);
-    assert.equal(instance.state.plans, null);
-    assert.equal(instance.state.activePlan, null);
-  });
-
   it('shows the all units action', function() {
     const service = {
       get: function() {

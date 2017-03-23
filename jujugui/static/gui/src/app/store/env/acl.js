@@ -44,12 +44,6 @@ YUI.add('acl', function(Y) {
     @return {Object} A namespace providing access to ACLs checkers (see below).
   */
   juju.generateAcl = function (controllerAPI, modelAPI) {
-    if (!controllerAPI) {
-      // The application is connected to a legacy Juju.
-      controllerAPI = {
-        get: (_) => ''
-      };
-    }
     const acl = {
       /**
         Report whether the model interaction is read-only, in which case it is

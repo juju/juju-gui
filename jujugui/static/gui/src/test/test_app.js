@@ -581,8 +581,7 @@ describe('App', function() {
 
 
   describe('Application authentication', function() {
-    var app, conn, conn2, controller, destroyMe, ecs, env, juju, legacyApp,
-        legacyEnv, legacyConn, Y;
+    var app, conn, conn2, controller, destroyMe, ecs, env, juju, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
@@ -595,17 +594,10 @@ describe('App', function() {
 
     beforeEach(function() {
       conn = new testUtils.SocketStub();
-      legacyConn = new testUtils.SocketStub();
       conn2 = new testUtils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
         conn: conn,
-        ecs: ecs,
-        user: 'user',
-        password: 'password'
-      });
-      legacyEnv = new juju.environments.GoLegacyEnvironment({
-        conn: legacyConn,
         ecs: ecs,
         user: 'user',
         password: 'password'
@@ -626,31 +618,18 @@ describe('App', function() {
         viewContainer: container
       });
       app.navigate = function() { return true; };
-      legacyApp = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        consoleEnabled: true,
-        controllerAPI: controller,
-        controllerSocketTemplate: '/api',
-        env: legacyEnv,
-        jujuCoreVersion: '1.25.6',
-        viewContainer: container
-      });
-      legacyApp.navigate = function() { return true; };
       destroyMe = [ecs, controller];
     });
 
     afterEach(function(done) {
       env.close(() => {
-        legacyEnv.close(() => {
-          controller.close(() => {
-            app.destroy();
-            legacyApp.destroy();
-            sessionStorage.setItem('credentials', null);
-            destroyMe.forEach(item => {
-              item.destroy();
-            });
-            done();
+        controller.close(() => {
+          app.destroy();
+          sessionStorage.setItem('credentials', null);
+          destroyMe.forEach(item => {
+            item.destroy();
           });
+          done();
         });
       });
     });
@@ -682,47 +661,6 @@ describe('App', function() {
       assert.deepEqual(
         app.env.getCredentials(), {user: '', password: '', macaroons: null});
       assert.equal(conn.messages.length, 0);
-    });
-
-    it('uses the auth token if there are no credentials', function() {
-      // Override the local window.location object.
-      legacyApp.location = {search: '?authtoken=demoToken'};
-      legacyEnv.setCredentials(null);
-      legacyEnv.connect();
-      assert.equal(legacyConn.messages.length, 1);
-      assert.deepEqual(legacyConn.last_message(), {
-        RequestId: 1,
-        Type: 'GUIToken',
-        Version: 0,
-        Request: 'Login',
-        Params: {Token: 'demoToken'}
-      });
-    });
-
-    it('handles multiple authtokens', function() {
-      // Override the local window.location object.
-      legacyApp.location = {search: '?authtoken=demoToken&authtoken=discarded'};
-      legacyEnv.setCredentials(null);
-      legacyEnv.connect();
-      assert.equal(legacyConn.messages.length, 1);
-      assert.deepEqual(legacyConn.last_message(), {
-        RequestId: 1,
-        Type: 'GUIToken',
-        Version: 0,
-        Request: 'Login',
-        Params: {Token: 'demoToken'}
-      });
-    });
-
-    it('ignores the authtoken if credentials exist', function() {
-      // Override the local window.location object.
-      legacyApp.location = {search: '?authtoken=demoToken'};
-      legacyEnv.setCredentials({user: 'user', password: 'password'});
-      legacyEnv.connect();
-      assert.equal(1, legacyConn.messages.length);
-      var message = legacyConn.last_message();
-      assert.equal('Admin', message.Type);
-      assert.equal('Login', message.Request);
     });
 
     it('displays the login view if credentials are not valid', function() {
@@ -796,51 +734,6 @@ describe('App', function() {
       app.onLogin({ data: { result: true } });
       assert.equal(app.navigate.calledOnce, false,
         'navigate should not be called in gisf mode here');
-    });
-
-    // XXX This test causes intermittent cascading failures when run in CI.
-    // When the notification system gets refactored this test can be un-skipped.
-    it.skip('creates a notification if logged in with a token', function(done) {
-      // We need to change the prototype before we instantiate.
-      // See the "this.restore()" call in the callback below that cleans up.
-      var stub = sinon.stub(Y.juju.App.prototype, 'onLogin');
-      sinon.stub(app, 'maskVisibility');
-      app.redirectPath = '/foo/bar/';
-      app.location = {
-        toString: function() {return '/login/';},
-        search: '?authtoken=demoToken'};
-      sinon.stub(app.env, 'onceAfter');
-      sinon.stub(app, 'navigate');
-      stub.addCallback(function() {
-        // Clean up.
-        this.restore();
-        // Begin assertions.
-        var e = this.lastCall.args[0];
-        // These two really simply verify that our test prep did what we
-        // expected.
-        assert.equal(e.data.result, true);
-        assert.equal(e.data.fromToken, true);
-        this.passThroughToOriginalMethod(app);
-        assert.equal(app.maskVisibility.calledOnce, true);
-        assert.equal(app.env.onceAfter.calledOnce, true);
-        var onceAfterArgs = app.env.onceAfter.lastCall.args;
-        assert.equal(onceAfterArgs[0], 'environmentNameChange');
-        // Call the event handler so we can verify what it does.
-        onceAfterArgs[1].call(onceAfterArgs[2]);
-        assert.equal(
-            app.db.notifications.item(0).get('title'),
-            'Logged in with Token');
-        assert.equal(app.navigate.calledOnce, true);
-        var navigateArgs = app.navigate.lastCall.args;
-        assert.equal(navigateArgs[0], '/foo/bar/');
-        assert.deepEqual(navigateArgs[1], {overrideAllNamespaces: true});
-        done();
-      });
-      env.setCredentials(null);
-      env.connect();
-      conn.msg({
-        'request-id': conn.last_message()['request-id'],
-        Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
     it('tries to log in on first connection', function() {
@@ -929,20 +822,16 @@ describe('App', function() {
 
 
   describe('Application Connection State', function() {
-    let Y, app, conn, controllerAPI, env, legacyModelAPI, juju;
+    let Y, app, conn, controllerAPI, env, juju;
 
-    function constructAppInstance(legacy) {
+    function constructAppInstance() {
       let version = '2.0.0';
       let controller = controllerAPI;
       let model = env;
-      if (legacy) {
-        version = '1.25.6';
-        controller = null;
-        model = legacyModelAPI;
-      }
       const noop = function() {return this;};
       const app = new juju.App({
         baseUrl: 'http://example.com/',
+        apiAddress: 'wss://1.2.3.4:1234',
         env: model,
         controllerAPI: controller,
         consoleEnabled: true,
@@ -991,11 +880,6 @@ describe('App', function() {
         user: 'user',
         password: 'password'
       });
-      legacyModelAPI = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
-        user: 'user',
-        password: 'password'
-      });
       controllerAPI = new juju.ControllerAPI({
         conn: new testUtils.SocketStub(),
         user: 'user',
@@ -1034,17 +918,6 @@ describe('App', function() {
       app.after('ready', () => {
         assert.strictEqual(controllerAPI.connect.callCount, 1, 'controller');
         assert.strictEqual(env.connect.callCount, 0, 'model');
-        done();
-      });
-    });
-
-    it('should connect to the model in Juju 1', function(done) {
-      controllerAPI.connect = sinon.stub();
-      legacyModelAPI.connect = sinon.stub();
-      app = constructAppInstance(true);
-      app.after('ready', () => {
-        assert.strictEqual(controllerAPI.connect.callCount, 0, 'controller');
-        assert.strictEqual(legacyModelAPI.connect.callCount, 1, 'model');
         done();
       });
     });
@@ -1121,77 +994,24 @@ describe('App', function() {
         });
       });
 
-      it('closes and reopens the model connection in Juju 1', function(done) {
-        let modelClosed = false;
-        let modelConnected = false;
-        const ecs = {
-          clear: sinon.stub()
-        };
-        // Create an application instance.
-        app = constructAppInstance(true);
-        app.after('ready', () => {
-          app.state.changeState = sinon.stub();
-          // Mock the API connections for the resulting application.
-          app.env = {
-            close: (callback) => {
-              modelClosed = true;
-              callback();
-            },
-            connect: () => {
-              assert.strictEqual(
-                modelClosed, true, 'model connect called before close');
-              modelConnected = true;
-            },
-            get: sinon.stub().returns(ecs)
-          };
-          this._cleanups.push(() => {
-            app.env = env;
-          });
-          // Mock the app method used to render the login mask.
-          app._renderLogin = sinon.stub();
-          // Log out from the app.
-          app.logout();
-          // The API connections have been properly closed.
-          assert.strictEqual(modelClosed, true, 'model closed');
-          assert.strictEqual(modelConnected, true, 'model connect');
-          // The database has been reset and updated.
-          assert.strictEqual(app.db.reset.called, true, 'db.reset');
-          assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
-          assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
-          assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
-          // The login mask has been displayed.
-          assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
-          assert.equal(app.state.changeState.callCount, 1);
-          assert.deepEqual(app.state.changeState.args[0], [{
-            model: null,
-            profile: null,
-            root: null,
-            store: null
-          }]);
-          done();
+      it('clears the db changed timer when the app is destroyed', function() {
+        // Set up the application instance.
+        app = constructAppInstance();
+        app.dbChangedTimer = 'I am the timer!';
+        // Mock the clearTimeout builtin function.
+        const original = clearTimeout;
+        clearTimeout = sinon.stub();
+        this._cleanups.push(() => {
+          clearTimeout = original;
         });
+        // Destroy the application.
+        app.destroy();
+        // The timer has been canceled.
+        assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
+        assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
       });
     });
-
-    it('clears the db changed timer when the app is destroyed', function() {
-      // Set up the application instance.
-      app = constructAppInstance();
-      app.dbChangedTimer = 'I am the timer!';
-      // Mock the clearTimeout builtin function.
-      const original = clearTimeout;
-      clearTimeout = sinon.stub();
-      this._cleanups.push(() => {
-        clearTimeout = original;
-      });
-      // Destroy the application.
-      app.destroy();
-      // The timer has been canceled.
-      assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
-      assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
-    });
-
   });
-
 
   describe('switchEnv', function() {
     var Y, app;
@@ -1205,6 +1025,7 @@ describe('App', function() {
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         password: 'admin',
         socketTemplate: '/environment/$uuid/api',
+        controllerSocketTemplate: '/$uuid/api',
         user: 'admin',
         viewContainer: container
       });
@@ -1385,7 +1206,6 @@ describe('App', function() {
       });
       assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
     });
-
   });
 
   describe('clearUser', function() {
@@ -1442,7 +1262,6 @@ describe('App', function() {
       app.clearUser('charmstore');
       assert.equal(app.getUser('charmstore'), undefined);
     });
-
   });
 
   describe('storeUser', function() {
@@ -1508,9 +1327,7 @@ describe('App', function() {
       assert.equal(app._renderBreadcrumb.callCount, 1);
       assert.deepEqual(app.get('users')['charmstore'], user);
     });
-
   });
-
 
   describe('_getAuth', function() {
     var Y, app, controllerCredStub, modelCredStub, juju;
@@ -1876,54 +1693,6 @@ describe('App', function() {
       app.loginToAPIs(credentials, useMacaroons, [controller, model]);
       checkLoggedInWithMacaroons(controller, true);
       checkLoggedInWithMacaroons(model, false);
-    });
-  });
-
-  describe('isLegacyJuju', function() {
-    var app, juju, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        juju = juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      app = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: new juju.ControllerAPI({
-          conn: new testUtils.SocketStub()
-        }),
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet(),
-          user: 'user',
-          password: 'password'
-        }),
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-    });
-
-    afterEach(function() {
-      app.destroy();
-    });
-
-    it('reports legacy Juju versions', function() {
-      ['1.26.0', '0.8.0', '1.9', '1'].forEach(function(version) {
-        app.set('jujuCoreVersion', version);
-        assert.strictEqual(app.isLegacyJuju(), true, version);
-      });
-    });
-
-    it('reports non-legacy Juju versions', function() {
-      ['2.0.1', '2.0-beta42.47', '3.5', '2'].forEach(function(version) {
-        app.set('jujuCoreVersion', version);
-        assert.strictEqual(app.isLegacyJuju(), false, version);
-      });
     });
   });
 
@@ -2518,41 +2287,6 @@ describe('App', function() {
     });
   });
 
-  describe('_sharingVisibility', function() {
-    let app, juju, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        juju = juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      app = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: new juju.ControllerAPI({
-          conn: new testUtils.SocketStub()
-        }),
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet(),
-          user: 'user',
-          password: 'password'
-        }),
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-
-    });
-
-    afterEach(function() {
-      app.destroy();
-    });
-  });
-
   describe('setPageTitle', function () {
     let app, juju, Y;
 
@@ -2599,4 +2333,5 @@ describe('App', function() {
       assert.equal(document.title, 'Juju GUI');
     });
   });
+
 });

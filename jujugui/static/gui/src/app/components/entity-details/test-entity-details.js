@@ -49,7 +49,6 @@ describe('EntityDetails', function() {
         id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
-        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
@@ -85,14 +84,12 @@ describe('EntityDetails', function() {
           apiUrl={apiUrl}
           changeState={changeState}
           deployService={deployService}
-          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
           getModelName={getModelName}
-          isLegacyJuju={false}
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -134,7 +131,6 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
-            isLegacyJuju={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -161,7 +157,6 @@ describe('EntityDetails', function() {
           apiUrl="http://example.com/"
           changeState={changeState}
           deployService={deployService}
-          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -216,7 +211,6 @@ describe('EntityDetails', function() {
           apiUrl={apiUrl}
           changeState={changeState}
           deployService={deployService}
-          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
@@ -227,7 +221,6 @@ describe('EntityDetails', function() {
           getDiagramURL={getDiagramURL}
           listPlansForCharm={sinon.stub()}
           id={id}
-          isLegacyJuju={false}
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
@@ -267,7 +260,6 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
-            isLegacyJuju={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -294,7 +286,6 @@ describe('EntityDetails', function() {
           apiUrl="http://example.com/"
           changeState={changeState}
           deployService={deployService}
-          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -324,7 +315,6 @@ describe('EntityDetails', function() {
         id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
-        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
@@ -366,7 +356,6 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -374,7 +363,6 @@ describe('EntityDetails', function() {
         getModelName={getModelName}
         id={id}
         importBundleYAML={importBundleYAML}
-        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
@@ -414,7 +402,6 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
-            isLegacyJuju={false}
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -423,88 +410,6 @@ describe('EntityDetails', function() {
     assert.deepEqual(output, expected);
     assert.equal(listPlansForCharm.callCount, 1);
     assert.equal(listPlansForCharm.args[0][0], 'cs:django');
-  });
-
-  it('can not display plans', function() {
-    mockEntity.hasMetrics = sinon.stub().returns(false);
-    const plans = ['plan1', 'plan2'];
-    const addNotification = sinon.spy();
-    const apiUrl = 'http://example.com';
-    const changeState = sinon.spy();
-    const deployService = sinon.spy();
-    const getBundleYAML = sinon.spy();
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const getFile = sinon.spy();
-    const getModelName = sinon.spy();
-    const id = mockEntity.get('id');
-    const importBundleYAML = sinon.spy();
-    const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const pluralize = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        changeState={changeState}
-        deployService={deployService}
-        displayPlans={false}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        id={id}
-        importBundleYAML={importBundleYAML}
-        isLegacyJuju={false}
-        listPlansForCharm={listPlansForCharm}
-        makeEntityModel={makeEntityModel}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollPosition={100}
-        setPageTitle={sinon.stub()} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
-    const expected = (
-      <div className={'entity-details charm'}
-        ref="content"
-        tabIndex="0">
-        <div>
-          <juju.components.EntityHeader
-            acl={acl}
-            entityModel={mockEntity}
-            importBundleYAML={importBundleYAML}
-            getBundleYAML={getBundleYAML}
-            getModelName={getModelName}
-            hasPlans={false}
-            changeState={changeState}
-            addNotification={addNotification}
-            deployService={deployService}
-            plans={null}
-            pluralize={pluralize}
-            scrollPosition={100} />
-          {undefined}
-          <juju.components.EntityContent
-            apiUrl={apiUrl}
-            changeState={changeState}
-            entityModel={mockEntity}
-            getFile={getFile}
-            hasPlans={false}
-            isLegacyJuju={false}
-            plans={null}
-            pluralize={pluralize}
-            renderMarkdown={renderMarkdown} />
-          </div>
-      </div>);
-    assert.deepEqual(output, expected);
-    assert.equal(listPlansForCharm.callCount, 0);
   });
 
   it('can set plans to empty on error', function() {
@@ -530,7 +435,6 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -538,7 +442,6 @@ describe('EntityDetails', function() {
         getModelName={getModelName}
         id={id}
         importBundleYAML={importBundleYAML}
-        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
@@ -578,7 +481,6 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
-            isLegacyJuju={false}
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />

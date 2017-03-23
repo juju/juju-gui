@@ -34,7 +34,6 @@ describe('Ghost Deployer Extension', function() {
   beforeEach(function() {
     GhostDeployer = Y.Base.create(
         'deployer', Y.Base, [juju.GhostDeployer], {
-          isLegacyJuju: sinon.stub().returns(false),
           views: {
             environment: {
               instance: {
@@ -151,16 +150,6 @@ describe('Ghost Deployer Extension', function() {
 
   it('does not call addCharm for local charms and juju 2', function() {
     const charm = makeCharm('local:trusty/django-42');
-    ghostDeployer.isLegacyJuju = function() { return false; };
-    ghostDeployer.env.addCharm = sinon.stub();
-    ghostDeployer.deployService(charm);
-    assert.equal(ghostDeployer.env.addCharm.callCount, 0);
-    assert.equal(ghostDeployer.env.deploy.callCount, 1);
-  });
-
-  it('does not call addCharm for local charms and juju 1', function() {
-    const charm = makeCharm('local:trusty/django-42');
-    ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.env.addCharm = sinon.stub();
     ghostDeployer.deployService(charm);
     assert.equal(ghostDeployer.env.addCharm.callCount, 0);
@@ -177,31 +166,6 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(args[0].applicationName, 'ghost-service-id');
     assert.deepEqual(args[0].resources, {a: 'resource'});
     assert.equal(typeof args[1], 'function');
-  });
-
-  it('properly adds the series to Juju 1 applications', function() {
-    const charm = makeCharm();
-    ghostDeployer.isLegacyJuju = function() { return true; };
-    ghostDeployer.deployService(charm);
-    const args = ghostDeployer.env.deploy.lastCall.args[0];
-    assert.strictEqual(args.charmURL, 'cs:trusty/django-42');
-  });
-
-  it('properly adds the series to local Juju 1 applications', function() {
-    const charm = makeCharm('local:trusty/django-42');
-    ghostDeployer.isLegacyJuju = function() { return true; };
-    ghostDeployer.deployService(charm);
-    const args = ghostDeployer.env.deploy.lastCall.args[0];
-    assert.strictEqual(args.charmURL, 'local:trusty/django-42');
-  });
-
-  it('properly adds the series to userspace Juju 1 applications', function() {
-    const charm = makeCharm();
-    charm.set('id', 'cs:~thedr/django-42');
-    ghostDeployer.isLegacyJuju = function() { return true; };
-    ghostDeployer.deployService(charm);
-    const args = ghostDeployer.env.deploy.lastCall.args[0];
-    assert.strictEqual(args.charmURL, 'cs:~thedr/trusty/django-42');
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {
