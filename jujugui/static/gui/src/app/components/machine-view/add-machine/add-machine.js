@@ -31,6 +31,7 @@ YUI.add('machine-view-add-machine', function() {
       placeUnit: React.PropTypes.func,
       providerType: React.PropTypes.string,
       selectMachine: React.PropTypes.func,
+      series: React.PropTypes.array,
       unit: React.PropTypes.object
     },
 
@@ -132,6 +133,7 @@ YUI.add('machine-view-add-machine', function() {
             disabled={props.acl.isReadOnly()}
             hasUnit={!!props.unit}
             providerType={props.providerType}
+            series={props.series}
             valuesChanged={this._updateConstraints}
           />
         </div>);

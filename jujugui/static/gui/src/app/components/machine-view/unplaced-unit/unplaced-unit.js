@@ -69,6 +69,7 @@ YUI.add('machine-view-unplaced-unit', function() {
       providerType: React.PropTypes.string,
       removeUnit: React.PropTypes.func.isRequired,
       selectMachine: React.PropTypes.func.isRequired,
+      series: React.PropTypes.array,
       unit: React.PropTypes.object.isRequired
     },
 
@@ -110,6 +111,7 @@ YUI.add('machine-view-unplaced-unit', function() {
           placeUnit={props.placeUnit}
           providerType={props.providerType}
           selectMachine={props.selectMachine}
+          series={props.series}
           unit={props.unit}
         />
       );

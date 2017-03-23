@@ -33,6 +33,7 @@ YUI.add('machine-view', function() {
       placeUnit: React.PropTypes.func.isRequired,
       providerType: React.PropTypes.string,
       removeUnits: React.PropTypes.func.isRequired,
+      series: React.PropTypes.array,
       services: React.PropTypes.object.isRequired,
       units: React.PropTypes.object.isRequired
     },
@@ -179,6 +180,7 @@ YUI.add('machine-view', function() {
             providerType={props.providerType}
             removeUnit={this._removeUnit}
             selectMachine={this.selectMachine}
+            series={props.series}
             unit={unit}
           />
         );
@@ -378,6 +380,7 @@ YUI.add('machine-view', function() {
           placeUnit={props.placeUnit}
           providerType={props.providerType}
           selectMachine={this.selectMachine}
+          series={props.series}
           unit={this.state.placingUnit}
         />
       );
@@ -431,6 +434,7 @@ YUI.add('machine-view', function() {
           parentId={this.state.selectedMachine}
           placeUnit={props.placeUnit}
           providerType={props.providerType}
+          series={props.series}
           unit={this.state.placingUnit}
         />
       );

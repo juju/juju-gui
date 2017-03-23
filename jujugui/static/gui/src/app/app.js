@@ -1823,7 +1823,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderMachineView: function(state, next) {
-      var db = this.db;
+      const db = this.db;
       ReactDOM.render(
         <window.juju.components.MachineView
           acl={this.acl}
@@ -1839,6 +1839,7 @@ YUI.add('juju-gui', function(Y) {
           providerType={this.env.get('providerType') || ''}
           removeUnits={this.env.remove_units.bind(this.env)}
           services={db.services}
+          series={window.jujulib.CHARM_SERIES}
           units={db.units} />,
         document.getElementById('machine-view'));
       next();

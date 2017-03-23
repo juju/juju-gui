@@ -26,11 +26,12 @@ YUI.add('constraints', function() {
       disabled: React.PropTypes.bool,
       hasUnit: React.PropTypes.bool,
       providerType: React.PropTypes.string,
+      series: React.PropTypes.array,
       valuesChanged: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: () => {
-      return {disabled: false, hasUnit: false, providerType: ''};
+      return {disabled: false, hasUnit: false, providerType: '', series: []};
     },
 
     /**
@@ -76,12 +77,9 @@ YUI.add('constraints', function() {
       let series;
       // Only allow selecting a series if there is no unit already assigned.
       // If there is a unit, the machine must have the same series as the unit.
-      if (!props.hasUnit) {
+      if (!props.hasUnit && props.series.length) {
         // Generate a list of series options.
-        const machineSeries = window.jujulib.SERIES.filter(ser => {
-          return ser !== window.jujulib.BUNDLE_SERIES;
-        });
-        const seriesOptions = machineSeries.map(ser => {
+        const seriesOptions = props.series.map(ser => {
           return <option key={ser} value={ser}>{ser}</option>;
         });
         series = (

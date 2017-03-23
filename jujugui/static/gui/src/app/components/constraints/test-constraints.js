@@ -25,37 +25,12 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Constraints', function() {
+  const series = ['precise', 'trusty', 'xenial', 'win8', 'centos7'];
   const seriesOptions = [
-    <option key={'oneiric'} value={'oneiric'}>{'oneiric'}</option>,
     <option key={'precise'} value={'precise'}>{'precise'}</option>,
-    <option key={'quantal'} value={'quantal'}>{'quantal'}</option>,
-    <option key={'raring'} value={'raring'}>{'raring'}</option>,
-    <option key={'saucy'} value={'saucy'}>{'saucy'}</option>,
     <option key={'trusty'} value={'trusty'}>{'trusty'}</option>,
-    <option key={'utopic'} value={'utopic'}>{'utopic'}</option>,
-    <option key={'vivid'} value={'vivid'}>{'vivid'}</option>,
-    <option key={'wily'} value={'wily'}>{'wily'}</option>,
     <option key={'xenial'} value={'xenial'}>{'xenial'}</option>,
-    <option key={'yakkety'} value={'yakkety'}>{'yakkety'}</option>,
-    <option key={'zesty'} value={'zesty'}>{'zesty'}</option>,
-    <option key={'win2012hvr2'} value={'win2012hvr2'}>
-      {'win2012hvr2'}
-    </option>,
-    <option key={'win2012hv'} value={'win2012hv'}>
-      {'win2012hv'}
-    </option>,
-    <option key={'win2012r2'} value={'win2012r2'}>
-      {'win2012r2'}
-    </option>,
-    <option key={'win2012'} value={'win2012'}>{'win2012'}</option>,
-    <option key={'win7'} value={'win7'}>{'win7'}</option>,
     <option key={'win8'} value={'win8'}>{'win8'}</option>,
-    <option key={'win81'} value={'win81'}>{'win81'}</option>,
-    <option key={'win10'} value={'win10'}>{'win10'}</option>,
-    <option key={'win2016'} value={'win2016'}>{'win2016'}</option>,
-    <option key={'win2016nano'} value={'win2016nano'}>
-      {'win2016nano'}
-    </option>,
     <option key={'centos7'} value={'centos7'}>{'centos7'}</option>
   ];
   let valuesChanged;
@@ -77,6 +52,7 @@ describe('Constraints', function() {
         disabled={args.disabled || false}
         hasUnit={args.hasUnit || false}
         providerType={args.providerType || ''}
+        series={series}
         valuesChanged={valuesChanged}
       />, true);
     return {
@@ -347,7 +323,10 @@ describe('Constraints', function() {
     // We need to render the full component here as the shallowRenderer does
     // not yet support simulating change events.
     testUtils.renderIntoDocument(
-      <juju.components.Constraints valuesChanged={valuesChanged} />
+      <juju.components.Constraints
+        valuesChanged={valuesChanged}
+        series={series}
+      />
     );
     assert.equal(valuesChanged.callCount, 1, 'valuesChanged.callCount');
     const args = valuesChanged.args[0];
@@ -366,10 +345,13 @@ describe('Constraints', function() {
     // We need to render the full component here as the shallowRenderer does
     // not yet support simulating change events.
     const output = testUtils.renderIntoDocument(
-      <juju.components.Constraints valuesChanged={valuesChanged} />
+      <juju.components.Constraints
+        valuesChanged={valuesChanged}
+        series={series}
+      />
     );
     const refs = output.refs;
-    refs.seriesConstraintSelect.value = 'yakkety';
+    refs.seriesConstraintSelect.value = 'xenial';
     refs.archConstraintSelect.value = 'i386';
     refs.cpuConstraintInput.value = '1024';
     refs.coresConstraintInput.value = '2';
@@ -385,7 +367,7 @@ describe('Constraints', function() {
       cores: '2',
       mem: '2048',
       'root-disk': '4096',
-      series: 'yakkety'
+      series: 'xenial'
     });
   });
 
