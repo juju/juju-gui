@@ -671,7 +671,7 @@ YUI.add('juju-env-bakery', function(Y) {
 
         var unsealedStr = nacl.util.encodeUTF8(unsealed);
         var plain = JSON.parse(unsealedStr);
-        if(plain.Condition === undefined){
+        if(plain.Condition === undefined) {
           throw new Exception('empty condition in third party caveat');
         }
         // Check that the condition actually holds.
