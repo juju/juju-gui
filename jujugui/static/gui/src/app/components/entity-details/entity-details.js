@@ -30,7 +30,6 @@ YUI.add('entity-details', function() {
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
-      displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
@@ -38,7 +37,6 @@ YUI.add('entity-details', function() {
       getModelName: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
-      isLegacyJuju: React.PropTypes.bool,
       listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
@@ -99,7 +97,6 @@ YUI.add('entity-details', function() {
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
                   hasPlans={this.state.hasPlans}
-                  isLegacyJuju={this.props.isLegacyJuju}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}
                   plans={this.state.plans}
@@ -171,8 +168,7 @@ YUI.add('entity-details', function() {
     */
     _getPlans: function() {
       var entityModel = this.state.entityModel;
-      if (this.props.displayPlans &&
-        entityModel.get('entityType') === 'charm') {
+      if (entityModel.get('entityType') === 'charm') {
         if (entityModel.hasMetrics()) {
           this.setState({hasPlans: true}, () => {
             this.props.listPlansForCharm(

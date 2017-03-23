@@ -127,18 +127,9 @@ YUI.add('local-charm-import-helpers', function(Y) {
       var res = helper._parseUploadResponse(e.target.responseText);
 
       if (e.type === 'error' || e.target.status >= 400) {
-        // If the server does not return a properly formatted error response
-        // then it's safe to assume that local charm upload is not supported.
-        // XXX jcsackett 2016-06-13 We check both res.Error or res.error b/c
-        // we need to support juju2 and juju 1.25. When we no longer support
-        // the latter we can remove `res.error`.
-        var errorMessage = res.Error || res.error || 'Your version of ' +
-                'Juju does not support local charm uploads. Please use at ' +
-                'least version 1.18.0.';
-
         notifications.add({
           title: 'Import failed',
-          message: 'Import from "' + file.name + '" failed. ' + errorMessage,
+          message: 'Import from "' + file.name + '" failed. ' + res.Error,
           level: 'error'
         });
         console.log('error', e);
@@ -157,13 +148,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
         } else {
           callback = helper._loadCharmDetailsCallback;
         }
-
-        // XXX jcsackett 2016-06-13 We check both res['charm-url'] or
-        // res.CharmURL b/c we need to support juju2 and juju 1.25.
-        // When we no longer support the latter we can remove
-        // `res.CharmURL`.
-        var charmUrl = res['charm-url'] || res.CharmURL;
-        helper.loadCharmDetails(charmUrl, env, callback);
+        helper.loadCharmDetails(res['charm-url'], env, callback);
       }
     },
 

@@ -462,27 +462,6 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Fire a "permissionDenied" event passing the attempted operation.
-     *
-     * @method _firePermissionDenied
-     * @private
-     * @param {Object} op The attempted operation (with an "op" attr).
-     * @return {undefined} Fires an event only.
-     */
-    _firePermissionDenied: function(op) {
-      var title = 'Permission denied';
-      var message = ('GUI is in read-only mode and this operation ' +
-          'requires a model modification');
-      var silent = this.get('_silentFailureOps').some(v => {
-        return v === op.op;
-      });
-      console.warn(title + ': ' + message + '. Attempted operation: ', op);
-      if (!silent) {
-        this.fire('permissionDenied', {title: title, message: message, op: op});
-      }
-    },
-
-    /**
       Store the user's credentials in session storage.
 
       @method setCredentials

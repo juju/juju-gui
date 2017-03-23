@@ -278,91 +278,6 @@ describe('DeploymentFlow', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render for Juju 1', function() {
-    const renderer = createDeploymentFlow({
-      getAgreementsByTerms: sinon.stub(),
-      getUserName: sinon.stub(),
-      isLegacyJuju: true,
-      withPlans: true
-    });
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const props = instance.props;
-    const expected = (
-      <juju.components.DeploymentPanel
-        changeState={props.changeState}
-        title="Pavlova">
-        {undefined}
-        {undefined}
-        {undefined}
-        {undefined}
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={false}
-          instance="deployment-machines"
-          showCheck={false}
-          title="Machines to be deployed">
-          <juju.components.DeploymentMachines
-            acl={props.acl}
-            cloud={null}
-            machines={props.groupedChanges._addMachines} />
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={false}
-          instance="deployment-services"
-          showCheck={true}
-          title={
-            <span className="deployment-flow__service-title">
-              Applications to be deployed
-              <juju.components.GenericButton
-                action={instance._toggleChangelogs}
-                type="inline-neutral"
-                extraClasses="right"
-                title="Show changelog" />
-            </span>}>
-          <juju.components.DeploymentServices
-            acl={props.acl}
-            changesFilterByParent={props.changesFilterByParent}
-            charmsGetById={props.charmsGetById}
-            generateAllChangeDescriptions={
-              props.generateAllChangeDescriptions}
-            groupedChanges={props.groupedChanges}
-            listPlansForCharm={props.listPlansForCharm}
-            parseTermId={instance._parseTermId}
-            servicesGetById={props.servicesGetById}
-            showChangelogs={false}
-            showTerms={props.showTerms}
-            withPlans={true} />
-        </juju.components.DeploymentSection>
-        {undefined}
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={false}
-          instance="deployment-changes"
-          showCheck={false}
-          title="Model changes">
-          <juju.components.DeploymentChanges
-          changes={props.changes}
-          generateAllChangeDescriptions={
-            props.generateAllChangeDescriptions} />
-        </juju.components.DeploymentSection>
-        <div className="twelve-col">
-          <div className="deployment-flow__deploy">
-            {undefined}
-            <div className="deployment-flow__deploy-action">
-              <juju.components.GenericButton
-                action={instance._handleDeploy}
-                disabled={false}
-                type="positive"
-                title="Deploy" />
-            </div>
-          </div>
-        </div>
-      </juju.components.DeploymentPanel>);
-    assert.deepEqual(output, expected);
-  });
-
   it('can display the cloud section as complete', function() {
     const renderer = createDeploymentFlow({
       credential: 'cred',
@@ -417,7 +332,6 @@ describe('DeploymentFlow', function() {
 
   it('can enable the credential section', function() {
     const renderer = createDeploymentFlow({
-      isLegacyJuju: false,
       modelCommitted: false
     });
     const instance = renderer.getMountedInstance();
@@ -428,7 +342,6 @@ describe('DeploymentFlow', function() {
 
   it('can hide the credential section', function() {
     const renderer = createDeploymentFlow({
-      isLegacyJuju: false,
       modelCommitted: true
     });
     const instance = renderer.getMountedInstance();
@@ -441,7 +354,6 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow({
       cloud: {name: 'cloud'},
       credential: 'cred',
-      isLegacyJuju: false,
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
@@ -452,7 +364,6 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow({
       cloud: {name: 'cloud'},
       credential: 'cred',
-      isLegacyJuju: false,
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
@@ -463,7 +374,6 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow({
       cloud: {name: 'cloud'},
       credential: 'cred',
-      isLegacyJuju: false,
       modelCommitted: true,
       withPlans: true
     });
@@ -592,7 +502,7 @@ describe('DeploymentFlow', function() {
             </juju.components.USSOLoginLink>
           </div>
           <div className="deployment-login__signup">
-            Don't have an account?
+            Do not have an account?
             <juju.components.USSOLoginLink
               gisf={instance.props.gisf}
               charmstore={instance.props.charmstore}
@@ -729,16 +639,6 @@ describe('DeploymentFlow', function() {
       state: {modelName: ''},
       allowed: false
     }, {
-      about: 'no model name: legacy juju',
-      state: {modelName: ''},
-      isLegacyJuju: true,
-      allowed: false
-    }, {
-      about: 'legacy juju',
-      state: {modelName: 'mymodel'},
-      isLegacyJuju: true,
-      allowed: true
-    }, {
       about: 'no cloud',
       state: {modelName: 'mymodel'},
       modelCommitted: true,
@@ -865,8 +765,7 @@ describe('DeploymentFlow', function() {
         acl: {isReadOnly: () => !!test.isReadOnly},
         applications: applications,
         charmsGetById: charmsGetById,
-        modelCommitted: !!test.modelCommitted,
-        isLegacyJuju: !!test.isLegacyJuju
+        modelCommitted: !!test.modelCommitted
       };
       if (!test.includeAgreements) {
         props.getAgreementsByTerms = sinon.stub();
@@ -965,29 +864,6 @@ describe('DeploymentFlow', function() {
       cloud: 'azure',
       region: 'skaro',
       config: {'authorized-keys': 'my SSH key'}
-    });
-    assert.equal(instance.props.changeState.callCount, 1);
-  });
-
-  it('can deploy with Juju 1', function() {
-    const renderer = createDeploymentFlow({
-      getAgreementsByTerms: sinon.stub(),
-      isLegacyJuju: true,
-      modelCommitted: true
-    });
-    const instance = renderer.getMountedInstance();
-    instance.refs = {};
-    const output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
-      .props.action();
-    const deploy = instance.props.deploy;
-    assert.equal(deploy.callCount, 1);
-    assert.strictEqual(deploy.args[0].length, 4);
-    assert.equal(deploy.args[0][2], 'Pavlova');
-    assert.deepEqual(deploy.args[0][3], {
-      credential: undefined,
-      cloud: undefined,
-      region: undefined
     });
     assert.equal(instance.props.changeState.callCount, 1);
   });

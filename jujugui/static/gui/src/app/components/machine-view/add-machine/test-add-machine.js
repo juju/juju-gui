@@ -126,7 +126,6 @@ describe('MachineViewAddMachine', function() {
         acl={acl}
         close={close}
         createMachine={createMachine}
-        jujuCoreVersion="2.4"
         parentId="new0" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -204,67 +203,6 @@ describe('MachineViewAddMachine', function() {
     assert.deepEqual(output.props.children[0], expected);
   });
 
-  it('can render for selecting a container', function() {
-    var close = sinon.stub();
-    var createMachine = sinon.stub();
-    var unit = {};
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        id: 'new0/lxc/new0',
-        displayName: 'new0/lxc/new0'
-      }, {
-        id: 'new0/lxc/new1',
-        displayName: 'new0/lxc/new1'
-      }, {
-        // Deleted containers should not appear in the list of options.
-        id: 'new0/lxc/new2',
-        deleted: true,
-        displayName: 'new0/lxc/new2'
-      }])
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
-        acl={acl}
-        close={close}
-        createMachine={createMachine}
-        jujuCoreVersion="1.4"
-        machines={machines}
-        unit={unit} />, true);
-    var instance = renderer.getMountedInstance();
-    instance._updateSelectedMachine({currentTarget: {value: 'new0'}});
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <select className="add-machine__container"
-        defaultValue=""
-        disabled={false}
-        key="containers"
-        onChange={instance._updateSelectedContainer}>
-        <option disabled={true} value="">
-          Choose container type...
-        </option>
-        {[
-          <option
-            key="root"
-            value="new0">
-            {'new0'}/root-container
-          </option>,
-          <option
-            key="new0/lxc/new0"
-            value="new0/lxc/new0">
-            new0/lxc/new0
-          </option>,
-          <option
-            key="new0/lxc/new1"
-            value="new0/lxc/new1">
-            new0/lxc/new1
-          </option>
-        ]}
-        <option value="lxd">LXD</option>
-        <option value="kvm">KVM</option>
-      </select>);
-    assert.deepEqual(output.props.children[1], expected);
-  });
-
   it('can call the cancel method', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
@@ -303,7 +241,6 @@ describe('MachineViewAddMachine', function() {
         acl={acl}
         close={close}
         createMachine={createMachine}
-        jujuCoreVersion="2.4"
         parentId="new0" />);
     var outputNode = ReactDOM.findDOMNode(output);
     var selectNode = outputNode.querySelector('.add-machine__container');

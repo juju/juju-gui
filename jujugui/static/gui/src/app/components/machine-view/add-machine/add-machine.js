@@ -25,7 +25,6 @@ YUI.add('machine-view-add-machine', function() {
       acl: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
-      jujuCoreVersion: React.PropTypes.string,
       machines: React.PropTypes.object,
       parentId: React.PropTypes.string,
       placeUnit: React.PropTypes.func,

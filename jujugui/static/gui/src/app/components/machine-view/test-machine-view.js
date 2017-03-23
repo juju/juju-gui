@@ -66,7 +66,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
@@ -206,7 +205,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -239,7 +237,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -273,7 +270,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -326,7 +322,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -403,7 +398,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -463,7 +457,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -508,7 +501,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -550,7 +542,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -587,7 +578,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -646,7 +636,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -695,7 +684,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -765,7 +753,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -843,7 +830,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -906,7 +892,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -959,7 +944,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -1009,7 +993,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1090,7 +1073,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1180,7 +1162,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         providerType={'gce'}
@@ -1196,7 +1177,6 @@ describe('MachineView', function() {
         acl={acl}
         close={instance._closeAddContainer}
         createMachine={createMachine}
-        jujuCoreVersion="2.4"
         parentId="new0"
         placeUnit={placeUnit}
         providerType={'gce'}
@@ -1239,7 +1219,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         units={units}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1310,7 +1289,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1352,7 +1330,6 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={removeUnits}
@@ -1387,7 +1364,6 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
-        jujuCoreVersion="2.4"
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}

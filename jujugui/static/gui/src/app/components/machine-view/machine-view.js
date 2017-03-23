@@ -28,7 +28,6 @@ YUI.add('machine-view', function() {
       createMachine: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
-      jujuCoreVersion: React.PropTypes.string.isRequired,
       machines: React.PropTypes.object.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
       providerType: React.PropTypes.string,
@@ -430,7 +429,6 @@ YUI.add('machine-view', function() {
           acl={props.acl}
           close={this._closeAddContainer}
           createMachine={props.createMachine}
-          jujuCoreVersion={props.jujuCoreVersion}
           parentId={this.state.selectedMachine}
           placeUnit={props.placeUnit}
           providerType={props.providerType}

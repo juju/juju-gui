@@ -58,7 +58,6 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
-        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -114,7 +113,6 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
-        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -176,14 +174,12 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
-        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
         importBundleYAML={importBundleYAML}
-        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
@@ -204,7 +200,6 @@ describe('Charmbrowser', function() {
               acl={acl}
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
-              isLegacyJuju={false}
               getBundleYAML={getBundleYAML}
               changeState={
                 output.props.children.props.children.props.changeState}
@@ -217,7 +212,6 @@ describe('Charmbrowser', function() {
               getFile={getFile}
               renderMarkdown={renderMarkdown}
               deployService={deployService}
-              displayPlans={true}
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize}
@@ -255,14 +249,12 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
-        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
         importBundleYAML={importBundleYAML}
-        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
@@ -283,7 +275,6 @@ describe('Charmbrowser', function() {
               acl={acl}
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
-              isLegacyJuju={false}
               getBundleYAML={getBundleYAML}
               changeState={
                 output.props.children.props.children.props.changeState}
@@ -296,7 +287,6 @@ describe('Charmbrowser', function() {
               getFile={getFile}
               renderMarkdown={renderMarkdown}
               deployService={deployService}
-              displayPlans={true}
               id='~spinch/koala'
               addNotification={addNotification}
               pluralize={utils.pluralize}
@@ -321,7 +311,6 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
-        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}

@@ -54,8 +54,6 @@ YUI.add('service-overview', function() {
       const props = this.props;
 
       if (!props.displayPlans) {
-        // If we aren't in a Juju 2 model then do not query for
-        // or display the plans.
         return;
       }
 
@@ -237,8 +235,7 @@ YUI.add('service-overview', function() {
                 id: serviceId,
                 activeComponent: 'change-version'}}}});
       }
-      // If we aren't in a Juju 2 model then do not query for
-      // or display the plans.
+
       if (this.props.displayPlans && (state.activePlan || plans)) {
         actions.push({
           title: 'Plan',
