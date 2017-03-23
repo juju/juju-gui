@@ -37,7 +37,7 @@ const User = class User {
 
   get controller() {
     let credentials = JSON.parse(
-      this.sessionStorage.getItem('credentials'));
+      this.storage.getItem('credentials'));
     if (!credentials) {
       credentials = {};
     }

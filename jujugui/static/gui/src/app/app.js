@@ -471,7 +471,7 @@ YUI.add('juju-gui', function(Y) {
         }
         this.state = this._setupState(baseURL);
       }.bind(this);
-
+      this.user = new window.jujugui.User();
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -490,6 +490,7 @@ YUI.add('juju-gui', function(Y) {
       this.defaultPageTitle = 'Juju GUI';
 
       let modelOptions = {
+        user: this.user,
         ecs: ecs,
         conn: this.get('conn'),
         jujuCoreVersion: this.get('jujuCoreVersion'),
@@ -525,20 +526,15 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
-      // If the user closed the GUI when they were on a different env than
-      // their default then it would show them the login screen. This sets
-      // the credentials to the environment that they are logging into
-      // initially.
       var user = null;
       var password = null;
       var macaroons = null;
-      var credentials = modelAPI.getCredentials();
+      var credentials = this.user.controller;
       if (credentials.areAvailable) {
         user = credentials.user;
         password = credentials.password;
         macaroons = credentials.macaroons;
       }
-      modelAPI.setCredentials({ user, password, macaroons });
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
@@ -631,7 +627,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('model connected');
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
-        var credentials = this.env.getCredentials();
+        var credentials = this.user.controller;
         if (credentials.areAvailable) {
           this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
           return;
@@ -702,8 +698,7 @@ YUI.add('juju-gui', function(Y) {
     setUpControllerAPI: function(
       controllerAPI, user, password, macaroons, entityPromise) {
       const external = this._getExternalAuth();
-      controllerAPI.setAttrs({ user, password });
-      controllerAPI.setCredentials({ user, password, macaroons, external });
+      this.user.controller = { user, password, macaroons, external };
 
       controllerAPI.after('login', evt => {
         this.anonymousMode = false;
@@ -764,7 +759,7 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         console.log('controller connected');
-        const creds = this.controllerAPI.getCredentials();
+        const creds = this.user.controller;
         const gisf = this.get('gisf');
         const currentState = this.state.current;
         const rootState = currentState ? currentState.root : null;
@@ -805,8 +800,7 @@ YUI.add('juju-gui', function(Y) {
       Handles logging into both the env and controller api WebSockets.
 
       @method loginToAPIs
-      @param {Object} credentials The credentials to pass to the instances
-        setCredentials method.
+      @param {Object} credentials The credentials for the controller APIs.
       @param {Boolean} useMacaroons Whether to use macaroon based auth
         (macaraq) or simple username/password auth.
       @param {Array} apis The apis instances that we should be logging into.
@@ -826,16 +820,15 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
+      // We make sure controller credentials are set in the user object for
+      // the apis.
+      if (credentials) {
+        this.user.controller = credentials;
+      }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (!api) {
           return;
-        }
-        //TODO this bit we can move outside of the forEach loop and just set it once on the user
-        if (credentials) {
-          // We set credentials even if the API is not connected: they will be
-          // used when the connection is eventually established.
-          api.setCredentials(credentials);
         }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
@@ -925,6 +918,9 @@ YUI.add('juju-gui', function(Y) {
       };
       const charmstore = this.get('charmstore');
       // TODO we should pass in a func that does the user.setcredentials here
+      const setCreds = function(creds) {
+        this.user.controller = creds;
+      };
       ReactDOM.render(
         <window.juju.components.Login
           charmstore={charmstore}
@@ -935,7 +931,8 @@ YUI.add('juju-gui', function(Y) {
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
-          setCredentials={this.env.setCredentials.bind(this.env)}
+          setCredentials={setCreds}
+          showSpinner={this.showConnectingMask.bind(this)}
           storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
@@ -1131,6 +1128,9 @@ YUI.add('juju-gui', function(Y) {
         // If the controller isn't ready yet then don't render anything.
         return;
       }
+      const getCreds = function() {
+        return this.user.controller.user;
+      };
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
@@ -1148,7 +1148,7 @@ YUI.add('juju-gui', function(Y) {
           showPay={window.juju_config.payFlag || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={controllerAPI.getCredentials().user}
+          user={getCreds}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,
         document.getElementById('top-page-container'));
@@ -2253,7 +2253,7 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      const macaroons = this.controllerAPI.getCredentials().macaroons;
+      const macaroons = this.user.controller.macaroons;
       const plansBakery = this.bakeryFactory.create({
         serviceName: 'plans',
         macaroon: macaroons,
@@ -2701,12 +2701,11 @@ YUI.add('juju-gui', function(Y) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
         // The GUI will automatically log in when we switch.
-        this.env.setCredentials({
+        this.user.controller = {
           user: username,
           password: password
-        });
+        };
       };
-      const credentials = this.env.getCredentials();
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2723,8 +2722,6 @@ YUI.add('juju-gui', function(Y) {
       const setUpModel = model => {
         // Tell the model to use the new socket URL when reconnecting.
         model.set('socket_url', socketUrl);
-        // Store the existing credentials so that they can be possibly reused.
-        model.setCredentials(credentials);
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
@@ -3018,14 +3015,14 @@ YUI.add('juju-gui', function(Y) {
       let credentials;
       // Try to retrieve the user from the model connection.
       if (this.env) {
-        credentials = this.env.getCredentials();
+        credentials = this.user.controller;
         if (credentials.user) {
           return mkUser(credentials.user, true);
         }
       }
       // Try to retrieve the user from the controller connection.
       if (this.controllerAPI) {
-        credentials = this.controllerAPI.getCredentials();
+        credentials = this.user.controller;
         if (credentials.user) {
           return mkUser(credentials.user, true);
         }

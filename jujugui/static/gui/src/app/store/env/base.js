@@ -201,6 +201,13 @@ YUI.add('juju-env-base', function(Y) {
     */
     'ecs': {},
     /**
+      The user authorization object.
+
+      @attribute user
+      @type {Object}
+    */
+    'user': {},
+    /**
       Whether or not the connection is open.
 
       @attribute connected
@@ -391,7 +398,7 @@ YUI.add('juju-env-base', function(Y) {
       }
       this.cleanup(() => {
         this.userIsAuthenticated = false;
-        this.setCredentials(null);
+        this.get('user').controller = null;
         this.ws.close();
         callback();
       });
