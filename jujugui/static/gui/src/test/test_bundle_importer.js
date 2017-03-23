@@ -88,19 +88,6 @@ describe('Bundle Importer', function() {
       });
     });
 
-    describe('importChangesToken', function() {
-      it('calls fetchDryRun with token', function() {
-        var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
-        this._cleanups.push(fetch.restore);
-        bundleImporter.importChangesToken('TOKEN');
-        assert.equal(fetch.callCount, 1);
-        var args = fetch.lastCall.args;
-        assert.equal(args.length, 2);
-        assert.strictEqual(args[0], null);
-        assert.equal(args[1], 'TOKEN');
-      });
-    });
-
     describe('importBundleFile', function() {
 
       it('sets up and loads the FileReader', function() {

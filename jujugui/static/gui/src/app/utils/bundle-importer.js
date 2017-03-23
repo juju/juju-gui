@@ -58,17 +58,6 @@ YUI.add('bundle-importer', function(Y) {
     },
 
     /**
-      Import a the collection of changes identified by the given token into the
-      current model.
-
-      @method importChangesToken
-      @param {String} changesToken The token identifying a bundle change set.
-    */
-    importChangesToken: function(changesToken) {
-      this.fetchDryRun(null, changesToken);
-    },
-
-    /**
       Import bundle YAML or dry-run file.
 
       @method importBundleFile

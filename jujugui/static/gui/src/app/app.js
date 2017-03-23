@@ -2592,23 +2592,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.state.current.root === 'login') {
         this.state.changeState({root: null});
       }
-      // Handle the change set token if provided in the query.
-      // The change set token identifies a collections of changes required
-      // to deploy a bundle. Those changes are assumed to be already
-      // registered in the GUI server (via a ChangeSet:SetChanges request).
-      // Doing that is usually responsibility of a separate system
-      // (most of the times, it is Juju Quickstart).
-      var querystring = this.location.search.substring(1);
-      var qs = views.utils.parseQueryString(querystring);
-      var changesToken = qs.changestoken || '';
-      if (changesToken || changesToken.length) {
-        // De-dupe if necessary.
-        if (Array.isArray(changesToken)) {
-          changesToken = changesToken[0];
-        }
-        // Try to create a bundle uncommitted state using the token.
-        this.bundleImporter.importChangesToken(changesToken);
-      }
       // If we are in GISF mode then we do not want to store and redirect
       // on login because the user has already logged into their models
       // and will frequently be switching between models and logging in to
