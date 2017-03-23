@@ -390,7 +390,7 @@ YUI.add('inspector-config', function() {
                 disabled={disabled}
                 onChange={this._importConfig}
                 ref="file"
-                type="file"  />
+                type="file" />
             </form>
             <div className="inspector-config__config-file">
               <juju.components.ButtonRow buttons={importButton} />

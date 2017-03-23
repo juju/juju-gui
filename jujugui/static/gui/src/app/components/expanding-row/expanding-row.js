@@ -116,7 +116,7 @@ YUI.add('expanding-row', function() {
     _resize: function() {
       const expanded = this.state.expanded;
       this.setState({styles: {
-        height: expanded ?  this.refs.inner.offsetHeight + 'px' : '0px',
+        height: expanded ? this.refs.inner.offsetHeight + 'px' : '0px',
         opacity: expanded ? 1 : 0
       }});
     },

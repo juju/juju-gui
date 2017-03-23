@@ -70,7 +70,7 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3}
           machineCount={4}
           appState={appState}
-          pluralize={sinon.stub()}  />);
+          pluralize={sinon.stub()} />);
     assert.notEqual(
         queryComponentSelector(
             component,
@@ -84,7 +84,7 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3}
           machineCount={4}
           appState={appState}
-          pluralize={sinon.stub()}  />);
+          pluralize={sinon.stub()} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -107,7 +107,7 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3}
           machineCount={4}
           appState={appState}
-          pluralize={sinon.stub()}  />);
+          pluralize={sinon.stub()} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,

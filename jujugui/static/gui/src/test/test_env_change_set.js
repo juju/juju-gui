@@ -716,7 +716,7 @@ describe('Environment Change Set', function() {
     it('clears added units', function() {
       var db = ecs.get('db');
       var stubRemove = sinon.stub();
-      db.removeUnits =  stubRemove;
+      db.removeUnits = stubRemove;
       db.units = {
         getById: sinon.stub(),
         reset: sinon.stub()
