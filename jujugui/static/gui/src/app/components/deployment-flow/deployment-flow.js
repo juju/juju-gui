@@ -940,7 +940,7 @@ YUI.add('deployment-flow', function() {
       if (this.state.loadingTerms) {
         return false;
       }
-      // Can't deply if there is no user.
+      // Can't deploy if there is no user.
       // TODO: when the user creation is implemented this should be updated to
       // check if the form has been filled out.
       if (this.props.showPay && !this.state.paymentUser) {
