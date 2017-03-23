@@ -29,4 +29,22 @@
       display: block;
     }
   }
+
+  .add-machine {
+    &__container {
+      width: 100%;
+      margin: 10px 10px 0;
+    }
+
+    &__title {
+      margin-top: 20px;
+    }
+  }
+
+  // This rule needs to override other rules, which means it needs a pretty high
+  // degreee of specificity. Since the styling is shared elsewhere, it's been
+  // pulled into a placeholder.
+  .constraints .constraints__select {
+    @extend %constraints-select
+  }
 }
