@@ -42,6 +42,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getDischargeToken: React.PropTypes.func,
+      getUser: React.PropTypes.func.isRequired,
       getUserName: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
       groupedChanges: React.PropTypes.object.isRequired,
@@ -51,10 +52,12 @@ YUI.add('deployment-flow', function() {
       loginToController: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
+      profileUsername: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       setModelName: React.PropTypes.func.isRequired,
+      showPay: React.PropTypes.bool,
       showTerms: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
@@ -76,6 +79,7 @@ YUI.add('deployment-flow', function() {
         loggedIn: !!this.props.getAuth(),
         modelName: this.props.modelName,
         newTerms: [],
+        paymentUser: null,
         region: this.props.region,
         showChangelogs: false,
         sshKey: null,
@@ -168,6 +172,11 @@ YUI.add('deployment-flow', function() {
           disabled = !hasCloud || !hasCredential;
           visible = this.props.withPlans;
           break;
+        case 'payment':
+          completed = !!this.state.paymentUser;
+          disabled = false;
+          visible = this.props.showPay;
+          break;
         case 'changes':
           completed = false;
           disabled = !hasCloud || !hasCredential;
@@ -235,6 +244,16 @@ YUI.add('deployment-flow', function() {
     */
     _setBudget: function(budget) {
       this.setState({budget: budget});
+    },
+
+    /**
+      Store the payment user in state.
+
+      @method _setPaymentUser
+      @param {String} user The user deetails.
+    */
+    _setPaymentUser: function(user) {
+      this.setState({paymentUser: user});
     },
 
     /**
@@ -607,7 +626,7 @@ YUI.add('deployment-flow', function() {
                 gisf={this.props.gisf}
                 charmstore={this.props.charmstore}
                 callback={callback}
-                displayType={'text'}
+                displayType="text"
                 sendPost={this.props.sendPost}
                 storeUser={this.props.storeUser}
                 getDischargeToken={this.props.getDischargeToken}
@@ -772,6 +791,34 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the payment details section.
+
+      @method _generatePaymentSection
+      @returns {Object} The markup.
+    */
+    _generatePaymentSection: function() {
+      const status = this._getSectionStatus('payment');
+      if (!this.props.showPay || !status.visible) {
+        return null;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-payment"
+          showCheck={true}
+          title="Payment details">
+          <juju.components.DeploymentPayment
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getUser={this.props.getUser}
+            paymentUser={this.state.paymentUser}
+            setPaymentUser={this._setPaymentUser}
+            username={this.props.profileUsername} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
       Generate the changes section.
 
       @method _generateChangeSection
@@ -869,6 +916,12 @@ YUI.add('deployment-flow', function() {
       if (this.state.loadingTerms) {
         return false;
       }
+      // Can't deploy if there is no user.
+      // TODO: when the user creation is implemented this should be updated to
+      // check if the form has been filled out.
+      if (this.props.showPay && !this.state.paymentUser) {
+        return false;
+      }
       // That's all we need if the model already exists.
       if (this.props.modelCommitted) {
         return true;
@@ -899,6 +952,7 @@ YUI.add('deployment-flow', function() {
             {this._generateServicesSection()}
             {this._generateBudgetSection()}
             {this._generateChangeSection()}
+            {this._generatePaymentSection()}
             <div className="twelve-col">
               <div className="deployment-flow__deploy">
                 {this._generateAgreementsSection()}
@@ -934,6 +988,7 @@ YUI.add('deployment-flow', function() {
     'deployment-credential',
     'deployment-machines',
     'deployment-panel',
+    'deployment-payment',
     'deployment-section',
     'deployment-services',
     'deployment-ssh-key',
