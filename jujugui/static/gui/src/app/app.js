@@ -535,6 +535,7 @@ YUI.add('juju-gui', function(Y) {
         password = credentials.password;
         macaroons = credentials.macaroons;
       }
+      this.user.controller = { user, password, macaroons };
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
@@ -820,15 +821,15 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
-      // We make sure controller credentials are set in the user object for
-      // the apis.
-      if (credentials) {
-        this.user.controller = credentials;
-      }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (!api) {
           return;
+        }
+        // We make sure controller credentials are set in the user object for
+        // the apis.
+        if (credentials) {
+          this.user.controller = credentials;
         }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
@@ -2705,6 +2706,7 @@ YUI.add('juju-gui', function(Y) {
           password: password
         };
       };
+      const credentials = this.user.controller;
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2721,6 +2723,7 @@ YUI.add('juju-gui', function(Y) {
       const setUpModel = model => {
         // Tell the model to use the new socket URL when reconnecting.
         model.set('socket_url', socketUrl);
+        this.user.controller = credentials;
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
