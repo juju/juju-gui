@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredentialAdd', function() {
-  var acl, getCloudProviderDetails;
+  let acl, sendAnalytics, getCloudProviderDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('DeploymentCredentialAdd', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    sendAnalytics = sinon.stub();
     getCloudProviderDetails = sinon.stub();
     getCloudProviderDetails.withArgs('gce').returns({
       id: 'google',
@@ -106,6 +107,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />, true);
@@ -253,6 +255,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />, true);
@@ -267,6 +270,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />);
@@ -372,6 +376,7 @@ describe('DeploymentCredentialAdd', function() {
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -519,6 +524,7 @@ describe('DeploymentCredentialAdd', function() {
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -619,6 +625,7 @@ describe('DeploymentCredentialAdd', function() {
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
@@ -768,6 +775,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);
@@ -797,6 +805,10 @@ describe('DeploymentCredentialAdd', function() {
       }
     };
     instance._handleAddCredentials();
+    assert.equal(sendAnalytics.callCount, 1);
+    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(sendAnalytics.args[0][1], 'Button click');
+    assert.equal(sendAnalytics.args[0][2], 'Add credentials');
     assert.equal(updateCloudCredential.callCount, 1);
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'new@test');
@@ -824,6 +836,7 @@ describe('DeploymentCredentialAdd', function() {
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -872,6 +885,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(false)} />, true);
@@ -894,6 +908,7 @@ describe('DeploymentCredentialAdd', function() {
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={sinon.stub()}
+          sendAnalytics={sendAnalytics}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);

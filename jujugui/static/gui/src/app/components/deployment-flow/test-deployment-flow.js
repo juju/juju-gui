@@ -83,6 +83,7 @@ const createDeploymentFlow = (props = {}) => {
     loginToController: sinon.stub(),
     modelName: 'Pavlova',
     profileUsername: 'Spinach',
+    sendAnalytics: sinon.stub(),
     servicesGetById: sinon.stub(),
     setModelName: sinon.stub(),
     showPay: false,
@@ -191,6 +192,7 @@ describe('DeploymentFlow', function() {
             getCloudCredentials={props.getCloudCredentials}
             getCloudCredentialNames={props.getCloudCredentialNames}
             region={undefined}
+            sendAnalytics={props.sendAnalytics}
             setCredential={instance._setCredential}
             setRegion={instance._setRegion}
             updateCloudCredential={props.updateCloudCredential}
@@ -335,6 +337,10 @@ describe('DeploymentFlow', function() {
     output.props.children[1].props.buttons[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
+    assert.equal(instance.props.sendAnalytics.callCount, 1);
+    assert.equal(instance.props.sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(instance.props.sendAnalytics.args[0][1], 'Select cloud');
+    assert.equal(instance.props.sendAnalytics.args[0][2], 'cloud-2');
   });
 
   it('can enable the credential section', function() {
@@ -635,6 +641,10 @@ describe('DeploymentFlow', function() {
     assert.equal(props.changeState.callCount, 1);
     assert.equal(props.setModelName.callCount, 1);
     assert.equal(props.setModelName.args[0][0], 'Lamington');
+    assert.equal(props.sendAnalytics.callCount, 1);
+    assert.equal(props.sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(props.sendAnalytics.args[0][1], 'Button click');
+    assert.equal(props.sendAnalytics.args[0][2], 'Close - Exit deployment');
   });
 
   it('can agree to terms during deploy', function() {

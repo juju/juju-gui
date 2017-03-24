@@ -32,6 +32,7 @@ YUI.add('deployment-credential', function() {
       getCloudCredentials: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
+      sendAnalytics: React.PropTypes.func.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
@@ -158,6 +159,11 @@ YUI.add('deployment-credential', function() {
         this.setState({savedCredential: this.props.credential});
         this.props.setCredential(null);
       } else if (cancel) {
+        this.props.sendAnalytics(
+          'Deployment Flow',
+          'Button click',
+          'Cancel add credential'
+        );
         // Restore previous credentials.
         this.props.setCredential(this.state.savedCredential);
       }
@@ -277,6 +283,7 @@ YUI.add('deployment-credential', function() {
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
+          sendAnalytics={this.props.sendAnalytics}
           setCredential={this.props.setCredential}
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.user}

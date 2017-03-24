@@ -54,6 +54,7 @@ YUI.add('deployment-flow', function() {
       modelName: React.PropTypes.string.isRequired,
       profileUsername: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
+      sendAnalytics: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       setModelName: React.PropTypes.func.isRequired,
@@ -203,6 +204,13 @@ YUI.add('deployment-flow', function() {
       @param {String} cloud The selected cloud.
     */
     _setCloud: function(cloud) {
+      if (cloud) {
+        this.props.sendAnalytics(
+          'Deployment Flow',
+          'Select cloud',
+          cloud.name
+        );
+      }
       this.setState({cloud: cloud});
     },
 
@@ -278,6 +286,11 @@ YUI.add('deployment-flow', function() {
         // Here we need to just prevent the deployment flow to close.
         return;
       }
+      this.props.sendAnalytics(
+        'Deployment Flow',
+        'Button click',
+        'Close - Exit deployment'
+      );
       this.props.changeState({
         gui: {
           deploy: null
@@ -696,6 +709,7 @@ YUI.add('deployment-flow', function() {
             getCloudCredentials={this.props.getCloudCredentials}
             getCloudCredentialNames={this.props.getCloudCredentialNames}
             region={this.state.region}
+            sendAnalytics={this.props.sendAnalytics}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
             updateCloudCredential={this.props.updateCloudCredential}
