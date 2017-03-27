@@ -1001,9 +1001,6 @@ YUI.add('environment-change-set', function(Y) {
             // Remove the relation from the relations db. Even the ghost
             // relations are stored in the db.
             relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
-            argsEndpoints.forEach(endpoint => {
-              const service = db.services.getServiceByName(endpoint[0]);
-            });
           }
         }
       }, this);
