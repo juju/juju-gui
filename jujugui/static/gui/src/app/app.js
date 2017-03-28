@@ -2287,7 +2287,8 @@ YUI.add('juju-gui', function(Y) {
           dischargeToken: config.dischargeToken
         });
         this.payment = new window.jujulib.payment(
-          config.paymentURL, paymentBakery, Stripe);
+          config.paymentURL, paymentBakery);
+        this.stripe = new window.jujulib.stripe();
       }
     },
 

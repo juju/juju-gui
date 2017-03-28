@@ -20,6 +20,7 @@ var module = module;
   - the Romulus plans service;
   - the Romulus terms service.
   - the payment service.
+  - the Stripe service.
 */
 (function (exports) {
 
