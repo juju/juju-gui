@@ -120,6 +120,8 @@ describe('EntityContent', function() {
                 </ul>
               </div>
               <juju.components.EntityResources
+                apiUrl={apiUrl}
+                entityId={mockEntity.get('id')}
                 pluralize={pluralize}
                 resources={[{resource: 'one'}]} />
               <juju.components.EntityContentRelations
@@ -255,6 +257,8 @@ describe('EntityContent', function() {
                 </ul>
               </div>
               <juju.components.EntityResources
+                apiUrl={apiUrl}
+                entityId={mockEntity.get('id')}
                 pluralize={pluralize}
                 resources={undefined} />
               <juju.components.EntityContentRelations

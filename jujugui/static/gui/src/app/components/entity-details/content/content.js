@@ -260,6 +260,8 @@ YUI.add('entity-content', function() {
       if (entityModel.get('entityType') === 'charm') {
         return (
           <juju.components.EntityResources
+            apiUrl={this.props.apiUrl}
+            entityId={entityModel.get('id')}
             pluralize={this.props.pluralize}
             resources={entityModel.get('resources')} />);
       }

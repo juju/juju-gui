@@ -23,8 +23,53 @@ YUI.add('entity-resources', function() {
   juju.components.EntityResources = React.createClass({
 
     propTypes: {
+      apiUrl: React.PropTypes.string.isRequired,
+      entityId: React.PropTypes.string.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       resources: React.PropTypes.array
+    },
+
+    getInitialState: function() {
+      const props = this.props;
+      const url = window.jujulib.URL.fromLegacyString(props.entityId);
+      const entityPath = url.legacyPath();
+      return {
+        baseUrl: `${props.apiUrl}/${entityPath}/resource`
+      };
+    },
+
+    /**
+      Generate a single resource to display.
+
+      @param {Object} resource the resource being displayed.
+      @returns {Object} The resource markup.
+    */
+    _generateResource: function(resource) {
+      const revision = resource.Revision;
+      const name = resource.Name;
+      // Get the file extension.
+      const parts = resource.Path.split('.');
+      let extension = '';
+      // If there is a file extension then format it for display.
+      if (parts.length > 1) {
+        extension = `(.${parts.pop()})`;
+      }
+      let itemContent = (
+        <span>
+          {name} {extension}
+        </span>
+      );
+      // You can create a charm with a resource but not attach the content yet.
+      // In that case, the revision is -1 and the resource is not downloadable.
+      if (revision >= 0) {
+        const resourceUrl = `${this.state.baseUrl}/${name}/${revision}`;
+        itemContent = (
+          <a href={resourceUrl} title={'Download ' + name}>
+            {name} {extension}
+          </a>
+        );
+      }
+      return itemContent;
     },
 
     /**
@@ -33,29 +78,23 @@ YUI.add('entity-resources', function() {
       @returns {Object} The resource list markup.
     */
     _generateResources: function() {
-      const resources = this.props.resources;
+      const props = this.props;
+      const resources = props.resources;
       if (!resources || resources.length === 0) {
         return;
       }
       const resourceList = resources.map((resource, i) => {
-        // Get the file extension.
-        const parts = resource.Path.split('.');
-        let extension = '';
-        // If there is a file extension then format it for display.
-        if (parts.length > 1) {
-          extension = `(.${parts.pop()})`;
-        }
         return (
           <li className="entity-files__file"
             key={resource.Name + i}>
-            {resource.Name} {extension}
+            {this._generateResource(resource)}
           </li>);
       });
       return (
         <div className="entity-resources section" id="files">
           <h3 className="section__title">
             {resourceList.length}&nbsp;
-            {this.props.pluralize('resource', resourceList.length)}
+            {props.pluralize('resource', resourceList.length)}
           </h3>
           <ul className="section__list entity-files__listing">
             {resourceList}
