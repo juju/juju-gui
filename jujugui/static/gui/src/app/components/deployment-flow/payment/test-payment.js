@@ -64,7 +64,7 @@ describe('DeploymentPayment', function() {
           required={false} />
         <juju.components.GenericInput
           disabled={false}
-          label="County (optional)"
+          label="State/province (optional)"
           required={false} />
         <div className="twelve-col">
           <div className="six-col">

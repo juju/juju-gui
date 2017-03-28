@@ -209,7 +209,7 @@ YUI.add('deployment-payment', function() {
             required={false} />
           <juju.components.GenericInput
             disabled={disabled}
-            label="County (optional)"
+            label="State/province (optional)"
             required={false} />
           <div className="twelve-col">
             <div className="six-col">
