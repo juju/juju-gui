@@ -144,6 +144,7 @@ YUI.add('juju-gui', function(Y) {
                       node.getAttribute('name'), node.get('value'));
                 }
               });
+              Y.one('#shortcut-settings').hide();
             });
 
             target.one('.close').on('click', function(ev) {
