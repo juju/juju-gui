@@ -360,6 +360,30 @@ describe('GenericInput', function() {
     assert.deepEqual(output.props.className, 'generic-input has-error');
   });
 
+  it('adds an error icon with inlineErrorIcon is set', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        inlineErrorIcon={true}
+        placeholder="placeholder"
+        required={true}
+        ref="test"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.refs = {field: {value: ''}};
+      let output = renderer.getRenderOutput();
+      output.props.children[1].props.onBlur();
+      output = renderer.getRenderOutput();
+      const expected = (<juju.components.SvgIcon
+        name="relation-icon-error"
+        size={16}
+      />);
+      assert.deepEqual(output.props.children[2], expected);
+  });
+
   it('can set the focus on the field', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
