@@ -372,16 +372,16 @@ describe('GenericInput', function() {
           regex: /\S+/,
           error: 'This field is required.'
         }]} />, true);
-      const instance = renderer.getMountedInstance();
-      instance.refs = {field: {value: ''}};
-      let output = renderer.getRenderOutput();
-      output.props.children[1].props.onBlur();
-      output = renderer.getRenderOutput();
-      const expected = (<juju.components.SvgIcon
-        name="relation-icon-error"
-        size={16}
-      />);
-      assert.deepEqual(output.props.children[2], expected);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    let output = renderer.getRenderOutput();
+    output.props.children[1].props.onBlur();
+    output = renderer.getRenderOutput();
+    const expected = (<juju.components.SvgIcon
+      name="relation-icon-error"
+      size={16}
+    />);
+    assert.deepEqual(output.props.children[2], expected);
   });
 
   it('can set the focus on the field', () => {
