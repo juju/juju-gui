@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentPayment', function() {
-  let acl, getUser, user;
+  let acl, addressFields, getUser, user;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -43,6 +43,57 @@ describe('DeploymentPayment', function() {
         name: 'Company'
       }]
     });
+    addressFields = (
+      <div>
+        <juju.components.InsetSelect
+          disabled={false}
+          label="Country"
+          onChange={null}
+          options={[]} />
+        <juju.components.GenericInput
+          disabled={false}
+          label="Full name"
+          required={true} />
+        <juju.components.GenericInput
+          disabled={false}
+          label="Address line 1"
+          required={true} />
+        <juju.components.GenericInput
+          disabled={false}
+          label="Address line 2 (optional)"
+          required={false} />
+        <juju.components.GenericInput
+          disabled={false}
+          label="State/province (optional)"
+          required={false} />
+        <div className="twelve-col">
+          <div className="six-col">
+            <juju.components.GenericInput
+              disabled={false}
+              label="Town/city"
+              required={true} />
+          </div>
+          <div className="six-col last-col">
+            <juju.components.GenericInput
+              disabled={false}
+              label="Postcode"
+              required={true} />
+          </div>
+          <div className="four-col">
+            <juju.components.InsetSelect
+              disabled={false}
+              label="Country code"
+              onChange={null}
+              options={[]} />
+          </div>
+          <div className="eight-col last-col">
+            <juju.components.GenericInput
+              disabled={false}
+              label="Phone number"
+              required={true} />
+          </div>
+        </div>
+      </div>);
   });
 
   it('can display a loading spinner', function() {
@@ -116,8 +167,7 @@ describe('DeploymentPayment', function() {
     });
   });
 
-  it('can display a form if there is no user', function() {
-    // TODO: implement the form.
+  it('can display a personal form', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPayment
         acl={acl}
@@ -126,10 +176,335 @@ describe('DeploymentPayment', function() {
         paymentUser={null}
         setPaymentUser={sinon.stub()}
         username="spinach" />, true);
+    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
+    const options = output.props.children.props.children[0].props.children[0]
+      .props.children;
     const expected = (
       <div className="deployment-payment">
-        {null}
+        <form className="deployment-payment__form">
+          <div className="deployment-payment__form-content">
+            <ul className="deployment-payment__form-type">
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="personal">
+                  <input checked={true}
+                    id="personal"
+                    name="formType"
+                    onChange={options[0].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Personal use
+                </label>
+              </li>
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="business">
+                  <input checked={false}
+                    id="business"
+                    name="formType"
+                    onChange={options[1].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Business use
+                </label>
+              </li>
+            </ul>
+            {null}
+            <h2 className="deployment-payment__title">
+              Name and address
+            </h2>
+            {null}
+            {addressFields}
+            <h2 className="deployment-payment__title">
+              Payment information
+            </h2>
+            <juju.components.GenericInput
+              disabled={false}
+              label="Card number"
+              required={true} />
+            <div className="twelve-col">
+              <div className="six-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Expiry MM/YY"
+                  required={true} />
+              </div>
+              <div className="six-col last-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Security number (CVC)"
+                  required={true} />
+              </div>
+            </div>
+            <div className="twelve-col">
+              <juju.components.GenericInput
+                disabled={false}
+                label="Name on card"
+                required={true} />
+            </div>
+            <label htmlFor="cardAddressSame">
+              <input checked={true}
+                id="cardAddressSame"
+                name="cardAddressSame"
+                onChange={instance._handleCardSameChange}
+                type="checkbox" />
+              Credit or debit card address is the same as above
+            </label>
+            <label htmlFor="billingAddressSame">
+              <input checked={true}
+                id="billingAddressSame"
+                name="billingAddressSame"
+                onChange={instance._handleBillingSameChange}
+                type="checkbox" />
+              Billing address is the same as above
+            </label>
+            {null}
+            {null}
+          </div>
+          <div className="deployment-payment__add">
+          <juju.components.GenericButton
+            action={null}
+            disabled={false}
+            type="inline-neutral"
+            title="Add payment details" />
+          </div>
+        </form>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a business form', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentPayment
+        acl={acl}
+        addNotification={sinon.stub()}
+        getUser={getUser}
+        paymentUser={null}
+        setPaymentUser={sinon.stub()}
+        username="spinach" />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children.props.children[0].props.children[0]
+      .props.children[1].props.children.props.children[0].props.onChange();
+    output = renderer.getRenderOutput();
+    const options = output.props.children.props.children[0].props.children[0]
+      .props.children;
+    const expected = (
+      <div className="deployment-payment">
+        <form className="deployment-payment__form">
+          <div className="deployment-payment__form-content">
+            <ul className="deployment-payment__form-type">
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="personal">
+                  <input checked={false}
+                    id="personal"
+                    name="formType"
+                    onChange={options[0].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Personal use
+                </label>
+              </li>
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="business">
+                  <input checked={true}
+                    id="business"
+                    name="formType"
+                    onChange={options[1].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Business use
+                </label>
+              </li>
+            </ul>
+            <div className="deployment-payment__vat">
+              <juju.components.GenericInput
+                disabled={false}
+                label="VAT number (optional)"
+                required={false} />
+            </div>
+            <h2 className="deployment-payment__title">
+              Name and address
+            </h2>
+            <juju.components.GenericInput
+              disabled={false}
+              label="Business name"
+              required={true} />
+            {addressFields}
+            <h2 className="deployment-payment__title">
+              Payment information
+            </h2>
+            <juju.components.GenericInput
+              disabled={false}
+              label="Card number"
+              required={true} />
+            <div className="twelve-col">
+              <div className="six-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Expiry MM/YY"
+                  required={true} />
+              </div>
+              <div className="six-col last-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Security number (CVC)"
+                  required={true} />
+              </div>
+            </div>
+            <div className="twelve-col">
+              <juju.components.GenericInput
+                disabled={false}
+                label="Name on card"
+                required={true} />
+            </div>
+            <label htmlFor="cardAddressSame">
+              <input checked={true}
+                id="cardAddressSame"
+                name="cardAddressSame"
+                onChange={instance._handleCardSameChange}
+                type="checkbox" />
+              Credit or debit card address is the same as above
+            </label>
+            <label htmlFor="billingAddressSame">
+              <input checked={true}
+                id="billingAddressSame"
+                name="billingAddressSame"
+                onChange={instance._handleBillingSameChange}
+                type="checkbox" />
+              Billing address is the same as above
+            </label>
+            {null}
+            {null}
+          </div>
+          <div className="deployment-payment__add">
+          <juju.components.GenericButton
+            action={null}
+            disabled={false}
+            type="inline-neutral"
+            title="Add payment details" />
+          </div>
+        </form>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display card and billing address fields', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentPayment
+        acl={acl}
+        addNotification={sinon.stub()}
+        getUser={getUser}
+        paymentUser={null}
+        setPaymentUser={sinon.stub()}
+        username="spinach" />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    const formContent = output.props.children.props.children[0].props.children;
+    formContent[9].props.children[0].props.onChange(
+      {currentTarget: {checked: false}});
+    formContent[10].props.children[0].props.onChange(
+      {currentTarget: {checked: false}});
+    output = renderer.getRenderOutput();
+    const options = output.props.children.props.children[0].props.children[0]
+      .props.children;
+    const expected = (
+      <div className="deployment-payment">
+        <form className="deployment-payment__form">
+          <div className="deployment-payment__form-content">
+            <ul className="deployment-payment__form-type">
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="personal">
+                  <input checked={true}
+                    id="personal"
+                    name="formType"
+                    onChange={options[0].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Personal use
+                </label>
+              </li>
+              <li className="deployment-payment__form-type-option">
+                <label htmlFor="business">
+                  <input checked={false}
+                    id="business"
+                    name="formType"
+                    onChange={options[1].props.children.props.children[0]
+                      .props.onChange}
+                    type="radio" />
+                  Business use
+                </label>
+              </li>
+            </ul>
+            {null}
+            <h2 className="deployment-payment__title">
+              Name and address
+            </h2>
+            {null}
+            {addressFields}
+            <h2 className="deployment-payment__title">
+              Payment information
+            </h2>
+            <juju.components.GenericInput
+              disabled={false}
+              label="Card number"
+              required={true} />
+            <div className="twelve-col">
+              <div className="six-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Expiry MM/YY"
+                  required={true} />
+              </div>
+              <div className="six-col last-col">
+                <juju.components.GenericInput
+                  disabled={false}
+                  label="Security number (CVC)"
+                  required={true} />
+              </div>
+            </div>
+            <div className="twelve-col">
+              <juju.components.GenericInput
+                disabled={false}
+                label="Name on card"
+                required={true} />
+            </div>
+            <label htmlFor="cardAddressSame">
+              <input checked={false}
+                id="cardAddressSame"
+                name="cardAddressSame"
+                onChange={instance._handleCardSameChange}
+                type="checkbox" />
+              Credit or debit card address is the same as above
+            </label>
+            <label htmlFor="billingAddressSame">
+              <input checked={false}
+                id="billingAddressSame"
+                name="billingAddressSame"
+                onChange={instance._handleBillingSameChange}
+                type="checkbox" />
+              Billing address is the same as above
+            </label>
+            <div>
+              <h2 className="deployment-payment__title">
+                Card address
+              </h2>
+              {addressFields}
+            </div>
+            <div>
+              <h2 className="deployment-payment__title">
+                Billing address
+              </h2>
+              {addressFields}
+            </div>
+          </div>
+          <div className="deployment-payment__add">
+          <juju.components.GenericButton
+            action={null}
+            disabled={false}
+            type="inline-neutral"
+            title="Add payment details" />
+          </div>
+        </form>
       </div>);
     assert.deepEqual(output, expected);
   });
