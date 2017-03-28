@@ -9,6 +9,17 @@
   }
 
   &-panel {
+    .deployment-model-name {
+      .generic-input {
+        &__label {
+          display: none;
+        }
+        &__field {
+          padding: 10px;
+        }
+      }
+    }
+
     .button--neutral {
       background-color: $white;
     }
