@@ -735,7 +735,6 @@ YUI.add('environment-change-set', function(Y) {
       // Remove the associated relations
       db.relations.remove(relations);
       db.services.remove(model);
-      model.updateSubordinateUnits(db);
       model.destroy();
       this._removeExistingRecord(recordKey);
       // Check if there are other applications using the same charm. If not
@@ -941,11 +940,6 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       });
-      var db = this.get('db');
-      // Reduce duplicated effort by only updating one service; if the other is
-      // subordinate, this method will catch that.
-      var service = db.services.getServiceByName(args[0][0]);
-      service.updateSubordinateUnits(db);
       var parent = [serviceA, serviceB];
       var command = {
         method: '_add_relation',
@@ -1007,12 +1001,6 @@ YUI.add('environment-change-set', function(Y) {
             // Remove the relation from the relations db. Even the ghost
             // relations are stored in the db.
             relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
-            argsEndpoints.forEach(endpoint => {
-              const service = db.services.getServiceByName(endpoint[0]);
-              if (service.get('subordinate')) {
-                service.updateSubordinateUnits(db);
-              }
-            });
           }
         }
       }, this);
@@ -1064,8 +1052,6 @@ YUI.add('environment-change-set', function(Y) {
             // stored in the DB.
             var unit = units.getById(unitName);
             db.removeUnits(unit);
-            db.services.getServiceByName(unit.service)
-              .updateSubordinateUnits(db);
           }
         }
       }, this);
@@ -1333,8 +1319,6 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       };
-      var service = db.services.getServiceByName(args[0]);
-      service.updateSubordinateUnits(db);
       return this._createNewRecord('addUnits', command, parent);
     },
 
