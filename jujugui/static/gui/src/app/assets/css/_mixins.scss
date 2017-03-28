@@ -55,8 +55,6 @@
 @mixin hidden($duration: 0.5s, $delay: 0s) {
   opacity: 0;
   visibility: hidden;
-  // We want visibility to flip off only after opacity has finished changing.
-  transition: visibility 0s ($duration + $delay), opacity $duration $delay;
 }
 
 %floating-panel {
