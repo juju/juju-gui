@@ -68,12 +68,6 @@ describe('Sharing', () => {
         humanizeTimestamp={humanizeTimestamp}
         revokeModelAccess={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    const doneButton = (<juju.components.GenericButton
-      title="Done"
-      action={closeHandler}
-      type="inline-neutral"
-      extraClasses="right" />);
     const expected = (
       <juju.components.Popup
         className="sharing__popup"
@@ -231,7 +225,7 @@ describe('Sharing', () => {
         <form onSubmit={instance._grantModelAccess}>
           <div className="sharing__invite--username">
             <juju.components.GenericInput
-              inlineError={true}
+              inlineErrorIcon={true}
               label="Username"
               placeholder="Username"
               onKeyUp={instance._handleUsernameInputChange}

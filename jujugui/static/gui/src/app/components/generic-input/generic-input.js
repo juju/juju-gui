@@ -26,12 +26,12 @@ YUI.add('generic-input', function() {
       autocomplete: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
       errors: React.PropTypes.bool,
-      inlineError: React.PropTypes.bool,
+      inlineErrorIcon: React.PropTypes.bool,
       label: React.PropTypes.string,
       multiLine: React.PropTypes.bool,
       onBlur: React.PropTypes.func,
-      onKeyUp: React.PropTypes.func,
       onFocus: React.PropTypes.func,
+      onKeyUp: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
       type: React.PropTypes.string,
@@ -242,7 +242,7 @@ YUI.add('generic-input', function() {
           'has-error': !!errors
         }
       );
-      const errorIcon = errors && this.props.inlineError ?
+      const errorIcon = errors && this.props.inlineErrorIcon ?
       (<juju.components.SvgIcon
         name="relation-icon-error"
         size={16}

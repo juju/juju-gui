@@ -283,7 +283,7 @@ YUI.add('sharing', function() {
           <form onSubmit={this._grantModelAccess}>
             <div className="sharing__invite--username">
               <juju.components.GenericInput
-                inlineError={true}
+                inlineErrorIcon={true}
                 label="Username"
                 placeholder="Username"
                 ref="username"
@@ -326,7 +326,7 @@ YUI.add('sharing', function() {
           const _this = this;
           return function() {
             _this.setState({sent: false, canAdd: false});
-          }
+          };
         }.bind(this))();
         setTimeout(sent, 1000);
         return (<juju.components.GenericButton
