@@ -60,12 +60,14 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="text" />
-        {null}
+        {undefined}
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -100,12 +102,14 @@ describe('GenericInput', function() {
           id="Region"
           dangerouslySetInnerHTML={{__html: 'default'}}
           onChange={instance.validate}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field">
         </div>
-        {null}
+        {undefined}
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -138,12 +142,14 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="password" />
-        {null}
+        {undefined}
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -250,7 +256,7 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[2], expected);
+    assert.deepEqual(output.props.children[3], expected);
   });
 
   it('can validate when there are no validations set', () => {
@@ -266,7 +272,7 @@ describe('GenericInput', function() {
     instance.refs = {field: {value: ''}};
     instance.validate();
     var output = renderer.getRenderOutput();
-    assert.isNull(output.props.children[2]);
+    assert.isUndefined(output.props.children[3]);
   });
 
   it('can validate the input when leaving', () => {
@@ -295,7 +301,7 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[2], expected);
+    assert.deepEqual(output.props.children[3], expected);
   });
 
   it('allows the label to be optional', () => {
@@ -322,12 +328,14 @@ describe('GenericInput', function() {
           id={undefined}
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="text" />
-        {null}
+        {undefined}
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -390,6 +398,28 @@ describe('GenericInput', function() {
     instance.refs = {field: {value: ''}};
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onBlur();
+    assert.equal(updateModelName.callCount, 1);
+  });
+
+  it('can call the passed keyup function', () => {
+    const updateModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        onKeyUp={updateModelName}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    let output = renderer.getRenderOutput();
+    output.props.children[1].props.onKeyUp();
     assert.equal(updateModelName.callCount, 1);
   });
 });

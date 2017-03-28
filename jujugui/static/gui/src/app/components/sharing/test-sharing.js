@@ -68,16 +68,17 @@ describe('Sharing', () => {
         humanizeTimestamp={humanizeTimestamp}
         revokeModelAccess={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
-    const expectedButtons = [{
-      title: 'Done',
-      action: closeHandler,
-      type: 'neutral'
-    }];
+    const instance = renderer.getMountedInstance();
+    const doneButton = (<juju.components.GenericButton
+      title="Done"
+      action={closeHandler}
+      type="inline-neutral"
+      extraClasses="right" />);
     const expected = (
       <juju.components.Popup
         className="sharing__popup"
-        title="Share"
-        buttons={expectedButtons}>
+        close={closeHandler}
+        title="Share">
         {undefined}
         <div className="sharing__users-header">
           <div className="sharing__users-header-user">User</div>
@@ -86,6 +87,12 @@ describe('Sharing', () => {
         <div className="sharing__users">
           {undefined}
         </div>
+        <juju.components.GenericButton
+          title="Done"
+          action={closeHandler}
+          type="inline-neutral"
+          extraClasses="right"
+        />
       </juju.components.Popup>
     );
     assert.deepEqual(output, expected);
@@ -209,13 +216,13 @@ describe('Sharing', () => {
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expectedOptions = [{
-      label: 'read',
+      label: 'Read',
       value: 'read'
     }, {
-      label: 'write',
+      label: 'Write',
       value: 'write'
     }, {
-      label: 'admin',
+      label: 'Admin',
       value: 'admin'
     }];
     const expectedMarkup = (
@@ -224,8 +231,11 @@ describe('Sharing', () => {
         <form onSubmit={instance._grantModelAccess}>
           <div className="sharing__invite--username">
             <juju.components.GenericInput
+              inlineError={true}
               label="Username"
               placeholder="Username"
+              onKeyUp={instance._handleUsernameInputChange}
+              errors={false}
               ref="username"
               required={true} />
           </div>
@@ -239,13 +249,14 @@ describe('Sharing', () => {
           <div className="sharing__invite--grant-button">
             <juju.components.GenericButton
               submit={true}
-              icon="add_16"
+              title="Add"
               tooltip="Add user"
               ref="grantButton"
-              type="positive" />
+              type="positive"
+              disabled={true} />
           </div>
+          {undefined}
         </form>
-        {undefined}
       </div>
     );
     const actualMarkup = output.props.children[0];
@@ -273,11 +284,9 @@ describe('Sharing', () => {
     inviteForm.props.onSubmit();
     assert.equal(grantModelAccess.called, true,
       'grantModelAccess was not called');
-    assert.deepEqual(grantModelAccess.args[0], [
-      'chekov',
-      'read',
-      instance._modifyModelAccessCallback
-    ], 'grantModelAccess not called with the correct data');
+    assert.deepEqual(grantModelAccess.args[0][0], 'chekov');
+    assert.deepEqual(grantModelAccess.args[0][1], 'read');
+    assert.isFunction(grantModelAccess.args[0][2]);
   });
 
   it('can render and revoke user access', () => {
@@ -331,11 +340,83 @@ describe('Sharing', () => {
     const instance = renderer.getMountedInstance();
     instance._modifyModelAccessCallback('boom');
     const output = renderer.getRenderOutput();
-    const actualMessage = output.props.children[0].props.children[2];
+    const actualMessage = output.props.children[0].props.children[1].props.
+      children[3];
     const expectedMessage = (
-      <div className="sharing__invite--error">boom</div>
+      <div className="sharing__invite--error"><b>Error:</b>{' '}boom</div>
     );
     assert.deepEqual(actualMessage, expectedMessage);
+  });
+
+  it('shows different buttons based on state', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Sharing
+        addNotification={sinon.stub()}
+        canShareModel={true}
+        closeHandler={sinon.stub()}
+        getModelUserInfo={sinon.stub()}
+        grantModelAccess={sinon.stub()}
+        revokeModelAccess={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    const defaultAdd = output.props.children[0].
+      props.children[1].props.children[2].props.children;
+    const expectedDefaultAdd = (
+      <juju.components.GenericButton
+        submit={true}
+        title="Add"
+        tooltip="Add user"
+        ref="grantButton"
+        type="positive"
+        disabled={true}
+      />
+    );
+    assert.deepEqual(defaultAdd, expectedDefaultAdd);
+
+    instance.setState({canAdd: true});
+    output = renderer.getRenderOutput();
+    const canAdd = output.props.children[0].
+      props.children[1].props.children[2].props.children;
+    const expectedCanAdd = (
+      <juju.components.GenericButton
+        submit={true}
+        title="Add"
+        tooltip="Add user"
+        ref="grantButton"
+        type="positive"
+        disabled={false} />
+    );
+    assert.deepEqual(canAdd, expectedCanAdd);
+
+    instance.setState({canAdd: false, sending: true});
+    output = renderer.getRenderOutput();
+    const inProgressAdd = output.props.children[0].
+      props.children[1].props.children[2].props.children;
+    const expectedInProgressAdd = (
+      <juju.components.GenericButton
+        submit={true}
+        title="Add"
+        tooltip="Add user"
+        ref="grantButton"
+        type="positive"
+        disabled={true} />
+    );
+    assert.deepEqual(inProgressAdd, expectedInProgressAdd);
+
+    instance.setState({sending: false, canAdd: false, sent: true});
+    output = renderer.getRenderOutput();
+    const completeAdd = output.props.children[0].
+      props.children[1].props.children[2].props.children;
+    const expectedCompleteAdd = (
+      <juju.components.GenericButton
+        submit={true}
+        icon="tick_16"
+        tooltip="Add user"
+        ref="grantButton"
+        type="positive"
+        disabled={true} />
+    );
+    assert.deepEqual(completeAdd, expectedCompleteAdd);
   });
 
 });
