@@ -28,7 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-base', function(Y) {
 
   const module = Y.namespace('juju.environments');
-  const _sessionStorageData = {};
   // Define a Juju tags management object.
   module.tags = {
     /**
@@ -107,53 +106,6 @@ YUI.add('juju-env-base', function(Y) {
       }
     };
   };
-
-  module.stubSessionStorage = {
-    /**
-     * Implement simple sessionStorage getItem work-alike.
-     *
-     * @method getItem
-     * @param {String} key The key to be used.
-     * @return {Object} String on null; the value for the key.
-     */
-    getItem: function(key) {
-      // sessionStorage returns null, not undefined, for missing keys.
-      // This actually makes a difference for the JSON parsing.
-      return _sessionStorageData[key] || null;
-    },
-    /**
-     * Implement simple sessionStorage setItem work-alike.
-     *
-     * @method setItem
-     * @param {String} key The key to be used.
-     * @param {String} value The value to be set.
-     * @return {undefined} side effects only.
-     */
-    setItem: function(key, value) {
-      _sessionStorageData[key] = value;
-    }
-  };
-
-  /**
-   * Set local sessionStorage for module, handling possible security issues.
-   *
-   * @method verifySessionStorage
-   * @return {undefined} side effects only.
-   */
-  module.verifySessionStorage = function() {
-    try {
-      // Any manipulation of the sessionStorage that might actually fail
-      // because cookies are turned off needs to be in this try/catch block.
-      if (!module.sessionStorage) {
-        // The conditional is to allow for test manipulation.
-        module.sessionStorage = window.sessionStorage;
-      }
-      module.sessionStorage.getItem('credentials');
-    } catch (e) {
-      module.sessionStorage = module.stubSessionStorage;
-    }
-  };
-  module.verifySessionStorage();
 
   /**
    * The Base Juju environment.
