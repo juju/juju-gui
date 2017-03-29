@@ -171,6 +171,29 @@ var module = module;
     },
 
     /**
+      Get a list of countries.
+
+      @public getCountries
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the country data as its second. The country data
+        returns {Array} A list of country objects, the objects contain:
+          - name {String} The country name e.g. "Australia"
+          - code {String} The country code e.g. "AU"
+    */
+    getCountries: function(callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, response['Countries']);
+      };
+      const url = `${this.url}/country`;
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
       Reformat the user object for easier use with JavaScript.
 
       @public _parseUser

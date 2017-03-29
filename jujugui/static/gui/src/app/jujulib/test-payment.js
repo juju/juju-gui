@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Canonical Ltd. */
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -330,6 +330,45 @@ describe('jujulib register service', function() {
     payment.createUser('spinach', {}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
+      done();
+    });
+  });
+
+  it('can get a list of contries', function(done) {
+    const countries = [{
+      name: 'Australia',
+      code: 'AU'
+    }];
+    const bakery = {
+      sendGetRequest: (path, success, failure) => {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.paymentAPIVersion +
+          '/country');
+        const xhr = makeXHRRequest({Countries: countries});
+        success(xhr);
+      }
+    };
+    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+    payment.getCountries((error, response) => {
+      assert.strictEqual(error, null);
+      assert.deepEqual(response, countries);
+      done();
+    });
+  });
+
+  it('handles errors when getting the country list', function(done) {
+    const bakery = {
+      sendGetRequest: (path, success, failure) => {
+        const xhr = makeXHRRequest({Message: 'Uh oh!'});
+        failure(xhr);
+      }
+    };
+    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+    payment.getCountries((error, response) => {
+      assert.equal(error, 'Uh oh!');
+      assert.isNull(response);
       done();
     });
   });

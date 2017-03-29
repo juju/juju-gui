@@ -64,6 +64,7 @@ globals:
   renderIntoDocument: true
   saveAs: true
   sinon: true
+  Stripe: true
   testUtils: true
   xit: true
   YUI: true
