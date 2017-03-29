@@ -640,8 +640,7 @@ YUI.add('store', function() {
                         data-entity="hive"
                         onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
-                          <img src={this._generateIconPath(
-                              'hive')}
+                          <img src={this._generateIconPath('hive')}
                               alt=""
                               className="featured-entity__image" />
                         </div>
