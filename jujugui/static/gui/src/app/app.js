@@ -820,15 +820,15 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
+      // We make sure controller credentials are set in the user object for
+      // the apis.
+      if (credentials) {
+        this.user.controller = credentials;
+      }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (!api) {
           return;
-        }
-        // We make sure controller credentials are set in the user object for
-        // the apis.
-        if (credentials) {
-          this.user.controller = credentials;
         }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
