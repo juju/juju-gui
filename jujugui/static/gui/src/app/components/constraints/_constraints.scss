@@ -11,4 +11,11 @@
     margin: 5px 10px 10px;
     width: calc(100% - 20px);
   }
+
+  // This rule needs to override other rules, which means it needs a pretty high
+  // degreee of specificity. Since the styling is shared elsewhere, it's been
+  // pulled into a placeholder.
+  .constraints__select {
+    @extend %constraints-select;
+  }
 }

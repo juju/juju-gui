@@ -324,7 +324,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={removeUnits}
+        series={['trusty', 'xenial']}
         services={services}
         units={units} />, true);
     var instance = renderer.getMountedInstance();
@@ -339,7 +341,9 @@ describe('MachineView', function() {
           machines={machines}
           removeUnit={instance._removeUnit}
           placeUnit={placeUnit}
+          providerType={'azure'}
           selectMachine={instance.selectMachine}
+          series={['trusty', 'xenial']}
           unit={unitList[0]} />
         <juju.components.MachineViewUnplacedUnit
           acl={acl}
@@ -348,8 +352,10 @@ describe('MachineView', function() {
           key="django/1"
           machines={machines}
           placeUnit={placeUnit}
+          providerType={'azure'}
           removeUnit={instance._removeUnit}
           selectMachine={instance.selectMachine}
+          series={['trusty', 'xenial']}
           unit={unitList[1]} />
       </ul>);
     assert.deepEqual(
@@ -394,7 +400,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={removeUnits}
+        series={['trusty', 'xenial']}
         services={services}
         units={units} />, true);
     var instance = renderer.getMountedInstance();
@@ -407,9 +415,11 @@ describe('MachineView', function() {
           icon="django.svg"
           key="django/0"
           machines={machines}
+          providerType={'azure'}
           removeUnit={instance._removeUnit}
           placeUnit={placeUnit}
           selectMachine={instance.selectMachine}
+          series={['trusty', 'xenial']}
           unit={unitList[0]} />]}
       </ul>);
     assert.deepEqual(
@@ -884,7 +894,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'azure'}
         removeUnits={sinon.stub()}
+        series={['trusty', 'xenial']}
         services={services}
         units={units} />, true);
     var instance = renderer.getMountedInstance();
@@ -896,7 +908,9 @@ describe('MachineView', function() {
         close={instance._closeAddMachine}
         createMachine={createMachine}
         placeUnit={placeUnit}
+        providerType={'azure'}
         selectMachine={instance.selectMachine}
+        series={['trusty', 'xenial']}
         unit={null} />);
     assert.deepEqual(
       output.props.children.props.children[1].props.children[0], expected);
@@ -1150,7 +1164,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={placeUnit}
+        providerType={'gce'}
         removeUnits={removeUnits}
+        series={['trusty', 'xenial']}
         services={services}
         units={units} />, true);
     var instance = renderer.getMountedInstance();
@@ -1163,6 +1179,8 @@ describe('MachineView', function() {
         createMachine={createMachine}
         parentId="new0"
         placeUnit={placeUnit}
+        providerType={'gce'}
+        series={['trusty', 'xenial']}
         unit={null} />);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[0], expected);

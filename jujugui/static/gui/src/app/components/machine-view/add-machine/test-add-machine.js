@@ -36,11 +36,13 @@ describe('MachineViewAddMachine', function() {
   it('can render for creating a machine', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
         acl={acl}
         close={close}
-        createMachine={createMachine} />, true);
+        createMachine={createMachine}
+        providerType={'ec2'}
+      />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -55,13 +57,15 @@ describe('MachineViewAddMachine', function() {
     }];
     var expected = (
       <div className="add-machine">
-        <div className="add-machine__constraints"
-          key="constraints">
+        <div className="add-machine__constraints" key="constraints">
           <h4 className="add-machine__title">
             Define constraints
           </h4>
           <juju.components.Constraints
+            containerType={''}
             disabled={false}
+            hasUnit={false}
+            providerType={'ec2'}
             valuesChanged={instance._updateConstraints} />
         </div>
         <juju.components.ButtonRow
@@ -75,11 +79,13 @@ describe('MachineViewAddMachine', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var close = sinon.stub();
     var createMachine = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
         acl={acl}
         close={close}
-        createMachine={createMachine} />, true);
+        createMachine={createMachine}
+        providerType={'lxd'}
+      />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -94,13 +100,15 @@ describe('MachineViewAddMachine', function() {
     }];
     var expected = (
       <div className="add-machine">
-        <div className="add-machine__constraints"
-          key="constraints">
+        <div className="add-machine__constraints" key="constraints">
           <h4 className="add-machine__title">
             Define constraints
           </h4>
           <juju.components.Constraints
+            containerType={''}
             disabled={true}
+            hasUnit={false}
+            providerType={'lxd'}
             valuesChanged={instance._updateConstraints} />
         </div>
         <juju.components.ButtonRow
@@ -110,29 +118,19 @@ describe('MachineViewAddMachine', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render for creating a container with Juju 2.x', function() {
-    var close = sinon.stub();
-    var createMachine = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+  it('can render for creating a container', function() {
+    const close = sinon.stub();
+    const createMachine = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
         acl={acl}
         close={close}
         createMachine={createMachine}
         parentId="new0" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var buttons = [{
-      title: 'Cancel',
-      type: 'base',
-      action: close
-    }, {
-      title: 'Create',
-      action: instance._submitForm,
-      type: 'neutral',
-      disabled: true
-    }];
-    var expected = (
-      <div className="add-machine">
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="add-machine">{[
         <select className="add-machine__container"
           defaultValue=""
           disabled={false}
@@ -145,10 +143,7 @@ describe('MachineViewAddMachine', function() {
           <option value="lxd">LXD</option>
           <option value="kvm">KVM</option>
         </select>
-        <juju.components.ButtonRow
-          buttons={buttons}
-          key="buttons" />
-      </div>);
+      ]}</div>);
     assert.deepEqual(output, expected);
   });
 
@@ -238,7 +233,7 @@ describe('MachineViewAddMachine', function() {
     assert.equal(createMachine.args[0][2], instance.state.constraints);
   });
 
-  it('can create a container for Juju 2.x', function() {
+  it('can create a container', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
     var output = testUtils.renderIntoDocument(

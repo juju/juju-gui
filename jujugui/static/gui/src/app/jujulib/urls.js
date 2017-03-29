@@ -352,5 +352,9 @@ var module = module;
   const jujulib = exports.jujulib;
   jujulib.URL = URL;
   jujulib.SERIES = SERIES;
+  jujulib.BUNDLE_SERIES = BUNDLE_SERIES;
+  jujulib.CHARM_SERIES = SERIES.filter(series => {
+    return series !== BUNDLE_SERIES;
+  });
 
 }((module && module.exports) ? module.exports : this));

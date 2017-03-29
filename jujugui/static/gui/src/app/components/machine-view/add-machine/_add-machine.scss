@@ -1,12 +1,20 @@
 .add-machine {
+  select {
+    width: 100%;
+    margin: 10px 10px 0;
+  }
+
+  // We need the compiled selector to be .add-machine .add-machine__container,
+  // not just .add-machine__container. We need more specificity to overrule
+  // styles that are applied to .add-machine select.
+  .add-machine__container {
+    margin: 0 10px 10px;
+    width: calc(100% - 20px);
+  }
+
   &__title {
     margin: 0 10px 20px;
     font-size: 1em;
-  }
-
-  &__container {
-    margin: 0 10px 10px;
-    width: calc(100% - 20px);
   }
 
   &__constraints {
@@ -15,11 +23,6 @@
     &:first-child {
       margin-top: 0;
     }
-  }
-
-  select {
-    width: 100%;
-    margin: 10px 10px 0;
   }
 }
 

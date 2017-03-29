@@ -70,12 +70,12 @@ describe('ScaleService', function() {
   });
 
   it('creates and autoplaces units if constraints is open', function() {
-    var addGhostStub = sinon.stub();
-    var createMachineStub = sinon.stub();
-    var changeStateStub = sinon.stub();
+    const addGhostStub = sinon.stub();
+    const createMachineStub = sinon.stub();
+    const changeStateStub = sinon.stub();
     // We need to render the full component here as the shallowRenderer
     // does not yet support simulating change events.
-    var output = testUtils.renderIntoDocument(
+    const output = testUtils.renderIntoDocument(
       <juju.components.ScaleService
         acl={acl}
         serviceId="123"
@@ -84,36 +84,37 @@ describe('ScaleService', function() {
         changeState={changeStateStub} />);
 
     // Set the value in the input.
-    var unitCount = output.refs.numUnitsInput;
+    const unitCount = output.refs.numUnitsInput;
     unitCount.value = 3;
     testUtils.Simulate.change(unitCount);
 
     // Open the constraints and set their values.
     testUtils.Simulate.change(output.refs.autoPlaceUnitsToggle);
 
-    var constraintsContainer = output.refs.constraintsContainer;
-    var cpu = constraintsContainer.querySelector(
+    const constraintsContainer = output.refs.constraintsContainer;
+
+    const cpu = constraintsContainer.querySelector(
       'input[name="cpu-constraint"]');
     cpu.value = 'c p u';
     testUtils.Simulate.change(cpu);
 
-    var cores = constraintsContainer.querySelector(
+    const cores = constraintsContainer.querySelector(
       'input[name="cores-constraint"]');
     cores.value = 'c o r e s';
     testUtils.Simulate.change(cores);
 
-    var ram = constraintsContainer.querySelector(
+    const ram = constraintsContainer.querySelector(
       'input[name="mem-constraint"]');
     ram.value = 'r a m';
     testUtils.Simulate.change(ram);
 
-    var disk = constraintsContainer.querySelector(
+    const disk = constraintsContainer.querySelector(
       'input[name="disk-constraint"]');
     disk.value = 'd i s k';
     testUtils.Simulate.change(disk);
 
     // Submit the scale-service form.
-    var form = ReactDOM.findDOMNode(output);
+    const form = ReactDOM.findDOMNode(output);
     testUtils.Simulate.submit(form);
     assert.equal(createMachineStub.callCount, 1);
     assert.equal(addGhostStub.callCount, 0);
@@ -121,9 +122,10 @@ describe('ScaleService', function() {
     // Check that the createMachinesPlaceUnits call was passed the proper data.
     assert.equal(createMachineStub.args[0][0], 3);
     assert.deepEqual(createMachineStub.args[0][1], {
+      arch: '',
       'cpu-power': 'c p u',
-      'cores': 'c o r e s',
-      'mem': 'r a m',
+      cores: 'c o r e s',
+      mem: 'r a m',
       'root-disk': 'd i s k'
     });
     // Check that it modifies state so that it shows the unit list.
@@ -184,6 +186,7 @@ describe('ScaleService', function() {
         addGhostAndEcsUnits={sinon.stub()}
         changeState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
+        providerType='ec2'
         serviceId="123" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -229,6 +232,8 @@ describe('ScaleService', function() {
         ref="constraintsContainer">
           <juju.components.Constraints
             disabled={true}
+            hasUnit={true}
+            providerType={'ec2'}
             valuesChanged={instance._updateConstraints} />
         </div>
         <juju.components.ButtonRow buttons={[{

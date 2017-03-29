@@ -744,6 +744,7 @@ describe('Inspector', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         modelUUID="abc123"
+        providerType='lxd'
         relatableApplications={[]}
         service={service}
         serviceRelations={[]}
@@ -763,7 +764,8 @@ describe('Inspector', function() {
         type={undefined}
         count={undefined}
         title='Scale'
-        icon={icon} />
+        icon={icon}
+      />
     );
     assert.deepEqual(header, expectedHeader,
                      'Header is not rendered as expected');
@@ -771,10 +773,12 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.ScaleService
           acl={acl}
-          serviceId={service.get('id')}
           addGhostAndEcsUnits={children.props.addGhostAndEcsUnits}
+          changeState={children.props.changeState}
           createMachinesPlaceUnits={children.props.createMachinesPlaceUnits}
-          changeState={children.props.changeState} />);
+          providerType='lxd'
+          serviceId={service.get('id')}
+        />);
   });
 
   it('displays Expose when the app state calls for it', function() {

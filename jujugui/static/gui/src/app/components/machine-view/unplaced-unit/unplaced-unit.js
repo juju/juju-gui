@@ -66,8 +66,10 @@ YUI.add('machine-view-unplaced-unit', function() {
       isDragging: React.PropTypes.bool.isRequired,
       machines: React.PropTypes.object.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
+      providerType: React.PropTypes.string,
       removeUnit: React.PropTypes.func.isRequired,
       selectMachine: React.PropTypes.func.isRequired,
+      series: React.PropTypes.array,
       unit: React.PropTypes.object.isRequired
     },
 
@@ -99,15 +101,20 @@ YUI.add('machine-view-unplaced-unit', function() {
       if (!this.state.showPlaceUnit) {
         return;
       }
+      const props = this.props;
       return (
         <juju.components.MachineViewAddMachine
-          acl={this.props.acl}
+          acl={props.acl}
           close={this._togglePlaceUnit}
-          createMachine={this.props.createMachine}
-          machines={this.props.machines}
-          placeUnit={this.props.placeUnit}
-          selectMachine={this.props.selectMachine}
-          unit={this.props.unit} />);
+          createMachine={props.createMachine}
+          machines={props.machines}
+          placeUnit={props.placeUnit}
+          providerType={props.providerType}
+          selectMachine={props.selectMachine}
+          series={props.series}
+          unit={props.unit}
+        />
+      );
     },
 
     /**

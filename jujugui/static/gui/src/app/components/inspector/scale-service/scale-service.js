@@ -27,6 +27,7 @@ YUI.add('scale-service', function() {
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+      providerType: React.PropTypes.string,
       serviceId: React.PropTypes.string.isRequired
     },
 
@@ -100,11 +101,10 @@ YUI.add('scale-service', function() {
       const state = this.state;
       const appState = {
         gui: {
-          inspector: {
-            id: this.props.serviceId,
-            activeComponent: 'units'
-          }}};
-      var numUnits = this.state['num-units'];
+          inspector: {id: this.props.serviceId, activeComponent: 'units'}
+        }
+      };
+      const numUnits = this.state['num-units'];
       // Constraints will not be shown if the user wants to manually place.
       if (!state.constraintsVisibility) {
         // db, env, and service have already been bound to this function in
@@ -112,15 +112,17 @@ YUI.add('scale-service', function() {
         this.props.addGhostAndEcsUnits(numUnits);
         appState.gui.machines = '';
       } else {
-        var constraints = this.state.constraints;
+        const constraints = this.state.constraints;
+        delete constraints.series;
         this.props.createMachinesPlaceUnits(numUnits, constraints);
       }
       this.props.changeState(appState);
     },
 
     render: function() {
-      var disabled = this.props.acl.isReadOnly();
-      var buttons = [{
+      const props = this.props;
+      const disabled = props.acl.isReadOnly();
+      const buttons = [{
         disabled: disabled,
         title: 'Confirm',
         submit: true
@@ -166,7 +168,9 @@ YUI.add('scale-service', function() {
           </div>
           <div className={this._generateClasses()} ref="constraintsContainer">
             <juju.components.Constraints
-              disabled={true}
+              disabled={disabled}
+              hasUnit={true}
+              providerType={props.providerType}
               valuesChanged={this._updateConstraints} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />

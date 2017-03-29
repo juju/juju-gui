@@ -47,6 +47,7 @@ YUI.add('inspector-component', function() {
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
       modelUUID: React.PropTypes.string.isRequired,
+      providerType: React.PropTypes.string,
       relatableApplications: React.PropTypes.array.isRequired,
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
@@ -229,10 +230,12 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.ScaleService
                 acl={this.props.acl}
-                serviceId={serviceId}
                 addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
+                changeState={changeState}
                 createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
-                changeState={changeState} />,
+                providerType={this.props.providerType}
+                serviceId={serviceId}
+              />,
             backState: {
               gui: {
                 inspector: {
