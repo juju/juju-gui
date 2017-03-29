@@ -63,6 +63,12 @@ YUI.add('env-list', function() {
         return !model.isController &&
           model.name !== this.props.environmentName;
       }).sort((a, b) => {
+        if (!b.lastConnection) {
+          return 1;
+        }
+        if (!a.lastConnection) {
+          return -1;
+        }
         return b.lastConnection.getTime() - a.lastConnection.getTime();
       });
       // If there is only one model left and it's the same name as the current
@@ -74,8 +80,11 @@ YUI.add('env-list', function() {
       return modelsWithoutController.map(model => {
         let name = model.name;
         let owner = model.owner;
-        const lastConnected = this.props.
-          humanizeTimestamp(model.lastConnection);
+        let lastConnected = 'Never accessed';
+        if (model.lastConnection) {
+          lastConnected = 'Last accessed ' + this.props.humanizeTimestamp(
+            model.lastConnection);
+        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -98,7 +107,7 @@ YUI.add('env-list', function() {
             key={model.uuid}>
             {name}
             <div className="env-list__last-connected">
-              Last accessed {lastConnected}
+              {lastConnected}
             </div>
           </li>
         );
