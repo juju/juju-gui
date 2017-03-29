@@ -292,10 +292,15 @@ YUI.add('machine-view-add-machine', function() {
       if (props.unit && props.machines) {
         components.push(this._generateSelectMachine());
         if (state.selectedMachine) {
-          if (state.selectedMachine !== 'new') {
+          if (state.selectedMachine === 'new') {
+            components.push(this._generateConstraints());
+          } else {
             components.push(this._generateSelectContainer());
+            const selectedContainer = state.selectedContainer;
+            if (selectedContainer === 'lxd' || selectedContainer === 'kvm') {
+              components.push(this._generateConstraints());
+            }
           }
-          components.push(this._generateConstraints());
           components.push(this._generateButtons());
         }
       } else if (!props.machines) {

@@ -1480,7 +1480,7 @@ YUI.add('juju-gui', function(Y) {
         <div className={classes}>
           <window.juju.components.SvgIcon
             height={providerDetails.svgHeight * scale}
-            name={providerDetails.id}
+            name={providerDetails.id || ''}
             width={providerDetails.svgWidth * scale} />
         </div>,
         container);
@@ -1772,7 +1772,7 @@ YUI.add('juju-gui', function(Y) {
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           createMachine={this._createMachine.bind(this)}
           destroyMachines={this.env.destroyMachines.bind(this.env)}
-          environmentName={db.environment.get('name')}
+          environmentName={db.environment.get('name') || ''}
           machines={db.machines}
           placeUnit={this.env.placeUnit.bind(this.env)}
           providerType={this.env.get('providerType') || ''}
