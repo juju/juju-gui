@@ -75,16 +75,21 @@ const createDeploymentFlow = (props = {}) => {
     getAgreementsByTerms: getAgreementsByTerms,
     getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
+    getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
     groupedChanges: groupedChanges,
     listBudgets: sinon.stub(),
     listPlansForCharm: sinon.stub(),
     loginToController: sinon.stub(),
     modelName: 'Pavlova',
+    profileUsername: 'Spinach',
+    sendAnalytics: sinon.stub(),
     servicesGetById: sinon.stub(),
     setModelName: sinon.stub(),
+    showPay: false,
     showTerms: sinon.stub(),
     storeUser: sinon.stub(),
+    validateForm: sinon.stub(),
     withPlans: true
   };
   // Merge the user-specified props with the default props.
@@ -119,9 +124,11 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
       modelCommitted: false,
+      validateForm: validateForm,
       withPlans: true
     });
     const instance = renderer.getMountedInstance();
@@ -185,11 +192,12 @@ describe('DeploymentFlow', function() {
             getCloudCredentials={props.getCloudCredentials}
             getCloudCredentialNames={props.getCloudCredentialNames}
             region={undefined}
+            sendAnalytics={props.sendAnalytics}
             setCredential={instance._setCredential}
             setRegion={instance._setRegion}
             updateCloudCredential={props.updateCloudCredential}
             user="dalek"
-            validateForm={instance._validateForm} />
+            validateForm={validateForm} />
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
           completed={false}
@@ -262,6 +270,7 @@ describe('DeploymentFlow', function() {
             generateAllChangeDescriptions={
               props.generateAllChangeDescriptions}/>
         </juju.components.DeploymentSection>
+        {null}
         <div className="twelve-col">
           <div className="deployment-flow__deploy">
             {undefined}
@@ -328,6 +337,10 @@ describe('DeploymentFlow', function() {
     output.props.children[1].props.buttons[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
+    assert.equal(instance.props.sendAnalytics.callCount, 1);
+    assert.equal(instance.props.sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(instance.props.sendAnalytics.args[0][1], 'Select cloud');
+    assert.equal(instance.props.sendAnalytics.args[0][2], 'cloud-2');
   });
 
   it('can enable the credential section', function() {
@@ -381,13 +394,47 @@ describe('DeploymentFlow', function() {
     assert.isFalse(output.props.children[6].props.disabled);
   });
 
+  it('can show the payments section', function() {
+    const acl = {isReadOnly: sinon.stub()};
+    const addNotification = sinon.stub();
+    const getUser = sinon.stub();
+    const renderer = createDeploymentFlow({
+      acl: acl,
+      addNotification: addNotification,
+      cloud: {name: 'cloud'},
+      credential: 'cred',
+      getUser: getUser,
+      isLegacyJuju: false,
+      profileUsername: 'spinach',
+      showPay: true
+    });
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.DeploymentSection
+        completed={false}
+        disabled={false}
+        instance="deployment-payment"
+        showCheck={true}
+        title="Payment details">
+        <juju.components.DeploymentPayment
+          acl={acl}
+          addNotification={addNotification}
+          getUser={getUser}
+          paymentUser={null}
+          setPaymentUser={instance._setPaymentUser}
+          username="spinach" />
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output.props.children[8], expected);
+  });
+
   it('can hide the agreements section', function() {
     const renderer = createDeploymentFlow({
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, [])
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[8].props.children.props.children[0]);
+      output.props.children[9].props.children.props.children[0]);
   });
 
   it('can handle the agreements when there are no added apps', function() {
@@ -399,7 +446,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[8].props.children.props.children[0]);
+      output.props.children[9].props.children.props.children[0]);
   });
 
   it('can display the agreements section', function() {
@@ -414,7 +461,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const agreements = output.props.children[8].props.children
+    const agreements = output.props.children[9].props.children
       .props.children[0];
     const expected = (
       <div className="deployment-flow__deploy-option">
@@ -436,7 +483,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: false
     });
     const output = renderer.getRenderOutput();
-    const agreements = output.props.children[8].props.children
+    const agreements = output.props.children[9].props.children
       .props.children[0];
     const className = agreements.props.className;
     const expectedClass = 'deployment-flow__deploy-option--disabled';
@@ -581,7 +628,7 @@ describe('DeploymentFlow', function() {
     instance._updateModelName();
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
@@ -594,6 +641,10 @@ describe('DeploymentFlow', function() {
     assert.equal(props.changeState.callCount, 1);
     assert.equal(props.setModelName.callCount, 1);
     assert.equal(props.setModelName.args[0][0], 'Lamington');
+    assert.equal(props.sendAnalytics.callCount, 1);
+    assert.equal(props.sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(props.sendAnalytics.args[0][1], 'Button click');
+    assert.equal(props.sendAnalytics.args[0][2], 'Close - Exit deployment');
   });
 
   it('can agree to terms during deploy', function() {
@@ -613,7 +664,7 @@ describe('DeploymentFlow', function() {
     instance._handleTermsAgreement({target: {checked: true}});
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 0,
       'The deploy function should not be called');
@@ -709,6 +760,18 @@ describe('DeploymentFlow', function() {
       noTerms: true,
       allowed: true
     }, {
+      about: 'no payment user',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'},
+        credential: 'cred',
+        paymentUser: null,
+        sshKey: 'mykey'
+      },
+      noTerms: true,
+      showPay: true,
+      allowed: false
+    }, {
       about: 'terms not agreed',
       state: {
         modelName: 'mymodel',
@@ -765,7 +828,8 @@ describe('DeploymentFlow', function() {
         acl: {isReadOnly: () => !!test.isReadOnly},
         applications: applications,
         charmsGetById: charmsGetById,
-        modelCommitted: !!test.modelCommitted
+        modelCommitted: !!test.modelCommitted,
+        showPay: test.showPay || false
       };
       if (!test.includeAgreements) {
         props.getAgreementsByTerms = sinon.stub();
@@ -797,13 +861,13 @@ describe('DeploymentFlow', function() {
       }
     };
     let output = renderer.getRenderOutput();
-    let deployButton = output.props.children[8].props.children.props
+    let deployButton = output.props.children[9].props.children.props
       .children[1].props.children;
     deployButton.props.action();
 
     // .action() rerenders the component so we need to get it again
     output = renderer.getRenderOutput();
-    deployButton = output.props.children[8].props.children.props
+    deployButton = output.props.children[9].props.children.props
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
@@ -824,7 +888,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {};
     const output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -853,7 +917,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setSSHKey('my SSH key');
     const output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);

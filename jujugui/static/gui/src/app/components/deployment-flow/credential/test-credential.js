@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, cloud, credentials, regions, tags, user;
+  var acl, sendAnalytics, cloud, credentials, regions, tags, user;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('DeploymentCredential', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    sendAnalytics = sinon.stub();
     regions = [{name: 'test-region'}];
     cloud = {id: 'azure', id: 'azure', regions: regions};
     credentials = {
@@ -55,6 +56,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
         user={user}
@@ -88,6 +90,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={getCloudProviderDetails}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -111,6 +114,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
             validateForm={validateForm}/>
@@ -138,6 +142,7 @@ describe('DeploymentCredential', function() {
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
         region="north-north-west"
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -203,6 +208,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, [])}
         getCloudProviderDetails={getCloudProviderDetails}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -226,6 +232,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
@@ -249,6 +256,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -310,6 +318,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -336,6 +345,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -364,6 +374,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -425,6 +436,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -464,6 +476,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={getCloudProviderDetails}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -488,6 +501,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
             validateForm={validateForm}/>
@@ -515,6 +529,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={getCloudProviderDetails}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -541,6 +556,7 @@ describe('DeploymentCredential', function() {
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={sinon.stub()}
         user={user}
@@ -555,5 +571,9 @@ describe('DeploymentCredential', function() {
     instance._toggleAdd(true);
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], credential);
+    assert.equal(sendAnalytics.callCount, 1);
+    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
+    assert.equal(sendAnalytics.args[0][1], 'Button click');
+    assert.equal(sendAnalytics.args[0][2], 'Cancel add credential');
   });
 });

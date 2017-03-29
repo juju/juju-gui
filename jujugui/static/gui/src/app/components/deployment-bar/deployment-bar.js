@@ -28,6 +28,7 @@ YUI.add('deployment-bar', function() {
       generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
+      sendAnalytics: React.PropTypes.func.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -77,7 +78,7 @@ YUI.add('deployment-bar', function() {
     _getDeployButtonLabel: function() {
       var label = this.props.modelCommitted ? 'Commit changes'
         : 'Deploy changes';
-      return label  + ' (' +
+      return label + ' (' +
         Object.keys(this.props.currentChangeSet).length + ')';
     },
 
@@ -105,6 +106,11 @@ YUI.add('deployment-bar', function() {
       @method _deployAction
     */
     _deployAction: function() {
+      this.props.sendAnalytics(
+        'Deployment Flow',
+        'Button click',
+        'deploy'
+      );
       this.props.changeState({
         gui: {
           deploy: ''

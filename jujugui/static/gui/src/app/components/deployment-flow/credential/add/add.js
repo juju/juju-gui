@@ -29,6 +29,7 @@ YUI.add('deployment-credential-add', function() {
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      sendAnalytics: React.PropTypes.func.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
@@ -93,6 +94,11 @@ YUI.add('deployment-credential-add', function() {
         return;
       }
       const credentialName = this.refs.credentialName.getValue();
+      this.props.sendAnalytics(
+        'Deployment Flow',
+        'Button click',
+        'Add credentials'
+      );
       props.updateCloudCredential(
         props.generateCloudCredentialName(
           props.cloud.name, props.user, credentialName),

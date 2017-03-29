@@ -285,67 +285,6 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-    Given a relation between two services (this one and one other), return the
-    service on the other end of the relation.
-
-    @method getOtherServiceFromRelation
-    @param relation The relation to check
-    @param db The database of services and relations
-    @return The other service in the relation
-    */
-    getOtherServiceFromRelation: function(relation, db) {
-      var endpoints = relation.get('endpoints');
-      if (!endpoints || endpoints.length !== 2) {
-        return;
-      }
-      // Endpoints do not differentiate which end which service is connected to,
-      // this returns the service at the oppostite end from the end that we
-      // check.
-      if (endpoints[0][0] === this.get('id')) {
-        return db.services.getById(endpoints[1][0]);
-      }
-      return db.services.getById(endpoints[0][0]);
-    },
-
-    /**
-    Update the unit list for subordinate services with the units that they are
-    installed on.
-
-    @method updateSubordinateUnits
-    @param db The database of services, relations, and units
-    @param halt If true, do not continue on to update related services
-    */
-    updateSubordinateUnits: function(db, halt) {
-      var relations = db.relations.get_relations_for_service(this);
-      if (this.get('subordinate')) {
-        var units = new models.ServiceUnitList();
-        relations.forEach(function(relation) {
-          // Only count subordinate relations.
-          if (relation.get('scope') !== 'container') {
-            return;
-          }
-          var farService = this.getOtherServiceFromRelation(relation, db);
-          if (farService && !farService.get('subordinate')) {
-            // As subordinate services' unit lists are only lists of other units
-            // services, we call add directly here, contrary to the note in the
-            // add method.  This remains dangerous in other instances.
-            units.add(farService.get('units').toArray(), true);
-          }
-        }.bind(this));
-        this.set('units', units);
-      } else {
-        relations.forEach(function(relation) {
-          var farService = this.getOtherServiceFromRelation(relation, db);
-          if (farService && farService.get('subordinate') && !halt) {
-            // Run on the far service, but don't follow relations from that
-            // service to prevent infinite loops.
-            farService.updateSubordinateUnits(db, true);
-          }
-        }.bind(this));
-      }
-    },
-
-    /**
       Detaches all of the events in the models _event property
 
       @method destructor
@@ -1099,8 +1038,6 @@ YUI.add('juju-models', function(Y) {
       }
       // Include the new change in the service own units model list.
       _process_delta(service.get('units'), action, data, {});
-      // Also do for subordinates
-      service.updateSubordinateUnits(db);
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -1904,7 +1841,6 @@ YUI.add('juju-models', function(Y) {
             // first before trying to remove them
             if (service) {
               service.removeRelations(data);
-              service.updateSubordinateUnits(db);
             } else {
               // fixTests
               console.error('Relation added without matching service');
@@ -1921,7 +1857,6 @@ YUI.add('juju-models', function(Y) {
           // it's possible that a service will be null
           if (service) {
             _process_delta(service.get('relations'), action, data, db);
-            service.updateSubordinateUnits(db);
           } else {
             // fixTests
             console.error('Relation added without matching service');
@@ -2330,9 +2265,6 @@ YUI.add('juju-models', function(Y) {
       var units = this.units;
       this.services.each(function(service) {
         units.update_service_unit_aggregates(service);
-        if (service.get('subordinate')) {
-          service.updateSubordinateUnits(this);
-        }
       }.bind(this));
       this.fire('update');
     },
@@ -2938,9 +2870,6 @@ YUI.add('juju-models', function(Y) {
           unit.set(flag, value);
           dbUnit.set(flag, value);
         });
-        if (service.get('subordinate')) {
-          service.updateSubordinateUnits(this);
-        }
       }
       if (serviceOrServiceList instanceof models.ServiceList) {
         serviceOrServiceList.each(updateOneService.bind(this));

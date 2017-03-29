@@ -144,6 +144,7 @@ YUI.add('juju-gui', function(Y) {
                       node.getAttribute('name'), node.get('value'));
                 }
               });
+              Y.one('#shortcut-settings').hide();
             });
 
             target.one('.close').on('click', function(ev) {
@@ -457,17 +458,25 @@ YUI.add('juju-gui', function(Y) {
       });
 
       let environments = juju.environments;
-      // If there is no protocol in the baseURL then prefix the origin when
-      // creating state.
-      let baseURL = cfg.baseUrl;
-      if (baseURL.indexOf('://') < 0) {
-        baseURL = `${window.location.origin}${baseURL}`;
-      }
-      this.state = this._setupState(baseURL);
+
+      // This is wrapped to be called twice.
+      // The early return (at line 478) would state from being set (originally
+      // at line 514).
+      const setUpStateWrapper = function() {
+        // If there is no protocol in the baseURL then prefix the origin when
+        // creating state.
+        let baseURL = cfg.baseUrl;
+        if (baseURL.indexOf('://') < 0) {
+          baseURL = `${window.location.origin}${baseURL}`;
+        }
+        this.state = this._setupState(baseURL);
+      }.bind(this);
+
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
       if (env) {
+        setUpStateWrapper();
         this._init(cfg, env, this.get('controllerAPI'));
         return;
       }
@@ -492,6 +501,17 @@ YUI.add('juju-gui', function(Y) {
       modelOptions.webHandler = new environments.web.WebHandler();
       const modelAPI = new environments.GoEnvironment(modelOptions);
       const controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
+
+      // For analytics to work we need to set it up before state is set up.
+      // Relies on controllerAPI, is used by state
+      this.sendAnalytics = juju.sendAnalyticsFactory(
+        controllerAPI,
+        window.dataLayer
+      );
+
+      setUpStateWrapper();
+
+      this.defaultPageTitle = 'Juju GUI';
       this._init(cfg, modelAPI, controllerAPI);
     },
 
@@ -1120,6 +1140,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
+          generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
@@ -1129,8 +1150,11 @@ YUI.add('juju-gui', function(Y) {
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
           showPay={window.juju_config.payFlag || false}
+          updateCloudCredential={
+            controllerAPI.updateCloudCredential.bind(controllerAPI)}
           user={controllerAPI.getCredentials().user}
-          userInfo={this._getUserInfo(state)} />,
+          userInfo={this._getUserInfo(state)}
+          validateForm={views.utils.validateForm.bind(views.utils)} />,
         document.getElementById('top-page-container'));
       next();
     },
@@ -1287,6 +1311,7 @@ YUI.add('juju-gui', function(Y) {
           changes={currentChangeSet}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
+          sendAnalytics={this.sendAnalytics}
           setModelName={env.set.bind(env, 'environmentName')}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
@@ -1301,6 +1326,7 @@ YUI.add('juju-gui', function(Y) {
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getDischargeToken={getDischargeToken}
+          getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
           gisf={this.get('gisf')}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
@@ -1310,13 +1336,16 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           modelCommitted={connected}
           modelName={modelName}
+          profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           servicesGetById={services.getById.bind(services)}
+          showPay={window.juju_config.payFlag || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
           storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          validateForm={utils.validateForm.bind(utils)}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },
@@ -1357,6 +1386,7 @@ YUI.add('juju-gui', function(Y) {
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           modelCommitted={this.env.get('connected')}
+          sendAnalytics={this.sendAnalytics}
           showInstall={!!this.get('sandbox')} />,
         document.getElementById('deployment-bar-container'));
     },
@@ -1975,7 +2005,8 @@ YUI.add('juju-gui', function(Y) {
     _setupState: function(baseURL) {
       const state = new window.jujugui.State({
         baseURL: baseURL,
-        seriesList: window.jujulib.SERIES
+        seriesList: window.jujulib.SERIES,
+        sendAnalytics: this.sendAnalytics
       });
 
       state.register([
@@ -2859,7 +2890,8 @@ YUI.add('juju-gui', function(Y) {
         charmstore: this.get('charmstore'),
         bundleImporter: this.bundleImporter,
         state: this.state,
-        staticURL: window.juju_config.staticURL
+        staticURL: window.juju_config.staticURL,
+        sendAnalytics: this.sendAnalytics
       };
 
       this.showView('environment', options, {
@@ -3103,6 +3135,7 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'acl',
+    'analytics',
     'changes-utils',
     'juju-charm-models',
     'juju-bundle-models',

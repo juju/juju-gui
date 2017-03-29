@@ -98,6 +98,8 @@ const State = class State {
     */
     this._dispatchers = {};
 
+    this.sendAnalytics = cfg.sendAnalytics || function() {};
+
     window.onpopstate = this.dispatch.bind(this, [], true, true);
   }
 
@@ -233,7 +235,7 @@ const State = class State {
                able to generate
   */
   dispatch(nullKeys = [], updateState = true,
-    backDispatch = false,  stateFromURL = false) {
+    backDispatch = false, stateFromURL = false) {
     let error, state;
     // We only want to dispatch the state from the URL on application load or
     // when explicitly requested by the developer.
@@ -446,16 +448,11 @@ const State = class State {
     this._appStateHistory.push(purgedState);
     this._pushState();
 
-    // Emiting a google tag manager event registering the state change.
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        'event': 'GAEvent',
-        'eventCategory': 'Navigation',
-        'eventAction': 'State change',
-        'eventLabel': this.location.href,
-        'eventValue': undefined
-      });
-    }
+    this.sendAnalytics(
+      'Navigation',
+      'State change',
+      this.location.href
+    );
 
     let {error} = this.dispatch(nullKeys, false);
     if (error !== null) {

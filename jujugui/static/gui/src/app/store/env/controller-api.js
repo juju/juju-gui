@@ -664,7 +664,7 @@ YUI.add('juju-controller-api', function(Y) {
             }
             let lastConnection = null;
             for (let i = 0; i < model.users.length; i++) {
-              const user =  model.users[i];
+              const user = model.users[i];
               if (user.name === credentials.user) {
                 lastConnection = user.lastConnection;
                 break;

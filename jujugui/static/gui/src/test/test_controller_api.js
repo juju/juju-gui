@@ -53,7 +53,7 @@ describe('Controller API', function() {
     cleanups = [];
   });
 
-  afterEach(function()  {
+  afterEach(function() {
     cleanups.forEach(function(action) {action();});
     // We need to clear any credentials stored in sessionStorage.
     controllerAPI.setCredentials(null);
@@ -1236,7 +1236,7 @@ describe('Controller API', function() {
 
     it('list models error', done => {
       // Perform the request.
-      controllerAPI.listModelsWithInfo((err, models) =>  {
+      controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(models, []);
         done();
@@ -1248,7 +1248,7 @@ describe('Controller API', function() {
 
     it('model info error', done => {
       // Perform the request.
-      controllerAPI.listModelsWithInfo((err, models) =>  {
+      controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(models, []);
         done();
@@ -1274,7 +1274,7 @@ describe('Controller API', function() {
 
     it('specific model response error', done => {
       // Perform the request.
-      controllerAPI.listModelsWithInfo((err, models) =>  {
+      controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 1);
         const result = models[0];

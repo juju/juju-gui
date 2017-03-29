@@ -40,13 +40,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who@external',
-        lastConnection: {a: 0, getTime: function(){}}
+        lastConnection: {a: 0, getTime: function() {}}
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek@external',
-        lastConnection: {a: 1, getTime: function(){}}
+        lastConnection: {a: 1, getTime: function() {}}
       }
     ];
     const renderer = jsTestUtils.shallowRender(
@@ -88,13 +88,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who',
-        lastConnection: {a: 0, getTime: function(){}}
+        lastConnection: {a: 0, getTime: function() {}}
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek',
-        lastConnection: {a: 1, getTime: function(){}}
+        lastConnection: {a: 1, getTime: function() {}}
       }
     ];
     const renderer = jsTestUtils.shallowRender(

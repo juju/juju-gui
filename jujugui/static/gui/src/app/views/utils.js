@@ -1607,6 +1607,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} providerName Name of the provider.
     @return {Object} The details for the provider.
   */
+
   utils.getCloudProviderDetails = function(providerName) {
     const providers = {
       'gce': {
@@ -1849,10 +1850,40 @@ YUI.add('juju-view-utils', function(Y) {
       }
     };
     // Map the cloud id to provider type.
-    if (providerName === 'aws') {
-      providerName = 'ec2';
+    switch (providerName) {
+      case 'aws':
+        providerName = 'ec2';
+        break;
+      case 'google':
+        providerName = 'gce';
+        break;
     }
     return providers[providerName];
+  };
+
+  /**
+    Validate the form fields in a react component.
+
+    @method validateForm
+    @param {Array} fields A list of field ref names.
+    @param {Object} refs The refs for a component.
+    @returns {Boolean} Whether the form is valid.
+  */
+  utils.validateForm = function(fields, refs) {
+    let formValid = true;
+    fields.forEach(field => {
+      const ref = refs[field];
+      if (!ref || !ref.validate) {
+        return;
+      }
+      const valid = ref.validate();
+      // If there is an error then mark that. We don't want to exit the loop
+      // at this point so that each field gets validated.
+      if (!valid) {
+        formValid = false;
+      }
+    });
+    return formValid;
   };
 
 }, '0.1.0', {

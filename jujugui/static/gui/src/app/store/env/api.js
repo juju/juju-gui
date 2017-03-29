@@ -534,7 +534,7 @@ YUI.add('juju-env-api', function(Y) {
             tags.parse(tags.CONTROLLER, response['controller-tag']));
         }
         this.setConnectedAttr(
-          'modelId',  tags.parse(tags.MODEL, response['model-tag']));
+          'modelId', tags.parse(tags.MODEL, response['model-tag']));
         this.currentModelInfo(this._handleCurrentModelInfo.bind(this));
         this._watchAll();
         // Start pinging the server.
@@ -1662,7 +1662,7 @@ YUI.add('juju-env-api', function(Y) {
       if (args.constraints) {
         params.constraints = this.prepareConstraints(args.constraints);
       }
-      if (args.minUnits)  {
+      if (args.minUnits) {
         params['min-units'] = args.minUnits;
       }
 

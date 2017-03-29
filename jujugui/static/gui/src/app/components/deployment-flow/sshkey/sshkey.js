@@ -61,15 +61,19 @@ YUI.add('deployment-ssh-key', function() {
 
       let message = (
         <p>
-          Optionally provide an SSH key that will allow accessing machines
-          provisioned on this model, for instance via "juju ssh".
+          Optionally provide a SSH key (e.g. ~/.ssh/id_rsa.pub) to allow
+          accessing machines provisioned on this model via "juju ssh".
+          <br/> SSH keys can be added at any time using "juju add-ssh-key" or
+          "juju import-ssh-key".
         </p>
       );
       if (isAzure) {
         message = (
           <p>
-            Provide the SSH key that will be used to provision machines on
-            Azure.
+            Provide the SSH key (e.g. ~/.ssh/id_rsa.pub) that will be used to
+            provision machines on Azure.
+            <br/> Additional keys can be added at any time using
+            "juju add-ssh-key" or "juju import-ssh-key".
           </p>
         );
       }

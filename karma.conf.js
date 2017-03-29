@@ -55,7 +55,9 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/utils/jujulib-conversion-utils.js',
       'jujugui/static/gui/build/app/utils/net-utils.js',
-      'jujugui/static/gui/build/app/utils/test-net-utils.js'
+      'jujugui/static/gui/build/app/utils/test-net-utils.js',
+      'jujugui/static/gui/build/app/utils/analytics.js',
+      'jujugui/static/gui/build/app/utils/test-analytics.js'
     ],
 
     // list of files to exclude
