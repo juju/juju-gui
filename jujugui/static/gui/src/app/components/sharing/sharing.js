@@ -322,13 +322,15 @@ YUI.add('sharing', function() {
           type="positive"
           disabled={true} />);
       } else if (this.state.sent) {
+        // We want the button to transition back to it's resting state after a
+        // set amount of time, so make a closure then trigger it after 1.5s.
         const sent = (function () {
           const _this = this;
           return function() {
             _this.setState({sent: false, canAdd: false});
           };
         }.bind(this))();
-        setTimeout(sent, 1000);
+        setTimeout(sent, 1500);
         return (<juju.components.GenericButton
           submit={true}
           icon="tick_16"

@@ -342,75 +342,84 @@ describe('Sharing', () => {
     assert.deepEqual(actualMessage, expectedMessage);
   });
 
-  it('shows different buttons based on state', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
-        addNotification={sinon.stub()}
-        canShareModel={true}
-        closeHandler={sinon.stub()}
-        getModelUserInfo={sinon.stub()}
-        grantModelAccess={sinon.stub()}
-        revokeModelAccess={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
-    let output = renderer.getRenderOutput();
-    const defaultAdd = output.props.children[0].
-      props.children[1].props.children[2].props.children;
-    const expectedDefaultAdd = (
-      <juju.components.GenericButton
-        submit={true}
-        title="Add"
-        tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={true}
-      />
-    );
-    assert.deepEqual(defaultAdd, expectedDefaultAdd);
+  describe('add button states', () => {
+    function makeSharingEle(state) {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.Sharing
+          addNotification={sinon.stub()}
+          canShareModel={true}
+          closeHandler={sinon.stub()}
+          getModelUserInfo={sinon.stub()}
+          grantModelAccess={sinon.stub()}
+          revokeModelAccess={sinon.stub()} />, true);
+      const instance = renderer.getMountedInstance();
+      if (state) {
+        instance.setState(state);
+      }
+      const output = renderer.getRenderOutput();
+      return output.props.children[0].
+        props.children[1].props.children[2].props.children;
+    }
+    it('shows a disabled button with "add" text by default', () => {
+      const expected = (
+        <juju.components.GenericButton
+          submit={true}
+          title="Add"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={true}
+        />
+      );
+      assert.deepEqual(makeSharingEle(), expected);
+    });
 
-    instance.setState({canAdd: true});
-    output = renderer.getRenderOutput();
-    const canAdd = output.props.children[0].
-      props.children[1].props.children[2].props.children;
-    const expectedCanAdd = (
-      <juju.components.GenericButton
-        submit={true}
-        title="Add"
-        tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={false} />
-    );
-    assert.deepEqual(canAdd, expectedCanAdd);
+    it('shows an active button with "add" text when enabled', () => {
+      const output = makeSharingEle({
+        canAdd: true
+      });
+      const expected = (
+        <juju.components.GenericButton
+          submit={true}
+          title="Add"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={false} />
+      );
+      assert.deepEqual(output, expected);
+    });
 
-    instance.setState({canAdd: false, sending: true});
-    output = renderer.getRenderOutput();
-    const inProgressAdd = output.props.children[0].
-      props.children[1].props.children[2].props.children;
-    const expectedInProgressAdd = (
-      <juju.components.GenericButton
-        submit={true}
-        title="Add"
-        tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={true} />
-    );
-    assert.deepEqual(inProgressAdd, expectedInProgressAdd);
+    it('shows a disabled button with "add" text when sending', () => {
+      const output = makeSharingEle({
+        sending: true
+      });
+      const expected = (
+        <juju.components.GenericButton
+          submit={true}
+          title="Add"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={true} />
+      );
+      assert.deepEqual(output, expected);
+    });
 
-    instance.setState({sending: false, canAdd: false, sent: true});
-    output = renderer.getRenderOutput();
-    const completeAdd = output.props.children[0].
-      props.children[1].props.children[2].props.children;
-    const expectedCompleteAdd = (
-      <juju.components.GenericButton
-        submit={true}
-        icon="tick_16"
-        tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={true} />
-    );
-    assert.deepEqual(completeAdd, expectedCompleteAdd);
+    it('shows a disabled button with tick icon when sent', () => {
+      const output = makeSharingEle({
+        sent: true
+      });
+      const expected = (
+        <juju.components.GenericButton
+          submit={true}
+          icon="tick_16"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={true} />
+      );
+      assert.deepEqual(output, expected);
+    });
   });
-
 });
