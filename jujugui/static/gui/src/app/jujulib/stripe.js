@@ -13,29 +13,71 @@ var module = module;
     Provides access to the Stripe API.
   */
 
+  const stripeAPIVersion = 'v2';
+
   /**
     Initializer.
 
     @function stripe
+    @param url {String} The URL of the Stripe instance, including
+      scheme and port, and excluding the API version.
     @returns {Object} A client object for making Stripe API calls.
   */
-  function stripe() {
+  function stripe(url) {
+    // Store the API URL (including version) handling missing trailing slash.
+    this.url = `${url.replace(/\/?$/, '/')}${stripeAPIVersion}/`;
     this.stripe = null;
   };
 
   stripe.prototype = {
     /**
+      Load a JavaScript file.
+
+      @private _loadScript
+      @param callback {Function} A function to be called when the file has
+        loaded.
+    */
+    _loadScript: function(callback) {
+      // Load the stripe module.
+      const node = document.createElement('script');
+      node.src = this.url;
+      node.onload = () => {
+        callback();
+      };
+      document.head.appendChild(node);
+    },
+
+    /**
+      Get the global Stripe object. Used for testing.
+
+      @private _getStripeModule
+    */
+    _getStripeModule: function() {
+      if (!Stripe) {
+        console.error('The Stripe module was not able to be loaded.');
+      }
+      return Stripe;
+    },
+
+    /**
       Load and return the Stripe API object.
 
-      @public _stripe
+      @private _getStripe
+      @param callback {Function} A function to be called once the Stripe API is
+        available.
     */
-    _stripe: function(callback) {
+    _getStripe: function(callback) {
+      // If the Stripe module is already loaded then return.
       if (this.stripe) {
         callback(this.stripe);
         return;
       }
-
+      this._loadScript(() => {
+        this.stripe = this._getStripeModule();
+        callback(this.stripe);
+      });
     },
+
     /**
       Create a Stripe card token.
 
@@ -127,9 +169,7 @@ var module = module;
         address_zip: card.addressZip,
         address_country: card.addressCountry
       };
-      this._stripe(stripe => {
-        stripe.card.createToken(data, handler);
-      });
+      this._getStripe(stripe => {stripe.card.createToken(data, handler);});
     }
   };
 

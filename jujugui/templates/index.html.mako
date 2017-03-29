@@ -465,6 +465,5 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
     </script>
     <!-- End Google Tag Manager -->
-    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
   </body>
 </html>

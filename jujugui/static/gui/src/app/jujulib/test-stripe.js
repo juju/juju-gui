@@ -5,11 +5,51 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib stripe service', function() {
+describe('jujulib Stripe service', function() {
+  let fakeStripe;
+
+  beforeEach(function() {
+    fakeStripe = {
+      card: {
+        createToken: sinon.stub()
+      }
+    };
+  });
+
   it('exists', function() {
-    const stripe = new window.jujulib.stripe();
-    assert.strictEqual(
-      stripe instanceof window.jujulib.stripe, true);
+    const stripe = new window.jujulib.stripe('http://example.com');
+    assert.strictEqual(stripe instanceof window.jujulib.stripe, true);
+    assert.equal(stripe.url,'http://example.com/v2/');
+  });
+
+  it('can load the Stripe JavaScript', function() {
+    const stripe = new window.jujulib.stripe('http://example.com');
+    stripe._getStripeModule = sinon.stub().returns(fakeStripe);
+    stripe._getStripe(sinon.stub());
+    assert.equal(
+      document.querySelector('script').src,
+      'http://example.com/v2/');
+  });
+
+  it('calls the callback once the script has loaded', function() {
+    const stripe = new window.jujulib.stripe('http://example.com');
+    stripe._loadScript = sinon.stub().callsArg(0);
+    stripe._getStripeModule = sinon.stub().returns(fakeStripe);
+    const callback = sinon.stub();
+    stripe._getStripe(callback);
+    assert.equal(callback.callCount, 1);
+    assert.equal(callback.args[0][0], fakeStripe);
+  });
+
+  it('does not load the script more than once', function() {
+    const stripe = new window.jujulib.stripe('http://example.com');
+    stripe._loadScript = sinon.stub().callsArg(0);
+    stripe._getStripeModule = sinon.stub().returns(fakeStripe);
+    const callback = sinon.stub();
+    stripe._getStripe(callback);
+    stripe._getStripe(callback);
+    assert.equal(stripe._loadScript.callCount, 1);
+    assert.equal(callback.callCount, 2);
   });
 
   describe('createToken', function() {
@@ -56,16 +96,12 @@ describe('jujulib stripe service', function() {
     });
 
     it('can create a token', function() {
-      const createToken = sinon.stub().callsArgWith(1, null, cardResponse);
-      const stripe = {
-        card: {
-          createToken: createToken
-        }
-      };
-      const stripe = new window.jujulib.stripe();
+      fakeStripe.card.createToken = sinon.stub().callsArgWith(1, null, cardResponse);
+      const stripe = new window.jujulib.stripe('http://example.com/');
+      stripe.stripe = fakeStripe;
       stripe.createToken(cardData, sinon.stub());
-      assert.equal(createToken.callCount, 1);
-      assert.deepEqual(createToken.args[0][0], {
+      assert.equal(fakeStripe.card.createToken.callCount, 1);
+      assert.deepEqual(fakeStripe.card.createToken.args[0][0], {
         number: '1234123412341234',
         cvc: '321',
         exp_month: '03',
@@ -81,13 +117,10 @@ describe('jujulib stripe service', function() {
     });
 
     it('can return the token data', function() {
-      const createToken = sinon.stub().callsArgWith(1, null, cardResponse);
-      const stripe = {
-        card: {
-          createToken: createToken
-        }
-      };
-      const stripe = new window.jujulib.stripe();
+      fakeStripe.card.createToken = sinon.stub().callsArgWith(
+        1, null, cardResponse);
+      const stripe = new window.jujulib.stripe('http://example.com/');
+      stripe.stripe = fakeStripe;
       const callback = sinon.stub();
       stripe.createToken(cardData, callback);
       assert.equal(callback.callCount, 1);
@@ -119,7 +152,7 @@ describe('jujulib stripe service', function() {
     });
 
     it('handles errors when getting a user', function() {
-      const createToken = sinon.stub().callsArgWith(1, null, {
+      fakeStripe.card.createToken = sinon.stub().callsArgWith(1, null, {
         error: {
           type: 'card_error',
           code: 'invalid_expiry_year',
@@ -127,12 +160,8 @@ describe('jujulib stripe service', function() {
           param: 'exp_year'
         }
       });
-      const stripe = {
-        card: {
-          createToken: createToken
-        }
-      };
-      const stripe = new window.jujulib.stripe();
+      const stripe = new window.jujulib.stripe('http://example.com/');
+      stripe.stripe = fakeStripe;
       const callback = sinon.stub();
       stripe.createToken(cardData, callback);
       assert.equal(callback.callCount, 1);

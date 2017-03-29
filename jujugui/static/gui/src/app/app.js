@@ -2288,7 +2288,7 @@ YUI.add('juju-gui', function(Y) {
         });
         this.payment = new window.jujulib.payment(
           config.paymentURL, paymentBakery);
-        this.stripe = new window.jujulib.stripe();
+        this.stripe = new window.jujulib.stripe('https://js.stripe.com/');
       }
     },
 
