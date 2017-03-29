@@ -637,33 +637,16 @@ YUI.add('store', function() {
             <ul className="twelve-col no-bullets equal-height">
                 <li className="three-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="apache-analytics-sql"
+                        data-entity="hive"
                         onClick={this._handleEntityClick}>
-                        <ul className="featured-entity__image-list one-col">
-                            <li className="featured-entity__image-list-item">
-                                <img src={this._generateIconPath(
-                                    'apache-hadoop-slave')}
-                                    alt=""
-                                    className="featured-entity__image" />
-                            </li>
-                            <li className="featured-entity__image-list-item">
-                                <img src={this._generateIconPath(
-                                    'apache-hive')}
-                                    alt=""
-                                    className="featured-entity__image" />
-                            </li>
-                            <li className="featured-entity__image-list-item">
-                                <img src={this._generateIconPath('mariadb')}
-                                    alt=""
-                                    className="featured-entity__image" />
-                            </li>
-                            <li className="featured-entity__image-list-item">
-                                +3
-                            </li>
-                        </ul>
+                        <div className="one-col no-margin-bottom">
+                          <img src={this._generateIconPath('hive')}
+                              alt=""
+                              className="featured-entity__image" />
+                        </div>
                         <div className="two-col last-col no-margin-bottom">
                               <h3 className="featured-entity__title">
-                                  Apache analytics SQL
+                                  Hive
                               </h3>
                               <p>by bigdata-charmers</p>
                         </div>
@@ -671,18 +654,18 @@ YUI.add('store', function() {
                 </li>
                 <li className="three-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="apache-spark"
+                        data-entity="spark"
                         onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img
-                              src={this._generateIconPath('apache-spark')}
+                              src={this._generateIconPath('spark')}
                               alt=""
                               className="featured-entity__image" />
                         </div>
                         <div
                             className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                                Apache Spark
+                                Spark
                             </h3>
                             <p>by bigdata-charmers</p>
                         </div>
@@ -690,17 +673,17 @@ YUI.add('store', function() {
                 </li>
                 <li className="three-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="apache-zeppelin"
+                        data-entity="zeppelin"
                         onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img
-                                src={this._generateIconPath('apache-zeppelin')}
+                                src={this._generateIconPath('zeppelin')}
                                 alt=""
                                 className="featured-entity__image" />
                         </div>
                         <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                                Apache Zeppelin
+                                Zeppelin
                             </h3>
                             <p>by bigdata-charmers</p>
                         </div>
