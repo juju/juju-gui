@@ -123,6 +123,19 @@ describe('EnvList', function() {
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
+        data-id={models[3].uuid}
+        data-name={models[3].name}
+        data-owner={models[3].owner}
+        onClick={instance._handleModelClick}
+        key={models[3].uuid}>
+        {'dalek/model-name-4'}
+        <div className="env-list__last-connected">
+          {'Never accessed'}
+        </div>
+      </li>,
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
         data-id={models[2].uuid}
         data-name={models[2].name}
         data-owner={models[2].owner}
@@ -144,19 +157,6 @@ describe('EnvList', function() {
         {'dalek/model-name-2'}
         <div className="env-list__last-connected">
           {'Last accessed less than a minute ago'}
-        </div>
-      </li>,
-      <li className="env-list__environment"
-        role="menuitem"
-        tabIndex="0"
-        data-id={models[3].uuid}
-        data-name={models[3].name}
-        data-owner={models[3].owner}
-        onClick={instance._handleModelClick}
-        key={models[3].uuid}>
-        {'dalek/model-name-4'}
-        <div className="env-list__last-connected">
-          {'Never accessed'}
         </div>
       </li>
     ];

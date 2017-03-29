@@ -64,10 +64,10 @@ YUI.add('env-list', function() {
           model.name !== this.props.environmentName;
       }).sort((a, b) => {
         if (!b.lastConnection) {
-          return -1;
+          return 1;
         }
         if (!a.lastConnection) {
-          return 1;
+          return -1;
         }
         return b.lastConnection.getTime() - a.lastConnection.getTime();
       });
