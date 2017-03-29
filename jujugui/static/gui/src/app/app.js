@@ -458,7 +458,6 @@ YUI.add('juju-gui', function(Y) {
       });
 
       let environments = juju.environments;
-
       // This is wrapped to be called twice.
       // The early return (at line 478) would state from being set (originally
       // at line 514).
@@ -471,7 +470,7 @@ YUI.add('juju-gui', function(Y) {
         }
         this.state = this._setupState(baseURL);
       }.bind(this);
-      this.user = new window.jujugui.User();
+      this.user = this.get('user') || new window.jujugui.User();
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -918,7 +917,6 @@ YUI.add('juju-gui', function(Y) {
         return window.localStorage.getItem('discharge-token');
       };
       const charmstore = this.get('charmstore');
-      // TODO we should pass in a func that does the user.setcredentials here
       const setCreds = function(creds) {
         this.user.controller = creds;
       };
@@ -3111,6 +3109,10 @@ YUI.add('juju-gui', function(Y) {
        */
       socketTemplate: {value: '/model/$uuid/api'},
 
+      /**
+       The user auth object.
+       */
+      user: {value: null},
       /**
        The users associated with various services that the GUI uses. The users
        are keyed by their service name. For example,
