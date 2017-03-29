@@ -96,7 +96,8 @@ describe('jujulib Stripe service', function() {
     });
 
     it('can create a token', function() {
-      fakeStripe.card.createToken = sinon.stub().callsArgWith(1, null, cardResponse);
+      fakeStripe.card.createToken = sinon.stub().callsArgWith(
+        1, null, cardResponse);
       const stripe = new window.jujulib.stripe('http://example.com/');
       stripe.stripe = fakeStripe;
       stripe.createToken(cardData, sinon.stub());
