@@ -34,7 +34,7 @@ describe('EnvList', function() {
     YUI().use('env-list', function() { done(); });
   });
 
-  it('renders a list of environments', function() {
+  it('renders a list of models', function() {
     const models = [
       {
         uuid: 'model-uuid-1',
@@ -62,7 +62,7 @@ describe('EnvList', function() {
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    const expected = [
+    const expectedOutput = [
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
@@ -73,13 +73,94 @@ describe('EnvList', function() {
         key={models[1].uuid}>
         {'dalek/model-name-2'}
         <div className="env-list__last-connected">
-          Last accessed {'less than a minute ago'}
+          {'Last accessed less than a minute ago'}
         </div>
       </li>
     ];
-    assert.deepEqual(
-      output.props.children[0].props.children,
-      expected);
+    assert.deepEqual(output.props.children[0].props.children, expectedOutput);
+  });
+
+  it('orders the model list, and handles never connected ones', function() {
+    const models = [
+      {
+        uuid: 'model-uuid-1',
+        name: 'model-name-1',
+        owner: 'who@external',
+        lastConnection: {a: 0, getTime: () => 0}
+      },
+      {
+        uuid: 'model-uuid-2',
+        name: 'model-name-2',
+        owner: 'dalek@external',
+        lastConnection: {a: 1, getTime: () => 1}
+      },
+      {
+        uuid: 'model-uuid-3',
+        name: 'model-name-3',
+        owner: 'who@external',
+        lastConnection: {a: 2, getTime: () => 2}
+      },
+      {
+        uuid: 'model-uuid-4',
+        name: 'model-name-4',
+        owner: 'dalek@external',
+      }
+    ];
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvList
+        acl={acl}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        changeState={sinon.stub()}
+        environmentName="model-name-1"
+        envs={models}
+        handleModelClick={sinon.stub()}
+        humanizeTimestamp={humanizeTimestamp}
+        switchModel={sinon.stub()}
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expectedOutput = [
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
+        data-id={models[2].uuid}
+        data-name={models[2].name}
+        data-owner={models[2].owner}
+        onClick={instance._handleModelClick}
+        key={models[2].uuid}>
+        {'model-name-3'}
+        <div className="env-list__last-connected">
+          {'Last accessed less than a minute ago'}
+        </div>
+      </li>,
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
+        data-id={models[1].uuid}
+        data-name={models[1].name}
+        data-owner={models[1].owner}
+        onClick={instance._handleModelClick}
+        key={models[1].uuid}>
+        {'dalek/model-name-2'}
+        <div className="env-list__last-connected">
+          {'Last accessed less than a minute ago'}
+        </div>
+      </li>,
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
+        data-id={models[3].uuid}
+        data-name={models[3].name}
+        data-owner={models[3].owner}
+        onClick={instance._handleModelClick}
+        key={models[3].uuid}>
+        {'dalek/model-name-4'}
+        <div className="env-list__last-connected">
+          {'Never accessed'}
+        </div>
+      </li>
+    ];
+    assert.deepEqual(output.props.children[0].props.children, expectedOutput);
   });
 
   it('handles local model owners', function() {
@@ -121,7 +202,7 @@ describe('EnvList', function() {
         key={models[1].uuid}>
         {'dalek/model-name-2'}
         <div className="env-list__last-connected">
-          Last accessed {'less than a minute ago'}
+          {'Last accessed less than a minute ago'}
         </div>
       </li>
     ]);
