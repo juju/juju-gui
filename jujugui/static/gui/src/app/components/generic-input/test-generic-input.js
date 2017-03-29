@@ -440,7 +440,6 @@ describe('GenericInput', function() {
           error: 'This field is required.'
         }]}
         value="default" />, true);
-    const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onKeyUp();
     assert.equal(updateModelName.callCount, 1);
