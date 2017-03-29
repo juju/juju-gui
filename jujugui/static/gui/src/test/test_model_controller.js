@@ -38,8 +38,20 @@ describe('Model Controller Promises', function() {
   });
 
   beforeEach(function() {
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
-    environment = env = new yui.juju.environments.GoEnvironment({conn: conn});
+    environment = env = new yui.juju.environments.GoEnvironment({
+      conn: conn, user: userClass});
     db = new yui.juju.models.Database();
     env.connect();
     modelController = new yui.juju.ModelController({

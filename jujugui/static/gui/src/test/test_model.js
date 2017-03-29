@@ -1549,8 +1549,20 @@ describe('test_model.js', function() {
     });
 
     beforeEach(function() {
+      const getMockStorage = function() {
+        return new function() {
+          return {
+            store: {},
+            setItem: function(name, val) { this.store['name'] = val; },
+            getItem: function(name) { return this.store['name'] || null; }
+          };
+        };
+      };
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
-      env = new juju.environments.GoEnvironment({conn: conn});
+      env = new juju.environments.GoEnvironment({
+        conn: conn, user: userClass});
       env.connect();
       env.set('facades', {Client: [0], Charms: [1]});
       conn.open();

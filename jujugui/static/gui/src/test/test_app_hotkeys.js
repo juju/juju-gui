@@ -31,6 +31,16 @@ describe('application hotkeys', function() {
     });
   });
 
+  const getMockStorage = function() {
+    return new function() {
+      return {
+        store: {},
+        setItem: function(name, val) { this.store['name'] = val; },
+        getItem: function(name) { return this.store['name'] || null; }
+      };
+    };
+  };
+
   beforeEach(function() {
     jujuConfig = window.juju_config;
     window.juju_config = {
@@ -40,24 +50,27 @@ describe('application hotkeys', function() {
     };
     container = utils.makeAppContainer(Y);
     container.one('#shortcut-help').setStyle('display', 'none');
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     env = new juju.environments.GoEnvironment({
       conn: new utils.SocketStub(),
       ecs: new juju.EnvironmentChangeSet(),
-      password: 'password',
-      user: 'user'
+      user: userClass
     });
     env.connect();
     app = new Y.juju.App({
       baseUrl: 'http://example.com/',
       consoleEnabled: true,
       controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub()
+        conn: new utils.SocketStub(),
+        user: userClass
       }),
       env: env,
       container: container,
       viewContainer: container,
       jujuCoreVersion: '2.0.0',
-      controllerSocketTemplate: ''
+      controllerSocketTemplate: '',
+      user: userClass
     });
     app.showView(new Y.View());
     app.activateHotkeys();

@@ -1044,6 +1044,17 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
+      const getMockStorage = function() {
+        return new function() {
+          return {
+            store: {},
+            setItem: function(name, val) { this.store['name'] = val; },
+            getItem: function(name) { return this.store['name'] || null; }
+          };
+        };
+      };
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       callback = sinon.stub();
       commit = sinon.stub();
       envGet = sinon.stub();
@@ -1055,11 +1066,9 @@ describe('utilities', function() {
           get: envGet,
           on: sinon.stub(),
           set: sinon.stub(),
-          setCredentials: sinon.stub()
         },
         controllerAPI: {
           createModel: sinon.stub(),
-          getCredentials: sinon.stub().returns({user: 'user-spinach'}),
         },
         _autoPlaceUnits: sinon.stub(),
         db: {
@@ -1073,7 +1082,8 @@ describe('utilities', function() {
         switchEnv: sinon.stub(),
         state: {
           changeState: sinon.stub()
-        }
+        },
+        user: userClass,
       };
     });
 
@@ -1106,7 +1116,7 @@ describe('utilities', function() {
       assert.equal(app.controllerAPI.createModel.callCount, 1);
       const args = app.controllerAPI.createModel.args[0];
       assert.strictEqual(args[0], 'new-model');
-      assert.strictEqual(args[1], 'user-spinach');
+      assert.strictEqual(args[1], 'user@local');
       assert.deepEqual(args[2], {
         credential: 'the-credential',
         cloud: 'azure',

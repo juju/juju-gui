@@ -112,10 +112,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
+      const getMockStorage = function() {
+        return new function() {
+          return {
+            store: {},
+            setItem: function(name, val) { this.store['name'] = val; },
+            getItem: function(name) { return this.store['name'] || null; }
+          };
+        };
+      };
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
-        conn: conn, user: 'user', password: 'password', ecs: ecs
+        conn: conn, user: userClass, ecs: ecs
       });
       env.connect();
       env.set('facades', {
@@ -139,8 +150,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       cleanups.forEach(function(action) {action();});
-      // We need to clear any credentials stored in sessionStorage.
-      env.setCredentials(null);
       if (env && env.destroy) {env.destroy();}
       if (conn && conn.destroy) {conn.destroy();}
     });
@@ -348,7 +357,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('sends the correct login message for external users', () => {
         noopHandleLogin();
-        env.setCredentials({user: 'who@external', password: 'pswd'});
+        env.get('user').controller = {user: 'who@external', password: 'pswd'};
         env.login();
         const lastMessage = conn.last_message();
         const expected = {
@@ -366,7 +375,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
         assert.deepEqual(
-          env.getCredentials(), {user: '', password: '', macaroons: null});
+          env.get('user').controller,
+          {user: '', password: '', macaroons: null});
         assert.isTrue(env.failedAuthentication);
       });
 
@@ -421,7 +431,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('avoids sending login requests without credentials', function() {
-        env.setCredentials(null);
+        env.get('user').controller = {};
         env.login();
         assert.equal(0, conn.messages.length);
       });
@@ -541,7 +551,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('sends an initial login request with macaroons', function() {
-        env.setCredentials({macaroons: ['macaroon']});
+        env.get('user').controller = {macaroons: ['macaroon']};
         env.loginWithMacaroon(makeBakery());
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         assertRequest(conn.last_message(), ['macaroon']);
@@ -622,7 +632,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         });
         assert.strictEqual(error, null);
-        const creds = env.getCredentials();
+        const creds = env.get('user').controller;
         assert.strictEqual(creds.user, 'who@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
@@ -633,7 +643,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('succeeds with already stored macaroons', function() {
-        env.setCredentials({macaroons: ['already stored', 'macaroons']});
+        env.get('user').controller = {
+          macaroons: ['already stored', 'macaroons']};
         env.loginWithMacaroon(makeBakery(), callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         const requestId = assertRequest(
@@ -650,7 +661,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         });
         assert.strictEqual(error, null);
-        const creds = env.getCredentials();
+        const creds = env.get('user').controller;
         assert.strictEqual(creds.user, 'dalek@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
