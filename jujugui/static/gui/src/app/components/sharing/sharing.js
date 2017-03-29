@@ -114,8 +114,7 @@ YUI.add('sharing', function() {
 
       @method _modifyModelAccessCallback
       @param {String} error Any errors that occured while updating access.
-
-      @return {Booolean} success Successfully modified the model access.
+      @return {Booolean} Successfully modified the model access.
     */
     _modifyModelAccessCallback: function(error) {
       let success = true;
@@ -251,11 +250,7 @@ YUI.add('sharing', function() {
       @param {Object} evt The keyup event.
     */
     _handleUsernameInputChange: function(evt) {
-      if (evt.target.value !== '') {
-        this.setState({canAdd: true});
-      } else {
-        this.setState({canAdd: false});
-      }
+      this.setState({canAdd: evt.target.value !== ''});
     },
 
     _generateInvite: function() {
@@ -324,12 +319,11 @@ YUI.add('sharing', function() {
       } else if (this.state.sent) {
         // We want the button to transition back to it's resting state after a
         // set amount of time, so make a closure then trigger it after 1.5s.
-        const sent = (function () {
-          const _this = this;
-          return function() {
-            _this.setState({sent: false, canAdd: false});
+        const sent = (() => {
+          return () => {
+            this.setState({sent: false, canAdd: false});
           };
-        }.bind(this))();
+        })();
         setTimeout(sent, 1500);
         return (<juju.components.GenericButton
           submit={true}

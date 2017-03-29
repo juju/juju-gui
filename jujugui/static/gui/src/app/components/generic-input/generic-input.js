@@ -25,7 +25,7 @@ YUI.add('generic-input', function() {
     propTypes: {
       autocomplete: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
-      errors: React.PropTypes.bool,
+      hasExternalError: React.PropTypes.bool,
       inlineErrorIcon: React.PropTypes.bool,
       label: React.PropTypes.string,
       multiLine: React.PropTypes.bool,
@@ -60,9 +60,6 @@ YUI.add('generic-input', function() {
     validate: function(evt) {
       const validate = this.props.validate;
       if (!validate) {
-        if (this._onKeyUp) {
-          this._onKeyUp(evt);
-        }
         // If there are no validators then this field should always be valid.
         return true;
       }
@@ -89,9 +86,6 @@ YUI.add('generic-input', function() {
       // Have to always set the state in case there used to be errors, but are
       // no longer.
       this.setState({errors: components});
-      if (this._onKeyUp) {
-        this._onKeyUp(evt);
-      }
       return errors.length === 0;
     },
 
@@ -235,14 +229,16 @@ YUI.add('generic-input', function() {
     },
 
     render: function() {
-      const errors = this.state.errors || this.props.errors;
+      const errors = this.state.errors;
+      const showErrors = errors || this.props.hasExternalError;
       var {labelElement, id} = this._generateLabel();
       var classes = classNames(
         'generic-input', {
-          'has-error': !!errors
+          'has-error': !!showErrors
         }
       );
-      const errorIcon = errors && this.props.inlineErrorIcon ?
+      // If there's an error and an inline icon has been explicitly asked for.
+      const errorIcon = showErrors && this.props.inlineErrorIcon ?
       (<juju.components.SvgIcon
         name="relation-icon-error"
         size={16}

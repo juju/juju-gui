@@ -67,7 +67,7 @@ describe('GenericInput', function() {
           ref="field"
           type="text" />
         {undefined}
-        {undefined}
+        {null}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -109,7 +109,7 @@ describe('GenericInput', function() {
           ref="field">
         </div>
         {undefined}
-        {undefined}
+        {null}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -149,7 +149,7 @@ describe('GenericInput', function() {
           ref="field"
           type="password" />
         {undefined}
-        {undefined}
+        {null}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -272,7 +272,7 @@ describe('GenericInput', function() {
     instance.refs = {field: {value: ''}};
     instance.validate();
     var output = renderer.getRenderOutput();
-    assert.isUndefined(output.props.children[3]);
+    assert.isNull(output.props.children[3]);
   });
 
   it('can validate the input when leaving', () => {
@@ -335,7 +335,7 @@ describe('GenericInput', function() {
           ref="field"
           type="text" />
         {undefined}
-        {undefined}
+        {null}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -425,7 +425,7 @@ describe('GenericInput', function() {
     assert.equal(updateModelName.callCount, 1);
   });
 
-  it('can call the passed keyup function', () => {
+  it('onKeyUp function passes through', () => {
     const updateModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
@@ -441,7 +441,6 @@ describe('GenericInput', function() {
         }]}
         value="default" />, true);
     const instance = renderer.getMountedInstance();
-    instance.refs = {field: {value: ''}};
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onKeyUp();
     assert.equal(updateModelName.callCount, 1);
