@@ -1,21 +1,22 @@
 .sharing {
   &__popup {
     top: calc(50% - 250px);
+    padding-bottom: 0.625rem;
+
+    .popup__close {
+      position: absolute;
+      right: 20px;
+    }
 
     .popup__title {
       border-bottom: 1px solid #ccc;
-      margin: 0 -20px 10px -20px;
+      margin: 0 -20px 1rem -20px;
       padding: 0 20px 20px;
-    }
-
-    .button-row--count-1 {
-      width: 100%;
-      box-sizing: content-box;
     }
   }
 
   &__invite {
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 
     &--header {
       margin-bottom: 20px;
@@ -25,9 +26,19 @@
       display: none;
     }
 
+    .generic-input.has-error {
+      .generic-input__field {
+        border: 1px solid $error;
+      }
+
+      .svg-icon {
+        top: 0.875rem;
+      }
+    }
+
     .generic-input__field,
     .inset-select__field {
-      padding: 7px 10px;
+      padding: 10px;
     }
 
     &--username,
@@ -41,7 +52,7 @@
 
       .generic-input__field {
         margin-bottom: 0;
-        width: 180px;
+        width: 142px;
       }
     }
 
@@ -59,22 +70,28 @@
     }
 
     &--grant-button {
+      vertical-align: middle;
+
       .button--positive {
-        line-height: normal;
-        padding: 7.5px 9px 7.5px 9px;
+        height: 40px;
+        width: 77px;
+        margin-top: -3px;
+
+        svg {
+          display: inline;
+        }
       }
     }
 
     &--error {
-      color: $error;
-      margin-top: 5px;
+      font-size: 0.875rem;
+      margin-top: 0.875rem;
     }
   }
 
   &__users-header {
     border-bottom: 1px solid #ccc;
-    padding: 0 20px 10px 20px;
-    margin: 0 -20px;
+    padding: 0 0 10px;
     height: 29px;
 
     &-user {
@@ -90,8 +107,9 @@
   &__users {
     max-height: 250px;
     overflow-y: scroll;
-    margin: 0 -20px;
+    margin: 0 -20px 0.625rem;
     clear: both;
+    border-bottom: 1px solid #ccc;
   }
 
   &__user {
@@ -144,6 +162,7 @@
       float: left;
       width: 50px;
       line-height: 53px;
+      text-transform: capitalize;
     }
 
     &:last-child {

@@ -25,10 +25,13 @@ YUI.add('generic-input', function() {
     propTypes: {
       autocomplete: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
+      hasExternalError: React.PropTypes.bool,
+      inlineErrorIcon: React.PropTypes.bool,
       label: React.PropTypes.string,
       multiLine: React.PropTypes.bool,
       onBlur: React.PropTypes.func,
       onFocus: React.PropTypes.func,
+      onKeyUp: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
       type: React.PropTypes.string,
@@ -51,9 +54,10 @@ YUI.add('generic-input', function() {
     /**
       Validate the field value.
 
+      @param {Object} evt The trigger event.
       @method validate
     */
-    validate: function() {
+    validate: function(evt) {
       const validate = this.props.validate;
       if (!validate) {
         // If there are no validators then this field should always be valid.
@@ -133,6 +137,16 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Handle keyup event if set in props.
+      @param {Object} evt The keyboard event.
+    */
+    _keyUpHandler: function (evt) {
+      if (this.props.onKeyUp) {
+        this.props.onKeyUp(evt);
+      }
+    },
+
+    /**
       Handle blur events for the input.
       @method _blurHandler
     */
@@ -191,6 +205,7 @@ YUI.add('generic-input', function() {
             id={id}
             dangerouslySetInnerHTML={{__html: this.props.value}}
             onChange={this.validate}
+            onKeyUp={this._keyUpHandler}
             onFocus={this._focusHandler}
             onBlur={this._blurHandler}
             aria-invalid={errors}
@@ -205,6 +220,7 @@ YUI.add('generic-input', function() {
           id={id}
           placeholder={this.props.placeholder}
           required={this.props.required}
+          onKeyUp={this._keyUpHandler}
           onFocus={this._focusHandler}
           onBlur={this._blurHandler}
           aria-invalid={errors}
@@ -213,21 +229,31 @@ YUI.add('generic-input', function() {
     },
 
     render: function() {
+      const errors = this.state.errors;
+      const showErrors = errors || this.props.hasExternalError;
       var {labelElement, id} = this._generateLabel();
       var classes = classNames(
         'generic-input', {
-          'has-error': !!this.state.errors
+          'has-error': !!showErrors
         }
       );
+      // If there's an error and an inline icon has been explicitly asked for.
+      const errorIcon = showErrors && this.props.inlineErrorIcon ?
+      (<juju.components.SvgIcon
+        name="relation-icon-error"
+        size={16}
+      />) : undefined;
       return (
         <div className={classes}>
           {labelElement}
           {this._generateInput(id)}
-          {this.state.errors}
+          {errorIcon}
+          {errors}
         </div>
       );
     }
   });
 
 }, '0.1.0', { requires: [
+  'svg-icon'
 ]});

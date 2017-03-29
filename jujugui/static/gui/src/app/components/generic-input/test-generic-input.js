@@ -60,11 +60,13 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="text" />
+        {undefined}
         {null}
       </div>
     );
@@ -100,11 +102,13 @@ describe('GenericInput', function() {
           id="Region"
           dangerouslySetInnerHTML={{__html: 'default'}}
           onChange={instance.validate}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field">
         </div>
+        {undefined}
         {null}
       </div>
     );
@@ -138,11 +142,13 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="password" />
+        {undefined}
         {null}
       </div>
     );
@@ -250,7 +256,7 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[2], expected);
+    assert.deepEqual(output.props.children[3], expected);
   });
 
   it('can validate when there are no validations set', () => {
@@ -266,7 +272,7 @@ describe('GenericInput', function() {
     instance.refs = {field: {value: ''}};
     instance.validate();
     var output = renderer.getRenderOutput();
-    assert.isNull(output.props.children[2]);
+    assert.isNull(output.props.children[3]);
   });
 
   it('can validate the input when leaving', () => {
@@ -295,7 +301,7 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[2], expected);
+    assert.deepEqual(output.props.children[3], expected);
   });
 
   it('allows the label to be optional', () => {
@@ -322,11 +328,13 @@ describe('GenericInput', function() {
           id={undefined}
           placeholder="us-central-1"
           required={true}
+          onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           aria-invalid={false}
           ref="field"
           type="text" />
+        {undefined}
         {null}
       </div>
     );
@@ -350,6 +358,30 @@ describe('GenericInput', function() {
     output.props.children[1].props.onBlur();
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.className, 'generic-input has-error');
+  });
+
+  it('adds an error icon with inlineErrorIcon is set', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        inlineErrorIcon={true}
+        placeholder="placeholder"
+        required={true}
+        ref="test"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    let output = renderer.getRenderOutput();
+    output.props.children[1].props.onBlur();
+    output = renderer.getRenderOutput();
+    const expected = (<juju.components.SvgIcon
+      name="relation-icon-error"
+      size={16}
+    />);
+    assert.deepEqual(output.props.children[2], expected);
   });
 
   it('can set the focus on the field', () => {
@@ -390,6 +422,26 @@ describe('GenericInput', function() {
     instance.refs = {field: {value: ''}};
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onBlur();
+    assert.equal(updateModelName.callCount, 1);
+  });
+
+  it('onKeyUp function passes through', () => {
+    const updateModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        onKeyUp={updateModelName}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    let output = renderer.getRenderOutput();
+    output.props.children[1].props.onKeyUp();
     assert.equal(updateModelName.callCount, 1);
   });
 });

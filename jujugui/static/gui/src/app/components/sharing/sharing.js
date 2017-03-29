@@ -39,6 +39,7 @@ YUI.add('sharing', function() {
       this.xhrs = [];
 
       return {
+        canAdd: false,
         loadingUsers: false,
         usersWithAccess: []
       };
@@ -113,10 +114,13 @@ YUI.add('sharing', function() {
 
       @method _modifyModelAccessCallback
       @param {String} error Any errors that occured while updating access.
+      @return {Booolean} Successfully modified the model access.
     */
     _modifyModelAccessCallback: function(error) {
+      let success = true;
       if (error) {
         this.setState({inviteError: error});
+        success = false;
       } else {
         // Reset the form fields.
         this.refs.username.setValue('');
@@ -126,6 +130,8 @@ YUI.add('sharing', function() {
           this._getModelUserInfo();
         });
       }
+      this.setState({sending: false});
+      return success;
     },
 
     /**
@@ -140,8 +146,14 @@ YUI.add('sharing', function() {
       }
       const username = this.refs.username.getValue();
       const access = this.refs.access.getValue();
+      this.setState({sending: true});
       this.props.grantModelAccess(username, access,
-        this._modifyModelAccessCallback);
+        // Wrap the ModelAccessCallback to set the state that modify the add
+        // button depending on success.
+        function(error) {
+          const success = this._modifyModelAccessCallback(error);
+          this.setState({sent: success});
+        }.bind(this));
     },
 
     /**
@@ -231,24 +243,33 @@ YUI.add('sharing', function() {
       });
     },
 
+    /**
+      On key up, we want to check if the input is empty and change the state
+      accordingly.
+
+      @param {Object} evt The keyup event.
+    */
+    _handleUsernameInputChange: function(evt) {
+      this.setState({canAdd: evt.target.value !== ''});
+    },
+
     _generateInvite: function() {
       if (!this.props.canShareModel) {
         return;
       }
       const accessOptions = [{
-        label: 'read',
+        label: 'Read',
         value: 'read'
       }, {
-        label: 'write',
+        label: 'Write',
         value: 'write'
       }, {
-        label: 'admin',
+        label: 'Admin',
         value: 'admin'
       }];
-      const inviteError = this.state.inviteError;
-      const inviteErrorMarkup = inviteError ? (
+      const error = this.state.inviteError ? (
         <div className="sharing__invite--error">
-          {inviteError}
+          <b>Error:</b> {this.state.inviteError}
         </div>
       ) : undefined;
       return (
@@ -257,9 +278,12 @@ YUI.add('sharing', function() {
           <form onSubmit={this._grantModelAccess}>
             <div className="sharing__invite--username">
               <juju.components.GenericInput
+                inlineErrorIcon={true}
                 label="Username"
                 placeholder="Username"
                 ref="username"
+                onKeyUp={this._handleUsernameInputChange}
+                errors={!!this.state.inviteError}
                 required={true} />
             </div>
             <div className="sharing__invite--access">
@@ -270,30 +294,65 @@ YUI.add('sharing', function() {
                 options={accessOptions} />
             </div>
             <div className="sharing__invite--grant-button">
-              <juju.components.GenericButton
-                submit={true}
-                icon="add_16"
-                tooltip="Add user"
-                ref="grantButton"
-                type="positive" />
+              {this.generateAddButton()}
             </div>
+            {error}
           </form>
-          {inviteErrorMarkup}
         </div>
       );
     },
 
+    /**
+      Generate the invite 'add' button based on the current state
+
+      @returns {Object} The generated button.
+    */
+    generateAddButton: function() {
+      if (this.state.sending) {
+        return (<juju.components.GenericButton
+          submit={true}
+          title="Add"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={true} />);
+      } else if (this.state.sent) {
+        // We want the button to transition back to it's resting state after a
+        // set amount of time, so make a closure then trigger it after 1.5s.
+        const sent = (() => {
+          return () => {
+            this.setState({sent: false, canAdd: false});
+          };
+        })();
+        setTimeout(sent, 1500);
+        return (<juju.components.GenericButton
+          submit={true}
+          icon="tick_16"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={!this.state.canAdd} />);
+      } else {
+        return (<juju.components.GenericButton
+          submit={true}
+          title="Add"
+          tooltip="Add user"
+          ref="grantButton"
+          type="positive"
+          disabled={!this.state.canAdd} />);
+      }
+    },
+
+    handleClose: function() {
+      return true;
+    },
+
     render: function() {
-      const buttons = [{
-        title: 'Done',
-        action: this.props.closeHandler,
-        type: 'neutral'
-      }];
       return (
         <juju.components.Popup
           className="sharing__popup"
-          title="Share"
-          buttons={buttons}>
+          close={this.props.closeHandler}
+          title="Share">
           {this._generateInvite()}
           <div className="sharing__users-header">
             <div className="sharing__users-header-user">User</div>
@@ -302,6 +361,12 @@ YUI.add('sharing', function() {
           <div className="sharing__users">
             {this._generateUsersWithAccess()}
           </div>
+          <juju.components.GenericButton
+            title="Done"
+            action={this.props.closeHandler}
+            type="inline-neutral"
+            extraClasses="right"
+          />
         </juju.components.Popup>
       );
     }
