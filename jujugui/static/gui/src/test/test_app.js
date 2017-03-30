@@ -2261,14 +2261,14 @@ describe('App', function() {
     it('is disabled after successful login', done => {
       app.anonymousMode = true;
       app.state = {current: {root: null}};
-      app._renderLoginOutLink = sinon.stub();
+      app._renderUserMenu = sinon.stub();
       // Set a model UUID so that the login subscriber execution stops as soon
       // as possible.
       app.env.set('modelUUID', 'uuid');
       app.controllerAPI.after('login', evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(
-          app._renderLoginOutLink.called, true, '_renderLoginOutLink');
+          app._renderUserMenu.called, true, '_renderUserMenu');
         done();
       });
       app.controllerAPI.fire('login', {err: null});

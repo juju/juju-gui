@@ -27,12 +27,11 @@ YUI.add('header-logo', function() {
   juju.components.HeaderLogo = React.createClass({
 
     propTypes: {
-      navigateUserProfile: React.PropTypes.func.isRequired
     },
 
     render: function() {
       return (
-        <a onClick={this.props.navigateUserProfile}
+        <a href="/"
           role="button" title="Go to user profile">
           <juju.components.SvgIcon name="juju-logo"
             className="svg-icon"

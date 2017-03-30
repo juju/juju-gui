@@ -1451,6 +1451,50 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Navigate to the account, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method showAccount
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+  */
+  utils.showAccount = function(ecs, changeState) {
+    var currentChangeSet = ecs.getCurrentChangeSet();
+    // If there are uncommitted changes then show a confirmation popup.
+    if (Object.keys(currentChangeSet).length > 0) {
+      utils._showUncommittedConfirm(
+        utils._showAccount.bind(this, ecs, changeState, true));
+      return;
+    }
+    // If there are no uncommitted changes then switch right away.
+    utils._showAccount(ecs, changeState, false);
+  };
+
+  /**
+    Navigate to the account, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method _showAccount
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+    @param {Boolean} clear Whether to clear the ecs.
+  */
+  utils.showAccount = function(ecs, changeState, clear=false) {
+    utils._hidePopup();
+    if (clear) {
+      // Have to go ahead and clear the ECS otherwise future navigation will
+      // pop up the uncommitted changes confirmation again.
+      ecs.clear();
+    }
+    changeState({
+      profile: null,
+      model: null,
+      root: 'account',
+      store: null
+    });
+  };
+
+  /**
     Deploy or commit to a model.
 
     @method deploy

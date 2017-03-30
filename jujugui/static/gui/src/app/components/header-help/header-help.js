@@ -71,8 +71,8 @@ YUI.add('header-help', function() {
         link = 'https://jujucharms.com/support';
       }
       return (
-        <li className="header-help-menu__list-item
-          header-help-menu__list-item-with-link"
+        <li className="header-menu__menu-list-item
+          header-menu__menu-list-item-with-link"
           role="menuitem" tabIndex="1">
           <a href={link} target="_blank">{label}</a>
         </li>
@@ -88,11 +88,11 @@ YUI.add('header-help', function() {
       if (this.state.showHelpMenu) {
         return (
           <juju.components.Panel
-            instanceName="header-help-menu"
+            instanceName="header-menu__menu"
             visible={true}>
-              <ul className="header-help-menu__list" role="menubar">
-                <li className="header-help-menu__list-item
-                  header-help-menu__list-item-with-link"
+              <ul className="header-menu__menu-list" role="menubar">
+                <li className="header-menu__menu-list-item
+                  header-menu__menu-list-item-with-link"
                   role="menuitem" tabIndex="0">
                   <a
                     href="https://jujucharms.com/docs/stable/getting-started"
@@ -100,11 +100,11 @@ YUI.add('header-help', function() {
                     View Documentation</a>
                 </li>
                 {this._generateIssuesLink()}
-                <li className="header-help-menu__list-item
-                  header-help-menu__list-item-info"
+                <li className="header-menu__menu-list-item
+                  header-menu__menu-list-item-info"
                   role="menuItem" tabIndex="2">
                   Keyboard shortcuts
-                  <span className="header-help-menu__extra-info">
+                  <span className="header-menu__menu-extra-info">
                     Shift + ?
                   </span>
                 </li>
@@ -123,14 +123,14 @@ YUI.add('header-help', function() {
     */
     _getClassNames: function() {
       return classNames(
-        'header-help__button', {
-          'header-help__show-menu': this.state.showHelpMenu
+        'header-menu__button', {
+          'header-menu__show-menu': this.state.showHelpMenu
         });
     },
 
     render: function() {
       return (
-        <div className="header-help">
+        <div className="header-menu">
           <span className={this._getClassNames()}
             onClick={this.toggleHelpMenu}
             role="button"
@@ -140,7 +140,7 @@ YUI.add('header-help', function() {
             aria-controls="headerHelpMenu"
             aria-expanded="false">
             <juju.components.SvgIcon name="help_16"
-              className="header-help__icon"
+              className="header-menu__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
