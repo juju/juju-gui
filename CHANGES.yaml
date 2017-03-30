@@ -1,3 +1,20 @@
+- 2.5.0:
+
+   - Removed Juju 1 support.
+   - Removed Sandbox support.
+   - Display channel information on bundle and charm detail pages.
+   - Subordinate inspector unit lists now show subordinate units.
+   - Improve styling for small screens.
+   - Improve header rendering when switching models.
+   - Updated styling on model sharing modal.
+   - Added series to constraint options when creating new machines.
+   - (Fix) Settings screen now closes on save.
+   - (Fix) Constraints are now properly shown when scaling in inspector.
+   - (Fix) Only constraints available on the specified provider are shown.
+   - (Fix) Model switcher displays models which have never been connected to.
+   - (Fix) Provide links to download charm resources when available.
+
+
 - 2.4.4:
 
    - New model switcher which sorts based on last accessed.
