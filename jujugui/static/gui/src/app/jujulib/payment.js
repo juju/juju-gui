@@ -187,7 +187,7 @@ var module = module;
           callback(error, null);
           return;
         }
-        callback(null, response['Countries']);
+        callback(null, response['countries']);
       };
       const url = `${this.url}/country`;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);

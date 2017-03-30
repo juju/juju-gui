@@ -24,6 +24,7 @@ YUI.add('deployment-payment', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func,
       getUser: React.PropTypes.func,
       paymentUser: React.PropTypes.object,
       setPaymentUser: React.PropTypes.func.isRequired,
@@ -42,9 +43,25 @@ YUI.add('deployment-payment', function() {
     },
 
     componentWillMount: function() {
+      this._getUser();
+      this._getCountries();
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    /**
+      Get the payment details for the user.
+
+      @method _getUser
+    */
+    _getUser: function() {
       this.setState({loading: true}, () => {
         const xhr = this.props.getUser(this.props.username, (error, user) => {
-          if (error) {
+          if (error && error !== 'not found') {
             this.props.addNotification({
               title: 'Could not load user info',
               message: `Could not load user info: ${error}`,
@@ -61,10 +78,26 @@ YUI.add('deployment-payment', function() {
       });
     },
 
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
+    /**
+      Get a list of countries.
+
+      @method _getCountries
+    */
+    _getCountries: function() {
+      const xhr = this.props.getCountries((error, countries) => {
+        if (error) {
+          const message = 'Could not load country info';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
+          return;
+        }
+        this.setState({countries: countries || []});
       });
+      this.xhrs.push(xhr);
     },
 
     /**
@@ -182,6 +215,36 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
+      Generate the country values for a select box.
+
+      @method _generateCountryOptions
+      @returns {Array} The list of country options.
+    */
+    _generateCountryOptions: function() {
+      return this.state.countries.map(country => {
+        return {
+          label: country.name,
+          value: country.name
+        };
+      });
+    },
+
+    /**
+      Generate the country code values for a select box.
+
+      @method _generateCountryCodeOptions
+      @returns {Array} The list of country code options.
+    */
+    _generateCountryCodeOptions: function() {
+      return this.state.countries.map(country => {
+        return {
+          label: country.code,
+          value: country.code
+        };
+      });
+    },
+
+    /**
       Generate the fields for an address.
 
       @method _generateAddressFields
@@ -194,7 +257,7 @@ YUI.add('deployment-payment', function() {
             disabled={disabled}
             label="Country"
             onChange={null}
-            options={[]} />
+            options={this._generateCountryOptions()} />
           <juju.components.GenericInput
             disabled={disabled}
             label="Full name"
@@ -229,7 +292,7 @@ YUI.add('deployment-payment', function() {
                 disabled={disabled}
                 label="Country code"
                 onChange={null}
-                options={[]} />
+                options={this._generateCountryCodeOptions()} />
             </div>
             <div className="eight-col last-col">
               <juju.components.GenericInput

@@ -44,6 +44,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func.isRequired,
       getDischargeToken: React.PropTypes.func,
       getUser: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
@@ -879,6 +880,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPayment
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            getCountries={this.props.getCountries}
             getUser={this.props.getUser}
             paymentUser={this.state.paymentUser}
             setPaymentUser={this._setPaymentUser}

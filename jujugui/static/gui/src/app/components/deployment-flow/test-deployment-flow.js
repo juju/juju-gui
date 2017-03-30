@@ -75,6 +75,7 @@ const createDeploymentFlow = (props = {}) => {
     getAgreementsByTerms: getAgreementsByTerms,
     getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
+    getCountries: sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
     groupedChanges: groupedChanges,
@@ -415,12 +416,14 @@ describe('DeploymentFlow', function() {
   it('can show the payments section', function() {
     const acl = {isReadOnly: sinon.stub()};
     const addNotification = sinon.stub();
+    const getCountries = sinon.stub();
     const getUser = sinon.stub();
     const renderer = createDeploymentFlow({
       acl: acl,
       addNotification: addNotification,
       cloud: {name: 'cloud'},
       credential: 'cred',
+      getCountries: getCountries,
       getUser: getUser,
       isLegacyJuju: false,
       profileUsername: 'spinach',
@@ -438,6 +441,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentPayment
           acl={acl}
           addNotification={addNotification}
+          getCountries={getCountries}
           getUser={getUser}
           paymentUser={null}
           setPaymentUser={instance._setPaymentUser}

@@ -1312,6 +1312,8 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
+          getCountries={
+              this.payment && this.payment.getCountries.bind(this.payment)}
           getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}

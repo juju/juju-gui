@@ -5,7 +5,7 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib register service', function() {
+describe('jujulib payment service', function() {
   let parsedUser, returnedUser;
 
   const makeXHRRequest = function(obj) {
@@ -346,7 +346,7 @@ describe('jujulib register service', function() {
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
           '/country');
-        const xhr = makeXHRRequest({Countries: countries});
+        const xhr = makeXHRRequest({countries: countries});
         success(xhr);
       }
     };

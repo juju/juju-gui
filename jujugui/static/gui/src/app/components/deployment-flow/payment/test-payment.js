@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentPayment', function() {
-  let acl, addressFields, getUser, user;
+  let acl, addressFields, getCountries, getUser, user;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -43,13 +43,20 @@ describe('DeploymentPayment', function() {
         name: 'Company'
       }]
     });
+    getCountries = sinon.stub().callsArgWith(0, null, [{
+      name: 'Australia',
+      code: 'AU'
+    }]);
     addressFields = (
       <div>
         <juju.components.InsetSelect
           disabled={false}
           label="Country"
           onChange={null}
-          options={[]} />
+          options={[{
+            label: 'Australia',
+            value: 'Australia'
+          }]} />
         <juju.components.GenericInput
           disabled={false}
           label="Full name"
@@ -84,7 +91,10 @@ describe('DeploymentPayment', function() {
               disabled={false}
               label="Country code"
               onChange={null}
-              options={[]} />
+              options={[{
+                label: 'AU',
+                value: 'AU'
+              }]} />
           </div>
           <div className="eight-col last-col">
             <juju.components.GenericInput
@@ -101,6 +111,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={sinon.stub()}
         setPaymentUser={sinon.stub()}
         username="spinach" />, true);
@@ -118,6 +129,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         setPaymentUser={setPaymentUser}
         username="spinach" />);
@@ -130,6 +142,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         paymentUser={user}
         setPaymentUser={sinon.stub()}
@@ -156,6 +169,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={addNotification}
+        getCountries={getCountries}
         getUser={getUser}
         setPaymentUser={setPaymentUser}
         username="spinach" />);
@@ -172,6 +186,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         paymentUser={null}
         setPaymentUser={sinon.stub()}
@@ -277,6 +292,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         paymentUser={null}
         setPaymentUser={sinon.stub()}
@@ -393,6 +409,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         paymentUser={null}
         setPaymentUser={sinon.stub()}
@@ -516,6 +533,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        getCountries={getCountries}
         getUser={getUser}
         setPaymentUser={sinon.stub()}
         username="spinach" />, true);
