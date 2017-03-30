@@ -32,6 +32,8 @@ describe('EntityResources', function() {
   it('can display an empty list', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
+        apiUrl='/api'
+        entityId='cs:foo-0'
         pluralize={sinon.stub()}
         resource={[]} />, true);
     const output = renderer.getRenderOutput();
@@ -55,9 +57,16 @@ describe('EntityResources', function() {
       Type: 'file',
       Path: 'file2',
       Revision: 2
+    }, {
+      Description: 'file3 desc',
+      Name: 'file3',
+      Type: 'file',
+      Path: 'file3.tar'
     }];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
+        apiUrl='/api'
+        entityId='cs:foo-0'
         pluralize={sinon.stub().returns('resources')}
         resources={resources} />, true);
     const output = renderer.getRenderOutput();
@@ -65,16 +74,26 @@ describe('EntityResources', function() {
       <div>
         <div className="entity-resources section" id="files">
           <h3 className="section__title">
-            {2}&nbsp;{'resources'}
+            {3}&nbsp;{'resources'}
           </h3>
           <ul className="section__list entity-files__listing">
             <li className="entity-files__file"
               key="file10">
-              {'file1'} {'(.zip)'}
+              <a href="/api/foo-0/resource/file1/5" title="Download file1">
+                {'file1'} {'(.zip)'}
+              </a>
             </li>
             <li className="entity-files__file"
               key="file21">
-              {'file2'} {''}
+              <a href="/api/foo-0/resource/file2/2" title="Download file2">
+                {'file2'} {''}
+              </a>
+            </li>
+            <li className="entity-files__file"
+              key="file32">
+              <span>
+                {'file3'} {'(.tar)'}
+              </span>
             </li>
           </ul>
         </div>
