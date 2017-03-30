@@ -205,11 +205,11 @@ YUI.add('deployment-payment', function() {
             {this._generateBillingAddressFields()}
           </div>
           <div className="deployment-payment__add">
-          <juju.components.GenericButton
-            action={null}
-            disabled={disabled}
-            type="inline-neutral"
-            title="Add payment details" />
+            <juju.components.GenericButton
+              action={null}
+              disabled={disabled}
+              type="inline-neutral"
+              title="Add payment details" />
           </div>
         </form>);
     },

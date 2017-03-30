@@ -1,7 +1,15 @@
 .deployment-payment {
+
   &__form {
     @extend %floating-panel;
     padding: 20px;
+
+    // Clearfix.
+    :after {
+      content: '';
+      display: table;
+      clear: both;
+    }
 
     &-content {
       width: 65%;
