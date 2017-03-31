@@ -33,6 +33,7 @@ def update(settings):
     _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')
     _update(settings, 'jujugui.static_url', default='')
+    _update(settings, 'jujugui.stripe_key', default='')
     _update(settings, 'jujugui.user', default=None)
 
     _update_bool(settings, 'jujugui.combine', default=True)
