@@ -634,8 +634,9 @@ describe('DeploymentFlow', function() {
     assert.strictEqual(props.deploy.args[0].length, 4);
     assert.equal(props.deploy.args[0][2], 'Lamington');
     assert.deepEqual(props.deploy.args[0][3], {
-      credential: 'cred',
+      config: {},
       cloud: 'cloud',
+      credential: 'cred',
       region: 'north'
     });
     assert.equal(props.changeState.callCount, 1);
@@ -895,8 +896,9 @@ describe('DeploymentFlow', function() {
     assert.strictEqual(deploy.args[0].length, 4);
     assert.equal(deploy.args[0][2], 'Pavlova');
     assert.deepEqual(deploy.args[0][3], {
-      credential: 'cred',
+      config: {},
       cloud: 'cloud',
+      credential: 'cred',
       region: 'north'
     });
     assert.equal(instance.props.changeState.callCount, 1);
@@ -928,6 +930,66 @@ describe('DeploymentFlow', function() {
       cloud: 'azure',
       region: 'skaro',
       config: {'authorized-keys': 'my SSH key'}
+    });
+    assert.equal(instance.props.changeState.callCount, 1);
+  });
+
+  it('can deploy with a VPC id', function() {
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'aws'},
+      credential: 'creds',
+      modelCommitted: true,
+      modelName: 'mymodel',
+      region: 'skaro'
+    });
+    const instance = renderer.getMountedInstance();
+    instance._setVPCId('my VPC id');
+    const output = renderer.getRenderOutput();
+    output.props.children[9].props.children.props.children[1].props.children
+      .props.action();
+    const deploy = instance.props.deploy;
+    assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
+    assert.equal(deploy.args[0][2], 'mymodel');
+    assert.deepEqual(deploy.args[0][3], {
+      credential: 'creds',
+      cloud: 'aws',
+      region: 'skaro',
+      config: {'vpc-id': 'my VPC id', 'vpc-id-force': false}
+    });
+    assert.equal(instance.props.changeState.callCount, 1);
+  });
+
+  it('can deploy with a forced VPC id', function() {
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'aws'},
+      credential: 'creds',
+      modelCommitted: true,
+      modelName: 'mymodel',
+      region: 'skaro'
+    });
+    const instance = renderer.getMountedInstance();
+    instance._setVPCId('my VPC id', true);
+    const output = renderer.getRenderOutput();
+    output.props.children[9].props.children.props.children[1].props.children
+      .props.action();
+    const deploy = instance.props.deploy;
+    assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
+    assert.equal(deploy.args[0][2], 'mymodel');
+    assert.deepEqual(deploy.args[0][3], {
+      credential: 'creds',
+      cloud: 'aws',
+      region: 'skaro',
+      config: {'vpc-id': 'my VPC id', 'vpc-id-force': true}
     });
     assert.equal(instance.props.changeState.callCount, 1);
   });

@@ -87,7 +87,9 @@ YUI.add('deployment-flow', function() {
         // The list of term ids for the uncommitted applications.
         terms: this._getTerms() || [],
         // Whether the user has ticked the checked to agree to terms.
-        termsAgreed: false
+        termsAgreed: false,
+        vpcId: null,
+        vpcIdForce: false
       };
     },
 
@@ -245,6 +247,23 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Store the provided AWS virtual private cloud value in state.
+      In the case the value is set, also set whether to force Juju to use the
+      given value, even when it fails the minimum validation criteria.
+
+      @method _setVPCId
+      @param {String} value The VPC identifier.
+      @param {Boolean} force Whether to force the value. Ignored if !value.
+    */
+    _setVPCId: function(value, force) {
+      if (!value) {
+        value = null;
+        force = false;
+      }
+      this.setState({vpcId: value, vpcIdForce: !!force});
+    },
+
+    /**
       Store the selected budget in state.
 
       @method _setBudget
@@ -323,12 +342,17 @@ YUI.add('deployment-flow', function() {
       }
       this.setState({deploying: true});
       const args = {
-        credential: this.state.credential,
+        config: {},
         cloud: this.state.cloud && this.state.cloud.name || undefined,
+        credential: this.state.credential,
         region: this.state.region
       };
       if (this.state.sshKey) {
-        args.config = {'authorized-keys': this.state.sshKey};
+        args.config['authorized-keys'] = this.state.sshKey;
+      }
+      if (this.state.vpcId) {
+        args.config['vpc-id'] = this.state.vpcId;
+        args.config['vpc-id-force'] = this.state.vpcIdForce;
       }
       const deploy = this.props.deploy.bind(
         this, this._handleClose, true, this.state.modelName, args);
