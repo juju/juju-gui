@@ -135,7 +135,7 @@ var module = module;
             - country {String} The address country
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
-        - token {String|Null} A payment authentication token
+        - token {String|Null} A Stripe token
         - paymentMethodName {String|Null} The name of the payment method
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
@@ -162,12 +162,12 @@ var module = module;
           business: user.business,
           'business-name': user.businessName,
           'billing-addresses': this._unparseAddresses(user.billingAddresses),
-          'allow-email': user.allowEmail,
+          'allow-email': user.allowEmail || false,
           token: user.token,
-          'payment-method-name': user.paymentMethodName
+          'payment-method-name': user.paymentMethodName || null
         }
       };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
 
     /**

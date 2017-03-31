@@ -138,6 +138,7 @@ def config(request):
         'gisfLogout': gisfLogout,
         'shareFlag': False,
         'payFlag': False,
+        'stripeKey': settings['jujugui.stripe_key'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

@@ -24,11 +24,14 @@ YUI.add('deployment-payment', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      createToken: React.PropTypes.func,
+      createUser: React.PropTypes.func,
       getCountries: React.PropTypes.func,
       getUser: React.PropTypes.func,
       paymentUser: React.PropTypes.object,
       setPaymentUser: React.PropTypes.func.isRequired,
-      username: React.PropTypes.string.isRequired
+      username: React.PropTypes.string.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -62,12 +65,13 @@ YUI.add('deployment-payment', function() {
       this.setState({loading: true}, () => {
         const xhr = this.props.getUser(this.props.username, (error, user) => {
           if (error && error !== 'not found') {
+            const message = 'Could not load user info';
             this.props.addNotification({
-              title: 'Could not load user info',
-              message: `Could not load user info: ${error}`,
+              title: message,
+              message: `${message}: ${error}`,
               level: 'error'
             });
-            console.error('Could not load user info', error);
+            console.error(message, error);
             return;
           }
           this.setState({loading: false}, () => {
@@ -101,6 +105,168 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
+      Validate the form.
+
+      @method _validateForm
+      @returns {Boolean} Whether the form is valid.
+    */
+    _validateForm: function() {
+      let fields = [
+        'userAddressLine1',
+        'userAddressLine2',
+        'userAddressCity',
+        'userAddressState',
+        'userAddressPostcode',
+        'userAddressCountry',
+        'userAddressPhoneNumber',
+        'userAddressFullName',
+        'cardExpiry',
+        'cardNumber',
+        'cardCVC',
+        'cardName'
+      ];
+      if (this.state.business) {
+        fields = fields.concat([
+          'VATNumber',
+          'businessName'
+        ]);
+      }
+      if (!this.state.billingAddressSame) {
+        fields = fields.concat([
+          'billingAddressLine1',
+          'billingAddressLine2',
+          'billingAddressCity',
+          'billingAddressState',
+          'billingAddressPostcode',
+          'billingAddressCountry',
+          'billingAddressPhoneNumber'
+        ]);
+      }
+      if (!this.state.cardAddressSame) {
+        fields = fields.concat([
+          'cardAddressLine1',
+          'cardAddressLine2',
+          'cardAddressCity',
+          'cardAddressState',
+          'cardAddressPostcode',
+          'cardAddressCountry',
+          'cardAddressPhoneNumber'
+        ]);
+      }
+      return this.props.validateForm(fields, this.refs);
+    },
+
+    /**
+      Get address data.
+
+      @method _getAddress
+      @param key {String} The identifier for the form instance.
+    */
+    _getAddress: function(key) {
+      const refs = this.refs;
+      return {
+        line1: refs[`${key}AddressLine1`].getValue(),
+        line2: refs[`${key}AddressLine2`].getValue(),
+        city: refs[`${key}AddressCity`].getValue(),
+        state: refs[`${key}AddressState`].getValue(),
+        postCode: refs[`${key}AddressPostcode`].getValue(),
+        country: refs[`${key}AddressCountry`].getValue(),
+        phones: [refs[`${key}AddressPhoneNumber`].getValue()]
+      };
+    },
+
+    /**
+      Handle creating the card and user.
+
+      @method _handleAddUser
+    */
+    _handleAddUser: function() {
+      const valid = this._validateForm();
+      if (!valid) {
+        return;
+      }
+      const refs = this.refs;
+      const cardAddress = this._getAddress(
+        this.state.cardAddressSame ? 'user' : 'card');
+      const expiry = refs.cardExpiry.getValue().split('/');
+      const expiryMonth = expiry[0];
+      const expiryYear = expiry[1];
+      const card = {
+        number: refs.cardNumber.getValue().replace(/ /g, ''),
+        cvc: refs.cardCVC.getValue(),
+        expMonth: expiryMonth,
+        expYear: expiryYear,
+        name: refs.cardName.getValue(),
+        addressLine1: cardAddress.line1,
+        addressLine2: cardAddress.line2,
+        addressCity: cardAddress.city,
+        addressState: cardAddress.state,
+        addressZip: cardAddress.postCode,
+        addressCountry: cardAddress.country
+      };
+      const xhr = this.props.createToken(card, (error, token) => {
+        if (error) {
+          const message = 'Could not create Stripe token';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
+          return;
+        }
+        this._createUser(token.id);
+      });
+      this.xhrs.push(xhr);
+    },
+
+    /**
+      Create a payment user.
+
+      @method _createUser
+      @param token {String} A Stripe token.
+    */
+    _createUser: function(token) {
+      const refs = this.refs;
+      const business = this.state.business;
+      const address = this._getAddress('user');
+      let billingAddress;
+      if (this.state.billingAddressSame) {
+        billingAddress = address;
+      } else {
+        billingAddress = this._getAddress('billing');
+      }
+      const user = {
+        first: refs.userAddressFullName.getValue(),
+        // We currently store the full name in the first name property.
+        last: 'NOT USED',
+        email: null,
+        addresses: [address],
+        vat: business && refs.VATNumber.getValue() || null,
+        business: business,
+        businessName: business && refs.businessName.getValue() || null,
+        billingAddresses: [billingAddress],
+        token: token
+      };
+      const xhr = this.props.createUser(
+        this.props.username, user, (error, user) => {
+          if (error) {
+            const message = 'Could not create a payment user';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
+            return;
+          }
+          // Reload the user as one should exist now.
+          this._getUser();
+        });
+      this.xhrs.push(xhr);
+    },
+
+    /**
       Generate the details for the payment method.
 
       @method _generatePaymentMethods
@@ -121,12 +287,35 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
+      Format the credit card number.
+
+      @method _formatCardNumber
+    */
+    _formatCardNumber: function() {
+      // Get the current number and clean all the spaces.
+      const number = this.refs.cardNumber.getValue().replace(/ /g, '');
+      let parts = [];
+      // Loop through the blocks of four numbers.
+      for (var i=0; i<(number.length / 4); i++) {
+        const position = 4 * i;
+        // Store the block of numbers.
+        parts.push(number.slice(position, position + 4));
+      }
+      // Set the value with the formatted number.
+      this.refs.cardNumber.setValue(parts.join(' '));
+    },
+
+    /**
       Generate the details for the payment method.
 
       @method _generatePaymentForm
     */
     _generatePaymentForm: function() {
       const disabled = this.props.acl.isReadOnly();
+      const required = {
+        regex: /\S+/,
+        error: 'This field is required.'
+      };
       return (
         <form className="deployment-payment__form">
           <div className="deployment-payment__form-content">
@@ -157,39 +346,67 @@ YUI.add('deployment-payment', function() {
               Name and address
             </h2>
             {this._generateBusinessNameField()}
-            {this._generateAddressFields()}
+            {this._generateAddressFields('user')}
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
             <juju.components.GenericInput
               disabled={disabled}
               label="Card number"
-              required={true} />
-            <div className="twelve-col">
-              <div className="six-col">
+              onChange={this._formatCardNumber}
+              ref="cardNumber"
+              required={true}
+              validate={[required, {
+                regex: /^[a-zA-Z0-9_-\s]{16,}/,
+                error: 'The card number is too short.'
+              }, {
+                regex: /^[a-zA-Z0-9_-\s]{0,23}$/,
+                error: 'The card number is too long.'
+              }, {
+                regex: /^[0-9\s]+$/,
+                error: 'The card number can only contain numbers.'
+              }]} />
+            <div className="twelve-col no-margin-bottom">
+              <div className="six-col no-margin-bottom">
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Expiry MM/YY"
-                  required={true} />
+                  ref="cardExpiry"
+                  required={true}
+                  validate={[required, {
+                    regex: /[\d]{2}\/[\d]{2}/,
+                    error: 'The expiry must be in the format MM/YY'
+                  }]} />
               </div>
-              <div className="six-col last-col">
+              <div className="six-col last-col no-margin-bottom">
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Security number (CVC)"
-                  required={true} />
+                  ref="cardCVC"
+                  required={true}
+                  validate={[required, {
+                    regex: /^[0-9]{3}$/,
+                    error: 'The CVC must be three characters long.'
+                  }, {
+                    regex: /^[0-9]+$/,
+                    error: 'The CVC can only contain numbers.'
+                  }]} />
               </div>
             </div>
             <div className="twelve-col">
               <juju.components.GenericInput
                 disabled={disabled}
                 label="Name on card"
-                required={true} />
+                ref="cardName"
+                required={true}
+                validate={[required]} />
             </div>
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={this._handleCardSameChange}
+                ref="cardAddressSame"
                 type="checkbox" />
               Credit or debit card address is the same as above
             </label>
@@ -198,6 +415,7 @@ YUI.add('deployment-payment', function() {
                 id="billingAddressSame"
                 name="billingAddressSame"
                 onChange={this._handleBillingSameChange}
+                ref="billingAddressSame"
                 type="checkbox" />
               Billing address is the same as above
             </label>
@@ -206,7 +424,7 @@ YUI.add('deployment-payment', function() {
           </div>
           <div className="deployment-payment__add">
             <juju.components.GenericButton
-              action={null}
+              action={this._handleAddUser}
               disabled={disabled}
               type="inline-neutral"
               title="Add payment details" />
@@ -248,57 +466,77 @@ YUI.add('deployment-payment', function() {
       Generate the fields for an address.
 
       @method _generateAddressFields
+      @param key {String} An identifier for this form instance.
     */
-    _generateAddressFields: function() {
+    _generateAddressFields: function(key) {
+      const required = {
+        regex: /\S+/,
+        error: 'This field is required.'
+      };
       const disabled = this.props.acl.isReadOnly();
       return (
         <div>
           <juju.components.InsetSelect
             disabled={disabled}
             label="Country"
-            onChange={null}
-            options={this._generateCountryOptions()} />
+            options={this._generateCountryOptions()}
+            ref={`${key}AddressCountry`}
+            value="United Kingdom" />
           <juju.components.GenericInput
             disabled={disabled}
             label="Full name"
-            required={true} />
+            ref={`${key}AddressFullName`}
+            required={true}
+            validate={[required]} />
           <juju.components.GenericInput
             disabled={disabled}
             label="Address line 1"
-            required={true} />
+            ref={`${key}AddressLine1`}
+            required={true}
+            validate={[required]} />
           <juju.components.GenericInput
             disabled={disabled}
             label="Address line 2 (optional)"
+            ref={`${key}AddressLine2`}
             required={false} />
           <juju.components.GenericInput
             disabled={disabled}
-            label="State/province (optional)"
-            required={false} />
+            label="State/province"
+            ref={`${key}AddressState`}
+            required={true}
+            validate={[required]} />
           <div className="twelve-col">
             <div className="six-col">
               <juju.components.GenericInput
                 disabled={disabled}
                 label="Town/city"
-                required={true} />
+                ref={`${key}AddressCity`}
+                required={true}
+                validate={[required]} />
             </div>
             <div className="six-col last-col">
               <juju.components.GenericInput
                 disabled={disabled}
                 label="Postcode"
-                required={true} />
+                ref={`${key}AddressPostcode`}
+                required={true}
+                validate={[required]} />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
                 disabled={disabled}
                 label="Country code"
-                onChange={null}
-                options={this._generateCountryCodeOptions()} />
+                options={this._generateCountryCodeOptions()}
+                ref={`${key}AddressCountryCode`}
+                value="GB" />
             </div>
             <div className="eight-col last-col">
               <juju.components.GenericInput
                 disabled={disabled}
                 label="Phone number"
-                required={true} />
+                ref={`${key}AddressPhoneNumber`}
+                required={true}
+                validate={[required]} />
             </div>
           </div>
         </div>);
@@ -338,7 +576,7 @@ YUI.add('deployment-payment', function() {
           <h2 className="deployment-payment__title">
             Card address
           </h2>
-          {this._generateAddressFields()}
+          {this._generateAddressFields('card')}
         </div>);
     },
 
@@ -356,7 +594,7 @@ YUI.add('deployment-payment', function() {
           <h2 className="deployment-payment__title">
             Billing address
           </h2>
-          {this._generateAddressFields()}
+          {this._generateAddressFields('billing')}
         </div>);
     },
 
@@ -374,6 +612,7 @@ YUI.add('deployment-payment', function() {
           <juju.components.GenericInput
             disabled={this.props.acl.isReadOnly()}
             label="VAT number (optional)"
+            ref="VATNumber"
             required={false} />
         </div>);
     },
@@ -391,7 +630,12 @@ YUI.add('deployment-payment', function() {
         <juju.components.GenericInput
           disabled={this.props.acl.isReadOnly()}
           label="Business name"
-          required={true} />);
+          ref="businessName"
+          required={true}
+          validate={[{
+            regex: /\S+/,
+            error: 'This field is required.'
+          }]} />);
     },
 
     /**
