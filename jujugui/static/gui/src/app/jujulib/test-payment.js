@@ -281,7 +281,7 @@ describe('jujulib payment service', function() {
 
   it('can return the user when after creating a user', function() {
     const bakery = {
-      sendPostRequest: function(path, params, success, failure) {
+      sendPutRequest: function(path, params, success, failure) {
         assert.equal(
           path,
           'http://1.2.3.4/' +
@@ -320,7 +320,7 @@ describe('jujulib payment service', function() {
 
   it('handles errors when creating a user', function(done) {
     const bakery = {
-      sendPostRequest: function(path, params, success, failure) {
+      sendPutRequest: function(path, params, success, failure) {
         const xhr = makeXHRRequest({Message: 'Uh oh!'});
         failure(xhr);
       }
@@ -334,7 +334,7 @@ describe('jujulib payment service', function() {
     });
   });
 
-  it('can get a list of contries', function(done) {
+  it('can get a list of countries', function(done) {
     const countries = [{
       name: 'Australia',
       code: 'AU'

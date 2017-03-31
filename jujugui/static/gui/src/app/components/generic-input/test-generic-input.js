@@ -60,6 +60,7 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onChange={instance._callOnChange}
           onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
@@ -101,7 +102,7 @@ describe('GenericInput', function() {
           contentEditable={true}
           id="Region"
           dangerouslySetInnerHTML={{__html: 'default'}}
-          onChange={instance.validate}
+          onChange={instance._handleDIVOnchange}
           onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
@@ -142,6 +143,7 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
+          onChange={instance._callOnChange}
           onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
@@ -328,6 +330,7 @@ describe('GenericInput', function() {
           id={undefined}
           placeholder="us-central-1"
           required={true}
+          onChange={instance._callOnChange}
           onKeyUp={instance._keyUpHandler}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
