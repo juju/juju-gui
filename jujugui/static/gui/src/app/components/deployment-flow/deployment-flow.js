@@ -158,6 +158,12 @@ YUI.add('deployment-flow', function() {
           disabled = !hasCloud;
           visible = willCreateModel;
           break;
+        case 'vpc':
+          completed = false;
+          disabled = !hasCloud;
+          visible = (
+            willCreateModel && hasCloud && this.state.cloud.name === 'aws');
+          break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
@@ -545,6 +551,27 @@ YUI.add('deployment-flow', function() {
             cloud={cloud}
             setSSHKey={this._setSSHKey}
           />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the AWS VPC management section.
+
+      @method _generateVPCSection
+      @returns {Object} The react component.
+    */
+    _generateVPCSection: function() {
+      const status = this._getSectionStatus('vpc');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-vpc"
+          showCheck={false}>
+          <juju.components.DeploymentVPC setVPCId={this._setVPCId} />
         </juju.components.DeploymentSection>);
     },
 
@@ -984,6 +1011,7 @@ YUI.add('deployment-flow', function() {
             {this._generateCloudSection()}
             {this._generateCredentialSection()}
             {this._generateSSHKeySection()}
+            {this._generateVPCSection()}
             {this._generateMachinesSection()}
             {this._generateServicesSection()}
             {this._generateBudgetSection()}
@@ -1028,6 +1056,7 @@ YUI.add('deployment-flow', function() {
     'deployment-section',
     'deployment-services',
     'deployment-ssh-key',
+    'deployment-vpc',
     'generic-button',
     'generic-input',
     'usso-login-link'
