@@ -19,8 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-  Provides a help menu to the header. The idea moving forward is to have a
-  more complete 'built-in' small help system for tips.
+  Provides a user menu to the header - shows Profile, Account and Logout links.
+  If user is not logged in the user icon is replaced with a login button.
 */
 YUI.add('user-menu', function() {
 

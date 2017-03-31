@@ -31,7 +31,7 @@ describe('UserMenu', () => {
   });
 
   const LogoutLink = (<div />);
-  function createEle(props) {
+  function createEle(props, wrappedComponent) {
     props = props || {};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserMenu.prototype.wrappedComponent
@@ -130,6 +130,29 @@ describe('UserMenu', () => {
           </ul>
         </juju.components.Panel>);
       assert.deepEqual(output.props.children[1], expected);
+    });
+
+    it('closes when handleClickOutside is called', () => {
+      const userMenu = createEle({
+        LogoutLink: LogoutLink,
+        controllerAPI: {
+          userIsAuthenticated: sinon.stub().returns(true)
+        }
+      });
+      userMenu.instance.toggleUserMenu();
+      let output = userMenu.renderer.getRenderOutput();
+
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-menu__button header-menu__show-menu');
+      assert.isDefined(output.props.children[1]);
+
+      userMenu.instance.handleClickOutside();
+      output = userMenu.renderer.getRenderOutput();
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-menu__button');
+      assert.deepEqual(output.props.children[1], '');
     });
   });
 });

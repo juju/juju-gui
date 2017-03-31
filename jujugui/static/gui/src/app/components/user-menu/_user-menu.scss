@@ -6,6 +6,7 @@
   .usso-login {
     &__action {
       text-decoration: none;
+      // Importants to overwrite vanilla values
       // scss-lint:disable ImportantRule
       color: $warm-grey !important;
       // scss-lint:disable ImportantRule
