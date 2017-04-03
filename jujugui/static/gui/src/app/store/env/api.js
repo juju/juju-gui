@@ -605,7 +605,7 @@ YUI.add('juju-env-api', function(Y) {
       if (this.pendingLoginResponse) {
         return;
       }
-      var credentials = this.get('user').controller;
+      const credentials = this.get('user').controller;
       if (!credentials.user || !credentials.password) {
         this.fire('login', {err: 'invalid username or password'});
         return;

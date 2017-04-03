@@ -433,8 +433,10 @@ YUI.add('juju-gui', function(Y) {
       this.bakeryFactory = new window.jujulib.bakeryFactory(
         Y.juju.environments.web.Bakery);
 
-      // Create a client side database to store state.
+      // Set up a client side database to store state.
       this.db = new models.Database();
+      // Create a user store to track authentication details.
+      this.user = this.get('user') || new window.jujugui.User();
       // Create and set up a new instance of the charmstore.
       this._setupCharmstore(window.jujulib.charmstore);
       // Create and set up a new instance of the bundleservice.
@@ -470,7 +472,6 @@ YUI.add('juju-gui', function(Y) {
         }
         this.state = this._setupState(baseURL);
       }.bind(this);
-      this.user = this.get('user') || new window.jujugui.User();
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -525,16 +526,15 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
-      var user = null;
-      var password = null;
-      var macaroons = null;
-      var credentials = this.user.controller;
+      let user = null;
+      let password = null;
+      let macaroons = null;
+      let credentials = this.user.controller;
       if (credentials.areAvailable) {
         user = credentials.user;
         password = credentials.password;
         macaroons = credentials.macaroons;
       }
-      this.user.controller = { user, password, macaroons };
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
@@ -627,7 +627,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('model connected');
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
-        var credentials = this.user.controller;
+        const credentials = this.user.controller;
         if (credentials.areAvailable) {
           this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
           return;
@@ -917,9 +917,6 @@ YUI.add('juju-gui', function(Y) {
         return window.localStorage.getItem('discharge-token');
       };
       const charmstore = this.get('charmstore');
-      const setCreds = function(creds) {
-        this.user.controller = creds;
-      };
       ReactDOM.render(
         <window.juju.components.Login
           charmstore={charmstore}
@@ -930,7 +927,6 @@ YUI.add('juju-gui', function(Y) {
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
-          setCredentials={setCreds}
           storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
@@ -1126,9 +1122,6 @@ YUI.add('juju-gui', function(Y) {
         // If the controller isn't ready yet then don't render anything.
         return;
       }
-      const getCreds = function() {
-        return this.user.controller.user;
-      };
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
@@ -1146,7 +1139,7 @@ YUI.add('juju-gui', function(Y) {
           showPay={window.juju_config.payFlag || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={getCreds}
+          user={this.user.controller.user}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,
         document.getElementById('top-page-container'));
@@ -2704,7 +2697,6 @@ YUI.add('juju-gui', function(Y) {
           password: password
         };
       };
-      const credentials = this.user.controller;
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2721,7 +2713,6 @@ YUI.add('juju-gui', function(Y) {
       const setUpModel = model => {
         // Tell the model to use the new socket URL when reconnecting.
         model.set('socket_url', socketUrl);
-        this.user.controller = credentials;
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
@@ -3110,9 +3101,11 @@ YUI.add('juju-gui', function(Y) {
       socketTemplate: {value: '/model/$uuid/api'},
 
       /**
-       The user auth object.
+       The authentication store for the user. This holds macaroons or other
+       credential details for the user to connect to the controller.
        */
       user: {value: null},
+
       /**
        The users associated with various services that the GUI uses. The users
        are keyed by their service name. For example,

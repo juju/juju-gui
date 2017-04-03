@@ -43,11 +43,11 @@ describe('Controller API', function() {
   };
 
   beforeEach(function() {
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
+    const user = new window.jujugui.User({storage: getMockStorage()});
+    user.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     controllerAPI = new juju.ControllerAPI({
-      conn: conn, user: userClass
+      conn: conn, user: user
     });
     controllerAPI.connect();
     controllerAPI.set('facades', {

@@ -22,7 +22,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 
-fdescribe('user auth class', () => {
+describe('user auth class', () => {
   it('exists', () => {
     const user = new window.jujugui.User({storage: {}});
     assert.isObject(user);
@@ -78,9 +78,13 @@ fdescribe('user auth class', () => {
     it('determines if creds are external', () => {
       let storage = getMockStorage();
       const user = new window.jujugui.User({storage: storage});
-      user.controller = {user: 'doctor@tardis', password: 'bad wolf', external: 'foo'};
+      user.controller = {
+        user: 'doctor@tardis',
+        password: 'bad wolf',
+        external: 'foo'
+      };
       const creds = user.controller;
-      assert.equal(creds.external, true);
+      assert.equal(creds.areExternal, true);
     });
   });
 });

@@ -1,5 +1,5 @@
 /*
- This file is part of the Juju GUI, which lets users view and manage Juju
+This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
 
@@ -128,7 +128,7 @@ describe('App', function() {
         baseUrl: 'http://0.0.0.0:6543/',
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
+        controllerSocketTemplate: '/api'
       }));
       if (config.env && config.env.connect) {
         config.env.connect();

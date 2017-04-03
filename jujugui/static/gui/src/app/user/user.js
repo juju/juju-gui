@@ -35,6 +35,12 @@ const User = class User {
 
   // TODO get/set charmstore creds
 
+  /**
+   Credentials for the controller connection for the GUI. As a getter,
+   it adds convenience attributes to the credentials for handling login flow.
+  /*
+  /* XXX 'controller' isn't quite right--this handles both controller and model
+   connection credentials. Perhaps juju? */
   get controller() {
     let credentials = JSON.parse(
       this.storage.getItem('credentials'));
