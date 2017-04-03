@@ -31,10 +31,10 @@ function addressFields(key) {
         label="Country"
         options={[{
           label: 'Australia',
-          value: 'Australia'
+          value: 'AU'
         }]}
         ref={`${key}AddressCountry`}
-        value="United Kingdom" />
+        value="GB" />
       <juju.components.GenericInput
         disabled={false}
         label="Full name"
@@ -141,6 +141,9 @@ describe('DeploymentPayment', function() {
       code: 'AU'
     }]);
     refs = {
+      emailAddress: {
+        getValue: sinon.stub().returns('spinach@example.com')
+      },
       userAddressFullName: {
         getValue: sinon.stub().returns('Geoffrey Spinach')
       },
@@ -160,7 +163,7 @@ describe('DeploymentPayment', function() {
         getValue: sinon.stub().returns('90210')
       },
       userAddressCountry: {
-        getValue: sinon.stub().returns('North of the border')
+        getValue: sinon.stub().returns('CA')
       },
       userAddressPhoneNumber: {
         getValue: sinon.stub().returns('12341234')
@@ -197,7 +200,7 @@ describe('DeploymentPayment', function() {
       <div className="deployment-payment">
         <juju.components.Spinner />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can store the user details', function() {
@@ -241,7 +244,7 @@ describe('DeploymentPayment', function() {
           </li>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display an error when getting users', function() {
@@ -317,6 +320,15 @@ describe('DeploymentPayment', function() {
               Name and address
             </h2>
             {null}
+            <juju.components.GenericInput
+              disabled={false}
+              label="Email address"
+              ref="emailAddress"
+              required={true}
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }]} />
             {addressFields('user')}
             <h2 className="deployment-payment__title">
               Payment information
@@ -414,7 +426,7 @@ describe('DeploymentPayment', function() {
           </div>
         </form>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a business form', function() {
@@ -484,6 +496,15 @@ describe('DeploymentPayment', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
+            <juju.components.GenericInput
+              disabled={false}
+              label="Email address"
+              ref="emailAddress"
+              required={true}
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }]} />
             {addressFields('user')}
             <h2 className="deployment-payment__title">
               Payment information
@@ -581,7 +602,7 @@ describe('DeploymentPayment', function() {
           </div>
         </form>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display card and billing address fields', function() {
@@ -599,26 +620,26 @@ describe('DeploymentPayment', function() {
         validateForm={sinon.stub()} />, true);
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[9].props.children[0].props.onChange(
-      {currentTarget: {checked: false}});
     formContent[10].props.children[0].props.onChange(
+      {currentTarget: {checked: false}});
+    formContent[11].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     formContent = output.props.children.props.children[0].props.children;
-    assert.deepEqual(formContent[11], (
+    expect(formContent[12]).toEqualJSX(
       <div>
         <h2 className="deployment-payment__title">
           Card address
         </h2>
         {addressFields('card')}
-      </div>));
-    assert.deepEqual(formContent[12], (
+      </div>);
+    expect(formContent[13]).toEqualJSX(
       <div>
         <h2 className="deployment-payment__title">
           Billing address
         </h2>
         {addressFields('billing')}
-      </div>));
+      </div>);
   });
 
   it('can abort requests when unmounting', function() {
@@ -688,7 +709,7 @@ describe('DeploymentPayment', function() {
       addressCity: 'Sasquatch',
       addressState: 'Bunnyhug',
       addressZip: '90210',
-      addressCountry: 'North of the border'
+      addressCountry: 'CA'
     });
   });
 
@@ -724,7 +745,7 @@ describe('DeploymentPayment', function() {
         getValue: sinon.stub().returns('9000')
       },
       cardAddressCountry: {
-        getValue: sinon.stub().returns('Down Under')
+        getValue: sinon.stub().returns('AU')
       },
       cardAddressPhoneNumber: {
         getValue: sinon.stub().returns('')
@@ -733,7 +754,7 @@ describe('DeploymentPayment', function() {
     instance.refs = Object.assign(refs, extraRefs);
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[9].props.children[0].props.onChange(
+    formContent[10].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
@@ -749,7 +770,7 @@ describe('DeploymentPayment', function() {
       addressCity: 'Snake',
       addressState: 'Spider',
       addressZip: '9000',
-      addressCountry: 'Down Under'
+      addressCountry: 'AU'
     });
   });
 
@@ -800,16 +821,15 @@ describe('DeploymentPayment', function() {
     assert.equal(createUser.callCount, 1);
     assert.equal(createUser.args[0][0], 'spinach');
     assert.deepEqual(createUser.args[0][1], {
-      first: 'Geoffrey Spinach',
-      last: 'NOT USED',
-      email: null,
+      name: 'Geoffrey Spinach',
+      email: 'spinach@example.com',
       addresses: [{
         line1: '10 Maple St',
         line2: '',
         city: 'Sasquatch',
         state: 'Bunnyhug',
         postCode: '90210',
-        country: 'North of the border',
+        countrycode: 'CA',
         phones: ['12341234']
       }],
       vat: null,
@@ -821,7 +841,7 @@ describe('DeploymentPayment', function() {
         city: 'Sasquatch',
         state: 'Bunnyhug',
         postCode: '90210',
-        country: 'North of the border',
+        countrycode: 'CA',
         phones: ['12341234']
       }],
       token: 'token_123'
@@ -897,7 +917,7 @@ describe('DeploymentPayment', function() {
         getValue: sinon.stub().returns('9000')
       },
       billingAddressCountry: {
-        getValue: sinon.stub().returns('Down Under')
+        getValue: sinon.stub().returns('AU')
       },
       billingAddressPhoneNumber: {
         getValue: sinon.stub().returns('00001111')
@@ -906,22 +926,21 @@ describe('DeploymentPayment', function() {
     instance.refs = Object.assign(refs, extraRefs);
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[10].props.children[0].props.onChange(
+    formContent[11].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
     assert.deepEqual(createUser.args[0][1], {
-      first: 'Geoffrey Spinach',
-      last: 'NOT USED',
-      email: null,
+      name: 'Geoffrey Spinach',
+      email: 'spinach@example.com',
       addresses: [{
         line1: '10 Maple St',
         line2: '',
         city: 'Sasquatch',
         state: 'Bunnyhug',
         postCode: '90210',
-        country: 'North of the border',
+        countrycode: 'CA',
         phones: ['12341234']
       }],
       vat: null,
@@ -933,7 +952,7 @@ describe('DeploymentPayment', function() {
         city: 'Snake',
         state: 'Spider',
         postCode: '9000',
-        country: 'Down Under',
+        countrycode: 'AU',
         phones: ['00001111']
       }],
       token: 'token_123'

@@ -15,8 +15,7 @@ describe('jujulib payment service', function() {
   beforeEach(function() {
     returnedUser = {
       nickname: 'spinach',
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       business: true,
       addresses: [{
@@ -37,7 +36,7 @@ describe('jujulib payment service', function() {
           name: null,
           city: 'New Orleans',
           'post-code': null,
-          country: null,
+          countrycode: null,
           phones: []
         },
         brand: 'Brand',
@@ -52,8 +51,7 @@ describe('jujulib payment service', function() {
     };
     parsedUser = {
       nickname: 'spinach',
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       business: true,
       addresses: [{
@@ -63,7 +61,7 @@ describe('jujulib payment service', function() {
         name: null,
         city: 'New Orleans',
         postCode: '70130',
-        country: null,
+        countrycode: null,
         phones: []
       }],
       vat: '1234',
@@ -75,7 +73,7 @@ describe('jujulib payment service', function() {
         name: null,
         city: 'New Orleans',
         postCode: '70130',
-        country: null,
+        countrycode: null,
         phones: []
       }],
       paymentMethods: [{
@@ -86,7 +84,7 @@ describe('jujulib payment service', function() {
           name: null,
           city: 'New Orleans',
           postCode: null,
-          country: null,
+          countrycode: null,
           phones: []
         },
         brand: 'Brand',
@@ -160,8 +158,7 @@ describe('jujulib payment service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(user, {
         nickname: null,
-        first: null,
-        last: null,
+        name: null,
         email: null,
         business: false,
         addresses: [],
@@ -174,7 +171,7 @@ describe('jujulib payment service', function() {
           name: null,
           city: 'New Orleans',
           postCode: null,
-          country: null,
+          countrycode: null,
           phones: []
         }],
         paymentMethods: [{
@@ -185,7 +182,7 @@ describe('jujulib payment service', function() {
             name: null,
             city: 'New Orleans',
             postCode: null,
-            country: null,
+            countrycode: null,
             phones: []
           },
           brand: null,
@@ -224,8 +221,7 @@ describe('jujulib payment service', function() {
     jujulib._makeRequest = makeRequest;
     const payment = new window.jujulib.payment('http://1.2.3.4/', {});
     const newUser = {
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',
@@ -248,8 +244,7 @@ describe('jujulib payment service', function() {
     assert.equal(makeRequest.callCount, 1);
     assert.deepEqual(makeRequest.args[0][3], {
       user: {
-        first: 'Geoffrey',
-        last: 'Spinach',
+        name: 'Geoffrey Spinach',
         email: 'spinach@example.com',
         addresses: [{
           name: null,
@@ -257,7 +252,7 @@ describe('jujulib payment service', function() {
           line2: null,
           city: 'New Orleans',
           'post-code': '70130',
-          country: null,
+          countrycode: null,
           phones: []
         }],
         vat: '1234',
@@ -269,7 +264,7 @@ describe('jujulib payment service', function() {
           line2: null,
           city: 'New Orleans',
           'post-code': '70130',
-          country: null,
+          countrycode: null,
           phones: []
         }],
         'allow-email': true,
@@ -294,8 +289,7 @@ describe('jujulib payment service', function() {
     const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
     const newUser = {
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',

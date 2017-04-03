@@ -42,8 +42,7 @@ var module = module;
         first parameter and the user data as its second. The user data
         includes the following fields:
           - nickname {String} The user's nickname
-          - first {String} The user's first name
-          - last {String} The user's last name
+          - name {String} The user's full name
           - email {String} The user's email address
           - business {Boolean} whether this is a business account
           - addresses {Array} A list of address objects, the
@@ -54,7 +53,7 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postCode {String} The address post code
-              - country {String} The address country
+              - countrycode {String} The address country code
               - phones {Array} a list of phone number strings
           - vat {String|Null} The VAT number
           - businessName {String|Null} The business name
@@ -66,7 +65,7 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postCode {String} The address post code
-              - country {String} The address country
+              - countrycode {String} The address country code
               - phones {Array} a list of phone number strings
 	        - paymentMethods {Array} A list of payment method objects,
             the objects contain:
@@ -77,7 +76,7 @@ var module = module;
                 - county {String|Null} The address county
                 - city {String|Null} The address city
                 - postCode {String|Null} The address post code
-                - country {String|Null} The address country
+                - countrycode {String|Null} The address country code
                 - phones {Array} a list of phone number strings
               - brand {String} The card brand name
               - last4 {String} The last four digits of the card number
@@ -109,8 +108,7 @@ var module = module;
       @public createUser
       @param name {String} The user's username.
       @param user {Object} The user data object, containing:
-        - first {String} The user's first name
-        - last {String} The user's last name
+        - name {String} The user's full name
         - email {String} The user's email address
         - addresses {Array} A list of address objects, the objects contain:
           - name {String} The name of the address e.g. "Home"
@@ -119,7 +117,7 @@ var module = module;
           - county {String} The address county
           - city {String} The address city
           - postCode {String} The address post code
-          - country {String} The address country
+          - countrycode {String} The address country code
           - phones {Array} a list of phone number strings
         - vat {String|Null} The VAT number
         - business {Boolean} whether this is a business account
@@ -132,7 +130,7 @@ var module = module;
             - county {String} The address county
             - city {String} The address city
             - postCode {String} The address post code
-            - country {String} The address country
+            - countrycode {String} The address country code
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
         - token {String|Null} A Stripe token
@@ -154,8 +152,7 @@ var module = module;
       const url = `${this.url}/u/${name}`;
       const payload = {
         user: {
-          first: user.first,
-          last: user.last,
+          name: user.name,
           email: user.email,
           addresses: this._unparseAddresses(user.addresses),
           vat: user.vat,
@@ -214,8 +211,7 @@ var module = module;
       });
       return {
         nickname: user.nickname || null,
-        first: user.first || null,
-        last: user.last || null,
+        name: user.name || null,
         email: user.email || null,
         business: user.business || false,
         addresses: this._parseAddresses(user.addresses),
@@ -255,7 +251,7 @@ var module = module;
         line2: address.line2 || null,
         city: address.city || null,
         postCode: address['post-code'] || null,
-        country: address.country || null,
+        countrycode: address.countrycode || null,
         phones: address.phones || []
       };
     },
@@ -287,7 +283,7 @@ var module = module;
         line2: address.line2 || null,
         city: address.city || null,
         'post-code': address.postCode || null,
-        country: address.country || null,
+        countrycode: address.countrycode || null,
         phones: address.phones || []
       };
     }

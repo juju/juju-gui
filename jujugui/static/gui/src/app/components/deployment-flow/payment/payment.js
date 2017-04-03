@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-payment', function() {
 
   juju.components.DeploymentPayment = React.createClass({
+    displayName: 'DeploymentPayment',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -112,6 +114,7 @@ YUI.add('deployment-payment', function() {
     */
     _validateForm: function() {
       let fields = [
+        'emailAddress',
         'userAddressLine1',
         'userAddressLine2',
         'userAddressCity',
@@ -170,7 +173,7 @@ YUI.add('deployment-payment', function() {
         city: refs[`${key}AddressCity`].getValue(),
         state: refs[`${key}AddressState`].getValue(),
         postCode: refs[`${key}AddressPostcode`].getValue(),
-        country: refs[`${key}AddressCountry`].getValue(),
+        countrycode: refs[`${key}AddressCountry`].getValue(),
         phones: [refs[`${key}AddressPhoneNumber`].getValue()]
       };
     },
@@ -202,7 +205,7 @@ YUI.add('deployment-payment', function() {
         addressCity: cardAddress.city,
         addressState: cardAddress.state,
         addressZip: cardAddress.postCode,
-        addressCountry: cardAddress.country
+        addressCountry: cardAddress.countrycode
       };
       const xhr = this.props.createToken(card, (error, token) => {
         if (error) {
@@ -237,10 +240,8 @@ YUI.add('deployment-payment', function() {
         billingAddress = this._getAddress('billing');
       }
       const user = {
-        first: refs.userAddressFullName.getValue(),
-        // We currently store the full name in the first name property.
-        last: 'NOT USED',
-        email: null,
+        name: refs.userAddressFullName.getValue(),
+        email: refs.emailAddress.getValue(),
         addresses: [address],
         vat: business && refs.VATNumber.getValue() || null,
         business: business,
@@ -346,6 +347,12 @@ YUI.add('deployment-payment', function() {
               Name and address
             </h2>
             {this._generateBusinessNameField()}
+            <juju.components.GenericInput
+              disabled={disabled}
+              label="Email address"
+              ref="emailAddress"
+              required={true}
+              validate={[required]} />
             {this._generateAddressFields('user')}
             <h2 className="deployment-payment__title">
               Payment information
@@ -442,7 +449,7 @@ YUI.add('deployment-payment', function() {
       return this.state.countries.map(country => {
         return {
           label: country.name,
-          value: country.name
+          value: country.code
         };
       });
     },
@@ -481,7 +488,7 @@ YUI.add('deployment-payment', function() {
             label="Country"
             options={this._generateCountryOptions()}
             ref={`${key}AddressCountry`}
-            value="United Kingdom" />
+            value="GB" />
           <juju.components.GenericInput
             disabled={disabled}
             label="Full name"
@@ -669,6 +676,7 @@ YUI.add('deployment-payment', function() {
 
 }, '0.1.0', {
   requires: [
+    'account-payment-method-card',
     'generic-button',
     'generic-input',
     'inset-select',
