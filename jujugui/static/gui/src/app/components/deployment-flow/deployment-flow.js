@@ -20,6 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('deployment-flow', function() {
 
+  // Define the VPC ID zero value.
+  const INITIAL_VPC_ID = null;
+
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -87,7 +90,9 @@ YUI.add('deployment-flow', function() {
         // The list of term ids for the uncommitted applications.
         terms: this._getTerms() || [],
         // Whether the user has ticked the checked to agree to terms.
-        termsAgreed: false
+        termsAgreed: false,
+        vpcId: INITIAL_VPC_ID,
+        vpcIdForce: false
       };
     },
 
@@ -156,6 +161,12 @@ YUI.add('deployment-flow', function() {
           disabled = !hasCloud;
           visible = willCreateModel;
           break;
+        case 'vpc':
+          completed = false;
+          disabled = !hasCloud;
+          visible = (
+            willCreateModel && hasCloud && this.state.cloud.name === 'aws');
+          break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
@@ -211,7 +222,7 @@ YUI.add('deployment-flow', function() {
           cloud.name
         );
       }
-      this.setState({cloud: cloud});
+      this.setState({cloud: cloud, vpcId: INITIAL_VPC_ID});
     },
 
     /**
@@ -242,6 +253,23 @@ YUI.add('deployment-flow', function() {
     */
     _setSSHKey: function(key) {
       this.setState({sshKey: key});
+    },
+
+    /**
+      Store the provided AWS virtual private cloud value in state.
+      In the case the value is set, also set whether to force Juju to use the
+      given value, even when it fails the minimum validation criteria.
+
+      @method _setVPCId
+      @param {String} value The VPC identifier.
+      @param {Boolean} force Whether to force the value. Ignored if !value.
+    */
+    _setVPCId: function(value, force) {
+      if (!value) {
+        value = INITIAL_VPC_ID;
+        force = false;
+      }
+      this.setState({vpcId: value, vpcIdForce: !!force});
     },
 
     /**
@@ -323,12 +351,17 @@ YUI.add('deployment-flow', function() {
       }
       this.setState({deploying: true});
       const args = {
-        credential: this.state.credential,
+        config: {},
         cloud: this.state.cloud && this.state.cloud.name || undefined,
+        credential: this.state.credential,
         region: this.state.region
       };
       if (this.state.sshKey) {
-        args.config = {'authorized-keys': this.state.sshKey};
+        args.config['authorized-keys'] = this.state.sshKey;
+      }
+      if (this.state.vpcId) {
+        args.config['vpc-id'] = this.state.vpcId;
+        args.config['vpc-id-force'] = this.state.vpcIdForce;
       }
       const deploy = this.props.deploy.bind(
         this, this._handleClose, true, this.state.modelName, args);
@@ -521,6 +554,27 @@ YUI.add('deployment-flow', function() {
             cloud={cloud}
             setSSHKey={this._setSSHKey}
           />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the AWS VPC management section.
+
+      @method _generateVPCSection
+      @returns {Object} The react component.
+    */
+    _generateVPCSection: function() {
+      const status = this._getSectionStatus('vpc');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-vpc"
+          showCheck={false}>
+          <juju.components.DeploymentVPC setVPCId={this._setVPCId} />
         </juju.components.DeploymentSection>);
     },
 
@@ -960,6 +1014,7 @@ YUI.add('deployment-flow', function() {
             {this._generateCloudSection()}
             {this._generateCredentialSection()}
             {this._generateSSHKeySection()}
+            {this._generateVPCSection()}
             {this._generateMachinesSection()}
             {this._generateServicesSection()}
             {this._generateBudgetSection()}
@@ -1004,6 +1059,7 @@ YUI.add('deployment-flow', function() {
     'deployment-section',
     'deployment-services',
     'deployment-ssh-key',
+    'deployment-vpc',
     'generic-button',
     'generic-input',
     'usso-login-link'
