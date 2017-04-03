@@ -9,11 +9,11 @@
       // Importants to overwrite vanilla values
       // scss-lint:disable ImportantRule
       color: $warm-grey !important;
-      // scss-lint:disable ImportantRule
+      // scss-lint:enable ImportantRule
       &:hover {
         // scss-lint:disable ImportantRule
         color: $dark-warm-grey !important;
-        // scss-lint:disable ImportantRule
+        // scss-lint:enable ImportantRule
       }
     }
     &__notification {
