@@ -23,4 +23,20 @@
     display: inline-block;
     margin-left: .25em;
   }
+
+  .entity-title {
+    &__credential {
+      color: $dark-grey;
+      font-size: 0.9em;
+      margin-left: 1em;
+
+      &:before {
+        content: '(Credential: ';
+      }
+
+      &:after {
+        content: ')';
+      }
+    }
+  }
 }

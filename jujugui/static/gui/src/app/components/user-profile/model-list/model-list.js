@@ -273,6 +273,8 @@ YUI.add('user-profile-model-list', function() {
           return null;
         }
       }
+      // See the _generateModelInfo function in entity.js for matching logic.
+      // Both sections should be kept roughly in sync.
       const region = model.region || 'no region';
       let owner = '--';
       // TODO frankban: it's not clear why we should ever miss an owner.
