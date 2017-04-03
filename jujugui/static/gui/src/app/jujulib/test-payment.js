@@ -20,13 +20,13 @@ describe('jujulib payment service', function() {
       business: true,
       addresses: [{
         city: 'New Orleans',
-        'post-code': '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       'business-name': 'Spinachy business',
       'billing-addresses': [{
         city: 'New Orleans',
-        'post-code': '70130'
+        postcode: '70130'
       }],
       'payment-methods': [{
         address: {
@@ -35,8 +35,8 @@ describe('jujulib payment service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          'post-code': null,
-          countrycode: null,
+          postcode: null,
+          'country-code': null,
           phones: []
         },
         brand: 'Brand',
@@ -60,8 +60,8 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
-        postCode: '70130',
-        countrycode: null,
+        postcode: '70130',
+        countryCode: null,
         phones: []
       }],
       vat: '1234',
@@ -72,8 +72,8 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
-        postCode: '70130',
-        countrycode: null,
+        postcode: '70130',
+        countryCode: null,
         phones: []
       }],
       paymentMethods: [{
@@ -83,8 +83,8 @@ describe('jujulib payment service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          postCode: null,
-          countrycode: null,
+          postcode: null,
+          countryCode: null,
           phones: []
         },
         brand: 'Brand',
@@ -170,8 +170,8 @@ describe('jujulib payment service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          postCode: null,
-          countrycode: null,
+          postcode: null,
+          countryCode: null,
           phones: []
         }],
         paymentMethods: [{
@@ -181,8 +181,8 @@ describe('jujulib payment service', function() {
             line2: null,
             name: null,
             city: 'New Orleans',
-            postCode: null,
-            countrycode: null,
+            postcode: null,
+            countryCode: null,
             phones: []
           },
           brand: null,
@@ -225,52 +225,50 @@ describe('jujulib payment service', function() {
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       business: true,
       businessName: 'Spinachy business',
       billingAddresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       allowEmail: true,
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    payment.createUser('spinach', newUser, sinon.stub());
+    payment.createUser(newUser, sinon.stub());
     // Restore the original method on the lib.
     jujulib._makeRequest = originalMakeRequest;
     assert.equal(makeRequest.callCount, 1);
     assert.deepEqual(makeRequest.args[0][3], {
-      user: {
-        name: 'Geoffrey Spinach',
-        email: 'spinach@example.com',
-        addresses: [{
-          name: null,
-          line1: null,
-          line2: null,
-          city: 'New Orleans',
-          'post-code': '70130',
-          countrycode: null,
-          phones: []
-        }],
-        vat: '1234',
-        business: true,
-        'business-name': 'Spinachy business',
-        'billing-addresses': [{
-          name: null,
-          line1: null,
-          line2: null,
-          city: 'New Orleans',
-          'post-code': '70130',
-          countrycode: null,
-          phones: []
-        }],
-        'allow-email': true,
-        token: '54321',
-        'payment-method-name': 'Platinum'
-      }
+      name: 'Geoffrey Spinach',
+      email: 'spinach@example.com',
+      addresses: [{
+        name: null,
+        line1: null,
+        line2: null,
+        city: 'New Orleans',
+        postcode: '70130',
+        'country-code': null,
+        phones: []
+      }],
+      vat: '1234',
+      business: true,
+      'business-name': 'Spinachy business',
+      'billing-addresses': [{
+        name: null,
+        line1: null,
+        line2: null,
+        city: 'New Orleans',
+        postcode: '70130',
+        'country-code': null,
+        phones: []
+      }],
+      'allow-email': true,
+      token: '54321',
+      'payment-method-name': 'Platinum'
     });
   });
 
@@ -281,7 +279,7 @@ describe('jujulib payment service', function() {
           path,
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
-          '/u/spinach');
+          '/u');
         const xhr = makeXHRRequest(returnedUser);
         success(xhr);
       }
@@ -293,20 +291,20 @@ describe('jujulib payment service', function() {
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       business: true,
       businessName: 'Spinachy business',
       billingAddresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       allowEmail: true,
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    payment.createUser('spinach', {user: newUser}, function(error, user) {
+    payment.createUser(newUser, function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
     });
@@ -321,7 +319,7 @@ describe('jujulib payment service', function() {
     };
     const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    payment.createUser('spinach', {}, function(error, user) {
+    payment.createUser({}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
       done();

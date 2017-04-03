@@ -819,8 +819,7 @@ describe('DeploymentPayment', function() {
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
-    assert.equal(createUser.args[0][0], 'spinach');
-    assert.deepEqual(createUser.args[0][1], {
+    assert.deepEqual(createUser.args[0][0], {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -828,8 +827,8 @@ describe('DeploymentPayment', function() {
         line2: '',
         city: 'Sasquatch',
         state: 'Bunnyhug',
-        postCode: '90210',
-        countrycode: 'CA',
+        postcode: '90210',
+        countryCode: 'CA',
         phones: ['12341234']
       }],
       vat: null,
@@ -840,11 +839,12 @@ describe('DeploymentPayment', function() {
         line2: '',
         city: 'Sasquatch',
         state: 'Bunnyhug',
-        postCode: '90210',
-        countrycode: 'CA',
+        postcode: '90210',
+        countryCode: 'CA',
         phones: ['12341234']
       }],
-      token: 'token_123'
+      token: 'token_123',
+      paymentMethodName: 'Default'
     });
   });
 
@@ -879,7 +879,7 @@ describe('DeploymentPayment', function() {
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
-    const args = createUser.args[0][1];
+    const args = createUser.args[0][0];
     assert.equal(args.business, true);
     assert.equal(args.businessName, 'Tuques LTD');
     assert.equal(args.vat, 'vat23');
@@ -931,7 +931,7 @@ describe('DeploymentPayment', function() {
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
-    assert.deepEqual(createUser.args[0][1], {
+    assert.deepEqual(createUser.args[0][0], {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -939,8 +939,8 @@ describe('DeploymentPayment', function() {
         line2: '',
         city: 'Sasquatch',
         state: 'Bunnyhug',
-        postCode: '90210',
-        countrycode: 'CA',
+        postcode: '90210',
+        countryCode: 'CA',
         phones: ['12341234']
       }],
       vat: null,
@@ -951,11 +951,12 @@ describe('DeploymentPayment', function() {
         line2: '',
         city: 'Snake',
         state: 'Spider',
-        postCode: '9000',
-        countrycode: 'AU',
+        postcode: '9000',
+        countryCode: 'AU',
         phones: ['00001111']
       }],
-      token: 'token_123'
+      token: 'token_123',
+      paymentMethodName: 'Default'
     });
   });
 
@@ -966,7 +967,7 @@ describe('DeploymentPayment', function() {
         acl={acl}
         addNotification={addNotification}
         createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
-        createUser={sinon.stub().callsArgWith(2, 'Uh oh!', null)}
+        createUser={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
         getCountries={getCountries}
         getUser={getUser}
         paymentUser={null}
@@ -991,7 +992,7 @@ describe('DeploymentPayment', function() {
         acl={acl}
         addNotification={sinon.stub()}
         createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
-        createUser={sinon.stub().callsArgWith(2, null, null)}
+        createUser={sinon.stub().callsArgWith(1, null, null)}
         getCountries={getCountries}
         getUser={getUser}
         paymentUser={null}

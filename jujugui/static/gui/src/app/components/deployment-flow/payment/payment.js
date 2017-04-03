@@ -172,8 +172,8 @@ YUI.add('deployment-payment', function() {
         line2: refs[`${key}AddressLine2`].getValue(),
         city: refs[`${key}AddressCity`].getValue(),
         state: refs[`${key}AddressState`].getValue(),
-        postCode: refs[`${key}AddressPostcode`].getValue(),
-        countrycode: refs[`${key}AddressCountry`].getValue(),
+        postcode: refs[`${key}AddressPostcode`].getValue(),
+        countryCode: refs[`${key}AddressCountry`].getValue(),
         phones: [refs[`${key}AddressPhoneNumber`].getValue()]
       };
     },
@@ -204,8 +204,8 @@ YUI.add('deployment-payment', function() {
         addressLine2: cardAddress.line2,
         addressCity: cardAddress.city,
         addressState: cardAddress.state,
-        addressZip: cardAddress.postCode,
-        addressCountry: cardAddress.countrycode
+        addressZip: cardAddress.postcode,
+        addressCountry: cardAddress.countryCode
       };
       const xhr = this.props.createToken(card, (error, token) => {
         if (error) {
@@ -247,23 +247,23 @@ YUI.add('deployment-payment', function() {
         business: business,
         businessName: business && refs.businessName.getValue() || null,
         billingAddresses: [billingAddress],
-        token: token
+        token: token,
+        paymentMethodName: 'Default'
       };
-      const xhr = this.props.createUser(
-        this.props.username, user, (error, user) => {
-          if (error) {
-            const message = 'Could not create a payment user';
-            this.props.addNotification({
-              title: message,
-              message: `${message}: ${error}`,
-              level: 'error'
-            });
-            console.error(message, error);
-            return;
-          }
-          // Reload the user as one should exist now.
-          this._getUser();
-        });
+      const xhr = this.props.createUser(user, (error, user) => {
+        if (error) {
+          const message = 'Could not create a payment user';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
+          return;
+        }
+        // Reload the user as one should exist now.
+        this._getUser();
+      });
       this.xhrs.push(xhr);
     },
 
