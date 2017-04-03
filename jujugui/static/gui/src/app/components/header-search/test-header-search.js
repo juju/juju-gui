@@ -247,4 +247,35 @@ describe('HeaderSearch', function() {
       store: ''
     });
   });
+
+  it('navigates to the store if the query is only whitespace', function() {
+    appState.current = {
+      search: {text: '  '},
+      activeComponent: 'store'
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        appState={appState} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {searchInput: {focus: sinon.stub()}};
+    instance.state.active = true;
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: null,
+        type: null
+      },
+      store: ''
+    });
+  });
 });
