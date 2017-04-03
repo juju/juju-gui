@@ -25,6 +25,7 @@ YUI.add('machine-view', function() {
       acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
@@ -126,6 +127,15 @@ YUI.add('machine-view', function() {
     },
 
     /**
+      Handle opening the store.
+
+      @method _openStore
+    */
+    _openStore: function() {
+      this.props.changeState({store: ''});
+    },
+
+    /**
       Display a list of unplaced units or onboarding.
 
       @method _generateUnplacedUnits
@@ -145,7 +155,12 @@ YUI.add('machine-view', function() {
         var content;
         if (props.services.size() === 0) {
           icon = 'add_16';
-          content = 'Add applications to get started';
+          content = (
+            <span className="link"
+              onClick={this._openStore}>
+              Add applications to get started
+            </span>
+        );
         } else {
           icon = 'task-done_16';
           content = 'You have placed all of your units';

@@ -1757,6 +1757,7 @@ YUI.add('juju-gui', function(Y) {
           addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
               this, this.db, this.env)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+          changeState={this.state.changeState.bind(this.state)}
           createMachine={this._createMachine.bind(this)}
           destroyMachines={this.env.destroyMachines.bind(this.env)}
           environmentName={db.environment.get('name') || ''}
