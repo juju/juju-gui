@@ -63,6 +63,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -93,7 +94,10 @@ describe('MachineView', function() {
             <div className="machine-view__column-onboarding">
               <juju.components.SvgIcon name="add_16"
                 size="16" />
-              Add applications to get started
+              <span className="link"
+                onClick={instance._openStore}>
+                Add applications to get started
+              </span>
             </div>
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
@@ -185,7 +189,7 @@ describe('MachineView', function() {
           </juju.components.MachineViewColumn>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display onboarding if there are no applications', function() {
@@ -195,13 +199,14 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -209,15 +214,52 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />);
+        services={services} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="add_16"
           size="16" />
-        Add applications to get started
+        <span className="link"
+          onClick={instance._openStore}>
+          Add applications to get started
+        </span>
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    expect(
+      output.props.children.props.children[0].props.children[1]).toEqualJSX(
+      expected);
+  });
+
+  it('can open the store from the onboarding', function() {
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    const changeState = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        acl={acl}
+        addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        changeState={changeState}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
+        environmentName="My Env"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
+        units={units}
+        services={services} />, true);
+    const output = renderer.getRenderOutput();
+    output.props.children.props.children[0].props.children[1].props.children[1]
+      .props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {store: ''});
   });
 
   it('can display onboarding if there are no unplaced units', function() {
@@ -234,6 +276,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -267,6 +310,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -319,6 +363,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -395,6 +440,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -454,6 +500,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -498,6 +545,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -539,6 +587,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -575,6 +624,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -633,6 +683,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -681,6 +732,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -750,6 +802,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -827,6 +880,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -889,6 +943,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -941,6 +996,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
@@ -990,6 +1046,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1070,6 +1127,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1159,6 +1217,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1216,6 +1275,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1286,6 +1346,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1327,6 +1388,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -1361,6 +1423,7 @@ describe('MachineView', function() {
         acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"

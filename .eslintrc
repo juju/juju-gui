@@ -45,6 +45,7 @@ globals:
   describe: true
   enhanceWithClickOutside: true
   Exception: true
+  expect: true
   fail: true
   GlobalConfig: true
   it: true
