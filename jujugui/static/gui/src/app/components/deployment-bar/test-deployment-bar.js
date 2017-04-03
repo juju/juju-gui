@@ -77,7 +77,7 @@ describe('DeploymentBar', function() {
           </div>
         </div>
       </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without the install button', function() {
@@ -177,7 +177,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -212,7 +212,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -230,7 +230,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -263,7 +263,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -281,7 +281,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -299,7 +299,7 @@ describe('DeploymentBar', function() {
         services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[1],
+    expect(output.props.children.props.children[1]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -316,16 +316,12 @@ describe('DeploymentBar', function() {
         hasEntities={true}
         modelCommitted={false}
         showInstall={true} />, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.GenericButton
-        action={instance._deployAction}
-        type="inline-deployment"
-        disabled={true}
-        title="Deploy changes (2)" />);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children, expected);
+      <div className="deployment-bar__read-only">
+        Read only
+      </div>);
+    expect(output.props.children.props.children[2]).toEqualJSX(expected);
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{

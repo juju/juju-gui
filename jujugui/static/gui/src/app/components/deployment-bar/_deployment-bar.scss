@@ -10,17 +10,13 @@
     .button--inline-deployment {
       padding-left: 10px;
       padding-right: 10px;
-
-      &:first-child {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-
-      &:last-child {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
     }
+  }
+
+  &__read-only {
+    padding: 10px 15px;
+    background-color: #fff;
+    border-radius: $border-radius;
   }
 
   .button--inline-neutral {

@@ -118,9 +118,31 @@ YUI.add('deployment-bar', function() {
       });
     },
 
-    render: function() {
+    /**
+      Generate the deploy button or read-only notice.
+
+      @method _generateButton
+    */
+    _generateButton: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       var deployButton = this._getDeployButtonLabel();
+      if (this.props.acl.isReadOnly()) {
+        return (
+          <div className="deployment-bar__read-only">
+            Read only
+          </div>);
+      }
+      return (
+        <div className="deployment-bar__deploy">
+          <juju.components.GenericButton
+            action={this._deployAction}
+            type="inline-deployment"
+            disabled={changeCount === 0}
+            title={deployButton} />
+        </div>);
+    },
+
+    render: function() {
       return (
         <juju.components.Panel
           instanceName="deployment-bar-panel"
@@ -129,13 +151,7 @@ YUI.add('deployment-bar', function() {
             {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
-            <div className="deployment-bar__deploy">
-              <juju.components.GenericButton
-                action={this._deployAction}
-                type="inline-deployment"
-                disabled={this.props.acl.isReadOnly() || changeCount === 0}
-                title={deployButton} />
-            </div>
+            {this._generateButton()}
           </div>
         </juju.components.Panel>
       );
