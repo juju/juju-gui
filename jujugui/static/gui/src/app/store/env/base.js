@@ -28,7 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-base', function(Y) {
 
   const module = Y.namespace('juju.environments');
-  const _sessionStorageData = {};
   // Define a Juju tags management object.
   module.tags = {
     /**
@@ -108,53 +107,6 @@ YUI.add('juju-env-base', function(Y) {
     };
   };
 
-  module.stubSessionStorage = {
-    /**
-     * Implement simple sessionStorage getItem work-alike.
-     *
-     * @method getItem
-     * @param {String} key The key to be used.
-     * @return {Object} String on null; the value for the key.
-     */
-    getItem: function(key) {
-      // sessionStorage returns null, not undefined, for missing keys.
-      // This actually makes a difference for the JSON parsing.
-      return _sessionStorageData[key] || null;
-    },
-    /**
-     * Implement simple sessionStorage setItem work-alike.
-     *
-     * @method setItem
-     * @param {String} key The key to be used.
-     * @param {String} value The value to be set.
-     * @return {undefined} side effects only.
-     */
-    setItem: function(key, value) {
-      _sessionStorageData[key] = value;
-    }
-  };
-
-  /**
-   * Set local sessionStorage for module, handling possible security issues.
-   *
-   * @method verifySessionStorage
-   * @return {undefined} side effects only.
-   */
-  module.verifySessionStorage = function() {
-    try {
-      // Any manipulation of the sessionStorage that might actually fail
-      // because cookies are turned off needs to be in this try/catch block.
-      if (!module.sessionStorage) {
-        // The conditional is to allow for test manipulation.
-        module.sessionStorage = window.sessionStorage;
-      }
-      module.sessionStorage.getItem('credentials');
-    } catch (e) {
-      module.sessionStorage = module.stubSessionStorage;
-    }
-  };
-  module.verifySessionStorage();
-
   /**
    * The Base Juju environment.
    *
@@ -201,19 +153,12 @@ YUI.add('juju-env-base', function(Y) {
     */
     'ecs': {},
     /**
-      The username used to connect.
+      The user authorization object.
 
       @attribute user
-      @type {string}
+      @type {Object}
     */
     'user': {},
-    /**
-      The password used to connect.
-
-      @attribute password
-      @type {string}
-    */
-    'password': {},
     /**
       Whether or not the connection is open.
 
@@ -337,12 +282,11 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
-      // Populate our credentials if they don't already exist.
-      const credentials = this.getCredentials();
+      const credentials = this.get('user').controller;
       if (!credentials.areAvailable) {
-        credentials.user = this.get('user') || '';
-        credentials.password = this.get('password') || '';
-        this.setCredentials(credentials);
+        credentials.user = '';
+        credentials.password = '';
+        this.get('user').controller = credentials;
       }
     },
 
@@ -412,7 +356,7 @@ YUI.add('juju-env-base', function(Y) {
       }
       this.cleanup(() => {
         this.userIsAuthenticated = false;
-        this.setCredentials(null);
+        this.get('user').controller = null;
         this.ws.close();
         callback();
       });
@@ -462,74 +406,25 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-      Store the user's credentials in session storage.
-
-      @method setCredentials
-      @param {Object} The credentials to store.
-        Possible properties
-          { user: string, password: string, macaroons: object, external: any }.
-        The user must be a user name, not a user tag.
-      @return {undefined} Stores data only.
-    */
-    setCredentials: function(credentials) {
-      module.sessionStorage.setItem(
-          'credentials', JSON.stringify(credentials));
-    },
-
-    /**
-     * Retrieve the stored user credentials.
+     * Fire a "permissionDenied" event passing the attempted operation.
      *
-     * @method getCredentials
-     * @return {Object} The stored user credentials with "user", "password" and
-     *   "macaroons" attributes. This object also exposes the "areAvailable"
-     *   property holding whether either user/password or macaroons credentials
-     *   are actually available.
+     * @method _firePermissionDenied
+     * @private
+     * @param {Object} op The attempted operation (with an "op" attr).
+     * @return {undefined} Fires an event only.
      */
-    getCredentials: function() {
-      var credentials = JSON.parse(
-        module.sessionStorage.getItem('credentials'));
-      if (!credentials) {
-        credentials = {};
-      }
-      if (credentials.user) {
-        // User names without a "@something" part are local Juju users.
-        if (credentials.user.indexOf('@') === -1) {
-          credentials.user += '@local';
-        }
-      } else {
-        credentials.user = '';
-      }
-      if (!credentials.password) {
-        credentials.password = '';
-      }
-      if (!credentials.macaroons) {
-        credentials.macaroons = null;
-      }
-      Object.defineProperties(credentials, {
-        areAvailable: {
-          /**
-           * Reports whether or not credentials are populated.
-           *
-           * @method get
-           * @return {Boolean} Whether or not either user and password or
-           *   macaroons are set.
-           */
-          get: function() {
-            const creds = !!((this.user && this.password) || this.macaroons);
-            // In typical deploys this is sufficient however in HJC or when
-            // external auth values are provided we have to be more resilient.
-            return creds || this.areExternal;
-          }
-        },
-        areExternal: {
-          get: function() {
-            return !!(this.external);
-          }
-        }
+    _firePermissionDenied: function(op) {
+      var title = 'Permission denied';
+      var message = ('GUI is in read-only mode and this operation ' +
+          'requires a model modification');
+      var silent = this.get('_silentFailureOps').some(v => {
+        return v === op.op;
       });
-      return credentials;
+      console.warn(title + ': ' + message + '. Attempted operation: ', op);
+      if (!silent) {
+        this.fire('permissionDenied', {title: title, message: message, op: op});
+      }
     }
-
   });
 
   module.BaseEnvironment = BaseEnvironment;

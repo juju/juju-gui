@@ -31,27 +31,42 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+
     it('calls "open" on connection if available.', function() {
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       const conn= {
         open: sinon.stub(),
         close: sinon.stub()
       };
-      const env = new environments.BaseEnvironment({conn: conn});
+      const env = new environments.BaseEnvironment({
+        conn: conn, user: userClass});
       env.connect();
       assert.equal(conn.open.callCount, 1);
       env.destroy();
     });
 
     it('calls "cleanup" when the connection is closed', function() {
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'who', password: 'tardis'};
       const conn = {
         open: sinon.stub(),
         close: sinon.stub()
       };
-      const env = new environments.BaseEnvironment({conn: conn});
+      const env = new environments.BaseEnvironment({
+        conn: conn, user: userClass});
       env.connect();
       // Simulate the connection is authenticated.
       env.userIsAuthenticated = true;
-      env.setCredentials({user: 'who', 'password': 'tardis'});
       let called = false;
       env.cleanup = function(done) {
         called = true;
@@ -64,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // login data has been properly cleaned up.
         assert.strictEqual(conn.close.callCount, 1, 'connection not closed');
         assert.strictEqual(env.userIsAuthenticated, false);
-        assert.strictEqual(env.getCredentials().areAvailable, false);
+        assert.strictEqual(env.get('user').controller.areAvailable, false);
       };
       env.close();
       // The cleanup method has been called.
@@ -73,7 +88,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets connecting when it is attempting a connection', function() {
-      const env = new environments.BaseEnvironment();
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      const env = new environments.BaseEnvironment({user: userClass});
       env.set('socket_url', 'ws://sandbox');
       env.connect();
       assert.equal(env.get('connecting'), true);
@@ -81,61 +98,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
-    it('uses the module-defined sessionStorage.', function() {
-      const conn = {
-        open: sinon.stub(),
-        close: sinon.stub()
-      };
-      var env = new environments.BaseEnvironment({conn: conn});
-      var original = environments.sessionStorage;
-      var setItemValue = {};
-      environments.sessionStorage = {
-        getItem: function(key) {
-          return setItemValue[key];
-        },
-        setItem: function(key, value) {
-          setItemValue[key] = value;
-        }
-      };
-      // Try with a valid value.
-      var value = {user: 'foo', password: 'kumquat', macaroons: ['macaroon']};
-      env.setCredentials(value);
-      assert.deepEqual(setItemValue, {credentials: JSON.stringify(value)});
-      var creds = env.getCredentials();
-      assert.strictEqual(creds.areAvailable, true);
-      assert.strictEqual(creds.areExternal, false);
-      assert.strictEqual(creds.user, 'foo@local');
-      assert.strictEqual(creds.password, 'kumquat');
-      assert.deepEqual(creds.macaroons, ['macaroon']);
-      // Try with null value.
-      env.setCredentials(null);
-      assert.deepEqual(setItemValue, {credentials: 'null'});
-      creds = env.getCredentials();
-      assert.strictEqual(creds.areAvailable, false);
-      assert.strictEqual(creds.areExternal, false);
-      assert.strictEqual(creds.user, '');
-      assert.strictEqual(creds.password, '');
-      assert.strictEqual(creds.macaroons, null);
-      // Credentials are available with macaroons only or user/password only.
-      env.setCredentials({macaroons: ['macaroon']});
-      assert.strictEqual(env.getCredentials().areAvailable, true);
-      env.setCredentials({user: 'foo', password: 'kumquat'});
-      assert.strictEqual(env.getCredentials().areAvailable, true);
-      env.setCredentials({external: 'foo'});
-      assert.strictEqual(env.getCredentials().areExternal, true);
-      // Clean up.
-      environments.sessionStorage = original;
-    });
-
     describe('attribute resetter', () => {
       let baseModel;
 
       beforeEach(() => {
+        const userClass = new window.jujugui.User({storage: getMockStorage()});
+        userClass.controller = {user: 'user', password: 'password'};
         const conn = {
           open: sinon.stub(),
           close: sinon.stub()
         };
-        baseModel = new environments.BaseEnvironment({conn: conn});
+        baseModel = new environments.BaseEnvironment({
+          conn: conn, user: userClass});
       });
 
       it('sets attributes', () => {
@@ -183,45 +157,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-  });
-
-  describe('Base Environment module', function() {
-    var requires = ['juju-env-base'];
-    var environments, juju;
-
-    before(function(done) {
-      YUI(GlobalConfig).use(requires, function(Y) {
-        juju = Y.namespace('juju');
-        environments = juju.environments;
-        done();
-      });
-    });
-
-    it('has a working minimal stubSessionStorage.', function() {
-      assert.isNull(environments.stubSessionStorage.getItem('notKey'));
-      environments.stubSessionStorage.setItem('foo', 'bar');
-      assert.equal(environments.stubSessionStorage.getItem('foo'), 'bar');
-      environments.stubSessionStorage.setItem('foo', undefined);
-      assert.isNull(environments.stubSessionStorage.getItem('foo'));
-    });
-
-    it('has a working verifySessionStorage.', function() {
-      // Make sure that the module called the function already.
-      assert.isDefined(environments.sessionStorage);
-      var original = environments.sessionStorage;
-      environments.sessionStorage = {
-        getItem: function() {
-          throw 'Firefox security exception';
-        }
-      };
-      environments.verifySessionStorage();
-      // Verify that the function noticed that sessionStorage was broken and
-      // replaced it with a good one.
-      assert.strictEqual(
-          environments.sessionStorage, environments.stubSessionStorage);
-      // Clean up.
-      environments.sessionStorage = original;
-    });
   });
 
   describe('tags management', function() {

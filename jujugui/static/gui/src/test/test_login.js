@@ -32,9 +32,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+
     beforeEach(function() {
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
-      env = new juju.environments.GoEnvironment({conn: conn});
+      env = new juju.environments.GoEnvironment({conn: conn, user: userClass});
       env.connect();
       conn.open();
     });
@@ -70,27 +82,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var data = {error: 'who are you?'};
       env.handleLogin(data);
       assert.deepEqual(
-        env.getCredentials(), {user: '', password: '', macaroons: null});
-    });
-
-    it('credentials passed to the constructor are stored', function() {
-      const user = 'jean-luc-picard';
-      const password = 'I am the real legend!';
-      // Make sure that the session is empty from the 'beforeEach' instantiation
-      sessionStorage.setItem('credentials', null);
-      const env = new juju.environments.GoEnvironment({
-        user: user,
-        password: password,
-        conn: conn
-      });
-      const credentials = env.getCredentials();
-      assert.equal(credentials.user, user + '@local');
-      assert.equal(credentials.password, password);
-      assert.equal(JSON.stringify({
-        user: user,
-        password: password,
-        macaroons: null
-      }), sessionStorage.getItem('credentials'));
+        env.get('user').controller, {user: '', password: '', macaroons: null});
     });
 
     it('login requests are sent in response to a connection', function() {
@@ -104,7 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('with credentials set, login() sends an RPC message', function() {
-      env.setCredentials({user: 'admin', password: 'password'});
+      env.get('user').controller = {user: 'admin', password: 'password'};
       env.login();
       var message = conn.last_message();
       assert.equal(message.request, 'Login');

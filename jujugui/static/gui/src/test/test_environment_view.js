@@ -217,6 +217,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {
+        const getMockStorage = function() {
+          return new function() {
+            return {
+              store: {},
+              setItem: function(name, val) { this.store['name'] = val; },
+              getItem: function(name) { return this.store['name'] || null; }
+            };
+          };
+        };
+        const userClass = new window.jujugui.User({storage: getMockStorage()});
+        userClass.controller = {user: 'user', password: 'password'};
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
@@ -226,7 +237,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         juju = Y.namespace('juju');
         db = new models.Database();
         ecs = new juju.EnvironmentChangeSet({db: db});
-        env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+        env = new juju.environments.GoEnvironment({
+          conn: conn, ecs: ecs, user: userClass});
         env.connect();
         conn.open();
         fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');

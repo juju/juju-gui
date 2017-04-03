@@ -37,14 +37,24 @@ describe('Environment Change Set', function() {
   });
 
   beforeEach(function() {
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     dbObj = new models.Database();
     ecs = new ECS({
       db: dbObj
     });
     envObj = new Y.juju.environments.GoEnvironment({
       connection: new testUtils.SocketStub(),
-      user: 'user',
-      password: 'password',
+      user: userClass,
       ecs: ecs
     });
     sinon.stub(envObj, '_addCharm');

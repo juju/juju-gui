@@ -1471,6 +1471,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.deploy = function(app, callback, autoplace=true, modelName, args) {
     const env = app.env;
     const controllerAPI = app.controllerAPI;
+    const user = app.user;
     if (autoplace) {
       app._autoPlaceUnits();
     }
@@ -1506,7 +1507,7 @@ YUI.add('juju-view-utils', function(Y) {
       app.switchEnv(socketUrl, null, null, commit, true, false);
     };
     controllerAPI.createModel(
-      modelName, controllerAPI.getCredentials().user, args, handler);
+      modelName, user.controller.user, args, handler);
   };
 
   /**

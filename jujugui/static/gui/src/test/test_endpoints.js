@@ -41,6 +41,17 @@ describe('Relation endpoints logic', function() {
   });
 
   beforeEach(function() {
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
       charmstoreURL: 'http://1.2.3.4/',
@@ -53,19 +64,20 @@ describe('Relation endpoints logic', function() {
     env = new juju.environments.GoEnvironment({
       conn: conn,
       ecs: ecs,
-      password: 'password',
-      user: 'user'
+      user: userClass
     });
     env.connect();
     app = new Y.juju.App({
       baseUrl: 'http://example.com/',
       controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub()
+        conn: new utils.SocketStub(),
+        user: userClass
       }),
       env: env,
       socketTemplate: '/model/$uuid/api',
       controllerSocketTemplate: '/api',
-      jujuCoreVersion: '2.0.0'
+      jujuCoreVersion: '2.0.0',
+      user: userClass
     });
     app.navigate = function() { return true; };
     app.showView(new Y.View());
@@ -400,6 +412,17 @@ describe('Endpoints map handlers', function() {
   });
 
   beforeEach(function() {
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
       charmstoreURL: 'http://1.2.3.4/',
@@ -411,8 +434,7 @@ describe('Endpoints map handlers', function() {
     conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
-      user: 'user',
-      password: 'password',
+      user: userClass,
       ecs: ecs,
       conn: conn
     });
@@ -425,9 +447,9 @@ describe('Endpoints map handlers', function() {
       apiAddress: 'wss://1.2.3.4:1234',
       controllerAPI: new juju.ControllerAPI({
         conn: utils.SocketStub(),
-        user: 'user',
-        password: 'password'
+        user: userClass
       }),
+      user: userClass,
       consoleEnabled: true,
       charmstore: factory.makeFakeCharmstore(),
       jujuCoreVersion: '2.0.0',
@@ -619,6 +641,17 @@ describe('Application config handlers', function() {
   });
 
   beforeEach(function() {
+    const getMockStorage = function() {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store['name'] = val; },
+          getItem: function(name) { return this.store['name'] || null; }
+        };
+      };
+    };
+    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
       charmstoreURL: 'http://1.2.3.4/',
@@ -632,16 +665,17 @@ describe('Application config handlers', function() {
     env = new juju.environments.GoEnvironment({
       conn: conn,
       ecs: ecs,
-      user: 'user',
-      password: 'password'
+      user: userClass
     });
     env.connect();
     env.set('facades', {Application: [1]});
     app = new Y.juju.App({
       baseUrl: 'http://example.com/',
       controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub()
+        conn: new utils.SocketStub(),
+        user: userClass
       }),
+      user: userClass,
       env: env,
       socketTemplate: '/model/$uuid/api',
       controllerSocketTemplate: '/api',
