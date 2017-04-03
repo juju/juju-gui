@@ -52,11 +52,16 @@
     &-row,
     &-header {
       margin: 0;
-      padding: 15px 0 15px 15px;
+      padding: 15px 0 15px 0;
     }
 
     &-header {
       border-bottom: 1px solid $mid-grey;
+      // These side paddings are in addition to the top and bottom specified
+      // above. The header needs the side paddings while the rows do not, as
+      // the expanding divs inside the rows handle side paddings.
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
     &-row {
@@ -118,5 +123,9 @@
     &:last-child:after {
       content: '';
     }
+  }
+
+  .expanding-row__initial {
+    padding: 0 20px;
   }
 }

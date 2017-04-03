@@ -241,19 +241,42 @@ YUI.add('user-profile-entity', function() {
     },
 
     /**
-      Generate the owner for a model.
+      Generate the credentials for a model.
 
-      @method _generateOwner
-      @return {Object} The owner markup.
+      @method _generateCredentials
+      @return {Object} The credential markup.
     */
-    _generateOwner: function() {
-      const entity = this.props.entity;
-      if (this.props.type !== 'model' || !entity.owner) {
-        return;
+    _generateModelInfo: function() {
+      if (this.props.type !== 'model') {
+        return null;
       }
+      const model = this.props.entity;
+      // See the _generateRow function in model-list.js for matching logic.
+      // Both sections should be kept roughly in sync.
+      const region = model.region || 'no region';
+      let owner = '--';
+      if (model.owner) {
+        owner = model.owner = model.owner.split('@')[0];
+      }
+      // The main different between this and model-list.js is that we display
+      // the credentials used here in place of the model name, as the model
+      // name is displayed elsewhere in the expanded row.
       return (
-        <div className="three-col last-col">
-          Owner: {entity.owner}
+        <div className="modelInfo">
+          <div className="prepend-three four-col">
+            {model.cloud + '/' + region}
+          </div>
+          <div className="two-col">
+            <juju.components.DateDisplay
+              date={model.lastConnection || '--'}
+              relative={true} />
+          </div>
+          <div className="one-col">
+            {model.numMachines}
+          </div>
+          <div className="two-col last-col">
+            {owner}
+          </div>
         </div>
       );
     },
@@ -266,12 +289,29 @@ YUI.add('user-profile-entity', function() {
       const isCharm = type === 'charm';
       // Model names will be in the format "username/model-name" so we have to
       // extract the part we need.
-      let name = entity.name;
+      let title = (
+        <div className="entity-title">
+          <span className="entity-title__name">
+            {entity.name}
+          </span>
+        </div>
+      );
       let buttonAction;
       if (isModel) {
-        if (entity.name.indexOf('/') !== -1) {
+        let name = entity.name;
+        if (name.indexOf('/') !== -1) {
           name = name.split('/')[1];
         }
+        title = (
+          <div className="entity-title">
+            <span className="entity-title__name">
+              {name}
+            </span>
+            <span className="entity-title__credential">
+              {entity.credential}
+            </span>
+          </div>
+        );
         buttonAction = this._switchModel.bind(this, {
           id: entity.uuid,
           name: name,
@@ -283,7 +323,7 @@ YUI.add('user-profile-entity', function() {
       const icon = isCharm ? (
         <img className="user-profile__entity-icon"
           src={entity.icon}
-          title={name} />) : undefined;
+          title={entity.name} />) : undefined;
       const classes = {
         'user-profile__entity': true,
         'user-profile__list-row': true
@@ -300,7 +340,7 @@ YUI.add('user-profile-entity', function() {
           <div>
             <div className="expanding-row__expanded-header twelve-col">
               <div className="six-col no-margin-bottom">
-                {icon}{name}
+                {icon}{title}
               </div>
               <div className={'expanding-row__expanded-header-action ' +
                 'six-col last-col no-margin-bottom'}>
@@ -315,7 +355,7 @@ YUI.add('user-profile-entity', function() {
               'no-margin-bottom'}>
               {this._generateSeries()}
               {this._generateServices()}
-              {this._generateOwner()}
+              {this._generateModelInfo()}
               {this._generateDiagram()}
               {this._generateDescription()}
               {this._generateTags()}
