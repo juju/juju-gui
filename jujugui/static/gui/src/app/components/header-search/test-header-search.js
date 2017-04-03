@@ -41,8 +41,8 @@ describe('HeaderSearch', function() {
 
   it('sets the active class if there is search metadata', function() {
     appState.current.search = 'apache2';
-    var className = 'header-search header-search--active';
-    var output = jsTestUtils.shallowRender(
+    const className = 'header-search header-search--active';
+    const output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />);
     assert.deepEqual(output,
@@ -52,7 +52,7 @@ describe('HeaderSearch', function() {
   });
 
   it('hides the close button when not active', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />);
     assert.deepEqual(output.props.children[2],
@@ -65,7 +65,7 @@ describe('HeaderSearch', function() {
   });
 
   it('changes state when the close button is clicked', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />);
     output.props.children[2].props.onClick();
@@ -79,18 +79,18 @@ describe('HeaderSearch', function() {
 
   it('gets cleared when closed', function() {
     appState.current.search = {text: 'hexo'};
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
-    var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
     instance.refs = {
       searchInput: {
         focus: sinon.stub()
       }
     };
     // The input should have the metadata search value
-    var input = output.props.children[0].props.children[1];
+    let input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
     // re-render which will get the new state.
     delete appState.current.search;
@@ -109,18 +109,18 @@ describe('HeaderSearch', function() {
 
   it('does not clear the search when rerendering', function() {
     appState.current.search = {text: 'hexo'};
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
-    var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
     instance.refs = {
       searchInput: {
         focus: sinon.stub()
       }
     };
     // The input should have the metadata search value
-    var input = output.props.children[0].props.children[1];
+    let input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
     // re-render which will get the new state.
     renderer.render(
@@ -132,10 +132,10 @@ describe('HeaderSearch', function() {
   });
 
   it('becomes active when the input is focused', function() {
-    var output = testUtils.renderIntoDocument(
+    const output = testUtils.renderIntoDocument(
       <juju.components.HeaderSearch
         appState={appState} />);
-    var input = output.refs.searchInput;
+    const input = output.refs.searchInput;
     testUtils.Simulate.focus(input);
     assert.isTrue(
         output.refs.headerSearchContainer
@@ -153,7 +153,7 @@ describe('HeaderSearch', function() {
   });
 
   it('navigates to the store when the Store button is clicked', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />);
     output.props.children[1].props.onClick();
@@ -164,14 +164,14 @@ describe('HeaderSearch', function() {
   });
 
   it('opens the search input if the search button is clicked', function() {
-    var focus = sinon.stub();
-    var preventDefault = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const focus = sinon.stub();
+    const preventDefault = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {searchInput: {focus: focus}};
-    var output = renderer.getRenderOutput();
+    let output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick({
       preventDefault: preventDefault
     });
@@ -191,13 +191,13 @@ describe('HeaderSearch', function() {
       search: {text: 'apache2'},
       activeComponent: 'store'
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {searchInput: {focus: sinon.stub()}};
     instance.state.active = true;
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick({
       preventDefault: sinon.stub()
     });
@@ -214,6 +214,68 @@ describe('HeaderSearch', function() {
         type: null
       },
       store: null
+    });
+  });
+
+  it('navigates to the store if the query is blank', function() {
+    appState.current = {
+      search: {text: ''},
+      activeComponent: 'store'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        appState={appState} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {searchInput: {focus: sinon.stub()}};
+    instance.state.active = true;
+    const output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: null,
+        type: null
+      },
+      store: ''
+    });
+  });
+
+  it('navigates to the store if the query is only whitespace', function() {
+    appState.current = {
+      search: {text: '  '},
+      activeComponent: 'store'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        appState={appState} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {searchInput: {focus: sinon.stub()}};
+    instance.state.active = true;
+    const output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: null,
+        type: null
+      },
+      store: ''
     });
   });
 });

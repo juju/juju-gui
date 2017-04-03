@@ -168,6 +168,7 @@ YUI.add('header-search', function() {
         this._openSearch(true);
         return;
       }
+      const query = this.state.query.replace(/ /g, '');
       this.props.appState.changeState({
         root: null,
         search: {
@@ -176,10 +177,10 @@ YUI.add('header-search', function() {
           requires: null,
           series: null,
           tags: null,
-          text: this.state.query,
+          text: query === '' ? null : query,
           type: null
         },
-        store: null
+        store: query === '' ? '' : null
       });
     },
 
