@@ -991,8 +991,9 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         views.utils.showProfile(
-         this.env && this.env.get('ecs'),
-         this.state.changeState.bind(this.state), auth.rootUserName);
+          this.env && this.env.get('ecs'),
+          this.state.changeState.bind(this.state),
+          auth.rootUserName);
       };
 
       const navigateUserAccount = () => {
@@ -1001,8 +1002,8 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         views.utils.showAccount(
-         this.env && this.env.get('ecs'),
-         this.state.changeState.bind(this.state));
+          this.env && this.env.get('ecs'),
+          this.state.changeState.bind(this.state));
       };
       ReactDOM.render(<window.juju.components.UserMenu
         controllerAPI={controllerAPI}

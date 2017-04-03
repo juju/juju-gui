@@ -94,7 +94,7 @@
     margin: 12px 0 11px 12px;
     // scss-lint:disable ImportantRule
     color: $warm-grey !important;
-    // scss-lint:disable ImportantRule
+    // scss-lint:enable ImportantRule
     text-decoration: none;
 
     &-with-text {
@@ -121,7 +121,7 @@
       // scss-lint:disable ImportantRule
       color: $dark-warm-grey !important;
       text-decoration: none !important;
-      // scss-lint:disable ImportantRule
+      // scss-lint:enable ImportantRule
     }
   }
 
@@ -133,12 +133,12 @@
     background-color: $white;
     // scss-lint:disable ImportantRule
     color: $dark-warm-grey !important;
-    // scss-lint:disable ImportantRule
+    // scss-lint:enable ImportantRule
 
     .tooltip__tooltip--below {
       // scss-lint:disable ImportantRule
       display: none !important;
-      // scss-lint:disable ImportantRule
+      // scss-lint:enable ImportantRule
     }
   }
 }
