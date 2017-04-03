@@ -29,21 +29,60 @@ YUI.add('deployment-vpc', function() {
       setVPCId: React.PropTypes.func.isRequired
     },
 
-    /**
-      Handle VPC id changes.
+    getInitialState: function() {
+      return {force: false, forceEnabled: false};
+    },
 
-      @method _onInputBlur
+    /**
+      Handle text input blur changes by setting the VPC data.
+
       @param {Object} evt The blur event.
     */
     _onInputBlur: function(evt) {
-      const value = this.refs.vpcId.getValue();
-      this.props.setVPCId(value);
+      this.setVPC(this.state.force);
+    },
+
+    /**
+      Handle text input key up events by disabling or enabling the VPC force
+      check box based on whether the input is empty.
+
+      @param {Object} evt The key up event.
+    */
+    _onInputKeyUp: function(evt) {
+      this.setState({forceEnabled: !!this.refs.vpcId.getValue()});
+    },
+
+    /**
+      Handle VPC force check box changes by updating the VPC data.
+
+      @param {Object} evt The change event from the check box.
+    */
+    _onCheckboxChange: function(evt) {
+      const force = evt.target.checked;
+      this.setState({force: force});
+      this.setVPC(force);
+    },
+
+    /**
+      Stop the propagation of VPC force check box click events.
+
+      @param {Object} evt The change event from the check box.
+    */
+    _onCheckboxClick: function(evt) {
+      evt.stopPropagation();
+    },
+
+    /**
+      Set VPC id and force values based on the current state of VPC widgets.
+
+      @param {Boolean} force Whether to force the id value, even if not valid.
+    */
+    setVPC: function(force) {
+      this.props.setVPCId(this.refs.vpcId.getValue(), force);
     },
 
     /**
       Render the component.
-
-      @method render
     */
     render: function() {
       return (
@@ -59,8 +98,21 @@ YUI.add('deployment-vpc', function() {
             ref="vpcId"
             multiLine={false}
             onBlur={this._onInputBlur}
+            onKeyUp={this._onInputKeyUp}
             required={false}
           />
+          <input
+            type="checkbox"
+            id="vpcIdForce"
+            onChange={this._onCheckboxChange}
+            onClick={this._onCheckboxClick}
+            checked={this.state.force}
+            disabled={!this.state.forceEnabled}
+          />
+          &nbsp;
+          Force Juju to use the AWS VPC ID specified above, even when it fails
+          the minimum validation criteria. This is ignored if VPC ID is not
+          set.
         </div>
       );
     }

@@ -47,6 +47,16 @@ describe('DeploymentVPC', function() {
     };
   };
 
+  // Check that the setVPCId function has been called for the expected number
+  // of times and, the last time, with the expected id value and force flag.
+  const checkSetVPCIdCalled = (expectedTimes, expectedId, expectedForce) => {
+    assert.strictEqual(setVPCId.callCount, expectedTimes, 'call count');
+    const args = setVPCId.args[expectedTimes-1];
+    assert.strictEqual(args.length, 2, 'args');
+    assert.strictEqual(args[0], expectedId, 'id');
+    assert.strictEqual(args[1], expectedForce, 'force');
+  };
+
   it('renders to show the VPC widgets', function() {
     const comp = render('aws');
     const expectedOutput = (
@@ -62,24 +72,66 @@ describe('DeploymentVPC', function() {
           ref="vpcId"
           multiLine={false}
           onBlur={comp.instance._onInputBlur}
+          onKeyUp={comp.instance._onInputKeyUp}
           required={false}
         />
+        <input
+          type="checkbox"
+          id="vpcIdForce"
+          onClick={comp.instance._onCheckboxClick}
+          onChange={comp.instance._onCheckboxChange}
+          checked={false}
+          disabled={true}
+        />
+        &nbsp;
+        Force Juju to use the AWS VPC ID specified above, even when it fails
+        the minimum validation criteria. This is ignored if VPC ID is not
+        set.
       </div>
     );
     assert.deepEqual(comp.output, expectedOutput);
   });
 
-  it('stores the VPC value', function() {
+  it('stores the VPC data', function() {
     const comp = render();
-    const input = comp.output.props.children[1];
-    // Simulate returning a value from a blur event.
-    comp.instance.refs = {vpcId: {getValue: () => 'my VPC id'}};
+    const children = comp.output.props.children;
+    const input = children[1];
+    // Simulate returning a value from the id value field.
+    comp.instance.refs = {vpcId: {getValue: () => 'my-id'}};
     input.props.onBlur();
-    // The VPC id value has been stored.
-    assert.strictEqual(setVPCId.callCount, 1);
-    const args = setVPCId.args[0];
-    assert.strictEqual(args.length, 1);
-    assert.equal(args[0], 'my VPC id');
+    // The VPC data has been stored.
+    checkSetVPCIdCalled(1, 'my-id', false);
   });
 
+  it('forces the VPC data', function() {
+    const comp = render();
+    const children = comp.output.props.children;
+    const input = children[1];
+    const checkbox = children[2];
+    // Simulate forcing a value from the id value field.
+    comp.instance.refs = {vpcId: {getValue: () => 'forced-id'}};
+    checkbox.props.onChange({target: {checked: true}});
+    input.props.onBlur();
+    // The VPC data has been stored.
+    checkSetVPCIdCalled(2, 'forced-id', true);
+  });
+
+  it('enables or disable the force check box', function() {
+    const comp = render();
+    const children = comp.output.props.children;
+    const instance = comp.instance;
+    const input = children[1];
+    // Check that the force check box is initially disabled.
+    assert.strictEqual(instance.state.forceEnabled, false, 'initial');
+    // Simulate returning a value from the id value field.
+    instance.refs = {vpcId: {getValue: () => 'my-id'}};
+    input.props.onKeyUp();
+    // The check box is now enabled.
+    assert.strictEqual(instance.state.forceEnabled, true, 'enabled');
+    // Simulate returning no value from the id value field.
+    instance.refs = {vpcId: {getValue: () => ''}};
+    input.props.onKeyUp();
+    // The check box is now disabled again.
+    assert.strictEqual(instance.state.forceEnabled, false, 'disabled again');
+  });
 });
