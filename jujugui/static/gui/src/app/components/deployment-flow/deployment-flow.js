@@ -222,7 +222,7 @@ YUI.add('deployment-flow', function() {
           cloud.name
         );
       }
-      this.setState({cloud: cloud});
+      this.setState({cloud: cloud, vpcId: INITIAL_VPC_ID});
     },
 
     /**
