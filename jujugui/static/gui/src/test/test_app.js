@@ -73,8 +73,8 @@ describe('App', function() {
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) { this.store[name] = val; },
+          getItem: function(name) { return this.store[name] || null; }
         };
       };
     };
