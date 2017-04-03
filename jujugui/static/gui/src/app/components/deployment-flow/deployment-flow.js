@@ -20,6 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('deployment-flow', function() {
 
+  // Define the VPC ID zero value.
+  const INITIAL_VPC_ID = null;
+
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -88,7 +91,7 @@ YUI.add('deployment-flow', function() {
         terms: this._getTerms() || [],
         // Whether the user has ticked the checked to agree to terms.
         termsAgreed: false,
-        vpcId: null,
+        vpcId: INITIAL_VPC_ID,
         vpcIdForce: false
       };
     },
@@ -263,7 +266,7 @@ YUI.add('deployment-flow', function() {
     */
     _setVPCId: function(value, force) {
       if (!value) {
-        value = null;
+        value = INITIAL_VPC_ID;
         force = false;
       }
       this.setState({vpcId: value, vpcIdForce: !!force});
