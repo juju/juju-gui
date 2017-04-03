@@ -41,6 +41,7 @@
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.1.0",
+    "karma-jasmine-expect-jsx": "^1.0.2",
     "karma-mocha": "^1.0.1",
     "karma-mocha-reporter": "^2.2.2",
     "mocha": "^3.2.0",

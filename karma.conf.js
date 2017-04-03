@@ -12,7 +12,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'chai-sinon'],
+    frameworks: ['jasmine', 'jasmine-expect-jsx', 'chai-sinon'],
 
     // List of files / patterns to load in the browser; Karma is smart enough,
     // with the preprocessors, to watch the source files and serve the compiled
@@ -85,7 +85,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['mocha'],
+    reporters: ['jasmine-expect-jsx', 'mocha'],
 
     // web server and port
     hostname: '0.0.0.0',
