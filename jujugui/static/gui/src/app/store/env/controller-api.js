@@ -1107,6 +1107,7 @@ YUI.add('juju-controller-api', function(Y) {
         - err: a possible result specific error, in which case all subsequent
           fields are omitted;
         - names: the list of names that identify cloud credentials
+        - displayNames: the list of credential names extracted from the full id
           corresponding to the user/cloud pair provided as input.
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty array.
@@ -1182,6 +1183,7 @@ YUI.add('juju-controller-api', function(Y) {
         - authType: the authentication type (as a string, like 'jsonfile');
         - attrs: non-secret credential values as an object mapping strings to
           strings. Keys there are based on the cloud type;
+       - displayName: the credential name extracted from the full id;
         - redacted: a list of names of redacted attributes.
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty object.
