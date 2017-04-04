@@ -30,6 +30,7 @@ YUI.add('generic-input', function() {
       label: React.PropTypes.string,
       multiLine: React.PropTypes.bool,
       onBlur: React.PropTypes.func,
+      onChange: React.PropTypes.func,
       onFocus: React.PropTypes.func,
       onKeyUp: React.PropTypes.func,
       placeholder: React.PropTypes.string,
@@ -159,6 +160,28 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Call the supplied onChange method with the value of the input.
+
+      @method _callOnChange
+    */
+    _callOnChange: function() {
+      var onChange = this.props.onChange;
+      if (onChange) {
+        onChange(this.getValue());
+      }
+    },
+
+    /**
+      Handle the onChange event for a content editable element.
+
+      @method _handleDIVOnchange
+    */
+    _handleDIVOnchange: function() {
+      this.validate();
+      this._callOnChange();
+    },
+
+    /**
       Generates a label for the input if the prop is provided.
       @method _generateLabel
     */
@@ -204,7 +227,7 @@ YUI.add('generic-input', function() {
             contentEditable={!disabled}
             id={id}
             dangerouslySetInnerHTML={{__html: this.props.value}}
-            onChange={this.validate}
+            onChange={this._handleDIVOnchange}
             onKeyUp={this._keyUpHandler}
             onFocus={this._focusHandler}
             onBlur={this._blurHandler}
@@ -223,6 +246,7 @@ YUI.add('generic-input', function() {
           onKeyUp={this._keyUpHandler}
           onFocus={this._focusHandler}
           onBlur={this._blurHandler}
+          onChange={this._callOnChange}
           aria-invalid={errors}
           ref="field"
           type={this.props.type} />);

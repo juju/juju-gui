@@ -42,8 +42,7 @@ var module = module;
         first parameter and the user data as its second. The user data
         includes the following fields:
           - nickname {String} The user's nickname
-          - first {String} The user's first name
-          - last {String} The user's last name
+          - name {String} The user's full name
           - email {String} The user's email address
           - business {Boolean} whether this is a business account
           - addresses {Array} A list of address objects, the
@@ -53,8 +52,8 @@ var module = module;
               - line2 {String} The second address line
               - county {String} The address county
               - city {String} The address city
-              - postCode {String} The address post code
-              - country {String} The address country
+              - postcode {String} The address post code
+              - countryCode {String} The address country code
               - phones {Array} a list of phone number strings
           - vat {String|Null} The VAT number
           - businessName {String|Null} The business name
@@ -65,8 +64,8 @@ var module = module;
               - line2 {String} The second address line
               - county {String} The address county
               - city {String} The address city
-              - postCode {String} The address post code
-              - country {String} The address country
+              - postcode {String} The address post code
+              - countryCode {String} The address country code
               - phones {Array} a list of phone number strings
 	        - paymentMethods {Array} A list of payment method objects,
             the objects contain:
@@ -76,8 +75,8 @@ var module = module;
                 - line2 {String|Null} The second address line
                 - county {String|Null} The address county
                 - city {String|Null} The address city
-                - postCode {String|Null} The address post code
-                - country {String|Null} The address country
+                - postcode {String|Null} The address post code
+                - countryCode {String|Null} The address country code
                 - phones {Array} a list of phone number strings
               - brand {String} The card brand name
               - last4 {String} The last four digits of the card number
@@ -107,10 +106,8 @@ var module = module;
       Add a user.
 
       @public createUser
-      @param name {String} The user's username.
       @param user {Object} The user data object, containing:
-        - first {String} The user's first name
-        - last {String} The user's last name
+        - name {String} The user's full name
         - email {String} The user's email address
         - addresses {Array} A list of address objects, the objects contain:
           - name {String} The name of the address e.g. "Home"
@@ -118,8 +115,8 @@ var module = module;
           - line2 {String} The second address line
           - county {String} The address county
           - city {String} The address city
-          - postCode {String} The address post code
-          - country {String} The address country
+          - postcode {String} The address post code
+          - countryCode {String} The address country code
           - phones {Array} a list of phone number strings
         - vat {String|Null} The VAT number
         - business {Boolean} whether this is a business account
@@ -131,18 +128,18 @@ var module = module;
             - line2 {String} The second address line
             - county {String} The address county
             - city {String} The address city
-            - postCode {String} The address post code
-            - country {String} The address country
+            - postcode {String} The address post code
+            - countryCode {String} The address country code
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
-        - token {String|Null} A payment authentication token
+        - token {String|Null} A Stripe token
         - paymentMethodName {String|Null} The name of the payment method
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and a user object as its second (see the getUser object
         for the fields it returns).
     */
-    createUser: function(name, user, callback) {
+    createUser: function(user, callback) {
       const handler = (error, response) => {
         if (error !== null) {
           callback(error, null);
@@ -151,23 +148,20 @@ var module = module;
         const parsed = this._parseUser(response);
         callback(null, parsed);
       };
-      const url = `${this.url}/u/${name}`;
+      const url = `${this.url}/u`;
       const payload = {
-        user: {
-          first: user.first,
-          last: user.last,
-          email: user.email,
-          addresses: this._unparseAddresses(user.addresses),
-          vat: user.vat,
-          business: user.business,
-          'business-name': user.businessName,
-          'billing-addresses': this._unparseAddresses(user.billingAddresses),
-          'allow-email': user.allowEmail,
-          token: user.token,
-          'payment-method-name': user.paymentMethodName
-        }
+        name: user.name,
+        email: user.email,
+        addresses: this._unparseAddresses(user.addresses),
+        vat: user.vat,
+        business: user.business,
+        'business-name': user.businessName,
+        'billing-addresses': this._unparseAddresses(user.billingAddresses),
+        'allow-email': user.allowEmail || false,
+        token: user.token,
+        'payment-method-name': user.paymentMethodName || null
       };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
 
     /**
@@ -187,7 +181,7 @@ var module = module;
           callback(error, null);
           return;
         }
-        callback(null, response['Countries']);
+        callback(null, response['countries']);
       };
       const url = `${this.url}/country`;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
@@ -214,8 +208,7 @@ var module = module;
       });
       return {
         nickname: user.nickname || null,
-        first: user.first || null,
-        last: user.last || null,
+        name: user.name || null,
         email: user.email || null,
         business: user.business || false,
         addresses: this._parseAddresses(user.addresses),
@@ -254,8 +247,8 @@ var module = module;
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
-        postCode: address['post-code'] || null,
-        country: address.country || null,
+        postcode: address.postcode || null,
+        countryCode: address['country-code'] || null,
         phones: address.phones || []
       };
     },
@@ -286,8 +279,8 @@ var module = module;
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
-        'post-code': address.postCode || null,
-        country: address.country || null,
+        postcode: address.postcode || null,
+        'country-code': address.countryCode || null,
         phones: address.phones || []
       };
     }

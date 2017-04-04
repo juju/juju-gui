@@ -1272,6 +1272,9 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
+          createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
+          createUser={
+              this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}
           changes={currentChangeSet}
           charmsGetById={db.charms.getById.bind(db.charms)}
@@ -1290,6 +1293,8 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
+          getCountries={
+              this.payment && this.payment.getCountries.bind(this.payment)}
           getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
@@ -2256,7 +2261,8 @@ YUI.add('juju-gui', function(Y) {
         });
         this.payment = new window.jujulib.payment(
           config.paymentURL, paymentBakery);
-        this.stripe = new window.jujulib.stripe('https://js.stripe.com/');
+        this.stripe = new window.jujulib.stripe(
+          'https://js.stripe.com/', config.stripeKey);
       }
     },
 

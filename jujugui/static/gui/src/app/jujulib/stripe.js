@@ -21,12 +21,14 @@ var module = module;
     @function stripe
     @param url {String} The URL of the Stripe instance, including
       scheme and port, and excluding the API version.
+    @param stripeKey {String} The publishable Stripe key.
     @returns {Object} A client object for making Stripe API calls.
   */
-  function stripe(url) {
+  function stripe(url, stripeKey) {
     // Store the API URL (including version) handling missing trailing slash.
     this.url = `${url.replace(/\/?$/, '/')}${stripeAPIVersion}/`;
     this.stripe = null;
+    this.stripeKey = stripeKey;
   };
 
   stripe.prototype = {
@@ -74,6 +76,7 @@ var module = module;
       }
       this._loadScript(() => {
         this.stripe = this._getStripeModule();
+        this.stripe.setPublishableKey(this.stripeKey);
         callback(this.stripe);
       });
     },

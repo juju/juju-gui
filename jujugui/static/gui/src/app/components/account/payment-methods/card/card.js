@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account-payment-method-card', function() {
 
   juju.components.AccountPaymentMethodCard = React.createClass({
+    displayName: 'AccountPaymentMethodCard',
 
     propTypes: {
       card: React.PropTypes.object.isRequired

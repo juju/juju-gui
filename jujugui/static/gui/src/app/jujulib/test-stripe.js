@@ -12,18 +12,20 @@ describe('jujulib Stripe service', function() {
     fakeStripe = {
       card: {
         createToken: sinon.stub()
-      }
+      },
+      setPublishableKey: sinon.stub()
     };
   });
 
   it('exists', function() {
-    const stripe = new window.jujulib.stripe('http://example.com');
+    const stripe = new window.jujulib.stripe('http://example.com', 'key123');
     assert.strictEqual(stripe instanceof window.jujulib.stripe, true);
     assert.equal(stripe.url,'http://example.com/v2/');
+    assert.equal(stripe.stripeKey,'key123');
   });
 
   it('can load the Stripe JavaScript', function() {
-    const stripe = new window.jujulib.stripe('http://example.com');
+    const stripe = new window.jujulib.stripe('http://example.com', 'key123');
     stripe._getStripeModule = sinon.stub().returns(fakeStripe);
     stripe._getStripe(sinon.stub());
     assert.equal(
@@ -32,17 +34,19 @@ describe('jujulib Stripe service', function() {
   });
 
   it('calls the callback once the script has loaded', function() {
-    const stripe = new window.jujulib.stripe('http://example.com');
+    const stripe = new window.jujulib.stripe('http://example.com', 'key123');
     stripe._loadScript = sinon.stub().callsArg(0);
     stripe._getStripeModule = sinon.stub().returns(fakeStripe);
     const callback = sinon.stub();
     stripe._getStripe(callback);
+    assert.equal(fakeStripe.setPublishableKey.callCount, 1);
+    assert.equal(fakeStripe.setPublishableKey.args[0][0], 'key123');
     assert.equal(callback.callCount, 1);
     assert.equal(callback.args[0][0], fakeStripe);
   });
 
   it('does not load the script more than once', function() {
-    const stripe = new window.jujulib.stripe('http://example.com');
+    const stripe = new window.jujulib.stripe('http://example.com', 'key123');
     stripe._loadScript = sinon.stub().callsArg(0);
     stripe._getStripeModule = sinon.stub().returns(fakeStripe);
     const callback = sinon.stub();

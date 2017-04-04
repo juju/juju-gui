@@ -1,7 +1,15 @@
 .deployment-payment {
+
   &__form {
     @extend %floating-panel;
     padding: 20px;
+
+    // Clearfix.
+    :after {
+      content: '';
+      display: table;
+      clear: both;
+    }
 
     &-content {
       width: 65%;
@@ -46,5 +54,9 @@
   input[type="radio"],
   input[type="checkbox"] {
     margin-right: 10px;
+  }
+
+  .generic-input__errors {
+    margin-bottom: 0;
   }
 }

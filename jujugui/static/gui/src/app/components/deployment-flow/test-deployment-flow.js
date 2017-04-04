@@ -69,12 +69,15 @@ const createDeploymentFlow = (props = {}) => {
     changesFilterByParent: sinon.stub(),
     charmsGetById: charmsGetById,
     charmstore: {},
+    createToken: sinon.stub(),
+    createUser: sinon.stub(),
     deploy: sinon.stub().callsArg(0),
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
     getAgreementsByTerms: getAgreementsByTerms,
     getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
+    getCountries: sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
     groupedChanges: groupedChanges,
@@ -415,16 +418,24 @@ describe('DeploymentFlow', function() {
   it('can show the payments section', function() {
     const acl = {isReadOnly: sinon.stub()};
     const addNotification = sinon.stub();
+    const createToken = sinon.stub();
+    const createUser = sinon.stub();
+    const getCountries = sinon.stub();
     const getUser = sinon.stub();
+    const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
       acl: acl,
       addNotification: addNotification,
       cloud: {name: 'cloud'},
+      createToken: createToken,
+      createUser: createUser,
       credential: 'cred',
+      getCountries: getCountries,
       getUser: getUser,
       isLegacyJuju: false,
       profileUsername: 'spinach',
-      showPay: true
+      showPay: true,
+      validateForm: validateForm
     });
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -438,10 +449,14 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentPayment
           acl={acl}
           addNotification={addNotification}
+          createToken={createToken}
+          createUser={createUser}
+          getCountries={getCountries}
           getUser={getUser}
           paymentUser={null}
           setPaymentUser={instance._setPaymentUser}
-          username="spinach" />
+          username="spinach"
+          validateForm={validateForm} />
       </juju.components.DeploymentSection>);
     assert.deepEqual(output.props.children[9], expected);
   });

@@ -5,7 +5,7 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib register service', function() {
+describe('jujulib payment service', function() {
   let parsedUser, returnedUser;
 
   const makeXHRRequest = function(obj) {
@@ -15,19 +15,18 @@ describe('jujulib register service', function() {
   beforeEach(function() {
     returnedUser = {
       nickname: 'spinach',
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       business: true,
       addresses: [{
         city: 'New Orleans',
-        'post-code': '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       'business-name': 'Spinachy business',
       'billing-addresses': [{
         city: 'New Orleans',
-        'post-code': '70130'
+        postcode: '70130'
       }],
       'payment-methods': [{
         address: {
@@ -36,8 +35,8 @@ describe('jujulib register service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          'post-code': null,
-          country: null,
+          postcode: null,
+          'country-code': null,
           phones: []
         },
         brand: 'Brand',
@@ -52,8 +51,7 @@ describe('jujulib register service', function() {
     };
     parsedUser = {
       nickname: 'spinach',
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       business: true,
       addresses: [{
@@ -62,8 +60,8 @@ describe('jujulib register service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
-        postCode: '70130',
-        country: null,
+        postcode: '70130',
+        countryCode: null,
         phones: []
       }],
       vat: '1234',
@@ -74,8 +72,8 @@ describe('jujulib register service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
-        postCode: '70130',
-        country: null,
+        postcode: '70130',
+        countryCode: null,
         phones: []
       }],
       paymentMethods: [{
@@ -85,8 +83,8 @@ describe('jujulib register service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          postCode: null,
-          country: null,
+          postcode: null,
+          countryCode: null,
           phones: []
         },
         brand: 'Brand',
@@ -160,8 +158,7 @@ describe('jujulib register service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(user, {
         nickname: null,
-        first: null,
-        last: null,
+        name: null,
         email: null,
         business: false,
         addresses: [],
@@ -173,8 +170,8 @@ describe('jujulib register service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
-          postCode: null,
-          country: null,
+          postcode: null,
+          countryCode: null,
           phones: []
         }],
         paymentMethods: [{
@@ -184,8 +181,8 @@ describe('jujulib register service', function() {
             line2: null,
             name: null,
             city: 'New Orleans',
-            postCode: null,
-            country: null,
+            postcode: null,
+            countryCode: null,
             phones: []
           },
           brand: null,
@@ -224,69 +221,65 @@ describe('jujulib register service', function() {
     jujulib._makeRequest = makeRequest;
     const payment = new window.jujulib.payment('http://1.2.3.4/', {});
     const newUser = {
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       business: true,
       businessName: 'Spinachy business',
       billingAddresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       allowEmail: true,
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    payment.createUser('spinach', newUser, sinon.stub());
+    payment.createUser(newUser, sinon.stub());
     // Restore the original method on the lib.
     jujulib._makeRequest = originalMakeRequest;
     assert.equal(makeRequest.callCount, 1);
     assert.deepEqual(makeRequest.args[0][3], {
-      user: {
-        first: 'Geoffrey',
-        last: 'Spinach',
-        email: 'spinach@example.com',
-        addresses: [{
-          name: null,
-          line1: null,
-          line2: null,
-          city: 'New Orleans',
-          'post-code': '70130',
-          country: null,
-          phones: []
-        }],
-        vat: '1234',
-        business: true,
-        'business-name': 'Spinachy business',
-        'billing-addresses': [{
-          name: null,
-          line1: null,
-          line2: null,
-          city: 'New Orleans',
-          'post-code': '70130',
-          country: null,
-          phones: []
-        }],
-        'allow-email': true,
-        token: '54321',
-        'payment-method-name': 'Platinum'
-      }
+      name: 'Geoffrey Spinach',
+      email: 'spinach@example.com',
+      addresses: [{
+        name: null,
+        line1: null,
+        line2: null,
+        city: 'New Orleans',
+        postcode: '70130',
+        'country-code': null,
+        phones: []
+      }],
+      vat: '1234',
+      business: true,
+      'business-name': 'Spinachy business',
+      'billing-addresses': [{
+        name: null,
+        line1: null,
+        line2: null,
+        city: 'New Orleans',
+        postcode: '70130',
+        'country-code': null,
+        phones: []
+      }],
+      'allow-email': true,
+      token: '54321',
+      'payment-method-name': 'Platinum'
     });
   });
 
   it('can return the user when after creating a user', function() {
     const bakery = {
-      sendPostRequest: function(path, params, success, failure) {
+      sendPutRequest: function(path, params, success, failure) {
         assert.equal(
           path,
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
-          '/u/spinach');
+          '/u');
         const xhr = makeXHRRequest(returnedUser);
         success(xhr);
       }
@@ -294,25 +287,24 @@ describe('jujulib register service', function() {
     const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
     const newUser = {
-      first: 'Geoffrey',
-      last: 'Spinach',
+      name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       vat: '1234',
       business: true,
       businessName: 'Spinachy business',
       billingAddresses: [{
         city: 'New Orleans',
-        postCode: '70130'
+        postcode: '70130'
       }],
       allowEmail: true,
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    payment.createUser('spinach', {user: newUser}, function(error, user) {
+    payment.createUser(newUser, function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
     });
@@ -320,21 +312,21 @@ describe('jujulib register service', function() {
 
   it('handles errors when creating a user', function(done) {
     const bakery = {
-      sendPostRequest: function(path, params, success, failure) {
+      sendPutRequest: function(path, params, success, failure) {
         const xhr = makeXHRRequest({Message: 'Uh oh!'});
         failure(xhr);
       }
     };
     const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    payment.createUser('spinach', {}, function(error, user) {
+    payment.createUser({}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
       done();
     });
   });
 
-  it('can get a list of contries', function(done) {
+  it('can get a list of countries', function(done) {
     const countries = [{
       name: 'Australia',
       code: 'AU'
@@ -346,7 +338,7 @@ describe('jujulib register service', function() {
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
           '/country');
-        const xhr = makeXHRRequest({Countries: countries});
+        const xhr = makeXHRRequest({countries: countries});
         success(xhr);
       }
     };

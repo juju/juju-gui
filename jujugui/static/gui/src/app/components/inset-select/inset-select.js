@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inset-select', function() {
 
   juju.components.InsetSelect = React.createClass({
+    displayName: 'InsetSelect',
 
     propTypes: {
       disabled: React.PropTypes.bool,
