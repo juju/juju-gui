@@ -24,24 +24,18 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderLogo', function() {
-  let navigateUserProfile;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('header-logo', function() { done(); });
   });
 
-  beforeEach(function() {
-    navigateUserProfile = sinon.stub();
-  });
-
   it('renders', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderLogo
-        navigateUserProfile={navigateUserProfile} />, true);
+      <juju.components.HeaderLogo />, true);
     const output = renderer.getRenderOutput();
 
-    const expected = (<a onClick={navigateUserProfile}
+    const expected = (<a href="/"
       role="button" title="Go to user profile">
       <juju.components.SvgIcon name="juju-logo"
         className="svg-icon"

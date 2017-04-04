@@ -47,8 +47,8 @@ describe('HeaderHelp', function() {
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
 
-    const expected = <div className="header-help">
-        <span className={'header-help__button'}
+    const expected = <div className="header-menu">
+        <span className={'header-menu__button'}
           onClick={instance.toggleHelpMenu}
           role="button"
           tabIndex="0"
@@ -57,7 +57,7 @@ describe('HeaderHelp', function() {
           aria-controls="headerHelpMenu"
           aria-expanded="false">
           <juju.components.SvgIcon name="help_16"
-            className="header-help__icon"
+            className="header-menu__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -88,36 +88,36 @@ describe('HeaderHelp', function() {
 
       assert.equal(output.props.children.length, 2);
       assert.deepEqual(output.props.children[0].props.className,
-        'header-help__button header-help__show-menu');
+        'header-menu__button header-menu__show-menu');
 
-      assert.deepEqual(output.props.children[1],
-        <juju.components.Panel
-          instanceName="header-help-menu"
-          visible={true}>
-            <ul className="header-help-menu__list" role="menubar">
-              <li className="header-help-menu__list-item
-                header-help-menu__list-item-with-link"
-                role="menuitem" tabIndex="0">
-                <a
-                  href={docsUrl}
-                  target="_blank">
-                  View Documentation</a>
-              </li>
-              <li className="header-help-menu__list-item
-                header-help-menu__list-item-with-link"
-                role="menuitem" tabIndex="1">
-                <a href={issueUrl} target="_blank">File Issue</a>
-              </li>
-              <li className="header-help-menu__list-item
-                header-help-menu__list-item-info"
-                role="menuItem" tabIndex="2">
-                Keyboard shortcuts
-                <span className="header-help-menu__extra-info">
-                  Shift + ?
-                </span>
-              </li>
-            </ul>
-          </juju.components.Panel>);
+      const expected = (<juju.components.Panel
+        instanceName="header-menu__menu"
+        visible={true}>
+          <ul className="header-menu__menu-list" role="menubar">
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              <a
+                href={docsUrl}
+                target="_blank">
+                View Documentation</a>
+            </li>
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="1">
+              <a href={issueUrl} target="_blank">File Issue</a>
+            </li>
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-info"
+              role="menuItem" tabIndex="2">
+              Keyboard shortcuts
+              <span className="header-menu__menu-extra-info">
+                Shift + ?
+              </span>
+            </li>
+          </ul>
+        </juju.components.Panel>);
+      assert.deepEqual(output.props.children[1], expected);
     });
 
     it('shows the jujuchams issues page if in gisf and logged in',
@@ -133,31 +133,31 @@ describe('HeaderHelp', function() {
 
         assert.equal(output.props.children.length, 2);
         assert.deepEqual(output.props.children[0].props.className,
-          'header-help__button header-help__show-menu');
+          'header-menu__button header-menu__show-menu');
 
         assert.deepEqual(output.props.children[1],
           <juju.components.Panel
-            instanceName="header-help-menu"
+            instanceName="header-menu__menu"
             visible={true}>
-              <ul className="header-help-menu__list" role="menubar">
-                <li className="header-help-menu__list-item
-                  header-help-menu__list-item-with-link"
+              <ul className="header-menu__menu-list" role="menubar">
+                <li className="header-menu__menu-list-item
+                  header-menu__menu-list-item-with-link"
                   role="menuitem" tabIndex="0">
                   <a
                     href={docsUrl}
                     target="_blank">
                     View Documentation</a>
                 </li>
-                <li className="header-help-menu__list-item
-                  header-help-menu__list-item-with-link"
+                <li className="header-menu__menu-list-item
+                  header-menu__menu-list-item-with-link"
                   role="menuitem" tabIndex="1">
                   <a href={loggedInIssueUrl} target="_blank">Get Support</a>
                 </li>
-                <li className="header-help-menu__list-item
-                  header-help-menu__list-item-info"
+                <li className="header-menu__menu-list-item
+                  header-menu__menu-list-item-info"
                   role="menuItem" tabIndex="2">
                   Keyboard shortcuts
-                  <span className="header-help-menu__extra-info">
+                  <span className="header-menu__menu-extra-info">
                     Shift + ?
                   </span>
                 </li>

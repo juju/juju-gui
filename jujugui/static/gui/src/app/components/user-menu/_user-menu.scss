@@ -1,0 +1,24 @@
+#profile-link-container {
+  .header-menu {
+    margin-right: 10px;
+  }
+
+  .usso-login {
+    &__action {
+      text-decoration: none;
+      // Importants to overwrite vanilla values
+      // scss-lint:disable ImportantRule
+      color: $warm-grey !important;
+      // scss-lint:enable ImportantRule
+      &:hover {
+        // scss-lint:disable ImportantRule
+        color: $dark-warm-grey !important;
+        // scss-lint:enable ImportantRule
+      }
+    }
+    &__notification {
+      top: 150%;
+      right: 0;
+    }
+  }
+}

@@ -706,7 +706,7 @@ YUI.add('juju-gui', function(Y) {
           this._renderLogin(evt.err);
           return;
         }
-        this._renderLoginOutLink();
+        this._renderUserMenu();
         console.log('successfully logged into controller');
         // If the user is connected to a model then the modelList will be
         // fetched by the modelswitcher component.
@@ -935,11 +935,11 @@ YUI.add('juju-gui', function(Y) {
       Renders the Log out component or log in link depending on the
       environment the GUI is executing in.
     */
-    _renderLoginOutLink: function() {
+    _renderUserMenu: function() {
       const controllerAPI = this.controllerAPI;
       const linkContainerId = 'profile-link-container';
       const linkContainer = document.getElementById(linkContainerId);
-      if (linkContainer === null) {
+      if (!linkContainer) {
         console.error(`no linkContainerId: ${linkContainerId}`);
         return;
       }
@@ -949,27 +949,17 @@ YUI.add('juju-gui', function(Y) {
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
-      if (controllerAPI && !controllerAPI.userIsAuthenticated) {
-        // If the user is not authenticated but we're connected to a controller
-        // then the user is anonymous and we should show them a login button
-        // so that they can log in via USSO.
-        ReactDOM.render(
-          <window.juju.components.USSOLoginLink
-            charmstore={charmstore}
-            displayType={'text'}
-            getDischargeToken={getDischargeToken}
-            gisf={this.get('gisf')}
-            loginToController={controllerAPI.loginWithMacaroon.bind(
-              controllerAPI, bakeryFactory.get('juju'))}
-            sendPost={webhandler.sendPostRequest.bind(webhandler)}
-            storeUser={this.storeUser.bind(this)}
-          />,
-          linkContainer);
-        return;
-      }
-
-      ReactDOM.render(
-        <window.juju.components.Logout
+      const USSOLoginLink = (<window.juju.components.USSOLoginLink
+          charmstore={charmstore}
+          displayType={'text'}
+          getDischargeToken={getDischargeToken}
+          gisf={this.get('gisf')}
+          loginToController={controllerAPI.loginWithMacaroon.bind(
+            controllerAPI, bakeryFactory.get('juju'))}
+          sendPost={webhandler.sendPostRequest.bind(webhandler)}
+          storeUser={this.storeUser.bind(this)}
+        />);
+      const LogoutLink = (<window.juju.components.Logout
           logout={this.logout.bind(this)}
           clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
           gisfLogout={window.juju_config.gisfLogout || ''}
@@ -980,8 +970,35 @@ YUI.add('juju-gui', function(Y) {
           // If the charmbrowser is open then don't show the logout link.
           visible={!this.state.current.store}
           locationAssign={window.location.assign.bind(window.location)}
-        />,
-        linkContainer);
+        />);
+
+      const navigateUserProfile = () => {
+        const auth = this._getAuth();
+        if (!auth) {
+          return;
+        }
+        views.utils.showProfile(
+          this.env && this.env.get('ecs'),
+          this.state.changeState.bind(this.state),
+          auth.rootUserName);
+      };
+
+      const navigateUserAccount = () => {
+        const auth = this._getAuth();
+        if (!auth) {
+          return;
+        }
+        views.utils.showAccount(
+          this.env && this.env.get('ecs'),
+          this.state.changeState.bind(this.state));
+      };
+      ReactDOM.render(<window.juju.components.UserMenu
+        controllerAPI={controllerAPI}
+        LogoutLink={LogoutLink}
+        navigateUserAccount={navigateUserAccount}
+        navigateUserProfile={navigateUserProfile}
+        USSOLoginLink={USSOLoginLink}
+       />, linkContainer);
     },
 
     /**
@@ -1200,18 +1217,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderHeaderLogo: function() {
-      const navigateUserProfile = () => {
-        const auth = this._getAuth();
-        if (!auth) {
-          return;
-        }
-        views.utils.showProfile(
-         this.env && this.env.get('ecs'),
-         this.state.changeState.bind(this.state), auth.rootUserName);
-      };
       ReactDOM.render(
-        <window.juju.components.HeaderLogo
-          navigateUserProfile={navigateUserProfile} />,
+        <window.juju.components.HeaderLogo />,
         document.getElementById('header-logo'));
     },
 
@@ -2900,7 +2907,7 @@ YUI.add('juju-gui', function(Y) {
       }
       this._renderComponents();
       this._renderNotifications();
-      this._renderLoginOutLink();
+      this._renderUserMenu();
 
       next();
     },
@@ -3165,7 +3172,7 @@ YUI.add('juju-gui', function(Y) {
     'settings',
     'sharing',
     'shortcuts',
-    'usso-login-link',
+    'user-menu',
     'user-profile',
     'zoom',
     // juju-views group

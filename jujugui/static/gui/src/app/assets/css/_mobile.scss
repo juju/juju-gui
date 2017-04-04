@@ -36,6 +36,17 @@
     display: none;
   }
 
+  #profile-link-container {
+    .header-menu__button-with-text {
+      .header-menu__icon {
+        margin-right: 0;
+      }
+      .header-menu__label {
+        display: none;
+      }
+    }
+  }
+
   #header-logo {
     width: 32px;
     overflow: hidden;
