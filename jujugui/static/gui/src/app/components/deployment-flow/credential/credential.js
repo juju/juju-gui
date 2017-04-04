@@ -117,7 +117,8 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to get credentials', error);
         return;
       }
-      const credentialList = Object.keys(credentials);
+      const credentialList = Object.keys(credentials).map(
+        credential => credentials[credential].displayName);
       this.setState({
         credentials: credentialList,
         credentialsLoading: false,

@@ -1089,7 +1089,7 @@ YUI.add('juju-controller-api', function(Y) {
       if (parts.length === 3) {
         return parts[2];
       }
-      // return id;
+      return id;
     },
 
     /**
@@ -1213,6 +1213,7 @@ YUI.add('juju-controller-api', function(Y) {
           prev[name] = {
             authType: entry['auth-type'] || '',
             attrs: entry.attrs || {},
+            displayName: this._parseCredentialName(name),
             redacted: entry.redacted || []
           };
           return prev;
