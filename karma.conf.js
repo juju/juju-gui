@@ -18,6 +18,7 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
+      'node_modules/keysim/dist/keysim.js',
       'jujugui/static/gui/src/app/jujulib/index.js',
       'jujugui/static/gui/src/app/jujulib/charmstore.js',
       'jujugui/static/gui/src/app/jujulib/plans.js',

@@ -2722,6 +2722,12 @@
       "from": "kew@>=0.7.0 <0.8.0",
       "resolved": "https://registry.npmjs.org/kew/-/kew-0.7.0.tgz"
     },
+    "keysim": {
+      "version": "2.0.0",
+      "from": "keysim@latest",
+      "resolved": "https://registry.npmjs.org/keysim/-/keysim-2.0.0.tgz",
+      "dev": true
+    },
     "kind-of": {
       "version": "3.0.3",
       "from": "kind-of@>=3.0.2 <4.0.0",
