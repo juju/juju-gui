@@ -336,7 +336,7 @@ describe('DeploymentPayment', function() {
             <juju.components.GenericInput
               disabled={false}
               label="Card number"
-              onChange={instance._formatCardNumber}
+              onChange={instance._handleNumberChange}
               ref="cardNumber"
               required={true}
               validate={[{
@@ -512,7 +512,7 @@ describe('DeploymentPayment', function() {
             <juju.components.GenericInput
               disabled={false}
               label="Card number"
-              onChange={instance._formatCardNumber}
+              onChange={instance._handleNumberChange}
               ref="cardNumber"
               required={true}
               validate={[{
@@ -1004,5 +1004,79 @@ describe('DeploymentPayment', function() {
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(getUser.callCount, 2);
+  });
+
+  describe('_formatCardNumber', function() {
+    let instance;
+
+    beforeEach(function() {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.DeploymentPayment
+          acl={acl}
+          addNotification={sinon.stub()}
+          createToken={sinon.stub()}
+          createUser={sinon.stub()}
+          getCountries={sinon.stub()}
+          getUser={sinon.stub()}
+          paymentUser={null}
+          setPaymentUser={sinon.stub()}
+          username="spinach"
+          validateForm={sinon.stub()} />, true);
+      instance = renderer.getMountedInstance();
+    });
+
+    it('can format the number for American Express', function() {
+      assert.equal(
+        instance._formatCardNumber('373412345612345'),
+        '3734 123456 12345');
+    });
+
+    it('can format the number for Visa', function() {
+      assert.equal(
+        instance._formatCardNumber('4534223432344234'),
+        '4534 2234 3234 4234');
+    });
+
+    it('can format the number for MasterCard', function() {
+      assert.equal(
+        instance._formatCardNumber('5334223432344234'),
+        '5334 2234 3234 4234');
+    });
+
+    it('can format the number for Discover', function() {
+      assert.equal(
+        instance._formatCardNumber('6011223432344234'),
+        '6011 2234 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('6221273432344234'),
+        '6221 2734 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('6461273432344234'),
+        '6461 2734 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('6561273432344234'),
+        '6561 2734 3234 4234');
+    });
+
+    it('can format the number for Diners Club', function() {
+      assert.equal(
+        instance._formatCardNumber('3034223432344234'),
+        '3034 2234 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('3094223432344234'),
+        '3094 2234 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('3694223432344234'),
+        '3694 2234 3234 4234');
+      assert.equal(
+        instance._formatCardNumber('3894223432344234'),
+        '3894 2234 3234 4234');
+    });
+
+    it('can format the number for JCB', function() {
+      assert.equal(
+        instance._formatCardNumber('3533223432344234'),
+        '3533 2234 3234 4234');
+    });
   });
 });

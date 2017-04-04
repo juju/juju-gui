@@ -288,22 +288,94 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
-      Format the credit card number.
+      Handle updating the number with the correct spacing.
+
+      @method _handleNumberChange
+    */
+    _handleNumberChange: function() {
+      this.refs.cardNumber.setValue(
+        this._formatCardNumber(this.refs.cardNumber.getValue()));
+      // TODO: when we have card logos we should update the logo for the card
+      // type here.
+    },
+
+    /**
+      Format the credit card number. Stripe accepts Visa, MasterCard, American
+      Express, JCB, Discover, and Diners Club, of which all are spaced in blocks
+      four except American Express.
 
       @method _formatCardNumber
+      @param number {String} A full or partial card number.
     */
-    _formatCardNumber: function() {
-      // Get the current number and clean all the spaces.
-      const number = this.refs.cardNumber.getValue().replace(/ /g, '');
-      let parts = [];
-      // Loop through the blocks of four numbers.
-      for (var i=0; i<(number.length / 4); i++) {
-        const position = 4 * i;
-        // Store the block of numbers.
-        parts.push(number.slice(position, position + 4));
+    _formatCardNumber: function(number) {
+      const provider = this._getCardProvider(number);
+      if (!provider) {
+        return number;
       }
-      // Set the value with the formatted number.
-      this.refs.cardNumber.setValue(parts.join(' '));
+      let parts = [];
+      let position = 0;
+      // Clean all the spaces from the card number.
+      number = number.replace(/ /g, '');
+      // Loop through the blocks.
+      provider.blocks.forEach(block => {
+        // Store the block of numbers.
+        parts.push(number.slice(position, position + block));
+        position += block;
+      });
+      // Join the new blocks with spaces.
+      return parts.join(' ');
+    },
+
+    /**
+      Get the details of the card provider from the card number.
+
+      @method _getCardProvider
+      @param number {String} A full or partial card number.
+    */
+    _getCardProvider: function(number) {
+      // Clean all the spaces from the card number.
+      number = number.replace(/ /g, '');
+      // Define the blocks for the different card providers. Defaulting to the
+      // most common.
+      const providers = [{
+        name: 'American Express',
+        // Prefix: 34, 37
+        numbers: /^(34|37)/,
+        blocks: [4, 6, 5]
+      }, {
+        name: 'Visa',
+        // Prefix: 4
+        numbers: /^4/,
+        blocks: [4, 4, 4, 4]
+      }, {
+        name: 'MasterCard',
+        // Prefix: 50-55
+        numbers: /^5[1-5]/,
+        blocks: [4, 4, 4, 4]
+      }, {
+        name: 'Discover',
+        // Prefix: 	6011, 622126-622925, 644-649, 65
+        numbers: /^(65|6011|(64[4-9])|(622\d\d\d))/,
+        blocks: [4, 4, 4, 4]
+      }, {
+        name: 'Diners Club',
+        // Prefix: 300-305, 309, 36, 38-39
+        numbers: /^((30[0-5])|309|36|(3[8-9]))/,
+        blocks: [4, 4, 4, 4]
+      }, {
+        name: 'JCB',
+        // Prefix: 3528-3589
+        numbers: /^(35\d\d)/,
+        blocks: [4, 4, 4, 4]
+      }];
+      let match;
+      providers.some(provider => {
+        if (provider.numbers.test(number)) {
+          match = provider;
+          return true;
+        }
+      });
+      return match || null;
     },
 
     /**
@@ -360,7 +432,7 @@ YUI.add('deployment-payment', function() {
             <juju.components.GenericInput
               disabled={disabled}
               label="Card number"
-              onChange={this._formatCardNumber}
+              onChange={this._handleNumberChange}
               ref="cardNumber"
               required={true}
               validate={[required, {
