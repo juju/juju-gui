@@ -65,11 +65,10 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       done.
 
       @method makeAppContainer
-      @param {Object} yui The YUI instance.
       @return {Object} The container element, already attached to the window
         document.
     */
-    makeAppContainer: (yui) => {
+    makeAppContainer: () => {
       const elements = [
         'charmbrowser-container',
         'deployment-bar-container',
@@ -88,16 +87,19 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'profile-link-container',
         'provider-logo-container',
         'shortcut-help',
+        'shortcut-settings',
         'top-page-container',
         'zoom-container'
       ];
-      const container = yui.Node.create('<div>');
-      container.set('id', 'test-container');
-      container.addClass('container');
+      const container = document.createElement('div');
+      container.setAttribute('id', 'test-container');
+      container.setAttribute('class', 'container');
       elements.forEach(function(id) {
-        container.appendChild(yui.Node.create('<div/>')).set('id', id);
+        const node = document.createElement('div');
+        node.setAttribute('id', id);
+        container.appendChild(node);
       });
-      container.appendTo(document.body);
+      document.body.appendChild(container);
       return container;
     },
 

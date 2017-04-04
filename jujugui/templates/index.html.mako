@@ -159,8 +159,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <div id="viewport">
         <div id="content">
-            <div id="shortcut-help" class="modal" style="display:none"></div>
-            <div id="shortcut-settings" class="modal modal--narrow" style="display:none"></div>
+            <div id="shortcut-help" class="modal hidden"></div>
+            <div id="shortcut-settings" class="modal modal--narrow hidden"></div>
             <div id="main">
             </div> <!-- /container -->
             <div id="drag-over-notification-container"></div>

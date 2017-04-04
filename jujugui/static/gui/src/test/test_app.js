@@ -166,10 +166,13 @@ describe('App', function() {
 
       beforeEach(function() {
         // Set up the MAAS link node.
-        maasNode = Y.Node.create(
-            '<div id="maas-server" style="display:none">' +
-            '  <a href="">MAAS UI</a>' +
-            '</div>');
+        maasNode = document.createElement('div');
+        maasNode.setAttribute('id', 'maas-server');
+        maasNode.classList.add('hidden');
+        const link = document.createElement('a');
+        const content = document.createTextNode('MAAS UI');
+        link.appendChild(content);
+        maasNode.appendChild(link);
         container.appendChild(maasNode);
         // Create the environment.
         env = new juju.environments.GoEnvironment({
@@ -180,20 +183,20 @@ describe('App', function() {
       });
 
       afterEach(function() {
-        container.one('#maas-server').remove(true);
+        container.querySelector('#maas-server').remove(true);
       });
 
       // Ensure the given MAAS node is shown and includes a link to the given
       // address.
       var assertMaasLinkExists = function(node, address) {
-        assert.strictEqual(node.getStyle('display'), 'block');
-        assert.strictEqual(node.one('a').get('href'), address);
+        assert.strictEqual(node.classList.contains('hidden'), false);
+        assert.strictEqual(node.querySelector('a').href, address);
       };
 
       it('shows a link to the MAAS server if provider is MAAS', function() {
         constructAppInstance({env: env}, this);
         // The MAAS node is initially hidden.
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
         env.set('maasServer', 'http://1.2.3.4/MAAS');
         // Once the MAAS server becomes available, the node is activated and
         // includes a link to the server.
@@ -216,13 +219,13 @@ describe('App', function() {
       it('does not show the MAAS link if provider is not MAAS', function() {
         constructAppInstance({env: env}, this);
         // The MAAS node is initially hidden.
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
         env.set('maasServer', null);
         // The MAAS node is still hidden.
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
         // Further changes to the maasServer attribute don't activate the link.
         env.set('maasServer', 'http://1.2.3.4/MAAS');
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
       });
 
     });

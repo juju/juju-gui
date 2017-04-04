@@ -111,44 +111,45 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-settings',
         toggle: true,
         callback: function(evt, target) {
-          const shortcutHelp = Y.one('#shortcut-help');
+          const shortcutHelp = document.querySelector('#shortcut-help');
           if (shortcutHelp) {
-            shortcutHelp.hide();
+            shortcutHelp.classList.add('hidden');
           }
 
-          if (target && !target.getHTML().length) {
+          if (target && !target.children.length) {
             ReactDOM.render(
               <window.juju.components.Settings
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
                 forceContainers={localStorage.getItem('force-containers')} />,
-              target.getDOMNode());
+              ReactDOM.findDOMNode(target));
 
             // This is only added to the DOM once and is checked if it exists
             // above. It's hidden and then shown, so this event is not auto
             // cleaned up, but can only occur once.
-            target.one('#save-settings').on('click', function(ev) {
-              var fields = target.all('input');
-              fields.each(function(node) {
-                // If it's a checkbox:
-                if (node.get('type') === 'checkbox') {
-                  // and if it's checked set that value to localStorage.
-                  if (node.get('checked')) {
-                    localStorage.setItem(node.getAttribute('name'), true);
+            target.querySelector('#save-settings').addEventListener(
+              'click', ev => {
+                const fields = target.querySelectorAll('input');
+                fields.each(function(node) {
+                  // If it's a checkbox:
+                  if (node.get('type') === 'checkbox') {
+                    // and if it's checked set that value to localStorage.
+                    if (node.get('checked')) {
+                      localStorage.setItem(node.getAttribute('name'), true);
+                    } else {
+                      // otherwise unset it from the localStorage.
+                      localStorage.removeItem(node.getAttribute('name'));
+                    }
                   } else {
-                    // otherwise unset it from the localStorage.
-                    localStorage.removeItem(node.getAttribute('name'));
+                    localStorage.setItem(
+                        node.getAttribute('name'), node.get('value'));
                   }
-                } else {
-                  localStorage.setItem(
-                      node.getAttribute('name'), node.get('value'));
-                }
+                });
               });
-              Y.one('#shortcut-settings').hide();
-            });
 
-            target.one('.close').on('click', function(ev) {
-              Y.one('#shortcut-settings').hide();
+            target.querySelector('.close').addEventListener('click', ev => {
+              document.querySelector('#shortcut-settings').classList.add(
+                'hidden');
             });
           }
         },
@@ -159,13 +160,13 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-help',
         toggle: true,
         callback: function(evt, target) {
-          const shortcutSettings = Y.one('#shortcut-settings');
+          const shortcutSettings = document.querySelector('#shortcut-settings');
           if (shortcutSettings) {
-            shortcutSettings.hide();
+            shortcutSettings.classList.add('hidden');
           }
 
           // This could be its own view.
-          if (target && !target.getHTML().length) {
+          if (target && !target.children.length) {
             var bindings = [];
             Object.keys(this.keybindings).forEach(k => {
               const v = this.keybindings[k];
@@ -182,10 +183,10 @@ YUI.add('juju-gui', function(Y) {
             ReactDOM.render(
               <window.juju.components.Shortcuts
                 bindings={bindings} />,
-              target.getDOMNode());
+              ReactDOM.findDOMNode(target));
 
-            target.one('.close').on('click', function(ev) {
-              Y.one('#shortcut-help').hide();
+            target.querySelector('.close').addEventListener('click', ev => {
+              document.querySelector('#shortcut-help').classList.add('hidden');
             });
           }
         },
@@ -218,8 +219,8 @@ YUI.add('juju-gui', function(Y) {
         fire: 'clearState',
         callback: function() {
           // Explicitly hide anything we might care about.
-          Y.one('#shortcut-help').hide();
-          Y.one('#shortcut-settings').hide();
+          document.querySelector('#shortcut-help').classList.add('hidden');
+          document.querySelector('#shortcut-settings').classList.add('hidden');
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -244,33 +245,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Data driven behaviors.
-     *
-     * Placeholder for real behaviors associated with DOM Node data-*
-     * attributes.
-     *
-     * @attribute behaviors
-     */
-    behaviors: {
-      timestamp: {
-        /**
-         * Wait for the DOM to be built before rendering timestamps.
-         *
-         * @method behaviors.timestamp.callback
-         */
-        callback: function() {
-          Y.later(6000, this, function(o) {
-            Y.one('body')
-              .all('[data-timestamp]')
-              .each(function(node) {
-                node.setHTML(views.humanizeTimestamp(
-                  node.getAttribute('data-timestamp')));
-              });
-          }, [], true);}
-      }
-    },
-
-    /**
      * Activate the keyboard listeners. Only called by the main index.html,
      * not by the tests' one.
      *
@@ -286,11 +260,11 @@ YUI.add('juju-gui', function(Y) {
         const v = key_map[k];
         code_map[v] = k;
       });
-      this._keybindings = Y.one(window).on('keydown', function(evt) {
-        //Normalize key-code
+      this._keybindings = document.addEventListener('keydown', evt => {
+        // Normalize key-code
         // This gets triggered by different types of elements some YUI some
-        // React. So try and use the native tagName property first, if That
-        // fails then fall back to getDOMNode().
+        // React. So try and use the native tagName property first, if that
+        // fails then fall back to ReactDOM.findDOMNode().
         var tagName = evt.target.tagName;
         var contentEditable = evt.target.contentEditable;
         var currentKey;
@@ -300,10 +274,10 @@ YUI.add('juju-gui', function(Y) {
           currentKey = String.fromCharCode(evt.which).toLowerCase();
         }
         if (!tagName) {
-          tagName = evt.target.getDOMNode().tagName;
+          tagName = ReactDOM.findDOMNode(evt.target).tagName;
         }
         if (!contentEditable) {
-          contentEditable = evt.target.getDOMNode().contentEditable;
+          contentEditable = ReactDOM.findDOMNode(evt.target).contentEditable;
         }
         // Don't ignore esc in the search box.
         if (currentKey === 'esc' &&
@@ -330,13 +304,13 @@ YUI.add('juju-gui', function(Y) {
             // the event still propagates.
             return;
           }
-          var target = Y.one(spec.target);
+          var target = document.querySelector(spec.target);
           if (target) {
             if (spec.toggle) {
-              if (target.getStyle('display') !== 'none') {
-                target.hide();
+              if (target.classList.contains('hidden')) {
+                target.classList.remove('hidden');
               } else {
-                target.show();
+                target.classList.add('hidden');
               }
             }
             if (spec.focus) { target.focus(); }
@@ -348,9 +322,8 @@ YUI.add('juju-gui', function(Y) {
           }
           // If we handled the event nothing else has to.
           evt.stopPropagation();
-          evt.preventDefault();
         }
-      }, this);
+      });
     },
 
     /**
@@ -637,8 +610,6 @@ YUI.add('juju-gui', function(Y) {
       // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
-
-      this.enableBehaviors();
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -2431,17 +2402,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Hook up all of the declared behaviors.
-     *
-     * @method enableBehaviors
-     */
-    enableBehaviors: function() {
-      Object.keys(this.behaviors).forEach(behavior => {
-        this.behaviors[behavior].callback.call(this);
-      });
-    },
-
-    /**
      * On database changes update the view.
      *
      * @method on_database_changed
@@ -2790,9 +2750,9 @@ YUI.add('juju-gui', function(Y) {
         // The current environment is not MAAS.
         return;
       }
-      var maasContainer = Y.one('#maas-server');
-      maasContainer.one('a').set('href', maasServer);
-      maasContainer.show();
+      var maasContainer = document.querySelector('#maas-server');
+      maasContainer.querySelector('a').setAttribute('href', maasServer);
+      maasContainer.classList.remove('hidden');
     },
 
     maskVisibility: function(visibility = true) {

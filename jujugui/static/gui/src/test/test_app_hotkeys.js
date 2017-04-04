@@ -19,14 +19,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  let app, container, env, juju, jujuConfig, utils, windowNode, Y;
+  let app, container, env, juju, jujuConfig, keyboard, utils, Y;
   const requirements = ['juju-gui', 'juju-tests-utils', 'node-event-simulate'];
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
-      windowNode = Y.one(window);
       done();
     });
   });
@@ -48,8 +47,8 @@ describe('application hotkeys', function() {
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
     };
-    container = utils.makeAppContainer(Y);
-    container.one('#shortcut-help').setStyle('display', 'none');
+    container = utils.makeAppContainer();
+    container.querySelector('#shortcut-help').classList.add('hidden');
     const userClass = new window.jujugui.User({storage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     env = new juju.environments.GoEnvironment({
@@ -75,6 +74,7 @@ describe('application hotkeys', function() {
     app.showView(new Y.View());
     app.activateHotkeys();
     app.render();
+    keyboard = Keysim.Keyboard.US_ENGLISH;
   });
 
   afterEach(function(done) {
@@ -87,36 +87,24 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for "?" events', function() {
-    windowNode.simulate('keydown', {
-      keyCode: 191, // "/" key.
-      shiftKey: true
-    });
-    var help = container.one('#shortcut-help');
-    assert.equal(help.getStyle('display'), 'block',
+    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
+    keyboard.dispatchEventsForKeystroke(keystroke, container);
+    const help = document.querySelector('#shortcut-help');
+    assert.equal(help.classList.contains('hidden'), false,
                  'Shortcut help not displayed');
-    // Is the "S-?" label displayed in the help?
-    var bindings = help.all('.two-col'),
-        found = false;
-    bindings.each(function(node) {
-      var text = node.getDOMNode().textContent;
-      if (text === 'Shift + ?') {
-        found = true;
-      }
-    });
-    assert.equal(found, true, 'Shortcut label not found');
-    help.hide();
+    assert.equal(
+      help.children.length > 0, true, 'The shortcut component not rendered');
+    container.querySelector('#shortcut-help').classList.add('hidden');
   });
 
   it('should listen for Alt-S key events', function() {
-    var searchInput = Y.Node.create('<input/>');
-    searchInput.set('id', 'charm-search-field');
-    container.append(searchInput);
-    windowNode.simulate('keydown', {
-      keyCode: 83, // "S" key.
-      altKey: true
-    });
+    var searchInput = document.createElement('input');
+    searchInput.setAttribute('id', 'charm-search-field');
+    container.appendChild(searchInput);
+    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.ALT, 83);
+    keyboard.dispatchEventsForKeystroke(keystroke, container);
     // Did charm-search-field get the focus?
-    assert.equal(searchInput, Y.one(document.activeElement));
+    assert.equal(searchInput, document.activeElement);
   });
 
   it('should listen for alt-E events', function(done) {
@@ -130,9 +118,7 @@ describe('application hotkeys', function() {
       assert.isTrue(altEtriggered);
       done();
     });
-    windowNode.simulate('keydown', {
-      keyCode: 69, // "E" key.
-      altKey: true
-    });
+    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.ALT, 69);
+    keyboard.dispatchEventsForKeystroke(keystroke, container);
   });
 });
