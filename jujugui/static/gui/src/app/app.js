@@ -2751,7 +2751,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var maasContainer = document.querySelector('#maas-server');
-      maasContainer.querySelector('a').set('href', maasServer);
+      maasContainer.querySelector('a').setAttribute('href', maasServer);
       maasContainer.classList.remove('hidden');
     },
 
