@@ -1845,11 +1845,15 @@ describe('Controller API', function() {
       ];
       controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
         assert.strictEqual(err, null);
-        assert.deepEqual(results, [
-          {names: ['name1', 'name2']},
-          {err: 'bad wolf'},
-          {names: ['name3']},
-        ]);
+        assert.deepEqual(results, [{
+          names: ['ldx_spinach@local_name1', 'ldx_spinach@local_name2'],
+          displayNames: ['name1', 'name2']
+        }, {
+          err: 'bad wolf'
+        }, {
+          names: ['google_spinach@local_name3'],
+          displayNames: ['name3']
+        }]);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           'request-id': 1,
@@ -1869,11 +1873,11 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {
           results: [{
-            result: ['cloudcred-name1', 'cloudcred-name2'],
+            result: ['cloudcred-ldx_spinach@local_name1', 'cloudcred-ldx_spinach@local_name2'],
           }, {
             error: {message: 'bad wolf'},
           }, {
-            result: ['cloudcred-name3'],
+            result: ['cloudcred-google_spinach@local_name3'],
           }]
         }
       });

@@ -1077,6 +1077,22 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
+      Get the credential name for display from the credential id.
+
+      @method _parseCredentialName
+      @param {String} id The id of a could credential in the form
+        cloud_user@scope_name.
+      @returns {String} the credential display name.
+    */
+    _parseCredentialName: id => {
+      const parts = id.split('_');
+      if (parts.length === 3) {
+        return parts[2];
+      }
+      // return id;
+    },
+
+    /**
       Returns the names of cloud credentials for a set of users.
 
       @method getCloudCredentialNames
@@ -1121,7 +1137,12 @@ YUI.add('juju-controller-api', function(Y) {
           const names = credentialTags.map(credentialTag => {
             return tags.parse(tags.CREDENTIAL, credentialTag);
           });
-          return {names: names};
+          const displayNames = names.map(
+              name => this._parseCredentialName(name));
+          return {
+            names: names,
+            displayNames: displayNames
+          };
         });
         callback(null, credentials);
       };

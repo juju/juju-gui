@@ -103,7 +103,7 @@ YUI.add('account-credentials', function() {
           }
           let credentials = [];
           names.forEach((cloud, i) => {
-            cloud.names.forEach(name => {
+            cloud.displayNames.forEach(name => {
               credentials.push({
                 name: name,
                 // Store the cloud for this name.
