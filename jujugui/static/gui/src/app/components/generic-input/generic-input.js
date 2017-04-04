@@ -172,7 +172,7 @@ YUI.add('generic-input', function() {
     },
 
     /**
-      Handle the onChange event for a div input.
+      Handle the onChange event for a content editable element.
 
       @method _handleDIVOnchange
     */
