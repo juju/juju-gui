@@ -37,9 +37,13 @@ describe('AccountCredentials', () => {
       aws: 'aws',
       gce: 'gce'
     });
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [
-      {names: ['aws_spinach@external_test1']},
-      {names: ['gce_spinach@external_test2']}
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [{
+      names: ['aws_spinach@external_test1'],
+      displayNames: ['test1']
+    }, {
+      names: ['gce_spinach@external_test2'],
+      displayNames: ['test2']
+    }
     ]);
   });
 
@@ -54,6 +58,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -79,7 +84,7 @@ describe('AccountCredentials', () => {
         </juju.components.ExpandingRow>
         <juju.components.Spinner />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render', () => {
@@ -92,6 +97,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -129,7 +135,7 @@ describe('AccountCredentials', () => {
             <li className="user-profile__list-row twelve-col"
               key="aws_spinach@external_test1">
               <div className="six-col no-margin-bottom">
-                aws_spinach@external_test1
+                test1
               </div>
               <div className="four-col no-margin-bottom">
                 Amazon
@@ -146,7 +152,7 @@ describe('AccountCredentials', () => {
             <li className="user-profile__list-row twelve-col"
               key="gce_spinach@external_test2">
                 <div className="six-col no-margin-bottom">
-                  gce_spinach@external_test2
+                  test2
                 </div>
                 <div className="four-col no-margin-bottom">
                   Google
@@ -162,7 +168,7 @@ describe('AccountCredentials', () => {
             </li>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there are no credentials', () => {
@@ -176,6 +182,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -203,7 +210,7 @@ describe('AccountCredentials', () => {
           No credentials available.
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display errors when getting clouds', () => {
@@ -218,6 +225,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />);
@@ -242,6 +250,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />);
@@ -264,6 +273,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -287,6 +297,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -312,6 +323,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -351,7 +363,7 @@ describe('AccountCredentials', () => {
           {[<li className="user-profile__list-row twelve-col"
             key="gce_spinach@external_test2">
               <div className="six-col no-margin-bottom">
-                gce_spinach@external_test2
+                test2
               </div>
               <div className="four-col no-margin-bottom">
                 Google
@@ -367,7 +379,7 @@ describe('AccountCredentials', () => {
           </li>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can abort the requests when unmounting', () => {
@@ -382,6 +394,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -400,6 +413,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
@@ -438,7 +452,7 @@ describe('AccountCredentials', () => {
           No credentials available.
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display correctly with a chosen cloud', () => {
@@ -447,6 +461,7 @@ describe('AccountCredentials', () => {
     const generateCloudCredentialName = sinon.stub();
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
+    const sendAnalytics = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountCredentials
         acl={acl}
@@ -456,6 +471,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         updateCloudCredential={updateCloudCredential}
         username="spinach@external"
         validateForm={validateForm} />, true);
@@ -502,6 +518,7 @@ describe('AccountCredentials', () => {
                 getCloudProviderDetails={getCloudProviderDetails}
                 generateCloudCredentialName={generateCloudCredentialName}
                 getCredentials={instance._getClouds}
+                sendAnalytics={sendAnalytics}
                 setCredential={instance._setCredential}
                 updateCloudCredential={updateCloudCredential}
                 user="spinach@external"
@@ -513,7 +530,7 @@ describe('AccountCredentials', () => {
           No credentials available.
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('clears the cloud when the form is closed', () => {
@@ -531,6 +548,7 @@ describe('AccountCredentials', () => {
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={listClouds}
         revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         username="spinach@external"
         validateForm={validateForm} />, true);

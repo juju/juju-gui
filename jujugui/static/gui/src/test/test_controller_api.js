@@ -1845,11 +1845,15 @@ describe('Controller API', function() {
       ];
       controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
         assert.strictEqual(err, null);
-        assert.deepEqual(results, [
-          {names: ['name1', 'name2']},
-          {err: 'bad wolf'},
-          {names: ['name3']},
-        ]);
+        assert.deepEqual(results, [{
+          names: ['ldx_spinach@local_name1', 'ldx_spinach@local_name2'],
+          displayNames: ['name1', 'name2']
+        }, {
+          err: 'bad wolf'
+        }, {
+          names: ['google_spinach@local_name3'],
+          displayNames: ['name3']
+        }]);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           'request-id': 1,
@@ -1869,11 +1873,14 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {
           results: [{
-            result: ['cloudcred-name1', 'cloudcred-name2'],
+            result: [
+              'cloudcred-ldx_spinach@local_name1',
+              'cloudcred-ldx_spinach@local_name2'
+            ],
           }, {
             error: {message: 'bad wolf'},
           }, {
-            result: ['cloudcred-name3'],
+            result: ['cloudcred-google_spinach@local_name3'],
           }]
         }
       });
@@ -1906,22 +1913,28 @@ describe('Controller API', function() {
   describe('getCloudCredentials', function() {
     it('retrieves the requested credentials by name', function(done) {
       // Perform the request.
-      const names = ['cred1', 'cred2', 'no-such'];
+      const names = [
+        'google_spinach@local_cred1',
+        'aws_spinach@local_cred2',
+        'no-such'
+      ];
       controllerAPI.getCloudCredentials(names, (err, creds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(creds, {
-          cred1: {
+          'google_spinach@local_cred1': {
             authType: 'jsonfile',
             attrs: {
               type: 'service_account',
               project_id: 'juju-42',
               private_key_id: 'my-private-key-id'
             },
+            displayName: 'cred1',
             redacted: ['secret', 'confidential']
           },
-          cred2: {
+          'aws_spinach@local_cred2': {
             authType: 'oauth2',
             attrs: {},
+            displayName: 'cred2',
             redacted: []
           },
           'no-such': {err: 'no such credentials'}
@@ -1933,8 +1946,8 @@ describe('Controller API', function() {
           request: 'Credential',
           version: 1,
           params: {entities: [
-            {tag: 'cloudcred-cred1'},
-            {tag: 'cloudcred-cred2'},
+            {tag: 'cloudcred-google_spinach@local_cred1'},
+            {tag: 'cloudcred-aws_spinach@local_cred2'},
             {tag: 'cloudcred-no-such'}
           ]}
         });

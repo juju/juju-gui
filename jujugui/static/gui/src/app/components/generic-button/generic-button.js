@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('generic-button', function() {
 
   juju.components.GenericButton = React.createClass({
+    displayName: 'GenericButton',
+
     propTypes: {
       action: React.PropTypes.func,
       children: React.PropTypes.node,

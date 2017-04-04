@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-credential', function() {
 
   juju.components.DeploymentCredential = React.createClass({
+    displayName: 'DeploymentCredential',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -117,7 +119,12 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to get credentials', error);
         return;
       }
-      const credentialList = Object.keys(credentials);
+      const credentialList = Object.keys(credentials).map(credential => {
+        return {
+          displayName: credentials[credential].displayName,
+          id: credential
+        };
+      });
       this.setState({
         credentials: credentialList,
         credentialsLoading: false,
@@ -126,7 +133,7 @@ YUI.add('deployment-credential', function() {
           (!credentials || credentialList.length === 0)
       });
       if (credentials && credentialList.length > 0) {
-        let select = credentialList[0];
+        let select = credentialList[0].id;
         // If the supplied credential to select is actually in the list then
         // select it.
         if (credentials[credential]) {
@@ -179,8 +186,8 @@ YUI.add('deployment-credential', function() {
     _generateCredentials: function() {
       var credentials = this.state.credentials.map((credential) => {
         return {
-          label: credential,
-          value: credential
+          label: credential.displayName,
+          value: credential.id
         };
       });
       credentials.push({

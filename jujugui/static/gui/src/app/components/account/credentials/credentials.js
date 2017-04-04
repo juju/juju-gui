@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account-credentials', function() {
 
   juju.components.AccountCredentials = React.createClass({
+    displayName: 'AccountCredentials',
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -30,6 +31,7 @@ YUI.add('account-credentials', function() {
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       revokeCloudCredential: React.PropTypes.func.isRequired,
+      sendAnalytics: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
@@ -103,8 +105,9 @@ YUI.add('account-credentials', function() {
           }
           let credentials = [];
           names.forEach((cloud, i) => {
-            cloud.names.forEach(name => {
+            cloud.displayNames.forEach((name, j) => {
               credentials.push({
+                id: cloud.names[j],
                 name: name,
                 // Store the cloud for this name.
                 cloud: pairs[i][1]
@@ -139,7 +142,7 @@ YUI.add('account-credentials', function() {
         }
         // Remove the credential from the list.
         const credentials = this.state.credentials.filter(cred => {
-          if (cred.name !== credential) {
+          if (cred.id !== credential) {
             return true;
           }
         });
@@ -163,7 +166,7 @@ YUI.add('account-credentials', function() {
         const cloud = this.props.getCloudProviderDetails(credential.cloud);
         return (
           <li className="user-profile__list-row twelve-col"
-            key={credential.name}>
+            key={credential.id}>
               <div className="six-col no-margin-bottom">
                 {credential.name}
               </div>
@@ -173,7 +176,7 @@ YUI.add('account-credentials', function() {
               <div className="two-col last-col no-margin-bottom">
                 <juju.components.GenericButton
                   action={
-                    this._handleDeleteCredential.bind(this, credential.name)}
+                    this._handleDeleteCredential.bind(this, credential.id)}
                   type="neutral"
                   title="Remove" />
               </div>
@@ -250,6 +253,7 @@ YUI.add('account-credentials', function() {
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
             getCredentials={this._getClouds}
+            sendAnalytics={this.props.sendAnalytics}
             setCredential={this._setCredential}
             updateCloudCredential={this.props.updateCloudCredential}
             user={this.props.username}

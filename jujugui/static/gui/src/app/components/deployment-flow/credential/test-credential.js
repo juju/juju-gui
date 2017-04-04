@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, sendAnalytics, cloud, credentials, regions, tags, user;
+  var acl, sendAnalytics, cloud, credentials, regions, credentialNames, user;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -38,10 +38,10 @@ describe('DeploymentCredential', function() {
     cloud = {id: 'azure', id: 'azure', regions: regions};
     credentials = {
       'lxd_admin@local_default': {
-        name: 'lxd_admin@local_default'
+        displayName: 'default'
       }
     };
-    tags = [{tags: ['lxd_admin@local_default']}];
+    credentialNames = [{names: ['lxd_admin@local_default']}];
     user = 'user-admin';
   });
 
@@ -68,7 +68,7 @@ describe('DeploymentCredential', function() {
           <juju.components.Spinner />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render with a cloud', function() {
@@ -88,7 +88,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -120,7 +120,7 @@ describe('DeploymentCredential', function() {
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when not editable', function() {
@@ -139,7 +139,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         region="north-north-west"
         sendAnalytics={sendAnalytics}
@@ -162,7 +162,7 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'lxd_admin@local_default',
+                  label: 'default',
                   value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
@@ -186,7 +186,7 @@ describe('DeploymentCredential', function() {
           {undefined}
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without a cloud', function() {
@@ -238,7 +238,7 @@ describe('DeploymentCredential', function() {
             validateForm={validateForm} />
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can show existing credentials', function() {
@@ -254,7 +254,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -276,7 +276,7 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'lxd_admin@local_default',
+                  label: 'default',
                   value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
@@ -300,7 +300,7 @@ describe('DeploymentCredential', function() {
           {undefined}
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('selects an initial credential', function() {
@@ -316,7 +316,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -343,7 +343,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -372,7 +372,8 @@ describe('DeploymentCredential', function() {
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -394,7 +395,7 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'lxd_admin@local_default',
+                  label: 'default',
                   value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
@@ -418,7 +419,7 @@ describe('DeploymentCredential', function() {
           {undefined}
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can handle a cloud without regions', function() {
@@ -434,7 +435,8 @@ describe('DeploymentCredential', function() {
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -474,7 +476,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -507,7 +509,7 @@ describe('DeploymentCredential', function() {
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('clears the credential when displaying the form', function() {
@@ -527,7 +529,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
@@ -554,7 +556,7 @@ describe('DeploymentCredential', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, tags)}
+          sinon.stub().callsArgWith(1, null, credentialNames)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
