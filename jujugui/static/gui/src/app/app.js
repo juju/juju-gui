@@ -2698,6 +2698,7 @@ YUI.add('juju-gui', function(Y) {
           password: password
         };
       };
+      const credentials = this.user.controller;
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2714,6 +2715,10 @@ YUI.add('juju-gui', function(Y) {
       const setUpModel = model => {
         // Tell the model to use the new socket URL when reconnecting.
         model.set('socket_url', socketUrl);
+        // We need to reset the credentials each time we set up a model,
+        // b/c we remove the credentials when we close down a model
+        // connection in the `close()` method of base.js
+        this.user.controller = credentials;
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
