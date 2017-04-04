@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-header', function() {
 
   juju.components.UserProfileHeader = React.createClass({
+    displayName: 'UserProfileHeader',
 
     propTypes: {
       avatar: React.PropTypes.string.isRequired,

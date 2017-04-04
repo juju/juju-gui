@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account', function() {
 
   juju.components.Account = React.createClass({
+    displayName: 'Account',
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -31,6 +32,7 @@ YUI.add('account', function() {
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       revokeCloudCredential: React.PropTypes.func.isRequired,
+      sendAnalytics: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string.isRequired,
@@ -79,6 +81,7 @@ YUI.add('account', function() {
                 getCloudProviderDetails={this.props.getCloudProviderDetails}
                 listClouds={this.props.listClouds}
                 revokeCloudCredential={this.props.revokeCloudCredential}
+                sendAnalytics={this.props.sendAnalytics}
                 updateCloudCredential={this.props.updateCloudCredential}
                 username={this.props.user}
                 validateForm={this.props.validateForm} />

@@ -43,6 +43,7 @@ describe('Account', () => {
     const revokeCloudCredential = sinon.stub();
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
+    const sendAnalytics = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
@@ -54,6 +55,7 @@ describe('Account', () => {
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
         updateCloudCredential={updateCloudCredential}
+        sendAnalytics={sendAnalytics}
         showPay={true}
         user="spinach@external"
         userInfo={userInfo}
@@ -80,6 +82,7 @@ describe('Account', () => {
               getCloudProviderDetails={getCloudProviderDetails}
               listClouds={listClouds}
               revokeCloudCredential={revokeCloudCredential}
+              sendAnalytics={sendAnalytics}
               updateCloudCredential={updateCloudCredential}
               username="spinach@external"
               validateForm={validateForm} />
@@ -91,7 +94,7 @@ describe('Account', () => {
           </div>
         </div>
       </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without payments', () => {
@@ -105,6 +108,7 @@ describe('Account', () => {
     const revokeCloudCredential = sinon.stub();
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
+    const sendAnalytics = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
@@ -116,6 +120,7 @@ describe('Account', () => {
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
         updateCloudCredential={updateCloudCredential}
+        sendAnalytics={sendAnalytics}
         showPay={false}
         user="spinach@external"
         userInfo={userInfo}
@@ -142,6 +147,7 @@ describe('Account', () => {
               getCloudProviderDetails={getCloudProviderDetails}
               listClouds={listClouds}
               revokeCloudCredential={revokeCloudCredential}
+              sendAnalytics={sendAnalytics}
               updateCloudCredential={updateCloudCredential}
               username="spinach@external"
               validateForm={validateForm} />
@@ -149,6 +155,6 @@ describe('Account', () => {
           </div>
         </div>
       </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

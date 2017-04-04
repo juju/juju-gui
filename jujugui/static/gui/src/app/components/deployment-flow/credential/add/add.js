@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-credential-add', function() {
 
   juju.components.DeploymentCredentialAdd = React.createClass({
+    displayName: 'DeploymentCredentialAdd',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,

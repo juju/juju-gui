@@ -1136,6 +1136,7 @@ YUI.add('juju-gui', function(Y) {
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
+          sendAnalytics={this.sendAnalytics}
           showPay={window.juju_config.payFlag || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
