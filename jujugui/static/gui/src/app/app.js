@@ -1982,9 +1982,9 @@ YUI.add('juju-gui', function(Y) {
       });
 
       state.register([
+        ['*', this.authorizeCookieUse.bind(this)],
         ['*', this.checkUserCredentials.bind(this)],
         ['*', this.show_environment.bind(this)],
-        ['*', this.authorizeCookieUse.bind(this)],
         ['root',
           this._rootDispatcher.bind(this),
           this._clearRoot.bind(this)],
