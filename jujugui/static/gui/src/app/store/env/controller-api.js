@@ -356,11 +356,11 @@ YUI.add('juju-controller-api', function(Y) {
 
       // Perform the API call.
       var macaroons = this.get('user').controller.macaroons;
+      this.pendingLoginResponse = true;
       sendLoginRequest(
         macaroons,
         handleResponse.bind(this, bakery, macaroons, cback)
       );
-      this.pendingLoginResponse = true;
     },
 
     /**
