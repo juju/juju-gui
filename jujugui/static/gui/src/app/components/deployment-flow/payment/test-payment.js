@@ -60,17 +60,14 @@ describe('DeploymentPayment', function() {
           phones: ['12341234']
         })
       },
-      cardExpiry: {
-        getValue: sinon.stub().returns('03/17')
-      },
-      cardNumber: {
-        getValue: sinon.stub().returns('1234 5678 1234 5678')
-      },
-      cardCVC: {
-        getValue: sinon.stub().returns('123')
-      },
-      cardName: {
-        getValue: sinon.stub().returns('Mr Geoffrey Spinach')
+      cardForm: {
+        getValue: sinon.stub().returns({
+          number: '1234567812345678',
+          cvc: '123',
+          expMonth: '03',
+          expYear: '17',
+          name: 'Mr Geoffrey Spinach'
+        })
       }
     };
   });
@@ -232,69 +229,10 @@ describe('DeploymentPayment', function() {
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
-            <juju.components.GenericInput
-              disabled={false}
-              label="Card number"
-              onChange={instance._handleNumberChange}
-              ref="cardNumber"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^[a-zA-Z0-9_-\s]{16,}/,
-                error: 'The card number is too short.'
-              }, {
-                regex: /^[a-zA-Z0-9_-\s]{0,23}$/,
-                error: 'The card number is too long.'
-              }, {
-                regex: /^[0-9\s]+$/,
-                error: 'The card number can only contain numbers.'
-              }]} />
-            <div className="twelve-col no-margin-bottom">
-              <div className="six-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={false}
-                  label="Expiry MM/YY"
-                  ref="cardExpiry"
-                  required={true}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }, {
-                    regex: /[\d]{2}\/[\d]{2}/,
-                    error: 'The expiry must be in the format MM/YY'
-                  }]} />
-              </div>
-              <div className="six-col last-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={false}
-                  label="Security number (CVC)"
-                  ref="cardCVC"
-                  required={true}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }, {
-                    regex: /^[0-9]{3}$/,
-                    error: 'The CVC must be three characters long.'
-                  }, {
-                    regex: /^[0-9]+$/,
-                    error: 'The CVC can only contain numbers.'
-                  }]} />
-              </div>
-            </div>
-            <div className="twelve-col">
-              <juju.components.GenericInput
-                disabled={false}
-                label="Name on card"
-                ref="cardName"
-                required={true}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
-            </div>
+            <juju.components.CardForm
+              acl={acl}
+              ref="cardForm"
+              validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={true}
                 id="cardAddressSame"
@@ -415,69 +353,10 @@ describe('DeploymentPayment', function() {
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
-            <juju.components.GenericInput
-              disabled={false}
-              label="Card number"
-              onChange={instance._handleNumberChange}
-              ref="cardNumber"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^[a-zA-Z0-9_-\s]{16,}/,
-                error: 'The card number is too short.'
-              }, {
-                regex: /^[a-zA-Z0-9_-\s]{0,23}$/,
-                error: 'The card number is too long.'
-              }, {
-                regex: /^[0-9\s]+$/,
-                error: 'The card number can only contain numbers.'
-              }]} />
-            <div className="twelve-col no-margin-bottom">
-              <div className="six-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={false}
-                  label="Expiry MM/YY"
-                  ref="cardExpiry"
-                  required={true}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }, {
-                    regex: /[\d]{2}\/[\d]{2}/,
-                    error: 'The expiry must be in the format MM/YY'
-                  }]} />
-              </div>
-              <div className="six-col last-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={false}
-                  label="Security number (CVC)"
-                  ref="cardCVC"
-                  required={true}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }, {
-                    regex: /^[0-9]{3}$/,
-                    error: 'The CVC must be three characters long.'
-                  }, {
-                    regex: /^[0-9]+$/,
-                    error: 'The CVC can only contain numbers.'
-                  }]} />
-              </div>
-            </div>
-            <div className="twelve-col">
-              <juju.components.GenericInput
-                disabled={false}
-                label="Name on card"
-                ref="cardName"
-                required={true}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
-            </div>
+            <juju.components.CardForm
+              acl={acl}
+              ref="cardForm"
+              validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={true}
                 id="cardAddressSame"
@@ -528,13 +407,13 @@ describe('DeploymentPayment', function() {
         validateForm={validateForm} />, true);
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[10].props.children[0].props.onChange(
+    formContent[8].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
-    formContent[11].props.children[0].props.onChange(
+    formContent[9].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     formContent = output.props.children.props.children[0].props.children;
-    expect(formContent[12]).toEqualJSX(
+    expect(formContent[10]).toEqualJSX(
       <div>
         <h2 className="deployment-payment__title">
           Card address
@@ -546,7 +425,7 @@ describe('DeploymentPayment', function() {
           ref="cardAddress"
           validateForm={validateForm} />
       </div>);
-    expect(formContent[13]).toEqualJSX(
+    expect(formContent[11]).toEqualJSX(
       <div>
         <h2 className="deployment-payment__title">
           Billing address
@@ -661,7 +540,7 @@ describe('DeploymentPayment', function() {
     instance.refs = refs;
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[10].props.children[0].props.onChange(
+    formContent[8].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
@@ -824,7 +703,7 @@ describe('DeploymentPayment', function() {
     instance.refs = refs;
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
-    formContent[11].props.children[0].props.onChange(
+    formContent[9].props.children[0].props.onChange(
       {currentTarget: {checked: false}});
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
@@ -904,79 +783,5 @@ describe('DeploymentPayment', function() {
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(getUser.callCount, 2);
-  });
-
-  describe('_formatCardNumber', function() {
-    let instance;
-
-    beforeEach(function() {
-      const renderer = jsTestUtils.shallowRender(
-        <juju.components.DeploymentPayment
-          acl={acl}
-          addNotification={sinon.stub()}
-          createToken={sinon.stub()}
-          createUser={sinon.stub()}
-          getCountries={sinon.stub()}
-          getUser={sinon.stub()}
-          paymentUser={null}
-          setPaymentUser={sinon.stub()}
-          username="spinach"
-          validateForm={sinon.stub()} />, true);
-      instance = renderer.getMountedInstance();
-    });
-
-    it('can format the number for American Express', function() {
-      assert.equal(
-        instance._formatCardNumber('373412345612345'),
-        '3734 123456 12345');
-    });
-
-    it('can format the number for Visa', function() {
-      assert.equal(
-        instance._formatCardNumber('4534223432344234'),
-        '4534 2234 3234 4234');
-    });
-
-    it('can format the number for MasterCard', function() {
-      assert.equal(
-        instance._formatCardNumber('5334223432344234'),
-        '5334 2234 3234 4234');
-    });
-
-    it('can format the number for Discover', function() {
-      assert.equal(
-        instance._formatCardNumber('6011223432344234'),
-        '6011 2234 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('6221273432344234'),
-        '6221 2734 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('6461273432344234'),
-        '6461 2734 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('6561273432344234'),
-        '6561 2734 3234 4234');
-    });
-
-    it('can format the number for Diners Club', function() {
-      assert.equal(
-        instance._formatCardNumber('3034223432344234'),
-        '3034 2234 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('3094223432344234'),
-        '3094 2234 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('3694223432344234'),
-        '3694 2234 3234 4234');
-      assert.equal(
-        instance._formatCardNumber('3894223432344234'),
-        '3894 2234 3234 4234');
-    });
-
-    it('can format the number for JCB', function() {
-      assert.equal(
-        instance._formatCardNumber('3533223432344234'),
-        '3533 2234 3234 4234');
-    });
   });
 });

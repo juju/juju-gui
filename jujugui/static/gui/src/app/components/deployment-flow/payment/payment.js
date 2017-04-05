@@ -92,10 +92,7 @@ YUI.add('deployment-payment', function() {
       let fields = [
         'emailAddress',
         'userAddress',
-        'cardExpiry',
-        'cardNumber',
-        'cardCVC',
-        'cardName'
+        'cardForm'
       ];
       if (this.state.business) {
         fields = fields.concat([
@@ -113,25 +110,6 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
-      Get address data.
-
-      @method _getAddress
-      @param key {String} The identifier for the form instance.
-    */
-    _getAddress: function(key) {
-      const address = this.refs[`${key}Address`].getValue();
-      return {
-        line1: address.line1,
-        line2: address.line2,
-        city: address.city,
-        state: address.state,
-        postcode: address.poscode,
-        countryCode: address.countryCode,
-        phones: address.phones
-      };
-    },
-
-    /**
       Handle creating the card and user.
 
       @method _handleAddUser
@@ -144,22 +122,14 @@ YUI.add('deployment-payment', function() {
       const refs = this.refs;
       const cardAddress = this.refs[
         `${this.state.cardAddressSame ? 'user' : 'card'}Address`].getValue();
-      const expiry = refs.cardExpiry.getValue().split('/');
-      const expiryMonth = expiry[0];
-      const expiryYear = expiry[1];
-      const card = {
-        number: refs.cardNumber.getValue().replace(/ /g, ''),
-        cvc: refs.cardCVC.getValue(),
-        expMonth: expiryMonth,
-        expYear: expiryYear,
-        name: refs.cardName.getValue(),
+      const card = Object.assign(refs.cardForm.getValue(), {
         addressLine1: cardAddress.line1,
         addressLine2: cardAddress.line2,
         addressCity: cardAddress.city,
         addressState: cardAddress.state,
         addressZip: cardAddress.postcode,
         addressCountry: cardAddress.countryCode
-      };
+      });
       const xhr = this.props.createToken(card, (error, token) => {
         if (error) {
           const message = 'Could not create Stripe token';
@@ -241,97 +211,6 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
-      Handle updating the number with the correct spacing.
-
-      @method _handleNumberChange
-    */
-    _handleNumberChange: function() {
-      this.refs.cardNumber.setValue(
-        this._formatCardNumber(this.refs.cardNumber.getValue()));
-      // TODO: when we have card logos we should update the logo for the card
-      // type here.
-    },
-
-    /**
-      Format the credit card number. Stripe accepts Visa, MasterCard, American
-      Express, JCB, Discover, and Diners Club, of which all are spaced in blocks
-      four except American Express.
-
-      @method _formatCardNumber
-      @param number {String} A full or partial card number.
-    */
-    _formatCardNumber: function(number) {
-      const provider = this._getCardProvider(number);
-      if (!provider) {
-        return number;
-      }
-      let parts = [];
-      let position = 0;
-      // Clean all the spaces from the card number.
-      number = number.replace(/ /g, '');
-      // Loop through the blocks.
-      provider.blocks.forEach(block => {
-        // Store the block of numbers.
-        parts.push(number.slice(position, position + block));
-        position += block;
-      });
-      // Join the new blocks with spaces.
-      return parts.join(' ');
-    },
-
-    /**
-      Get the details of the card provider from the card number.
-
-      @method _getCardProvider
-      @param number {String} A full or partial card number.
-    */
-    _getCardProvider: function(number) {
-      // Clean all the spaces from the card number.
-      number = number.replace(/ /g, '');
-      // Define the blocks for the different card providers. Defaulting to the
-      // most common.
-      const providers = [{
-        name: 'American Express',
-        // Prefix: 34, 37
-        numbers: /^(34|37)/,
-        blocks: [4, 6, 5]
-      }, {
-        name: 'Visa',
-        // Prefix: 4
-        numbers: /^4/,
-        blocks: [4, 4, 4, 4]
-      }, {
-        name: 'MasterCard',
-        // Prefix: 50-55
-        numbers: /^5[1-5]/,
-        blocks: [4, 4, 4, 4]
-      }, {
-        name: 'Discover',
-        // Prefix: 	6011, 622126-622925, 644-649, 65
-        numbers: /^(65|6011|(64[4-9])|(622\d\d\d))/,
-        blocks: [4, 4, 4, 4]
-      }, {
-        name: 'Diners Club',
-        // Prefix: 300-305, 309, 36, 38-39
-        numbers: /^((30[0-5])|309|36|(3[8-9]))/,
-        blocks: [4, 4, 4, 4]
-      }, {
-        name: 'JCB',
-        // Prefix: 3528-3589
-        numbers: /^(35\d\d)/,
-        blocks: [4, 4, 4, 4]
-      }];
-      let match;
-      providers.some(provider => {
-        if (provider.numbers.test(number)) {
-          match = provider;
-          return true;
-        }
-      });
-      return match || null;
-    },
-
-    /**
       Generate the details for the payment method.
 
       @method _generatePaymentForm
@@ -387,57 +266,10 @@ YUI.add('deployment-payment', function() {
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
-            <juju.components.GenericInput
-              disabled={disabled}
-              label="Card number"
-              onChange={this._handleNumberChange}
-              ref="cardNumber"
-              required={true}
-              validate={[required, {
-                regex: /^[a-zA-Z0-9_-\s]{16,}/,
-                error: 'The card number is too short.'
-              }, {
-                regex: /^[a-zA-Z0-9_-\s]{0,23}$/,
-                error: 'The card number is too long.'
-              }, {
-                regex: /^[0-9\s]+$/,
-                error: 'The card number can only contain numbers.'
-              }]} />
-            <div className="twelve-col no-margin-bottom">
-              <div className="six-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={disabled}
-                  label="Expiry MM/YY"
-                  ref="cardExpiry"
-                  required={true}
-                  validate={[required, {
-                    regex: /[\d]{2}\/[\d]{2}/,
-                    error: 'The expiry must be in the format MM/YY'
-                  }]} />
-              </div>
-              <div className="six-col last-col no-margin-bottom">
-                <juju.components.GenericInput
-                  disabled={disabled}
-                  label="Security number (CVC)"
-                  ref="cardCVC"
-                  required={true}
-                  validate={[required, {
-                    regex: /^[0-9]{3}$/,
-                    error: 'The CVC must be three characters long.'
-                  }, {
-                    regex: /^[0-9]+$/,
-                    error: 'The CVC can only contain numbers.'
-                  }]} />
-              </div>
-            </div>
-            <div className="twelve-col">
-              <juju.components.GenericInput
-                disabled={disabled}
-                label="Name on card"
-                ref="cardName"
-                required={true}
-                validate={[required]} />
-            </div>
+            <juju.components.CardForm
+              acl={this.props.acl}
+              ref="cardForm"
+              validateForm={this.props.validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
                 id="cardAddressSame"
@@ -608,6 +440,7 @@ YUI.add('deployment-payment', function() {
   requires: [
     'account-payment-method-card',
     'address-form',
+    'card-form',
     'generic-button',
     'generic-input',
     'inset-select',
