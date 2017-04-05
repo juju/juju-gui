@@ -60,10 +60,12 @@ describe('d3-components', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'container');
-    container.append(Y.Node.create('<button/>')
-             .addClass('thing'))
-             .append(Y.Node.create('<button/>')
-             .addClass('target'));
+    const button1 = document.createElement('button');
+    button1.classList.add('thing');
+    container.appendChild(button1);
+    const button2 = document.createElement('button');
+    button2.classList.add('target');
+    container.appendChild(button2);
     state = {};
   });
 
@@ -201,12 +203,16 @@ describe('d3-components', function() {
        // Give each of these a render method that adds to container
        modA.name = 'moda';
        modA.render = function() {
-         this.get('container').append(Y.Node.create('<div id="fromA"></div>'));
+         const node = document.createElement('div');
+         node.setAttribute('id', 'fromA');
+         this.get('container').appendChild(node);
        };
 
        modB.name = 'modb';
        modB.render = function() {
-         this.get('container').append(Y.Node.create('<div id="fromB"></div>'));
+         const node = document.createElement('div');
+         node.setAttribute('id', 'fromB');
+         this.get('container').appendChild(node);
        };
 
        comp.setAttrs({container: container});
