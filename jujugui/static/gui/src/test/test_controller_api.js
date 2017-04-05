@@ -715,7 +715,8 @@ describe('Controller API', function() {
         assert.strictEqual(result.series, 'trusty');
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-7a43-47d3-89dd-b02c923e');
-        assert.strictEqual(result.credential, 'who');
+        assert.strictEqual(result.credential, 'aws_who@external_who');
+        assert.strictEqual(result.credentialName, 'who');
         assert.strictEqual(result.region, 'gallifrey');
         assert.strictEqual(result.cloud, 'aws');
         assert.strictEqual(result.numMachines, 3);
@@ -768,7 +769,7 @@ describe('Controller API', function() {
               'provider-type': 'lxd',
               uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
               'controller-uuid': '5bea955d-7a43-47d3-89dd',
-              'cloud-credential-tag': 'cloudcred-who',
+              'cloud-credential-tag': 'cloudcred-aws_who@external_who',
               'cloud-region': 'gallifrey',
               'cloud-tag': 'cloud-aws',
               machines: [1, 2, 3],
@@ -975,7 +976,8 @@ describe('Controller API', function() {
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-1');
         assert.strictEqual(result.controllerUUID, '5bea955d-c');
-        assert.strictEqual(result.credential, 'who');
+        assert.strictEqual(result.credential, 'aws_who@external_who');
+        assert.strictEqual(result.credentialName, 'who');
         assert.strictEqual(result.region, 'gallifrey');
         assert.strictEqual(result.cloud, 'aws');
         assert.strictEqual(result.numMachines, 2);
@@ -1052,7 +1054,7 @@ describe('Controller API', function() {
               'provider-type': 'lxd',
               uuid: '5bea955d-1',
               'controller-uuid': '5bea955d-c',
-              'cloud-credential-tag': 'cloudcred-who',
+              'cloud-credential-tag': 'cloudcred-aws_who@external_who',
               'cloud-region': 'gallifrey',
               'cloud-tag': 'cloud-aws',
               machines: [{}, {}],

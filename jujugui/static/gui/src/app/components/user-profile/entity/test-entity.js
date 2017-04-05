@@ -37,7 +37,8 @@ describe('UserProfileEntity', () => {
       isController: false,
       isAlive: true,
       cloud: 'aws',
-      credential: 'foobar',
+      credential: 'aws_user@local_foobar',
+      credentialName: 'foobar',
       numMachines: 5
     };
     window.flags = {};

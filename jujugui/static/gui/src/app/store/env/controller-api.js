@@ -479,6 +479,7 @@ YUI.add('juju-controller-api', function(Y) {
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - credential: the name of the credential used to create the model;
+        - credentialName: the readable credential name extracted from the id;
         - region: the model region (or null if no regions apply);
         - cloud: the cloud used to deploy the model, as a string;
         - numMachines: the number of machines in the model;
@@ -565,6 +566,7 @@ YUI.add('juju-controller-api', function(Y) {
             controllerUUID: result['controller-uuid'],
             owner: tags.parse(tags.USER, result['owner-tag']),
             credential: credential,
+            credentialName: this._parseCredentialName(credential),
             region: result['cloud-region'] || null,
             cloud: cloud,
             numMachines: machines.length,
@@ -607,6 +609,7 @@ YUI.add('juju-controller-api', function(Y) {
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - credential: the name of the credential used to create the model;
+        - credentialName: the readable credential name extracted from the id;
         - region: the model region (or null if no regions apply);
         - cloud: the cloud used to deploy the model, as a string;
         - numMachines: the number of machines in the model;
@@ -679,6 +682,7 @@ YUI.add('juju-controller-api', function(Y) {
               controllerUUID: model.controllerUUID,
               owner: model.owner,
               credential: model.credential,
+              credentialName: this._parseCredentialName(model.credential),
               region: model.region,
               cloud: model.cloud,
               numMachines: model.numMachines,
