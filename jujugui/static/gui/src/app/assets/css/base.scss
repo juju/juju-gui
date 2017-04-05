@@ -51,7 +51,6 @@ $z-indexed-elements: search-results-list-block__tags,
   inspector-view,
   env-size-display,
   deployment-bar-panel,
-  cookie-policy,
   top-page,
   header-banner-breadcrumbs,
   white-box,
@@ -67,7 +66,8 @@ $z-indexed-elements: search-results-list-block__tags,
   expanding-progress,
   popup,
   full-screen-mask,
-  centered-column;
+  centered-column,
+  cookie-policy;
 // sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
