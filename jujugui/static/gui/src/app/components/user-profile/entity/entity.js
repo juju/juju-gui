@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity', function() {
 
   juju.components.UserProfileEntity = React.createClass({
+    displayName: 'UserProfileEntity',
 
     propTypes: {
       changeState: React.PropTypes.func,
@@ -308,7 +309,7 @@ YUI.add('user-profile-entity', function() {
               {name}
             </span>
             <span className="entity-title__credential">
-              {entity.credential}
+              {entity.credentialName}
             </span>
           </div>
         );
@@ -368,6 +369,7 @@ YUI.add('user-profile-entity', function() {
 
 }, '', {
   requires: [
+    'date-display',
     'expanding-row',
     'generic-button'
   ]
