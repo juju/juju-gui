@@ -72,12 +72,12 @@ describe('AddressForm', function() {
               label: 'Australia',
               value: 'AU'
             }]}
-            ref="addressCountry"
+            ref="country"
             value="GB" />
           <juju.components.GenericInput
             disabled={false}
             label="Full name"
-            ref="addressFullName"
+            ref="name"
             required={true}
             validate={[{
               regex: /\S+/,
@@ -86,7 +86,7 @@ describe('AddressForm', function() {
           <juju.components.GenericInput
             disabled={false}
             label="Address line 1"
-            ref="addressLine1"
+            ref="line1"
             required={true}
             validate={[{
               regex: /\S+/,
@@ -95,12 +95,12 @@ describe('AddressForm', function() {
           <juju.components.GenericInput
             disabled={false}
             label="Address line 2 (optional)"
-            ref="addressLine2"
+            ref="line2"
             required={false} />
           <juju.components.GenericInput
             disabled={false}
             label="State/province"
-            ref="addressState"
+            ref="state"
             required={true}
             validate={[{
               regex: /\S+/,
@@ -111,7 +111,7 @@ describe('AddressForm', function() {
               <juju.components.GenericInput
                 disabled={false}
                 label="Town/city"
-                ref="addressCity"
+                ref="city"
                 required={true}
                 validate={[{
                   regex: /\S+/,
@@ -122,7 +122,7 @@ describe('AddressForm', function() {
               <juju.components.GenericInput
                 disabled={false}
                 label="Postcode"
-                ref="addressPostcode"
+                ref="postcode"
                 required={true}
                 validate={[{
                   regex: /\S+/,
@@ -137,14 +137,14 @@ describe('AddressForm', function() {
                   label: 'AU',
                   value: 'AU'
                 }]}
-                ref="addressCountryCode"
+                ref="countryCode"
                 value="GB" />
             </div>
             <div className="eight-col last-col">
               <juju.components.GenericInput
                 disabled={false}
                 label="Phone number"
-                ref="addressPhoneNumber"
+                ref="phoneNumber"
                 required={true}
                 validate={[{
                   regex: /\S+/,
@@ -209,33 +209,34 @@ describe('AddressForm', function() {
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
     instance.refs = {
-      addressFullName: {
+      name: {
         getValue: sinon.stub().returns('Geoffrey Spinach')
       },
-      addressLine1: {
+      line1: {
         getValue: sinon.stub().returns('10 Maple St')
       },
-      addressLine2: {
+      line2: {
         getValue: sinon.stub().returns('')
       },
-      addressCity: {
+      city: {
         getValue: sinon.stub().returns('Sasquatch')
       },
-      addressState: {
+      state: {
         getValue: sinon.stub().returns('Bunnyhug')
       },
-      addressPostcode: {
+      postcode: {
         getValue: sinon.stub().returns('90210')
       },
-      addressCountry: {
+      country: {
         getValue: sinon.stub().returns('CA')
       },
-      addressPhoneNumber: {
+      phoneNumber: {
         getValue: sinon.stub().returns('12341234')
       }
     };
     renderer.getRenderOutput();
     assert.deepEqual(instance.getValue(), {
+      name: 'Geoffrey Spinach',
       line1: '10 Maple St',
       line2: '',
       city: 'Sasquatch',

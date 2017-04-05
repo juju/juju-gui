@@ -115,14 +115,7 @@ YUI.add('deployment-payment', function() {
     _validateForm: function() {
       let fields = [
         'emailAddress',
-        'userAddressLine1',
-        'userAddressLine2',
-        'userAddressCity',
-        'userAddressState',
-        'userAddressPostcode',
-        'userAddressCountry',
-        'userAddressPhoneNumber',
-        'userAddressFullName',
+        'userAddress',
         'cardExpiry',
         'cardNumber',
         'cardCVC',
@@ -135,26 +128,10 @@ YUI.add('deployment-payment', function() {
         ]);
       }
       if (!this.state.billingAddressSame) {
-        fields = fields.concat([
-          'billingAddressLine1',
-          'billingAddressLine2',
-          'billingAddressCity',
-          'billingAddressState',
-          'billingAddressPostcode',
-          'billingAddressCountry',
-          'billingAddressPhoneNumber'
-        ]);
+        fields.push('billingAddress');
       }
       if (!this.state.cardAddressSame) {
-        fields = fields.concat([
-          'cardAddressLine1',
-          'cardAddressLine2',
-          'cardAddressCity',
-          'cardAddressState',
-          'cardAddressPostcode',
-          'cardAddressCountry',
-          'cardAddressPhoneNumber'
-        ]);
+        fields.push('cardAddress');
       }
       return this.props.validateForm(fields, this.refs);
     },
@@ -166,15 +143,15 @@ YUI.add('deployment-payment', function() {
       @param key {String} The identifier for the form instance.
     */
     _getAddress: function(key) {
-      const refs = this.refs;
+      const address = this.refs[`${key}Address`].getValue();
       return {
-        line1: refs[`${key}AddressLine1`].getValue(),
-        line2: refs[`${key}AddressLine2`].getValue(),
-        city: refs[`${key}AddressCity`].getValue(),
-        state: refs[`${key}AddressState`].getValue(),
-        postcode: refs[`${key}AddressPostcode`].getValue(),
-        countryCode: refs[`${key}AddressCountry`].getValue(),
-        phones: [refs[`${key}AddressPhoneNumber`].getValue()]
+        line1: address.line1,
+        line2: address.line2,
+        city: address.city,
+        state: address.state,
+        postcode: address.poscode,
+        countryCode: address.countryCode,
+        phones: address.phones
       };
     },
 
@@ -189,8 +166,8 @@ YUI.add('deployment-payment', function() {
         return;
       }
       const refs = this.refs;
-      const cardAddress = this._getAddress(
-        this.state.cardAddressSame ? 'user' : 'card');
+      const cardAddress = this.refs[
+        `${this.state.cardAddressSame ? 'user' : 'card'}Address`].getValue();
       const expiry = refs.cardExpiry.getValue().split('/');
       const expiryMonth = expiry[0];
       const expiryYear = expiry[1];
@@ -232,15 +209,15 @@ YUI.add('deployment-payment', function() {
     _createUser: function(token) {
       const refs = this.refs;
       const business = this.state.business;
-      const address = this._getAddress('user');
+      const address = this.refs.userAddress.getValue();
       let billingAddress;
       if (this.state.billingAddressSame) {
         billingAddress = address;
       } else {
-        billingAddress = this._getAddress('billing');
+        billingAddress = this.refs.billingAddress.getValue();
       }
       const user = {
-        name: refs.userAddressFullName.getValue(),
+        name: address.name,
         email: refs.emailAddress.getValue(),
         addresses: [address],
         vat: business && refs.VATNumber.getValue() || null,
@@ -425,7 +402,12 @@ YUI.add('deployment-payment', function() {
               ref="emailAddress"
               required={true}
               validate={[required]} />
-            {this._generateAddressFields('user')}
+            <juju.components.AddressForm
+              acl={this.props.acl}
+              addNotification={this.props.addNotification}
+              getCountries={this.props.getCountries}
+              ref="userAddress"
+              validateForm={this.props.validateForm} />
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
@@ -542,86 +524,6 @@ YUI.add('deployment-payment', function() {
     },
 
     /**
-      Generate the fields for an address.
-
-      @method _generateAddressFields
-      @param key {String} An identifier for this form instance.
-    */
-    _generateAddressFields: function(key) {
-      const required = {
-        regex: /\S+/,
-        error: 'This field is required.'
-      };
-      const disabled = this.props.acl.isReadOnly();
-      return (
-        <div>
-          <juju.components.InsetSelect
-            disabled={disabled}
-            label="Country"
-            options={this._generateCountryOptions()}
-            ref={`${key}AddressCountry`}
-            value="GB" />
-          <juju.components.GenericInput
-            disabled={disabled}
-            label="Full name"
-            ref={`${key}AddressFullName`}
-            required={true}
-            validate={[required]} />
-          <juju.components.GenericInput
-            disabled={disabled}
-            label="Address line 1"
-            ref={`${key}AddressLine1`}
-            required={true}
-            validate={[required]} />
-          <juju.components.GenericInput
-            disabled={disabled}
-            label="Address line 2 (optional)"
-            ref={`${key}AddressLine2`}
-            required={false} />
-          <juju.components.GenericInput
-            disabled={disabled}
-            label="State/province"
-            ref={`${key}AddressState`}
-            required={true}
-            validate={[required]} />
-          <div className="twelve-col">
-            <div className="six-col">
-              <juju.components.GenericInput
-                disabled={disabled}
-                label="Town/city"
-                ref={`${key}AddressCity`}
-                required={true}
-                validate={[required]} />
-            </div>
-            <div className="six-col last-col">
-              <juju.components.GenericInput
-                disabled={disabled}
-                label="Postcode"
-                ref={`${key}AddressPostcode`}
-                required={true}
-                validate={[required]} />
-            </div>
-            <div className="four-col">
-              <juju.components.InsetSelect
-                disabled={disabled}
-                label="Country code"
-                options={this._generateCountryCodeOptions()}
-                ref={`${key}AddressCountryCode`}
-                value="GB" />
-            </div>
-            <div className="eight-col last-col">
-              <juju.components.GenericInput
-                disabled={disabled}
-                label="Phone number"
-                ref={`${key}AddressPhoneNumber`}
-                required={true}
-                validate={[required]} />
-            </div>
-          </div>
-        </div>);
-    },
-
-    /**
       Update the state when the billing checkbox changes.
 
       @method _handleBillingSameChange
@@ -655,7 +557,12 @@ YUI.add('deployment-payment', function() {
           <h2 className="deployment-payment__title">
             Card address
           </h2>
-          {this._generateAddressFields('card')}
+          <juju.components.AddressForm
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getCountries={this.props.getCountries}
+            ref="cardAddress"
+            validateForm={this.props.validateForm} />
         </div>);
     },
 
@@ -673,7 +580,12 @@ YUI.add('deployment-payment', function() {
           <h2 className="deployment-payment__title">
             Billing address
           </h2>
-          {this._generateAddressFields('billing')}
+          <juju.components.AddressForm
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getCountries={this.props.getCountries}
+            ref="billingAddress"
+            validateForm={this.props.validateForm} />
         </div>);
     },
 
@@ -749,6 +661,7 @@ YUI.add('deployment-payment', function() {
 }, '0.1.0', {
   requires: [
     'account-payment-method-card',
+    'address-form',
     'generic-button',
     'generic-input',
     'inset-select',

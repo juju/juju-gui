@@ -47,7 +47,8 @@ var module = module;
           - business {Boolean} whether this is a business account
           - addresses {Array} A list of address objects, the
             objects contain:
-              - name {String} The name of the address e.g. "Home"
+              - name {String} The name for the address e.g. "Geoffrey Spinach"
+                or "Tuque LTD"
               - line1 {String} The first address line
               - line2 {String} The second address line
               - county {String} The address county
@@ -59,7 +60,8 @@ var module = module;
           - businessName {String|Null} The business name
 	        - billingAddresses {Array} A list of billing address objects,
             the objects contain:
-              - name {String} The name of the address e.g. "Home"
+              - name {String} The name for the address e.g. "Geoffrey Spinach"
+                or "Tuque LTD"
               - line1 {String} The first address line
               - line2 {String} The second address line
               - county {String} The address county
@@ -70,7 +72,8 @@ var module = module;
 	        - paymentMethods {Array} A list of payment method objects,
             the objects contain:
               - address {Object} The card address object containing
-                - name {String|Null} The name of the address e.g. "Home"
+                - name {String|Null} The name for the address e.g.
+                  "Geoffrey Spinach" or "Tuque LTD"
                 - line1 {String|Null} The first address line
                 - line2 {String|Null} The second address line
                 - county {String|Null} The address county
@@ -110,7 +113,8 @@ var module = module;
         - name {String} The user's full name
         - email {String} The user's email address
         - addresses {Array} A list of address objects, the objects contain:
-          - name {String} The name of the address e.g. "Home"
+          - name {String} The name for the address e.g. "Geoffrey Spinach" or
+            "Tuque LTD"
           - line1 {String} The first address line
           - line2 {String} The second address line
           - county {String} The address county
@@ -123,7 +127,8 @@ var module = module;
         - businessName {String|Null} The business name
         - billingAddresses {Array} A list of billing address objects,
           the objects contain:
-            - name {String} The name of the address e.g. "Home"
+            - name {String} The name for the address e.g. "Geoffrey Spinach" or
+              "Tuque LTD"
             - line1 {String} The first address line
             - line2 {String} The second address line
             - county {String} The address county

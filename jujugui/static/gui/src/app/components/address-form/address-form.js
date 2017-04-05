@@ -83,14 +83,14 @@ YUI.add('address-form', function() {
     */
     validate: function() {
       let fields = [
-        'addressLine1',
-        'addressLine2',
-        'addressCity',
-        'addressState',
-        'addressPostcode',
-        'addressCountry',
-        'addressPhoneNumber',
-        'addressFullName'
+        'line1',
+        'line2',
+        'city',
+        'state',
+        'postcode',
+        'country',
+        'phoneNumber',
+        'name'
       ];
       return this.props.validateForm(fields, this.refs);
     },
@@ -104,13 +104,14 @@ YUI.add('address-form', function() {
     getValue: function(key) {
       const refs = this.refs;
       return {
-        line1: refs.addressLine1.getValue(),
-        line2: refs.addressLine2.getValue(),
-        city: refs.addressCity.getValue(),
-        state: refs.addressState.getValue(),
-        postcode: refs.addressPostcode.getValue(),
-        countryCode: refs.addressCountry.getValue(),
-        phones: [refs.addressPhoneNumber.getValue()]
+        name: refs.name.getValue(),
+        line1: refs.line1.getValue(),
+        line2: refs.line2.getValue(),
+        city: refs.city.getValue(),
+        state: refs.state.getValue(),
+        postcode: refs.postcode.getValue(),
+        countryCode: refs.country.getValue(),
+        phones: [refs.phoneNumber.getValue()]
       };
     },
 
@@ -161,29 +162,29 @@ YUI.add('address-form', function() {
               disabled={disabled}
               label="Country"
               options={this._generateCountryOptions()}
-              ref="addressCountry"
+              ref="country"
               value="GB" />
             <juju.components.GenericInput
               disabled={disabled}
               label="Full name"
-              ref="addressFullName"
+              ref="name"
               required={true}
               validate={[required]} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Address line 1"
-              ref="addressLine1"
+              ref="line1"
               required={true}
               validate={[required]} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Address line 2 (optional)"
-              ref="addressLine2"
+              ref="line2"
               required={false} />
             <juju.components.GenericInput
               disabled={disabled}
               label="State/province"
-              ref="addressState"
+              ref="state"
               required={true}
               validate={[required]} />
             <div className="twelve-col">
@@ -191,7 +192,7 @@ YUI.add('address-form', function() {
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Town/city"
-                  ref="addressCity"
+                  ref="city"
                   required={true}
                   validate={[required]} />
               </div>
@@ -199,7 +200,7 @@ YUI.add('address-form', function() {
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Postcode"
-                  ref="addressPostcode"
+                  ref="postcode"
                   required={true}
                   validate={[required]} />
               </div>
@@ -208,14 +209,14 @@ YUI.add('address-form', function() {
                   disabled={disabled}
                   label="Country code"
                   options={this._generateCountryCodeOptions()}
-                  ref="addressCountryCode"
+                  ref="countryCode"
                   value="GB" />
               </div>
               <div className="eight-col last-col">
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Phone number"
-                  ref="addressPhoneNumber"
+                  ref="phoneNumber"
                   required={true}
                   validate={[required]} />
               </div>

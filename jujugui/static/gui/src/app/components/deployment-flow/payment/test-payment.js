@@ -23,99 +23,6 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-function addressFields(key) {
-  return (
-    <div>
-      <juju.components.InsetSelect
-        disabled={false}
-        label="Country"
-        options={[{
-          label: 'Australia',
-          value: 'AU'
-        }]}
-        ref={`${key}AddressCountry`}
-        value="GB" />
-      <juju.components.GenericInput
-        disabled={false}
-        label="Full name"
-        ref={`${key}AddressFullName`}
-        required={true}
-        validate={[{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }]} />
-      <juju.components.GenericInput
-        disabled={false}
-        label="Address line 1"
-        ref={`${key}AddressLine1`}
-        required={true}
-        validate={[{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }]} />
-      <juju.components.GenericInput
-        disabled={false}
-        label="Address line 2 (optional)"
-        ref={`${key}AddressLine2`}
-        required={false} />
-      <juju.components.GenericInput
-        disabled={false}
-        label="State/province"
-        ref={`${key}AddressState`}
-        required={true}
-        validate={[{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }]} />
-      <div className="twelve-col">
-        <div className="six-col">
-          <juju.components.GenericInput
-            disabled={false}
-            label="Town/city"
-            ref={`${key}AddressCity`}
-            required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]} />
-        </div>
-        <div className="six-col last-col">
-          <juju.components.GenericInput
-            disabled={false}
-            label="Postcode"
-            ref={`${key}AddressPostcode`}
-            required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]} />
-        </div>
-        <div className="four-col">
-          <juju.components.InsetSelect
-            disabled={false}
-            label="Country code"
-            options={[{
-              label: 'AU',
-              value: 'AU'
-            }]}
-            ref={`${key}AddressCountryCode`}
-            value="GB" />
-        </div>
-        <div className="eight-col last-col">
-          <juju.components.GenericInput
-            disabled={false}
-            label="Phone number"
-            ref={`${key}AddressPhoneNumber`}
-            required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]} />
-        </div>
-      </div>
-    </div>);
-}
-
 describe('DeploymentPayment', function() {
   let acl, getCountries, getUser, refs, user;
 
@@ -144,29 +51,17 @@ describe('DeploymentPayment', function() {
       emailAddress: {
         getValue: sinon.stub().returns('spinach@example.com')
       },
-      userAddressFullName: {
-        getValue: sinon.stub().returns('Geoffrey Spinach')
-      },
-      userAddressLine1: {
-        getValue: sinon.stub().returns('10 Maple St')
-      },
-      userAddressLine2: {
-        getValue: sinon.stub().returns('')
-      },
-      userAddressCity: {
-        getValue: sinon.stub().returns('Sasquatch')
-      },
-      userAddressState: {
-        getValue: sinon.stub().returns('Bunnyhug')
-      },
-      userAddressPostcode: {
-        getValue: sinon.stub().returns('90210')
-      },
-      userAddressCountry: {
-        getValue: sinon.stub().returns('CA')
-      },
-      userAddressPhoneNumber: {
-        getValue: sinon.stub().returns('12341234')
+      userAddress: {
+        getValue: sinon.stub().returns({
+          name: 'Geoffrey Spinach',
+          line1: '10 Maple St',
+          line2: '',
+          city: 'Sasquatch',
+          state: 'Bunnyhug',
+          postcode: '90210',
+          countryCode: 'CA',
+          phones: ['12341234']
+        })
       },
       cardExpiry: {
         getValue: sinon.stub().returns('03/17')
@@ -271,10 +166,12 @@ describe('DeploymentPayment', function() {
   });
 
   it('can display a personal form', function() {
+    const addNotification = sinon.stub();
+    const validateForm = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPayment
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -282,7 +179,7 @@ describe('DeploymentPayment', function() {
         paymentUser={null}
         setPaymentUser={sinon.stub()}
         username="spinach"
-        validateForm={sinon.stub()} />, true);
+        validateForm={validateForm} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const options = output.props.children.props.children[0].props.children[0]
@@ -329,7 +226,12 @@ describe('DeploymentPayment', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
-            {addressFields('user')}
+            <juju.components.AddressForm
+              acl={acl}
+              addNotification={addNotification}
+              getCountries={getCountries}
+              ref="userAddress"
+              validateForm={validateForm} />
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
@@ -430,10 +332,12 @@ describe('DeploymentPayment', function() {
   });
 
   it('can display a business form', function() {
+    const addNotification = sinon.stub();
+    const validateForm = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPayment
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -441,7 +345,7 @@ describe('DeploymentPayment', function() {
         paymentUser={null}
         setPaymentUser={sinon.stub()}
         username="spinach"
-        validateForm={sinon.stub()} />, true);
+        validateForm={validateForm} />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[0]
@@ -505,7 +409,12 @@ describe('DeploymentPayment', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
-            {addressFields('user')}
+            <juju.components.AddressForm
+              acl={acl}
+              addNotification={addNotification}
+              getCountries={getCountries}
+              ref="userAddress"
+              validateForm={validateForm} />
             <h2 className="deployment-payment__title">
               Payment information
             </h2>
@@ -606,10 +515,12 @@ describe('DeploymentPayment', function() {
   });
 
   it('can display card and billing address fields', function() {
+    const addNotification = sinon.stub();
+    const validateForm = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPayment
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -617,7 +528,7 @@ describe('DeploymentPayment', function() {
         paymentUser={null}
         setPaymentUser={sinon.stub()}
         username="spinach"
-        validateForm={sinon.stub()} />, true);
+        validateForm={validateForm} />, true);
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
     formContent[10].props.children[0].props.onChange(
@@ -631,14 +542,24 @@ describe('DeploymentPayment', function() {
         <h2 className="deployment-payment__title">
           Card address
         </h2>
-        {addressFields('card')}
+        <juju.components.AddressForm
+          acl={acl}
+          addNotification={addNotification}
+          getCountries={getCountries}
+          ref="cardAddress"
+          validateForm={validateForm} />
       </div>);
     expect(formContent[13]).toEqualJSX(
       <div>
         <h2 className="deployment-payment__title">
           Billing address
         </h2>
-        {addressFields('billing')}
+        <juju.components.AddressForm
+          acl={acl}
+          addNotification={addNotification}
+          getCountries={getCountries}
+          ref="billingAddress"
+          validateForm={validateForm} />
       </div>);
   });
 
@@ -728,30 +649,19 @@ describe('DeploymentPayment', function() {
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
-    const extraRefs = {
-      cardAddressLine1: {
-        getValue: sinon.stub().returns('9 Kangaroo St')
-      },
-      cardAddressLine2: {
-        getValue: sinon.stub().returns('')
-      },
-      cardAddressCity: {
-        getValue: sinon.stub().returns('Snake')
-      },
-      cardAddressState: {
-        getValue: sinon.stub().returns('Spider')
-      },
-      cardAddressPostcode: {
-        getValue: sinon.stub().returns('9000')
-      },
-      cardAddressCountry: {
-        getValue: sinon.stub().returns('AU')
-      },
-      cardAddressPhoneNumber: {
-        getValue: sinon.stub().returns('')
-      }
+    refs.cardAddress = {
+      getValue: sinon.stub().returns({
+        name: 'Bruce Dundee',
+        line1: '9 Kangaroo St',
+        line2: '',
+        city: 'Snake',
+        state: 'Spider',
+        postcode: '9000',
+        countryCode: 'AU',
+        phones: ['00001111']
+      })
     };
-    instance.refs = Object.assign(refs, extraRefs);
+    instance.refs = refs;
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
     formContent[10].props.children[0].props.onChange(
@@ -823,6 +733,7 @@ describe('DeploymentPayment', function() {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
+        name: 'Geoffrey Spinach',
         line1: '10 Maple St',
         line2: '',
         city: 'Sasquatch',
@@ -835,6 +746,7 @@ describe('DeploymentPayment', function() {
       business: false,
       businessName: null,
       billingAddresses: [{
+        name: 'Geoffrey Spinach',
         line1: '10 Maple St',
         line2: '',
         city: 'Sasquatch',
@@ -900,30 +812,19 @@ describe('DeploymentPayment', function() {
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
-    const extraRefs = {
-      billingAddressLine1: {
-        getValue: sinon.stub().returns('9 Kangaroo St')
-      },
-      billingAddressLine2: {
-        getValue: sinon.stub().returns('')
-      },
-      billingAddressCity: {
-        getValue: sinon.stub().returns('Snake')
-      },
-      billingAddressState: {
-        getValue: sinon.stub().returns('Spider')
-      },
-      billingAddressPostcode: {
-        getValue: sinon.stub().returns('9000')
-      },
-      billingAddressCountry: {
-        getValue: sinon.stub().returns('AU')
-      },
-      billingAddressPhoneNumber: {
-        getValue: sinon.stub().returns('00001111')
-      }
+    refs.billingAddress = {
+      getValue: sinon.stub().returns({
+        name: 'Bruce Dundee',
+        line1: '9 Kangaroo St',
+        line2: '',
+        city: 'Snake',
+        state: 'Spider',
+        postcode: '9000',
+        countryCode: 'AU',
+        phones: ['00001111']
+      })
     };
-    instance.refs = Object.assign(refs, extraRefs);
+    instance.refs = refs;
     let output = renderer.getRenderOutput();
     let formContent = output.props.children.props.children[0].props.children;
     formContent[11].props.children[0].props.onChange(
@@ -935,6 +836,7 @@ describe('DeploymentPayment', function() {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
+        name: 'Geoffrey Spinach',
         line1: '10 Maple St',
         line2: '',
         city: 'Sasquatch',
@@ -947,6 +849,7 @@ describe('DeploymentPayment', function() {
       business: false,
       businessName: null,
       billingAddresses: [{
+        name: 'Bruce Dundee',
         line1: '9 Kangaroo St',
         line2: '',
         city: 'Snake',
