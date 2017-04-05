@@ -28,6 +28,17 @@ describe('State', () => {
     path: 'http://abc.com:123/?deploy-target=cs:trusty/kibana-15',
     state: {special: {deployTarget: 'cs:trusty/kibana-15'}},
     error: null
+  }, {
+    path: 'http://abc.com:123/login?next=/u/frankban/prod',
+    state: {root: 'login', special: {next: '/u/frankban/prod'}},
+    error: null
+  }, {
+    path: 'http://abc.com:123/login?next=/u/frankban/prod&deploy-target=cs:trusty/kibana-15', // eslint-disable-line max-len
+    state: {
+      root: 'login',
+      special: {
+        next: '/u/frankban/prod', deployTarget: 'cs:trusty/kibana-15'}},
+    error: null
   }];
 
   const userStateTests = [{
@@ -1181,7 +1192,7 @@ describe('State', () => {
       assert.equal(sendAnalytics.args[0][0], 'Navigation');
       assert.equal(sendAnalytics.args[0][1], 'State change');
       assert.equal(
-        sendAnalytics.args[0][2], 
+        sendAnalytics.args[0][2],
         '/u/hatch/staging/i/applications/inspector/ghost');
     });
 
