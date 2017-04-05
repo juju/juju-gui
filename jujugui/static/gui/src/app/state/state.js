@@ -666,7 +666,9 @@ const State = class State {
     }
     let deployTarget = query['deploy-target'];
     if (deployTarget) {
-      if (!state.special) { state.special = {}; }
+      if (!state.special) {
+        state.special = {};
+      }
       state.special.deployTarget = deployTarget;
       // Push the state so that any special query string is removed now,
       // therefore avoiding multiple dispatches of the same special callback.
@@ -676,7 +678,9 @@ const State = class State {
     }
     let next = query.next;
     if (next) {
-      if (!state.special) { state.special = {}; }
+      if (!state.special) {
+        state.special = {};
+      }
       state.special.next = next;
     }
     return state;

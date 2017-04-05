@@ -707,10 +707,16 @@ YUI.add('juju-gui', function(Y) {
           console.log('redirecting to "next" state', next);
           const {error, state: newState} = state.generateState(next, false);
           if (error === null) {
-            newState.root = null;
+            // The root at this point will be 'login' and because the `next`
+            // url may not explicitly define a new root path we have to set it
+            // to null to clear 'login' from the url.
+            if (!newState.root) {
+              newState.root = null;
+            }
             newState.special = null;
             this.maskVisibility(false);
-            return state.changeState(newState);
+            state.changeState(newState);
+            return;
           }
           console.error('error redirecting to previous state', error);
           return;
