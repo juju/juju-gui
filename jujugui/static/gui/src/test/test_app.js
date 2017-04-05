@@ -671,40 +671,6 @@ describe('App', function() {
       localApp.env.login();
     });
 
-    it('navigates to requested url on login', function() {
-      // The difference between this test and the following one is that this
-      // tests the path where there is no hash in the url.
-      var popup = sinon.stub(
-          Y.juju.App.prototype, 'popLoginRedirectPath').returns('/foo/bar');
-      this._cleanups.push(popup.restore);
-      env.connect();
-      sinon.stub(app, 'maskVisibility');
-      sinon.stub(app, 'navigate');
-      sinon.stub(app, 'dispatch');
-      app.onLogin({ data: { result: true } });
-      assert.equal(app.navigate.calledOnce, true);
-      assert.deepEqual(app.navigate.lastCall.args, [
-        '/foo/bar',
-        { overrideAllNamespaces: true }]);
-      // dispatch should not be called if there is no hash in the url.
-      // dispatch should be called in the test below where there is a hash.
-      assert.equal(app.dispatch.calledOnce, false);
-    });
-
-    it('does not navigate to requested url on login with gisf', function() {
-      var popup = sinon.stub(
-          Y.juju.App.prototype, 'popLoginRedirectPath').returns('/foo/bar');
-      this._cleanups.push(popup.restore);
-      env.connect();
-      app.set('gisf', true);
-      sinon.stub(app, 'maskVisibility');
-      sinon.stub(app, 'navigate');
-      sinon.stub(app, 'dispatch');
-      app.onLogin({ data: { result: true } });
-      assert.equal(app.navigate.calledOnce, false,
-        'navigate should not be called in gisf mode here');
-    });
-
     it('tries to log in on first connection', function() {
       // This is the case when credential are stashed.
       env.connect();
@@ -758,36 +724,6 @@ describe('App', function() {
       assert.strictEqual(window.location, app.location);
     });
 
-    describe('popLoginRedirectPath', function() {
-      it('returns and clears redirectPath', function() {
-        app.redirectPath = '/foo/bar/';
-        app.location = {pathname: '/login/'};
-        assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
-        assert.isUndefined(app.redirectPath);
-      });
-
-      it('prefers the current path if not login', function() {
-        app.redirectPath = '/';
-        app.location = {pathname: '/foo/bar/'};
-        assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
-        assert.isUndefined(app.redirectPath);
-      });
-
-      it('uses root if the redirectPath is /login/', function() {
-        app.redirectPath = '/login/';
-        app.location = {pathname: '/login/'};
-        assert.equal(app.popLoginRedirectPath(), '/');
-        assert.isUndefined(app.redirectPath);
-      });
-
-      it('uses root if the redirectPath is /login', function() {
-        // Missing trailing slash is only difference from previous test.
-        app.redirectPath = '/login';
-        app.location = {pathname: '/login/'};
-        assert.equal(app.popLoginRedirectPath(), '/');
-        assert.isUndefined(app.redirectPath);
-      });
-    });
   });
 
 

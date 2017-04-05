@@ -370,18 +370,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.renderEnvironment = true;
 
-      // If this property has a value other than '/' then
-      // navigate to it after logging in.
-      this.redirectPath = '/';
-
-      // This attribute is used by the namespaced URL tracker.
-      // _routeSeen is part of a mechanism to prevent non-namespaced routes
-      // from being processed multiple times when multiple namespaces are
-      // present in the URL.  The data structure is reset for each URL (in
-      // _dispatch).  It holds a mapping between route callback uids and a
-      // flag to indicate that the callback has been used.
-      this._routeSeen = {};
-
       // When a user drags a file over the browser we show notifications which
       // are drop targets to illustrate what they can do with their selected
       // file. This array keeps track of those masks and their respective
@@ -672,6 +660,8 @@ YUI.add('juju-gui', function(Y) {
       this.user.controller = { user, password, macaroons, external };
 
       controllerAPI.after('login', evt => {
+        const state = this.state;
+        const current = this.state.current;
         this.anonymousMode = false;
         if (evt.err) {
           this._renderLogin(evt.err);
@@ -679,13 +669,35 @@ YUI.add('juju-gui', function(Y) {
         }
         this._renderUserMenu();
         console.log('successfully logged into controller');
+        // If state has a `next` property then that overrides all defaults.
+        const specialState = current.special;
+        const next = specialState && specialState.next;
+        // There should never be a `next` state if we aren't on login but
+        // adding the state login check here just to be sure.
+        if (state.current.root === 'login' && next) {
+          console.log('redirecting to "next" state', next);
+          const {error, state: newState} = state.generateState(next, false);
+          if (error === null) {
+            // The root at this point will be 'login' and because the `next`
+            // url may not explicitly define a new root path we have to set it
+            // to null to clear 'login' from the url.
+            if (!newState.root) {
+              newState.root = null;
+            }
+            newState.special = null;
+            this.maskVisibility(false);
+            state.changeState(newState);
+            return;
+          }
+          console.error('error redirecting to previous state', error);
+          return;
+        }
         // If the user is connected to a model then the modelList will be
         // fetched by the modelswitcher component.
         if (this.env.get('modelUUID')) {
           return;
         }
         const modelUUID = this._getModelUUID();
-        const current = this.state.current;
         if (modelUUID && !current.profile && current.root !== 'store') {
           // A model uuid was defined in the config so attempt to connect to it.
           this._listAndSwitchModel(null, modelUUID);
@@ -698,7 +710,7 @@ YUI.add('juju-gui', function(Y) {
           // routing.
           this.maskVisibility(false);
           const isLogin = current.root === 'login';
-          const previousState = this.state.previous;
+          const previousState = state.previous;
           const previousRoot = previousState && previousState.root || null;
           // If there was a previous root before the login then redirect to that
           // otherwise go to the profile.
@@ -718,7 +730,7 @@ YUI.add('juju-gui', function(Y) {
           ) {
             newState.profile = this._getAuth().rootUserName;
           }
-          this.state.changeState(newState);
+          state.changeState(newState);
         }
       });
 
@@ -1053,13 +1065,14 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} state - The application state.
     */
     _getUserInfo: function(state) {
-      const username = state.profile || this._getAuth().rootUserName;
+      const auth = this._getAuth();
+      const username = state.profile || (auth && auth.rootUserName) || '';
       const userInfo = {
         external: username,
         isCurrent: false,
         profile: username
       };
-      if (userInfo.profile === this._getAuth().rootUserName) {
+      if (auth && userInfo.profile === auth.rootUserName) {
         userInfo.isCurrent = true;
         // This is the current user, and might be a local one. Use the
         // authenticated charm store user as the external (USSO) name.
@@ -2540,31 +2553,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Get the path to which we should redirect after logging in.  Clear it out
-      afterwards so it is clear that we've consumed it.
-
-      This is logic from the onLogin method factored out to make it easier to
-      test.
-
-      @method popLoginRedirectPath
-      @private
-      @return {String} the path to which we should redirect.
-    */
-    popLoginRedirectPath: function() {
-      var result = this.redirectPath;
-      delete this.redirectPath;
-      var currentPath = this.location.pathname;
-      var loginPath = /^\/login(\/|$)/;
-      if (currentPath !== '/' && !loginPath.test(currentPath)) {
-        // We used existing credentials or a token to go directly to a url.
-        result = currentPath;
-      } else if (!result || loginPath.test(result)) {
-        result = '/';
-      }
-      return result;
-    },
-
-    /**
       Hide the login mask and redispatch the router.
 
       When the environment gets a response from a login attempt,
@@ -2587,14 +2575,6 @@ YUI.add('juju-gui', function(Y) {
       this.set('loggedIn', true);
       if (this.state.current.root === 'login') {
         this.state.changeState({root: null});
-      }
-      // If we are in GISF mode then we do not want to store and redirect
-      // on login because the user has already logged into their models
-      // and will frequently be switching between models and logging in to
-      // them. We rely exclusively on the state system to update the paths.
-      if (!this.get('gisf')) {
-        var redirectPath = this.popLoginRedirectPath();
-        this.navigate(redirectPath, {overrideAllNamespaces: true});
       }
     },
 

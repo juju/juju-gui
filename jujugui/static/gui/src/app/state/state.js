@@ -661,16 +661,27 @@ const State = class State {
     @return {Object} The updated state to contain the root value, if any.
   */
   _parseSpecial(query, state, allowStateModifications = true) {
-    if (query && query['deploy-target']) {
+    if (!query) {
+      return state;
+    }
+    let deployTarget = query['deploy-target'];
+    if (deployTarget) {
       if (!state.special) {
         state.special = {};
       }
-      state.special.deployTarget = query['deploy-target'];
+      state.special.deployTarget = deployTarget;
       // Push the state so that any special query string is removed now,
       // therefore avoiding multiple dispatches of the same special callback.
       if (allowStateModifications) {
         this._pushState();
       }
+    }
+    let next = query.next;
+    if (next) {
+      if (!state.special) {
+        state.special = {};
+      }
+      state.special.next = next;
     }
     return state;
   }
