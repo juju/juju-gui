@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('loading-spinner', function() {
 
   juju.components.Spinner = React.createClass({
+    displayName: 'Spinner',
+
     render: function() {
       return (
         <div className="spinner-loading">Loading...</div>
