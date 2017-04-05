@@ -486,7 +486,7 @@ YUI.add('d3-components', function(Y) {
     attachContainer: function() {
       var container = this.get('container');
       if (container && !container.inDoc()) {
-        Y.one('body').append(container);
+        document.body.appendChild(container);
       }
       return this;
     },
