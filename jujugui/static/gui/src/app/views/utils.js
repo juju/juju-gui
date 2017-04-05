@@ -774,20 +774,27 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
-    var containerHeight = Y.one('body').get(
-        primary ? 'winHeight' : 'docHeight'),
-        bottomNavbar = Y.one('.bottom-navbar'),
-        navbar = Y.one('.header-banner'),
-        viewport = Y.one('#viewport'),
+    var containerHeight,
+        bottomNavbar = document.querySelector('.bottom-navbar'),
+        navbar = document.querySelector('.header-banner'),
+        viewport = document.querySelector('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
+    if (primary) {
+      containerHeight = document.documentElement.clientHeight;
+    } else {
+      const body = document.body;
+      const html = document.documentElement;
+      containerHeight = Math.max(body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight);
+    }
     // If all elements are present and the viewport is not set to display none
-    if (containerHeight && navbar && viewport &&
-      viewport.getComputedStyle('width') !== 'auto') {
+    const viewportHeight = viewport && window.getComputedStyle(
+      viewport).getPropertyValue('width');
+    if (containerHeight && navbar && viewport && viewportHeight !== 'auto') {
       result.height = containerHeight -
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 
-      result.width = Math.floor(parseFloat(
-          viewport.getComputedStyle('width')));
+      result.width = Math.floor(parseFloat(viewportHeight));
 
       // Make sure we don't get sized any smaller than the minimum.
       result.height = Math.max(result.height, minheight || 0);
