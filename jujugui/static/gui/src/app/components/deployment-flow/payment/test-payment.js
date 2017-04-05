@@ -43,10 +43,7 @@ describe('DeploymentPayment', function() {
         name: 'Company'
       }]
     });
-    getCountries = sinon.stub().callsArgWith(0, null, [{
-      name: 'Australia',
-      code: 'AU'
-    }]);
+    getCountries = sinon.stub();
     refs = {
       emailAddress: {
         getValue: sinon.stub().returns('spinach@example.com')

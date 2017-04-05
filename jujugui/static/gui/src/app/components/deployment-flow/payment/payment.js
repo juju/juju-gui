@@ -42,14 +42,12 @@ YUI.add('deployment-payment', function() {
         billingAddressSame: true,
         business: false,
         cardAddressSame: true,
-        countries: [],
         loading: false
       };
     },
 
     componentWillMount: function() {
       this._getUser();
-      this._getCountries();
     },
 
     componentWillUnmount: function() {
@@ -82,28 +80,6 @@ YUI.add('deployment-payment', function() {
         });
         this.xhrs.push(xhr);
       });
-    },
-
-    /**
-      Get a list of countries.
-
-      @method _getCountries
-    */
-    _getCountries: function() {
-      const xhr = this.props.getCountries((error, countries) => {
-        if (error) {
-          const message = 'Could not load country info';
-          this.props.addNotification({
-            title: message,
-            message: `${message}: ${error}`,
-            level: 'error'
-          });
-          console.error(message, error);
-          return;
-        }
-        this.setState({countries: countries || []});
-      });
-      this.xhrs.push(xhr);
     },
 
     /**
@@ -491,36 +467,6 @@ YUI.add('deployment-payment', function() {
               title="Add payment details" />
           </div>
         </form>);
-    },
-
-    /**
-      Generate the country values for a select box.
-
-      @method _generateCountryOptions
-      @returns {Array} The list of country options.
-    */
-    _generateCountryOptions: function() {
-      return this.state.countries.map(country => {
-        return {
-          label: country.name,
-          value: country.code
-        };
-      });
-    },
-
-    /**
-      Generate the country code values for a select box.
-
-      @method _generateCountryCodeOptions
-      @returns {Array} The list of country code options.
-    */
-    _generateCountryCodeOptions: function() {
-      return this.state.countries.map(country => {
-        return {
-          label: country.code,
-          value: country.code
-        };
-      });
     },
 
     /**
