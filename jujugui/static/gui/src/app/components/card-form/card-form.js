@@ -130,7 +130,7 @@ YUI.add('card-form', function() {
         blocks: [4, 4, 4, 4]
       }, {
         name: 'Discover',
-        // Prefix: 	6011, 622126-622925, 644-649, 65
+        // Prefix: 6011, 622126-622925, 644-649, 65
         numbers: /^(65|6011|(64[4-9])|(622\d\d\d))/,
         blocks: [4, 4, 4, 4]
       }, {
