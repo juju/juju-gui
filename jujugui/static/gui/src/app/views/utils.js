@@ -102,7 +102,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method addSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to add.
     @return {Undefined} Mutates only.
   */
@@ -113,7 +113,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function(n) {
+      document.querySelectorAll(selector).forEach(function(n) {
         var classes = this.getAttribute('class');
         if (!self.hasSVGClass(this, class_name)) {
           this.setAttribute('class', classes + ' ' + class_name);
@@ -134,7 +134,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method removeSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to remove.
     @return {Undefined} Mutates only.
   */
@@ -144,7 +144,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function() {
+      document.querySelectorAll(selector).each(function() {
         var classes = this.getAttribute('class');
         this.setAttribute('class', classes.replace(class_name, ''));
       });
