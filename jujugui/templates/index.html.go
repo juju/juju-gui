@@ -50,7 +50,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
     <script src="{{.configURL}}"></script>
     <link rel="shortcut icon" href="{{.staticURL}}/static/gui/build/app/favicon.ico">
-    <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/stylesheets/prettify.css&app/assets/juju-gui.css">
+    <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/juju-gui.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>

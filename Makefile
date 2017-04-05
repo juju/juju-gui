@@ -44,8 +44,7 @@ SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -ty
 FONT_FILES := $(shell find $(GUISRC)/app/assets/fonts -type f -name "*.woff" -or -name "*.woff2")
 STATIC_FONT_FILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(FONT_FILES))
 STATIC_CSS_FILES = \
-	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
-	$(GUIBUILD)/app/assets/stylesheets/prettify.css
+	$(GUIBUILD)/app/assets/stylesheets/normalize.css
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
