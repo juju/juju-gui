@@ -171,7 +171,6 @@ describe('d3-components', function() {
       assert.isTrue(resized);
       done();
     });
-    Y.one('window').simulate('resize');
     window.dispatchEvent(new Event('resize'));
   });
 
