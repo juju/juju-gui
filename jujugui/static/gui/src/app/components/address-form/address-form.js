@@ -82,7 +82,7 @@ YUI.add('address-form', function() {
       @returns {Boolean} Whether the form is valid.
     */
     validate: function() {
-      let fields = [
+      const fields = [
         'line1',
         'line2',
         'city',
@@ -99,9 +99,8 @@ YUI.add('address-form', function() {
       Get address data.
 
       @method getValue
-      @param key {String} The identifier for the form instance.
     */
-    getValue: function(key) {
+    getValue: function() {
       const refs = this.refs;
       return {
         name: refs.name.getValue(),
