@@ -652,6 +652,17 @@ const State = class State {
   }
 
   /**
+    Sets every top level key in state to null to reset the UI back to its
+    root state.
+  */
+  reset() {
+    // Generate a new null changeState
+    const newState = {};
+    Object.keys(this.current).map(key => newState[key] = null);
+    this.changeState(newState);
+  }
+
+  /**
     Inspects the query path to see if there are parts in the special section.
     @param {Object} query - The query path split into parts.
     @param {Object} state - The application state object as being parsed
