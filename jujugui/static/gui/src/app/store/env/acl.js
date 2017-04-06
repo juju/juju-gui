@@ -44,12 +44,16 @@ YUI.add('acl', function(Y) {
     @return {Object} A namespace providing access to ACLs checkers (see below).
   */
   juju.generateAcl = function (controllerAPI, modelAPI) {
+    const getUser = () => {
+      const user = controllerAPI.get('user') || {};
+      const controller = user.controller || {user: null};
+      return controller.user;
+    };
     const acl = {
       /**
         Report whether the model interaction is read-only, in which case it is
         not possible to interact with the model, just watch it.
 
-        @function isReadOnly
         @return {Boolean} Whether the user has read-only access.
       */
       isReadOnly: () => modelAPI.get('modelAccess') === 'read',
@@ -57,7 +61,6 @@ YUI.add('acl', function(Y) {
       /**
         Report whether the current user can create models.
 
-        @function canAddModels
         @return {Boolean} Whether the user can add models.
       */
       canAddModels: () => {
@@ -71,18 +74,41 @@ YUI.add('acl', function(Y) {
       /**
         Report whether the user can share the current model.
 
-        @function canShareModel
         @return {Boolean} Whether the user can share the current model.
       */
       canShareModel: () => modelAPI.get('modelAccess') === 'admin',
 
       /**
+        Report whether the user can destroy the given model.
+
+        @param {Object} model A model object as returned by the controller
+          listModelsWithInfo API call.
+        @return {Boolean} Whether the user can destroy the given model.
+      */
+      canRemoveModel: model => {
+        const currentUser = getUser();
+        if (model.owner !== currentUser) {
+          return false;
+        }
+        for (let user of model.users) {
+          if (user.name === currentUser) {
+            return user.access === 'admin';
+          }
+        }
+        return false;
+      },
+
+      /**
         Report whether the user can destroy the current model.
 
-        @function canRemoveModel
         @return {Boolean} Whether the user can destroy the current model.
       */
-      canRemoveModel: () => modelAPI.get('modelAccess') === 'admin'
+      canRemoveCurrentModel: () => {
+        return (
+          modelAPI.get('modelAccess') === 'admin' &&
+          modelAPI.get('modelOwner') === getUser()
+        );
+      }
     };
     return acl;
   };
