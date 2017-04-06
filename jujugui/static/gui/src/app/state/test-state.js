@@ -1353,6 +1353,17 @@ describe('State', () => {
         });
       });
     });
+
+    it('can be passed a custom state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      // Because this uses the same logic as above, we're only checking
+      // that it actually accepts the argument.
+      assert.equal(
+        state.generatePath({profile: 'hatch'}), 'http://abc.com:123/u/hatch');
+    });
   });
 
 });

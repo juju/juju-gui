@@ -573,15 +573,18 @@ const State = class State {
 
   /**
     Takes the existing app state and generates the path.
+    @param {Object} stateObj An optional argument to generate a path from using
+      the same logic as the normal state path generation. If not provided,
+      defaults to `this.current`.
     @return {String} The path representing the current application state.
   */
-  generatePath() {
+  generatePath(stateObj = this.current) {
     let path = [];
-    const root = this.current.root;
+    const root = stateObj.root;
     if (root) {
       path.push(root);
     }
-    const search = this.current.search;
+    const search = stateObj.search;
     if (search) {
       path.push(PATH_DELIMETERS.get('search'));
       // Append the text if it is truthy, i.e. not a blank string etc.
@@ -605,19 +608,19 @@ const State = class State {
         }
       }
     }
-    const user = this.current.user || this.current.profile;
+    const user = stateObj.user || stateObj.profile;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
-    const model = this.current.model;
+    const model = stateObj.model;
     if (model) {
       path = path.concat([PATH_DELIMETERS.get('user'), model.path]);
     }
-    const store = this.current.store;
+    const store = stateObj.store;
     if (store) {
       path.push(store);
     }
-    const gui = this.current.gui;
+    const gui = stateObj.gui;
     if (gui) {
       path.push(PATH_DELIMETERS.get('gui'));
       Object.keys(gui).forEach(key => {
