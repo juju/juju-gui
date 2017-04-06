@@ -996,23 +996,21 @@ YUI.add('juju-topology-relation', function(Y) {
       @param {Object} context The target rectangle.
     */
     _attachAmbiguousReleationSelect: function(menu, view, context) {
-      // For each endpoint choice, delegate a click event to add the specified
-      // relation. Use event delegation in order to avoid weird behaviors
-      // encountered when using "on" on a YUI NodeList: in some situations,
-      // e.g. our production server, NodeList.on does not work.
-      menu.querySelector('.menu').addEventListener('click', function(evt) {
-        var el = evt.currentTarget;
-        var endpoints_item = [
-          [el.getAttribute('data-startservice'), {
-            name: el.getAttribute('data-startname'),
-            role: 'server' }],
-          [el.getAttribute('data-endservice'), {
-            name: el.getAttribute('data-endname'),
-            role: 'client' }]
-        ];
-        menu.classList.remove('active');
-        view.addRelationEnd(endpoints_item, view, context);
-      }, 'li');
+      menu.querySelectorAll('.menu li').forEach(node => {
+        node.addEventListener('click', function(evt) {
+          var el = evt.currentTarget;
+          var endpoints_item = [
+            [el.getAttribute('data-startservice'), {
+              name: el.getAttribute('data-startname'),
+              role: 'server' }],
+            [el.getAttribute('data-endservice'), {
+              name: el.getAttribute('data-endname'),
+              role: 'client' }]
+          ];
+          menu.classList.remove('active');
+          view.addRelationEnd(endpoints_item, view, context);
+        });
+      });
       // Add a cancel item.
       menu.querySelector('.cancel').addEventListener('click', function(evt) {
         menu.classList.remove('active');

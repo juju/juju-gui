@@ -350,7 +350,10 @@ describe('topology relation module', function() {
       const menu = {
         querySelector: sinon.stub().returns({
           addEventListener: addEventListener,
-        })
+        }),
+        querySelectorAll: sinon.stub().returns([{
+          addEventListener: addEventListener,
+        }])
       };
       view._attachAmbiguousReleationSelect(menu);
       assert.equal(addEventListener.callCount, 2);
