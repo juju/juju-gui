@@ -856,12 +856,12 @@ describe('canvasDropHandler', function() {
 });
 
 describe('_canvasDropHandler', function() {
-  var Y, views, utils, models, serviceModule;
+  var views, utils, models, serviceModule;
 
   // Requiring this much setup (before() and beforeEach() to call a single
   // method on a single object is obscene.
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
+    YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
       'juju-view-environment'],

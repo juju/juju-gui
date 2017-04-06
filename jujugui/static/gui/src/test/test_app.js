@@ -51,11 +51,10 @@ function injectData(app, data) {
 }
 
 describe('App', function() {
-  let container, getMockStorage, jujuConfig, testUtils, yui;
+  let container, getMockStorage, jujuConfig, testUtils;
 
   before(done => {
     YUI(GlobalConfig).use(['juju-tests-utils'], function(Y) {
-      yui = Y;
       testUtils = Y.namespace('juju-tests.utils');
       done();
     });
@@ -1076,10 +1075,10 @@ describe('App', function() {
   });
 
   describe('getUser', function() {
-    var app, juju, Y;
+    var app, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
+      YUI(GlobalConfig).use([
         'juju-gui',
         'juju-tests-utils',
         'juju-view-utils',
@@ -1135,10 +1134,10 @@ describe('App', function() {
   });
 
   describe('clearUser', function() {
-    var app, juju, Y;
+    var app, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
+      YUI(GlobalConfig).use([
         'juju-gui',
         'juju-tests-utils',
         'juju-view-utils',
