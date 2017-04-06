@@ -27,22 +27,43 @@ YUI.add('header-logo', function() {
   juju.components.HeaderLogo = React.createClass({
 
     propTypes: {
-      resetState: React.PropTypes.func.isRequired
+      gisf: React.PropTypes.bool.isRequired,
+      showProfile: React.PropTypes.func
     },
 
-    _navigateToRoot: function(e) {
+    /**
+      Calls the showProfile prop
+      @param {Object} e The click event.
+    */
+    _showProfile: function(e) {
       e.preventDefault();
-      this.props.resetState();
+      this.props.showProfile();
+    },
+
+    /**
+      Returns the Juju logo SvgIcon component.
+      @return {Object} The SvgIcon component of the Juju logo.
+    */
+    _svg: function() {
+      return (<juju.components.SvgIcon name="juju-logo"
+        className="svg-icon"
+        width="90" height="35" />);
     },
 
     render: function() {
+      if (this.props.gisf) {
+        return (
+          <a href="/"
+             role="button"
+             title="Home">
+            {this._svg()}
+          </a>);
+      }
       return (
-        <a onClick={this._navigateToRoot}
+        <a onClick={this._showProfile}
            role="button"
            title="Home">
-          <juju.components.SvgIcon name="juju-logo"
-            className="svg-icon"
-            width="90" height="35" />
+          {this._svg()}
         </a>);
     }
   });

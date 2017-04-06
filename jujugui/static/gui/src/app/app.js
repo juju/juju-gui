@@ -1202,9 +1202,20 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderHeaderLogo: function() {
+      const showProfile = () =>
+        this.state.changeState({
+          profile: this.user.controller.user.split('@')[0],
+          model: null,
+          store: null,
+          root: null,
+          search: null,
+          account: null,
+          user: null
+        });
       ReactDOM.render(
         <window.juju.components.HeaderLogo
-          resetState={this.state.reset.bind(this.state)}/>,
+          showProfile={showProfile}
+          gisf={this.get('gisf')} />,
         document.getElementById('header-logo'));
     },
 

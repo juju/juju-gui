@@ -30,31 +30,46 @@ describe('HeaderLogo', function() {
     YUI().use('header-logo', function() { done(); });
   });
 
-  it('renders', () => {
+  it('renders for gisf', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderLogo
-        resetState={sinon.stub()}/>, true);
+        gisf={true} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <a onClick={output.props.onClick}
-        role="button" title="Home">
-      <juju.components.SvgIcon name="juju-logo"
-        className="svg-icon"
-        width="90" height="35" />
-    </a>);
+      <a href="/" role="button" title="Home">
+        <juju.components.SvgIcon name="juju-logo"
+          className="svg-icon"
+          width="90" height="35" />
+      </a>);
     expect(output).toEqualJSX(expected);
   });
 
-  it('calls resetState on click', () => {
-    const resetState = sinon.stub();
+  it('renders for gijoe', () => {
+    const showProfile = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderLogo
+        gisf={false}
+        showProfile={showProfile} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <a onClick={showProfile} role="button" title="Home">
+        <juju.components.SvgIcon name="juju-logo"
+          className="svg-icon"
+          width="90" height="35" />
+      </a>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('calls showProfil on click in gisf', () => {
+    const showProfile = sinon.stub();
     const preventDefault = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderLogo
-        resetState={resetState}/>, true);
+        showProfile={showProfile}/>, true);
     const output = renderer.getRenderOutput();
     // Call the click handler
     output.props.onClick({preventDefault});
     assert.equal(preventDefault.callCount, 1);
-    assert.equal(resetState.callCount, 1);
+    assert.equal(showProfile.callCount, 1);
   });
 });
