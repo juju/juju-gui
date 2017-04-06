@@ -138,7 +138,7 @@ describe('topology relation module', function() {
         assert.equal(state.changeState.callCount, 1);
         assert.deepEqual(state.changeState.args[0][0], {
           gui: {
-            inspector: { id: container.get('text').split(':')[0].trim() }
+            inspector: { id: container.innerText.split(':')[0].trim() }
           }});
       });
 
@@ -330,17 +330,19 @@ describe('topology relation module', function() {
       }, {
         name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
       }]];
-      container.append(
-        '<div id="ambiguous-relation-menu">' +
-          '<div id="ambiguous-relation-menu-content"></div>' +
-        '</div>');
+      const menuNode = document.createElement('div');
+      menuNode.setAttribute('id', 'ambiguous-relation-menu');
+      const menuContent = document.createElement('div');
+      menuContent.setAttribute('id', 'ambiguous-relation-menu-content');
+      menuNode.appendChild(menuContent);
+      container.appendChild(menuNode);
       var menu = view._renderAmbiguousRelationMenu.call({
         get: function() {
           return container;
         }
       }, endpoints);
-      assert.isNotNull(menu.one('.menu'));
-      assert.equal(menu.all('li').size(), 2);
+      assert.isNotNull(menu.querySelector('.menu'));
+      assert.equal(menu.querySelectorAll('li').length, 2);
     });
 
     it('attaches the click events for the menu', function() {

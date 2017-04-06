@@ -965,11 +965,15 @@ YUI.add('juju-topology-relation', function(Y) {
         DOM.
     */
     _renderAmbiguousRelationMenu: function(endpoints) {
-      var menu = this.get('container').one('#ambiguous-relation-menu');
+      // Get the DOM node if the container has been provided by YUI,
+      // otherwise the container will be the DOM node already.
+      const container = this.get('container').getDOMNode &&
+        this.get('container').getDOMNode() || this.get('container');
+      var menu = container.querySelector('#ambiguous-relation-menu');
       ReactDOM.render(
         <juju.components.AmbiguousRelationMenu
           endpoints={endpoints} />,
-        menu.one('#ambiguous-relation-menu-content').getDOMNode());
+        menu.querySelector('#ambiguous-relation-menu-content'));
       return menu;
     },
 
@@ -987,7 +991,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // relation. Use event delegation in order to avoid weird behaviors
       // encountered when using "on" on a YUI NodeList: in some situations,
       // e.g. our production server, NodeList.on does not work.
-      menu.one('.menu').delegate('click', function(evt) {
+      menu.querySelector('.menu').addEventListener('click', function(evt) {
         var el = evt.currentTarget;
         var endpoints_item = [
           [el.getData('startservice'), {
@@ -997,12 +1001,12 @@ YUI.add('juju-topology-relation', function(Y) {
             name: el.getData('endname'),
             role: 'client' }]
         ];
-        menu.removeClass('active');
+        menu.classList.remove('active');
         view.addRelationEnd(endpoints_item, view, context);
       }, 'li');
       // Add a cancel item.
-      menu.one('.cancel').on('click', function(evt) {
-        menu.removeClass('active');
+      menu.querySelector('.cancel').addEventListener('click', function(evt) {
+        menu.classList.remove('active');
         view.cancelRelationBuild();
       });
     },
@@ -1021,9 +1025,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
       var locateAt = topoUtils.locateRelativePointOnCanvas(m, tr, z);
-      menu.setStyle('left', locateAt[0]);
-      menu.setStyle('top', locateAt[1]);
-      menu.addClass('active');
+      menu.style.left = locateAt[0];
+      menu.style.top = locateAt[1];
+      menu.classList.add('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
       // Firing resized will ensure the menu's positioned properly.

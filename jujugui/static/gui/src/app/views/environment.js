@@ -82,7 +82,7 @@ YUI.add('juju-view-environment', function(Y) {
         EnvironmentView.superclass.render.apply(this, arguments);
         ReactDOM.render(
           <juju.components.Environment />,
-          container.getDOMNode());
+            container.getDOMNode());
         this._rendered = true;
       }
 

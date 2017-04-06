@@ -100,7 +100,10 @@ YUI.add('juju-topology', function(Y) {
           vis,
           width = this.get('width'),
           height = this.get('height'),
-          container = this.get('container');
+          // Get the DOM node if the container has been provided by YUI,
+          // otherwise the container will be the DOM node already.
+          container = this.get('container').getDOMNode &&
+            this.get('container').getDOMNode() || this.get('container');
 
       if (this._templateRendered) {
         return;
@@ -113,7 +116,7 @@ YUI.add('juju-topology', function(Y) {
       this.computeScales();
 
       // Set up the visualization with a pack layout.
-      var canvas = d3.select(container.getDOMNode());
+      var canvas = d3.select(container);
       var base = canvas.select('.topology-canvas');
       if (base.empty()) {
         base = canvas.append('div')
@@ -121,7 +124,7 @@ YUI.add('juju-topology', function(Y) {
       }
 
       // Cache the canvas element for style modifications.
-      this.set('canvas', container.one('.topology-canvas'));
+      this.set('canvas', container.querySelector('.topology-canvas'));
 
       svg = base.append('svg:svg')
                 .attr('width', width)
