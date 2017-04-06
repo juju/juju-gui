@@ -160,7 +160,7 @@ YUI.add('juju-view-environment', function(Y) {
           services = db.services;
       if (helpText) {
         if (services.size() === 0) {
-          helpText.style.display = 'block';
+          helpText.removeAttribute('style');
           helpText.classList.remove('shrink');
           includedPlus.classed('show', false);
         } else {
