@@ -788,13 +788,12 @@ describe('App', function() {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
           function(Y) {
             juju = Y.namespace('juju');
-            container = Y.Node.create(
-                '<div id="test" class="container"></div>');
             done();
           });
     });
 
     beforeEach(function() {
+      container = testUtils.makeContainer(this);
       conn = new testUtils.SocketStub();
       userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1022,7 +1021,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
     });
 
     afterEach(function() {
@@ -1124,7 +1123,7 @@ describe('App', function() {
     });
 
     it('gets the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1183,7 +1182,7 @@ describe('App', function() {
     });
 
     it('clears the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1206,7 +1205,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1275,7 +1274,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1428,7 +1427,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       // Monkey patch.
       getLocation = Y.getLocation;
       Y.getLocation = function() {
@@ -1438,7 +1437,7 @@ describe('App', function() {
 
     afterEach(function() {
       Y.getLocation = getLocation;
-      container.destroy();
+      container.remove();
       app.destroy();
     });
 
