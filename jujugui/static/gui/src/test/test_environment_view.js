@@ -233,28 +233,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         d3 = Y.namespace('d3');
-        relationUtils = window.juju.utils.RelationUtils;
-        conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
-        db = new models.Database();
-        ecs = new juju.EnvironmentChangeSet({db: db});
-        env = new juju.environments.GoEnvironment({
-          conn: conn, ecs: ecs, user: userClass});
-        env.connect();
-        conn.open();
-        fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
-        done();
-      });
-    });
-
-    after(function(done) {
-      env.close(() => {
-        env.destroy();
         done();
       });
     });
 
     beforeEach(function() {
+      const getMockStorage = function() {
+        return new function() {
+          return {
+            store: {},
+            setItem: function(name, val) { this.store['name'] = val; },
+            getItem: function(name) { return this.store['name'] || null; }
+          };
+        };
+      };
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      relationUtils = window.juju.utils.RelationUtils;
+      conn = new testUtils.SocketStub();
+      db = new models.Database();
+      ecs = new juju.EnvironmentChangeSet({db: db});
+      env = new juju.environments.GoEnvironment({
+        conn: conn, ecs: ecs, user: userClass});
+      env.connect();
+      conn.open();
+      fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
       jujuConfig = window.juju_config;
       window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');
@@ -284,7 +288,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    afterEach(function() {
+    afterEach(function(done) {
       db.reset();
       db.destroy();
       charm.destroy();
@@ -294,6 +298,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.destroy({remove: true});
       }
       window.juju_config = jujuConfig;
+      env.close(() => {
+        env.destroy();
+        done();
+      });
     });
 
     function getParentId(view) {

@@ -60,6 +60,18 @@ YUI.add('juju-topology', function(Y) {
     },
 
     /**
+      Get the DOM node if the container has been provided by YUI, otherwise the
+      container will be the DOM node already.
+
+      @method getContainer
+      @return {Object} A DOM node.
+    */
+    getContainer: function() {
+      const container = this.get('container');
+      return container.getDOMNode && container.getDOMNode() || container;
+    },
+
+    /**
      * Called by render, conditionally attach container to the DOM if
      * it isn't already. The framework calls this before module
      * rendering so that d3 Events will have attached DOM elements. If
@@ -100,10 +112,7 @@ YUI.add('juju-topology', function(Y) {
           vis,
           width = this.get('width'),
           height = this.get('height'),
-          // Get the DOM node if the container has been provided by YUI,
-          // otherwise the container will be the DOM node already.
-          container = this.get('container').getDOMNode &&
-            this.get('container').getDOMNode() || this.get('container');
+          container = this.getContainer();
 
       if (this._templateRendered) {
         return;

@@ -211,6 +211,18 @@ YUI.add('juju-topology-relation', function(Y) {
       this.update();
     },
 
+    /**
+      Get the DOM node if the container has been provided by YUI, otherwise the
+      container will be the DOM node already.
+
+      @method getContainer
+      @return {Object} A DOM node.
+    */
+    getContainer: function() {
+      const container = this.get('container');
+      return container.getDOMNode && container.getDOMNode() || container;
+    },
+
     renderedHandler: function() {
       this.update();
     },
@@ -494,9 +506,9 @@ YUI.add('juju-topology-relation', function(Y) {
      * @return {undefined} Side effects only.
      */
     mouseMoveHandler: function(evt) {
-      var container = this.get('container');
+      const container = this.getContainer();
       this.mousemove.call(
-          container.one('.zoom-plane').getDOMNode(),
+          container.querySelector('.zoom-plane'),
           null, this);
     },
 
@@ -577,7 +589,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
         // Start the line between the cursor and the nearest connector
         // point on the service.
-        this.set('dragplane', Y.one('.the-canvas g').getDOMNode());
+        this.set('dragplane', document.querySelector('.the-canvas g'));
         var mouse = d3.mouse(this.get('dragplane'));
         self.cursorBox = new views.BoundingBox();
         self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
@@ -961,14 +973,11 @@ YUI.add('juju-topology-relation', function(Y) {
 
       @method _renderAmbiguousRelationMenu
       @param {Array} endpoints The possible endpoints for the relation.
-      @return {Object} A Y.Node instance from the menu which was added to the
+      @return {Object} A node instance from the menu which was added to the
         DOM.
     */
     _renderAmbiguousRelationMenu: function(endpoints) {
-      // Get the DOM node if the container has been provided by YUI,
-      // otherwise the container will be the DOM node already.
-      const container = this.get('container').getDOMNode &&
-        this.get('container').getDOMNode() || this.get('container');
+      const container = this.getContainer();
       var menu = container.querySelector('#ambiguous-relation-menu');
       ReactDOM.render(
         <juju.components.AmbiguousRelationMenu
@@ -994,11 +1003,11 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.querySelector('.menu').addEventListener('click', function(evt) {
         var el = evt.currentTarget;
         var endpoints_item = [
-          [el.getData('startservice'), {
-            name: el.getData('startname'),
+          [el.getAttribute('data-startservice'), {
+            name: el.getAttribute('data-startname'),
             role: 'server' }],
-          [el.getData('endservice'), {
-            name: el.getData('endname'),
+          [el.getAttribute('data-endservice'), {
+            name: el.getAttribute('data-endname'),
             role: 'client' }]
         ];
         menu.classList.remove('active');
@@ -1025,8 +1034,8 @@ YUI.add('juju-topology-relation', function(Y) {
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
       var locateAt = topoUtils.locateRelativePointOnCanvas(m, tr, z);
-      menu.style.left = locateAt[0];
-      menu.style.top = locateAt[1];
+      menu.style.left = `${locateAt[0]}px`;
+      menu.style.top = `${locateAt[1]}px`;
       menu.classList.add('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
@@ -1094,12 +1103,12 @@ YUI.add('juju-topology-relation', function(Y) {
      *   relation line.
      */
     showRelationMenu: function(relation) {
-      var menu = Y.one('#relation-menu');
+      const menu = document.querySelector('#relation-menu');
       ReactDOM.render(
         <juju.components.RelationMenu
           relations={relation.relations} />,
-        menu.getDOMNode());
-      menu.addClass('active');
+        menu);
+      menu.classList.add('active');
       this.set('relationMenuActive', true);
       this.set('relationMenuRelation', relation);
       var topo = this.get('component');
@@ -1111,13 +1120,13 @@ YUI.add('juju-topology-relation', function(Y) {
       var locateAt = topoUtils.locateRelativePointOnCanvas(point, tr, z);
       // Shift the menu to the left by half its width, and up by its height
       // plus the height of the arrow (16px).
-      locateAt[0] -= menu.get('clientWidth') / 2;
-      locateAt[1] -= menu.get('clientHeight') + 16;
-      menu.setStyle('left', locateAt[0]);
-      menu.setStyle('top', locateAt[1]);
+      locateAt[0] -= menu.clientWidth / 2;
+      locateAt[1] -= menu.clientHeight + 16;
+      menu.style.left = `${locateAt[0]}px`;
+      menu.style.top = `${locateAt[1]}px`;
       // Shift the arrow to the left by half the menu's width minus half the
       // width of the arrow itself (10px).
-      menu.one('.triangle').setStyle('left', menu.get('clientWidth') / 2 - 5);
+      menu.querySelector('.triangle').style.left = menu.clientWidth / 2 - 5;
 
       // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
@@ -1133,7 +1142,8 @@ YUI.add('juju-topology-relation', function(Y) {
     relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
-      var relationId = Y.one(this).get('parentNode').getData('relationid');
+      const relationId = document.querySelector(this).get(
+        'parentNode').getAttribute('data-relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
       topo.fire('clearState');
@@ -1161,7 +1171,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     inspectRelationClick: function(_, self) {
       var topo = self.get('component');
-      var endpoint = Y.one(this).getAttribute('data-endpoint');
+      var endpoint = this.getAttribute('data-endpoint');
       var serviceId = endpoint.split(':')[0].trim();
       topo.get('state').changeState({
         gui: {

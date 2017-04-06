@@ -50,7 +50,7 @@ describe('pan zoom module', function() {
   afterEach(function() {
     db.destroy();
     view.destroy();
-    viewContainer.destroy();
+    viewContainer.remove();
   });
 
   function fixTranslate(translate) {
