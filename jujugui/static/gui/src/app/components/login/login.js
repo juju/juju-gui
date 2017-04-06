@@ -23,15 +23,11 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
-      charmstore: React.PropTypes.object.isRequired,
       controllerIsConnected: React.PropTypes.func.isRequired,
       errorMessage: React.PropTypes.string,
-      getDischargeToken: React.PropTypes.func,
       gisf: React.PropTypes.bool.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
-      sendPost: React.PropTypes.func,
-      storeUser: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
@@ -102,14 +98,9 @@ YUI.add('login-component', function() {
     _generateUSSOLink: function () {
       return (
         <juju.components.USSOLoginLink
-          charmstore={this.props.charmstore}
           displayType="button"
-          getDischargeToken={this.props.getDischargeToken}
-          gisf={this.props.gisf}
           loginToController={this.props.loginToController}
-          ref="USSOLoginLink"
-          sendPost={this.props.sendPost}
-          storeUser={this.props.storeUser} />);
+          ref="USSOLoginLink" />);
     },
 
     _generateClassnames: function() {

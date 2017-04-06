@@ -639,6 +639,47 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Sends the discharge token via POST to the storefront. This is used
+      when the GUI is operating in GISF mode, allowing a shared login between
+      the GUI and the storefront.
+
+      @method _sendGISFPostBack
+    */
+    _sendGISFPostBack: function() {
+      const dischargeToken = window.localStorage.getItem('discharge-token');
+      if (!dischargeToken) {
+        console.error('no discharge token in local storage after login');
+        return;
+      }
+      console.log('sending discharge token to storefront');
+      const content = 'discharge-token=' + dischargeToken;
+      const webhandler = new Y.juju.environments.web.WebHandler();
+      webhandler.sendPostRequest(
+        '/_login',
+        {'Content-Type': 'application/x-www-form-urlencoded'},
+        content);
+    },
+
+    /**
+      Auto logs the user into the charmstore as part of the login process
+      when the gui operates in a gisf context.
+
+      @method _loginToCharmstore
+    */
+    _loginToCharmstore: function() {
+      const bakery = this.get('charmstore').bakery;
+      const fetchMacaroonCallback = (error, macaroon) => {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        this.storeUser('charmstore', true);
+        console.log('logged into charmstore');
+      };
+      bakery.fetchMacaroonFromStaticPath(fetchMacaroonCallback);
+    },
+
+    /**
       Creates the second instance of the WebSocket for communication with
       the Juju controller if it's necessary. A username and password must be
       supplied if you're connecting to a standalone Juju controller and not to
@@ -669,6 +710,15 @@ YUI.add('juju-gui', function(Y) {
         }
         this._renderUserMenu();
         console.log('successfully logged into controller');
+
+        // If the GUI is embedded in storefront, we need to share login
+        // data with the storefront backend and ensure we're already
+        // logged into the charmstore.
+        if (this.get('gisf')) {
+          this._sendGISFPostBack();
+          this._loginToCharmstore();
+        }
+
         // If state has a `next` property then that overrides all defaults.
         const specialState = current.special;
         const next = specialState && specialState.next;
@@ -692,6 +742,7 @@ YUI.add('juju-gui', function(Y) {
           console.error('error redirecting to previous state', error);
           return;
         }
+
         // If the user is connected to a model then the modelList will be
         // fetched by the modelswitcher component.
         if (this.env.get('modelUUID')) {
@@ -892,26 +943,17 @@ YUI.add('juju-gui', function(Y) {
       const loginToController =
         this.controllerAPI.loginWithMacaroon.bind(
           this.controllerAPI, this.bakeryFactory.get('juju'));
-      const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = () => {
         return this.controllerAPI && this.controllerAPI.get('connected');
       };
-      const getDischargeToken = () => {
-        return window.localStorage.getItem('discharge-token');
-      };
-      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.Login
-          charmstore={charmstore}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
-          getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
           loginToAPIs={this.loginToAPIs.bind(this)}
-          loginToController={loginToController}
-          sendPost={webhandler.sendPostRequest.bind(webhandler)}
-          storeUser={this.storeUser.bind(this)} />,
-        document.getElementById('login-container'));
+          loginToController={loginToController} />,
+          document.getElementById('login-container'));
     },
 
     /**
@@ -928,19 +970,10 @@ YUI.add('juju-gui', function(Y) {
       }
       const bakeryFactory = this.bakeryFactory;
       const charmstore = this.get('charmstore');
-      const webhandler = new Y.juju.environments.web.WebHandler();
-      const getDischargeToken = function() {
-        return window.localStorage.getItem('discharge-token');
-      };
       const USSOLoginLink = (<window.juju.components.USSOLoginLink
-          charmstore={charmstore}
           displayType={'text'}
-          getDischargeToken={getDischargeToken}
-          gisf={this.get('gisf')}
           loginToController={controllerAPI.loginWithMacaroon.bind(
             controllerAPI, bakeryFactory.get('juju'))}
-          sendPost={webhandler.sendPostRequest.bind(webhandler)}
-          storeUser={this.storeUser.bind(this)}
         />);
       const LogoutLink = (<window.juju.components.Logout
           logout={this.logout.bind(this)}
