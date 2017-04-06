@@ -38,20 +38,13 @@ describe('LoginComponent', function() {
   it('renders', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
-    const sendPost = sinon.stub();
-    const getDischargeToken = sinon.stub();
-    const charmstore = sinon.stub();
-    const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
-        getDischargeToken={getDischargeToken}
         gisf={false}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToControllerStub}
-        sendPost={sendPost}
-      storeUser={storeUser} />, true);
+        loginToController={loginToControllerStub} />,
+      true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -91,14 +84,9 @@ describe('LoginComponent', function() {
               title={'Login'}
               type={'positive'} />
             <juju.components.USSOLoginLink
-              charmstore={charmstore}
               displayType="button"
-              getDischargeToken={getDischargeToken}
-              gisf={false}
               loginToController={loginToControllerStub}
-              ref="USSOLoginLink"
-              sendPost={sendPost}
-              storeUser={storeUser}/>
+              ref="USSOLoginLink" />
           </form>
         </div>
         <div className="login__message">
@@ -120,20 +108,13 @@ describe('LoginComponent', function() {
   it('renders but is hidden in gisf', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
-    const sendPost = sinon.stub();
-    const getDischargeToken = sinon.stub();
-    const charmstore = sinon.stub();
-    const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
-        getDischargeToken={getDischargeToken}
         gisf={true}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToControllerStub}
-        sendPost={sendPost}
-        storeUser={storeUser}/>, true);
+        loginToController={loginToControllerStub} />,
+      true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -173,14 +154,9 @@ describe('LoginComponent', function() {
               title={'Login'}
               type={'positive'} />
             <juju.components.USSOLoginLink
-              charmstore={charmstore}
               displayType="button"
-              getDischargeToken={getDischargeToken}
-              gisf={true}
               loginToController={loginToControllerStub}
-              ref="USSOLoginLink"
-              storeUser={storeUser}
-              sendPost={sendPost} />
+              ref="USSOLoginLink" />
           </form>
         </div>
         <div className="login__message">
