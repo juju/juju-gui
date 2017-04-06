@@ -1287,10 +1287,11 @@ YUI.add('juju-topology-service', function(Y) {
         return d.translateStr;
       });
 
-      const container = this.getContainer();
+      const container = self.getContainer();
       // Remove any active menus.
-      container.querySelectorAll('.environment-menu.active')
-        .classList.remove('active');
+      container.querySelectorAll('.environment-menu.active').forEach(node => {
+        node.classList.remove('active');
+      });
       if (box.inDrag === views.DRAG_START) {
         box.inDrag = views.DRAG_ACTIVE;
       }

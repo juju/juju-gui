@@ -1142,8 +1142,7 @@ YUI.add('juju-topology-relation', function(Y) {
     relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
-      const relationId = document.querySelector(this).get(
-        'parentNode').getAttribute('data-relationid');
+      const relationId = this.parentNode.getAttribute('data-relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
       topo.fire('clearState');

@@ -33,7 +33,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
   it('aborts a resize if the canvas is not available', function() {
     var container = {
-      one: testUtils.getter({'.topology-canvas': undefined}, {})
+      querySelector: testUtils.getter({'.topology-canvas': undefined}, {})
     };
     var view = new views.ViewportModule();
     view.getContainer = function() {return container;};
@@ -45,7 +45,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
   it('aborts a resize if the "svg" element is not available', function() {
     var container = {
-      one: testUtils.getter({'.the-canvas': undefined}, {})
+      querySelector: testUtils.getter({'.the-canvas': undefined}, {})
     };
     var view = new views.ViewportModule();
     view.getContainer = function() {return container;};
@@ -64,7 +64,7 @@ describe('views.ViewportModule (Topology module)', function() {
       get: function() {}
     };
     var container = {
-      one: testUtils.getter({}, {})
+      querySelector: testUtils.getter({}, {})
     };
     // Catch global custom page resize events.
     ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(

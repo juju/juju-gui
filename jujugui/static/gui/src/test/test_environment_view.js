@@ -1311,7 +1311,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: state
       }).render();
       // This stops the simulate() call later on from causing a 'script error'
-      container.append(
+      container.insertAdjacentHTML('beforeend',
           '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
       var relation = container.querySelector(

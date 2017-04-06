@@ -339,9 +339,7 @@ describe('topology relation module', function() {
       menuNode.appendChild(menuContent);
       container.appendChild(menuNode);
       var menu = view._renderAmbiguousRelationMenu.call({
-        get: function() {
-          return container;
-        }
+        getContainer: sinon.stub().returns(container)
       }, endpoints);
       assert.isNotNull(menu.querySelector('.menu'));
       assert.equal(menu.querySelectorAll('li').length, 2);
@@ -385,8 +383,8 @@ describe('topology relation module', function() {
       assert.equal(locate.callCount, 1, 'locateRelativePointOnCanvas');
       assert.deepEqual(locate.lastCall.args, ['m', 'translate', 'scale']);
       assert.deepEqual(menu.style, {
-        left: 'locate1',
-        top: 'locate2'
+        left: 'locate1px',
+        top: 'locate2px'
       });
       assert.equal(addClass.callCount, 1, 'addClass');
       assert.equal(addClass.lastCall.args[0], 'active');
