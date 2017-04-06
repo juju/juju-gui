@@ -201,8 +201,8 @@ YUI.add('juju-view-environment', function(Y) {
         } else {
           dropMessage.classList.remove(helpActiveClass);
         }
-        tooltip.setStyle('opacity', showOnboarding && !fade ? 1 : 0);
-        helpImg.setStyle('opacity', showOnboarding ? 1 : 0);
+        tooltip.style.opacity = showOnboarding && !fade ? 1 : 0;
+        helpImg.style.opacity = showOnboarding ? 1 : 0;
       }
     },
     /**

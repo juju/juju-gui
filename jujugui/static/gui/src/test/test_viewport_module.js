@@ -95,12 +95,12 @@ describe('views.ViewportModule (Topology module)', function() {
 });
 
 describe('views.ViewportModule.setAllTheDimensions', function() {
-  var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
+  var views, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
       eventFired, dimentions;
   before(function(done) {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
       'juju-topology-viewport'];
-    Y = YUI(GlobalConfig).use(modules,
+    YUI(GlobalConfig).use(modules,
         function(Y) {
           views = Y.namespace('juju.views');
           testUtils = Y.namespace('juju-tests').utils;
@@ -129,9 +129,6 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     topo.vis.attr = testUtils.setter(topo.vis);
     view = new views.ViewportModule();
     canvas = {style: {}};
-    canvas.setStyles = function(styles) {
-      Y.mix(canvas.style, styles, true);
-    };
     zoomPlane = {};
     zoomPlane.setAttribute = testUtils.setter(zoomPlane);
     svg = {};
