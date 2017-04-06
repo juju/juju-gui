@@ -1235,8 +1235,26 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderHeaderLogo: function() {
+      const userName = this.user.controller.user.split('@')[0];
+      const gisf = this.get('gisf');
+      const homePath = gisf ? '/' :
+        this.state.generatePath({profile: userName});
+      const showProfile = () =>
+        this.state.changeState({
+          profile: userName,
+          model: null,
+          store: null,
+          root: null,
+          search: null,
+          account: null,
+          user: null
+        });
       ReactDOM.render(
-        <window.juju.components.HeaderLogo />,
+        <window.juju.components.HeaderLogo
+          gisf={gisf}
+          homePath={homePath}
+          showProfile={showProfile}
+           />,
         document.getElementById('header-logo'));
     },
 

@@ -30,17 +30,67 @@ describe('HeaderLogo', function() {
     YUI().use('header-logo', function() { done(); });
   });
 
-  it('renders', function() {
+  it('renders for gisf', () => {
+    const showProfile = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderLogo />, true);
+      <juju.components.HeaderLogo
+        gisf={true}
+        homePath="/"
+        showProfile={showProfile}/>, true);
     const output = renderer.getRenderOutput();
+    const expected = (
+      <a href="/" onClick={showProfile} role="button" title="Home">
+        <juju.components.SvgIcon name="juju-logo"
+          className="svg-icon"
+          width="90" height="35" />
+      </a>);
+    expect(output).toEqualJSX(expected);
+  });
 
-    const expected = (<a href="/"
-      role="button" title="Go to user profile">
-      <juju.components.SvgIcon name="juju-logo"
-        className="svg-icon"
-        width="90" height="35" />
-    </a>);
-    assert.deepEqual(output, expected);
+  it('renders for gijoe', () => {
+    const showProfile = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderLogo
+        gisf={false}
+        homePath="/u/hatch"
+        showProfile={showProfile} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <a href="/u/hatch" onClick={showProfile} role="button" title="Home">
+        <juju.components.SvgIcon name="juju-logo"
+          className="svg-icon"
+          width="90" height="35" />
+      </a>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('calls showProfile on click in gijoe', () => {
+    const showProfile = sinon.stub();
+    const preventDefault = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderLogo
+        gisf={false}
+        homePath="/u/hatch"
+        showProfile={showProfile}/>, true);
+    const output = renderer.getRenderOutput();
+    // Call the click handler
+    output.props.onClick({preventDefault});
+    assert.equal(preventDefault.callCount, 1);
+    assert.equal(showProfile.callCount, 1);
+  });
+
+  it('does not call showProfile on click in gisf', () => {
+    const showProfile = sinon.stub();
+    const preventDefault = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderLogo
+        gisf={true}
+        homePath="/u/hatch"
+        showProfile={showProfile}/>, true);
+    const output = renderer.getRenderOutput();
+    // Call the click handler
+    output.props.onClick({preventDefault});
+    assert.equal(preventDefault.callCount, 0);
+    assert.equal(showProfile.callCount, 0);
   });
 });

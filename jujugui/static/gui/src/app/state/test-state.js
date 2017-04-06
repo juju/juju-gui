@@ -1285,7 +1285,30 @@ describe('State', () => {
       assert.deepEqual(historyStub.pushState.args[0], [
         {}, 'Juju GUI', 'http://abc.com:123/u/hatch/staging']);
     });
+  });
 
+  describe('State.reset()', () => {
+    it('generates a new null state and calls changeState', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/u/hatch/staging'}
+      });
+      const changeState = sinon.stub(state, 'changeState');
+      // Fake a current state.
+      state._appStateHistory = [{
+        root: 'foo',
+        special: {
+          next: 'bar'
+        }
+      }];
+      state.reset();
+      assert.equal(changeState.callCount, 1);
+      assert.deepEqual(changeState.args[0], [{
+        root: null,
+        special: null
+      }]);
+    });
   });
 
   describe('State.generatePath()', () => {
@@ -1329,6 +1352,17 @@ describe('State', () => {
           assert.equal(state.generatePath(), test.path);
         });
       });
+    });
+
+    it('can be passed a custom state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      // Because this uses the same logic as above, we're only checking
+      // that it actually accepts the argument.
+      assert.equal(
+        state.generatePath({profile: 'hatch'}), 'http://abc.com:123/u/hatch');
     });
   });
 
