@@ -68,7 +68,7 @@ describe('App', function() {
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
     };
-    container = testUtils.makeAppContainer(yui);
+    container = testUtils.makeAppContainer();
     getMockStorage = function() {
       return new function() {
         return {
@@ -289,7 +289,7 @@ describe('App', function() {
     before(function(done) {
       // Need to define the container before the juju-gui module is loaded so
       // that the DOM exists when it initializes.
-      container = testUtils.makeAppContainer(yui);
+      container = testUtils.makeAppContainer();
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
