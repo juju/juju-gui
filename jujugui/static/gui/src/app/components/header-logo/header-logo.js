@@ -28,6 +28,7 @@ YUI.add('header-logo', function() {
 
     propTypes: {
       gisf: React.PropTypes.bool.isRequired,
+      homePath: React.PropTypes.string,
       showProfile: React.PropTypes.func
     },
 
@@ -36,6 +37,11 @@ YUI.add('header-logo', function() {
       @param {Object} e The click event.
     */
     _showProfile: function(e) {
+      if (this.props.gisf) {
+        // If we're in gisf then we want to allow the href to
+        // continue as normal
+        return;
+      }
       e.preventDefault();
       this.props.showProfile();
     },
@@ -51,16 +57,9 @@ YUI.add('header-logo', function() {
     },
 
     render: function() {
-      if (this.props.gisf) {
-        return (
-          <a href="/"
-             role="button"
-             title="Home">
-            {this._svg()}
-          </a>);
-      }
       return (
-        <a onClick={this._showProfile}
+        <a href={this.props.homePath}
+           onClick={this._showProfile}
            role="button"
            title="Home">
           {this._svg()}
