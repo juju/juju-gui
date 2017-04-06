@@ -724,6 +724,19 @@ describe('App', function() {
       assert.strictEqual(window.location, app.location);
     });
 
+    it('sends a post to storefront after controller connection in GISF',
+      function() {
+        app.set('gisf', true);
+        sinon.stub(app, 'maskVisibility');
+        sinon.stub(app, 'navigate');
+        sinon.stub(app, 'dispatch');
+        sinon.stub(app.state, 'changeState');
+        sinon.stub(app, '_sendGISFPostBack');
+        sinon.stub(app, '_loginToCharmstore');
+        app.controllerAPI.fire('login');
+        assert.equal(app._sendGISFPostBack.callCount, 1);
+        assert.equal(app._loginToCharmstore.callCount, 1);
+      });
   });
 
 
