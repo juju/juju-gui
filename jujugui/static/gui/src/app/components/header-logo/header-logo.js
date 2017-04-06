@@ -27,12 +27,19 @@ YUI.add('header-logo', function() {
   juju.components.HeaderLogo = React.createClass({
 
     propTypes: {
+      resetState: React.PropTypes.func.isRequired
+    },
+
+    _navigateToRoot: function(e) {
+      e.preventDefault();
+      this.props.resetState();
     },
 
     render: function() {
       return (
-        <a href="/"
-          role="button" title="Go to user profile">
+        <a onClick={this._navigateToRoot}
+           role="button"
+           title="Home">
           <juju.components.SvgIcon name="juju-logo"
             className="svg-icon"
             width="90" height="35" />

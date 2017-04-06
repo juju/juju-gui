@@ -1203,7 +1203,8 @@ YUI.add('juju-gui', function(Y) {
 
     _renderHeaderLogo: function() {
       ReactDOM.render(
-        <window.juju.components.HeaderLogo />,
+        <window.juju.components.HeaderLogo
+          resetState={this.state.reset.bind(this.state)}/>,
         document.getElementById('header-logo'));
     },
 

@@ -30,17 +30,31 @@ describe('HeaderLogo', function() {
     YUI().use('header-logo', function() { done(); });
   });
 
-  it('renders', function() {
+  it('renders', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderLogo />, true);
+      <juju.components.HeaderLogo
+        resetState={sinon.stub()}/>, true);
     const output = renderer.getRenderOutput();
-
-    const expected = (<a href="/"
-      role="button" title="Go to user profile">
+    const expected = (
+      <a onClick={output.props.onClick}
+        role="button" title="Home">
       <juju.components.SvgIcon name="juju-logo"
         className="svg-icon"
         width="90" height="35" />
     </a>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('calls resetState on click', () => {
+    const resetState = sinon.stub();
+    const preventDefault = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderLogo
+        resetState={resetState}/>, true);
+    const output = renderer.getRenderOutput();
+    // Call the click handler
+    output.props.onClick({preventDefault});
+    assert.equal(preventDefault.callCount, 1);
+    assert.equal(resetState.callCount, 1);
   });
 });
