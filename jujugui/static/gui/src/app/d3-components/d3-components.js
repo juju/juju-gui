@@ -265,7 +265,7 @@ YUI.add('d3-components', function(Y) {
               // For this reason, it is not possible here to just pass the
               // context as third argument.
               var target = self,
-                  callback = Y.bind(handler.callback, handler.context);
+                  callback = handler.callback.bind(handler.context);
               if (['windowresize'].indexOf(name) !== -1) {
                 target = Y;
                 handler.context = null;

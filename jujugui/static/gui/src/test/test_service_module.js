@@ -900,7 +900,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _deployFromCharmbrowser: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)(files);
+    serviceModule._canvasDropHandler.call(self, files);
   });
 
   it('extracts a zipped charm directory when dropped', function(done) {
@@ -908,7 +908,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _extractCharmMetadata: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)([file]);
+    serviceModule._canvasDropHandler.call(self, [file]);
   });
 
   it('recognizes zip files of type x-zip-compressed', function(done) {
@@ -917,7 +917,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _extractCharmMetadata: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)(files);
+    serviceModule._canvasDropHandler.call(self, files);
   });
 
 });

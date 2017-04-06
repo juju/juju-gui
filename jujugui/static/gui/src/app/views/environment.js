@@ -90,14 +90,14 @@ YUI.add('juju-view-environment', function(Y) {
       topo.recordSubscription(
           'ServiceModule',
           db.services.after('remove',
-                            Y.bind(this.updateHelpIndicator, this)));
+                            this.updateHelpIndicator.bind(this)));
 
       topo.recordSubscription(
           'ServiceModule',
-          db.services.after('add', Y.bind(this.updateHelpIndicator, this)));
+          db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
-      topo.once('rendered', Y.bind(this.updateHelpIndicator, this));
+      topo.once('rendered', this.updateHelpIndicator.bind(this));
       return this;
     },
 

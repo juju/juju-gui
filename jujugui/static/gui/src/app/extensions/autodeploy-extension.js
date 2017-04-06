@@ -73,7 +73,7 @@ YUI.add('autodeploy-extension', function(Y) {
       // empty function, the ECS relies on wrapping this function so if
       // it's null it'll just stop executing. This should probably be
       // handled properly on the ECS side. Jeff May 12 2014
-      var callback = Y.bind(this._onMachineCreated, this, machine);
+      var callback = this._onMachineCreated.bind(this, machine);
       env.addMachines([{
         series: series,
         containerType: containerType,
