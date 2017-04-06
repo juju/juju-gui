@@ -115,4 +115,25 @@ describe('pan zoom module', function() {
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
+
+  it('should pan a point to the screen', function() {
+    let oldIW = window.innerWidth,
+        oldIH = window.innerHeight;
+    window.innerWidth = 1000;
+    window.innerHeight = 1000;
+    topo.set('translate', [0, 0]);
+    topo.set('scale', 1);
+    // Point already within screen.
+    pz.panPointToScreen({
+      point: [500, 500]
+    });
+    assert.deepEqual(topo.get('translate'), [0, 0]);
+    // Point outside of screen.
+    pz.panPointToScreen({
+      point: [2000, 2000]
+    });
+    assert.deepEqual(topo.get('translate'), [-1220, -1300]);
+    window.innerWidth = oldIW;
+    window.innerHeight = oldIH;
+  });
 });
