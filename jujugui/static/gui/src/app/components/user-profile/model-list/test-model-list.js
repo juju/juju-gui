@@ -193,6 +193,7 @@ describe('UserProfileModelList', () => {
             </span>
           </li>
           {[<juju.components.UserProfileEntity
+            acl={acl}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={true}
@@ -221,7 +222,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of models shared with you', () => {
@@ -298,6 +299,7 @@ describe('UserProfileModelList', () => {
             </span>
           </li>
           {[<juju.components.UserProfileEntity
+            acl={acl}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[1]}
             expanded={false}
@@ -326,7 +328,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render models that are being destroyed', () => {

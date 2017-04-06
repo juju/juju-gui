@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileEntity', () => {
-  let model;
+  let acl, model;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('UserProfileEntity', () => {
   });
 
   beforeEach(() => {
+    acl = {canRemoveModel: (_) => true};
     model = {
       uuid: 'env1',
       name: 'spinach/sandbox',
@@ -52,6 +53,7 @@ describe('UserProfileEntity', () => {
     const displayConfirmation = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
+        acl={acl}
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
@@ -86,6 +88,78 @@ describe('UserProfileEntity', () => {
                 action={displayConfirmation}
                 type="inline-base"
                 title="Destroy model" />
+              <juju.components.GenericButton
+                action={button.props.action}
+                type="inline-neutral"
+                title="Manage" />
+            </div>
+          </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            {undefined}
+            {undefined}
+            <div className="modelInfo">
+              <div className="prepend-three four-col">
+                aws/no region
+              </div>
+              <div className="two-col">
+                <juju.components.DateDisplay
+                  date="today"
+                  relative={true} />
+              </div>
+              <div className="one-col">
+                5
+              </div>
+              <div className="two-col last-col">
+                test-owner
+              </div>
+            </div>
+            {undefined}
+            {undefined}
+            {undefined}
+            {undefined}
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render a model without the ability of destroying it', () => {
+    const displayConfirmation = sinon.stub();
+    acl = {canRemoveModel: (_) => false};
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        acl={acl}
+        displayConfirmation={displayConfirmation}
+        entity={model}
+        expanded={false}
+        switchModel={sinon.stub()}
+        type="model">
+        <span>Summary details</span>
+      </juju.components.UserProfileEntity>, true);
+    const output = renderer.getRenderOutput();
+    const button = output.props.children[1].props.children[0].props.children[1]
+      .props.children[1];
+    const expected = (
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="six-col no-margin-bottom">
+              {undefined}
+              <div className="entity-title">
+                <span className="entity-title__name">
+                  sandbox
+                </span>
+                <span className="entity-title__credential">
+                  foobar
+                </span>
+              </div>
+            </div>
+            <div className={'expanding-row__expanded-header-action ' +
+              'six-col last-col no-margin-bottom'}>
               <juju.components.GenericButton
                 action={button.props.action}
                 type="inline-neutral"
@@ -418,6 +492,7 @@ describe('UserProfileEntity', () => {
     const displayConfirmation = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
+        acl={acl}
         entity={model}
         displayConfirmation={displayConfirmation}
         type="model">
