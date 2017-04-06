@@ -29,8 +29,7 @@ describe('service module annotations', function() {
       'juju-tests-utils',
       'juju-views',
       'juju-view-environment',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -124,8 +123,7 @@ describe('service updates', function() {
       'juju-tests-utils',
       'juju-views',
       'juju-view-environment',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -198,8 +196,7 @@ describe.skip('service module events', function() {
       'juju-views',
       'juju-gui',
       'juju-view-environment',
-      'juju-topology-service',
-      'node-event-simulate'],
+      'juju-topology-service'],
     function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');

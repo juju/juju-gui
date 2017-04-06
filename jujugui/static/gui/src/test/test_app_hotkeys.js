@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('application hotkeys', function() {
   let app, container, env, juju, jujuConfig, keyboard, utils, Y;
-  const requirements = ['juju-gui', 'juju-tests-utils', 'node-event-simulate'];
+  const requirements = ['juju-gui', 'juju-tests-utils'];
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {

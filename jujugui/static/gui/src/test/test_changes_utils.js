@@ -26,10 +26,8 @@ describe('ChangesUtils', function() {
     var requirements = [
       'changes-utils',
       'environment-change-set',
-      'event-simulate',
       'juju-models',
-      'node',
-      'node-event-simulate'
+      'node'
     ];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');

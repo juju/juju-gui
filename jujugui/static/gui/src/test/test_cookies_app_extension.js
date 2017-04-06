@@ -25,8 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'app-cookies-extension', 'cookie', 'juju-tests-utils',
-        'node-event-simulate'
+        'app-cookies-extension', 'cookie', 'juju-tests-utils'
       ], function(Y) {
         utils = Y.namespace('juju-tests.utils');
         done();

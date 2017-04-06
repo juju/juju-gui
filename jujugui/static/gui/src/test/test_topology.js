@@ -24,7 +24,7 @@ describe('topology', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-topology', 'd3-components',
-      'juju-tests-utils', 'juju-view-utils', 'node', 'node-event-simulate'],
+      'juju-tests-utils', 'juju-view-utils', 'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
       views = Y.namespace('juju.views');

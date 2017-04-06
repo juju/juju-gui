@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'd3', 'node-event-simulate', 'juju-gui',
+        'd3', 'juju-gui',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {

@@ -26,8 +26,7 @@ describe('d3-components', function() {
     Y = YUI(GlobalConfig).use(['d3-components',
       'juju-tests-utils',
       'juju-view-utils',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
 
