@@ -1051,27 +1051,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.fire('show', {serviceNames: ['mysql']});
     });
 
-    // Tests for the service menu.
-    it('must be able to toggle the service menu', function(done) {
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        charmstore: fakeStore,
-        state: {changeState: sinon.stub()}
-      }).render();
-      container.querySelectorAll('.service').forEach((node, i) => {
-        node.after('click', function() {
-          view.hasSVGClass(
-              node.querySelector('.service-control-panel'),
-              'active').should.equal(true);
-          container.querySelectorAll('.service-control-panel.active').length
-              .should.equal(1);
-        });
-      });
-      done();
-    });
-
     it('must be able to add a relation from the service menu',
        function() {
          if (Y.UA.phantomjs) {
