@@ -81,7 +81,8 @@ describe('AccountPaymentMethodCard', () => {
         </div>
         <div className="account__payment-card-info">
           <h4>Card address</h4>
-          <p>{'1 Maple'} {'St'}</p>
+          <p>1 Maple</p>
+          <p>St</p>
           <p>{'Sasquatch'} {'Bunnyhug'}</p>
           <p>{'North of the Border'} {'90210'}</p>
         </div>
