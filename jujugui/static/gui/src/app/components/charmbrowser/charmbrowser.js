@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
+    displayName: 'Charmbrowser',
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -42,7 +43,7 @@ YUI.add('charmbrowser-component', function() {
       series: React.PropTypes.object.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
-      urllib: React.PropTypes.object.isRequired,
+      urllib: React.PropTypes.func.isRequired,
       utils: React.PropTypes.object.isRequired
     },
 
