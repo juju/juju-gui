@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-header', function() {
 
   juju.components.EntityHeader = React.createClass({
+    displayName: 'EntityHeader',
     /* Define and validate the properites available on this component. */
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -35,7 +36,7 @@ YUI.add('entity-header', function() {
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
-      urllib: React.PropTypes.object.isRequired
+      urllib: React.PropTypes.func.isRequired
     },
 
     /**
