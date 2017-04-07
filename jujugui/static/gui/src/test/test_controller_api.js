@@ -1931,15 +1931,23 @@ describe('Controller API', function() {
               private_key_id: 'my-private-key-id'
             },
             displayName: 'cred1',
-            redacted: ['secret', 'confidential']
+            redacted: ['secret', 'confidential'],
+            err: undefined
           },
           'aws_spinach@local_cred2': {
             authType: 'oauth2',
             attrs: {},
             displayName: 'cred2',
-            redacted: []
+            redacted: [],
+            err: undefined
           },
-          'no-such': {err: 'no such credentials'}
+          'no-such': {
+            authType: '',
+            attrs: {},
+            displayName: 'no-such',
+            redacted: [],
+            err: 'no such credentials'
+          }
         });
         const msg = conn.last_message();
         assert.deepEqual(msg, {
