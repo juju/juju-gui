@@ -2,14 +2,17 @@
 .account__payment-card {
   $width: 300px;
   $height: 200px;
-  width: $width;
-  height: $height;
-  perspective: 1000px;
-  cursor: pointer;
 
-  &--flipped {
-    .account__payment-card {
-      &-container {
+  &-wrapper {
+    float: left;
+    width: $width;
+    height: $height;
+    margin: 0 30px 20px 0;
+    perspective: 1000px;
+    cursor: pointer;
+
+    &--flipped {
+      .account__payment-card-container {
         transform: rotateY(180deg);
       }
     }
@@ -91,5 +94,9 @@
 
   &-brand {
     float: right;
+  }
+
+  &-info {
+    padding-top: 20px;
   }
 }

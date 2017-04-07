@@ -201,8 +201,17 @@ var module = module;
     */
     _parseUser: function(user) {
       const paymentMethods = (user['payment-methods'] || []).map(method => {
+        const address = method.address;
         return {
-          address: this._parseAddress(method.address),
+          address: {
+            name: address.name || null,
+            line1: address.line1 || null,
+            line2: address.line2 || null,
+            city: address.city || null,
+            state: address.county || null,
+            postcode: address.postcode || null,
+            country: address.country || null
+          },
           brand: method.brand || null,
           last4: method.last4 || null,
           month: method.month || null,

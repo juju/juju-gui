@@ -47,33 +47,43 @@ YUI.add('account-payment-method-card', function() {
     render: function() {
       const card = this.props.card;
       const cardClasses = classNames(
-        'account__payment-card',
-        {'account__payment-card--flipped': this.state.cardFlipped}
+        'account__payment-card-wrapper',
+        {'account__payment-card-wrapper--flipped': this.state.cardFlipped}
       );
+      const address = card.address;
       return (
-        <div className={cardClasses}
-          onClick={this._handleCardClick}>
-          <div className="account__payment-card-container">
-            <div className="account__payment-card-front">
-              <div className="account__payment-card-overlay"></div>
-              <div className="account__payment-card-name">
-                {card.name}
-              </div>
-            </div>
-            <div className="account__payment-card-back">
-              <div className="account__payment-card-overlay"></div>
-              <div className="account__payment-card-number">
-                xxxx xxxx xxxx {card.last4}
-              </div>
-              <div className="account__payment-card-bottom">
-                <div className="account__payment-card-expiry">
-                  {card.month}/{card.year}
-                </div>
-                <div className="account__payment-card-brand">
-                  {card.brand}
+        <div className="account__payment-card">
+          <div className={cardClasses}
+            onClick={this._handleCardClick}>
+            <div className="account__payment-card-container">
+              <div className="account__payment-card-front">
+                <div className="account__payment-card-overlay"></div>
+                <div className="account__payment-card-name">
+                  {card.name}
                 </div>
               </div>
+              <div className="account__payment-card-back">
+                <div className="account__payment-card-overlay"></div>
+                <div className="account__payment-card-number">
+                  xxxx xxxx xxxx {card.last4}
+                </div>
+                <div className="account__payment-card-bottom">
+                  <div className="account__payment-card-expiry">
+                    {card.month}/{card.year}
+                  </div>
+                  <div className="account__payment-card-brand">
+                    {card.brand}
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="account__payment-card-info">
+            <h4>Card address</h4>
+            <p>{address.line1}</p>
+            <p>{address.line2}</p>
+            <p>{address.city} {address.state}</p>
+            <p>{address.country} {address.postcode}</p>
           </div>
         </div>);
     }

@@ -33,10 +33,10 @@ describe('jujulib payment service', function() {
           name: null,
           line1: null,
           line2: null,
-          name: null,
+          county: 'Bunnyhug',
           city: 'New Orleans',
           postcode: null,
-          'country-code': null,
+          country: null,
           phones: []
         },
         brand: 'Brand',
@@ -81,11 +81,10 @@ describe('jujulib payment service', function() {
           name: null,
           line1: null,
           line2: null,
-          name: null,
+          state: 'Bunnyhug',
           city: 'New Orleans',
           postcode: null,
-          countryCode: null,
-          phones: []
+          country: null
         },
         brand: 'Brand',
         last4: '1234',
@@ -179,11 +178,10 @@ describe('jujulib payment service', function() {
             name: null,
             line1: null,
             line2: null,
-            name: null,
+            state: null,
             city: 'New Orleans',
             postcode: null,
-            countryCode: null,
-            phones: []
+            country: null
           },
           brand: null,
           last4: null,

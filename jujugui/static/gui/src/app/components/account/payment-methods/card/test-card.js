@@ -35,6 +35,14 @@ describe('AccountPaymentMethodCard', () => {
       month: 3,
       year: 2017,
       brand: 'Fancy',
+      address: {
+        line1: '1 Maple',
+        line2: 'St',
+        city: 'Sasquatch',
+        state: 'Bunnyhug',
+        postcode: '90210',
+        country: 'North of the Border'
+      }
     };
   });
 
@@ -45,32 +53,41 @@ describe('AccountPaymentMethodCard', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__payment-card"
-        onClick={instance._handleCardClick}>
-        <div className="account__payment-card-container">
-          <div className="account__payment-card-front">
-            <div className="account__payment-card-overlay"></div>
-            <div className="account__payment-card-name">
-              Company
-            </div>
-          </div>
-          <div className="account__payment-card-back">
-            <div className="account__payment-card-overlay"></div>
-            <div className="account__payment-card-number">
-              xxxx xxxx xxxx {1234}
-            </div>
-            <div className="account__payment-card-bottom">
-              <div className="account__payment-card-expiry">
-                {3}/{2017}
+      <div className="account__payment-card">
+        <div className="account__payment-card-wrapper"
+          onClick={instance._handleCardClick}>
+          <div className="account__payment-card-container">
+            <div className="account__payment-card-front">
+              <div className="account__payment-card-overlay"></div>
+              <div className="account__payment-card-name">
+                Company
               </div>
-              <div className="account__payment-card-brand">
-                Fancy
+            </div>
+            <div className="account__payment-card-back">
+              <div className="account__payment-card-overlay"></div>
+              <div className="account__payment-card-number">
+                xxxx xxxx xxxx {1234}
+              </div>
+              <div className="account__payment-card-bottom">
+                <div className="account__payment-card-expiry">
+                  {3}/{2017}
+                </div>
+                <div className="account__payment-card-brand">
+                  Fancy
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="account__payment-card-info">
+          <h4>Card address</h4>
+          <p>1 Maple</p>
+          <p>St</p>
+          <p>{'Sasquatch'} {'Bunnyhug'}</p>
+          <p>{'North of the Border'} {'90210'}</p>
+        </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when flipped', () => {
@@ -78,10 +95,10 @@ describe('AccountPaymentMethodCard', () => {
       <juju.components.AccountPaymentMethodCard
         card={card} />, true);
     let output = component.getRenderOutput();
-    output.props.onClick({stopPropagation: sinon.stub()});
+    output.props.children[0].props.onClick({stopPropagation: sinon.stub()});
     output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.className,
-      'account__payment-card account__payment-card--flipped');
+      output.props.children[0].props.className,
+      'account__payment-card-wrapper account__payment-card-wrapper--flipped');
   });
 });
