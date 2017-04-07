@@ -87,7 +87,7 @@ YUI.add('acl', function(Y) {
       */
       canRemoveModel: model => {
         const currentUser = getUser();
-        // model.owner does not have the domain compoent in gijoe. So if one
+        // model.owner does not have the domain component in gijoe. So if one
         // is missing we can assume that the domain is @local.
         let modelOwner = model.owner;
         if (modelOwner.indexOf('@') < 0) {
