@@ -1182,8 +1182,7 @@ YUI.add('juju-controller-api', function(Y) {
         parameter is null. Otherwise, in case of errors, the second argument is
         an empty object. Credentials info is returned as objects with the
         following fields:
-        - err: a possible credentials specific error, in which case all
-          subsequent fields are omitted;
+        - err: a possible credentials specific error or `undefined`.
         - authType: the authentication type (as a string, like 'jsonfile');
         - attrs: non-secret credential values as an object mapping strings to
           strings. Keys there are based on the cloud type;
