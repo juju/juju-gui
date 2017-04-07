@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityDetails', function() {
-  var acl, mockEntity;
+  var acl, mockEntity, urllib;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -34,6 +34,7 @@ describe('EntityDetails', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
+    urllib = {fromLegacyString: sinon.stub()};
   });
 
   afterEach(function() {
@@ -59,7 +60,9 @@ describe('EntityDetails', function() {
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
         scrollPosition={0}
-        setPageTitle={sinon.stub()} />);
+        setPageTitle={sinon.stub()}
+        urllib={urllib}
+      />);
     assert.equal(output.props.className, 'entity-details');
   });
 
@@ -97,7 +100,9 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          urllib={urllib}
+        />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -106,7 +111,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    const expected = (
+    const expectedOutput = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -123,7 +128,9 @@ describe('EntityDetails', function() {
             deployService={deployService}
             plans={null}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            urllib={urllib}
+          />
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
@@ -133,11 +140,12 @@ describe('EntityDetails', function() {
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
-            renderMarkdown={renderMarkdown} />
+            renderMarkdown={renderMarkdown}
+          />
           </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('can display a message if there is a loading error', function() {
@@ -168,12 +176,14 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           scrollPosition={0}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          urllib={urllib}
+        />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
     const output = shallowRenderer.getRenderOutput();
-    const expected = (
+    const expectedOutput = (
       <div className="entity-details"
         ref="content"
         tabIndex="0">
@@ -186,7 +196,7 @@ describe('EntityDetails', function() {
           </span>.
         </p>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('can display a bundle diagram', function() {
@@ -224,7 +234,9 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          urllib={urllib}
+        />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -233,7 +245,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    const expected = (
+    const expectedOutput = (
       <div className={'entity-details bundle'}
         ref="content"
         tabIndex="0">
@@ -250,10 +262,13 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             plans={null}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            urllib={urllib}
+          />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
-            id={id} />
+            id={id}
+          />
           <juju.components.EntityContent
             apiUrl={apiUrl}
             changeState={changeState}
@@ -262,10 +277,11 @@ describe('EntityDetails', function() {
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
-            renderMarkdown={renderMarkdown} />
+            renderMarkdown={renderMarkdown}
+          />
           </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('will abort the request when unmounting', function() {
@@ -297,7 +313,9 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           scrollPosition={0}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          urllib={urllib}
+        />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -325,7 +343,9 @@ describe('EntityDetails', function() {
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
         scrollPosition={0}
-        setPageTitle={sinon.stub()} />, true);
+        setPageTitle={sinon.stub()}
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
     instance.componentDidMount();
@@ -368,7 +388,9 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollPosition={100}
-        setPageTitle={sinon.stub()} />, true);
+        setPageTitle={sinon.stub()}
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -377,7 +399,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    const expected = (
+    const expectedOutput = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -394,7 +416,9 @@ describe('EntityDetails', function() {
             deployService={deployService}
             plans={plans}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            urllib={urllib}
+          />
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
@@ -404,10 +428,11 @@ describe('EntityDetails', function() {
             hasPlans={true}
             plans={plans}
             pluralize={pluralize}
-            renderMarkdown={renderMarkdown} />
+            renderMarkdown={renderMarkdown}
+          />
           </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
     assert.equal(listPlansForCharm.callCount, 1);
     assert.equal(listPlansForCharm.args[0][0], 'cs:django');
   });
@@ -447,7 +472,9 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollPosition={100}
-        setPageTitle={sinon.stub()} />, true);
+        setPageTitle={sinon.stub()}
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -456,7 +483,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    const expected = (
+    const expectedOutput = (
       <div className={'entity-details charm'}
         ref="content"
         tabIndex="0">
@@ -473,7 +500,9 @@ describe('EntityDetails', function() {
             deployService={deployService}
             plans={[]}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            urllib={urllib}
+          />
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
@@ -483,10 +512,11 @@ describe('EntityDetails', function() {
             hasPlans={true}
             plans={[]}
             pluralize={pluralize}
-            renderMarkdown={renderMarkdown} />
+            renderMarkdown={renderMarkdown}
+          />
           </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
     assert.equal(listPlansForCharm.callCount, 1);
   });
 });
