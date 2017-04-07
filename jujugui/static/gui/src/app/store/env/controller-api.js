@@ -1210,17 +1210,13 @@ YUI.add('juju-controller-api', function(Y) {
         }
         const credentials = results.reduce((prev, result, index) => {
           const name = names[index];
-          const err = result.error && result.error.message;
-          if (err) {
-            prev[name] = {err: err};
-            return prev;
-          }
-          const entry = result.result;
+          const entry = result.result || {};
           prev[name] = {
             authType: entry['auth-type'] || '',
             attrs: entry.attrs || {},
             displayName: this._parseCredentialName(name),
-            redacted: entry.redacted || []
+            redacted: entry.redacted || [],
+            err: result.error && result.error.message
           };
           return prev;
         }, {});
