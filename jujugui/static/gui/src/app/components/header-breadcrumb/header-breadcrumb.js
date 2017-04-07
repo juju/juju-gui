@@ -150,13 +150,19 @@ YUI.add('header-breadcrumb', function() {
       @param {String} username The name of the profile.
     */
     _buildProfile: function(username) {
+      const props = this.props;
       const linkClasses = classNames('header-breadcrumb--link', {
-        'profile-disabled': !this.props.showEnvSwitcher
+        'profile-disabled': !props.showEnvSwitcher
       });
       const onClick = this._handleProfileClick.bind(this, username);
+      const profileUrl = props.appState.generatePath({profile: username});
       return (
         <li className="header-breadcrumb__list-item">
-          <a className={linkClasses} onClick={onClick}>{username}</a>
+          <a className={linkClasses}
+            onClick={onClick}
+            href={profileUrl}>
+            {username}
+          </a>
         </li>
       );
     },
