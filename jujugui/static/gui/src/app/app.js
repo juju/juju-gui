@@ -1763,7 +1763,9 @@ YUI.add('juju-gui', function(Y) {
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel}
-          setPageTitle={this.setPageTitle.bind(this)} />,
+          setPageTitle={this.setPageTitle.bind(this)}
+          urllib={window.jujulib.URL}
+        />,
         document.getElementById('charmbrowser-container'));
       next();
     },

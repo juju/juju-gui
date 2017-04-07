@@ -42,7 +42,8 @@ YUI.add('entity-details', function() {
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
-      setPageTitle: React.PropTypes.func.isRequired
+      setPageTitle: React.PropTypes.func.isRequired,
+      urllib: React.PropTypes.object.isRequired
     },
 
     /**
@@ -90,7 +91,9 @@ YUI.add('entity-details', function() {
                   deployService={this.props.deployService}
                   plans={this.state.plans}
                   pluralize={this.props.pluralize}
-                  scrollPosition={this.props.scrollPosition} />
+                  scrollPosition={this.props.scrollPosition}
+                  urllib={this.props.urllib}
+                />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   apiUrl={this.props.apiUrl}
@@ -100,7 +103,8 @@ YUI.add('entity-details', function() {
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}
                   plans={this.state.plans}
-                  pluralize={this.props.pluralize} />
+                  pluralize={this.props.pluralize}
+                />
               </div>
           );
           break;

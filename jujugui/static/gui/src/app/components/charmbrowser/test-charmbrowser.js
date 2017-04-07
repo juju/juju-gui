@@ -164,6 +164,7 @@ describe('Charmbrowser', function() {
       pluralize: sinon.spy()
     };
     const setPageTitle = sinon.spy();
+    const urllib = {fromLegacyString: sinon.stub()};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
@@ -185,10 +186,12 @@ describe('Charmbrowser', function() {
         utils={utils}
         renderMarkdown={renderMarkdown}
         series={{}}
-        setPageTitle={setPageTitle} />, true);
+        setPageTitle={setPageTitle}
+        urllib={urllib}
+      />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    const expected = (
+    const expectedOutput = (
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
@@ -215,10 +218,12 @@ describe('Charmbrowser', function() {
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize}
-              setPageTitle={setPageTitle} />
+              setPageTitle={setPageTitle}
+              urllib={urllib}
+            />
           </div>
         </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('displays entity details when the state has a user path', function() {
@@ -239,6 +244,7 @@ describe('Charmbrowser', function() {
       pluralize: sinon.stub()
     };
     const setPageTitle = sinon.stub();
+    const urllib = {fromLegacyString: sinon.stub()};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
@@ -260,10 +266,12 @@ describe('Charmbrowser', function() {
         utils={utils}
         renderMarkdown={renderMarkdown}
         series={{}}
-        setPageTitle={setPageTitle} />, true);
+        setPageTitle={setPageTitle}
+        urllib={urllib}
+      />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    const expected = (
+    const expectedOutput = (
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
@@ -290,10 +298,12 @@ describe('Charmbrowser', function() {
               id='~spinch/koala'
               addNotification={addNotification}
               pluralize={utils.pluralize}
-              setPageTitle={setPageTitle} />
+              setPageTitle={setPageTitle}
+              urllib={urllib}
+            />
           </div>
         </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('closes when clicked outside', function() {
