@@ -998,7 +998,6 @@ YUI.add('juju-gui', function(Y) {
           this.state.changeState.bind(this.state),
           auth.rootUserName);
       };
-
       const navigateUserAccount = () => {
         const auth = this._getAuth();
         if (!auth) {
@@ -1008,6 +1007,7 @@ YUI.add('juju-gui', function(Y) {
           this.env && this.env.get('ecs'),
           this.state.changeState.bind(this.state));
       };
+
       ReactDOM.render(<window.juju.components.UserMenu
         controllerAPI={controllerAPI}
         LogoutLink={LogoutLink}
@@ -1156,6 +1156,9 @@ YUI.add('juju-gui', function(Y) {
         // If the controller isn't ready yet then don't render anything.
         return;
       }
+      // When going to the account view, we are theoretically no longer
+      // connected to any model.
+      this.set('modelUUID', null);
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
@@ -1502,8 +1505,17 @@ YUI.add('juju-gui', function(Y) {
       const providerDetails = cloudProvider ?
         views.utils.getCloudProviderDetails(cloudProvider) :
         {};
-      const isProfile = this.state.current.profile;
-      const isDisabled = !cloudProvider || !providerDetails || isProfile;
+      const currentState = this.state.current || {};
+      const isDisabled = (
+        // There is no provider.
+        !cloudProvider ||
+        // It's not possible to get provider details.
+        !providerDetails ||
+        // We are in the profile page.
+        currentState.profile ||
+        // We are in the account page.
+        currentState.root === 'account'
+      );
       const classes = classNames(
         'provider-logo',
         {

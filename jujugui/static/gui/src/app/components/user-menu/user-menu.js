@@ -70,43 +70,51 @@ YUI.add('user-menu', function() {
     },
 
     /**
-     Generate menu based on whether the button has been clicked.
+      Generate menu based on whether the button has been clicked.
 
       @method generateUserMenu
     */
     _generateUserMenu: function() {
-      if (this.state.showUserMenu) {
-        const logoutLink = this.props.LogoutLink;
-        return (
-          <juju.components.Panel
-            instanceName="header-menu__menu"
-            visible={true}>
-              <ul className="header-menu__menu-list" role="menubar">
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                  <a role="button"
-                    onClick={this._handleProfileClick}>Pofile</a>
-                </li>
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                  <a role="button"
-                    onClick={this._handleAccountClick}>Account</a>
-                </li>
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                    {logoutLink}
-                  </li>
-              </ul>
-            </juju.components.Panel>);
+      if (!this.state.showUserMenu) {
+        return '';
       }
-      return '';
+      const logoutLink = this.props.LogoutLink;
+      let accountEntry = null;
+      // For the time being, weakly protect the account page via a flag.
+      // The account page can still be accessed directly by people knowing its
+      // "/account" path. Otherwise, the user menu voice can be activated, for
+      // instance, by running the following guiproxy command:
+      //   guiproxy -config 'gisf: true, jujuEnvUUID: "", accountFlag: true'
+      if (window.juju_config && window.juju_config.accountFlag) {
+        accountEntry = (
+          <li className="header-menu__menu-list-item
+            header-menu__menu-list-item-with-link"
+            role="menuitem" tabIndex="0">
+            <a role="button" onClick={this._handleAccountClick}>Account</a>
+          </li>
+        );
+      }
+      return (
+        <juju.components.Panel instanceName="header-menu__menu" visible={true}>
+          <ul className="header-menu__menu-list" role="menubar">
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              <a role="button" onClick={this._handleProfileClick}>Pofile</a>
+            </li>
+            {accountEntry}
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              {logoutLink}
+            </li>
+          </ul>
+        </juju.components.Panel>
+      );
     },
 
     /**
-     Get class names based on whether the menu is shown.
+      Get class names based on whether the menu is shown.
 
       @method _getClassNames
     */

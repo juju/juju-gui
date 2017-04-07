@@ -198,6 +198,18 @@ describe('HeaderBreadcrumb', () => {
       null);
   });
 
+  it('does not render the model switcher when in the account page', () => {
+    appState.current.root = 'account';
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: true
+    });
+    const switcher = comp.output.props.children[1].props.children[1];
+    assert.strictEqual(switcher, null);
+  });
+
   it('does not make the username linkable if we hide model switcher', () => {
     const comp = render({
       authDetails: {user: 'who@external', rootUserName: 'who'},

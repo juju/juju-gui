@@ -88,13 +88,14 @@ YUI.add('model-actions', function() {
     */
     _generateClasses: function() {
       const props = this.props;
-      return classNames(
-        'model-actions',
-        {
-          'model-actions--loading-model': props.appState.current.profile ||
-            props.loadingModel
-        }
+      const currentState = props.appState.current;
+      const isDisabled = (
+        currentState.profile ||
+        currentState.root === 'account' ||
+        props.loadingModel
       );
+      return classNames(
+        'model-actions', {'model-actions--loading-model': isDisabled});
     },
 
     render: function() {

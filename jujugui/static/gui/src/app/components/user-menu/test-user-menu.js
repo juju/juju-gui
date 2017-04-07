@@ -93,6 +93,10 @@ describe('UserMenu', () => {
 
   describe('menu', () => {
     it('opens a menu when clicked', () => {
+      // TODO frankban: remove juju_config handling when deleting the flag.
+      const jujuConfig = window.juju_config;
+      window.juju_config = {accountFlag: true};
+
       const userMenu = createEle({
         LogoutLink: LogoutLink,
         controllerAPI: {
@@ -106,7 +110,10 @@ describe('UserMenu', () => {
       assert.deepEqual(output.props.children[0].props.className,
         'header-menu__button header-menu__show-menu');
 
-      const expected = (<juju.components.Panel
+      // TODO frankban: remove juju_config handling when deleting the flag.
+      window.juju_config = jujuConfig;
+
+      const expectedOutput = (<juju.components.Panel
         instanceName="header-menu__menu"
         visible={true}>
           <ul className="header-menu__menu-list" role="menubar">
@@ -129,7 +136,7 @@ describe('UserMenu', () => {
             </li>
           </ul>
         </juju.components.Panel>);
-      assert.deepEqual(output.props.children[1], expected);
+      expect(output.props.children[1]).toEqualJSX(expectedOutput);
     });
 
     it('closes when handleClickOutside is called', () => {

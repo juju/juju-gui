@@ -335,4 +335,24 @@ describe('ModelActions', function() {
     const classFound = output.props.className.indexOf(className) >= 0;
     assert.isTrue(classFound);
   });
+
+  it('applies the correct class when on a user account page', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        appState={{current: {root: 'account'}}}
+        changeState={sinon.stub()}
+        exportEnvironmentFile={sinon.stub()}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        loadingModel={false}
+        userIsAuthenticated={false}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    const output = renderer.getRenderOutput();
+    const className = 'model-actions--loading-model';
+    const classFound = output.props.className.indexOf(className) >= 0;
+    assert.strictEqual(classFound, true);
+  });
 });

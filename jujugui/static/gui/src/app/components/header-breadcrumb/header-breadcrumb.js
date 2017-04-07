@@ -54,12 +54,9 @@ YUI.add('header-breadcrumb', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
-      return classNames(
-        'header-breadcrumb',
-        {
-          'header-breadcrumb--loading-model': this.props.loadingModel
-        }
-      );
+      return classNames('header-breadcrumb', {
+        'header-breadcrumb--loading-model': this.props.loadingModel
+      });
     },
 
     /**
@@ -70,7 +67,12 @@ YUI.add('header-breadcrumb', function() {
     */
     _renderEnvSwitcher: function() {
       const props = this.props;
-      if (!props.showEnvSwitcher || props.appState.current.profile) {
+      const currentState = props.appState.current;
+      if (
+        !props.showEnvSwitcher ||
+        currentState.profile ||
+        currentState.root === 'account'
+      ) {
         return null;
       }
       return (
