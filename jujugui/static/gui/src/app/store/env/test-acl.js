@@ -137,6 +137,9 @@ describe('ACL', function() {
     assert.strictEqual(acl.canRemoveModel(model), false);
     acl = makeACL({user: 'who@local'});
     assert.strictEqual(acl.canRemoveModel(model), true);
+    const model1 = makeModel('who@external', {'who@external': 'admin'});
+    acl = makeACL({user: 'who@external'});
+    assert.strictEqual(acl.canRemoveModel(model1), true);
     acl = makeACL({user: 'who'});
     const model2 = makeModel('who', {who: 'read'});
     assert.strictEqual(acl.canRemoveModel(model2), false);
