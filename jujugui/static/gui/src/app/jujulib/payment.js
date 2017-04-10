@@ -193,16 +193,56 @@ var module = module;
     },
 
     /**
-      Reformat the user object for easier use with JavaScript.
+      Get a list of the user's payment methods
 
-      @public _parseUser
-      @param user {Object} A user reponse from the API.
-      @returns {Object} A parsed user object.
+      @public getPaymentMethods
+      @param username {String} The user's username.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the payment methods as its second. The payment
+        methods returns an array of payment method objects containing:
+          - address {Object} The card address object containing
+            - name {String|Null} The name for the address e.g.
+              "Geoffrey Spinach" or "Tuque LTD"
+            - line1 {String|Null} The first address line
+            - line2 {String|Null} The second address line
+            - county {String|Null} The address county
+            - city {String|Null} The address city
+            - postcode {String|Null} The address post code
+            - countryCode {String|Null} The address country code
+          - brand {String} The card brand name
+          - last4 {String} The last four digits of the card number
+          - month {Int} The card expiry month
+          - name {String} The user provided identifier of the card
+          - cardHolder {String} The name of the card owner
+          - valid {Boolean} Whether the card is valid e.g. the card has not
+            expired
+          - Year {Int} The card expiry year
     */
-    _parseUser: function(user) {
-      const paymentMethods = (user['payment-methods'] || []).map(method => {
+    getPaymentMethods: function(username, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, this._parsePaymentMethods(
+          response['payment-methods'], true));
+      };
+      const url = `${this.url}/u/${username}/payment-methods`;
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
+      Reformat payment method objects for easier use with JavaScript.
+
+      @public _parsePaymentMethods
+      @param paymentMethods {Array} Payment method reponses from the API.
+      @returns {Array} A list of parsed payment method object.
+    */
+    _parsePaymentMethods: function(paymentMethods, parseCardholder=false) {
+      return paymentMethods.map(method => {
         const address = method.address;
-        return {
+        const parsed = {
           address: {
             name: address.name || null,
             line1: address.line1 || null,
@@ -219,7 +259,21 @@ var module = module;
           valid: method.valid || false,
           year: method.year || null
         };
+        if (parseCardholder) {
+          parsed.cardHolder = method['card-holder'];
+        }
+        return parsed;
       });
+    },
+
+    /**
+      Reformat the user object for easier use with JavaScript.
+
+      @public _parseUser
+      @param user {Object} A user reponse from the API.
+      @returns {Object} A parsed user object.
+    */
+    _parseUser: function(user) {
       return {
         nickname: user.nickname || null,
         name: user.name || null,
@@ -229,7 +283,8 @@ var module = module;
         vat: user.vat || null,
         businessName: user['business-name'] || null,
         billingAddresses: this._parseAddresses(user['billing-addresses']),
-        paymentMethods: paymentMethods,
+        paymentMethods: this._parsePaymentMethods(
+          user['payment-methods'] || []),
         allowEmail: user['allow-email'] || false,
         valid: user.valid || false
       };

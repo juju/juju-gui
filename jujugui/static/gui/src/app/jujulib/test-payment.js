@@ -363,4 +363,78 @@ describe('jujulib payment service', function() {
     });
   });
 
+  describe('getPaymentMethods', () => {
+    it('can get payment methods for a user', (done) => {
+      const bakery = {
+        sendGetRequest: function(path, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/payment-methods');
+          const xhr = makeXHRRequest({
+            'payment-methods': [{
+              address: {
+                name: 'Home',
+                line1: '1 Maple St',
+                line2: null,
+                county: 'Bunnyhug',
+                city: 'Sasquatch',
+                postcode: '90210',
+                country: 'North of the Border'
+              },
+              brand: 'Brand',
+              last4: '1234',
+              month: 3,
+              name: 'Main',
+              'card-holder': 'Mr G Spinach',
+              valid: true,
+              year: 2017
+            }]
+          });
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment(
+        'http://1.2.3.4/', bakery);
+      payment.getPaymentMethods('spinach', function(error, response) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(response, [{
+          address: {
+            name: 'Home',
+            line1: '1 Maple St',
+            line2: null,
+            state: 'Bunnyhug',
+            city: 'Sasquatch',
+            postcode: '90210',
+            country: 'North of the Border'
+          },
+          brand: 'Brand',
+          last4: '1234',
+          month: 3,
+          name: 'Main',
+          cardHolder: 'Mr G Spinach',
+          valid: true,
+          year: 2017
+        }]);
+        done();
+      });
+    });
+
+    it('handles errors when getting a user', (done) => {
+      const bakery = {
+        sendGetRequest: function(path, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment(
+        'http://1.2.3.4/', bakery);
+      payment.getPaymentMethods('spinach', function(error, user) {
+        assert.equal(error, 'Uh oh!');
+        assert.isNull(user);
+        done();
+      });
+    });
+  });
 });
