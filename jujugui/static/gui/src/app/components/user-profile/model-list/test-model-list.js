@@ -331,7 +331,7 @@ describe('UserProfileModelList', () => {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can render models that are being destroyed', () => {
+  it('hides models that are not alive', () => {
     models[0].isAlive = false;
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
@@ -345,14 +345,7 @@ describe('UserProfileModelList', () => {
       />, true);
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children[1][0];
-    const classes = 'expanding-row twelve-col user-profile__entity'
-                     + ' user-profile__list-row';
-    const expected = (
-      <li className={classes}
-        key="model1">
-        {'spinach'} is being destroyed.
-      </li>);
-    assert.deepEqual(content, expected);
+    assert.isNull(content);
   });
 
   // XXX kadams54 2016-09-29: ACL check disabled until
@@ -404,11 +397,10 @@ describe('UserProfileModelList', () => {
 
   it('can destroy a model', () => {
     const addNotification = sinon.stub();
-    const uuids = {};
-    models.forEach(model => {
-      uuids[model.uuid] = null;
-    });
-    const destroyModels = sinon.stub().callsArgWith(1, null, uuids);
+    const model = models[0];
+    const results = {};
+    results[model.uuid] = null;
+    const destroyModels = sinon.stub().callsArgWith(1, null, results);
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
@@ -421,7 +413,7 @@ describe('UserProfileModelList', () => {
         userInfo={userInfo}
       />, true);
     const instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
+    instance._displayConfirmation(model);
     let output = component.getRenderOutput();
     output.props.children[2].props.buttons[1].action();
     assert.equal(destroyModels.callCount, 1, 'destroyModels not called');
@@ -431,12 +423,15 @@ describe('UserProfileModelList', () => {
     assert.equal(addNotification.callCount, 1, 'addNotification not called');
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destroyed',
-      message: 'The model is currently being destroyed.',
+      message: `The model "${model.name}" is destroyed.`,
       level: 'important'
     }, 'Notification message does not match expected.');
   });
 
-  it('can cancel destroying a model', () => {
+  it('can render a model with requested destruction', () => {
+    const model = models[0];
+    const results = {};
+    results[model.uuid] = null;
     const destroyModels = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
@@ -450,7 +445,37 @@ describe('UserProfileModelList', () => {
         userInfo={userInfo}
       />, true);
     const instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
+    instance._displayConfirmation(model);
+    let output = component.getRenderOutput();
+    output.props.children[2].props.buttons[1].action();
+    output = component.getRenderOutput();
+    const content = output.props.children[1].props.children[1][0];
+    const classes = 'expanding-row twelve-col user-profile__entity'
+                     + ' user-profile__list-row';
+    const expected = (
+      <li className={classes}
+        key="model1">
+        Requesting that {model.name} be destroyed.
+      </li>);
+    expect(content).toEqualJSX(expected);
+  });
+
+  it('can cancel destroying a model', () => {
+    const modelName = models[0].name;
+    const destroyModels = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        facadesExist={true}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        userInfo={userInfo}
+      />, true);
+    const instance = component.getMountedInstance();
+    instance._displayConfirmation({name: modelName});
     let output = component.getRenderOutput();
     output.props.children[2].props.buttons[0].action();
     assert.equal(destroyModels.callCount, 0, 'destroyModels was called');
@@ -460,6 +485,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('can display a global error when destroying', () => {
+    const model = models[0];
     const addNotification = sinon.stub();
     const error = 'An error';
     const destroyModels = sinon.stub().callsArgWith(1, error, null);
@@ -476,12 +502,12 @@ describe('UserProfileModelList', () => {
       />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
-    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._displayConfirmation(model);
     instance._destroyModel();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destruction failed',
-      message: 'The model failed to be destroyed: ' + error,
+      message: `Could not destroy model "${model.name}": ${error}`,
       level: 'error'
     });
   });
@@ -506,12 +532,12 @@ describe('UserProfileModelList', () => {
       />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
-    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._displayConfirmation(model);
     instance._destroyModel();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destruction failed',
-      message: 'The model failed to be destroyed: ' + error,
+      message: `Could not destroy model "${model.name}": ${error}`,
       level: 'error'
     });
   });
@@ -545,23 +571,6 @@ describe('UserProfileModelList', () => {
       message: 'The controller model cannot be destroyed.',
       level: 'error'
     }, 'The notification does not match expected.');
-  });
-
-  it('will abort the requests when unmounting', function() {
-    const listModelsWithInfoAbort = sinon.stub();
-    const listModelsWithInfo = sinon.stub().returns(
-      {abort: listModelsWithInfoAbort});
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        currentModel={'model1'}
-        facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    renderer.unmount();
-    assert.equal(listModelsWithInfoAbort.callCount, 1);
   });
 
   it('broadcasts starting status', function() {
