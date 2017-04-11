@@ -175,8 +175,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         utils: {}
       };
 
-      var flags = {}; // Declare an empty set of feature flags.
-
       // Note that any changes to MessageRotator need to be made in both
       // index.html.go and index.html.mako.
       class MessageRotator {
@@ -279,86 +277,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           displayBrowserWarning();
         }
       };
-
-      /**
-        Feature flags support.
-
-        :WARNING: this is stuck on the window object to make sure it's
-        available everywhere. This means mocking this out in tests can be
-        dangerous and evil. Be careful.
-
-        This allows us to use the :flags: NS to set either boolean or string
-        feature flags to control various features in the app.  A simple /<flag>/
-        will set that flag as true in the global flags variable.  A
-        /<flag>=<val>/ will set that flag to that value in the global flags
-        variable. An example usage would be to turn on the ability to drag_and_
-        drop a feature by wrapping that feature code in something like:
-
-          if (flags.gui_featuredrag_enable) { ... }
-
-        From the Launchpad feature flags documentation:
-
-        > As a general rule, each switch should be checked only once or only a
-        > few time in the codebase. We don't want to disable the same thing in
-        > the ui, the model, and the database.
-        >
-        > The name looks like dotted python identifiers, with the form
-        > APP_FEATURE_EFFECT. The value is a Unicode string.
-
-        A shortened version of key can be used if they follow this pattern:
-
-        - The feature flag applies to the gui.
-        - The presence of the flag indicates Boolean enablement
-        - The (default) absence of the flag indicates the feature will not be
-          available.
-
-        If those conditions are met then you may simply use the descriptive
-        name of the feature, taking care it uniquely defines the feature. An
-        example is, rather than specifying gui_dndexport_enable you can specify
-        dndexport as a flag.
-
-        @method featureFlags
-        @param {object} url The url to parse for flags.
-        @param {object} configFlags An optional config object to merge with.
-      */
-      window.featureFlags = function(url, configFlags) {
-        var flags = configFlags || {},
-            flagsRegex = new RegExp(/:flags:\/([^:])*/g);
-
-        var found = url.match(flagsRegex);
-
-        // The matches come back as an array.
-        if (found && found.length) {
-          found = found[0];
-        }
-
-        // Check if the :flags: namespace is in the url.
-        if (found) {
-          // Make sure we trim a trailing / to prevent extra data in the split.
-          var urlFlags = found.replace(/\/+$/, '').split('/');
-
-          // Remove the first :flags: match from the split results.
-          urlFlags = urlFlags.slice(1);
-
-          urlFlags.forEach(function(flag) {
-            var key = flag;
-            var value = true;
-
-            // Allow setting a specific value other than true.
-            var equals = flag.indexOf('=');
-            if (equals !== -1) {
-              key = flag.slice(0, equals);
-              // Add one to the index to make sure we drop the first "equals"
-              // from the string.
-              value = flag.slice((equals + 1));
-            }
-
-            flags[key] = value;
-          });
-        }
-
-        return flags;
-      };
       // The browser driver does not accept anything but `true` as a value
       // to indicate that it's available so we use this as a flag to indicate
       // that the scripts are loaded and that the above methods are available.
@@ -400,20 +318,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
-        window.flags = featureFlags(
-            window.location.href,
-            window.juju_config.flags || {}
-        );
-
-        // Add the current flags to the body so they can be used to flag CSS.
-        for (var flag in window.flags) {
-          if (flag) {
-            document.getElementsByTagName(
-                'body')[0].className += ' flag-' + flag;
-          }
-        }
-
-
         var GlobalConfig = {
           combine: true,
           base: '${convoy_url}?/app/assets/javascripts/yui/',
