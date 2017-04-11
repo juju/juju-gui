@@ -402,8 +402,7 @@ describe('jujulib payment service', function() {
           success(xhr);
         }
       };
-      const payment = new window.jujulib.payment(
-        'http://1.2.3.4/', bakery);
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.getPaymentMethods('spinach', function(error, response) {
         assert.strictEqual(error, null);
         assert.deepEqual(response, [{
@@ -435,8 +434,7 @@ describe('jujulib payment service', function() {
           failure(xhr);
         }
       };
-      const payment = new window.jujulib.payment(
-        'http://1.2.3.4/', bakery);
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.getPaymentMethods('spinach', function(error, user) {
         assert.equal(error, 'Uh oh!');
         assert.isNull(user);
@@ -446,7 +444,7 @@ describe('jujulib payment service', function() {
   });
 
   describe('createPaymentMethod', () => {
-    it('can create a payment method', function() {
+    it('can create a payment method', () => {
       const originalMakeRequest = jujulib._makeRequest;
       const makeRequest = sinon.stub();
       jujulib._makeRequest = makeRequest;
@@ -461,7 +459,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('can return the user when after creating a user', function() {
+    it('can return the payment method when it has been created', (done) => {
       const bakery = {
         sendPutRequest: function(path, params, success, failure) {
           assert.equal(
@@ -491,8 +489,7 @@ describe('jujulib payment service', function() {
           success(xhr);
         }
       };
-      const payment = new window.jujulib.payment(
-        'http://1.2.3.4/', bakery);
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.createPaymentMethod('spinach', 'token123', (error, response) => {
         assert.strictEqual(error, null);
         assert.deepEqual(response, {
@@ -513,23 +510,81 @@ describe('jujulib payment service', function() {
           valid: true,
           year: 2017
         });
+        done();
       });
     });
 
-    it('handles errors when creating a user', function(done) {
+    it('handles errors when creating a payment method', (done) => {
       const bakery = {
         sendPutRequest: function(path, params, success, failure) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
           failure(xhr);
         }
       };
-      const payment = new window.jujulib.payment(
-        'http://1.2.3.4/', bakery);
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.createPaymentMethod('spinach', 'token123', (error, response) => {
         assert.equal(error, 'Uh oh!');
         assert.isNull(response);
         done();
       });
+    });
+  });
+
+  describe('removePaymentMethod', () => {
+    it('can remove a payment method', () => {
+      const originalMakeRequest = jujulib._makeRequest;
+      const makeRequest = sinon.stub();
+      jujulib._makeRequest = makeRequest;
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.removePaymentMethod(
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        sinon.stub());
+      // Restore the original method on the lib.
+      jujulib._makeRequest = originalMakeRequest;
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
+      });
+    });
+
+    it('can return the reponse when removing a payment method', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/payment-methods/' +
+            'payment-method-created-2017-3-11-13-49-42-186');
+          const xhr = makeXHRRequest('success');
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removePaymentMethod(
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        (error, response) => {
+          assert.isNull(error);
+          assert.deepEqual(response, 'success');
+          done();
+        });
+    });
+
+    it('handles errors when removing a payment method', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removePaymentMethod(
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        (error, response) => {
+          assert.equal(error, 'Uh oh!');
+          assert.isNull(response);
+          done();
+        });
     });
   });
 });

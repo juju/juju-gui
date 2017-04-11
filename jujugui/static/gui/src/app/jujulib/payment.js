@@ -260,6 +260,32 @@ var module = module;
     },
 
     /**
+      Remove a new payment method.
+
+      @public removePaymentMethod
+      @param name {String} The user's username.
+      @param id {String} The payment method id.
+      @param token {String} A Stripe token.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the response as the second parameter.
+    */
+    removePaymentMethod: function(username, id, token, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, response);
+      };
+      const url = `${this.url}/u/${username}/payment-methods/${id}`;
+      const payload = {
+        'payment-method-name': id
+      };
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', payload, handler);
+    },
+
+    /**
       Generate an ID of this payment method. The ID only needs to be unique per
       user so using the full timestamp should be enough.
 
