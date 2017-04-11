@@ -519,7 +519,7 @@ YUI.add('juju-topology-service', function(Y) {
       @method _attachDragEvents
     */
     _attachDragEvents: function() {
-      var container = Y.one(this.get('container')),
+      var container = Y.Node(this.get('container')),
           ZP = '.zoom-plane',
           EC = '.environment-help';
 
