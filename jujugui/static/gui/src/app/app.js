@@ -345,7 +345,6 @@ YUI.add('juju-gui', function(Y) {
       // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
-      window.flags = window.flags || {};
 
       // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
@@ -1132,9 +1131,6 @@ YUI.add('juju-gui', function(Y) {
       @method _renderISVProfile
     */
     _renderISVProfile: function() {
-      if (!window.flags || !window.flags.blues) {
-        return;
-      }
       ReactDOM.render(
         <window.juju.components.ISVProfile
           d3={d3} />,

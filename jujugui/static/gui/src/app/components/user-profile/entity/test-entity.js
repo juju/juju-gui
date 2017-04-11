@@ -42,11 +42,6 @@ describe('UserProfileEntity', () => {
       credentialName: 'foobar',
       numMachines: 5
     };
-    window.flags = {};
-  });
-
-  afterEach(() => {
-    delete window.flags;
   });
 
   it('can render a model', () => {

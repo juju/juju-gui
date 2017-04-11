@@ -139,9 +139,6 @@ YUI.add('user-profile', function() {
       // Exclude/include sections only displayed to the current user.
       if (props.userInfo.isCurrent) {
         toRender.push('agreementList');
-        if (window.flags && window.flags.blues) {
-          toRender.push('budgetList');
-        }
       }
       // Exclude/include sections that require a charm store user.
       if (props.userInfo.external) {
