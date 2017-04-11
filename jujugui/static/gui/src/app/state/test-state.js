@@ -476,6 +476,20 @@ describe('State', () => {
         state._processURL(
           'http://abc.com:123/a/b/c/?deploy-target=cs:trusty/ceph45'),
         {parts: ['a', 'b', 'c'], query: {'deploy-target': 'cs:trusty/ceph45'}});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/#apple-sauce'),
+        {hash: 'apple-sauce'});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/a/b/#granola'),
+        {parts: ['a', 'b'], hash: 'granola'});
+      assert.deepEqual(
+        state._processURL(
+          'http://abc.com:123/a/b/?deploy-target=cs:trusty/ceph45#gummybear'),
+        {
+          parts: ['a', 'b'],
+          query: {'deploy-target': 'cs:trusty/ceph45'},
+          hash: 'gummybear'
+        });
     });
   });
 
