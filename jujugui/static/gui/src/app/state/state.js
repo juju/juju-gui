@@ -499,6 +499,10 @@ const State = class State {
     const splitURL = this._processURL(url);
     let parts = splitURL.parts;
     const query = splitURL.query;
+    const hash = splitURL.hash;
+    if (hash) {
+      state.hash = hash;
+    }
     state = this._parseSpecial(query, state, allowStateModifications);
     // If we have an invalid parts or invalid query then we can return early.
     if (invalidParts(parts) && !query) {
