@@ -111,6 +111,7 @@ describe('DeploymentCredential', function() {
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
+            credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
@@ -229,6 +230,7 @@ describe('DeploymentCredential', function() {
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={null}
+            credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
@@ -500,6 +502,7 @@ describe('DeploymentCredential', function() {
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
             cloud={cloud}
+            credentials={['default']}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}

@@ -287,6 +287,8 @@ YUI.add('deployment-credential', function() {
           addNotification={this.props.addNotification}
           close={this._toggleAdd}
           cloud={this.props.cloud}
+          credentials={this.state.credentials.map(credential =>
+            credential.displayName)}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
