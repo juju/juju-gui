@@ -33,7 +33,6 @@ describe('Environment Change Set', function() {
       models = Y.namespace('juju.models');
       done();
     });
-    window.flags = { mv: true };
   });
 
   beforeEach(function() {
@@ -69,7 +68,6 @@ describe('Environment Change Set', function() {
   });
 
   after(function() {
-    window.flags = {};
     dbObj.reset();
     dbObj.destroy();
   });

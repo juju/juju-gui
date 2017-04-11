@@ -32,10 +32,6 @@ describe('UserProfile', () => {
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: true};
   });
 
-  afterEach(() => {
-    window.flags = {};
-  });
-
   it('renders a populated user profile page', () => {
     const acl = {};
     const links = [];
@@ -49,7 +45,6 @@ describe('UserProfile', () => {
     const getAgreements = sinon.stub();
     const staticURL = 'test-url';
     const charmstore = {};
-    window.flags = {blues: true};
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         acl={acl}
@@ -159,35 +154,6 @@ describe('UserProfile', () => {
     instance._interactiveLogin();
     assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
     assert.equal(storeUser.callCount, 1);
-  });
-
-  it('skips the budget list when blues flag is inactive', () => {
-    const addNotification = sinon.stub();
-    const changeState = sinon.stub();
-    const getDiagramURL = sinon.stub();
-    const listBudgets = sinon.stub();
-    const listModelsWithInfo = sinon.stub();
-    const switchModel = sinon.stub();
-    const getAgreements = sinon.stub();
-    window.flags = {blues: false};
-    const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={addNotification}
-        charmstore={{}}
-        getAgreements={getAgreements}
-        getDiagramURL={getDiagramURL}
-        listBudgets={listBudgets}
-        listModelsWithInfo={listModelsWithInfo}
-        switchModel={switchModel}
-        interactiveLogin={true}
-        changeState={changeState}
-        pluralize={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        storeUser={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    const instance = component.getMountedInstance();
-    assert.isUndefined(instance.refs.budgetList);
   });
 
   it('skips the bundle and charm lists when not logged in', () => {
