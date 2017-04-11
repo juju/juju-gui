@@ -591,6 +591,8 @@ const State = class State {
   */
   generatePath(stateObj = this.current) {
     let path = [];
+    let hash = stateObj.hash;
+    let hashAdded = false;
     const root = stateObj.root;
     if (root) {
       path.push(root);
@@ -615,7 +617,15 @@ const State = class State {
           }
         });
         if (querystrings.length > 0) {
-          path.push(`?${querystrings.join('&')}`);
+          // If there is a hash with a query string them we do not want the
+          // join at the end of the fn to put a slash between the query and
+          // the hash.
+          let queryHash = '';
+          if (hash) {
+            queryHash = `#${stateObj.hash}`;
+            hashAdded = true;
+          }
+          path.push(`?${querystrings.join('&')}${queryHash}`);
         }
       }
     }
@@ -661,6 +671,9 @@ const State = class State {
           }
         }
       });
+    }
+    if (hash && !hashAdded) {
+      path.push(`#${hash}`);
     }
     return `${this.baseURL}${path.join('/')}`;
   }
