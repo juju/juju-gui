@@ -157,4 +157,16 @@ describe('Entity Extension', function() {
       entity.iconPath,
        'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
   });
+
+  it('uses the correct name for the canonical-kubernetes bundle', function() {
+    entityModel.parseBundleServices = sinon.stub().returns([]);
+    entityModel.setAttrs({
+      id: 'cs:~who/canonical-k8s/42',
+      owner: 'foobar-charmers',
+      name: 'canonical-kubernetes'
+    });
+    const entity = entityModel.toEntity();
+    assert.strictEqual(
+      entity.displayName, 'The Canonical Distribution Of Kubernetes');
+  });
 });
