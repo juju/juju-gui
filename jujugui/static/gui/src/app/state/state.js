@@ -105,28 +105,35 @@ const State = class State {
 
   /**
     Takes the complete URL and runs it through various process methods and
-    returns an object with the processed url parts and query string.
+    returns an object with the processed url parts, query, and hash.
     @param {String} url - The URL to process.
     @return {Object} The processed url.
   */
   _processURL(url) {
+    const processed = {};
     const stripLRSlashes = path => path.replace(/^\/*/, '').replace(/\/*$/, '');
     // Strip the baseURL before parsing the sections.
     const cleanURL = stripLRSlashes(url.replace(this.baseURL, ''));
-    const splitURL = cleanURL.split('?');
-    const processed = {};
-    if (splitURL[1]) {
+    // The following regex splits a supplied url into its three parts, path,
+    // query, and hash.
+    const urlSplitRegex = /([^?#]+)?(?:\?([^#]+))?(?:#(.*))?/;
+    const splitURL = urlSplitRegex.exec(cleanURL);
+    const path = splitURL[1];
+    if (path) {
+      processed.parts = stripLRSlashes(path).split('/');
+    }
+    const query = splitURL[2];
+    if (query) {
       processed.query = {};
-      splitURL[1].split('&')
+      query.split('&')
            .forEach(section => {
              const parts = section.split('=');
              processed.query[parts[0]] = parts[1];
            });
     }
-    // The url parts without the query split on the / delimeter.
-    const cleanParts = stripLRSlashes(splitURL[0]);
-    if (cleanParts.length > 0) {
-      processed.parts = cleanParts.split('/');
+    const hash = splitURL[3];
+    if (hash) {
+      processed.hash = hash;
     }
     return processed;
   }
