@@ -52,6 +52,7 @@ describe('UserProfileEntity', () => {
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
+        permission="Read"
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
@@ -94,19 +95,22 @@ describe('UserProfileEntity', () => {
             {undefined}
             {undefined}
             <div className="modelInfo">
-              <div className="prepend-three four-col">
+              <div className="prepend-two two-col">
+                test-owner
+              </div>
+              <div className="two-col">
+                5
+              </div>
+              <div className="two-col">
                 aws/no region
               </div>
               <div className="two-col">
+                Read
+              </div>
+              <div className="two-col last-col">
                 <juju.components.DateDisplay
                   date="today"
                   relative={true} />
-              </div>
-              <div className="one-col">
-                5
-              </div>
-              <div className="two-col last-col">
-                test-owner
               </div>
             </div>
             {undefined}
@@ -128,6 +132,7 @@ describe('UserProfileEntity', () => {
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
+        permission="Read"
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
@@ -166,19 +171,22 @@ describe('UserProfileEntity', () => {
             {undefined}
             {undefined}
             <div className="modelInfo">
-              <div className="prepend-three four-col">
+              <div className="prepend-two two-col">
+                test-owner
+              </div>
+              <div className="two-col">
+                5
+              </div>
+              <div className="two-col">
                 aws/no region
               </div>
               <div className="two-col">
+                Read
+              </div>
+              <div className="two-col last-col">
                 <juju.components.DateDisplay
                   date="today"
                   relative={true} />
-              </div>
-              <div className="one-col">
-                5
-              </div>
-              <div className="two-col last-col">
-                test-owner
               </div>
             </div>
             {undefined}

@@ -38,7 +38,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 42,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'who',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'who'
+        }
+      ]
     }];
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: true};
   });
@@ -175,21 +191,24 @@ describe('UserProfileModelList', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               Name
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              Owner
+            </span>
+            <span className="user-profile__list-col two-col">
+              Machines
+            </span>
+            <span className="user-profile__list-col two-col">
               Cloud/Region
             </span>
             <span className="user-profile__list-col two-col">
-              Last accessed
-            </span>
-            <span className="user-profile__list-col one-col">
-              Machines
+              Permission
             </span>
             <span className={
               'user-profile__list-col two-col last-col'}>
-              Owner
+              Last accessed
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -198,24 +217,28 @@ describe('UserProfileModelList', () => {
             entity={models[0]}
             expanded={true}
             key="model1"
+            permission="write"
             switchModel={instance.props.switchModel}
             type="model">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               spinach
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              who
+            </span>
+            <span className="user-profile__list-col two-col">
+              42
+            </span>
+            <span className="user-profile__list-col two-col">
               aws/gallifrey
             </span>
             <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
               <juju.components.DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
-            </span>
-            <span className="user-profile__list-col one-col">
-              {42}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              who
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -234,7 +257,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 42,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'dalek',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'dalek'
+        }
+      ]
     }, {
       uuid: 'model2-uuid',
       name: 'model2',
@@ -243,7 +282,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 47,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'dalek',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'dalek'
+        }
+      ]
     }];
     userInfo = {external: 'dalek', profile: 'dalek', isCurrent: false};
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
@@ -281,21 +336,24 @@ describe('UserProfileModelList', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               Name
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              Owner
+            </span>
+            <span className="user-profile__list-col two-col">
+              Machines
+            </span>
+            <span className="user-profile__list-col two-col">
               Cloud/Region
             </span>
             <span className="user-profile__list-col two-col">
-              Last accessed
-            </span>
-            <span className="user-profile__list-col one-col">
-              Machines
+              Permission
             </span>
             <span className={
               'user-profile__list-col two-col last-col'}>
-              Owner
+              Last accessed
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -304,24 +362,28 @@ describe('UserProfileModelList', () => {
             entity={models[1]}
             expanded={false}
             key="model2-uuid"
+            permission="write"
             switchModel={instance.props.switchModel}
             type="model">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               model2
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              dalek
+            </span>
+            <span className="user-profile__list-col two-col">
+              47
+            </span>
+            <span className="user-profile__list-col two-col">
               aws/gallifrey
             </span>
             <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
               <juju.components.DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
-            </span>
-            <span className="user-profile__list-col one-col">
-              {47}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              dalek
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>

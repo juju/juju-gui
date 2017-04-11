@@ -291,6 +291,18 @@ YUI.add('user-profile-model-list', function() {
       if (model.owner) {
         owner = model.owner.split('@')[0];
       }
+
+      const modelUser = model.users ? model.users.filter(user => {
+        return user.displayName === props.userInfo.profile;
+      }) : null;
+
+      // This is purely defensive and we should always know a permission
+      // if you ever see this, sound the alarms.
+      let permission = 'unknown';
+      if (modelUser.length) {
+        permission = modelUser[0].access;
+      }
+
       return (
         <juju.components.UserProfileEntity
           acl={props.acl}
@@ -299,23 +311,27 @@ YUI.add('user-profile-model-list', function() {
           expanded={isCurrent}
           key={uuid}
           switchModel={props.switchModel}
+          permission={permission}
           type="model">
-          <span className="user-profile__list-col three-col">
+          <span className="user-profile__list-col two-col">
             {model.name || '--'}
           </span>
-          <span className="user-profile__list-col four-col">
+          <span className="user-profile__list-col two-col">
+            {owner}
+          </span>
+          <span className="user-profile__list-col two-col">
+            {model.numMachines}
+          </span>
+          <span className="user-profile__list-col two-col">
             {model.cloud + '/' + region}
           </span>
           <span className="user-profile__list-col two-col">
+            {permission}
+          </span>
+          <span className="user-profile__list-col two-col last-col">
             <juju.components.DateDisplay
               date={model.lastConnection || '--'}
               relative={true} />
-          </span>
-          <span className="user-profile__list-col one-col">
-            {model.numMachines}
-          </span>
-          <span className="user-profile__list-col two-col last-col">
-            {owner}
           </span>
         </juju.components.UserProfileEntity>);
     },
@@ -329,21 +345,24 @@ YUI.add('user-profile-model-list', function() {
     _generateHeader: function() {
       return (
         <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col three-col">
+          <span className="user-profile__list-col two-col">
             Name
           </span>
-          <span className="user-profile__list-col four-col">
+          <span className="user-profile__list-col two-col">
+            Owner
+          </span>
+          <span className="user-profile__list-col two-col">
+            Machines
+          </span>
+          <span className="user-profile__list-col two-col">
             Cloud/Region
           </span>
           <span className="user-profile__list-col two-col">
-            Last accessed
-          </span>
-          <span className="user-profile__list-col one-col">
-            Machines
+            Permission
           </span>
           <span className={
             'user-profile__list-col two-col last-col'}>
-            Owner
+            Last accessed
           </span>
         </li>);
     },
