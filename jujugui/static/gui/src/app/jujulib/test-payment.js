@@ -6,7 +6,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('jujulib payment service', function() {
-  let parsedUser, returnedUser;
+  let parsedUser, returnedUser, generatePaymentMethodName;
 
   const makeXHRRequest = function(obj) {
     return {target: {responseText: JSON.stringify(obj)}};
@@ -96,6 +96,15 @@ describe('jujulib payment service', function() {
       allowEmail: true,
       valid: true
     };
+    generatePaymentMethodName =
+      window.jujulib.payment.prototype._generatePaymentMethodName;
+    window.jujulib.payment.prototype._generatePaymentMethodName =
+      sinon.stub().returns('payment-method-created-2017-3-11-13-49-42-186');
+  });
+
+  afterEach(() => {
+    window.jujulib.payment.prototype._generatePaymentMethodName =
+      generatePaymentMethodName;
   });
 
   it('exists', function() {
@@ -233,8 +242,7 @@ describe('jujulib payment service', function() {
         postcode: '70130'
       }],
       allowEmail: true,
-      token: '54321',
-      paymentMethodName: 'Platinum'
+      token: '54321'
     };
     payment.createUser(newUser, sinon.stub());
     // Restore the original method on the lib.
@@ -266,7 +274,7 @@ describe('jujulib payment service', function() {
       }],
       'allow-email': true,
       token: '54321',
-      'payment-method-name': 'Platinum'
+      'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
     });
   });
 
@@ -299,8 +307,7 @@ describe('jujulib payment service', function() {
         postcode: '70130'
       }],
       allowEmail: true,
-      token: '54321',
-      paymentMethodName: 'Platinum'
+      token: '54321'
     };
     payment.createUser(newUser, function(error, user) {
       assert.strictEqual(error, null);
@@ -433,6 +440,94 @@ describe('jujulib payment service', function() {
       payment.getPaymentMethods('spinach', function(error, user) {
         assert.equal(error, 'Uh oh!');
         assert.isNull(user);
+        done();
+      });
+    });
+  });
+
+  describe('createPaymentMethod', () => {
+    it('can create a payment method', function() {
+      const originalMakeRequest = jujulib._makeRequest;
+      const makeRequest = sinon.stub();
+      jujulib._makeRequest = makeRequest;
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.createPaymentMethod('spinach', 'token123', sinon.stub());
+      // Restore the original method on the lib.
+      jujulib._makeRequest = originalMakeRequest;
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        token: 'token123',
+        'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
+      });
+    });
+
+    it('can return the user when after creating a user', function() {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/payment-methods/' +
+            'payment-method-created-2017-3-11-13-49-42-186');
+          const xhr = makeXHRRequest({
+            address: {
+              name: 'Home',
+              line1: '1 Maple St',
+              line2: null,
+              county: 'Bunnyhug',
+              city: 'Sasquatch',
+              postcode: '90210',
+              country: 'North of the Border'
+            },
+            brand: 'Brand',
+            last4: '1234',
+            month: 3,
+            name: 'Main',
+            'card-holder': 'Mr G Spinach',
+            valid: true,
+            year: 2017
+          });
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment(
+        'http://1.2.3.4/', bakery);
+      payment.createPaymentMethod('spinach', 'token123', (error, response) => {
+        assert.strictEqual(error, null);
+        assert.deepEqual(response, {
+          address: {
+            name: 'Home',
+            line1: '1 Maple St',
+            line2: null,
+            state: 'Bunnyhug',
+            city: 'Sasquatch',
+            postcode: '90210',
+            country: 'North of the Border'
+          },
+          brand: 'Brand',
+          last4: '1234',
+          month: 3,
+          name: 'Main',
+          cardHolder: 'Mr G Spinach',
+          valid: true,
+          year: 2017
+        });
+      });
+    });
+
+    it('handles errors when creating a user', function(done) {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment(
+        'http://1.2.3.4/', bakery);
+      payment.createPaymentMethod('spinach', 'token123', (error, response) => {
+        assert.equal(error, 'Uh oh!');
+        assert.isNull(response);
         done();
       });
     });

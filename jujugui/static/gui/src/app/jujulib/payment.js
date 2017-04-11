@@ -138,7 +138,6 @@ var module = module;
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
         - token {String|Null} A Stripe token
-        - paymentMethodName {String|Null} The name of the payment method
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and a user object as its second (see the getUser object
@@ -164,7 +163,7 @@ var module = module;
         'billing-addresses': this._unparseAddresses(user.billingAddresses),
         'allow-email': user.allowEmail || false,
         token: user.token,
-        'payment-method-name': user.paymentMethodName || null
+        'payment-method-name': this._generatePaymentMethodName()
       };
       return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
@@ -193,7 +192,7 @@ var module = module;
     },
 
     /**
-      Get a list of the user's payment methods
+      Get a list of the user's payment methods.
 
       @public getPaymentMethods
       @param username {String} The user's username.
@@ -233,6 +232,56 @@ var module = module;
     },
 
     /**
+      Create a new payment method.
+
+      @public createPaymentMethod
+      @param name {String} The user's username.
+      @param token {String} A Stripe token.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and a payment method object as its second (see the
+        getPaymentMethods docstring for the fields it returns).
+    */
+    createPaymentMethod: function(username, token, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, this._parsePaymentMethod(response, true));
+      };
+      const id = this._generatePaymentMethodName();
+      const url = `${this.url}/u/${username}/payment-methods/${id}`;
+      const payload = {
+        token: token,
+        'payment-method-name': id
+      };
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Generate an ID of this payment method. The ID only needs to be unique per
+      user so using the full timestamp should be enough.
+
+      @public _generatePaymentMethodName
+      @param paymentMethods {Array} Payment method reponses from the API.
+      @returns {Array} A list of parsed payment method object.
+    */
+    _generatePaymentMethodName: function() {
+      const date = new Date();
+      const parts = [
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+        date.getMilliseconds()
+      ];
+      return `payment-method-created-${parts.join('-')}`;
+    },
+
+    /**
       Reformat payment method objects for easier use with JavaScript.
 
       @public _parsePaymentMethods
@@ -241,29 +290,40 @@ var module = module;
     */
     _parsePaymentMethods: function(paymentMethods, parseCardholder=false) {
       return paymentMethods.map(method => {
-        const address = method.address;
-        const parsed = {
-          address: {
-            name: address.name || null,
-            line1: address.line1 || null,
-            line2: address.line2 || null,
-            city: address.city || null,
-            state: address.county || null,
-            postcode: address.postcode || null,
-            country: address.country || null
-          },
-          brand: method.brand || null,
-          last4: method.last4 || null,
-          month: method.month || null,
-          name: method.name || null,
-          valid: method.valid || false,
-          year: method.year || null
-        };
-        if (parseCardholder) {
-          parsed.cardHolder = method['card-holder'];
-        }
-        return parsed;
+        return this._parsePaymentMethod(method, parseCardholder);
       });
+    },
+
+    /**
+      Reformat a payment method object for easier use with JavaScript.
+
+      @public _parsePaymentMethod
+      @param paymentMethod {Object} A payment method reponse from the API.
+      @returns {Object} A parsed payment method object.
+    */
+    _parsePaymentMethod: function(paymentMethod, parseCardholder=false) {
+      const address = paymentMethod.address;
+      const parsed = {
+        address: {
+          name: address.name || null,
+          line1: address.line1 || null,
+          line2: address.line2 || null,
+          city: address.city || null,
+          state: address.county || null,
+          postcode: address.postcode || null,
+          country: address.country || null
+        },
+        brand: paymentMethod.brand || null,
+        last4: paymentMethod.last4 || null,
+        month: paymentMethod.month || null,
+        name: paymentMethod.name || null,
+        valid: paymentMethod.valid || false,
+        year: paymentMethod.year || null
+      };
+      if (parseCardholder) {
+        parsed.cardHolder = paymentMethod['card-holder'];
+      }
+      return parsed;
     },
 
     /**
