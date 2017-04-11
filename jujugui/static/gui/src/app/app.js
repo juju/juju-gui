@@ -1233,6 +1233,7 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
+          keybindings={this.keybindings}
           user={this._getAuth()} />,
         document.getElementById('header-help'));
     },

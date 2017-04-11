@@ -29,6 +29,7 @@ YUI.add('header-help', function() {
     propTypes: {
       appState: React.PropTypes.object.isRequired,
       gisf: React.PropTypes.bool.isRequired,
+      keybindings: React.PropTypes.object.isRequired,
       user: React.PropTypes.object
     },
 
@@ -73,10 +74,41 @@ YUI.add('header-help', function() {
       return (
         <li className="header-menu__menu-list-item
           header-menu__menu-list-item-with-link"
-          role="menuitem" tabIndex="1">
-          <a href={link} target="_blank">{label}</a>
+          role="menuitem" tabIndex="0">
+          <a className="header-menu__menu-list-item-link"
+            href={link} target="_blank">{label}</a>
         </li>
       );
+    },
+
+    /**
+     Click the button, get the help.
+
+      @param {Object} evt The event that triggered the function
+    */
+    _handleShortcutsLink: function(evt) {
+      const keybindings = this.props.keybindings;
+      // We specifically want the Shift + ? key combo
+      const spec = keybindings['S-/'];
+      const target = document.querySelector(spec.target);
+      if (target) {
+        if (spec.toggle) {
+          if (target.classList.contains('hidden')) {
+            target.classList.remove('hidden');
+          } else {
+            target.classList.add('hidden');
+          }
+        }
+        if (spec.focus) { target.focus(); }
+        if (spec.callback) {
+          // We need to pass the context of 'app' but we don't really want to
+          // pass a reference of the entire app around, so this just provides
+          // the required keybindings part.
+          spec.callback.call({keybindings: keybindings}, evt, target);
+        }
+        this.toggleHelpMenu();
+        evt.stopPropagation();
+      }
     },
 
     /**
@@ -95,17 +127,21 @@ YUI.add('header-help', function() {
                   header-menu__menu-list-item-with-link"
                   role="menuitem" tabIndex="0">
                   <a
+                    className="header-menu__menu-list-item-link"
                     href="https://jujucharms.com/docs/stable/getting-started"
                     target="_blank">
                     View Documentation</a>
                 </li>
                 {this._generateIssuesLink()}
                 <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-info"
-                  role="menuItem" tabIndex="2">
-                  Keyboard shortcuts
-                  <span className="header-menu__menu-extra-info">
-                    Shift + ?
+                  header-menu__menu-list-item-with-link"
+                  role="menuItem"
+                  tabIndex="0" onClick={this._handleShortcutsLink}>
+                  <span className="header-menu__menu-list-item-link">
+                    Keyboard shortcuts
+                    <span className="header-menu__menu-extra-info">
+                      Shift + ?
+                    </span>
                   </span>
                 </li>
               </ul>

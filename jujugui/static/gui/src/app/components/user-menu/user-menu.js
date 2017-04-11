@@ -90,7 +90,8 @@ YUI.add('user-menu', function() {
           <li className="header-menu__menu-list-item
             header-menu__menu-list-item-with-link"
             role="menuitem" tabIndex="0">
-            <a role="button" onClick={this._handleAccountClick}>Account</a>
+            <a className="header-menu__menu-list-item-link"
+              role="button" onClick={this._handleAccountClick}>Account</a>
           </li>
         );
       }
@@ -100,7 +101,8 @@ YUI.add('user-menu', function() {
             <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
               role="menuitem" tabIndex="0">
-              <a role="button" onClick={this._handleProfileClick}>Pofile</a>
+              <a className="header-menu__menu-list-item-link"
+                role="button" onClick={this._handleProfileClick}>Pofile</a>
             </li>
             {accountEntry}
             <li className="header-menu__menu-list-item
