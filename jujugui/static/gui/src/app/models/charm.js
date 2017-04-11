@@ -698,6 +698,9 @@ YUI.add('juju-charm-models', function(Y) {
       series: {},
 
       summary: {},
+      tags: {
+        setter: val => [...new Set(val)]
+      },
       tested_providers: {},
       url: {},
       iconPath: {
