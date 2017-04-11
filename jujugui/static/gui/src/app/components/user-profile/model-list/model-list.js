@@ -287,6 +287,8 @@ YUI.add('user-profile-model-list', function() {
         return user.displayName === props.userInfo.profile;
       }) : null;
 
+      // This is purely defensive and we should always know a permission
+      // if you ever see this, sound the alarms.
       let permission = 'unknown';
       if (modelUser.length) {
         permission = modelUser[0].access;
