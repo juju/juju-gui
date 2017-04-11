@@ -171,7 +171,8 @@ describe('HeaderHelp', function() {
             </ul>
           </juju.components.Panel>);
         expect(output.props.children[1]).toEqualJSX(expected);
-    });
+      }
+    );
 
     it('keyboard shortcuts link calls correct keyboard shortcut cb', () => {
       const keybindingsCallback = sinon.stub();
@@ -184,7 +185,7 @@ describe('HeaderHelp', function() {
       };
       const evt = {
         stopPropagation: sinon.stub()
-      }
+      };
       const div = document.createElement('div');
       div.setAttribute('id', 'shortcut-help');
       document.body.appendChild(div);
