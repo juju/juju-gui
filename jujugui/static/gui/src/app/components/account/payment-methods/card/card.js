@@ -45,6 +45,21 @@ YUI.add('account-payment-method-card', function() {
     },
 
     /**
+      Generate the card logo.
+
+      @method _generateLogo
+      @param {Object} e The click event from the checkbox.
+    */
+    _generateLogo: function(e) {
+      // Convert the brand to the format required for the logo.
+      const brand = this.props.card.brand.toLowerCase().replace(' ', '-');
+      return (
+        <juju.components.SvgIcon
+          size="40"
+          name={`card-${brand}`} />);
+    },
+
+    /**
       Handle toggling the card state.
 
       @method _handleCardClick
@@ -126,7 +141,7 @@ YUI.add('account-payment-method-card', function() {
                       {card.month}/{card.year}
                     </div>
                     <div className="account__payment-card-brand">
-                      {card.brand}
+                      {this._generateLogo()}
                     </div>
                   </div>
                 </div>
@@ -148,6 +163,7 @@ YUI.add('account-payment-method-card', function() {
 
 }, '', {
   requires: [
-    'generic-button'
+    'generic-button',
+    'svg-icon'
   ]
 });
