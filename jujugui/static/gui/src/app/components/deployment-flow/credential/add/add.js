@@ -28,6 +28,7 @@ YUI.add('deployment-credential-add', function() {
       addNotification: React.PropTypes.func.isRequired,
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
+      credentials: React.PropTypes.array.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
@@ -267,6 +268,22 @@ YUI.add('deployment-credential-add', function() {
       var title = info && info.title || cloud.name;
       var credentialName = id === 'gce' ?
         'Project ID (credential name)' : 'Credential name';
+      const nameValidators = [{
+        regex: /\S+/,
+        error: 'This field is required.'
+      }, {
+        regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
+        error: 'This field must only contain upper and lowercase ' +
+          'letters, numbers, and hyphens. It must not start or ' +
+          'end with a hyphen.'
+      }];
+      const credentials = this.props.credentials || [];
+      if (credentials.length > 0) {
+        nameValidators.push({
+          check: value => credentials.indexOf(value.toLowerCase()) > -1,
+          error: 'You already have a credential with this name.'
+        });
+      }
       return (
         <div className="deployment-credential-add twelve-col">
           <h4>{`Create new ${title} credential`}</h4>
@@ -287,15 +304,7 @@ YUI.add('deployment-credential-add', function() {
                 label={credentialName}
                 required={true}
                 ref="credentialName"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }, {
-                  regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                  error: 'This field must only contain upper and lowercase ' +
-                    'letters, numbers, and hyphens. It must not start or ' +
-                    'end with a hyphen.'
-                }]} />
+                validate={nameValidators} />
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials

@@ -50,7 +50,7 @@ YUI.add('generic-input', function() {
     },
 
     getInitialState: function() {
-      return {errors: null, focus: false};
+      return {errors: [], focus: false};
     },
 
     /**
@@ -67,27 +67,15 @@ YUI.add('generic-input', function() {
       }
       var value = this.getValue();
       var errors = [];
-      var components;
       this.props.validate.forEach((validator) => {
-        if (!validator.regex.test(value)) {
-          var error = validator.error;
-          errors.push(
-            <li className="generic-input__error"
-              key={error}
-              role="alert">
-              {error}
-            </li>);
+        if ((validator.check && validator.check(value)) ||
+          (validator.regex && !validator.regex.test(value))) {
+          errors.push(validator.error);
         }
       });
-      if (errors.length > 0) {
-        components = (
-          <ul className="generic-input__errors">
-            {errors}
-          </ul>);
-      }
       // Have to always set the state in case there used to be errors, but are
       // no longer.
-      this.setState({errors: components});
+      this.setState({errors: errors});
       return errors.length === 0;
     },
 
@@ -183,6 +171,31 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Generate the error elements.
+
+      @method _generateErrors
+      @returns {Object} The errors markup.
+    */
+    _generateErrors: function(evt) {
+      const errors = this.state.errors;
+      if (errors.length === 0) {
+        return null;
+      }
+      const components = errors.map(error => {
+        return (
+          <li className="generic-input__error"
+            key={error}
+            role="alert">
+            {error}
+          </li>);
+      });
+      return (
+        <ul className="generic-input__errors">
+          {components}
+        </ul>);
+    },
+
+    /**
       Generates a label for the input if the prop is provided.
       @method _generateLabel
     */
@@ -217,7 +230,7 @@ YUI.add('generic-input', function() {
     */
     _generateInput: function(id) {
       const disabled = this.props.disabled;
-      const errors = !!this.state.errors;
+      const errors = this.state.errors.length > 0;
       if (this.props.multiLine) {
         const classes = classNames(
           'generic-input__multiline-field',
@@ -254,12 +267,12 @@ YUI.add('generic-input', function() {
     },
 
     render: function() {
-      const errors = this.state.errors;
-      const showErrors = errors || this.props.hasExternalError;
+      const showErrors = this.state.errors.length > 0 ||
+        this.props.hasExternalError;
       var {labelElement, id} = this._generateLabel();
       var classes = classNames(
         'generic-input', {
-          'has-error': !!showErrors
+          'has-error': showErrors
         }
       );
       // If there's an error and an inline icon has been explicitly asked for.
@@ -273,7 +286,7 @@ YUI.add('generic-input', function() {
           {labelElement}
           {this._generateInput(id)}
           {errorIcon}
-          {errors}
+          {this._generateErrors()}
         </div>
       );
     }
