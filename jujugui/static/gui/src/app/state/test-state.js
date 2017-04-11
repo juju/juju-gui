@@ -70,7 +70,7 @@ describe('State', () => {
     state: { store: 'u/frankban/django/bundle/0' },
     error: null
   }, {
-    path: 'http://abc.com:123/u/frankban/django/bundle/0#jam',
+    path: 'http://abc.com:123/u/frankban/django/bundle/0/#jam',
     state: { hash: 'jam', store: 'u/frankban/django/bundle/0' },
     error: null
   }];
@@ -100,7 +100,7 @@ describe('State', () => {
     state: { root: 'login' },
     error: null
   }, {
-    path: 'http://abc.com:123/login#honey',
+    path: 'http://abc.com:123/login/#honey',
     state: {root: 'login', hash: 'honey'},
     error: null
   }];
@@ -191,7 +191,7 @@ describe('State', () => {
     },
     error: null
   }, {
-    path: 'http://abc.com:123/i/inspector/local/update#ketchup',
+    path: 'http://abc.com:123/i/inspector/local/update/#ketchup',
     state: {
       hash: 'ketchup',
       gui: {inspector: {localType: 'update'}}
@@ -216,7 +216,7 @@ describe('State', () => {
     state: { store: 'django/bundle/47' },
     error: null
   }, {
-    path: 'http://abc.com:123/django/bundle/47#relish',
+    path: 'http://abc.com:123/django/bundle/47/#relish',
     state: { hash: 'relish', store: 'django/bundle/47' },
     error: null
   }];
@@ -257,7 +257,7 @@ describe('State', () => {
     error: null
   }, {
     path:
-      'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0#ham',
+      'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/#ham', // eslint-disable-line max-len
     state: {
       hash: 'ham',
       user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
@@ -284,7 +284,7 @@ describe('State', () => {
     error: null
   }, {
     path:
-      'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost#mayo',
+      'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/#mayo',
     state: {
       hash: 'mayo',
       user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
@@ -389,7 +389,7 @@ describe('State', () => {
     },
     error: null
   }, {
-    path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications#turkey', // eslint-disable-line max-len
+    path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications/#turkey', // eslint-disable-line max-len
     state: {
       hash: 'turkey',
       user: 'frankban/production',
