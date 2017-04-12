@@ -39,4 +39,4 @@ sleep 2
 # Capture ctrl-c
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 
-DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma-mocha-old.conf.js --single-run --browsers Chrome --log-level warn --reporters mocha
+DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma-mocha-old.conf.js --single-run --browsers Chrome --log-level warn

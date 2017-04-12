@@ -105,28 +105,35 @@ const State = class State {
 
   /**
     Takes the complete URL and runs it through various process methods and
-    returns an object with the processed url parts and query string.
+    returns an object with the processed url parts, query, and hash.
     @param {String} url - The URL to process.
     @return {Object} The processed url.
   */
   _processURL(url) {
+    const processed = {};
     const stripLRSlashes = path => path.replace(/^\/*/, '').replace(/\/*$/, '');
     // Strip the baseURL before parsing the sections.
     const cleanURL = stripLRSlashes(url.replace(this.baseURL, ''));
-    const splitURL = cleanURL.split('?');
-    const processed = {};
-    if (splitURL[1]) {
+    // The following regex splits a supplied url into its three parts, path,
+    // query, and hash.
+    const urlSplitRegex = /([^?#]+)?(?:\?([^#]+))?(?:#(.*))?/;
+    const splitURL = urlSplitRegex.exec(cleanURL);
+    const path = splitURL[1];
+    if (path) {
+      processed.parts = stripLRSlashes(path).split('/');
+    }
+    const query = splitURL[2];
+    if (query) {
       processed.query = {};
-      splitURL[1].split('&')
+      query.split('&')
            .forEach(section => {
              const parts = section.split('=');
              processed.query[parts[0]] = parts[1];
            });
     }
-    // The url parts without the query split on the / delimeter.
-    const cleanParts = stripLRSlashes(splitURL[0]);
-    if (cleanParts.length > 0) {
-      processed.parts = cleanParts.split('/');
+    const hash = splitURL[3];
+    if (hash) {
+      processed.hash = hash;
     }
     return processed;
   }
@@ -492,6 +499,10 @@ const State = class State {
     const splitURL = this._processURL(url);
     let parts = splitURL.parts;
     const query = splitURL.query;
+    const hash = splitURL.hash;
+    if (hash) {
+      state.hash = hash;
+    }
     state = this._parseSpecial(query, state, allowStateModifications);
     // If we have an invalid parts or invalid query then we can return early.
     if (invalidParts(parts) && !query) {
@@ -580,6 +591,8 @@ const State = class State {
   */
   generatePath(stateObj = this.current) {
     let path = [];
+    let hash = stateObj.hash;
+    let hashAdded = false;
     const root = stateObj.root;
     if (root) {
       path.push(root);
@@ -604,7 +617,15 @@ const State = class State {
           }
         });
         if (querystrings.length > 0) {
-          path.push(`?${querystrings.join('&')}`);
+          // If there is a hash with a query string them we do not want the
+          // join at the end of the fn to put a slash between the query and
+          // the hash.
+          let queryHash = '';
+          if (hash) {
+            queryHash = `#${stateObj.hash}`;
+            hashAdded = true;
+          }
+          path.push(`?${querystrings.join('&')}${queryHash}`);
         }
       }
     }
@@ -650,6 +671,9 @@ const State = class State {
           }
         }
       });
+    }
+    if (hash && !hashAdded) {
+      path.push(`#${hash}`);
     }
     return `${this.baseURL}${path.join('/')}`;
   }

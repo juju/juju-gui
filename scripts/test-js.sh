@@ -24,4 +24,4 @@ if [ -n "$MULTI_RUN" ]; then
   SINGLE_RUN=""
 fi
 
-DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma.conf.js $SINGLE_RUN --browsers Chrome --log-level warn --reporters mocha
+DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma.conf.js $SINGLE_RUN --browsers Chrome --log-level warn

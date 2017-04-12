@@ -39,6 +39,14 @@ describe('State', () => {
       special: {
         next: '/u/frankban/prod', deployTarget: 'cs:trusty/kibana-15'}},
     error: null
+  }, {
+    path: 'http://abc.com:123/login?next=/u/frankban/prod&deploy-target=cs:trusty/kibana-15#peanut-butter', // eslint-disable-line max-len
+    state: {
+      root: 'login',
+      hash: 'peanut-butter',
+      special: {
+        next: '/u/frankban/prod', deployTarget: 'cs:trusty/kibana-15'}},
+    error: null
   }];
 
   const userStateTests = [{
@@ -61,6 +69,10 @@ describe('State', () => {
     path: 'http://abc.com:123/u/frankban/django/bundle/0',
     state: { store: 'u/frankban/django/bundle/0' },
     error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/django/bundle/0/#jam',
+    state: { hash: 'jam', store: 'u/frankban/django/bundle/0' },
+    error: null
   }];
 
   const rootStateTests = [{
@@ -71,21 +83,25 @@ describe('State', () => {
     path: 'http://abc.com:123/new',
     state: { root: 'new' },
     error: null
-  },{
+  }, {
     path: 'http://abc.com:123/store',
     state: { root: 'store' },
     error: null
-  },{
+  }, {
     path: 'http://abc.com:123/about',
     state: { root: 'about' },
     error: null
-  },{
+  }, {
     path: 'http://abc.com:123/docs',
     state: { root: 'docs' },
     error: null
-  },{
+  }, {
     path: 'http://abc.com:123/login',
     state: { root: 'login' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/login/#honey',
+    state: {root: 'login', hash: 'honey'},
     error: null
   }];
 
@@ -118,6 +134,15 @@ describe('State', () => {
   }, {
     path: 'http://abc.com:123/q/?series=yakkety',
     state: {
+      search: {
+        series: 'yakkety'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/?series=yakkety#mustard',
+    state: {
+      hash: 'mustard',
       search: {
         series: 'yakkety'
       }
@@ -165,6 +190,13 @@ describe('State', () => {
       gui: {inspector: {localType: 'update'}}
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/local/update/#ketchup',
+    state: {
+      hash: 'ketchup',
+      gui: {inspector: {localType: 'update'}}
+    },
+    error: null
   }];
 
   const storeStateTests = [{
@@ -182,6 +214,10 @@ describe('State', () => {
   }, {
     path: 'http://abc.com:123/django/bundle/47',
     state: { store: 'django/bundle/47' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/django/bundle/47/#relish',
+    state: { hash: 'relish', store: 'django/bundle/47' },
     error: null
   }];
 
@@ -219,6 +255,13 @@ describe('State', () => {
     state: {
       user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
     error: null
+  }, {
+    path:
+      'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/#ham', // eslint-disable-line max-len
+    state: {
+      hash: 'ham',
+      user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
+    error: null
   }];
 
   const modelGuiStateTests = [{
@@ -237,6 +280,13 @@ describe('State', () => {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost',
     state: {
+      user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
+    error: null
+  }, {
+    path:
+      'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/#mayo',
+    state: {
+      hash: 'mayo',
       user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
     error: null
   }];
@@ -333,6 +383,15 @@ describe('State', () => {
   }, {
     path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications', // eslint-disable-line max-len
     state: {
+      user: 'frankban/production',
+      store: 'u/frankban/django/bundle/0',
+      gui: { applications: '' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications/#turkey', // eslint-disable-line max-len
+    state: {
+      hash: 'turkey',
       user: 'frankban/production',
       store: 'u/frankban/django/bundle/0',
       gui: { applications: '' }
@@ -476,6 +535,20 @@ describe('State', () => {
         state._processURL(
           'http://abc.com:123/a/b/c/?deploy-target=cs:trusty/ceph45'),
         {parts: ['a', 'b', 'c'], query: {'deploy-target': 'cs:trusty/ceph45'}});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/#apple-sauce'),
+        {hash: 'apple-sauce'});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/a/b/#granola'),
+        {parts: ['a', 'b'], hash: 'granola'});
+      assert.deepEqual(
+        state._processURL(
+          'http://abc.com:123/a/b/?deploy-target=cs:trusty/ceph45#gummybear'),
+        {
+          parts: ['a', 'b'],
+          query: {'deploy-target': 'cs:trusty/ceph45'},
+          hash: 'gummybear'
+        });
     });
   });
 
