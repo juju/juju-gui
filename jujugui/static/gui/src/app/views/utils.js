@@ -1925,6 +1925,18 @@ YUI.add('juju-view-utils', function(Y) {
     return formValid;
   };
 
+  /**
+    Remove duplicate entries from an array.
+
+    @method arrayDedupe
+    @returns {Array} An array with no duplicates.
+  */
+  utils.arrayDedupe = function(array) {
+    // Sets can only contain unique values, so use that to do the dedupe and
+    // then turn it back into an array.
+    return Array.from(new Set(array));
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

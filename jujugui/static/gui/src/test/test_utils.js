@@ -1418,4 +1418,22 @@ describe('utilities', function() {
       assert.equal(refs.two.validate.callCount, 1);
     });
   });
+
+  describe('arrayDedupe', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can remove duplicates from an array', function() {
+      assert.deepEqual(
+        utils.arrayDedupe(
+          ['one', 'four', 'one', 'two', 'three', 'two', 'four']),
+        ['one', 'four', 'two', 'three']);
+    });
+  });
 })();
