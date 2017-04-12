@@ -1129,19 +1129,10 @@ describe('Juju delta handlers utilities', function() {
             state + ' did not return the correct value');
         });
 
-        it('returns properly when in maintenance and installed: ' + state,
-          function() {
-            assert.equal(translate(state, 'maintenance'), 'started',
-              state + ' did not return the correct value');
-          });
-
-        it('returns pending when in maintenance and not installed: ' + state,
-          function() {
-            assert.equal(
-              translate(state, 'maintenance', 'installing charm software'),
-              'pending',
-              state + ' did not return the correct value');
-          });
+        it('returns pending when in maintenance: ' + state, function() {
+          assert.equal(translate(state, 'maintenance'), 'pending',
+            state + ' did not return the correct value');
+        });
 
         it('returns started as a default: ' + state, function() {
           assert.equal(translate(state, 'foobar'), 'started',
