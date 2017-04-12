@@ -48,7 +48,7 @@ describe('AccountPaymentMethod', () => {
         </h2>
         <juju.components.Spinner />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render the payment methods', () => {
@@ -57,12 +57,16 @@ describe('AccountPaymentMethod', () => {
         name: 'Company'
       }]
     });
+    const addNotification = sinon.stub();
+    const removePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentMethod
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         getUser={getUser}
+        removePaymentMethod={removePaymentMethod}
         username="spinach" />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
@@ -83,12 +87,16 @@ describe('AccountPaymentMethod', () => {
             </div>
             <div className="account__payment-details">
               <juju.components.AccountPaymentMethodCard
-                card={{name: 'Company'}} />
+                addNotification={addNotification}
+                card={{name: 'Company'}}
+                onPaymentMethodRemoved={instance._getUser}
+                removePaymentMethod={removePaymentMethod}
+                username='spinach' />
             </div>
           </juju.components.ExpandingRow>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there is no user', () => {
@@ -109,7 +117,7 @@ describe('AccountPaymentMethod', () => {
           No payment methods available.
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there are no payment methods', () => {
@@ -132,7 +140,7 @@ describe('AccountPaymentMethod', () => {
           No payment methods available.
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can handle errors when loading the user', () => {

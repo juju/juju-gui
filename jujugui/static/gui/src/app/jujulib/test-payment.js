@@ -537,7 +537,7 @@ describe('jujulib payment service', function() {
       jujulib._makeRequest = makeRequest;
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.removePaymentMethod(
-        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         sinon.stub());
       // Restore the original method on the lib.
       jujulib._makeRequest = originalMakeRequest;
@@ -562,7 +562,7 @@ describe('jujulib payment service', function() {
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removePaymentMethod(
-        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         (error, response) => {
           assert.strictEqual(error, null);
           assert.deepEqual(response, 'success');
@@ -579,7 +579,7 @@ describe('jujulib payment service', function() {
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removePaymentMethod(
-        'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         (error, response) => {
           assert.equal(error, 'Uh oh!');
           assert.strictEqual(response, null);
