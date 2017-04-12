@@ -287,4 +287,21 @@
       }
     }
   }
+
+  &__card {
+    textarea {
+      color: $dark-warm-grey;
+      cursor: default;
+      overflow: auto;
+      border-color: #cdcdcd;
+      border-radius: 2px;
+      padding: 0.6875rem 0.875rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+
+      &:focus {
+        border-color: $dark-warm-grey;
+      }
+    }
+  }
 }
