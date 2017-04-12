@@ -1160,6 +1160,9 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
+          createPaymentMethod={
+            this.payment && this.payment.createPaymentMethod.bind(this.payment)}
+          createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
@@ -1168,7 +1171,7 @@ YUI.add('juju-gui', function(Y) {
             views.utils)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           removePaymentMethod={
-            this.payment.removePaymentMethod.bind(this.payment)}
+            this.payment && this.payment.removePaymentMethod.bind(this.payment)}
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
           sendAnalytics={this.sendAnalytics}

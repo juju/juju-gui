@@ -53,7 +53,7 @@ var module = module;
       var data = xhr.target.responseText,
           error = null;
 
-      if (parse !== false) {
+      if (parse !== false && data) {
         try {
           data = JSON.parse(data);
           if (data.error || data.Error) {
