@@ -121,7 +121,7 @@ describe('UserMenu', () => {
               header-menu__menu-list-item-with-link"
               role="menuitem" tabIndex="0">
               <a role="button"
-                onClick={userMenu.instance._handleProfileClick}>Pofile</a>
+                onClick={userMenu.instance._handleProfileClick}>Profile</a>
             </li>
             <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
