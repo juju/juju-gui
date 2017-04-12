@@ -352,10 +352,28 @@ YUI.add('entity-header', function() {
       return <li key={names} className="entity-header__channels">{names}</li>;
     },
 
+    /**
+      If there's a bugUrl add the link.
+
+      @return {Object} A react "ul" element.
+    */
+    _generateActionsList: function() {
+      const bugUrl = this.props.entityModel.getAttrs().bugUrl;
+      if (bugUrl) {
+        return (<ul className="entity-header__actions-list">
+          <li className="actions-list__item">
+            <a href={bugUrl} className="link" target="_blank">
+              Submit a bug
+            </a>
+          </li>
+        </ul>);
+      }
+      return;
+    },
+
     render: function() {
       const entityModel = this.props.entityModel;
       const entity = entityModel.toEntity();
-      const bugUrl = entityModel.getAttrs().bugUrl;
       const twitterUrl = [
         'https://twitter.com/intent/tweet?text=',
         entity.displayName,
@@ -416,13 +434,7 @@ YUI.add('entity-header', function() {
                     </a>
                   </li>
                 </ul>
-                <ul className="entity-header__actions-list">
-                  <li className="actions-list__item">
-                    <a href={bugUrl} className="link" target="_blank">
-                      Submit a bug
-                    </a>
-                  </li>
-                </ul>
+                {this._generateActionsList()}
               </div>
               <div className={
                 'entity-header__right four-col last-col no-margin-bottom'}>

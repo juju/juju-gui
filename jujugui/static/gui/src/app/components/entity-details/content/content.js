@@ -428,7 +428,9 @@ YUI.add('entity-content', function() {
     },
 
     /**
-      Generate the Juju card example
+      Generate the Juju card example.
+
+      @return {Object} React "div" that contains the card holder.
     */
     _generateCard: function() {
       const entityModel = this.props.entityModel;

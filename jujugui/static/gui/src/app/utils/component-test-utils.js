@@ -243,6 +243,7 @@ var jsTestUtils = {
         iconPath: 'data:image/gif;base64,',
         tags: ['database'],
         series: 'trusty',
+        storeId: 'trusty/django-123',
         files: files,
         options: {
           username: {
