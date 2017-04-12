@@ -1947,6 +1947,23 @@ YUI.add('juju-view-utils', function(Y) {
     return [].concat.apply([], array);
   };
 
+  /**
+    Map two arrays into an array of pairs for each position from the original
+    arrays e.g. [1, 2] and [3, 4] would become [[1, 3], [2, 4]]
+
+    @method arrayFlatten
+    @returns {Array} A single depth array.
+  */
+  utils.arrayZip = function(...arrays) {
+    // Get the length of the longest array.
+    const longest = Math.max(...arrays.map(array => array.length));
+    return [...Array(longest)].map((value, i) => {
+      // Get the values at the current position from all the arrays, filtering
+      // out those that don't have a value for that position.
+      return arrays.filter(array => array[i]).map(array => array[i]);
+    });
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
