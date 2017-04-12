@@ -31,6 +31,7 @@ YUI.add('account', function() {
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
+      removePaymentMethod: React.PropTypes.func,
       revokeCloudCredential: React.PropTypes.func.isRequired,
       sendAnalytics: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
@@ -52,6 +53,7 @@ YUI.add('account', function() {
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             getUser={this.props.getUser}
+            removePaymentMethod={this.props.removePaymentMethod}
             username={this.props.userInfo.profile} />);
       } else {
         return null;

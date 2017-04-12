@@ -21,11 +21,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account-payment-method', function() {
 
   juju.components.AccountPaymentMethod = React.createClass({
+    displayName: 'AccountPaymentMethod',
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
+      removePaymentMethod: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired
     },
 
@@ -38,6 +40,21 @@ YUI.add('account-payment-method', function() {
     },
 
     componentWillMount: function() {
+      this._getUser();
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    /**
+      Get a payment user.
+
+      @method _getUser
+    */
+    _getUser: function() {
       this.setState({loading: true}, () => {
         const xhr = this.props.getUser(this.props.username, (error, user) => {
           if (error) {
@@ -52,12 +69,6 @@ YUI.add('account-payment-method', function() {
           this.setState({user: user, loading: false});
         });
         this.xhrs.push(xhr);
-      });
-    },
-
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
       });
     },
 
@@ -94,7 +105,11 @@ YUI.add('account-payment-method', function() {
             </div>
             <div className="account__payment-details">
               <juju.components.AccountPaymentMethodCard
-                card={method} />
+                addNotification={this.props.addNotification}
+                card={method}
+                onPaymentMethodRemoved={this._getUser}
+                removePaymentMethod={this.props.removePaymentMethod}
+                username={this.props.username} />
             </div>
           </juju.components.ExpandingRow>);
       });

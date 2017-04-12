@@ -265,12 +265,11 @@ var module = module;
       @public removePaymentMethod
       @param name {String} The user's username.
       @param id {String} The payment method id.
-      @param token {String} A Stripe token.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and the response as the second parameter.
     */
-    removePaymentMethod: function(username, id, token, callback) {
+    removePaymentMethod: function(username, id, callback) {
       const handler = (error, response) => {
         if (error !== null) {
           callback(error, null);
