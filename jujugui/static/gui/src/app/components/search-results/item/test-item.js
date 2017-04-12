@@ -412,9 +412,9 @@ describe('SearchResultsItem', function() {
   });
 
   it('can handle clicking on an owner', function() {
-    var changeState = sinon.stub();
-    var stopPropagation = sinon.stub();
-    var item = {
+    const changeState = sinon.stub();
+    const stopPropagation = sinon.stub();
+    const item = {
       name: 'mysql',
       displayName: 'mysql',
       special: true,
@@ -428,7 +428,7 @@ describe('SearchResultsItem', function() {
       tags: ['tag1', 'tag2'],
       series: [{name: 'vivid'}, {name: 'wily'}]
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           changeState={changeState}
           key={item.storeId}
@@ -438,15 +438,8 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      search: {
-        owner: 'test-owner',
-        provides: null,
-        requires: null,
-        series: null,
-        tags: null,
-        text: '',
-        type: null
-      }
+      search: null,
+      profile: 'test-owner'
     });
   });
 
