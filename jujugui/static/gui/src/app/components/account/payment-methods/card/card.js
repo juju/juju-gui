@@ -48,9 +48,8 @@ YUI.add('account-payment-method-card', function() {
       Generate the card logo.
 
       @method _generateLogo
-      @param {Object} e The click event from the checkbox.
     */
-    _generateLogo: function(e) {
+    _generateLogo: function() {
       // Convert the brand to the format required for the logo.
       const brand = this.props.card.brand.toLowerCase().replace(' ', '-');
       return (
