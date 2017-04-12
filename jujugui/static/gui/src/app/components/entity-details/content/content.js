@@ -427,8 +427,19 @@ YUI.add('entity-content', function() {
         </div>);
     },
 
+    componentDidMount: function() {
+      if (window.jujuCards) {
+        window.jujuCards();
+      }
+    },
+
     render: function() {
       const entityModel = this.props.entityModel;
+      const entity = entityModel.toEntity();
+      const type = entity.type;
+      const storeId = entity.type === 'charm' ? entity.storeId : entity.id.split('cs:').join('');
+      const script = `<script src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>
+<div class="juju-card" data-id="${storeId}"></div>`;
       return (
         <div className="entity-content">
           {this._generateDescription(entityModel)}
@@ -451,6 +462,19 @@ YUI.add('entity-content', function() {
                   pluralize={this.props.pluralize} />
                 <juju.components.EntityContentRevisions
                   revisions={entityModel.get('revisions')} />
+                <div className="card section clearfix" id="cards">
+                  <h3 className="section__title">
+                    Embed this charm
+                  </h3>
+                  <p>
+                    Add this card to your website by copying the code below. Learn more.
+                  </p>
+                  <textarea
+                    rows="2" cols="70" readOnly="readonly" wrap="off"
+                    className="twelve-col" defaultValue={script}></textarea>
+                  <h4>Preview</h4>
+                  <div className="juju-card" data-id={storeId}></div>
+                </div>
               </div>
             </div>
           </div>

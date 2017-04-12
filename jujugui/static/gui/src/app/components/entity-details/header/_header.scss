@@ -1,5 +1,5 @@
 .entity-header {
-  $social-icon-size: 35px;
+  $social-icon-size: 44px;
   $sticky-height: 100px;
   margin-bottom: 0;
   padding: 50px 0;
@@ -153,11 +153,38 @@
   &__social-list {
     margin: 30px 0 0;
     height: $social-icon-size;
+    float: left;
 
     li {
       list-style: none;
-      margin: 0 10px 0 0;
+      margin: 0 20px 0 0;
       display: inline-block;
+    }
+  }
+
+  &__actions-list {
+    display: none;
+    height: 45px;
+    margin: 30px 0 0;
+
+    @media only screen and (min-width: 768px) {
+      display: inline-block;
+    }
+
+    .actions-list__item {
+      line-height: 45px;
+      display: inline-block;
+      float: left;
+      list-style: none;
+      margin-bottom: 0;
+      margin-left: 0;
+
+      &:not(:last-child):after {
+        color: #666;
+        content: '•';
+        vertical-align: middle;
+        margin: 0 5px;
+      }
     }
   }
 
@@ -169,24 +196,25 @@
     line-height: normal;
     width: $social-icon-size;
     height: $social-icon-size;
-
-    .svg-icon {
-      fill: $mid-grey;
-    }
+    border-radius: 44px;
   }
 
-  #item-twitter:hover {
-    .svg-icon {
-      $twitter-color: #55acee;
-      fill: $twitter-color;
-    }
+  #item-twitter .svg-icon {
+    fill: $mid-grey;
+  }
+  #item-googleplus {
+    background: $mid-grey;
+    fill: $white;
+  }
+
+  #item-twitter:hover .svg-icon {
+    $twitter-color: #55acee;
+    fill: $twitter-color;
   }
 
   #item-googleplus:hover {
-    .svg-icon {
-      $googleplus-color: #dc4a38;
-      fill: $googleplus-color;
-    }
+    $googleplus-color: #dc4a38;
+    background: $googleplus-color;
   }
   // scss-lint:enable IdSelector
   // sass-lint:enable no-ids, id-name-format

@@ -353,7 +353,9 @@ YUI.add('entity-header', function() {
     },
 
     render: function() {
-      const entity = this.props.entityModel.toEntity();
+      const entityModel = this.props.entityModel;
+      const entity = entityModel.toEntity();
+      const bugUrl = entityModel.getAttrs().bugUrl;
       const twitterUrl = [
         'https://twitter.com/intent/tweet?text=',
         entity.displayName,
@@ -401,7 +403,7 @@ YUI.add('entity-header', function() {
                       href={twitterUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-twitter"
-                        size="35"/>
+                        size="44"/>
                     </a>
                   </li>
                   <li>
@@ -410,7 +412,14 @@ YUI.add('entity-header', function() {
                        href={googlePlusUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-google"
-                        size="35"/>
+                        size="44"/>
+                    </a>
+                  </li>
+                </ul>
+                <ul className="entity-header__actions-list">
+                  <li className="actions-list__item">
+                    <a href={bugUrl} className="link" target="_blank">
+                      Submit a bug
                     </a>
                   </li>
                 </ul>
