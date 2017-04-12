@@ -45,7 +45,8 @@ describe('Bundle Importer', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     db = new models.Database();
     modelAPI = new yui.juju.environments.GoEnvironment({

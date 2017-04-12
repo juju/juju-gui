@@ -47,7 +47,8 @@ describe('Model Controller Promises', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     environment = env = new yui.juju.environments.GoEnvironment({

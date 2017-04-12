@@ -24,7 +24,7 @@ chai.config.truncateThreshold = 0;
 
 describe('user auth class', () => {
   it('exists', () => {
-    const user = new window.jujugui.User({storage: {}});
+    const user = new window.jujugui.User({sessionStorage: {}});
     assert.isObject(user);
   });
 

@@ -49,7 +49,8 @@ describe('application hotkeys', function() {
     };
     container = utils.makeAppContainer();
     container.querySelector('#shortcut-help').classList.add('hidden');
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     env = new juju.environments.GoEnvironment({
       conn: new utils.SocketStub(),

@@ -50,7 +50,8 @@ describe('Relation endpoints logic', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
@@ -421,7 +422,8 @@ describe('Endpoints map handlers', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
@@ -650,7 +652,8 @@ describe('Application config handlers', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
