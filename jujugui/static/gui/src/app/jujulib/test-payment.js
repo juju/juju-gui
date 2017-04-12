@@ -449,14 +449,15 @@ describe('jujulib payment service', function() {
       const makeRequest = sinon.stub();
       jujulib._makeRequest = makeRequest;
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
-      payment.createPaymentMethod('spinach', 'token123', sinon.stub());
+      payment.createPaymentMethod(
+        'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
+        sinon.stub());
       // Restore the original method on the lib.
       jujulib._makeRequest = originalMakeRequest;
       assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
-        token: 'token123',
-        'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
-      });
+      assert.equal(
+        makeRequest.args[0][3],
+        'payment-method-created-2017-3-11-13-49-42-186');
     });
 
     it('can return the payment method when it has been created', (done) => {
@@ -547,7 +548,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('can return the reponse when removing a payment method', (done) => {
+    it('can return when there are no errors', (done) => {
       const bakery = {
         sendDeleteRequest: function(path, success, failure) {
           assert.equal(
@@ -565,7 +566,6 @@ describe('jujulib payment service', function() {
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         (error, response) => {
           assert.strictEqual(error, null);
-          assert.deepEqual(response, 'success');
           done();
         });
     });
@@ -582,7 +582,6 @@ describe('jujulib payment service', function() {
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         (error, response) => {
           assert.equal(error, 'Uh oh!');
-          assert.strictEqual(response, null);
           done();
         });
     });
