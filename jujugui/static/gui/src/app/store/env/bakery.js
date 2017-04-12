@@ -31,8 +31,6 @@ YUI.add('juju-env-bakery', function(Y) {
   var module = Y.namespace('juju.environments.web');
   var macaroon = Y.namespace('macaroon');
 
-  // Define the discharge token header.
-  const DISCHARGE_TOKEN = 'discharge-token';
   // Define the bakery protocol version used by the GUI.
   const PROTOCOL_VERSION = 1;
   // Define the HTTP content type for JSON requests.
@@ -94,13 +92,13 @@ YUI.add('juju-env-bakery', function(Y) {
             document.cookie = prefix + cfg.macaroon + ';path=/';
           }
         }
-        this.dischargeStore = cfg.dischargeStore;
-        if (!this.dischargeStore) {
-          console.error('bakery instantiated without a discharge store');
+        this.user = cfg.user;
+        if (!this.user) {
+          console.error('bakery instantiated without user authentication');
           return;
         }
         if (cfg.dischargeToken) {
-          this.dischargeStore.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
+          this.user.identity = cfg.dischargeToken;
         }
       },
 
@@ -503,7 +501,7 @@ YUI.add('juju-env-bakery', function(Y) {
                                             successCallback, failureCallback) {
         thirdPartyLocation += '/discharge';
 
-        var dischargeToken = this.dischargeStore.getItem(DISCHARGE_TOKEN);
+        const dischargeToken = this.user.identity;
         var headers = {
           'Bakery-Protocol-Version': 1,
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -540,8 +538,7 @@ YUI.add('juju-env-bakery', function(Y) {
           var json = JSON.parse(response.target.responseText);
           if (json.DischargeToken !== undefined &&
               json.DischargeToken !== '') {
-            this.dischargeStore.setItem(DISCHARGE_TOKEN,
-              btoa(JSON.stringify(json.DischargeToken)));
+            this.user.identity = btoa(JSON.stringify(json.DischargeToken));
           }
           successCallback(macaroon.import(json.Macaroon));
         } catch (ex) {
@@ -740,7 +737,7 @@ YUI.add('juju-env-bakery', function(Y) {
               `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
           });
         }
-        this.dischargeStore.removeItem(DISCHARGE_TOKEN);
+        this.user.identity = null;
       }
     }
   );

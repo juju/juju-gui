@@ -406,11 +406,12 @@ YUI.add('juju-gui', function(Y) {
       if (window.juju_config) {
         dischargeToken = window.juju_config.dischargeToken;
       }
+      // This creates the juju bakery and stores it; it will be used later.
       this.bakeryFactory.create({
         webhandler: new Y.juju.environments.web.WebHandler(),
         interactive: this.get('interactiveLogin'),
         serviceName: 'juju',
-        dischargeStore: window.localStorage,
+        user: this.user,
         dischargeToken: dischargeToken,
         visitMethod: response => {
           // Add to the page a notification about accepting the pop up window
@@ -2277,7 +2278,7 @@ YUI.add('juju-gui', function(Y) {
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
           macaroon: existingMacaroons,
-          dischargeStore: window.localStorage,
+          user: this.user,
           dischargeToken: existingDischargeToken
         });
         this.set('charmstore', new Charmstore(charmstoreURL, bakery));
@@ -2338,7 +2339,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage,
+        user: this.user,
         dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, plansBakery);
@@ -2348,7 +2349,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage,
+        user: this.user,
         dischargeToken: config.dischargeToken
       });
       this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
@@ -2359,7 +2360,7 @@ YUI.add('juju-gui', function(Y) {
           webhandler: webHandler,
           interactive: interactive,
           cookieStore: storage,
-          dischargeStore: window.localStorage,
+          user: this.user,
           dischargeToken: config.dischargeToken
         });
         this.payment = new window.jujulib.payment(
