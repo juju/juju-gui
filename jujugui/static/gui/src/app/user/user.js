@@ -22,28 +22,40 @@ if (typeof this.jujugui === 'undefined') {
   this.jujugui = {};
 }
 
+const DISCHARGE_TOKEN = 'discharge-token';
+
 /** Class representing a user's authorizations in the GUI **/
 const User = class User {
 
   constructor(cfg = {}) {
-    this.storage = cfg.storage || sessionStorage;
+    // We pass in these values to make test setup easier.
+    this.sessionStorage = cfg.sessionStorage || sessionStorage;
+    this.localStorage = cfg.localStorage || localStorage;
   }
 
   // TODO get username
 
-  // TODO get/set identity creds
+  /**
+   Macaroon tokens from the identity manager.
+   */
+  get identity() {
+    return this.localStorage.getItem(DISCHARGE_TOKEN);
+  }
+  set identity(token) {
+    this.localStorage.setItem(DISCHARGE_TOKEN, token);
+  }
 
   // TODO get/set charmstore creds
 
   /**
    Credentials for the controller connection for the GUI. As a getter,
    it adds convenience attributes to the credentials for handling login flow.
-  /*
-  /* XXX 'controller' isn't quite right--this handles both controller and model
-   connection credentials. Perhaps juju? */
+  */
+  // XXX 'controller' isn't quite right--this handles both controller and model
+  // connection credentials. Perhaps juju?
   get controller() {
     let credentials = JSON.parse(
-      this.storage.getItem('credentials'));
+      this.sessionStorage.getItem('credentials'));
     if (!credentials) {
       credentials = {};
     }
@@ -87,7 +99,7 @@ const User = class User {
   }
 
   set controller(credentials) {
-    this.storage.setItem('credentials', JSON.stringify(credentials));
+    this.sessionStorage.setItem('credentials', JSON.stringify(credentials));
   }
 };
 
