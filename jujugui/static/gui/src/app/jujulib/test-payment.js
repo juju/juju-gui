@@ -217,7 +217,7 @@ describe('jujulib payment service', function() {
       'http://1.2.3.4/', bakery);
     payment.getUser('spinach', function(error, user) {
       assert.equal(error, 'Uh oh!');
-      assert.isNull(user);
+      assert.strictEqual(user, null);
       done();
     });
   });
@@ -326,7 +326,7 @@ describe('jujulib payment service', function() {
       'http://1.2.3.4/', bakery);
     payment.createUser({}, function(error, user) {
       assert.equal(error, 'Uh oh!');
-      assert.isNull(user);
+      assert.strictEqual(user, null);
       done();
     });
   });
@@ -365,7 +365,7 @@ describe('jujulib payment service', function() {
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
     payment.getCountries((error, response) => {
       assert.equal(error, 'Uh oh!');
-      assert.isNull(response);
+      assert.strictEqual(response, null);
       done();
     });
   });
@@ -437,7 +437,7 @@ describe('jujulib payment service', function() {
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.getPaymentMethods('spinach', function(error, user) {
         assert.equal(error, 'Uh oh!');
-        assert.isNull(user);
+        assert.strictEqual(user, null);
         done();
       });
     });
@@ -472,7 +472,7 @@ describe('jujulib payment service', function() {
             address: {
               name: 'Home',
               line1: '1 Maple St',
-              line2: null,
+              line2: 'Loonie Lane',
               county: 'Bunnyhug',
               city: 'Sasquatch',
               postcode: '90210',
@@ -496,7 +496,7 @@ describe('jujulib payment service', function() {
           address: {
             name: 'Home',
             line1: '1 Maple St',
-            line2: null,
+            line2: 'Loonie Lane',
             state: 'Bunnyhug',
             city: 'Sasquatch',
             postcode: '90210',
@@ -524,7 +524,7 @@ describe('jujulib payment service', function() {
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.createPaymentMethod('spinach', 'token123', (error, response) => {
         assert.equal(error, 'Uh oh!');
-        assert.isNull(response);
+        assert.strictEqual(response, null);
         done();
       });
     });
@@ -564,7 +564,7 @@ describe('jujulib payment service', function() {
       payment.removePaymentMethod(
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
         (error, response) => {
-          assert.isNull(error);
+          assert.strictEqual(error, null);
           assert.deepEqual(response, 'success');
           done();
         });
@@ -582,7 +582,7 @@ describe('jujulib payment service', function() {
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186', 'token123',
         (error, response) => {
           assert.equal(error, 'Uh oh!');
-          assert.isNull(response);
+          assert.strictEqual(response, null);
           done();
         });
     });

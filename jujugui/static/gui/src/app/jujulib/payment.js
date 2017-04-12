@@ -199,7 +199,7 @@ var module = module;
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and the payment methods as its second. The payment
-        methods returns an array of payment method objects containing:
+        methods is an array of payment method objects containing:
           - address {Object} The card address object containing
             - name {String|Null} The name for the address e.g.
               "Geoffrey Spinach" or "Tuque LTD"
@@ -211,12 +211,12 @@ var module = module;
             - countryCode {String|Null} The address country code
           - brand {String} The card brand name
           - last4 {String} The last four digits of the card number
+          - year {Int} The card expiry year
           - month {Int} The card expiry month
           - name {String} The user provided identifier of the card
           - cardHolder {String} The name of the card owner
           - valid {Boolean} Whether the card is valid e.g. the card has not
             expired
-          - Year {Int} The card expiry year
     */
     getPaymentMethods: function(username, callback) {
       const handler = (error, response) => {
@@ -235,7 +235,7 @@ var module = module;
       Create a new payment method.
 
       @public createPaymentMethod
-      @param name {String} The user's username.
+      @param username {String} The user's username.
       @param token {String} A Stripe token.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
@@ -290,8 +290,7 @@ var module = module;
       user so using the full timestamp should be enough.
 
       @public _generatePaymentMethodName
-      @param paymentMethods {Array} Payment method reponses from the API.
-      @returns {Array} A list of parsed payment method object.
+      @returns {String} A datestamp based id.
     */
     _generatePaymentMethodName: function() {
       const date = new Date();
@@ -312,7 +311,8 @@ var module = module;
 
       @public _parsePaymentMethods
       @param paymentMethods {Array} Payment method reponses from the API.
-      @returns {Array} A list of parsed payment method object.
+      @param parseCardholder {Boolean} Whether to include the card-holder.
+      @returns {Array} A list of parsed payment method objects.
     */
     _parsePaymentMethods: function(paymentMethods, parseCardholder=false) {
       return paymentMethods.map(method => {
@@ -325,6 +325,7 @@ var module = module;
 
       @public _parsePaymentMethod
       @param paymentMethod {Object} A payment method reponse from the API.
+      @param parseCardholder {Boolean} Whether to include the card-holder.
       @returns {Object} A parsed payment method object.
     */
     _parsePaymentMethod: function(paymentMethod, parseCardholder=false) {
