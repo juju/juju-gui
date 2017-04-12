@@ -1944,7 +1944,12 @@ YUI.add('juju-view-utils', function(Y) {
     @returns {Array} A single depth array.
   */
   utils.arrayFlatten = function(array) {
-    return [].concat.apply([], array);
+    return array.reduce((flattened, current) => {
+      return flattened.concat(
+        // If this is an array then flatten it before concat, otherwise concat
+        // the current value.
+        Array.isArray(current) ? utils.arrayFlatten(current) : current);
+    }, []);
   };
 
   /**

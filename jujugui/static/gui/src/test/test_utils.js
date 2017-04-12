@@ -1453,6 +1453,13 @@ describe('utilities', function() {
           [['one', 'two'], ['three'], 'four']),
         ['one', 'two', 'three', 'four']);
     });
+
+    it('can flatten nested arrays', function() {
+      assert.deepEqual(
+        utils.arrayFlatten(
+          [[['one', 'two'], ['three']]]),
+        ['one', 'two', 'three']);
+    });
   });
 
   describe('arrayZip', function() {
