@@ -1436,4 +1436,22 @@ describe('utilities', function() {
         ['one', 'four', 'two', 'three']);
     });
   });
+
+  describe('arrayFlatten', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can flatten an array of arrays', function() {
+      assert.deepEqual(
+        utils.arrayFlatten(
+          [['one', 'two'], ['three'], 'four']),
+        ['one', 'two', 'three', 'four']);
+    });
+  });
 })();

@@ -1937,6 +1937,16 @@ YUI.add('juju-view-utils', function(Y) {
     return Array.from(new Set(array));
   };
 
+  /**
+    Turn an array of arrays into a single array.
+
+    @method arrayFlatten
+    @returns {Array} A single depth array.
+  */
+  utils.arrayFlatten = function(array) {
+    return [].concat.apply([], array);
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
