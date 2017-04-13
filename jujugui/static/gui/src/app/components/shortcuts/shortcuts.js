@@ -20,53 +20,70 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('shortcuts', function() {
 
-  /**
-    Generate a list of bindings.
+  juju.components.Shortcuts = React.createClass({
 
-    @method _generateBindings
-    @param {Array} bindings A list of bindings.
-    @returns {Object} The binding components to display.
-  */
-  function _generateBindings(bindings) {
-    var components = [];
-    bindings.forEach((binding) => {
-      components.push(
-        <div key={binding.label}>
-          <div className="two-col">
-            {binding.label}
-          </div>
-          <div className="four-col last-col">
-            {binding.help}
-          </div>
-        </div>);
-    });
-    return components;
-  }
+    propTypes: {
+      bindings: React.propTypes.array.isRequired,
+      keybindings: React.propTypes.object.isRequired
+    },
 
-  var Shortcuts = function(props) {
-    return (
-      <div>
-        <div className="twelve-col no-margin-bottom">
-          <h2 className="bordered">Keyboard Shortcuts</h2>
-          <span className="close" tabIndex="0" role="button">
-            <juju.components.SvgIcon name="close_16"
-              size="16" />
-          </span>
+    /**
+
+    @return {Array} An array of the bindings to create ul
+    */
+    _generateBindings: function() {
+      let bindings = [];
+      Object.keys(this.props.keybindings).forEach(k => {
+        const v = this.props.keybindings[k];
+        if (v.help && (v.condition === undefined ||
+                       v.condition.call(this) === true)) {
+          // TODO: translate keybindings to
+          // human <Alt> m
+          // <Control> <Shift> N (note caps)
+          // also 'g then i' style
+          bindings.push({key: k, label: v.label || k, help: v.help});
+        }
+      }, this);
+
+      return bindings;
+    },
+
+    _generateList: function() {
+      const bindings = this._generateBindings();
+
+      const components = bindings.map((binding) => {
+        return(
+          <div key={binding.label}>
+            <div className="two-col">
+              {binding.label}
+            </div>
+            <div className="four-col last-col">
+              {binding.help}
+            </div>
+          </div>);
+      });
+      return components;
+    },
+
+    render: function() {
+      return (
+        <div>
+          <div className="twelve-col no-margin-bottom">
+            <h2 className="bordered">Keyboard Shortcuts</h2>
+            <span className="close" tabIndex="0" role="button">
+              <juju.components.SvgIcon name="close_16"
+                size="16" />
+            </span>
+          </div>
+          <div className="twelve-col">
+            <div className="content">
+              {this._generateList()}
+            </div>
+          </div>
         </div>
-        <div className="twelve-col">
-          <div className="content">
-            {_generateBindings(props.bindings)}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  Shortcuts.propTypes = {
-    bindings: React.PropTypes.array.isRequired
-  };
-
-  juju.components.Shortcuts = Shortcuts;
+      );
+    }
+  });
 
 }, '0.1.0', { requires: [
   'svg-icon'

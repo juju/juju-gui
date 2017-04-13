@@ -182,6 +182,7 @@ YUI.add('juju-gui', function(Y) {
 
             ReactDOM.render(
               <window.juju.components.Shortcuts
+                keybindings={this.keybindings}
                 bindings={bindings} />,
               ReactDOM.findDOMNode(target));
 
