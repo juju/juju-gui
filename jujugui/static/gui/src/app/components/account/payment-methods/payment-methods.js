@@ -190,7 +190,7 @@ YUI.add('account-payment-method', function() {
     },
 
     /**
-      Generate a form to add credentials.
+      Generate a form to add a payment method.
 
       @method _generateAddPaymentMethod
     */

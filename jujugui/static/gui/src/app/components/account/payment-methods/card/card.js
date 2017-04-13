@@ -103,6 +103,7 @@ YUI.add('account-payment-method-card', function() {
         {'account__payment-card-wrapper--flipped': this.state.cardFlipped}
       );
       const address = card.address;
+      const line2 = address.line2 ? (<p>{address.line2}</p>) : null;
       return (
         <div className="account__payment-card twelve-col">
           <div className="eight-col">
@@ -134,7 +135,7 @@ YUI.add('account-payment-method-card', function() {
             <div className="account__payment-card-info">
               <h4>Card address</h4>
               <p>{address.line1}</p>
-              <p>{address.line2}</p>
+              {line2}
               <p>{address.city} {address.state}</p>
               <p>{address.country} {address.postcode}</p>
             </div>
