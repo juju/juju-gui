@@ -411,7 +411,35 @@ YUI.add('juju-gui', function(Y) {
         interactive: this.get('interactiveLogin'),
         serviceName: 'juju',
         dischargeStore: window.localStorage,
-        dischargeToken: dischargeToken
+        dischargeToken: dischargeToken,
+        visitMethod: response => {
+          // Add to the page a notification about accepting the pop up window
+          // for logging into USSO.
+          const url = response.Info.VisitURL;
+          const notification = document.createElement('div');
+          notification.setAttribute('id', 'login-notification');
+          const message = document.createTextNode(
+            'To proceed with the authentication, please accept the pop up ' +
+            'window or ');
+          notification.appendChild(message);
+          const link = document.createElement('a');
+          link.href = url;
+          link.target = '_blank';
+          const text = document.createTextNode('click here');
+          link.appendChild(text);
+          notification.appendChild(link);
+          notification.appendChild(document.createTextNode('.'));
+          document.body.appendChild(notification);
+          // Open the pop up (default behavior for the time being).
+          window.open(url, 'Login');
+        },
+        onSuccess: () => {
+          // Remove the pop up notification from the page.
+          const notification = document.getElementById('login-notification');
+          if (notification) {
+            notification.remove();
+          }
+        }
       });
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
