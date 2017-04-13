@@ -498,6 +498,100 @@ describe('Bakery', function() {
         assert.equal(getSuccess, true);
         assert.equal(visitMethod.callCount, 1);
       });
+
+      it('calls original send with macaroon with third party ' +
+        'and with interaction', function () {
+        const visitMethod = sinon.stub();
+        bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          visitMethod: visitMethod,
+          serviceName: 'test',
+          dischargeStore: fakeLocalStorage
+        });
+        const onAuthRequired = sinon.stub().withArgs();
+        const onAuthDone = sinon.stub();
+        const onFailure = sinon.stub();
+        const redirect = true;
+        const response = {
+          target: {
+            status: 401,
+            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+            getResponseHeader: sinon.stub().withArgs(
+              'Www-Authenticate').returns('Macaroon')
+          }
+        };
+        let dischargeMacaroon;
+        bakery.webhandler.sendPostRequest = function (
+          path, headers, data, username, password, withCredentials,
+          progressCallback, completedCallback
+        ) {
+          postCalled++;
+          postSuccess = (
+            path === 'elsewhere/discharge' &&
+            headers['Bakery-Protocol-Version'] === 1 &&
+            headers['Content-Type'] === 'application/x-www-form-urlencoded'
+          );
+          const caveatObj = {};
+          try {
+            data.split('&').forEach(function (part) {
+              const item = part.split('=');
+              caveatObj[item[0]] = decodeURIComponent(item[1]);
+            });
+          } catch (ex) {
+            throw new Error('cannot read URL query params');
+          }
+          dischargeMacaroon = bakery.dischargeThirdPartyCaveat(
+            caveatObj.id, thirdParty, m => {});
+          // Call completed with 200 leads to no interaction.
+          completedCallback({
+            'target': {
+              status: 400,
+              responseText: JSON.stringify({
+                Code: 'interaction required',
+                Info: {WaitURL: '/mywaiturl'}
+              })
+            }
+          });
+        };
+        let getCalled = 0;
+        let getSuccess = false;
+        bakery.webhandler.sendGetRequest = function (
+          path, headers, username, password, withCredentials, progressCallback,
+          completedCallback
+        ) {
+          assert.deepEqual(headers, {'Content-Type': 'application/json'});
+          getCalled++;
+          getSuccess = path == '/mywaiturl';
+          if (getCalled === 1) {
+            // simulate retry
+            completedCallback({
+              'target': {
+                status: 0,
+                response: '',
+                responseText: ''
+              }});
+          } else {
+            completedCallback({
+              'target': {
+                status: 200,
+                responseText: JSON.stringify({
+                  'Macaroon': macaroon.export(dischargeMacaroon)
+                })
+              }
+            });
+          }
+        };
+        bakery._requestHandlerWithInteraction(
+          onAuthRequired, onAuthDone, onFailure, redirect, response);
+        assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+        assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+        assert.equal(onFailure.callCount, 0, 'onFailure');
+        assert.equal(postCalled, 1, 'postCalled');
+        assert.equal(postSuccess, true, 'postSuccess');
+        assert.equal(getCalled, 2);
+        assert.equal(getSuccess, true);
+        assert.equal(visitMethod.callCount, 1);
+      });
     });
 
     it('no PUT when no cookie path provided', function() {
