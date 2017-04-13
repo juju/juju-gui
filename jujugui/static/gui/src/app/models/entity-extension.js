@@ -60,7 +60,7 @@ YUI.add('entity-extension', function(Y) {
       if (attrs.name === 'canonical-kubernetes') {
         displayName = 'The Canonical Distribution Of Kubernetes';
       } else {
-        displayName = attrs.name.replace('-', ' ');
+        displayName = attrs.name.split('-').join(' ');
       }
       const entity = {
         description: attrs.description,

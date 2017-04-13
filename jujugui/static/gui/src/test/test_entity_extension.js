@@ -40,7 +40,7 @@ describe('Entity Extension', function() {
     var attrs = {
       id: '~owner/foobar',
       storeId: 'cs:~owner/foobar-132',
-      name: 'foo-bar',
+      name: 'foo-bar-entity',
       description: 'A test description.',
       revision_id: 132,
       downloads: '0',
@@ -79,12 +79,12 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     var expected = {
       description: 'A test description.',
-      displayName: 'foo bar',
+      displayName: 'foo bar entity',
       downloads: '0',
       id: '~owner/foobar',
       revision_id: 132,
       storeId: 'cs:~owner/foobar-132',
-      name: 'foo-bar',
+      name: 'foo-bar-entity',
       owner: 'owner',
       promulgated: false,
       revisions: [],
@@ -116,13 +116,13 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     var expected = {
       description: 'A test description.',
-      displayName: 'foo bar',
+      displayName: 'foo bar entity',
       downloads: '0',
       id: 'foobar',
       revision_id: '132',
       storeId: 'cs:~owner/foobar-132',
       machineCount: 2,
-      name: 'foo-bar',
+      name: 'foo-bar-entity',
       owner: 'foobar-charmers',
       promulgated: false,
       revisions: [],
