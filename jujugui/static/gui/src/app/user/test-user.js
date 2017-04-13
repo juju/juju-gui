@@ -28,17 +28,36 @@ describe('user auth class', () => {
     assert.isObject(user);
   });
 
-  describe('controller credentials', () => {
-    const getMockStorage = function() {
-      return new function() {
-        return {
-          store: {},
-          setItem: function(name, val) { this.store[name] = val; },
-          getItem: function(name) { return this.store[name] || null; }
-        };
+  const getMockStorage = function() {
+    return new function() {
+      return {
+        store: {},
+        setItem: function(name, val) { this.store[name] = val; },
+        getItem: function(name) { return this.store[name] || null; }
       };
     };
+  };
 
+  describe('identity credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+    });
+
+    it('can be set', () => {
+      user.identity = 'doctor';
+      assert.equal(storage.store['discharge-token'], 'doctor');
+    });
+
+    it('can be retrieved', () => {
+      storage.store['discharge-token'] = 'doctor';
+      assert.equal(user.identity, 'doctor');
+    });
+  });
+
+  describe('controller credentials', () => {
     it('can be set', () => {
       let storage = getMockStorage();
       const user = new window.jujugui.User({sessionStorage: storage});
