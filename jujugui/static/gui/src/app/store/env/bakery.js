@@ -379,8 +379,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {undefined} Nothing.
        */
       _requestHandler: function (successCallback, failureCallback, response) {
-        var target = response.target;
-        if (target.status >= 400) {
+        if (response.target.status >= 400) {
           failureCallback(response);
           return;
         }
@@ -560,24 +559,42 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {Object} The asynchronous request instance.
        */
       _interact: function(successCallback, failureCallback, e) {
-        var response = JSON.parse(e.target.responseText);
+        const response = JSON.parse(e.target.responseText);
         if (response.Code !== 'interaction required') {
           failureCallback(response.Code);
           return;
         }
-
         this.visitMethod(response);
-
-        return this.webhandler.sendGetRequest(
-            response.Info.WaitURL,
-            {'Content-Type': JSON_CONTENT_TYPE},
-            null, null, false, null,
-            this._requestHandler.bind(
-              this,
-              this._exportMacaroon.bind(this, successCallback, failureCallback),
-              failureCallback
-            )
-        );
+        const generateRequest = callback => {
+          return this.webhandler.sendGetRequest(
+              response.Info.WaitURL,
+              {'Content-Type': JSON_CONTENT_TYPE},
+              null, null, false, null, callback);
+        };
+        // When performing a "wait" request for the user logging into identity
+        // it is possible that they take longer than the server timeout of
+        // 1 minute when this happens the server just closes the connection.
+        let retryCounter = 0;
+        const retryOmatic = reqResponse => {
+          const target = reqResponse.target;
+          if (target.status === 0 &&
+              target.response === '' &&
+              target.responseText === '') {
+            // Server closed the connection, retry and increment the counter.
+            if (retryCounter < 5) {
+              retryCounter += 1;
+              generateRequest(retryOmatic);
+              return;
+            }
+            // We have retried 5 times so call failure handler.
+          }
+          // Call the usual request handler if no retry is necessary.
+          this._requestHandler(
+            this._exportMacaroon.bind(this, successCallback, failureCallback),
+            failureCallback,
+            reqResponse);
+        };
+        generateRequest(retryOmatic);
       },
 
       /**
