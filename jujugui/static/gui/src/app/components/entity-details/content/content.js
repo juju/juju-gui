@@ -441,23 +441,24 @@ YUI.add('entity-content', function() {
       'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
       '<div class="juju-card" data-id="' + storeId +'"></div>';
 
-      return (<div className="entity-content__card section clearfix">
-        <h3 className="section__title">
-          Embed this charm
-        </h3>
-        <p>
-          Add this card to your website by copying the code below.&nbsp;
-          <a href="https://jujucharms.com/community/cards" target="_blank"
-            className="link">
-            Learn more
-          </a>.
-        </p>
-        <textarea
-          rows="2" cols="70" readOnly="readonly" wrap="off"
-          className="twelve-col" defaultValue={script}></textarea>
-        <h4>Preview</h4>
-        <div className="juju-card" data-id={storeId}></div>
-      </div>);
+      return (
+        <div className="entity-content__card section clearfix">
+          <h3 className="section__title">
+            Embed this charm
+          </h3>
+          <p>
+            Add this card to your website by copying the code below.&nbsp;
+            <a href="https://jujucharms.com/community/cards" target="_blank"
+              className="link">
+              Learn more
+            </a>.
+          </p>
+          <textarea
+            rows="2" cols="70" readOnly="readonly" wrap="off"
+            className="twelve-col" defaultValue={script}></textarea>
+          <h4>Preview</h4>
+          <div className="juju-card" data-id={storeId}></div>
+        </div>);
     },
 
     componentDidMount: function() {
