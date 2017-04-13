@@ -31,6 +31,17 @@ function _generateTagItem(tag, fn) {
   ];
 }
 
+function generateScript(isBundle) {
+  let id = 'trusty/django-123';
+  if (isBundle) {
+    id = 'django-cluster';
+  }
+
+  return '<script ' +
+    'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
+    '<div class="juju-card" data-id="'+id+'"></div>';
+}
+
 describe('EntityContent', function() {
   let mockEntity;
 
@@ -54,6 +65,7 @@ describe('EntityContent', function() {
     const getFile = sinon.spy();
     const changeState = sinon.spy();
     const pluralize = sinon.spy();
+    const script = generateScript();
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
@@ -133,6 +145,23 @@ describe('EntityContent', function() {
                 pluralize={pluralize} />
               <juju.components.EntityContentRevisions
                 revisions={mockEntity.get('revisions')} />
+              <div className="entity-content__card section clearfix">
+                <h3 className="section__title">
+                  Embed this charm
+                </h3>
+                <p>Add this card to your website by copying the code below.
+                  <a className="link"
+                    href="https://jujucharms.com/community/cards"
+                    target="_blank">
+                    Learn more
+                  </a>.
+                </p>
+                <textarea className="twelve-col" cols="70"
+                  defaultValue={script} readOnly="readonly"
+                  rows="2" wrap="off" />
+                <h4>Preview</h4>
+                <div className="juju-card" data-id="trusty/django-123"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -154,7 +183,7 @@ describe('EntityContent', function() {
         </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a charm with actions', function() {
@@ -193,7 +222,7 @@ describe('EntityContent', function() {
         </ul>
       </div>);
     const parent = output.props.children[2].props.children.props.children[1];
-    assert.deepEqual(parent.props.children[0], expected);
+    expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
   it('can display a charm with no options', function() {
@@ -204,6 +233,7 @@ describe('EntityContent', function() {
     const getFile = sinon.spy();
     const pluralize = sinon.spy();
     const changeState = sinon.spy();
+    const script = generateScript();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
@@ -270,13 +300,30 @@ describe('EntityContent', function() {
                 pluralize={pluralize} />
               <juju.components.EntityContentRevisions
                 revisions={mockEntity.get('revisions')} />
+              <div className="entity-content__card section clearfix">
+                <h3 className="section__title">
+                  Embed this charm
+                </h3>
+                <p>Add this card to your website by copying the code below.
+                  <a className="link"
+                    href="https://jujucharms.com/community/cards"
+                    target="_blank">
+                    Learn more
+                  </a>.
+                </p>
+                <textarea className="twelve-col" cols="70"
+                  defaultValue={script} readOnly="readonly"
+                  rows="2" wrap="off" />
+                <h4>Preview</h4>
+                <div className="juju-card" data-id="trusty/django-123"></div>
+              </div>
             </div>
           </div>
         </div>
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a bundle for Juju 2', function() {
@@ -286,6 +333,7 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const pluralize = sinon.spy();
     const mockEntity = jsTestUtils.makeEntity(true, null, false);
+    const script = generateScript(true);
     const output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
@@ -332,6 +380,23 @@ describe('EntityContent', function() {
                 pluralize={pluralize} />
               <juju.components.EntityContentRevisions
                 revisions={mockEntity.get('revisions')} />
+              <div className="entity-content__card section clearfix">
+                <h3 className="section__title">
+                  Embed this charm
+                </h3>
+                <p>Add this card to your website by copying the code below.
+                  <a className="link"
+                    href="https://jujucharms.com/community/cards"
+                    target="_blank">
+                    Learn more
+                  </a>.
+                </p>
+                <textarea className="twelve-col" cols="70"
+                  defaultValue={script} readOnly="readonly"
+                  rows="2" wrap="off" />
+                <h4>Preview</h4>
+                <div className="juju-card" data-id="django-cluster"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -420,7 +485,7 @@ describe('EntityContent', function() {
         </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a bundle with actions', function() {
@@ -460,7 +525,7 @@ describe('EntityContent', function() {
         </ul>
       </div>);
     const parent = output.props.children[2].props.children.props.children[1];
-    assert.deepEqual(parent.props.children[0], expected);
+    expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
   it('doesn\'t show relations when they don\'t exist', function() {
@@ -600,7 +665,7 @@ describe('EntityContent', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output.props.children[1], expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can display loading plans', function() {
@@ -623,7 +688,7 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.Spinner />);
-    assert.deepEqual(output.props.children[1], expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can remove plans when none exist', function() {

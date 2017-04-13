@@ -110,7 +110,7 @@ describe('EntityHeader', function() {
                       '.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-twitter"
-                      size="35"/>
+                      size="44"/>
                   </a>
                 </li>
                 <li>
@@ -120,7 +120,7 @@ describe('EntityHeader', function() {
                       'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-google"
-                      size="35"/>
+                      size="44"/>
                   </a>
                 </li>
               </ul>
