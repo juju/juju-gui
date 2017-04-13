@@ -1566,7 +1566,8 @@ describe('test_model.js', function() {
           };
         };
       };
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = new juju.environments.GoEnvironment({

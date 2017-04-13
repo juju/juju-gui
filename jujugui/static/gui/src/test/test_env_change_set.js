@@ -45,7 +45,8 @@ describe('Environment Change Set', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     dbObj = new models.Database();
     ecs = new ECS({

@@ -226,7 +226,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
           };
         };
-        const userClass = new window.jujugui.User({storage: getMockStorage()});
+        const userClass = new window.jujugui.User(
+          {sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');

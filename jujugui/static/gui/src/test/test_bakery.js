@@ -85,14 +85,14 @@ describe('Bakery', function() {
     assert.equal(bakery.getMacaroon(), 'foo-bar');
   });
 
-  it('can be configured to use localStorage', function() {
+  it('can be configured to use the authentication user class', function() {
     bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test',
       macaroon: 'foo-bar',
       dischargeToken: 'discharge-foo',
       cookieStore: fakeLocalStorage,
-      dischargeStore: fakeLocalStorage
+      user: new window.jujugui.User({localStorage: fakeLocalStorage})
     });
     assert.equal(fakeLocalStorage.getItem('Macaroons-test'), 'foo-bar');
     assert.equal(fakeLocalStorage.getItem('discharge-token'), 'discharge-foo');
@@ -104,11 +104,11 @@ describe('Bakery', function() {
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test',
       macaroon: 'foo-bar',
-      dischargeStore: fakeLocalStorage,
+      user: new window.jujugui.User({localStorage: fakeLocalStorage}),
       cookieStore: fakeLocalStorage,
     });
     bakery.clearCookie();
-    assert.deepEqual(fakeLocalStorage.store, {});
+    assert.deepEqual(fakeLocalStorage.store, {'discharge-token': null});
   });
 
   describe('_fetchMacaroonFromStaticPath', function() {
@@ -289,7 +289,7 @@ describe('Bakery', function() {
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: null,
           serviceName: 'test',
-          dischargeStore: fakeLocalStorage
+          user: new window.jujugui.User({localStorage: fakeLocalStorage})
         });
         const onAuthRequired = sinon.stub().withArgs();
         const onAuthDone = sinon.stub();
@@ -354,7 +354,7 @@ describe('Bakery', function() {
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: null,
           serviceName: 'test',
-          dischargeStore: fakeLocalStorage,
+          user: new window.jujugui.User({localStorage: fakeLocalStorage}),
           dischargeToken: 'discharge-foo'
         });
         const onAuthRequired = sinon.stub().withArgs();
@@ -422,7 +422,7 @@ describe('Bakery', function() {
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: visitMethod,
           serviceName: 'test',
-          dischargeStore: fakeLocalStorage
+          user: new window.jujugui.User({localStorage: fakeLocalStorage})
         });
         const onAuthRequired = sinon.stub().withArgs();
         const onAuthDone = sinon.stub();

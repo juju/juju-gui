@@ -121,7 +121,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           };
         };
       };
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
