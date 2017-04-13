@@ -51,20 +51,25 @@ YUI.add('juju-env-bakery', function(Y) {
     Y.Base, [], {
 
       /**
-       Initialize.
+        Create and return the bakery.
 
-       @method initializer
-       @param {Object} cfg A config object providing webhandler and visit method
-           information. A visitMethod can be provided, which becomes the
-           bakery's visitMethod. Alternatively, the bakery can be configured to
-           non interactive mode. If neither is true, the default method is used.
-           setCookiePath is a string representing the endpoint register a
-           macaroon as a cookie back, can be omitted.
-           webhandler is an Y.juju.environments.web.WebHandler handling all the
-           xhr requests.
-           {visitMethod: fn, interactive: boolean, webhandler: obj,
-           serviceName: string, setCookiePath: string}
-       @return {undefined} Nothing.
+        @param {Object} cfg Parameters for the bakery, including:
+          - serviceName: the name of the service for which this bakery is used;
+          - visitMethod: the action used to visit the URL for logging into the
+            identity provider. The callable is provided the idm response
+            including the visit URL as "response.Info.VisitURL". If not
+            specified, a default visit method is used, opening a pop up;
+          - interactive: whether to use interactive mode (the default) or
+            non-interactive mode, in which case the visitMethod is never used,
+            as the bakery is assumed to already have the required tokens;
+          - onSuccess: an optional function to be called once the macaraq has
+            been successfully completed;
+          - setCookiePath: optional string representing the endpoint register a
+            macaroon as a cookie;
+          - cookieStore: an optional customized cookie storage;
+          - dischargeStore: an optional customized discharge storage;
+          - macaroon: an initial macaroon to be included in the storage;
+          - dischargeToken: optional token to be used when discharging.
        */
       initializer: function (cfg) {
         this.webhandler = cfg.webhandler;
@@ -75,14 +80,8 @@ YUI.add('juju-env-bakery', function(Y) {
         } else {
           this.visitMethod = this._defaultVisitMethod;
         }
-        // If there is a cookie that may already be set, such as when coming
-        // from the storefront, use that cookie name instead of the generated
-        // one.
-        if (cfg.existingCookie) {
-          this.macaroonName = cfg.existingCookie;
-        } else {
-          this.macaroonName = 'Macaroons-' + cfg.serviceName;
-        }
+        this._onSuccess = cfg.onSuccess || (() => {});
+        this.macaroonName = 'Macaroons-' + cfg.serviceName;
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
@@ -418,12 +417,16 @@ YUI.add('juju-env-bakery', function(Y) {
           discharge fails. It receives an error message.
       */
       discharge: function(m, successCallback, failureCallback) {
+        const successCB = macaroons => {
+          successCallback(macaroons);
+          this._onSuccess();
+        };
         try {
           macaroon.discharge(
             macaroon.import(m),
             this._obtainThirdPartyDischarge.bind(this),
             function(discharges) {
-              successCallback(macaroon.export(discharges));
+              successCB(macaroon.export(discharges));
             },
             failureCallback
           );

@@ -98,22 +98,11 @@ describe('Bakery', function() {
     assert.equal(fakeLocalStorage.getItem('discharge-token'), 'discharge-foo');
   });
 
-  it('can be configured to use a specified cookie name', function() {
-    bakery = new Y.juju.environments.web.Bakery({
-      webhandler: new Y.juju.environments.web.WebHandler(),
-      serviceName: 'test',
-      existingCookie: 'existing-cookie',
-      macaroon: 'foo-bar',
-      cookieStore: fakeLocalStorage
-    });
-    assert.equal(fakeLocalStorage.getItem('existing-cookie'), 'foo-bar');
-  });
-
   it('can clear a macaroon from the cookieStore', function() {
+    fakeLocalStorage.setItem('Macaroons-test', 42);
     bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test',
-      existingCookie: 'existing-cookie',
       macaroon: 'foo-bar',
       dischargeStore: fakeLocalStorage,
       cookieStore: fakeLocalStorage,
