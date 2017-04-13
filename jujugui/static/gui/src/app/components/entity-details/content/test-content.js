@@ -44,9 +44,6 @@ function generateScript(isBundle) {
 
 describe('EntityContent', function() {
   let mockEntity;
-  const script = '<script ' +
-  'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
-  '<div class="juju-card" data-id="trusty/django-123"></div>';
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
