@@ -500,13 +500,13 @@ describe('Bakery', function() {
       });
 
       it('calls original send with macaroon with third party ' +
-        'and with interaction', function () {
+        'and with interaction and retry', function () {
         const visitMethod = sinon.stub();
         bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: visitMethod,
           serviceName: 'test',
-          dischargeStore: fakeLocalStorage
+          user: new window.jujugui.User({localStorage: fakeLocalStorage})
         });
         const onAuthRequired = sinon.stub().withArgs();
         const onAuthDone = sinon.stub();
