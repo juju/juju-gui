@@ -144,16 +144,6 @@ YUI.add('inspector-config', function() {
       @method _saveConfig
     */
     _saveConfig: function() {
-      var refs = this.refs;
-      var configValues = {};
-      Object.keys(refs).forEach((ref) => {
-        var activeRef = refs[ref];
-        // Just in case we ever have any sub components which have refs
-        // and aren't a configuration component.
-        if (ref.split('-')[0] === 'Config') {
-          configValues[activeRef.props.option.key] = activeRef.state.value;
-        }
-      });
       // The service name component is only shown if it's a ghost service.
       var serviceName = this.refs.ServiceName;
       var props = this.props;
@@ -175,7 +165,7 @@ YUI.add('inspector-config', function() {
         service.set('name', nameValue);
         props.updateServiceUnitsDisplayname(service.get('id'));
       }
-      var changedConfig = this._getChangedValues(configValues);
+      const changedConfig = this._getChangedConfig();
       // If there are no changed values then don't set the config.
       if (Object.keys(changedConfig).length > 0) {
         props.setConfig(props.service.get('id'),
@@ -184,6 +174,26 @@ YUI.add('inspector-config', function() {
         );
       }
       this._showInspectorIndex();
+    },
+
+    /**
+      Get the config values that have changed from the model.
+
+      @method _getChangedConfig
+      @returns {Object} The configuration values with new data.
+    */
+    _getChangedConfig: function() {
+      var refs = this.refs;
+      var configValues = {};
+      Object.keys(refs).forEach((ref) => {
+        var activeRef = refs[ref];
+        // Just in case we ever have any sub components which have refs
+        // and aren't a configuration component.
+        if (ref.split('-')[0] === 'Config') {
+          configValues[activeRef.props.option.key] = activeRef.state.value;
+        }
+      });
+      return this._getChangedValues(configValues);
     },
 
     /**
