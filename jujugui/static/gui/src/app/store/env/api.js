@@ -552,7 +552,7 @@ YUI.add('juju-env-api', function(Y) {
         // model then do not reset credentials or the failed authentication
         // flags yet.
         // If the credentials were rejected remove them.
-        this.get('user').controller = null;
+        this.get('user').model = null;
         this.failedAuthentication = true;
       }
       // Only fire login if this is not a redirect error as we will come back
@@ -605,7 +605,7 @@ YUI.add('juju-env-api', function(Y) {
       if (this.pendingLoginResponse) {
         return;
       }
-      const credentials = this.get('user').controller;
+      const credentials = this.get('user').model;
       if (!credentials.user || !credentials.password) {
         this.fire('login', {err: 'invalid username or password'});
         return;
@@ -687,7 +687,7 @@ YUI.add('juju-env-api', function(Y) {
           cback('authentication failed: use a proper Juju 2 release');
           return;
         }
-        this.get('user').controller = {
+        this.get('user').model = {
           macaroons: macaroons,
           user: tags.parse(tags.USER, userTag)
         };
@@ -709,7 +709,7 @@ YUI.add('juju-env-api', function(Y) {
       }.bind(this);
 
       // Perform the API call.
-      var macaroons = this.get('user').controller.macaroons;
+      var macaroons = this.get('user').model.macaroons;
       this.pendingLoginResponse = true;
       sendLoginRequest(
         macaroons,
@@ -945,7 +945,7 @@ YUI.add('juju-env-api', function(Y) {
         this.fire('login', {err: 'cannot upload files anonymously'});
         return;
       }
-      var credentials = this.get('user').controller;
+      var credentials = this.get('user').model;
       var path = _getCharmAPIPath(this.get('modelUUID'), 'series=' + series);
       var headers = {'Content-Type': 'application/zip'};
       // Use a web handler to communicate to the Juju HTTPS API. The web
@@ -975,7 +975,7 @@ YUI.add('juju-env-api', function(Y) {
         credentials.
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
-      const credentials = this.get('user').controller;
+      const credentials = this.get('user').model;
       const path = _getCharmAPIPath(
           this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       const webHandler = this.get('webHandler');
@@ -995,7 +995,7 @@ YUI.add('juju-env-api', function(Y) {
       @return {String} The full URL to the icon, including auth credentials.
     */
     getLocalCharmIcon: function(charmUrl) {
-      const credentials = this.get('user').controller;
+      const credentials = this.get('user').model;
       const uuid = this.get('modelUUID');
       const path = _getCharmAPIPath(uuid, 'url=' + charmUrl + '&icon=1');
       const webHandler = this.get('webHandler');
@@ -1014,7 +1014,7 @@ YUI.add('juju-env-api', function(Y) {
         response is returned.
     */
     _jujuHttpGet: function(path, progress, callback) {
-      var credentials = this.get('user').controller;
+      var credentials = this.get('user').model;
       var webHandler = this.get('webHandler');
       var headers = Object.create(null);
       // TODO frankban: allow macaroons based auth here.
@@ -2612,7 +2612,7 @@ YUI.add('juju-env-api', function(Y) {
       // XXX frankban 2015/12/15: this will be done automatically by the
       // server, and the URL will be returned as part of the API response.
       if (!url) {
-        var user = this.get('user').controller.user;
+        var user = this.get('user').model.user;
         var envName = this.get('environmentName');
         url = 'local:/u/' + user + '/' + envName + '/' + applicationName;
       }
