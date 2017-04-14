@@ -46,16 +46,18 @@ const User = class User {
   }
 
   // TODO get/set charmstore creds
-
+    
   /**
-   Credentials for the controller connection for the GUI. As a getter,
-   it adds convenience attributes to the credentials for handling login flow.
+   Gets credentials out of sessionStorage.
+
+   @param {String} type The type of credential. Expected to be either
+   'controller' or 'model'.
+   @return {Object} A credentials object with both the stored data and
+   convenience attributes for handling login flow.
   */
-  // XXX 'controller' isn't quite right--this handles both controller and model
-  // connection credentials. Perhaps juju?
-  get controller() {
+  _getCredentials(type) {
     let credentials = JSON.parse(
-      this.sessionStorage.getItem('credentials'));
+      this.sessionStorage.getItem(type + 'Credentials'));
     if (!credentials) {
       credentials = {};
     }
@@ -98,8 +100,32 @@ const User = class User {
     return credentials;
   }
 
+  /**
+   Sets credentials in sessionStorage.
+
+   @param {String} type The type of credential. Expected to be either
+   'controller' or 'model'.
+   @param {Object} credentials The credentials object to be stored.
+   */
+  _setCredentials(type, credentials) {
+    this.sessionStorage.setItem(
+      type + 'Credentials', JSON.stringify(credentials));
+  }
+
+  get controller() {
+    return this._getCredentials('controller');
+  }
+
   set controller(credentials) {
-    this.sessionStorage.setItem('credentials', JSON.stringify(credentials));
+    this._setCredentials('controller', credentials);
+  }
+
+  get model() {
+    return this._getCredentials('model');
+  }
+
+  set model(credentials) {
+    this._setCredentials('model', credentials);
   }
 };
 

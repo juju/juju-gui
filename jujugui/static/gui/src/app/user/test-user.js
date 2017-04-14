@@ -22,9 +22,9 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 
-describe('user auth class', () => {
+fdescribe('user auth class', () => {
   it('exists', () => {
-    const user = new window.jujugui.User({sessionStorage: {}});
+    const user = new window.jujugui.User();
     assert.isObject(user);
   });
 
@@ -58,24 +58,31 @@ describe('user auth class', () => {
   });
 
   describe('controller credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
     it('can be set', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({sessionStorage: storage});
       user.controller = {user: 'rose'};
-      assert.deepEqual(JSON.parse(storage.store.credentials), {user: 'rose'});
+      assert.deepEqual(
+        JSON.parse(storage.store.controllerCredentials), {user: 'rose'});
     });
 
     it('can be retrieved', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({sessionStorage: storage});
       user.controller = {password: 'bad wolf'};
       const creds = user.controller;
       assert.equal(creds.password, 'bad wolf');
     });
 
     it('normalizes user names', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({sessionStorage: storage});
       user.controller = {user: 'rose'};
       let creds = user.controller;
       assert.equal(creds.user, 'rose@local');
@@ -85,8 +92,6 @@ describe('user auth class', () => {
     });
 
     it('determines if credentials are available', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({sessionStorage: storage});
       let creds = user.controller;
       assert.equal(creds.areAvailable, false);
       user.controller = {macaroons: ['macaroons']};
@@ -95,14 +100,60 @@ describe('user auth class', () => {
     });
 
     it('determines if creds are external', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({sessionStorage: storage});
       user.controller = {
         user: 'doctor@tardis',
         password: 'bad wolf',
         external: 'foo'
       };
       const creds = user.controller;
+      assert.equal(creds.areExternal, true);
+    });
+  });
+
+  describe('model credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    it('can be set', () => {
+      user.model = {user: 'rose'};
+      assert.deepEqual(
+        JSON.parse(storage.store.modelCredentials), {user: 'rose'});
+    });
+
+    it('can be retrieved', () => {
+      user.model = {password: 'bad wolf'};
+      const creds = user.model;
+      assert.equal(creds.password, 'bad wolf');
+    });
+
+    it('normalizes user names', () => {
+      user.model = {user: 'rose'};
+      let creds = user.model;
+      assert.equal(creds.user, 'rose@local');
+      user.model = {user: 'doctor@tardis'};
+      creds = user.model;
+      assert.equal(creds.user, 'doctor@tardis');
+    });
+
+    it('determines if credentials are available', () => {
+      let creds = user.model;
+      assert.equal(creds.areAvailable, false);
+      user.model = {macaroons: ['macaroons']};
+      creds = user.model;
+      assert.equal(creds.areAvailable, true);
+    });
+
+    it('determines if creds are external', () => {
+      user.model = {
+        user: 'doctor@tardis',
+        password: 'bad wolf',
+        external: 'foo'
+      };
+      const creds = user.model;
       assert.equal(creds.areExternal, true);
     });
   });
