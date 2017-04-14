@@ -41,6 +41,9 @@ YUI.add('user-profile-entity', function() {
       type: React.PropTypes.string.isRequired
     },
 
+    /**
+      Set initial state for KPI metrics
+    */
     getInitialState: function() {
       return {
         hasMetrics: false,
@@ -298,7 +301,6 @@ YUI.add('user-profile-entity', function() {
       );
     },
 
-<<<<<<< ca3a3c2a4a3744348e2ecb6f98d549b7dc9f4e4c
     /**
       Generate and return the destroy button if the user is allowed to destroy
       the given model.
@@ -329,7 +331,12 @@ YUI.add('user-profile-entity', function() {
           title="Destroy model"
         />
       );
-=======
+    /**
+      Retrieve metrics from the plans service.
+
+      @method _getMetrics
+      @param {Object} filters Additional filters to add to the metrics query.
+    */
     _getMetrics: function(filters) {
       if (this.state.hasMetrics) {
         return;
@@ -347,11 +354,24 @@ YUI.add('user-profile-entity', function() {
           //'cs:~canonical/jimm-0',
           this.props.entity.id,
           filters,
-          (error, data) => {
-            if (!error && data.length > 0) {
+          (error, charmMetrics) => {
+            if (error) {
+              // TODO When there are designs for showing errors for metrics,
+              // we'll be able to implement them here.
+              // Makyo - 2017-04-13
+              console.error(error);
+              return;
+            }
+            this.setState({
+              hasMetrics: false,
+              metrics: {},
+              metricTypes: []
+            });
+            if (charmMetrics.length > 0) {
               let metrics = [];
               let metricTypes = this.state.metricTypes;
-              data.forEach((item) => {
+              charmMetrics.forEach((item) => {
+                // refrain from adding duplicatae types to metricTypes
                 if (metricTypes.indexOf(item.Metric) === -1) {
                   metricTypes.push(item.Metric);
                 }
@@ -362,16 +382,13 @@ YUI.add('user-profile-entity', function() {
                 metrics: metrics,
                 metricTypes: metricTypes
               });
-            } else {
-              this.setState({
-                hasMetrics: false,
-                metrics: {},
-                metricTypes: []
-              });
             }
           });
     },
 
+    /**
+      Show the metrics component, gated on state.
+    */
     _showMetrics: function() {
       return (
         <juju.components.UserProfileEntityKPI
@@ -381,12 +398,18 @@ YUI.add('user-profile-entity', function() {
           metricTypes={this.state.metricTypes} />);
     },
 
-    _toggleKpiVisibility: function(e) {
+    /**
+      Set state to make KPI metrics visible/not visible.
+    */
+    _toggleKpiVisibility: function() {
       this.setState({
         kpiVisible: !this.state.kpiVisible
       });
     },
 
+    /**
+      For charms, generate a button for showing/hiding the metrics component.
+    */
     _generateMetrics: function() {
       if (this.props.type === 'charm') {
         return (
@@ -399,7 +422,6 @@ YUI.add('user-profile-entity', function() {
           </div>
         );
       }
->>>>>>> Add KPI metrics for charms
     },
 
     render: function() {

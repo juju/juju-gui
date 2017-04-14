@@ -630,4 +630,52 @@ describe('jujulib plans service', function() {
       }
     );
   });
+
+  it('gets kpi metrics for a charm', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/kpimetrics?charm-url=cs%3Ajuju-gui-42');
+        var xhr = makeXHRRequest([{
+            Metric: 'metric',
+            Sum: 42,
+            Count: 5
+          },
+          {
+            Metric: 'bad-wolf',
+            Sum: 53,
+            count: 8
+          },
+          {
+            Metric: 'metric',
+            Sum: 80,
+            Count: 10
+        }]);
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.getKpiMetrics('cs:juju-gui-42', {}, function(error, metrics) {
+      assert.isNull(error);
+      assert.deepEqual(metrics, [{
+          Metric: 'metric',
+          Sum: 42,
+          Count: 5
+        },
+        {
+          Metric: 'bad-wolf',
+          Sum: 53,
+          count: 8
+        },
+        {
+          Metric: 'metric',
+          Sum: 80,
+          Count: 10
+      }]);
+      done();
+    });
+  });
 });
