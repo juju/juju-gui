@@ -217,6 +217,8 @@ YUI.add('juju-delta-handlers', function(Y) {
      */
     unitInfo: function(db, action, change) {
       const portRanges = change['port-ranges'] || [];
+      const agentStatus = change['agent-status'] || {};
+      const workloadStatus = change['workload-status'] || {};
       const unitData = {
         id: change.name,
         charmUrl: change['charm-url'],
@@ -233,13 +235,12 @@ YUI.add('juju-delta-handlers', function(Y) {
           };
         }),
         subordinate: change.subordinate,
-        workloadStatusMessage: ''
+        agentStatus: agentStatus.current || '',
+        workloadStatus: workloadStatus.current || '',
+        workloadStatusMessage: workloadStatus.message || ''
       };
 
-      // Handle agent and workload status.
-      const agentStatus = change['agent-status'] || {};
-      const workloadStatus = change['workload-status'] || {};
-      unitData.workloadStatusMessage = workloadStatus.message;
+      // Handle legacy status.
       if (workloadStatus.current === 'error') {
         unitData.agent_state = workloadStatus.current;
         unitData.agent_state_info = workloadStatus.message;
