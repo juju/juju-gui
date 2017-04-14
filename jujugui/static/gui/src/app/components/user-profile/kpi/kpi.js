@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -34,8 +34,14 @@ YUI.add('user-profile-entity-kpi', function() {
       };
     },
 
-      // Tell the metric component to rendeddr a graph of specific metric.
+    /**
+      Tell the metric component to render a graph of specific metric.
+
+      @method _showMetric
+      @param {String} metric The metric to show (selected from metricTypes)
+    */
     _showMetric: function(metric) {
+      // TODO:
       // the ability to select a metric does not work properly, and we don't
       // know enough about the eventual metrics of charms to guess how; for
       // now, just render the first metric at hand. See also the comment in
@@ -49,13 +55,22 @@ YUI.add('user-profile-entity-kpi', function() {
       });
     },
 
+    /**
+      Show the metric when the component has mounted
+    */
     componentDidMount: function() {
+      // TODO:
       // the select isn't working; this should be the on-change callback
       // but for now just call it
       // Makyo 2017-04-03
       this._showMetric('bad-wolf');
     },
 
+    /**
+       Render a metric into the entity
+       TODO: in the future, this will include an instance of inset-select
+       to choose which metric.
+    */
     render: function() {
       return (
         <div className="twelve-col last-col">

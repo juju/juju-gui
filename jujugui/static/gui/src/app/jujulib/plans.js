@@ -346,10 +346,10 @@ var module = module;
       @param {Function} callback A callback for handling the retrieved metrics
     */
     getKpiMetrics: function(charmId, filters, callback) {
-      var url = this.url + '/kpimetrics';
+      var url = `${this.url}/kpimetrics`;
       var payload = filters || {};
       payload['charm-url'] = charmId;
-      var qs = jujulib._serialize(payload);
+      var qs = jujulib.serializeObject(payload);
       url += '?' + qs;
       return jujulib._makeRequest(this.bakery, url, 'GET', payload, callback);
     }
