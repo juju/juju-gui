@@ -72,6 +72,8 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(unit.machine, '1');
         assert.strictEqual(unit.agent_state, 'pending');
         assert.strictEqual(unit.agent_state_info, 'waiting for machine');
+        assert.strictEqual(unit.agentStatus, 'allocating');
+        assert.strictEqual(unit.workloadStatus, '');
         assert.strictEqual(unit.workloadStatusMessage, 'exterminating');
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
@@ -138,7 +140,10 @@ describe('Juju delta handlers', function() {
           assert.deepEqual(unit.agent_state_data, {foo: 'bar'});
           assert.strictEqual(unit.workloadStatusMessage, 'hook run error');
         }
-
+        assert.strictEqual(
+          unit.agentStatus, workloadInError ? 'executing' : 'idle');
+        assert.strictEqual(
+          unit.workloadStatus, workloadInError ? 'error' : 'maintenance');
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '192.168.0.1');
         assert.strictEqual(unit.subordinate, true, 'subordinate');

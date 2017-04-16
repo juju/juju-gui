@@ -31,10 +31,13 @@ describe('UnitDetails', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     fakeUnit = {
+      id: 'unit1',
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
       agent_state: 'started',
-      id: 'unit1'
+      agentStatus: 'idle',
+      workloadStatus: 'maintenance',
+      workloadStatusMessage: 'doing stuff'
     };
     service = {
       get: function(val) {
@@ -60,8 +63,147 @@ describe('UnitDetails', function() {
       />);
     const expectedOutput = (
       <div className='unit-details__properties'>
+        <div>
+          <p className='unit-details__property'>
+            Status: started - doing stuff
+          </p>
+          <p className="unit-details__property">
+            Agent Status: idle
+          </p>
+          <p className="unit-details__property">
+            Workload Status: maintenance
+          </p>
+        </div>
         <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state} {undefined}
+          Public addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="93.20.93.20">
+            <span>
+              {'93.20.93.20'}
+            </span>
+          </li>
+        </ul>
+        <p className='unit-details__property'>
+          IP addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="192.168.0.1">
+            <span>
+              {'192.168.0.1'}
+            </span>
+          </li>
+        </ul>
+      </div>);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+  });
+
+  it('does not render workload status message when not provided', function() {
+    fakeUnit.workloadStatusMessage = '';
+    const output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        service={service}
+        previousComponent='units'
+        unit={fakeUnit} />);
+    const expectedOutput = (
+      <div className='unit-details__properties'>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+          <p className="unit-details__property">
+            Agent Status: idle
+          </p>
+          <p className="unit-details__property">
+            Workload Status: maintenance
+          </p>
+        </div>
+        <p className='unit-details__property'>
+          Public addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="93.20.93.20">
+            <span>
+              {'93.20.93.20'}
+            </span>
+          </li>
+        </ul>
+        <p className='unit-details__property'>
+          IP addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="192.168.0.1">
+            <span>
+              {'192.168.0.1'}
+            </span>
+          </li>
+        </ul>
+      </div>);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+  });
+
+  it('does not render agent/workload statuses when not provided', function() {
+    fakeUnit.agentStatus = '';
+    fakeUnit.workloadStatus = '';
+    fakeUnit.workloadStatusMessage = '';
+    const output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        service={service}
+        previousComponent='units'
+        unitStatus='error'
+        unit={fakeUnit}
+      />);
+    const expectedOutput = (
+      <div className='unit-details__properties'>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+        </div>
+        <p className='unit-details__property'>
+          Public addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="93.20.93.20">
+            <span>
+              {'93.20.93.20'}
+            </span>
+          </li>
+        </ul>
+        <p className='unit-details__property'>
+          IP addresses: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="192.168.0.1">
+            <span>
+              {'192.168.0.1'}
+            </span>
+          </li>
+        </ul>
+      </div>);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+  });
+
+  it('does not render statuses if uncommitted', function() {
+    fakeUnit.agent_state = '';
+    const output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        service={service}
+        previousComponent='units'
+        unit={fakeUnit} />);
+    const expectedOutput = (
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
+          Status: uncommitted
         </p>
         <p className='unit-details__property'>
           Public addresses: {null}
@@ -83,48 +225,8 @@ describe('UnitDetails', function() {
             </span>
           </li>
         </ul>
-      </div>
-    );
-    assert.deepEqual(output.props.children[0], expectedOutput);
-  });
-
-  it('renders workload status when provided', function() {
-    fakeUnit.workloadStatusMessage = 'Installing software';
-    var output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        service={service}
-        previousComponent='units'
-        unit={fakeUnit} />);
-
-    assert.deepEqual(output.props.children[0],
-        <div className='unit-details__properties'>
-          <p className='unit-details__property'>
-            Status: {fakeUnit.agent_state} {' - Installing software'}
-          </p>
-          <p className='unit-details__property'>
-            Public addresses: {null}
-          </p>
-          <ul className="unit-details__list">
-            <li className="unit-details__list-item" key="93.20.93.20">
-              <span>
-                {'93.20.93.20'}
-              </span>
-            </li>
-          </ul>
-          <p className='unit-details__property'>
-            IP addresses: {null}
-          </p>
-          <ul className="unit-details__list">
-            <li className="unit-details__list-item" key="192.168.0.1">
-              <span>
-                {'192.168.0.1'}
-              </span>
-            </li>
-          </ul>
-        </div>);
+      </div>);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('shows list of addresses correctly', function() {
@@ -150,11 +252,13 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-    const expected = (
+    const expectedOutput = (
       <div className="unit-details__properties">
-        <p className="unit-details__property">
-          Status: {fakeUnit.agent_state} {undefined}
-        </p>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+        </div>
         <p className="unit-details__property">
           Public addresses: {null}
         </p>
@@ -198,7 +302,7 @@ describe('UnitDetails', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('shows list of addresses as links if exposed', function() {
@@ -212,7 +316,7 @@ describe('UnitDetails', function() {
       }, {
         from: 8080, to: 8080, protocol: 'tcp', single: true
       }],
-      agent_state: 'started',
+      agent_state: 'pending',
       id: 'unit1'
     };
     service = {
@@ -233,11 +337,13 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-    const expected = (
+    const expectedOutput = (
       <div className="unit-details__properties">
-        <p className="unit-details__property">
-          Status: {fakeUnit.agent_state} {undefined}
-        </p>
+        <div>
+          <p className='unit-details__property'>
+            Status: pending
+          </p>
+        </div>
         <p className="unit-details__property">
           Public addresses: {null}
         </p>
@@ -281,7 +387,7 @@ describe('UnitDetails', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('shows no addresses if no addresses are unavailable', function() {
@@ -295,12 +401,13 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-
-    assert.deepEqual(output.props.children[0],
+    const expectedOutput = (
       <div className='unit-details__properties'>
-        <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state} {undefined}
-        </p>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+        </div>
         <p className='unit-details__property'>
           Public addresses: {'none'}
         </p>
@@ -310,6 +417,7 @@ describe('UnitDetails', function() {
         </p>
         {undefined}
       </div>);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('shows only public address if available', function() {
@@ -334,11 +442,13 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-    const expected = (
+    const expectedOutput = (
       <div className="unit-details__properties">
-        <p className="unit-details__property">
-          Status: {fakeUnit.agent_state} {undefined}
-        </p>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+        </div>
         <p className="unit-details__property">
           Public addresses: {null}
         </p>
@@ -365,7 +475,7 @@ describe('UnitDetails', function() {
         </p>
         {undefined}
       </div>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('shows only private address if available', function() {
@@ -390,11 +500,13 @@ describe('UnitDetails', function() {
         previousComponent='units'
         unitStatus='error'
         unit={fakeUnit} />);
-    const expected = (
+    const expectedOutput = (
       <div className="unit-details__properties">
-        <p className="unit-details__property">
-          Status: {fakeUnit.agent_state} {undefined}
-        </p>
+        <div>
+          <p className='unit-details__property'>
+            Status: started
+          </p>
+        </div>
         <p className='unit-details__property'>
           Public addresses: {'none'}
         </p>
@@ -421,50 +533,48 @@ describe('UnitDetails', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expectedOutput);
   });
 
   it('renders the remove button', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
         service={service}
         unit={fakeUnit} />);
-    var buttons = [{
+    const buttons = [{
       disabled: false,
       title: 'Remove',
       action: output.props.children[1].props.buttons[0].action
     }];
-    assert.deepEqual(output.props.children[1],
-      <juju.components.ButtonRow
-        buttons={buttons} />);
+    const expectedOutput = <juju.components.ButtonRow buttons={buttons} />;
+    expect(output.props.children[1]).toEqualJSX(expectedOutput);
   });
 
   it('can disable remove button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
         service={service}
         unit={fakeUnit} />);
-    var buttons = [{
+    const buttons = [{
       disabled: true,
       title: 'Remove',
       action: output.props.children[1].props.buttons[0].action
     }];
-    assert.deepEqual(output.props.children[1],
-      <juju.components.ButtonRow
-        buttons={buttons} />);
+    const expectedOutput = <juju.components.ButtonRow buttons={buttons} />;
+    expect(output.props.children[1]).toEqualJSX(expectedOutput);
   });
 
   it('destroys the unit when the destroy button is clicked', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const destroyUnits = sinon.stub();
+    const changeState = sinon.stub();
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
@@ -477,9 +587,9 @@ describe('UnitDetails', function() {
   });
 
   it('navigates to the unit list when the unit is destroyed', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const destroyUnits = sinon.stub();
+    const changeState = sinon.stub();
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
@@ -500,9 +610,9 @@ describe('UnitDetails', function() {
   });
 
   it('can navigate to the expose view when the unit is destroyed', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const destroyUnits = sinon.stub();
+    const changeState = sinon.stub();
+    const output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
