@@ -868,6 +868,11 @@ YUI.add('juju-gui', function(Y) {
       credentials, useMacaroons, apis=[this.controllerAPI, this.env]) {
       if (useMacaroons) {
         apis.forEach(api => {
+          if (credentials && api.name === 'model-api') {
+            this.user.model = credentials;
+          } else if (credentials) {
+            this.user.controller = credentials;
+          }
           // The api may be unset if the current Juju does not support it.
           if (api && api.get('connected')) {
             console.log(`logging into ${api.name} with macaroons`);
@@ -883,13 +888,13 @@ YUI.add('juju-gui', function(Y) {
         if (!api) {
           return;
         }
+        if (credentials && api.name === 'model-api') {
+          this.user.model = credentials;
+        } else if (credentials) {
+          this.user.controller = credentials;
+        }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
-          if (api.name === 'model-api') {
-            this.user.model = credentials;
-          } else {
-            this.user.controller = credentials;
-          }
           api.login();
         }
       });
