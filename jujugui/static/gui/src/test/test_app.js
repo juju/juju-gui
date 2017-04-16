@@ -711,9 +711,9 @@ describe('App', function() {
       env.connect();
       env.close(() => {
         assert.strictEqual(env.userIsAuthenticated, false);
-        assert.deepEqual(
-          env.get('user').controller,
-          {user: '', password: '', macaroons: null});
+        let creds = env.get('user').sessionStorage.store.modelCredentials;
+        creds = JSON.parse(creds);
+        assert.deepEqual(creds, null);
         done();
       });
 
@@ -1593,7 +1593,7 @@ describe('App', function() {
       checkLoggedInWithCredentials(model, false, credentials);
     });
 
-    it('only sets credentials if no API is connected', () => {
+    it('sets credentials even if no API is connected', () => {
       const credentials = {user: 'user-who@local', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(false);
