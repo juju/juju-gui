@@ -77,16 +77,16 @@ describe('user auth class', () => {
     });
 
     it('can be retrieved', () => {
-      user.controller = {password: 'bad wolf'};
+      user.controller = {user: 'rose', password: 'bad wolf'};
       const creds = user.controller;
       assert.equal(creds.password, 'bad wolf');
     });
 
     it('normalizes user names', () => {
-      user.controller = {user: 'rose'};
+      user.controller = {user: 'rose', password: 'bad wolf'};
       let creds = user.controller;
       assert.equal(creds.user, 'rose@local');
-      user.controller = {user: 'doctor@tardis'};
+      user.controller = {user: 'doctor@tardis', password: 'tenant'};
       creds = user.controller;
       assert.equal(creds.user, 'doctor@tardis');
     });
@@ -125,16 +125,16 @@ describe('user auth class', () => {
     });
 
     it('can be retrieved', () => {
-      user.model = {password: 'bad wolf'};
+      user.model = {user: 'rose', password: 'bad wolf'};
       const creds = user.model;
       assert.equal(creds.password, 'bad wolf');
     });
 
     it('normalizes user names', () => {
-      user.model = {user: 'rose'};
+      user.model = {user: 'rose', password: 'bad wolf'};
       let creds = user.model;
       assert.equal(creds.user, 'rose@local');
-      user.model = {user: 'doctor@tardis'};
+      user.model = {user: 'doctor@tardis', password: 'tenant'};
       creds = user.model;
       assert.equal(creds.user, 'doctor@tardis');
     });

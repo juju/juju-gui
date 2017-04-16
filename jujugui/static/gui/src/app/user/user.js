@@ -46,7 +46,7 @@ const User = class User {
   }
 
   // TODO get/set charmstore creds
-    
+
   /**
    Gets credentials out of sessionStorage.
 
@@ -121,7 +121,14 @@ const User = class User {
   }
 
   get model() {
-    return this._getCredentials('model');
+    // There are situations where we have no model creds but can fall back to
+    // the controller credentials. So we only return empty credentials if both
+    // the model creds and the controller creds are empty.
+    let credentials = this._getCredentials('model');
+    if (credentials.areAvailable) {
+      return credentials;
+    }
+    return this._getCredentials('controller');
   }
 
   set model(credentials) {
