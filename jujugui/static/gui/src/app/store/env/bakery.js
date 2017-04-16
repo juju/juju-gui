@@ -573,9 +573,9 @@ YUI.add('juju-env-bakery', function(Y) {
         };
         // When performing a "wait" request for the user logging into identity
         // it is possible that they take longer than the server timeout of
-        // 1 minute when this happens the server just closes the connection.
+        // 1 minute: when this happens the server just closes the connection.
         let retryCounter = 0;
-        const retryOmatic = reqResponse => {
+        const retryCallback = reqResponse => {
           const target = reqResponse.target;
           if (target.status === 0 &&
               target.response === '' &&
@@ -583,10 +583,10 @@ YUI.add('juju-env-bakery', function(Y) {
             // Server closed the connection, retry and increment the counter.
             if (retryCounter < 5) {
               retryCounter += 1;
-              generateRequest(retryOmatic);
+              generateRequest(retryCallback);
               return;
             }
-            // We have retried 5 times so call failure handler.
+            // We have retried 5 times so fall through to call handler.
           }
           // Call the usual request handler if no retry is necessary.
           this._requestHandler(
@@ -594,7 +594,7 @@ YUI.add('juju-env-bakery', function(Y) {
             failureCallback,
             reqResponse);
         };
-        generateRequest(retryOmatic);
+        generateRequest(retryCallback);
       },
 
       /**
