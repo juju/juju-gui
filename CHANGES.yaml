@@ -1,3 +1,13 @@
+- 2.5.2:
+
+   - Unit workload status now shown in unit list view.
+   - User permissions are now shown in profile view.
+   - (Fix) Do not fail if cloud provider logo isn't available.
+   - (Fix) If login times out, retry.
+   - (Fix) Clicking user name in search results links to their profile.
+   - (Fix) Do not allow duplicate credential names.
+   - (Fix) Provide immediate feedback when destroying models.
+
 - 2.5.1:
 
    - Profile access has been moved to dropdown in top right.
