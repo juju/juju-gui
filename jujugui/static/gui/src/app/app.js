@@ -515,7 +515,7 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
-      const controllerCred = this.user.controller;
+      const controllerCreds = this.user.controller;
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
