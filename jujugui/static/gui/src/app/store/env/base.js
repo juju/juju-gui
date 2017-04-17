@@ -282,12 +282,6 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
-      const credentials = this.get('user').controller;
-      if (!credentials.areAvailable) {
-        credentials.user = '';
-        credentials.password = '';
-        this.get('user').controller = credentials;
-      }
     },
 
     destructor: function() {
@@ -356,7 +350,11 @@ YUI.add('juju-env-base', function(Y) {
       }
       this.cleanup(() => {
         this.userIsAuthenticated = false;
-        this.get('user').controller = null;
+        if (this.name === 'model-api') {
+          this.get('user').model = null;
+        } else {
+          this.get('user').controller = null;
+        }
         this.ws.close();
         callback();
       });

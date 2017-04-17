@@ -515,15 +515,7 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
-      let user = null;
-      let password = null;
-      let macaroons = null;
-      let credentials = this.user.controller;
-      if (credentials.areAvailable) {
-        user = credentials.user;
-        password = credentials.password;
-        macaroons = credentials.macaroons;
-      }
+      const controllerCreds = this.user.controller;
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
@@ -536,7 +528,11 @@ YUI.add('juju-gui', function(Y) {
         entityPromise = this._fetchEntityFromUserState(pathState.state.user);
       }
       this.controllerAPI = this.setUpControllerAPI(
-        controllerAPI, user, password, macaroons, entityPromise);
+        controllerAPI,
+        controllerCreds.user,
+        controllerCreds.password,
+        controllerCreds.macaroons,
+        entityPromise);
       const getBundleChanges = this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI);
       // Create Romulus API client instances.
@@ -616,7 +612,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('model connected');
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
-        const credentials = this.user.controller;
+        const credentials = this.user.model;
         if (credentials.areAvailable) {
           this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
           return;
@@ -882,15 +878,16 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
-      // We make sure controller credentials are set in the user object for
-      // the apis.
-      if (credentials) {
-        this.user.controller = credentials;
-      }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (!api) {
           return;
+        }
+        // Ensure the credentials are set, if available.
+        if (credentials && api.name === 'model-api') {
+          this.user.model = credentials;
+        } else if (credentials) {
+          this.user.controller = credentials;
         }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
@@ -2740,12 +2737,12 @@ YUI.add('juju-gui', function(Y) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
         // The GUI will automatically log in when we switch.
-        this.user.controller = {
+        this.user.model = {
           user: username,
           password: password
         };
       };
-      const credentials = this.user.controller;
+      const credentials = this.user.model;
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2765,7 +2762,7 @@ YUI.add('juju-gui', function(Y) {
         // We need to reset the credentials each time we set up a model,
         // b/c we remove the credentials when we close down a model
         // connection in the `close()` method of base.js
-        this.user.controller = credentials;
+        this.user.model = credentials;
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
@@ -3059,7 +3056,7 @@ YUI.add('juju-gui', function(Y) {
       let credentials;
       // Try to retrieve the user from the model connection.
       if (this.env) {
-        credentials = this.user.controller;
+        credentials = this.user.model;
         if (credentials.user) {
           return mkUser(credentials.user, true);
         }
