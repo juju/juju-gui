@@ -1527,9 +1527,7 @@ YUI.add('juju-gui', function(Y) {
     _renderProviderLogo: function() {
       const container = document.getElementById('provider-logo-container');
       const cloudProvider = this.env.get('providerType');
-      const providerDetails = cloudProvider ?
-        views.utils.getCloudProviderDetails(cloudProvider) :
-        {};
+      let providerDetails = views.utils.getCloudProviderDetails(cloudProvider);
       const currentState = this.state.current || {};
       const isDisabled = (
         // There is no provider.
@@ -1548,6 +1546,11 @@ YUI.add('juju-gui', function(Y) {
         }
       );
       const scale = 0.65;
+      if (!providerDetails) {
+        // It's possible that the GUI is being run on a provider that we have
+        // not yet setup in the cloud provider details.
+        providerDetails = {};
+      }
       ReactDOM.render(
         <div className={classes}>
           <window.juju.components.SvgIcon
