@@ -124,32 +124,6 @@ describe('Bundle Importer', function() {
       });
 
       describe('FileReader onload callback', function() {
-        var file = { name: 'path/to/file.json' };
-        it('shows notification if file contains invalid json', function() {
-          var notification = sinon.stub(
-              bundleImporter.db.notifications, 'add');
-          this._cleanups.push(notification.restore);
-          bundleImporter._fileReaderOnload(file, {
-            target: { result: '[invalid json]' }
-          });
-          assert.equal(notification.callCount, 1);
-          assert.equal(notification.lastCall.args[0].level, 'error');
-        });
-
-        it('shows notification before kicking off import', function() {
-          var importStub = sinon.stub(
-              bundleImporter, 'importBundleDryRun');
-          var notification = sinon.stub(
-              bundleImporter.db.notifications, 'add');
-          this._cleanups.concat([importStub.restore, notification.restore]);
-          bundleImporter._fileReaderOnload(file, {
-            target: { result: '["valid", "json"]' }
-          });
-          assert.equal(notification.callCount, 1);
-          assert.equal(notification.lastCall.args[0].level, 'important');
-          assert.equal(importStub.callCount, 1);
-        });
-
         it('calls fetchDryRun if yaml file', function() {
           var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
           var yamlFile = { name: 'path/to/file.yaml' };
