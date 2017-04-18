@@ -47,7 +47,8 @@ YUI.add('inspector-config', function() {
         // Have to clone the config so we don't update it via reference.
         serviceConfig: this._clone(this.props.service.get('config')),
         series: this.props.service.get('series'),
-        forceUpdate: false
+        forceUpdate: false,
+        changed: false
       };
     },
 
@@ -82,6 +83,19 @@ YUI.add('inspector-config', function() {
     },
 
     /**
+      Handle field value changes.
+
+      @method _handleOnChange
+    */
+    _handleOnChange: function() {
+      console.log(this._getChangedConfig());
+      if (Object.keys(this._getChangedConfig()).length > 0) {
+        console.log('changed!');
+        this.setState({changed: true});
+      }
+    },
+
+    /**
       Handle applying the uploaded config.
 
       @method _applyConfig
@@ -113,6 +127,7 @@ YUI.add('inspector-config', function() {
       this.props.getYAMLConfig(this.refs.file.files[0], this._applyConfig);
       // Reset the form so the file can be uploaded again
       this.refs['file-form'].reset();
+      this._handleOnChange();
     },
 
     /**
@@ -260,6 +275,7 @@ YUI.add('inspector-config', function() {
                 key={ref}
                 ref={ref}
                 option={option}
+                onChange={this._handleOnChange}
                 label={label}
                 config={serviceConfig[key]} />);
         } else {
@@ -269,6 +285,7 @@ YUI.add('inspector-config', function() {
                 key={ref}
                 ref={ref}
                 option={option}
+                onChange={this._handleOnChange}
                 config={serviceConfig[key]} />);
         }
       });
@@ -290,6 +307,7 @@ YUI.add('inspector-config', function() {
         return (<juju.components.StringConfig
           disabled={this.props.acl.isReadOnly()}
           ref="ServiceName"
+          onChange={this._handleOnChange}
           option={{
             key: 'Application name',
             description: 'Specify a custom application name. The application' +
@@ -317,6 +335,7 @@ YUI.add('inspector-config', function() {
       service.set('series', value);
       this.setState({forceUpdate: true}, () => {
         this.setState({series: value});
+        this._handleOnChange();
       });
       // If units were unplaced then we want to show a notification and
       // open up the machine view for the user.
@@ -371,14 +390,18 @@ YUI.add('inspector-config', function() {
         </div>);
     },
 
-    render: function() {
-      var disabled = this.props.acl.isReadOnly();
-      var importButton = [{
-        disabled: disabled,
-        title: 'Import config file',
-        action: this._openFileDialog
-      }];
-      var actionButtons = [{
+    /**
+      Display the save buttons if there are changes.
+
+      @method _generateButtons
+    */
+    _generateButtons: function() {
+      console.log('changed', this.state.changed);
+      if (!this.state.changed) {
+        return null;
+      }
+      const disabled = this.props.acl.isReadOnly();
+      const actionButtons = [{
         disabled: disabled,
         title: 'Cancel',
         type: 'base',
@@ -389,7 +412,17 @@ YUI.add('inspector-config', function() {
         type: 'neutral',
         action: this._saveConfig
       }];
+      return (
+        <juju.components.ButtonRow buttons={actionButtons} />);
+    },
 
+    render: function() {
+      var disabled = this.props.acl.isReadOnly();
+      var importButton = [{
+        disabled: disabled,
+        title: 'Import config file',
+        action: this._openFileDialog
+      }];
       return (
         <div className="inspector-config">
           <div className="inspector-config__fields">
@@ -408,7 +441,7 @@ YUI.add('inspector-config', function() {
             </div>
             {this._generateConfigElements()}
           </div>
-          <juju.components.ButtonRow buttons={actionButtons} />
+          {this._generateButtons()}
         </div>
       );
     }

@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('string-config', function() {
 
   juju.components.StringConfig = React.createClass({
+    displayName: 'StringConfig',
 
     propTypes: {
       config: React.PropTypes.oneOfType([
@@ -28,6 +29,7 @@ YUI.add('string-config', function() {
         React.PropTypes.number
       ]),
       disabled: React.PropTypes.bool,
+      onChange: React.PropTypes.func,
       option: React.PropTypes.object.isRequired
     },
 
@@ -69,6 +71,18 @@ YUI.add('string-config', function() {
       this.setState({ value: e.currentTarget.innerText });
     },
 
+    /**
+      Call an on change method if provided.
+
+      @method _handleOnChange
+    */
+    _handleOnChange: function() {
+      const onChange = this.props.onChange;
+      if (onChange) {
+        onChange();
+      }
+    },
+
     render: function() {
       var disabled = this.props.disabled;
       var type = this.props.option.type;
@@ -87,6 +101,7 @@ YUI.add('string-config', function() {
             ref="editableInput"
             onInput={this._updateValue}
             onBlur={this._updateValue}
+            onChange={this._handleOnChange}
             dangerouslySetInnerHTML={{__html: this.state.value}}>
           </div>
           <span className="string-config--description"

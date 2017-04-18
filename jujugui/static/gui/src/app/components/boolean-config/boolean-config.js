@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('boolean-config', function() {
 
   juju.components.BooleanConfig = React.createClass({
+    displayName: 'BooleanConfig',
+
     propTypes: {
       config: React.PropTypes.any.isRequired,
       disabled: React.PropTypes.bool,
@@ -71,10 +73,11 @@ YUI.add('boolean-config', function() {
       // Due to a bug in React we must use target here because we aren't able
       // to simulate changes on currentTarget.
       // https://github.com/facebook/react/issues/4950
-      this.setState({ value: e.target.checked });
-      if (onChange) {
-        onChange();
-      }
+      this.setState({ value: e.target.checked }, () => {
+        if (onChange) {
+          onChange();
+        }
+      });
     },
 
     /**
