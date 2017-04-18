@@ -26,8 +26,7 @@ describe('d3-components', function() {
     Y = YUI(GlobalConfig).use(['d3-components',
       'juju-tests-utils',
       'juju-view-utils',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
 
@@ -60,10 +59,12 @@ describe('d3-components', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'container');
-    container.append(Y.Node.create('<button/>')
-             .addClass('thing'))
-             .append(Y.Node.create('<button/>')
-             .addClass('target'));
+    const button1 = document.createElement('button');
+    button1.classList.add('thing');
+    container.appendChild(button1);
+    const button2 = document.createElement('button');
+    button2.classList.add('target');
+    container.appendChild(button2);
     state = {};
   });
 
@@ -115,7 +116,7 @@ describe('d3-components', function() {
     // Simulated events on DOM handlers better work.
     // These require a bound DOM element however
     comp.render();
-    Y.one('.thing').simulate('click');
+    document.querySelector('.thing').click();
     state.thing.should.equal('decorated');
   });
 
@@ -141,10 +142,15 @@ describe('d3-components', function() {
        comp.addModule(modA);
        comp.render();
 
-       Y.one('.thing').simulate('click');
+       document.querySelector('.thing').click();
        state.clicked.should.equal(true);
 
-       Y.one('.thing').simulate('dblclick');
+       const event = new MouseEvent('dblclick', {
+         'view': window,
+         'bubbles': true,
+         'cancelable': true
+       });
+       document.querySelector('.thing').dispatchEvent(event);
        state.dbldbl.should.equal(true);
 
      });
@@ -166,7 +172,7 @@ describe('d3-components', function() {
       assert.isTrue(resized);
       done();
     });
-    Y.one('window').simulate('resize');
+    window.dispatchEvent(new Event('resize'));
   });
 
   it('deep clones event objects to avoid shared bindings', function() {
@@ -196,12 +202,16 @@ describe('d3-components', function() {
        // Give each of these a render method that adds to container
        modA.name = 'moda';
        modA.render = function() {
-         this.get('container').append(Y.Node.create('<div id="fromA"></div>'));
+         const node = document.createElement('div');
+         node.setAttribute('id', 'fromA');
+         this.get('container').appendChild(node);
        };
 
        modB.name = 'modb';
        modB.render = function() {
-         this.get('container').append(Y.Node.create('<div id="fromB"></div>'));
+         const node = document.createElement('div');
+         node.setAttribute('id', 'fromB');
+         this.get('container').appendChild(node);
        };
 
        comp.setAttrs({container: container});
@@ -209,8 +219,8 @@ describe('d3-components', function() {
         .addModule(modB);
 
        comp.render();
-       viewUtils.isValue(Y.one('#fromA')).should.equal(true);
-       viewUtils.isValue(Y.one('#fromB')).should.equal(true);
+       viewUtils.isValue(document.querySelector('#fromA')).should.equal(true);
+       viewUtils.isValue(document.querySelector('#fromB')).should.equal(true);
      });
 
   it('should support d3 event bindings post render', function() {
@@ -222,7 +232,7 @@ describe('d3-components', function() {
     comp.render();
 
     // This is a d3 bound handler that occurs only after render.
-    container.one('.target').simulate('click');
+    document.querySelector('.target').click();
     state.targeted.should.equal(true);
   });
 

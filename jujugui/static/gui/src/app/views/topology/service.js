@@ -498,6 +498,20 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Get the DOM node if the container has been provided by YUI, otherwise the
+      container will be the DOM node already.
+
+      @method getContainer
+      @param {Object} context The context to get the container for.
+      @return {Object} A DOM node.
+    */
+    getContainer: function(context) {
+      context = context ? context : this;
+      const container = context.get('container');
+      return container.getDOMNode && container.getDOMNode() || container;
+    },
+
+    /**
       Attaches the drag and drop events for this view. These events need to be
       here because attaching them in the events object causes drag and drop
       events to stop bubbling at odd places cross browser.
@@ -505,7 +519,7 @@ YUI.add('juju-topology-service', function(Y) {
       @method _attachDragEvents
     */
     _attachDragEvents: function() {
-      var container = this.get('container'),
+      var container = Y.Node(this.get('container')),
           ZP = '.zoom-plane',
           EC = '.environment-help';
 
@@ -574,12 +588,12 @@ YUI.add('juju-topology-service', function(Y) {
       @param {DOM Element} node SVG DOM element.
     */
     attachTouchstartEvents: function(data, node) {
-      var topo = this.get('component'),
-          yuiNode = Y.Node(node);
+      const topo = this.get('component');
 
       // Do not attach the event to the ghost nodes
       if (!d3.select(node).classed('pending')) {
-        yuiNode.on('touchstart', this._touchstartServiceTap, this, topo);
+        node.addEventListener(
+          'touchstart', this._touchstartServiceTap, this, topo);
       }
     },
 
@@ -593,7 +607,7 @@ YUI.add('juju-topology-service', function(Y) {
     _touchstartServiceTap: function(e, topo) {
       // To execute the serviceClick method under the same context as
       // click we call it under the touch target context
-      var node = e.currentTarget.getDOMNode(),
+      var node = e.currentTarget,
           box = d3.select(node).datum();
       // If we're dragging with two fingers, ignore this as a tap and let
       // drag take over.
@@ -717,12 +731,12 @@ YUI.add('juju-topology-service', function(Y) {
     serviceClick: function(box, self, eType) {
       // Ignore if we clicked outside the actual service node.
       var topo = self.get('component');
-      var container = self.get('container');
+      const container = self.getContainer(self);
 
       // This check is required because d3.mouse() throws an internal error
       // on touch events
       if (eType !== 'touch') {
-        var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
+        var mouse_coords = d3.mouse(container.querySelector('.the-canvas'));
         if (!box.containsPoint(mouse_coords, topo.zoom)) {
           return;
         }
@@ -764,7 +778,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var topo = context.get('component');
       topo.fire('hoverService', {id: box.id});
-      var rect = Y.one(this);
+      var rect = this;
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
@@ -775,9 +789,10 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       topo.fire('hoverService', {id: null});
       context.unhoverServices();
+
+      const container = context.getContainer(context);
       // Do not fire if we're within the service box.
-      var container = context.get('container');
-      var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
+      var mouse_coords = d3.mouse(container.querySelector('.the-canvas'));
       if (box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
@@ -1084,9 +1099,11 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     clearStateHandler: function() {
-      var container = this.get('container'),
-          topo = this.get('component');
-      container.all('.environment-menu.active').removeClass('active');
+      var topo = this.get('component');
+      const container = this.getContainer();
+      container.querySelectorAll('.environment-menu.active').forEach(node => {
+        node.classList.remove('active');
+      });
       this.deselectNodes();
       this.unhoverServices();
       topo.get('state').changeState({
@@ -1270,9 +1287,11 @@ YUI.add('juju-topology-service', function(Y) {
         return d.translateStr;
       });
 
+      const container = self.getContainer();
       // Remove any active menus.
-      self.get('container').all('.environment-menu.active')
-      .removeClass('active');
+      container.querySelectorAll('.environment-menu.active').forEach(node => {
+        node.classList.remove('active');
+      });
       if (box.inDrag === views.DRAG_START) {
         box.inDrag = views.DRAG_ACTIVE;
       }

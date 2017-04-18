@@ -136,7 +136,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             ghostServiceId, // The service to which the unit is added.
             1, // Add a single unit.
             null, // For now the unit is unplaced.
-            Y.bind(this._addUnitCallback, this, ghostUnit), // The callback.
+            this._addUnitCallback.bind(this, ghostUnit), // The callback.
             // Options used by ECS, ignored by environment.
             {modelId: unitId}
         );

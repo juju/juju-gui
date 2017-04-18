@@ -29,8 +29,7 @@ describe('service module annotations', function() {
       'juju-tests-utils',
       'juju-views',
       'juju-view-environment',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -124,8 +123,7 @@ describe('service updates', function() {
       'juju-tests-utils',
       'juju-views',
       'juju-view-environment',
-      'node',
-      'node-event-simulate'],
+      'node'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -198,8 +196,7 @@ describe.skip('service module events', function() {
       'juju-views',
       'juju-gui',
       'juju-view-environment',
-      'juju-topology-service',
-      'node-event-simulate'],
+      'juju-topology-service'],
     function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
@@ -859,12 +856,12 @@ describe('canvasDropHandler', function() {
 });
 
 describe('_canvasDropHandler', function() {
-  var Y, views, utils, models, serviceModule;
+  var views, utils, models, serviceModule;
 
   // Requiring this much setup (before() and beforeEach() to call a single
   // method on a single object is obscene.
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
+    YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
       'juju-view-environment'],
@@ -903,7 +900,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _deployFromCharmbrowser: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)(files);
+    serviceModule._canvasDropHandler.call(self, files);
   });
 
   it('extracts a zipped charm directory when dropped', function(done) {
@@ -911,7 +908,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _extractCharmMetadata: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)([file]);
+    serviceModule._canvasDropHandler.call(self, [file]);
   });
 
   it('recognizes zip files of type x-zip-compressed', function(done) {
@@ -920,7 +917,7 @@ describe('_canvasDropHandler', function() {
     var self = {
       _extractCharmMetadata: function() {done();}
     };
-    Y.bind(serviceModule._canvasDropHandler, self)(files);
+    serviceModule._canvasDropHandler.call(self, files);
   });
 
 });

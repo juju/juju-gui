@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var views;
     before(function(done) {
       YUI(GlobalConfig).use(
-          'juju-view-utils', 'node-event-simulate',
+          'juju-view-utils',
           function(Y) {
             views = Y.namespace('juju.views');
             done();

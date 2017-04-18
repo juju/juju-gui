@@ -59,7 +59,10 @@ YUI.add('juju-topology-viewport', function(Y) {
      * @method getContainer
      */
     getContainer: function() {
-      return this.get('container');
+      // Get the DOM node if the container has been provided by YUI,
+      // otherwise the container will be the DOM node already.
+      const container = this.get('container');
+      return container.getDOMNode && container.getDOMNode() || container;
     },
 
     /**
@@ -86,9 +89,8 @@ YUI.add('juju-topology-viewport', function(Y) {
       topo.vis.attr('height', dimensions.height);
       zoomPlane.setAttribute('width', dimensions.width);
       zoomPlane.setAttribute('height', dimensions.height);
-      canvas.setStyles({
-        width: dimensions.width + 'px',
-        height: dimensions.height + 'px'});
+      canvas.style.width = dimensions.width + 'px';
+      canvas.style.height = dimensions.height + 'px';
       // Reset the scale parameters
       var oldSize = topo.get('size');
       topo.set('size', [dimensions.width, dimensions.height]);
@@ -114,14 +116,14 @@ YUI.add('juju-topology-viewport', function(Y) {
      */
     resized: function() {
       var container = this.getContainer();
-      var svg = container.one('.the-canvas');
-      var canvas = container.one('.topology-canvas');
+      var svg = container.querySelector('.the-canvas');
+      var canvas = container.querySelector('.topology-canvas');
       // Early out for tests that do not provide a full rendering environment.
       if (!utils.isValue(canvas) || !utils.isValue(svg)) {
         return;
       }
       var topo = this.get('component');
-      var zoomPlane = container.one('.zoom-plane');
+      var zoomPlane = container.querySelector('.zoom-plane');
       Y.fire('beforePageSizeRecalculation');
       // This sets the minimum viewport size - y was reduced to 200 to render
       // properly on 7" tablets in horizontal view.

@@ -102,7 +102,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method addSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to add.
     @return {Undefined} Mutates only.
   */
@@ -113,7 +113,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function(n) {
+      document.querySelectorAll(selector).forEach(function(n) {
         var classes = this.getAttribute('class');
         if (!self.hasSVGClass(this, class_name)) {
           this.setAttribute('class', classes + ' ' + class_name);
@@ -134,7 +134,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method removeSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to remove.
     @return {Undefined} Mutates only.
   */
@@ -144,7 +144,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function() {
+      document.querySelectorAll(selector).each(function() {
         var classes = this.getAttribute('class');
         this.setAttribute('class', classes.replace(class_name, ''));
       });
@@ -774,20 +774,27 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
-    var containerHeight = Y.one('body').get(
-        primary ? 'winHeight' : 'docHeight'),
-        bottomNavbar = Y.one('.bottom-navbar'),
-        navbar = Y.one('.header-banner'),
-        viewport = Y.one('#viewport'),
+    var containerHeight,
+        bottomNavbar = document.querySelector('.bottom-navbar'),
+        navbar = document.querySelector('.header-banner'),
+        viewport = document.querySelector('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
+    if (primary) {
+      containerHeight = document.documentElement.clientHeight;
+    } else {
+      const body = document.body;
+      const html = document.documentElement;
+      containerHeight = Math.max(body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight);
+    }
     // If all elements are present and the viewport is not set to display none
-    if (containerHeight && navbar && viewport &&
-      viewport.getComputedStyle('width') !== 'auto') {
+    const viewportHeight = viewport && window.getComputedStyle(
+      viewport).getPropertyValue('width');
+    if (containerHeight && navbar && viewport && viewportHeight !== 'auto') {
       result.height = containerHeight -
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 
-      result.width = Math.floor(parseFloat(
-          viewport.getComputedStyle('width')));
+      result.width = Math.floor(parseFloat(viewportHeight));
 
       // Make sure we don't get sized any smaller than the minimum.
       result.height = Math.max(result.height, minheight || 0);

@@ -1545,13 +1545,14 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, container, juju;
+    var Y, models, conn, env, container, juju, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
         'juju-tests-utils', 'json-stringify'], function(Y) {
         models = Y.namespace('juju.models');
         juju = Y.namespace('juju');
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1575,13 +1576,13 @@ describe('test_model.js', function() {
       env.connect();
       env.set('facades', {Client: [0], Charms: [1]});
       conn.open();
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
     });
 
     afterEach(function() {
       env.close();
       env.destroy();
-      container.destroy();
+      container.remove();
     });
 
     it('will throw an exception with non-read sync', function() {

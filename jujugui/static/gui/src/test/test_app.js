@@ -51,11 +51,10 @@ function injectData(app, data) {
 }
 
 describe('App', function() {
-  let container, getMockStorage, jujuConfig, testUtils, yui;
+  let container, getMockStorage, jujuConfig, testUtils;
 
   before(done => {
     YUI(GlobalConfig).use(['juju-tests-utils'], function(Y) {
-      yui = Y;
       testUtils = Y.namespace('juju-tests.utils');
       done();
     });
@@ -68,7 +67,7 @@ describe('App', function() {
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
     };
-    container = testUtils.makeAppContainer(yui);
+    container = testUtils.makeAppContainer();
     getMockStorage = function() {
       return new function() {
         return {
@@ -289,7 +288,7 @@ describe('App', function() {
     before(function(done) {
       // Need to define the container before the juju-gui module is loaded so
       // that the DOM exists when it initializes.
-      container = testUtils.makeAppContainer(yui);
+      container = testUtils.makeAppContainer();
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
@@ -788,13 +787,12 @@ describe('App', function() {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
           function(Y) {
             juju = Y.namespace('juju');
-            container = Y.Node.create(
-                '<div id="test" class="container"></div>');
             done();
           });
     });
 
     beforeEach(function() {
+      container = testUtils.makeContainer(this);
       conn = new testUtils.SocketStub();
       userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1022,7 +1020,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
     });
 
     afterEach(function() {
@@ -1077,10 +1075,10 @@ describe('App', function() {
   });
 
   describe('getUser', function() {
-    var app, juju, Y;
+    var app, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
+      YUI(GlobalConfig).use([
         'juju-gui',
         'juju-tests-utils',
         'juju-view-utils',
@@ -1124,7 +1122,7 @@ describe('App', function() {
     });
 
     it('gets the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1136,10 +1134,10 @@ describe('App', function() {
   });
 
   describe('clearUser', function() {
-    var app, juju, Y;
+    var app, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
+      YUI(GlobalConfig).use([
         'juju-gui',
         'juju-tests-utils',
         'juju-view-utils',
@@ -1183,7 +1181,7 @@ describe('App', function() {
     });
 
     it('clears the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1206,7 +1204,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1275,7 +1273,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -1428,7 +1426,7 @@ describe('App', function() {
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
       // Monkey patch.
       getLocation = Y.getLocation;
       Y.getLocation = function() {
@@ -1438,7 +1436,7 @@ describe('App', function() {
 
     afterEach(function() {
       Y.getLocation = getLocation;
-      container.destroy();
+      container.remove();
       app.destroy();
     });
 

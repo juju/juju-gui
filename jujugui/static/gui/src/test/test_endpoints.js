@@ -59,7 +59,7 @@ describe('Relation endpoints logic', function() {
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
     };
-    container = utils.makeAppContainer(Y);
+    container = utils.makeAppContainer();
     var conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
@@ -432,7 +432,7 @@ describe('Endpoints map handlers', function() {
       termsURL: 'http://terms.example.com/'
     };
     destroyMe = [];
-    container = utils.makeAppContainer(Y);
+    container = utils.makeAppContainer();
     conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
@@ -662,7 +662,7 @@ describe('Application config handlers', function() {
       termsURL: 'http://terms.example.com/'
     };
     destroyMe = [];
-    container = utils.makeAppContainer(Y);
+    container = utils.makeAppContainer();
     conn = new utils.SocketStub();
     var ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({

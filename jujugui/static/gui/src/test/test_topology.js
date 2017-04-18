@@ -20,11 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('topology', function() {
   var NS, TestModule, container, db, models, state, topo,
-      utils, views, viewUtils, Y;
+      utils, views, viewUtils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-topology', 'd3-components',
-      'juju-tests-utils', 'juju-view-utils', 'node', 'node-event-simulate'],
+    YUI(GlobalConfig).use(['juju-topology', 'd3-components',
+      'juju-tests-utils', 'juju-view-utils', 'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
       views = Y.namespace('juju.views');
@@ -60,10 +60,12 @@ describe('topology', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this);
-    container.append(Y.Node.create('<button/>')
-             .addClass('thing'))
-             .append(Y.Node.create('<button/>')
-             .addClass('target'));
+    const button1 = document.createElement('button');
+    button1.classList.add('thing');
+    container.appendChild(button1);
+    const button2 = document.createElement('button');
+    button2.classList.add('target');
+    container.appendChild(button2);
     state = {};
   });
 
