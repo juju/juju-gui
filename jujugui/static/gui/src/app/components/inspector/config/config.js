@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
+    displayName: 'Configuration',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -60,8 +62,7 @@ YUI.add('inspector-config', function() {
         // Reset the force update flag so it only happens once.
         this.setState({forceUpdate: false});
       }
-      return forceUpdate ||
-        nextProps.service.get('id') !== this.props.service.get('id');
+      return forceUpdate;
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -88,10 +89,8 @@ YUI.add('inspector-config', function() {
       @method _handleOnChange
     */
     _handleOnChange: function() {
-      console.log(this._getChangedConfig());
       if (Object.keys(this._getChangedConfig()).length > 0) {
-        console.log('changed!');
-        this.setState({changed: true});
+        this.setState({changed: true, forceUpdate: true});
       }
     },
 
@@ -114,8 +113,10 @@ YUI.add('inspector-config', function() {
           serviceConfig[key] = newConfig[key];
         }
       });
-      this.setState({forceUpdate: true});
-      this.setState({serviceConfig: serviceConfig});
+      this.setState({
+        forceUpdate: true,
+        serviceConfig: serviceConfig
+      });
     },
 
     /**
@@ -396,7 +397,6 @@ YUI.add('inspector-config', function() {
       @method _generateButtons
     */
     _generateButtons: function() {
-      console.log('changed', this.state.changed);
       if (!this.state.changed) {
         return null;
       }
