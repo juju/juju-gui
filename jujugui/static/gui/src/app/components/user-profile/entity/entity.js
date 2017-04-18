@@ -331,6 +331,8 @@ YUI.add('user-profile-entity', function() {
           title="Destroy model"
         />
       );
+    },
+
     /**
       Retrieve metrics from the plans service.
 
