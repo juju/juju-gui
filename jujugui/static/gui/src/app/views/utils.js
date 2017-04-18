@@ -1934,7 +1934,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.arrayDedupe = function(array) {
     // Sets can only contain unique values, so use that to do the dedupe and
     // then turn it back into an array.
-    return Array.from(new Set(array));
+    return [...new Set(array)];
   };
 
   /**
@@ -1956,8 +1956,8 @@ YUI.add('juju-view-utils', function(Y) {
     Map two arrays into an array of pairs for each position from the original
     arrays e.g. [1, 2] and [3, 4] would become [[1, 3], [2, 4]]
 
-    @method arrayFlatten
-    @returns {Array} A single depth array.
+    @method arrayZip
+    @returns {Array} A positionally grouped array.
   */
   utils.arrayZip = function(...arrays) {
     // Get the length of the longest array.
