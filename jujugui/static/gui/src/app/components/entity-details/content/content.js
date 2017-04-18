@@ -21,8 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-content', function() {
 
   juju.components.EntityContent = React.createClass({
-    /* Define and validate the properites available on this component. */
+    displayName: 'EntityContent',
+
     propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
@@ -31,6 +33,73 @@ YUI.add('entity-content', function() {
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
+      staticURL: React.PropTypes.string
+    },
+
+    getDefaultProps: function() {
+      return {
+        // The endpoint for viewing terms is set up on jujucharms.com.
+        staticURL: 'http://jujucharms.com'
+      };
+    },
+
+    getInitialState: function() {
+      this.xhrs = [];
+      return {
+        terms: [],
+        termsLoading: false
+      };
+    },
+
+    componentWillMount: function() {
+      this._getTerms();
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach(xhr => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    /**
+      Get the list of terms for the charm, updating the state with these
+      terms.
+
+      @method _getTerms
+    */
+    _getTerms: function() {
+      const entityTerms = this.props.entityModel.get('terms');
+      if (!entityTerms || !entityTerms.length || entityTerms.length === 0) {
+        this.setState({termsLoading: false});
+        return null;
+      }
+      this.setState({termsLoading: true}, () => {
+        entityTerms.forEach(term => {
+          const xhr = this.props.showTerms(term, null, (error, response) => {
+            if (error) {
+              const message = `Failed to load terms for ${term}`;
+              this.props.addNotification({
+                title: message,
+                message: `${message}: ${error}`,
+                level: 'error'
+              });
+              console.error(`${message}: ${error}`);
+              return;
+            }
+            const terms = this.state.terms;
+            terms.push(response);
+            this.setState({terms: terms}, () => {
+              // If all the terms have loaded then we can finally hide the
+              // loading spinner.
+              if (terms.length === entityTerms.length) {
+                this.setState({termsLoading: false});
+              }
+            });
+          });
+          this.xhrs.push(xhr);
+        });
+      });
     },
 
     /**
@@ -224,6 +293,46 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of terms if available.
+
+      @method _generateTerms
+      @return {Array} The terms markup.
+    */
+    _generateTerms: function() {
+      const terms = this.state.terms;
+      let content;
+      if (this.state.termsLoading) {
+        content = (
+          <juju.components.Spinner />);
+      } else if (terms.length === 0) {
+        return null;
+      } else {
+        const items = terms.map(item => {
+          const url = [
+            this.props.staticURL, 'terms', item.name, item.revision].join('/');
+          return (
+            <li key={item.name}>
+              <a className="link"
+                href={url}
+                target="_blank">
+                {item.name} &rsaquo;
+              </a>
+            </li>
+          );
+        });
+        content = (
+          <ul>
+            {items}
+          </ul>);
+      }
+      return (
+        <div className="four-col entity-content__metadata">
+          <h4>Terms</h4>
+          {content}
+        </div>);
+    },
+
+    /**
       Generate the description if it is a charm.
 
       @method _generateDescription
@@ -244,6 +353,7 @@ YUI.add('entity-content', function() {
                 </div>
               </div>
               {this._generateTags()}
+              {this._generateTerms()}
             </div>
           </div>
         );
