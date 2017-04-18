@@ -52,8 +52,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         generateChangeDescription={sinon.stub()}
         hasEntities={true}
-        modelCommitted={false}
-        showInstall={true} />, true);
+        modelCommitted={false} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -61,11 +60,6 @@ describe('DeploymentBar', function() {
         instanceName="deployment-bar-panel"
         visible={true}>
         <div className="deployment-bar">
-          <a className="button--inline-neutral"
-            href="https://jujucharms.com/get-started"
-            target="_blank">
-            Install Juju
-          </a>
           <juju.components.DeploymentBarNotification
             change={null} />
           <div className="deployment-bar__deploy">
@@ -80,22 +74,6 @@ describe('DeploymentBar', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can render without the install button', function() {
-    var currentChangeSet = {one: 1, two: 2};
-    var deployButtonAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
-        acl={acl}
-        changeState={sinon.stub()}
-        currentChangeSet={currentChangeSet}
-        deployButtonAction={deployButtonAction}
-        generateChangeDescription={sinon.stub()}
-        hasEntities={false}
-        modelCommitted={false}
-        showInstall={false} />);
-    assert.isUndefined(output.props.children.props.children[0]);
-  });
-
   it('enables the button if there are changes', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
@@ -107,10 +85,9 @@ describe('DeploymentBar', function() {
         deployButtonAction={deployButtonAction}
         generateChangeDescription={sinon.stub()}
         hasEntities={false}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     assert.isFalse(
-      output.props.children.props.children[2].props.children.props.disabled);
+      output.props.children.props.children[1].props.children.props.disabled);
   });
 
   it('disables the button if there are no changes', function() {
@@ -124,10 +101,9 @@ describe('DeploymentBar', function() {
         deployButtonAction={deployButtonAction}
         generateChangeDescription={sinon.stub()}
         hasEntities={false}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     assert.isTrue(
-      output.props.children.props.children[2].props.children.props.disabled);
+      output.props.children.props.children[1].props.children.props.disabled);
   });
 
   it('passes the button the correct title if there are commits', function() {
@@ -141,11 +117,10 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         deployButtonAction={deployButtonAction}
         generateChangeDescription={sinon.stub()}
-        modelCommitted={true}
-        showInstall={true} />, true);
+        modelCommitted={true} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children.props.children[2].props.children.props.title,
+      output.props.children.props.children[1].props.children.props.title,
       'Commit changes (0)');
   });
 
@@ -162,8 +137,7 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />, true);
+        modelCommitted={false} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
@@ -174,10 +148,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -197,8 +170,7 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />, true);
+        modelCommitted={false} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
@@ -209,10 +181,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -227,10 +198,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -248,8 +218,7 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />, true);
+        modelCommitted={false} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
@@ -260,10 +229,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -278,10 +246,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
-        modelCommitted={false}
-        showInstall={true} />);
+        modelCommitted={false} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -296,10 +263,9 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         deployButtonAction={deployButtonAction}
         modelCommitted={false}
-        services={[]}
-        showInstall={true} />);
+        services={[]} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[1]).toEqualJSX(
+    expect(output.props.children.props.children[0]).toEqualJSX(
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -314,14 +280,13 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         generateChangeDescription={sinon.stub()}
         hasEntities={true}
-        modelCommitted={false}
-        showInstall={true} />, true);
+        modelCommitted={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-bar__read-only">
         Read only
       </div>);
-    expect(output.props.children.props.children[2]).toEqualJSX(expected);
+    expect(output.props.children.props.children[1]).toEqualJSX(expected);
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{
@@ -335,8 +300,7 @@ describe('DeploymentBar', function() {
         generateChangeDescription={sinon.stub()}
         hasEntities={true}
         modelCommitted={false}
-        sendAnalytics={sendAnalytics}
-        showInstall={true} />, true);
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._deployAction();
     assert.equal(changeState.callCount, 1);

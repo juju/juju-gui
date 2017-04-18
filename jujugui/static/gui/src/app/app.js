@@ -1446,8 +1446,7 @@ YUI.add('juju-gui', function(Y) {
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           modelCommitted={this.env.get('connected')}
-          sendAnalytics={this.sendAnalytics}
-          showInstall={!!this.get('sandbox')} />,
+          sendAnalytics={this.sendAnalytics} />,
         document.getElementById('deployment-bar-container'));
     },
 
@@ -2918,7 +2917,6 @@ YUI.add('juju-gui', function(Y) {
       }
       var options = {
         endpointsController: this.endpointsController,
-        useDragDropImport: this.get('sandbox'),
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,

@@ -951,11 +951,8 @@ YUI.add('juju-env-api', function(Y) {
       // Use a web handler to communicate to the Juju HTTPS API. The web
       // handler takes care of setting up asynchronous requests with basic
       // HTTP authentication, and of subscribing/invoking the given callbacks.
-      // The web handler is stored as an environment attribute: it is usually
-      // an instance of app/store/web-handler.js:WebHandler when the GUI is
-      // connected to a real Juju model. When instead the GUI is run in
-      // sandbox mode, a fake handler is used, in which no HTTP requests are
-      // involved: see app/store/web-sandbox.js:WebSandbox.
+      // The web handler is stored as an environment attribute: it is
+      // an instance of app/store/web-handler.js:WebHandler.
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendPostRequest(
@@ -2982,10 +2979,6 @@ YUI.add('juju-env-api', function(Y) {
     // Microsoft Azure.
     azure: {
       supportedContainerTypes: []
-    },
-    // Sandbox mode.
-    demonstration: {
-      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // Amazon EC2.
     ec2: {

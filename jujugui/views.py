@@ -67,7 +67,6 @@ def config(request):
     """
     settings = request.registry.settings
     request.response.content_type = 'application/javascript'
-    sandbox_enabled = settings['jujugui.sandbox']
 
     user = settings.get('jujugui.user')
     password = settings.get('jujugui.password')
@@ -78,10 +77,6 @@ def config(request):
     discharge_token = settings.get('jujugui.discharge_token')
     plans_macaroons = settings.get('jujugui.plans_macaroons')
     terms_macaroons = settings.get('jujugui.terms_macaroons')
-
-    if sandbox_enabled:
-        user = user if user is not None else 'admin'
-        password = password if password is not None else 'password'
 
     if settings.get('jujugui.insecure', False):
         socket_protocol = 'ws'
@@ -119,9 +114,6 @@ def config(request):
         'password': password,
         'jujuEnvUUID': env_uuid,
         'interactiveLogin': settings['jujugui.interactive_login'],
-        # Enable/disable sandbox (demonstration) mode.
-        'sandbox': sandbox_enabled,
-        'sandboxSocketURL': 'wss://demo.jujucharms.com/ws',
         # XXX frankban: do we still support read-only mode?
         'readOnly': False,
         # Set the GTM_enabled to enable Google Tag Manager usage and calls.
