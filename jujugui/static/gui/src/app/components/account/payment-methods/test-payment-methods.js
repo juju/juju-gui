@@ -38,8 +38,12 @@ describe('AccountPaymentMethod', () => {
       <juju.components.AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />, true);
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
@@ -48,7 +52,7 @@ describe('AccountPaymentMethod', () => {
         </h2>
         <juju.components.Spinner />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render the payment methods', () => {
@@ -57,12 +61,19 @@ describe('AccountPaymentMethod', () => {
         name: 'Company'
       }]
     });
+    const addNotification = sinon.stub();
+    const removePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentMethod
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />, true);
+        removePaymentMethod={removePaymentMethod}
+        username="spinach"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
@@ -83,12 +94,16 @@ describe('AccountPaymentMethod', () => {
             </div>
             <div className="account__payment-details">
               <juju.components.AccountPaymentMethodCard
-                card={{name: 'Company'}} />
+                addNotification={addNotification}
+                card={{name: 'Company'}}
+                onPaymentMethodRemoved={instance._getUser}
+                removePaymentMethod={removePaymentMethod}
+                username='spinach' />
             </div>
           </juju.components.ExpandingRow>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there is no user', () => {
@@ -97,19 +112,28 @@ describe('AccountPaymentMethod', () => {
       <juju.components.AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />, true);
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
         <h2 className="account__title twelve-col">
           Payment details
         </h2>
-        <div>
-          No payment methods available.
+        <div className="account__payment-no-methods">
+          You do not have a payment method.
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-neutral"
+            title="Add payment method" />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there are no payment methods', () => {
@@ -120,19 +144,28 @@ describe('AccountPaymentMethod', () => {
       <juju.components.AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />, true);
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
         <h2 className="account__title twelve-col">
           Payment details
         </h2>
-        <div>
-          No payment methods available.
+        <div className="account__payment-no-methods">
+          You do not have a payment method.
+          <juju.components.GenericButton
+            action={instance._toggleAdd}
+            type="inline-neutral"
+            title="Add payment method" />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can handle errors when loading the user', () => {
@@ -142,8 +175,12 @@ describe('AccountPaymentMethod', () => {
       <juju.components.AccountPaymentMethod
         acl={acl}
         addNotification={addNotification}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />);
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not load user info',
@@ -159,9 +196,206 @@ describe('AccountPaymentMethod', () => {
       <juju.components.AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
         getUser={getUser}
-        username="spinach" />, true);
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub()} />, true);
     component.unmount();
     assert.equal(abort.callCount, 1);
+  });
+
+  it('can show the add payment form', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, {
+      paymentMethods: []
+    });
+    const validateForm = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={sinon.stub()}
+        createPaymentMethod={sinon.stub()}
+        createToken={sinon.stub()}
+        getUser={getUser}
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={validateForm} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.action();
+    output = component.getRenderOutput();
+    const expected = (
+      <juju.components.ExpandingRow
+        classes={{'twelve-col': true}}
+        clickable={false}
+        expanded={true}>
+        <div></div>
+        <div className="account__payment-form">
+          <div className="account__payment-form-fields">
+            <juju.components.CardForm
+              acl={acl}
+              ref="cardForm"
+              validateForm={validateForm} />
+          </div>
+          <div className="twelve-col account__payment-form-buttons">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Cancel" />
+            <juju.components.GenericButton
+              action={instance._createToken}
+              type="inline-positive"
+              title="Add payment method" />
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
+    expect(output.props.children[1]).toEqualJSX(expected);
+  });
+
+  it('validates the form when adding a new payment method', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, {
+      paymentMethods: []
+    });
+    const createToken = sinon.stub().callsArgWith(1, null, {id: 'token123'});
+    const createPaymentMethod = sinon.stub().callsArg(2, null, null);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={sinon.stub()}
+        createPaymentMethod={createPaymentMethod}
+        createToken={createToken}
+        getUser={getUser}
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub().returns(false)} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    instance.refs = {
+      cardForm: {
+        getValue: sinon.stub().returns({
+          card: 'data'
+        })
+      }
+    };
+    output.props.children[1].props.children[1].props.action();
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children[1]
+      .props.children[1].props.action();
+    assert.equal(createToken.callCount, 0);
+  });
+
+  it('can create a new payment method', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, {
+      paymentMethods: []
+    });
+    const createToken = sinon.stub().callsArgWith(1, null, {id: 'token123'});
+    const createPaymentMethod = sinon.stub().callsArg(2, null, null);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={sinon.stub()}
+        createPaymentMethod={createPaymentMethod}
+        createToken={createToken}
+        getUser={getUser}
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub().returns(true)} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    instance.refs = {
+      cardForm: {
+        getValue: sinon.stub().returns({
+          card: 'data'
+        })
+      }
+    };
+    output.props.children[1].props.children[1].props.action();
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children[1]
+      .props.children[1].props.action();
+    assert.equal(createToken.callCount, 1);
+    assert.deepEqual(createToken.args[0][0], {
+      card: 'data'
+    });
+    assert.equal(createPaymentMethod.callCount, 1);
+    assert.equal(instance.state.showAdd, false);
+    assert.equal(getUser.callCount, 2);
+  });
+
+  it('can handle errors when creating a token', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, {
+      paymentMethods: []
+    });
+    const createToken = sinon.stub().callsArgWith(1, 'Uh oh!');
+    const createPaymentMethod = sinon.stub().callsArg(2, null, null);
+    const addNotification = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={addNotification}
+        createPaymentMethod={createPaymentMethod}
+        createToken={createToken}
+        getUser={getUser}
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub().returns(true)} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    instance.refs = {
+      cardForm: {
+        getValue: sinon.stub().returns({
+          card: 'data'
+        })
+      }
+    };
+    output.props.children[1].props.children[1].props.action();
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children[1]
+      .props.children[1].props.action();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Could not create Stripe token',
+      message: 'Could not create Stripe token: Uh oh!',
+      level: 'error'
+    });
+  });
+
+  it('can handle errors when creating a payment method', () => {
+    const getUser = sinon.stub().callsArgWith(1, null, {
+      paymentMethods: []
+    });
+    const createToken = sinon.stub().callsArgWith(1, null, {id: 'token123'});
+    const createPaymentMethod = sinon.stub().callsArgWith(2, 'Uh oh!', null);
+    const addNotification = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountPaymentMethod
+        acl={acl}
+        addNotification={addNotification}
+        createPaymentMethod={createPaymentMethod}
+        createToken={createToken}
+        getUser={getUser}
+        removePaymentMethod={sinon.stub()}
+        username="spinach"
+        validateForm={sinon.stub().returns(true)} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    instance.refs = {
+      cardForm: {
+        getValue: sinon.stub().returns({
+          card: 'data'
+        })
+      }
+    };
+    output.props.children[1].props.children[1].props.action();
+    output = component.getRenderOutput();
+    output.props.children[1].props.children[1].props.children[1]
+      .props.children[1].props.action();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Could not create the payment method',
+      message: 'Could not create the payment method: Uh oh!',
+      level: 'error'
+    });
   });
 });

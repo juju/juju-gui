@@ -252,11 +252,7 @@ var module = module;
       };
       const id = this._generatePaymentMethodName();
       const url = `${this.url}/u/${username}/payment-methods/${id}`;
-      const payload = {
-        token: token,
-        'payment-method-name': id
-      };
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', token, handler);
     },
 
     /**
@@ -265,18 +261,12 @@ var module = module;
       @public removePaymentMethod
       @param name {String} The user's username.
       @param id {String} The payment method id.
-      @param token {String} A Stripe token.
-      @param callback {Function} A callback to handle errors or accept the
-        data from the request. Must accept an error message or null as its
-        first parameter and the response as the second parameter.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
     */
-    removePaymentMethod: function(username, id, token, callback) {
-      const handler = (error, response) => {
-        if (error !== null) {
-          callback(error, null);
-          return;
-        }
-        callback(null, response);
+    removePaymentMethod: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
       };
       const url = `${this.url}/u/${username}/payment-methods/${id}`;
       const payload = {
