@@ -69,13 +69,16 @@ describe('EntityContent', function() {
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          addNotification={sinon.stub()}
           apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
           pluralize={pluralize}
-          renderMarkdown={renderMarkdown} />, true);
+          renderMarkdown={renderMarkdown}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com" />, true);
     const option1 = {
       description: 'Your username',
       type: 'string',
@@ -186,18 +189,140 @@ describe('EntityContent', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can display a charm with actions', function() {
-    mockEntity.set('bugUrl', 'http://example.com/bugs');
-    mockEntity.set('homepage', 'http://example.com/');
+  it('can display a charm with terms', function() {
+    mockEntity.set('terms', ['term1', 'term2']);
+    const showTerms = sinon.stub();
+    showTerms.onFirstCall().callsArgWith(2, null, {
+      name: 'terms1',
+      revision: 5
+    });
+    showTerms.onSecondCall().callsArgWith(2, null, {
+      name: 'terms2',
+      revision: 10
+    });
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          addNotification={sinon.stub()}
           apiUrl="http://example.com"
           changeState={sinon.stub()}
           entityModel={mockEntity}
           getFile={sinon.stub()}
           hasPlans={false}
           pluralize={sinon.stub()}
-          renderMarkdown={sinon.stub()} />, true);
+          renderMarkdown={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="four-col entity-content__metadata">
+        <h4>Terms</h4>
+        <ul>
+          {[<li key="terms1">
+             <a className="link"
+               href="http://example.com/terms/terms1/5"
+               target="_blank">
+               {'terms1'} &rsaquo;
+             </a>
+           </li>,
+            <li key="terms2">
+              <a className="link"
+                href="http://example.com/terms/terms2/10"
+                target="_blank">
+                {'terms2'} &rsaquo;
+              </a>
+            </li>]}
+        </ul>
+      </div>);
+    const terms = output.props.children[0].props.children.props.children[2];
+    expect(terms).toEqualJSX(expected);
+  });
+
+  it('can display a spinner when loading terms', function() {
+    mockEntity.set('terms', ['term1', 'term2']);
+    const showTerms = sinon.stub();
+    showTerms.onFirstCall();
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          addNotification={sinon.stub()}
+          apiUrl="http://example.com"
+          changeState={sinon.stub()}
+          entityModel={mockEntity}
+          getFile={sinon.stub()}
+          hasPlans={false}
+          pluralize={sinon.stub()}
+          renderMarkdown={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="four-col entity-content__metadata">
+        <h4>Terms</h4>
+        <juju.components.Spinner />
+      </div>);
+    const terms = output.props.children[0].props.children.props.children[2];
+    expect(terms).toEqualJSX(expected);
+  });
+
+  it('can handle errors when loading terms', function() {
+    mockEntity.set('terms', ['term1', 'term2']);
+    const showTerms = sinon.stub().onFirstCall().callsArgWith(2, 'Uh oh', null);
+    const addNotification = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          addNotification={addNotification}
+          apiUrl="http://example.com"
+          changeState={sinon.stub()}
+          entityModel={mockEntity}
+          getFile={sinon.stub()}
+          hasPlans={false}
+          pluralize={sinon.stub()}
+          renderMarkdown={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com" />, true);
+    renderer.getRenderOutput();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Failed to load terms for term1',
+      message: 'Failed to load terms for term1: Uh oh',
+      level: 'error'
+    });
+  });
+
+  it('can abort requests when unmounting', function() {
+    mockEntity.set('terms', ['term1', 'term2']);
+    const abort = sinon.stub();
+    const showTerms = sinon.stub().returns({abort: abort});
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          addNotification={sinon.stub()}
+          apiUrl="http://example.com"
+          changeState={sinon.stub()}
+          entityModel={mockEntity}
+          getFile={sinon.stub()}
+          hasPlans={false}
+          pluralize={sinon.stub()}
+          renderMarkdown={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com" />, true);
+    renderer.unmount();
+    assert.equal(abort.callCount, 2);
+  });
+
+  it('can display a charm with actions', function() {
+    mockEntity.set('bugUrl', 'http://example.com/bugs');
+    mockEntity.set('homepage', 'http://example.com/');
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          addNotification={sinon.stub()}
+          apiUrl="http://example.com"
+          changeState={sinon.stub()}
+          entityModel={mockEntity}
+          getFile={sinon.stub()}
+          hasPlans={false}
+          pluralize={sinon.stub()}
+          renderMarkdown={sinon.stub()}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="section">
@@ -236,13 +361,16 @@ describe('EntityContent', function() {
     const script = generateScript();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
         hasPlans={false}
         pluralize={pluralize}
-        renderMarkdown={renderMarkdown} />, true);
+        renderMarkdown={renderMarkdown}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -336,13 +464,16 @@ describe('EntityContent', function() {
     const script = generateScript(true);
     const output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          addNotification={sinon.stub()}
           apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
           pluralize={pluralize}
-          renderMarkdown={renderMarkdown} />);
+          renderMarkdown={renderMarkdown}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com" />);
     const expected = (
       <div className="entity-content">
         {undefined}
@@ -494,13 +625,16 @@ describe('EntityContent', function() {
     mockEntity.set('homepage', 'http://example.com/');
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          addNotification={sinon.stub()}
           apiUrl="http://example.com"
           changeState={sinon.stub()}
           entityModel={mockEntity}
           getFile={sinon.stub()}
           hasPlans={false}
           pluralize={sinon.stub()}
-          renderMarkdown={sinon.stub()} />, true);
+          renderMarkdown={sinon.stub()}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="section">
@@ -537,13 +671,16 @@ describe('EntityContent', function() {
     mockEntity.set('relations', {requires: {}, provides: {}});
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          addNotification={sinon.stub()}
           apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
           pluralize={pluralize}
-          renderMarkdown={renderMarkdown} />, true);
+          renderMarkdown={renderMarkdown}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const parent = output.props.children[2].props.children.props.children[1];
     const relationsComponent = parent.props.children[2];
@@ -572,6 +709,7 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -579,7 +717,9 @@ describe('EntityContent', function() {
         hasPlans={true}
         plans={plans}
         pluralize={pluralize}
-        renderMarkdown={renderMarkdown} />, true);
+        renderMarkdown={renderMarkdown}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div id="plans"
@@ -677,6 +817,7 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -684,7 +825,9 @@ describe('EntityContent', function() {
         hasPlans={true}
         plans={null}
         pluralize={pluralize}
-        renderMarkdown={renderMarkdown} />, true);
+        renderMarkdown={renderMarkdown}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.Spinner />);
@@ -700,6 +843,7 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -707,7 +851,9 @@ describe('EntityContent', function() {
         hasPlans={true}
         plans={[]}
         pluralize={pluralize}
-        renderMarkdown={renderMarkdown} />, true);
+        renderMarkdown={renderMarkdown}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (undefined);
     assert.deepEqual(output.props.children[1], expected);
@@ -719,13 +865,16 @@ describe('EntityContent', function() {
     mockEntity.set('description', 'A simple [link](http://google.com/).');
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        addNotification={sinon.stub()}
         apiUrl='http://example.com'
         changeState={sinon.stub()}
         entityModel={mockEntity}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
-        renderMarkdown={marked} />);
+        renderMarkdown={marked}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />);
     const description = output.props.children[0].props.children.props
       .children[0].props.children;
     const markupObject = description.props.dangerouslySetInnerHTML;

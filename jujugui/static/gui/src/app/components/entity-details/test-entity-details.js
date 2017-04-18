@@ -41,31 +41,6 @@ describe('EntityDetails', function() {
     mockEntity = undefined;
   });
 
-  it('can be rendered', function() {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        apiUrl="http://example.com/"
-        id="test"
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        getBundleYAML={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={sinon.spy()}
-        getFile={sinon.stub()}
-        importBundleYAML={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={sinon.spy()}
-        pluralize={sinon.spy()}
-        renderMarkdown={sinon.stub()}
-        scrollPosition={0}
-        setPageTitle={sinon.stub()}
-        urllib={urllib}
-      />);
-    assert.equal(output.props.className, 'entity-details');
-  });
-
   it('fetches an entity properly', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
     const apiUrl = 'http://example.com';
@@ -81,6 +56,7 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
+    const showTerms = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -101,6 +77,8 @@ describe('EntityDetails', function() {
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
           setPageTitle={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com"
           urllib={urllib}
         />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -112,7 +90,7 @@ describe('EntityDetails', function() {
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
     const expectedOutput = (
-      <div className={'entity-details charm'}
+      <div className="entity-details charm"
         ref="content"
         tabIndex="0">
         <div>
@@ -133,6 +111,7 @@ describe('EntityDetails', function() {
           />
           {undefined}
           <juju.components.EntityContent
+            addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
@@ -141,6 +120,8 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            showTerms={showTerms}
+            staticURL="http://example.com"
           />
           </div>
       </div>
@@ -177,6 +158,8 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com"
           urllib={urllib}
         />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -215,6 +198,7 @@ describe('EntityDetails', function() {
     const renderMarkdown = sinon.spy();
     const getDiagramURL = sinon.spy();
     const addNotification = sinon.spy();
+    const showTerms = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -235,6 +219,8 @@ describe('EntityDetails', function() {
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
           setPageTitle={sinon.stub()}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com"
           urllib={urllib}
         />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -270,6 +256,7 @@ describe('EntityDetails', function() {
             id={id}
           />
           <juju.components.EntityContent
+            addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
@@ -278,6 +265,8 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            showTerms={showTerms}
+            staticURL="http://example.com"
           />
           </div>
       </div>);
@@ -314,6 +303,8 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
+          showTerms={sinon.stub()}
+          staticURL="http://example.com"
           urllib={urllib}
         />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -344,6 +335,8 @@ describe('EntityDetails', function() {
         renderMarkdown={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
         urllib={urllib}
       />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -369,6 +362,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const showTerms = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -389,6 +383,8 @@ describe('EntityDetails', function() {
         renderMarkdown={renderMarkdown}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
         urllib={urllib}
       />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -421,6 +417,7 @@ describe('EntityDetails', function() {
           />
           {undefined}
           <juju.components.EntityContent
+            addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
@@ -429,6 +426,8 @@ describe('EntityDetails', function() {
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            showTerms={showTerms}
+            staticURL="http://example.com"
           />
           </div>
       </div>);
@@ -453,6 +452,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const showTerms = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -473,6 +473,8 @@ describe('EntityDetails', function() {
         renderMarkdown={renderMarkdown}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
         urllib={urllib}
       />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -505,6 +507,7 @@ describe('EntityDetails', function() {
           />
           {undefined}
           <juju.components.EntityContent
+            addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
@@ -513,6 +516,8 @@ describe('EntityDetails', function() {
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            showTerms={showTerms}
+            staticURL="http://example.com"
           />
           </div>
       </div>);
