@@ -174,34 +174,28 @@ describe('HeaderHelp', function() {
       }
     );
 
-    it('keyboard shortcuts link calls correct keyboard shortcut cb', () => {
-      const keybindingsCallback = sinon.stub();
-      const keybindings = {
-        'S-/': {
-          target: '#shortcut-help',
-          toggle: true,
-          callback: keybindingsCallback
-        }
+    it('keyboard shortcuts link calls keyboard shortcut show()', () => {
+      const showFunc = sinon.stub();
+      const modalShortcuts = {
+        show: showFunc
       };
       const evt = {
         stopPropagation: sinon.stub()
       };
-      const div = document.createElement('div');
-      div.setAttribute('id', 'shortcut-help');
-      document.body.appendChild(div);
       const renderer = jsTestUtils.shallowRender(
         <juju.components.HeaderHelp.prototype.wrappedComponent
           appState={appState}
           gisf={true}
-          keybindings={keybindings}
+          modalShortcuts={modalShortcuts}
           user={{}} />, true);
       const instance = renderer.getMountedInstance();
+      instance.setState({
+        showHelpMenu: true
+      });
       instance._handleShortcutsLink(evt);
 
-      assert.equal(keybindingsCallback.callCount, 1);
-      assert.equal(keybindingsCallback.args[0][0], evt);
-      assert.equal(keybindingsCallback.args[0][1], div);
-      document.body.removeChild(div);
+      assert.equal(showFunc.callCount, 1);
+      assert.equal(instance.state.showHelpMenu, false);
     });
   });
 });

@@ -29,7 +29,7 @@ YUI.add('header-help', function() {
     propTypes: {
       appState: React.PropTypes.object.isRequired,
       gisf: React.PropTypes.bool.isRequired,
-      keybindings: React.PropTypes.object.isRequired,
+      modalShortcuts: React.PropTypes.object.isRequired,
       user: React.PropTypes.object
     },
 
@@ -87,28 +87,8 @@ YUI.add('header-help', function() {
       @param {Object} evt The event that triggered the function
     */
     _handleShortcutsLink: function(evt) {
-      const keybindings = this.props.keybindings;
-      // We specifically want the Shift + ? key combo
-      const spec = keybindings['S-/'];
-      const target = document.querySelector(spec.target);
-      if (target) {
-        if (spec.toggle) {
-          if (target.classList.contains('hidden')) {
-            target.classList.remove('hidden');
-          } else {
-            target.classList.add('hidden');
-          }
-        }
-        if (spec.focus) { target.focus(); }
-        if (spec.callback) {
-          // We need to pass the context of 'app' but we don't really want to
-          // pass a reference of the entire app around, so this just provides
-          // the required keybindings part.
-          spec.callback.call({keybindings: keybindings}, evt, target);
-        }
-        this.toggleHelpMenu();
-        evt.stopPropagation();
-      }
+      this.toggleHelpMenu();
+      this.props.modalShortcuts.show();
     },
 
     /**

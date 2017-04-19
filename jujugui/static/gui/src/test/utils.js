@@ -86,8 +86,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'notifications-container',
         'profile-link-container',
         'provider-logo-container',
-        'shortcut-help',
-        'shortcut-settings',
+        'modal-shortcuts',
+        'modal-gui-settings',
         'top-page-container',
         'zoom-container'
       ];

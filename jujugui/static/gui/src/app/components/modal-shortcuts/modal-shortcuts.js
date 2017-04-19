@@ -18,13 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('shortcuts', function() {
+YUI.add('modal-shortcuts', function() {
 
-  juju.components.Shortcuts = React.createClass({
+  juju.components.ModalShortcuts = React.createClass({
 
     propTypes: {
-      bindings: React.propTypes.array.isRequired,
-      keybindings: React.propTypes.object.isRequired
+      keybindings: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        visible: false
+      };
     },
 
     /**
@@ -33,15 +38,15 @@ YUI.add('shortcuts', function() {
     */
     _generateBindings: function() {
       let bindings = [];
-      Object.keys(this.props.keybindings).forEach(k => {
-        const v = this.props.keybindings[k];
-        if (v.help && (v.condition === undefined ||
-                       v.condition.call(this) === true)) {
-          // TODO: translate keybindings to
-          // human <Alt> m
-          // <Control> <Shift> N (note caps)
-          // also 'g then i' style
-          bindings.push({key: k, label: v.label || k, help: v.help});
+      Object.keys(this.props.keybindings).forEach(key => {
+        const binding = this.props.keybindings[key];
+        if (binding.help && (binding.condition === undefined ||
+                       binding.condition.call(this) === true)) {
+          bindings.push({
+            key: key,
+            label: binding.label || key,
+            help: binding.help
+          });
         }
       }, this);
 
@@ -65,12 +70,34 @@ YUI.add('shortcuts', function() {
       return components;
     },
 
+    show: function() {
+      this.setState({
+        visible: true
+      });
+    },
+
+    hide: function() {
+      this.setState({
+        visible: false
+      });
+    },
+
+    toggle: function() {
+      this.setState({
+        visible: !this.state.visible
+      });
+    },
+
     render: function() {
+      if (!this.state.visible) {
+        return (<div id="#shortcut-help"></div>);
+      }
       return (
-        <div>
+        <div id="#shortcut-help">
           <div className="twelve-col no-margin-bottom">
             <h2 className="bordered">Keyboard Shortcuts</h2>
-            <span className="close" tabIndex="0" role="button">
+            <span className="close" tabIndex="0" role="button"
+              onClick={this.hide}>
               <juju.components.SvgIcon name="close_16"
                 size="16" />
             </span>

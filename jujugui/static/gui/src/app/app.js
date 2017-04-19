@@ -108,88 +108,19 @@ YUI.add('juju-gui', function(Y) {
         help: 'Select the charm Search'
       },
       'S-1': {
-        target: '#shortcut-settings',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutHelp = document.querySelector('#shortcut-help');
-          if (shortcutHelp) {
-            shortcutHelp.classList.add('hidden');
-          }
-
-          if (target && !target.children.length) {
-            ReactDOM.render(
-              <window.juju.components.Settings
-                disableCookie={localStorage.getItem('disable-cookie')}
-                disableAutoPlace={localStorage.getItem('disable-auto-place')}
-                forceContainers={localStorage.getItem('force-containers')} />,
-              ReactDOM.findDOMNode(target));
-
-            // This is only added to the DOM once and is checked if it exists
-            // above. It's hidden and then shown, so this event is not auto
-            // cleaned up, but can only occur once.
-            target.querySelector('#save-settings').addEventListener(
-              'click', ev => {
-                const fields = target.querySelectorAll('input');
-                fields.each(function(node) {
-                  // If it's a checkbox:
-                  if (node.get('type') === 'checkbox') {
-                    // and if it's checked set that value to localStorage.
-                    if (node.get('checked')) {
-                      localStorage.setItem(node.getAttribute('name'), true);
-                    } else {
-                      // otherwise unset it from the localStorage.
-                      localStorage.removeItem(node.getAttribute('name'));
-                    }
-                  } else {
-                    localStorage.setItem(
-                        node.getAttribute('name'), node.get('value'));
-                  }
-                });
-              });
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-settings').classList.add(
-                'hidden');
-            });
-          }
+        target: '#modal-gui-settings',
+        callback: function() {
+          this.modalShortcuts.hide();
+          this.modalGUISettings.toggle();
         },
         help: 'GUI Settings',
         label: 'Shift + !'
       },
       'S-/': {
-        target: '#shortcut-help',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutSettings = document.querySelector('#shortcut-settings');
-          if (shortcutSettings) {
-            shortcutSettings.classList.add('hidden');
-          }
-
-          // This could be its own view.
-          if (target && !target.children.length) {
-            var bindings = [];
-            Object.keys(this.keybindings).forEach(k => {
-              const v = this.keybindings[k];
-              if (v.help && (v.condition === undefined ||
-                             v.condition.call(this) === true)) {
-                // TODO: translate keybindings to
-                // human <Alt> m
-                // <Control> <Shift> N (note caps)
-                // also 'g then i' style
-                bindings.push({key: k, label: v.label || k, help: v.help});
-              }
-            }, this);
-
-            ReactDOM.render(
-              <window.juju.components.Shortcuts
-                keybindings={this.keybindings}
-                bindings={bindings} />,
-              ReactDOM.findDOMNode(target));
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-help').classList.add('hidden');
-            });
-          }
+        target: '#modal-shortcuts',
+        callback: function() {
+          this.modalGUISettings.hide();
+          this.modalShortcuts.toggle();
         },
         help: 'Display this help',
         label: 'Shift + ?'
@@ -219,9 +150,8 @@ YUI.add('juju-gui', function(Y) {
       'esc': {
         fire: 'clearState',
         callback: function() {
-          // Explicitly hide anything we might care about.
-          document.querySelector('#shortcut-help').classList.add('hidden');
-          document.querySelector('#shortcut-settings').classList.add('hidden');
+          this.modalGUISettings.hide();
+          this.modalShortcuts.hide();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -1228,13 +1158,26 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
+    _renderModals: function() {
+      this.modalShortcuts = ReactDOM.render(
+        <window.juju.components.ModalShortcuts
+          keybindings={this.keybindings} />,
+        document.getElementById('modal-shortcuts'));
+      this.modalGUISettings = ReactDOM.render(
+        <window.juju.components.ModalGUISettings
+          disableCookie={localStorage.getItem('disable-cookie')}
+          disableAutoPlace={localStorage.getItem('disable-auto-place')}
+          forceContainers={localStorage.getItem('force-containers')}
+          localStorage={localStorage} />,
+        document.getElementById('modal-gui-settings'));
+    },
 
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
-          keybindings={this.keybindings}
+          modalShortcuts={this.modalShortcuts}
           user={this._getAuth()} />,
         document.getElementById('header-help'));
     },
@@ -2876,6 +2819,7 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
+      this._renderModals();
       this._renderHeaderHelp();
       this._renderHeaderLogo();
       const gui = this.state.current.gui;
@@ -3186,11 +3130,11 @@ YUI.add('juju-gui', function(Y) {
     'machine-view',
     'login-component',
     'logout-component',
+    'modal-gui-settings',
+    'modal-shortcuts',
     'notification-list',
     'panel-component',
-    'settings',
     'sharing',
-    'shortcuts',
     'user-menu',
     'user-profile',
     'zoom',

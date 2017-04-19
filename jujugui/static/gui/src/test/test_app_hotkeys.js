@@ -20,7 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('application hotkeys', function() {
   let app, container, env, juju, jujuConfig, keyboard, utils, Y;
-  const requirements = ['juju-gui', 'juju-tests-utils', 'node-event-simulate'];
+  const requirements = [
+    'juju-gui',
+    'juju-tests-utils',
+    'node-event-simulate',
+    'modal-shortcuts'
+  ];
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -48,7 +53,6 @@ describe('application hotkeys', function() {
       termsURL: 'http://terms.example.com/'
     };
     container = utils.makeAppContainer();
-    container.querySelector('#shortcut-help').classList.add('hidden');
     const userClass = new window.jujugui.User({storage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     env = new juju.environments.GoEnvironment({
@@ -74,6 +78,7 @@ describe('application hotkeys', function() {
     app.showView(new Y.View());
     app.activateHotkeys();
     app.render();
+    app._renderModals();
     keyboard = Keysim.Keyboard.US_ENGLISH;
   });
 
@@ -89,12 +94,13 @@ describe('application hotkeys', function() {
   it('should listen for "?" events', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
-    const help = document.querySelector('#shortcut-help');
-    assert.equal(help.classList.contains('hidden'), false,
-                 'Shortcut help not displayed');
-    assert.equal(
-      help.children.length > 0, true, 'The shortcut component not rendered');
-    container.querySelector('#shortcut-help').classList.add('hidden');
+    assert.equal(app.modalShortcuts.state.visible, true);
+  });
+
+  it('should listen for "!" events', function() {
+    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
+    keyboard.dispatchEventsForKeystroke(keystroke, container);
+    assert.equal(app.modalGUISettings.state.visible, true);
   });
 
   it('should listen for Alt-S key events', function() {
