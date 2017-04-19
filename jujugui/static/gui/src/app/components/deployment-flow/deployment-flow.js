@@ -39,6 +39,7 @@ YUI.add('deployment-flow', function() {
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
       credential: React.PropTypes.string,
+      ddData: React.PropTypes.object,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
@@ -48,6 +49,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
+      getDiagramURL: React.PropTypes.func,
       getDischargeToken: React.PropTypes.func,
       getUser: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
@@ -961,6 +963,30 @@ YUI.add('deployment-flow', function() {
         </div>);
     },
 
+    _generateOneClickDeploy: function() {
+      const props = this.props;
+      const ddEntityId = props.ddData && props.ddData.id;
+      if (!ddEntityId) {
+        return;
+      };
+      let diagram = undefined;
+      if (ddEntityId.indexOf('bundle') !== -1) {
+        diagram = <juju.components.EntityContentDiagram
+          getDiagramURL={this.props.getDiagramURL}
+          id={ddEntityId} />;
+      }
+      return (
+        <juju.components.DeploymentSection
+          instance="deployment-one-click"
+          showCheck={false}
+          title="Direct Deploy">
+          <p>
+            The following steps will guide you through deploying {ddEntityId}
+          </p>
+          {diagram}
+        </juju.components.DeploymentSection>);
+    },
+
     /**
       Report whether going forward with the deployment is currently allowed.
 
@@ -1019,6 +1045,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
+            {this._generateOneClickDeploy()}
             {this._generateModelNameSection()}
             {this._generateCloudSection()}
             {this._generateCredentialSection()}
