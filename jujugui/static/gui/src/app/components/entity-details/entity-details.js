@@ -44,6 +44,7 @@ YUI.add('entity-details', function() {
       renderMarkdown: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
       urllib: React.PropTypes.func.isRequired
     },
 
@@ -97,6 +98,7 @@ YUI.add('entity-details', function() {
                 />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
+                  addNotification={this.props.addNotification}
                   apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
@@ -105,6 +107,7 @@ YUI.add('entity-details', function() {
                   entityModel={entityModel}
                   plans={this.state.plans}
                   pluralize={this.props.pluralize}
+                  showTerms={this.props.showTerms}
                 />
               </div>
           );

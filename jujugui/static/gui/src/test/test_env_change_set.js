@@ -19,21 +19,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Environment Change Set', function() {
-  var Y, ECS, ecs, envObj, dbObj, models, testUtils;
+  var Y, ECS, ecs, envObj, dbObj, models, testUtils, viewUtils;
 
   before(function(done) {
     var modules = [
       'environment-change-set',
       'juju-models',
-      'juju-tests-utils'
+      'juju-tests-utils',
+      'juju-view-utils'
     ];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       testUtils = Y.namespace('juju-tests').utils;
+      viewUtils = Y.namespace('juju.views.utils');
       models = Y.namespace('juju.models');
       done();
     });
-    window.flags = { mv: true };
   });
 
   beforeEach(function() {
@@ -46,7 +47,8 @@ describe('Environment Change Set', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
+    const userClass = new window.jujugui.User(
+      {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     dbObj = new models.Database();
     ecs = new ECS({
@@ -69,7 +71,6 @@ describe('Environment Change Set', function() {
   });
 
   after(function() {
-    window.flags = {};
     dbObj.reset();
     dbObj.destroy();
   });
@@ -169,7 +170,7 @@ describe('Environment Change Set', function() {
         for (var i = 0; i < 999; i += 1) {
           result.push(ecs._createNewRecord('service'));
         }
-        var dedupe = Y.Array.dedupe(result);
+        var dedupe = viewUtils.arrayDedupe(result);
         // If there were any duplicates then these would be different.
         assert.equal(dedupe.length, result.length);
       });

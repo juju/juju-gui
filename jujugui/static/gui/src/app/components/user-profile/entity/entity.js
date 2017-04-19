@@ -34,6 +34,7 @@ YUI.add('user-profile-entity', function() {
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
+      permission: React.PropTypes.string,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
     },
@@ -265,19 +266,22 @@ YUI.add('user-profile-entity', function() {
       // name is displayed elsewhere in the expanded row.
       return (
         <div className="modelInfo">
-          <div className="prepend-three four-col">
+          <div className="prepend-two two-col">
+            {owner}
+          </div>
+          <div className="two-col">
+            {model.numMachines}
+          </div>
+          <div className="two-col">
             {model.cloud + '/' + region}
           </div>
           <div className="two-col">
+            {this.props.permission}
+          </div>
+          <div className="two-col last-col">
             <juju.components.DateDisplay
               date={model.lastConnection || '--'}
               relative={true} />
-          </div>
-          <div className="one-col">
-            {model.numMachines}
-          </div>
-          <div className="two-col last-col">
-            {owner}
           </div>
         </div>
       );

@@ -183,25 +183,15 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
-      Show search results for the given owner.
+      Navigate to the profile page of the given owner.
 
       @method _handleOwnerClick
       @param {String} owner The owner's name.
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleOwnerClick: function(owner, e) {
-      e.stopPropagation();
-      this.props.changeState({
-        search: {
-          owner: owner,
-          provides: null,
-          requires: null,
-          series: null,
-          tags: null,
-          text: '',
-          type: null
-        }
-      });
+    _handleOwnerClick: function(owner, evt) {
+      evt.stopPropagation();
+      this.props.changeState({search: null, profile: owner});
     },
 
     /**

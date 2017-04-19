@@ -73,16 +73,16 @@ YUI.add('juju-view-environment', function(Y) {
      * @chainable
      */
     render: function() {
-      var container = this.get('container'),
-          topo = this.topo,
-          db = this.get('db');
+      const container = this.getContainer();
+      let topo = this.topo;
+      const db = this.get('db');
 
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
         ReactDOM.render(
           <juju.components.Environment />,
-          container.getDOMNode());
+            container);
         this._rendered = true;
       }
 
@@ -90,15 +90,27 @@ YUI.add('juju-view-environment', function(Y) {
       topo.recordSubscription(
           'ServiceModule',
           db.services.after('remove',
-                            Y.bind(this.updateHelpIndicator, this)));
+                            this.updateHelpIndicator.bind(this)));
 
       topo.recordSubscription(
           'ServiceModule',
-          db.services.after('add', Y.bind(this.updateHelpIndicator, this)));
+          db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
-      topo.once('rendered', Y.bind(this.updateHelpIndicator, this));
+      topo.once('rendered', this.updateHelpIndicator.bind(this));
       return this;
+    },
+
+    /**
+      Get the DOM node if the container has been provided by YUI, otherwise the
+      container will be the DOM node already.
+
+      @method getContainer
+      @return {Object} A DOM node.
+    */
+    getContainer: function() {
+      const container = this.get('container');
+      return container.getDOMNode && container.getDOMNode() || container;
     },
 
     /**
@@ -107,8 +119,8 @@ YUI.add('juju-view-environment', function(Y) {
       @method createTopology
      */
     createTopology: function() {
-      var container = this.get('container'),
-          topo = this.topo;
+      const container = this.getContainer();
+      let topo = this.topo;
       if (!topo) {
         topo = new views.Topology({includePlus: true});
         topo.setAttrs({
@@ -141,17 +153,18 @@ YUI.add('juju-view-environment', function(Y) {
      * @method updateHelpIndicator
      */
     updateHelpIndicator: function(evt) {
-      var helpText = this.get('container').one('.environment-help'),
+      const container = this.getContainer();
+      var helpText = container.querySelector('.environment-help'),
           includedPlus = this.topo.vis.select('.included-plus'),
           db = this.get('db'),
           services = db.services;
       if (helpText) {
         if (services.size() === 0) {
-          helpText.show();
-          helpText.removeClass('shrink');
+          helpText.removeAttribute('style');
+          helpText.classList.remove('shrink');
           includedPlus.classed('show', false);
         } else {
-          helpText.addClass('shrink');
+          helpText.classList.add('shrink');
           includedPlus.classed('show', true);
         }
       }
@@ -164,10 +177,11 @@ YUI.add('juju-view-environment', function(Y) {
       @param {Boolean} fade Whether it should fade it in or out.
     */
     fadeHelpIndicator: function(fade) {
-      const container = this.get('container');
-      const helpImg = container.one('.environment-help__image');
-      const tooltip = container.one('.environment-help__tooltip');
-      const dropMessage = container.one('.environment-help__drop-message');
+      const container = this.getContainer();
+      const helpImg = container.querySelector('.environment-help__image');
+      const tooltip = container.querySelector('.environment-help__tooltip');
+      const dropMessage = container.querySelector(
+        '.environment-help__drop-message');
       const existingApps = this.get('db').services.size() > 0;
       // If there are existing apps then the onboarding should not be
       // displayed behind the drop notification.
@@ -180,14 +194,15 @@ YUI.add('juju-view-environment', function(Y) {
             // need to display it again temporarily to display the drop
             // notification. This class will be re-added when the drop finishes
             // and updateHelpIndicator is called above.
-            container.one('.environment-help').removeClass('shrink');
+            container.querySelector('.environment-help').classList.remove(
+              'shrink');
           }
-          dropMessage.addClass(helpActiveClass);
+          dropMessage.classList.add(helpActiveClass);
         } else {
-          dropMessage.removeClass(helpActiveClass);
+          dropMessage.classList.remove(helpActiveClass);
         }
-        tooltip.setStyle('opacity', showOnboarding && !fade ? 1 : 0);
-        helpImg.setStyle('opacity', showOnboarding ? 1 : 0);
+        tooltip.style.opacity = showOnboarding && !fade ? 1 : 0;
+        helpImg.style.opacity = showOnboarding ? 1 : 0;
       }
     },
     /**

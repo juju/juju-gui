@@ -263,7 +263,7 @@ YUI.add('environment-change-set', function(Y) {
       }
 
       // Take care of top-level objects quickly.
-      keys.forEach(Y.bind(function(key) {
+      keys.forEach(key => {
         command = this.changeSet[key];
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
@@ -275,7 +275,7 @@ YUI.add('environment-change-set', function(Y) {
           // Default everything else to the first level.
           keyToLevelMap[key] = 1;
         }
-      }, this));
+      });
 
       // Now build the other levels of the hierarchy as long as there are still
       // commands in the change set. Functions defined outside of loop for
@@ -364,7 +364,7 @@ YUI.add('environment-change-set', function(Y) {
         this.levelTimer.cancel();
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(Y.bind(this._commitNext, this, env, currentIndex));
+          Y.soon(this._commitNext.bind(this, env, currentIndex));
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;

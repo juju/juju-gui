@@ -25,6 +25,8 @@ YUI.add('popup', function() {
     action.
   */
   juju.components.Popup = React.createClass({
+    displayName: 'Popup',
+
     propTypes: {
       buttons: React.PropTypes.array,
       children: React.PropTypes.oneOfType([

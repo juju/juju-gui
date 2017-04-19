@@ -71,7 +71,7 @@ describe('GenericInput', function() {
         {null}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a multi line input', () => {
@@ -113,7 +113,7 @@ describe('GenericInput', function() {
         {null}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display as a different type', () => {
@@ -154,7 +154,7 @@ describe('GenericInput', function() {
         {null}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can return the field value', () => {
@@ -258,7 +258,35 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[3], expected);
+    expect(output.props.children[3]).toEqualJSX(expected);
+  });
+
+  it('can validate via a function', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          check: value => value === 'spinach',
+          error: 'That username is taken.'
+        }]} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: 'spinach'}};
+    instance.validate();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ul className="generic-input__errors">
+        {[<li className="generic-input__error"
+          role="alert"
+          key="This value is invalid.">
+          That username is taken.
+        </li>]}
+      </ul>
+    );
+    expect(output.props.children[3]).toEqualJSX(expected);
   });
 
   it('can validate when there are no validations set', () => {
@@ -303,7 +331,7 @@ describe('GenericInput', function() {
         </li>]}
       </ul>
     );
-    assert.deepEqual(output.props.children[3], expected);
+    expect(output.props.children[3]).toEqualJSX(expected);
   });
 
   it('allows the label to be optional', () => {
@@ -341,7 +369,7 @@ describe('GenericInput', function() {
         {null}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('adds a class to the wrapper element on error', () => {
@@ -360,7 +388,7 @@ describe('GenericInput', function() {
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onBlur();
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.className, 'generic-input has-error');
+    assert.equal(output.props.className, 'generic-input has-error');
   });
 
   it('adds an error icon with inlineErrorIcon is set', () => {
@@ -384,7 +412,7 @@ describe('GenericInput', function() {
       name="relation-icon-error"
       size={16}
     />);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can set the focus on the field', () => {

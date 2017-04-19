@@ -33,7 +33,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
   it('aborts a resize if the canvas is not available', function() {
     var container = {
-      one: testUtils.getter({'.topology-canvas': undefined}, {})
+      querySelector: testUtils.getter({'.topology-canvas': undefined}, {})
     };
     var view = new views.ViewportModule();
     view.getContainer = function() {return container;};
@@ -45,7 +45,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
   it('aborts a resize if the "svg" element is not available', function() {
     var container = {
-      one: testUtils.getter({'.the-canvas': undefined}, {})
+      querySelector: testUtils.getter({'.the-canvas': undefined}, {})
     };
     var view = new views.ViewportModule();
     view.getContainer = function() {return container;};
@@ -64,7 +64,7 @@ describe('views.ViewportModule (Topology module)', function() {
       get: function() {}
     };
     var container = {
-      one: testUtils.getter({}, {})
+      querySelector: testUtils.getter({}, {})
     };
     // Catch global custom page resize events.
     ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(
@@ -95,12 +95,12 @@ describe('views.ViewportModule (Topology module)', function() {
 });
 
 describe('views.ViewportModule.setAllTheDimensions', function() {
-  var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
+  var views, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
       eventFired, dimentions;
   before(function(done) {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
       'juju-topology-viewport'];
-    Y = YUI(GlobalConfig).use(modules,
+    YUI(GlobalConfig).use(modules,
         function(Y) {
           views = Y.namespace('juju.views');
           testUtils = Y.namespace('juju-tests').utils;
@@ -129,9 +129,6 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     topo.vis.attr = testUtils.setter(topo.vis);
     view = new views.ViewportModule();
     canvas = {style: {}};
-    canvas.setStyles = function(styles) {
-      Y.mix(canvas.style, styles, true);
-    };
     zoomPlane = {};
     zoomPlane.setAttribute = testUtils.setter(zoomPlane);
     svg = {};

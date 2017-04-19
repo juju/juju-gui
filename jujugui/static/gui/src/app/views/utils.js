@@ -102,7 +102,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method addSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to add.
     @return {Undefined} Mutates only.
   */
@@ -113,7 +113,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function(n) {
+      document.querySelectorAll(selector).forEach(function(n) {
         var classes = this.getAttribute('class');
         if (!self.hasSVGClass(this, class_name)) {
           this.setAttribute('class', classes + ' ' + class_name);
@@ -134,7 +134,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method removeSVGClass
     @param {Object} selector A YUI-wrapped SVG node or a selector string used
-      with Y.all that must return only SVG nodes.
+      with querySelectorAll that must return only SVG nodes.
     @param {String} class_name The class name to remove.
     @return {Undefined} Mutates only.
   */
@@ -144,7 +144,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     if (typeof(selector) === 'string') {
-      Y.all(selector).each(function() {
+      document.querySelectorAll(selector).each(function() {
         var classes = this.getAttribute('class');
         this.setAttribute('class', classes.replace(class_name, ''));
       });
@@ -774,20 +774,27 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
-    var containerHeight = Y.one('body').get(
-        primary ? 'winHeight' : 'docHeight'),
-        bottomNavbar = Y.one('.bottom-navbar'),
-        navbar = Y.one('.header-banner'),
-        viewport = Y.one('#viewport'),
+    var containerHeight,
+        bottomNavbar = document.querySelector('.bottom-navbar'),
+        navbar = document.querySelector('.header-banner'),
+        viewport = document.querySelector('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
+    if (primary) {
+      containerHeight = document.documentElement.clientHeight;
+    } else {
+      const body = document.body;
+      const html = document.documentElement;
+      containerHeight = Math.max(body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight);
+    }
     // If all elements are present and the viewport is not set to display none
-    if (containerHeight && navbar && viewport &&
-      viewport.getComputedStyle('width') !== 'auto') {
+    const viewportHeight = viewport && window.getComputedStyle(
+      viewport).getPropertyValue('width');
+    if (containerHeight && navbar && viewport && viewportHeight !== 'auto') {
       result.height = containerHeight -
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 
-      result.width = Math.floor(parseFloat(
-          viewport.getComputedStyle('width')));
+      result.width = Math.floor(parseFloat(viewportHeight));
 
       // Make sure we don't get sized any smaller than the minimum.
       result.height = Math.max(result.height, minheight || 0);
@@ -1923,6 +1930,50 @@ YUI.add('juju-view-utils', function(Y) {
       }
     });
     return formValid;
+  };
+
+  /**
+    Remove duplicate entries from an array.
+
+    @method arrayDedupe
+    @returns {Array} An array with no duplicates.
+  */
+  utils.arrayDedupe = function(array) {
+    // Sets can only contain unique values, so use that to do the dedupe and
+    // then turn it back into an array.
+    return [...new Set(array)];
+  };
+
+  /**
+    Turn an array of arrays into a single array.
+
+    @method arrayFlatten
+    @returns {Array} A single depth array.
+  */
+  utils.arrayFlatten = function(array) {
+    return array.reduce((flattened, current) => {
+      return flattened.concat(
+        // If this is an array then flatten it before concat, otherwise concat
+        // the current value.
+        Array.isArray(current) ? utils.arrayFlatten(current) : current);
+    }, []);
+  };
+
+  /**
+    Map two arrays into an array of pairs for each position from the original
+    arrays e.g. [1, 2] and [3, 4] would become [[1, 3], [2, 4]]
+
+    @method arrayZip
+    @returns {Array} A positionally grouped array.
+  */
+  utils.arrayZip = function(...arrays) {
+    // Get the length of the longest array.
+    const longest = Math.max(...arrays.map(array => array.length));
+    return [...Array(longest)].map((value, i) => {
+      // Get the values at the current position from all the arrays, filtering
+      // out those that don't have a value for that position.
+      return arrays.filter(array => array[i]).map(array => array[i]);
+    });
   };
 
 }, '0.1.0', {

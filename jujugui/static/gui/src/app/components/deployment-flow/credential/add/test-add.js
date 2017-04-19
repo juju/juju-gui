@@ -104,6 +104,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
@@ -241,7 +242,7 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can update to a new cloud', function() {
@@ -252,6 +253,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={sinon.stub()}
           cloud={null}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
@@ -267,6 +269,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={{name: 'aws', cloudType: 'ec2'}}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
@@ -361,7 +364,7 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render credential fields for a cloud', function() {
@@ -373,6 +376,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
+        credentials={['cred1']}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -411,6 +415,10 @@ describe('DeploymentCredentialAdd', function() {
                 error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
+              }, {
+                check: value => output.props.children[2].props.children[0]
+                  .props.children.props.validate[2].check,
+                error: 'You already have a credential with this name.'
               }]} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
@@ -509,7 +517,7 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a cloud with a json field', function() {
@@ -521,6 +529,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
+        credentials={[]}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -609,7 +618,7 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can disable controls when read only', function() {
@@ -622,6 +631,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
+        credentials={[]}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -759,7 +769,7 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can add the credentials', function() {
@@ -772,6 +782,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
@@ -833,6 +844,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
+        credentials={[]}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -882,6 +894,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
@@ -905,6 +918,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
+          credentials={[]}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={sinon.stub()}

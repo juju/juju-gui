@@ -113,22 +113,18 @@ YUI.add('juju-delta-handlers', function(Y) {
     */
     translateToLegacyAgentState: function(
       currentStatus, workloadStatus, workloadStatusMessage) {
-      var statusMaintenance = 'maintenance';
-      var statusAllocating = 'allocating';
-      var statusPending = 'pending';
-      var statusError = 'error';
-      var statusRebooting = 'rebooting';
-      var statusExecuting = 'executing';
-      var statusIdle = 'idle';
-      var statusLost = 'lost';
-      var statusFailed = 'failed';
-      var statusTerminated = 'terminated';
-      var statusStarted = 'started';
-      var statusStopped = 'stopped';
-
-      var messageInstalling = 'installing charm software';
-      var isInstalled = workloadStatus != statusMaintenance ||
-                        workloadStatusMessage != messageInstalling;
+      const statusMaintenance = 'maintenance';
+      const statusAllocating = 'allocating';
+      const statusPending = 'pending';
+      const statusError = 'error';
+      const statusRebooting = 'rebooting';
+      const statusExecuting = 'executing';
+      const statusIdle = 'idle';
+      const statusLost = 'lost';
+      const statusFailed = 'failed';
+      const statusTerminated = 'terminated';
+      const statusStarted = 'started';
+      const statusStopped = 'stopped';
 
       switch (currentStatus) {
 
@@ -156,7 +152,7 @@ YUI.add('juju-delta-handlers', function(Y) {
               break;
 
             case statusMaintenance:
-              return isInstalled ? statusStarted : statusPending;
+              return statusPending;
               break;
 
             default:
@@ -221,6 +217,8 @@ YUI.add('juju-delta-handlers', function(Y) {
      */
     unitInfo: function(db, action, change) {
       const portRanges = change['port-ranges'] || [];
+      const agentStatus = change['agent-status'] || {};
+      const workloadStatus = change['workload-status'] || {};
       const unitData = {
         id: change.name,
         charmUrl: change['charm-url'],
@@ -237,13 +235,12 @@ YUI.add('juju-delta-handlers', function(Y) {
           };
         }),
         subordinate: change.subordinate,
-        workloadStatusMessage: ''
+        agentStatus: agentStatus.current || '',
+        workloadStatus: workloadStatus.current || '',
+        workloadStatusMessage: workloadStatus.message || ''
       };
 
-      // Handle agent and workload status.
-      const agentStatus = change['agent-status'] || {};
-      const workloadStatus = change['workload-status'] || {};
-      unitData.workloadStatusMessage = workloadStatus.message;
+      // Handle legacy status.
       if (workloadStatus.current === 'error') {
         unitData.agent_state = workloadStatus.current;
         unitData.agent_state_info = workloadStatus.message;

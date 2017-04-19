@@ -250,6 +250,8 @@ YUI.add('account-credentials', function() {
             addNotification={this.props.addNotification}
             close={this._toggleAdd}
             cloud={this.state.cloud}
+            credentials={this.state.credentials.map(credential =>
+              credential.name)}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
             getCredentials={this._getClouds}

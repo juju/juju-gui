@@ -24,7 +24,7 @@ describe('topology relation module', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
       ['juju-tests-utils', 'juju-topology', 'node', 'relation-utils',
-        'node-event-simulate', 'juju-models'],
+        'juju-models'],
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
@@ -134,11 +134,13 @@ describe('topology relation module', function() {
           get: sinon.stub().withArgs('state').returns(state)
         };
         view.set('component', topo);
-        view.inspectRelationClick.call(container, undefined, view);
+        const relation = document.createElement('div');
+        relation.setAttribute('data-endpoint', 'one:two');
+        view.inspectRelationClick.call(relation, undefined, view);
         assert.equal(state.changeState.callCount, 1);
         assert.deepEqual(state.changeState.args[0][0], {
           gui: {
-            inspector: { id: container.get('text').split(':')[0].trim() }
+            inspector: { id: 'one' }
           }});
       });
 
@@ -330,42 +332,41 @@ describe('topology relation module', function() {
       }, {
         name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
       }]];
-      container.append(
-        '<div id="ambiguous-relation-menu">' +
-          '<div id="ambiguous-relation-menu-content"></div>' +
-        '</div>');
+      const menuNode = document.createElement('div');
+      menuNode.setAttribute('id', 'ambiguous-relation-menu');
+      const menuContent = document.createElement('div');
+      menuContent.setAttribute('id', 'ambiguous-relation-menu-content');
+      menuNode.appendChild(menuContent);
+      container.appendChild(menuNode);
       var menu = view._renderAmbiguousRelationMenu.call({
-        get: function() {
-          return container;
-        }
+        getContainer: sinon.stub().returns(container)
       }, endpoints);
-      assert.isNotNull(menu.one('.menu'));
-      assert.equal(menu.all('li').size(), 2);
+      assert.isNotNull(menu.querySelector('.menu'));
+      assert.equal(menu.querySelectorAll('li').length, 2);
     });
 
     it('attaches the click events for the menu', function() {
-      var delegate = sinon.stub();
-      var on = sinon.stub();
-      var menu = {
-        one: function() {
-          return {
-            delegate: delegate,
-            on: on
-          };
-        }
+      const addEventListener = sinon.stub();
+      const menu = {
+        querySelector: sinon.stub().returns({
+          addEventListener: addEventListener,
+        }),
+        querySelectorAll: sinon.stub().returns([{
+          addEventListener: addEventListener,
+        }])
       };
       view._attachAmbiguousReleationSelect(menu);
-      assert.equal(delegate.callCount, 1);
-      assert.equal(on.callCount, 1);
+      assert.equal(addEventListener.callCount, 2);
     });
 
     it('calls to position the menu to the terminating endpoint', function() {
-      var setStyle = sinon.stub();
       var addClass = sinon.stub();
       var set = sinon.stub();
       var menu = {
-        setStyle: setStyle,
-        addClass: addClass
+        style: {},
+        classList: {
+          add: addClass
+        }
       };
       var topo = {
         zoom: {
@@ -384,11 +385,10 @@ describe('topology relation module', function() {
 
       assert.equal(locate.callCount, 1, 'locateRelativePointOnCanvas');
       assert.deepEqual(locate.lastCall.args, ['m', 'translate', 'scale']);
-      assert.equal(setStyle.callCount, 2);
-      assert.deepEqual(setStyle.args, [
-        ['left', 'locate1'],
-        ['top', 'locate2']
-      ]);
+      assert.deepEqual(menu.style, {
+        left: 'locate1px',
+        top: 'locate2px'
+      });
       assert.equal(addClass.callCount, 1, 'addClass');
       assert.equal(addClass.lastCall.args[0], 'active');
       assert.equal(set.callCount, 2);

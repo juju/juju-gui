@@ -1,0 +1,10 @@
+.terms-popup {
+  &__container {
+    height: calc(100% - 60px);
+    overflow: auto;
+  }
+
+  &__terms {
+    list-style: none;
+  }
+}

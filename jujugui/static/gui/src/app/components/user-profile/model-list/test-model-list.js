@@ -38,7 +38,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 42,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'who',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'who'
+        }
+      ]
     }];
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: true};
   });
@@ -175,21 +191,24 @@ describe('UserProfileModelList', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               Name
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              Owner
+            </span>
+            <span className="user-profile__list-col two-col">
+              Machines
+            </span>
+            <span className="user-profile__list-col two-col">
               Cloud/Region
             </span>
             <span className="user-profile__list-col two-col">
-              Last accessed
-            </span>
-            <span className="user-profile__list-col one-col">
-              Machines
+              Permission
             </span>
             <span className={
               'user-profile__list-col two-col last-col'}>
-              Owner
+              Last accessed
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -198,24 +217,28 @@ describe('UserProfileModelList', () => {
             entity={models[0]}
             expanded={true}
             key="model1"
+            permission="write"
             switchModel={instance.props.switchModel}
             type="model">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               spinach
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              who
+            </span>
+            <span className="user-profile__list-col two-col">
+              42
+            </span>
+            <span className="user-profile__list-col two-col">
               aws/gallifrey
             </span>
             <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
               <juju.components.DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
-            </span>
-            <span className="user-profile__list-col one-col">
-              {42}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              who
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -234,7 +257,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 42,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'dalek',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'dalek'
+        }
+      ]
     }, {
       uuid: 'model2-uuid',
       name: 'model2',
@@ -243,7 +282,23 @@ describe('UserProfileModelList', () => {
       cloud: 'aws',
       region: 'gallifrey',
       numMachines: 47,
-      isAlive: true
+      isAlive: true,
+      users: [
+        {
+          access: 'admin',
+          displayName: 'steve',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'steve'
+        },
+        {
+          access: 'write',
+          displayName: 'dalek',
+          domain: 'Ubuntu SSO',
+          lastConnection: new Date(),
+          name: 'dalek'
+        }
+      ]
     }];
     userInfo = {external: 'dalek', profile: 'dalek', isCurrent: false};
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
@@ -281,21 +336,24 @@ describe('UserProfileModelList', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               Name
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              Owner
+            </span>
+            <span className="user-profile__list-col two-col">
+              Machines
+            </span>
+            <span className="user-profile__list-col two-col">
               Cloud/Region
             </span>
             <span className="user-profile__list-col two-col">
-              Last accessed
-            </span>
-            <span className="user-profile__list-col one-col">
-              Machines
+              Permission
             </span>
             <span className={
               'user-profile__list-col two-col last-col'}>
-              Owner
+              Last accessed
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -304,24 +362,28 @@ describe('UserProfileModelList', () => {
             entity={models[1]}
             expanded={false}
             key="model2-uuid"
+            permission="write"
             switchModel={instance.props.switchModel}
             type="model">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col two-col">
               model2
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className="user-profile__list-col two-col">
+              dalek
+            </span>
+            <span className="user-profile__list-col two-col">
+              47
+            </span>
+            <span className="user-profile__list-col two-col">
               aws/gallifrey
             </span>
             <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
               <juju.components.DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
-            </span>
-            <span className="user-profile__list-col one-col">
-              {47}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              dalek
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -331,7 +393,7 @@ describe('UserProfileModelList', () => {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can render models that are being destroyed', () => {
+  it('hides models that are not alive', () => {
     models[0].isAlive = false;
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
@@ -345,14 +407,7 @@ describe('UserProfileModelList', () => {
       />, true);
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children[1][0];
-    const classes = 'expanding-row twelve-col user-profile__entity'
-                     + ' user-profile__list-row';
-    const expected = (
-      <li className={classes}
-        key="model1">
-        {'spinach'} is being destroyed.
-      </li>);
-    assert.deepEqual(content, expected);
+    assert.isNull(content);
   });
 
   // XXX kadams54 2016-09-29: ACL check disabled until
@@ -404,11 +459,10 @@ describe('UserProfileModelList', () => {
 
   it('can destroy a model', () => {
     const addNotification = sinon.stub();
-    const uuids = {};
-    models.forEach(model => {
-      uuids[model.uuid] = null;
-    });
-    const destroyModels = sinon.stub().callsArgWith(1, null, uuids);
+    const model = models[0];
+    const results = {};
+    results[model.uuid] = null;
+    const destroyModels = sinon.stub().callsArgWith(1, null, results);
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
@@ -421,7 +475,7 @@ describe('UserProfileModelList', () => {
         userInfo={userInfo}
       />, true);
     const instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
+    instance._displayConfirmation(model);
     let output = component.getRenderOutput();
     output.props.children[2].props.buttons[1].action();
     assert.equal(destroyModels.callCount, 1, 'destroyModels not called');
@@ -431,12 +485,15 @@ describe('UserProfileModelList', () => {
     assert.equal(addNotification.callCount, 1, 'addNotification not called');
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destroyed',
-      message: 'The model is currently being destroyed.',
+      message: `The model "${model.name}" is destroyed.`,
       level: 'important'
     }, 'Notification message does not match expected.');
   });
 
-  it('can cancel destroying a model', () => {
+  it('can render a model with requested destruction', () => {
+    const model = models[0];
+    const results = {};
+    results[model.uuid] = null;
     const destroyModels = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
@@ -450,7 +507,37 @@ describe('UserProfileModelList', () => {
         userInfo={userInfo}
       />, true);
     const instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
+    instance._displayConfirmation(model);
+    let output = component.getRenderOutput();
+    output.props.children[2].props.buttons[1].action();
+    output = component.getRenderOutput();
+    const content = output.props.children[1].props.children[1][0];
+    const classes = 'expanding-row twelve-col user-profile__entity'
+                     + ' user-profile__list-row';
+    const expected = (
+      <li className={classes}
+        key="model1">
+        Requesting that {model.name} be destroyed.
+      </li>);
+    expect(content).toEqualJSX(expected);
+  });
+
+  it('can cancel destroying a model', () => {
+    const modelName = models[0].name;
+    const destroyModels = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        facadesExist={true}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        userInfo={userInfo}
+      />, true);
+    const instance = component.getMountedInstance();
+    instance._displayConfirmation({name: modelName});
     let output = component.getRenderOutput();
     output.props.children[2].props.buttons[0].action();
     assert.equal(destroyModels.callCount, 0, 'destroyModels was called');
@@ -460,6 +547,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('can display a global error when destroying', () => {
+    const model = models[0];
     const addNotification = sinon.stub();
     const error = 'An error';
     const destroyModels = sinon.stub().callsArgWith(1, error, null);
@@ -476,12 +564,12 @@ describe('UserProfileModelList', () => {
       />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
-    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._displayConfirmation(model);
     instance._destroyModel();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destruction failed',
-      message: 'The model failed to be destroyed: ' + error,
+      message: `Could not destroy model "${model.name}": ${error}`,
       level: 'error'
     });
   });
@@ -506,12 +594,12 @@ describe('UserProfileModelList', () => {
       />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
-    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._displayConfirmation(model);
     instance._destroyModel();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Model destruction failed',
-      message: 'The model failed to be destroyed: ' + error,
+      message: `Could not destroy model "${model.name}": ${error}`,
       level: 'error'
     });
   });
@@ -545,23 +633,6 @@ describe('UserProfileModelList', () => {
       message: 'The controller model cannot be destroyed.',
       level: 'error'
     }, 'The notification does not match expected.');
-  });
-
-  it('will abort the requests when unmounting', function() {
-    const listModelsWithInfoAbort = sinon.stub();
-    const listModelsWithInfo = sinon.stub().returns(
-      {abort: listModelsWithInfoAbort});
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        currentModel={'model1'}
-        facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    renderer.unmount();
-    assert.equal(listModelsWithInfoAbort.callCount, 1);
   });
 
   it('broadcasts starting status', function() {

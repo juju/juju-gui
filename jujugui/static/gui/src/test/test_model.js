@@ -41,6 +41,14 @@ describe('test_model.js', function() {
           '~alt-bac/precise/openstack-dashboard');
     });
 
+    it('must dedupe tags', () => {
+      const charm = new models.Charm({
+        id: 'cs:precise/openstack-dashboard-0',
+        tags:['bar', 'bar', 'foo', 'foo']
+      });
+      assert.deepEqual(charm.get('tags'), ['bar', 'foo']);
+    });
+
     it('must not set "owner" for promulgated charms', function() {
       var charm = new models.Charm({
         id: 'cs:precise/openstack-dashboard-0'
@@ -1537,13 +1545,14 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, container, juju;
+    var Y, models, conn, env, container, juju, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
         'juju-tests-utils', 'json-stringify'], function(Y) {
         models = Y.namespace('juju.models');
         juju = Y.namespace('juju');
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1558,7 +1567,8 @@ describe('test_model.js', function() {
           };
         };
       };
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = new juju.environments.GoEnvironment({
@@ -1566,13 +1576,13 @@ describe('test_model.js', function() {
       env.connect();
       env.set('facades', {Client: [0], Charms: [1]});
       conn.open();
-      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = testUtils.makeContainer(this);
     });
 
     afterEach(function() {
       env.close();
       env.destroy();
-      container.destroy();
+      container.remove();
     });
 
     it('will throw an exception with non-read sync', function() {

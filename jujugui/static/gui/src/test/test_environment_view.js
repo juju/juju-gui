@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, d3, db, conn, juju, jujuConfig,
-        charm, ecs, env, relationUtils, testUtils, fakeStore;
+        charm, click, ecs, env, relationUtils, testUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'd3', 'node-event-simulate', 'juju-gui',
+        'd3', 'juju-gui',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {
@@ -226,34 +226,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
           };
         };
-        const userClass = new window.jujugui.User({storage: getMockStorage()});
+        const userClass = new window.jujugui.User(
+          {sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         d3 = Y.namespace('d3');
-        relationUtils = window.juju.utils.RelationUtils;
-        conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
-        db = new models.Database();
-        ecs = new juju.EnvironmentChangeSet({db: db});
-        env = new juju.environments.GoEnvironment({
-          conn: conn, ecs: ecs, user: userClass});
-        env.connect();
-        conn.open();
-        fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
-        done();
-      });
-    });
-
-    after(function(done) {
-      env.close(() => {
-        env.destroy();
         done();
       });
     });
 
     beforeEach(function() {
+      const getMockStorage = function() {
+        return new function() {
+          return {
+            store: {},
+            setItem: function(name, val) { this.store['name'] = val; },
+            getItem: function(name) { return this.store['name'] || null; }
+          };
+        };
+      };
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      relationUtils = window.juju.utils.RelationUtils;
+      conn = new testUtils.SocketStub();
+      db = new models.Database();
+      ecs = new juju.EnvironmentChangeSet({db: db});
+      env = new juju.environments.GoEnvironment({
+        conn: conn, ecs: ecs, user: userClass});
+      env.connect();
+      conn.open();
+      fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
       jujuConfig = window.juju_config;
       window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');
@@ -276,9 +281,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: {changeState: sinon.stub()},
         sendAnalytics: sinon.stub()
       });
+      click = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+      });
     });
 
-    afterEach(function() {
+    afterEach(function(done) {
       db.reset();
       db.destroy();
       charm.destroy();
@@ -288,6 +298,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.destroy({remove: true});
       }
       window.juju_config = jujuConfig;
+      env.close(() => {
+        env.destroy();
+        done();
+      });
     });
 
     function getParentId(view) {
@@ -301,16 +315,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render().rendered();
 
       // Verify we have help text.
-      var help = Y.one('.environment-help');
-      assert.isFalse(help.hasClass('shrink'));
+      var help = document.querySelector('.environment-help');
+      assert.isFalse(help.classList.contains('shrink'));
     });
 
     it('should not display help text when canvas is populated', function() {
       view.render().rendered();
 
       // Verify we do not have help text.
-      var help = Y.one('.environment-help');
-      assert.strictEqual(help.getStyle('display'), 'none');
+      var help = document.querySelector('.environment-help');
+      assert.strictEqual(help.style.display, 'none');
     });
 
     it('should handle clicking the plus', function() {
@@ -323,8 +337,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.set('state', state);
       view.render().rendered();
 
-      var plus = Y.one('.environment-help .plus-service');
-      plus.simulate('click');
+      var plus = document.querySelector('.environment-help .plus-service');
+      plus.dispatchEvent(click);
       assert.equal(state.changeState.callCount, 1);
       assert.deepEqual(state.changeState.args[0][0], {
         root: 'store'
@@ -344,7 +358,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(beforeResizeEventFired);
         done();
       });
-      Y.one('window').simulate('resize');
+      window.dispatchEvent(new Event('resize'));
     });
 
     it('must render services blocks correctly',
@@ -358,7 +372,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             state: {changeState: sinon.stub()}
           });
           view.render();
-          var serviceBlock = container.one('.service').one('.service-block');
+          const serviceBlock = container.querySelector(
+            '.service').querySelector('.service-block');
           serviceBlock.getAttribute('r').should.equal('90');
           serviceBlock.getAttribute('cy').should.equal('95');
           serviceBlock.getAttribute('cx').should.equal('95');
@@ -374,12 +389,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: {changeState: sinon.stub()}
       });
       view.render();
-      var relationIcon = container.one('.service').one('.relation-button');
-      var line = relationIcon.one('line');
-      var circles = relationIcon.all('circle');
-      var img = relationIcon.one('image');
+      var relationIcon = container.querySelector('.service .relation-button');
+      var line = relationIcon.querySelector('line');
+      var circles = relationIcon.querySelectorAll('circle');
+      var img = relationIcon.querySelector('image');
 
-      assert.equal(relationIcon._node.classList[0], 'relation-button');
+      assert.equal(relationIcon.classList.contains('relation-button'), true);
       assert.equal(relationIcon.getAttribute('transform'), 'translate(95,30)');
 
       assert.equal(line.getAttribute('x1'), '0');
@@ -394,7 +409,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(circles.item(0).getAttribute('r'), '4');
       assert.equal(circles.item(0).getAttribute('fill'), '#888888');
 
-      assert.equal(circles.item(1)._node.classList[0], 'relation-button__link');
+      assert.equal(
+        circles.item(1).classList.contains('relation-button__link'), true);
       assert.equal(circles.item(1).getAttribute('cx'), '0');
       assert.equal(circles.item(1).getAttribute('cy'), '0');
       assert.equal(circles.item(1).getAttribute('r'), '15');
@@ -402,7 +418,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(circles.item(1).getAttribute('stroke'), '#888888');
       assert.equal(circles.item(1).getAttribute('stroke-width'), '1.1');
 
-      assert.equal(img._node.classList[0], 'relation-button__image');
+      assert.equal(img.classList.contains('relation-button__image'), true);
       assert.equal(
         img.getAttribute('href'),
         'static/gui/build/app/assets/svgs/build-relation_16.svg');
@@ -422,8 +438,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         staticURL: 'staticpath'
       });
       view.render();
-      var relationIcon = container.one('.service').one('.relation-button');
-      var img = relationIcon.one('image');
+      const relationIcon = container.querySelector('.service').querySelector(
+        '.relation-button');
+      const img = relationIcon.querySelector('image');
       assert.equal(
         img.getAttribute('href'),
         'staticpath/static/gui/build/app/assets/svgs/build-relation_16.svg');
@@ -441,27 +458,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             state: {changeState: sinon.stub()}
           });
           view.render();
-          container.all('.service').size().should.equal(4);
+          container.querySelectorAll('.service').length.should.equal(4);
 
           // Count all the real relations.
-          (container.all('.relation').size() -
-           container.all('.pending-relation').size())
+          (container.querySelectorAll('.relation').length -
+           container.querySelectorAll('.pending-relation').length)
               .should.equal(2);
 
           // Count all the subordinate relations.
-          container.all('.rel-group .relation.subordinate').size()
+          container.querySelectorAll('.rel-group .relation.subordinate').length
               .should.equal(1);
 
           // Verify that the paths render 'properly' where this
           // means no NaN in the paths
-          var line = container.one('.relation');
+          var line = container.querySelector('.relation');
           ['x1', 'y1', 'x2', 'y2'].forEach(e => {
             isNaN(parseInt(line.getAttribute(e), 10)).should.equal(false);
           });
 
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.
-          var node = container.one(
+          var node = container.querySelector(
               '#' + relationUtils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info', getParentId(view)));
           assert.isNotNull(node);
@@ -479,8 +496,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             state: {changeState: sinon.stub()}
           });
           view.render();
-          container.all('.service').size().should.equal(4);
-          container.all('.subordinate.service').size().should.equal(1);
+          container.querySelectorAll('.service').length.should.equal(4);
+          container.querySelectorAll(
+            '.subordinate.service').length.should.equal(1);
 
           done();
         }
@@ -496,9 +514,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: {changeState: sinon.stub()}
       });
       view.render();
-      var service = container.one('.service');
+      var service = container.querySelector('.service');
       assert.equal(
-        service.one('.service-icon').getAttribute('href'),
+        service.querySelector('.service-icon').getAttribute('href'),
         'http://1.2.3.4/v5/precise/wordpress-6/icon.svg');
       done();
     });
@@ -514,7 +532,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: {changeState: sinon.stub()}
       });
       view.render();
-      assert.equal(container.one('.service .service-block').getAttribute(
+      assert.equal(
+        container.querySelector('.service .service-block').getAttribute(
           'stroke'), '#19b6ee');
     });
 
@@ -588,26 +607,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var relationModule = view.topo.modules.RelationModule;
 
       function validateRelationCount(serviceNode, module, count) {
-        var service = d3.select(serviceNode.getDOMNode()).datum();
+        var service = d3.select(serviceNode).datum();
         return module.subordinateRelationsForService(service)
           .length === count;
       }
 
-      container.all('.subordinate.service').each(function(service) {
+      container.querySelectorAll('.subordinate.service').forEach(service => {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
       db.onDelta({ data: addSubordinate });
       view.update();
 
-      container.all('.subordinate.service').each(function(service) {
+      container.querySelectorAll('.subordinate.service').forEach(service => {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
       db.onDelta({ data: addRelation });
       view.update();
 
-      validateRelationCount(container.one('.subordinate.service'),
+      validateRelationCount(container.querySelector('.subordinate.service'),
           relationModule, 2).should.equal(true);
     });
 
@@ -644,10 +663,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.render();
 
-      container.all('.service').each(function(serviceNode) {
+      container.querySelectorAll('.service').forEach(serviceNode => {
         // There should not be any duplicate nodes within the service.
-        serviceNode.all('.service-icon').size().should.equal(1);
-        serviceNode.all('.service-block').size().should.equal(1);
+        serviceNode.querySelectorAll('.service-icon').length.should.equal(1);
+        serviceNode.querySelectorAll('.service-block').length.should.equal(1);
       });
     });
 
@@ -687,14 +706,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
           }
 
-          container.all('.service').each(function(service) {
-            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          container.querySelectorAll('.service').forEach(service => {
+            chartSizedProperly(service).should.equal(true);
           });
 
           db.onDelta({ data: tmp_data });
 
-          container.all('.service').each(function(service) {
-            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          container.querySelectorAll('.service').forEach(service => {
+            chartSizedProperly(service).should.equal(true);
           });
         }
     );
@@ -762,8 +781,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           // Ensure that endpoints match for all services before any
           // service is resized.
-          container.all('.rel-group').each(function(relationGroup) {
-            endpointsCalculatedProperly(relationGroup.getDOMNode())
+          container.querySelectorAll('.rel-group').forEach(relationGroup => {
+            endpointsCalculatedProperly(relationGroup)
               .should.equal(true);
           });
 
@@ -772,8 +791,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           // Ensure that endpoints still match for all services, now that
           // one service has been resized.  This is the real test here.
-          container.all('.rel-group').each(function(relationGroup) {
-            endpointsCalculatedProperly(relationGroup.getDOMNode())
+          container.querySelectorAll('.rel-group').forEach(relationGroup => {
+            endpointsCalculatedProperly(relationGroup)
               .should.equal(true);
           });
         }
@@ -817,7 +836,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           properTransform = /translate\(\d+\.?\d*[, ]\d+\.?\d*\)/;
       view.render();
 
-      container.all('.service').each(function(serviceNode) {
+      container.querySelectorAll('.service').forEach(serviceNode => {
         // Ensure that all initial service nodes' transform attributes are
         // properly formated (i.e.: no NaN values).
         properTransform.test(serviceNode.getAttribute('transform'))
@@ -827,15 +846,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.render();
 
-      container.all('.service').each(function(serviceNode) {
+      container.querySelectorAll('.service').forEach(serviceNode => {
         // Ensure that all new service nodes' transform attributes are properly
         // formatted as well (i.e.: no NaN values).
         properTransform.test(serviceNode.getAttribute('transform'))
           .should.equal(true);
 
         // There should not be any duplicate nodes within the service.
-        serviceNode.all('.service-block').size().should.equal(1);
-        serviceNode.all('.service-icon').size().should.equal(1);
+        serviceNode.querySelectorAll('.service-block').length.should.equal(1);
+        serviceNode.querySelectorAll('.service-icon').length.should.equal(1);
       });
     });
 
@@ -937,7 +956,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            charmstore: fakeStore,
            state: {changeState: sinon.stub()}
          }).render();
-         var rel_block = container.one('.sub-rel-count').getDOMNode();
+         var rel_block = container.querySelector('.sub-rel-count');
 
          // Get the contents of the subordinate relation count; YUI cannot
          // get this directly as the node is not an HTMLElement, so use
@@ -961,14 +980,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // from the viewport (only available from DOM).
          view.rendered();
 
-         var svg = Y.one('.the-canvas');
+         var svg = document.querySelector('.the-canvas');
 
-         parseInt(svg.one('g').getAttribute('height'), 10)
+         parseInt(svg.querySelector('g').getAttribute('height'), 10)
           .should.equal(
-         parseInt(svg.getComputedStyle('height'), 10));
-         parseInt(svg.one('g').getAttribute('width'), 10)
+         parseInt(window.getComputedStyle(svg).getPropertyValue('height'), 10));
+         parseInt(svg.querySelector('g').getAttribute('width'), 10)
           .should.equal(
-         parseInt(svg.getComputedStyle('width'), 10));
+         parseInt(window.getComputedStyle(svg).getPropertyValue('width'), 10));
        }
     );
 
@@ -977,12 +996,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        function() {
          // The height of a navbar is used in calculating the viewport size,
          // so add a temporary one to the DOM
-         var navbar = Y.Node.create('<div class="header-banner" ' +
-             'style="height:70px;">Navbar</div>');
-         Y.one('body').append(navbar);
-         var viewport = Y.Node.create('<div id="viewport" ' +
-             'style="width:800px;">viewport</div>');
-         Y.one('body').append(viewport);
+         const navbar = document.createElement('div');
+         navbar.classList.add('header-banner');
+         navbar.style.height = '70px';
+         document.body.appendChild(navbar);
+         const viewport = document.createElement('div');
+         viewport.setAttribute('id', 'viewport');
+         viewport.style.width = '800px';
+         document.body.appendChild(viewport);
          var view = new views.environment({
            container: container,
            db: db,
@@ -993,10 +1014,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
          view.rendered();
-         var svg = container.one('.the-canvas'),
-             canvas = container.one('.topology');
+         var svg = container.querySelector('.the-canvas'),
+             canvas = container.querySelector('.topology');
          // We have to hide the canvas so it does not affect our calculations.
-         canvas.setStyle('display', 'none');
+         canvas.style.display = 'none';
          parseInt(svg.getAttribute('height'), 10)
           .should.be.above(199);
          // Destroy the navbar
@@ -1030,27 +1051,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.fire('show', {serviceNames: ['mysql']});
     });
 
-    // Tests for the service menu.
-    it('must be able to toggle the service menu', function(done) {
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        charmstore: fakeStore,
-        state: {changeState: sinon.stub()}
-      }).render();
-      container.all('.service').each(function(node, i) {
-        node.after('click', function() {
-          view.hasSVGClass(
-              node.one('.service-control-panel'),
-              'active').should.equal(true);
-          container.all('.service-control-panel.active').size()
-              .should.equal(1);
-        });
-      });
-      done();
-    });
-
     it('must be able to add a relation from the service menu',
        function() {
          if (Y.UA.phantomjs) {
@@ -1063,12 +1063,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            charmstore: fakeStore,
            state: {changeState: sinon.stub()}
          }).render();
-         var serviceNode = container.one('.service'),
-             add_rel = container.one('.relation-button__link');
-         var service = d3.select(serviceNode.getDOMNode()).datum();
+         var serviceNode = container.querySelector('.service'),
+             add_rel = container.querySelector('.relation-button__link');
+         var service = d3.select(serviceNode).datum();
          var endpoints = {},
              serviceName = serviceNode.getAttribute('data-name'),
-             nextServiceName = serviceNode.next().getAttribute('data-name');
+             nextServiceName = serviceNode.nextSibling.getAttribute(
+               'data-name');
          endpoints[nextServiceName] = [
            [{
              service: serviceName,
@@ -1103,20 +1104,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          });
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
-         add_rel.simulate('click');
-         container.all('.selectable-service')
-               .size()
+         add_rel.dispatchEvent(click);
+         container.querySelectorAll('.selectable-service')
+               .length
                .should.equal(2);
-         container.all('.dragline')
-               .size()
+         container.querySelectorAll('.dragline')
+               .length
                .should.equal(1);
 
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(
-             d3.select(serviceNode.next().getDOMNode()).datum(),
+             d3.select(serviceNode.nextSibling).datum(),
              module,
-             serviceNode.next());
-         container.all('.selectable-service').size()
+             serviceNode.nextSibling);
+         container.querySelectorAll('.selectable-service').length
             .should.equal(0);
          // The database is initialized with three relations in beforeEach.
          assert.equal(4, db.relations.size());
@@ -1142,15 +1143,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            state: {changeState: sinon.stub()}
          }).render();
 
-         var relation = container.one(
-              '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
-         getParentId(view)) +
-              ' .rel-indicator'),
-             menu;
-
-         relation.simulate('click');
-         menu = container.one('#relation-menu');
-         menu.one('.relation-remove').simulate('click');
+         var relation = container.querySelector(
+           '#' +
+           relationUtils.generateSafeDOMId(
+             'mysql:db wordpress:db', getParentId(view)) +
+           ' .rel-indicator');
+         relation.dispatchEvent(click);
+         const menu = container.querySelector('#relation-menu');
+         menu.querySelector('.relation-remove').dispatchEvent(click);
          assert.isTrue(remove_called);
        });
 
@@ -1166,17 +1166,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var module = view.topo.modules.RelationModule;
 
       // Single relation
-      var relation = container.one(
+      var relation = container.querySelector(
           '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
-      relation.simulate('click');
-      menu = container.one('#relation-menu');
+      relation.dispatchEvent(click);
+      menu = container.querySelector('#relation-menu');
 
-      assert.equal(menu.all('.relation-container').size(), 1);
-      assert.equal(menu.one('.relation-container').getData('relationid'),
-          'mysql:db wordpress:db');
+      assert.equal(menu.querySelectorAll('.relation-container').length, 1);
+      assert.equal(
+        menu.querySelector('.relation-container').getAttribute(
+          'data-relationid'),
+        'mysql:db wordpress:db');
 
       // Assert that relation module is storing the menu state for rerendering.
       assert.equal(module.get('relationMenuActive'), true);
@@ -1184,20 +1186,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'mysql:db wordpress:db');
 
       // Multiple relations
-      relation = container.one(
+      relation = container.querySelector(
           '#' +
           relationUtils.generateSafeDOMId('mysql:db mediawiki:db',
           getParentId(view)) +
           ' .rel-indicator');
-      relation.simulate('click');
-      menu = container.one('#relation-menu');
+      relation.dispatchEvent(click);
+      menu = container.querySelector('#relation-menu');
 
-      var relContainers = menu.all('.relation-container');
-      assert.equal(relContainers.size(), 2);
-      assert.equal(relContainers.item(0).getData('relationid'),
-          'mysql:db mediawiki:db');
-      assert.equal(relContainers.item(1).getData('relationid'),
-          'mysql:db-slave mediawiki:db-slave');
+      var relContainers = menu.querySelectorAll('.relation-container');
+      assert.equal(relContainers.length, 2);
+      assert.equal(
+        relContainers.item(0).getAttribute('data-relationid'),
+        'mysql:db mediawiki:db');
+      assert.equal(
+        relContainers.item(1).getAttribute('data-relationid'),
+        'mysql:db-slave mediawiki:db-slave');
 
       // Errors are shown.
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1205,11 +1209,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       unit.agent_state_data = {
         hook: 'db-relation'
       };
-      relation.simulate('click');
-      menu = container.one('#relation-menu');
-      assert.equal(menu.all('.endpoint.error').size(), 1);
-      assert.equal(menu.all('.relation-container.error').size(), 1);
-      assert.equal(menu.all('.relation-container.running').size(), 1);
+      relation.dispatchEvent(click);
+      menu = container.querySelector('#relation-menu');
+      assert.equal(menu.querySelectorAll('.endpoint.error').length, 1);
+      assert.equal(menu.querySelectorAll(
+        '.relation-container.error').length, 1);
+      assert.equal(menu.querySelectorAll(
+        '.relation-container.running').length, 1);
     });
 
     it('shows relation status with an indicator', function() {
@@ -1284,23 +1290,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state: state
       }).render();
       // This stops the simulate() call later on from causing a 'script error'
-      container.append(
+      container.insertAdjacentHTML('beforeend',
           '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
-      var relation = container.one(
+      var relation = container.querySelector(
           '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
 
-      relation.simulate('click');
-      menu = Y.one('#relation-menu .menu');
+      relation.dispatchEvent(click);
+      menu = document.querySelector('#relation-menu .menu');
 
       // Click the first endpoint.
-      var endpoints = menu.all('.inspect-relation'),
+      var endpoints = menu.querySelectorAll('.inspect-relation'),
           endpoint = endpoints.item(0),
-          endpointName = endpoint.get('text').split(':')[0].trim();
-      endpoint.simulate('click');
+          endpointName = endpoint.innerText.split(':')[0].trim();
+      endpoint.dispatchEvent(click);
       assert.equal(state.changeState.callCount, 1);
       assert.deepEqual(state.changeState.args[0][0], {
         gui: {
@@ -1321,16 +1327,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(db.notifications.size(), 0);
 
          // Get a subordinate relation.
-          var relation = container.one(
+          var relation = container.querySelector(
               '#' + relationUtils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
               ' .rel-indicator'),
               menu;
 
-          relation.simulate('click');
-          menu = container.one('#relation-menu');
-          menu.one('.relation-remove').simulate('click');
+          relation.dispatchEvent(click);
+          menu = container.querySelector('#relation-menu');
+          menu.querySelector('.relation-remove').click();
           assert.equal(db.notifications.size(), 1);
         });
 
@@ -1346,16 +1352,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           db.relations.item(1).set('pending', true);
 
          // Get a subordinate relation.
-          var relation = container.one(
+          const relation = container.querySelector(
               '#' + relationUtils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
-              ' .rel-indicator'),
-              menu;
-
-          relation.simulate('click');
-          menu = container.one('#relation-menu');
-          menu.one('.relation-remove').simulate('click');
+              ' .rel-indicator');
+          relation.dispatchEvent(click);
+          const menu = container.querySelector('#relation-menu');
+          menu.querySelector('.relation-remove').dispatchEvent(click);
           assert.equal(db.notifications.size(), 0);
         });
 
@@ -1435,21 +1439,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('onboarding integration with the environment', function() {
-      // XXX This test does not run in Phantom, but passes in the browser.
-      // See https://github.com/ariya/phantomjs/issues/12782 for details.
-      // Makyo - 2015-09-21
       it('shows/hides the integrated button when a service is added',
           function() {
-            if (Y.UA.phantomjs) {
-              return;
-            }
             db = new models.Database();
             view.set('db', db);
             view.render().rendered();
             var includedPlus = view.topo.vis.select('.included-plus');
-            var helpText = container.one('.environment-help');
+            var helpText = container.querySelector('.environment-help');
             assert.equal(false, includedPlus.classed('show'));
-            assert.equal(false, helpText.hasClass('shrink'));
+            assert.equal(false, helpText.classList.contains('shrink'));
 
             var service = new models.Service({
               id: 'service-1',
@@ -1458,7 +1456,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             db.services.add([service]);
 
             assert.equal(true, includedPlus.classed('show'));
-            assert.equal(true, helpText.hasClass('shrink'));
+            assert.equal(true, helpText.classList.contains('shrink'));
             view.destroy();
           }
         );

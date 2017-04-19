@@ -28,8 +28,7 @@ YUI.add('deployment-bar', function() {
       generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
-      sendAnalytics: React.PropTypes.func.isRequired,
-      showInstall: React.PropTypes.bool.isRequired
+      sendAnalytics: React.PropTypes.func.isRequired
     },
 
     previousNotifications: [],
@@ -83,24 +82,6 @@ YUI.add('deployment-bar', function() {
     },
 
     /**
-      Generate the install button if it should be displayed.
-
-      @method _generateInstallButton
-      @returns {Object} The install button.
-    */
-    _generateInstallButton: function() {
-      if (!this.props.showInstall) {
-        return;
-      }
-      return (
-        <a className="button--inline-neutral"
-          href="https://jujucharms.com/get-started"
-          target="_blank">
-          Install Juju
-        </a>);
-    },
-
-    /**
       Display the deployment summary when the deploy button is clicked.
 
       @method _deployAction
@@ -148,7 +129,6 @@ YUI.add('deployment-bar', function() {
           instanceName="deployment-bar-panel"
           visible={true}>
           <div className="deployment-bar">
-            {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
             {this._generateButton()}
