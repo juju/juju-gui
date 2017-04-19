@@ -62,9 +62,10 @@ YUI.add('juju-env-bakery', function(Y) {
             as the bakery is assumed to already have the required tokens;
           - onSuccess: an optional function to be called once the macaraq has
             been successfully completed;
+          - setCookie: An optional boolean indicating whether to add a macaroon
+            to the document cookies;
           - setCookiePath: optional string representing the endpoint register a
             macaroon as a cookie;
-          - cookieStore: an optional customized cookie storage;
           - dischargeStore: an optional customized discharge storage;
           - macaroon: an initial macaroon to be included in the storage;
           - dischargeToken: optional token to be used when discharging.
@@ -83,19 +84,13 @@ YUI.add('juju-env-bakery', function(Y) {
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
-        this.cookieStore = cfg.cookieStore;
-        if (cfg.macaroon) {
-          if (this.cookieStore) {
-            this.cookieStore.setItem(this.macaroonName, cfg.macaroon);
-          } else {
-            var prefix = this.macaroonName + '=';
-            document.cookie = prefix + cfg.macaroon + ';path=/';
-          }
-        }
         this.user = cfg.user;
         if (!this.user) {
           console.error('bakery instantiated without user authentication');
           return;
+        }
+        if (cfg.macaroon) {
+          this.user.addMacaroon(this.macaroonName, cfg.macaroon, cfg.setCookie);
         }
         if (cfg.dischargeToken) {
           this.user.identity = cfg.dischargeToken;

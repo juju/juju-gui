@@ -45,8 +45,6 @@ const User = class User {
     this.localStorage.setItem(DISCHARGE_TOKEN, token);
   }
 
-  // TODO get/set charmstore creds
-
   /**
    Gets credentials out of sessionStorage.
 
@@ -133,6 +131,34 @@ const User = class User {
 
   set model(credentials) {
     this._setCredentials('model', credentials);
+  }
+
+  setMacaroon(macaroonName, macaroon, setCookie = false) {
+    this.localStorage.setItem(macaroonName, macaroon);
+    if (setCookie) {
+      const prefix = macaroonName + '=';
+      document.cookie = prefix + macaroon + ';path=/';
+    }
+  }
+
+  getMacaroon(macaroonName) {
+    return this.localStorage.getItem(macaroonName); 
+  }
+
+  clearMacaroon(macaroonName, removeCookie = false) {
+    this.localStorage.removeItem(macaroonName);
+    if (removeCookie) {
+      const name = this.macaroonName;
+      const pathParts = '/profile'.split('/');
+      let currentPath = ' path=';
+      // Delete the / cookie first
+      document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
+      pathParts.forEach(part => {
+        currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
+        document.cookie =
+          `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
+      });
+    }
   }
 };
 

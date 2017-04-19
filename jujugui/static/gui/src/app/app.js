@@ -536,8 +536,7 @@ YUI.add('juju-gui', function(Y) {
       const getBundleChanges = this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI);
       // Create Romulus API client instances.
-      this._setupRomulusServices(
-        window.juju_config, window.jujulib, window.localStorage);
+      this._setupRomulusServices(window.juju_config, window.jujulib);
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
@@ -2282,6 +2281,7 @@ YUI.add('juju-gui', function(Y) {
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
+          setCookie: true,
           macaroon: existingMacaroons,
           user: this.user,
           dischargeToken: existingDischargeToken
@@ -2324,9 +2324,8 @@ YUI.add('juju-gui', function(Y) {
       @method _setupRomulusServices
       @param {Object} config The GUI application configuration.
       @param {Object} jujulib The Juju API client library.
-      @param {Object} storage The place where to store macaroons.
     */
-    _setupRomulusServices: function(config, jujulib, storage) {
+    _setupRomulusServices: function(config, jujulib) {
       if (!config) {
         // We are probably running tests.
         return;
@@ -2343,7 +2342,6 @@ YUI.add('juju-gui', function(Y) {
         macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage,
         user: this.user,
         dischargeToken: config.dischargeToken
       });
@@ -2353,7 +2351,6 @@ YUI.add('juju-gui', function(Y) {
         macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage,
         user: this.user,
         dischargeToken: config.dischargeToken
       });
@@ -2364,7 +2361,6 @@ YUI.add('juju-gui', function(Y) {
           macaroon: macaroons,
           webhandler: webHandler,
           interactive: interactive,
-          cookieStore: storage,
           user: this.user,
           dischargeToken: config.dischargeToken
         });
