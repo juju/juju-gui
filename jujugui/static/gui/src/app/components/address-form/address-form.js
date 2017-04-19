@@ -24,10 +24,11 @@ YUI.add('address-form', function() {
     displayName: 'AddressForm',
 
     propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      addNotification: React.PropTypes.func.isRequired,
+      addNotification: React.PropTypes.func,
+      address: React.PropTypes.object,
+      disabled: React.PropTypes.bool,
       getCountries: React.PropTypes.func,
-      validateForm: React.PropTypes.func.isRequired
+      validateForm: React.PropTypes.func
     },
 
     getInitialState: function() {
@@ -46,6 +47,10 @@ YUI.add('address-form', function() {
       this.xhrs.forEach((xhr) => {
         xhr && xhr.abort && xhr.abort();
       });
+    },
+
+    getDefaultProps: function() {
+      return {address: {}};
     },
 
     /**
@@ -145,6 +150,7 @@ YUI.add('address-form', function() {
     },
 
     render: function() {
+      const address = this.props.address;
       let content;
       if (this.state.loading) {
         content = (
@@ -154,7 +160,7 @@ YUI.add('address-form', function() {
           regex: /\S+/,
           error: 'This field is required.'
         };
-        const disabled = this.props.acl.isReadOnly();
+        const disabled = this.props.disabled;
         content = (
           <div>
             <juju.components.InsetSelect
@@ -162,30 +168,34 @@ YUI.add('address-form', function() {
               label="Country"
               options={this._generateCountryOptions()}
               ref="country"
-              value="GB" />
+              value={address.country || 'GB'} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Full name"
               ref="name"
               required={true}
-              validate={[required]} />
+              validate={[required]}
+              value={address.name} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Address line 1"
               ref="line1"
               required={true}
-              validate={[required]} />
+              validate={[required]}
+              value={address.line1}/>
             <juju.components.GenericInput
               disabled={disabled}
               label="Address line 2 (optional)"
               ref="line2"
-              required={false} />
+              required={false}
+              value={address.line2} />
             <juju.components.GenericInput
               disabled={disabled}
               label="State/province"
               ref="state"
               required={true}
-              validate={[required]} />
+              validate={[required]}
+              value={address.county} />
             <div className="twelve-col">
               <div className="six-col">
                 <juju.components.GenericInput
@@ -193,7 +203,8 @@ YUI.add('address-form', function() {
                   label="Town/city"
                   ref="city"
                   required={true}
-                  validate={[required]} />
+                  validate={[required]}
+                  value={address.city} />
               </div>
               <div className="six-col last-col">
                 <juju.components.GenericInput
@@ -201,7 +212,8 @@ YUI.add('address-form', function() {
                   label="Postcode"
                   ref="postcode"
                   required={true}
-                  validate={[required]} />
+                  validate={[required]}
+                  value={address.postcode} />
               </div>
               <div className="four-col">
                 <juju.components.InsetSelect
@@ -209,7 +221,7 @@ YUI.add('address-form', function() {
                   label="Country code"
                   options={this._generateCountryCodeOptions()}
                   ref="countryCode"
-                  value="GB" />
+                  value={address.countryCode || 'GB'} />
               </div>
               <div className="eight-col last-col">
                 <juju.components.GenericInput
@@ -217,7 +229,8 @@ YUI.add('address-form', function() {
                   label="Phone number"
                   ref="phoneNumber"
                   required={true}
-                  validate={[required]} />
+                  validate={[required]}
+                  value={(address.phones || []).join(', ')} />
               </div>
             </div>
           </div>);

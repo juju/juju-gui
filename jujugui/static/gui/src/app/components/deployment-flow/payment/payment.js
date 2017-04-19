@@ -258,8 +258,8 @@ YUI.add('deployment-payment', function() {
               required={true}
               validate={[required]} />
             <juju.components.AddressForm
-              acl={this.props.acl}
               addNotification={this.props.addNotification}
+              disabled={disabled}
               getCountries={this.props.getCountries}
               ref="userAddress"
               validateForm={this.props.validateForm} />
@@ -336,7 +336,7 @@ YUI.add('deployment-payment', function() {
             Card address
           </h2>
           <juju.components.AddressForm
-            acl={this.props.acl}
+            disabled={this.props.acl.isReadOnly()}
             addNotification={this.props.addNotification}
             getCountries={this.props.getCountries}
             ref="cardAddress"
@@ -359,7 +359,7 @@ YUI.add('deployment-payment', function() {
             Billing address
           </h2>
           <juju.components.AddressForm
-            acl={this.props.acl}
+            disabled={this.props.acl.isReadOnly()}
             addNotification={this.props.addNotification}
             getCountries={this.props.getCountries}
             ref="billingAddress"
