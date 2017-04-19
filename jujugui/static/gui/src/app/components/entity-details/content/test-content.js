@@ -213,28 +213,63 @@ describe('EntityContent', function() {
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
+    const terms = output.props.children[0].props.children.props.children[2];
+    const links = terms.props.children[1].props.children;
     const expected = (
       <div className="four-col entity-content__metadata">
         <h4>Terms</h4>
         <ul>
-          {[<li key="terms1">
-             <a className="link"
-               href="http://example.com/terms/terms1/5"
-               target="_blank">
-               {'terms1'} &rsaquo;
-             </a>
-           </li>,
-            <li key="terms2">
-              <a className="link"
-                href="http://example.com/terms/terms2/10"
-                target="_blank">
-                {'terms2'} &rsaquo;
-              </a>
+          {[<li className="link"
+              key="terms1"
+              onClick={links[0].props.onClick}>
+              terms1
+            </li>,
+            <li className="link"
+              key="terms2"
+              onClick={links[1].props.onClick}>
+              terms2
             </li>]}
         </ul>
       </div>);
-    const terms = output.props.children[0].props.children.props.children[2];
     expect(terms).toEqualJSX(expected);
+  });
+
+  it('can display the terms popup', function() {
+    mockEntity.set('terms', ['term1', 'term2']);
+    const showTerms = sinon.stub();
+    showTerms.onFirstCall().callsArgWith(2, null, {
+      name: 'terms1',
+      revision: 5
+    });
+    showTerms.onSecondCall().callsArgWith(2, null, {
+      name: 'terms2',
+      revision: 10
+    });
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          addNotification={sinon.stub()}
+          apiUrl="http://example.com"
+          changeState={sinon.stub()}
+          entityModel={mockEntity}
+          getFile={sinon.stub()}
+          hasPlans={false}
+          pluralize={sinon.stub()}
+          renderMarkdown={sinon.stub()}
+          showTerms={showTerms}
+          staticURL="http://example.com" />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.children.props.children[2].props.children[1]
+      .props.children[1].props.onClick();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.TermsPopup
+        close={instance._toggleTerms}
+        terms={[{
+          name: 'terms2',
+          revision: 10
+        }]} />);
+    expect(output.props.children[4]).toEqualJSX(expected);
   });
 
   it('can display a spinner when loading terms', function() {

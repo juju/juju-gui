@@ -121,7 +121,6 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             showTerms={showTerms}
-            staticURL="http://example.com"
           />
           </div>
       </div>
@@ -266,7 +265,6 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             showTerms={showTerms}
-            staticURL="http://example.com"
           />
           </div>
       </div>);
@@ -427,7 +425,6 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             showTerms={showTerms}
-            staticURL="http://example.com"
           />
           </div>
       </div>);
@@ -517,7 +514,6 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             showTerms={showTerms}
-            staticURL="http://example.com"
           />
           </div>
       </div>);

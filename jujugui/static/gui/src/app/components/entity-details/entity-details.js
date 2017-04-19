@@ -45,7 +45,6 @@ YUI.add('entity-details', function() {
       scrollPosition: React.PropTypes.number.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
-      staticURL: React.PropTypes.string,
       urllib: React.PropTypes.func.isRequired
     },
 
@@ -109,7 +108,6 @@ YUI.add('entity-details', function() {
                   plans={this.state.plans}
                   pluralize={this.props.pluralize}
                   showTerms={this.props.showTerms}
-                  staticURL={this.props.staticURL}
                 />
               </div>
           );

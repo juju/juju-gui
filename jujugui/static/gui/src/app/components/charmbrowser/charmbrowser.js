@@ -191,7 +191,6 @@ YUI.add('charmbrowser-component', function() {
                 makeEntityModel={this.props.makeEntityModel}
                 setPageTitle={this.props.setPageTitle}
                 showTerms={this.props.showTerms}
-                staticURL={this.props.staticURL}
                 urllib={this.props.urllib}
               />
           );

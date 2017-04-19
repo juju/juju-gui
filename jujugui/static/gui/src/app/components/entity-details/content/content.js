@@ -34,14 +34,6 @@ YUI.add('entity-content', function() {
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
-      staticURL: React.PropTypes.string
-    },
-
-    getDefaultProps: function() {
-      return {
-        // The endpoint for viewing terms is set up on jujucharms.com.
-        staticURL: 'http://jujucharms.com'
-      };
     },
 
     getInitialState: function() {
@@ -308,15 +300,11 @@ YUI.add('entity-content', function() {
         return null;
       } else {
         const items = terms.map(item => {
-          const url = [
-            this.props.staticURL, 'terms', item.name, item.revision].join('/');
           return (
-            <li key={item.name}>
-              <a className="link"
-                href={url}
-                target="_blank">
-                {item.name} &rsaquo;
-              </a>
+            <li className="link"
+              key={item.name}
+              onClick={this._toggleTerms.bind(this, item)}>
+              {item.name}
             </li>
           );
         });
@@ -330,6 +318,33 @@ YUI.add('entity-content', function() {
           <h4>Terms</h4>
           {content}
         </div>);
+    },
+
+    /**
+      Generate the list of terms if available.
+
+      @method _toggleTerms
+      @param {Object} terms The terms to display.
+    */
+    _toggleTerms: function(terms=null) {
+      this.setState({showTerms: terms});
+    },
+
+    /**
+      Generate the terms popup.
+
+      @method _generateTermsPopup
+      @returns {Object} The terms popup markup.
+    */
+    _generateTermsPopup: function() {
+      const terms = this.state.showTerms;
+      if (!terms) {
+        return null;
+      }
+      return (
+        <juju.components.TermsPopup
+          close={this._toggleTerms}
+          terms={[terms]} />);
     },
 
     /**
@@ -606,6 +621,7 @@ YUI.add('entity-content', function() {
             </div>
           </div>
           {this._generateOptionsList(entityModel)}
+          {this._generateTermsPopup()}
         </div>
       );
     }
@@ -621,6 +637,7 @@ YUI.add('entity-content', function() {
     'entity-resources',
     'expanding-row',
     'loading-spinner',
-    'svg-icon'
+    'svg-icon',
+    'terms-popup'
   ]
 });

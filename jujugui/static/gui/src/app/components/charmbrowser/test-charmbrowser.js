@@ -231,7 +231,6 @@ describe('Charmbrowser', function() {
               pluralize={utils.pluralize}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
-              staticURL="http://example.com"
               urllib={urllib}
             />
           </div>
@@ -316,7 +315,6 @@ describe('Charmbrowser', function() {
               pluralize={utils.pluralize}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
-              staticURL="http://example.com"
               urllib={urllib}
             />
           </div>
