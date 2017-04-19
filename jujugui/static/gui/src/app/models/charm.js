@@ -40,12 +40,12 @@ YUI.add('juju-charm-models', function(Y) {
       var pairs;
       if (parts) {
         parts.shift(); // Get rid of the first, full string.
-        pairs = Y.Array.zip(idElements, parts);
+        pairs = utils.arrayZip(idElements, parts);
       } else if (defaultSeries) {
         parts = simpleCharmIdRe.exec(charmId);
         if (parts) {
           parts.shift(); // Get rid of the first, full string.
-          pairs = Y.Array.zip(simpleIdElements, parts);
+          pairs = utils.arrayZip(simpleIdElements, parts);
           pairs.push(['series', defaultSeries]);
         }
       }
@@ -698,6 +698,9 @@ YUI.add('juju-charm-models', function(Y) {
       series: {},
 
       summary: {},
+      tags: {
+        setter: val => [...new Set(val)]
+      },
       tested_providers: {},
       url: {},
       iconPath: {

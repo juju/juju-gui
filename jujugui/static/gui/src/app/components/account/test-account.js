@@ -44,15 +44,21 @@ describe('Account', () => {
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
     const sendAnalytics = sinon.stub();
+    const removePaymentMethod = sinon.stub();
+    const createPaymentMethod= sinon.stub();
+    const createToken = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
+        createPaymentMethod={createPaymentMethod}
+        createToken={createToken}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         getUser={getUser}
         listClouds={listClouds}
+        removePaymentMethod={removePaymentMethod}
         revokeCloudCredential={revokeCloudCredential}
         updateCloudCredential={updateCloudCredential}
         sendAnalytics={sendAnalytics}
@@ -89,8 +95,12 @@ describe('Account', () => {
             <juju.components.AccountPaymentMethod
               acl={acl}
               addNotification={addNotification}
+              createPaymentMethod={createPaymentMethod}
+              createToken={createToken}
               getUser={getUser}
-              username="spinach" />
+              removePaymentMethod={removePaymentMethod}
+              username="spinach"
+              validateForm={validateForm} />
           </div>
         </div>
       </juju.components.Panel>);

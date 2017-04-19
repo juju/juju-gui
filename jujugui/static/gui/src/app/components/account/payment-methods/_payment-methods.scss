@@ -1,3 +1,28 @@
-.account__payment-details {
-  padding: 20px;
+.account__payment {
+  &-details {
+    padding: 20px;
+  }
+
+  &-no-methods {
+    .button--inline-neutral {
+      margin-left: 20px;
+    }
+  }
+
+  &-form {
+    padding: 20px;
+
+    &-fields {
+      width: 50%;
+    }
+
+    &-buttons {
+      padding: 20px;
+      text-align: right;
+
+      .button--inline-positive {
+        margin-left: 20px;
+      }
+    }
+  }
 }

@@ -456,7 +456,6 @@ describe('AccountCredentials', () => {
   });
 
   it('can display correctly with a chosen cloud', () => {
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
     const addNotification = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     const updateCloudCredential = sinon.stub();
@@ -481,56 +480,45 @@ describe('AccountCredentials', () => {
     instance._setCloud('aws');
     output = component.getRenderOutput();
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
-        <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          <div></div>
-          <div className="twelve-col">
-            <div>
-              <div className="account__credentials-choose-cloud">
-                <juju.components.GenericButton
-                  action={
-                    output.props.children[1].props.children[1].props.children
-                    .props.children[0].props.children.props.action}
-                  type="inline-neutral"
-                  title="Change cloud" />
-              </div>
-              <juju.components.DeploymentCloud
-                acl={acl}
-                cloud="aws"
-                listClouds={listClouds}
-                getCloudProviderDetails={getCloudProviderDetails}
-                setCloud={instance._setCloud} />
-              <juju.components.DeploymentCredentialAdd
-                acl={acl}
-                addNotification={addNotification}
-                close={instance._toggleAdd}
-                cloud="aws"
-                getCloudProviderDetails={getCloudProviderDetails}
-                generateCloudCredentialName={generateCloudCredentialName}
-                getCredentials={instance._getClouds}
-                sendAnalytics={sendAnalytics}
-                setCredential={instance._setCredential}
-                updateCloudCredential={updateCloudCredential}
-                user="spinach@external"
-                validateForm={validateForm} />
+      <juju.components.ExpandingRow
+        classes={{'twelve-col': true}}
+        clickable={false}
+        expanded={true}>
+        <div></div>
+        <div className="twelve-col">
+          <div>
+            <div className="account__credentials-choose-cloud">
+              <juju.components.GenericButton
+                action={
+                  output.props.children[1].props.children[1].props.children
+                  .props.children[0].props.children.props.action}
+                type="inline-neutral"
+                title="Change cloud" />
             </div>
+            <juju.components.DeploymentCloud
+              acl={acl}
+              cloud="aws"
+              listClouds={listClouds}
+              getCloudProviderDetails={getCloudProviderDetails}
+              setCloud={instance._setCloud} />
+            <juju.components.DeploymentCredentialAdd
+              acl={acl}
+              addNotification={addNotification}
+              close={instance._toggleAdd}
+              cloud="aws"
+              credentials={['test1', 'test2']}
+              getCloudProviderDetails={getCloudProviderDetails}
+              generateCloudCredentialName={generateCloudCredentialName}
+              getCredentials={instance._getClouds}
+              sendAnalytics={sendAnalytics}
+              setCredential={instance._setCredential}
+              updateCloudCredential={updateCloudCredential}
+              user="spinach@external"
+              validateForm={validateForm} />
           </div>
-        </juju.components.ExpandingRow>
-        <div>
-          No credentials available.
         </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      </juju.components.ExpandingRow>);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('clears the cloud when the form is closed', () => {

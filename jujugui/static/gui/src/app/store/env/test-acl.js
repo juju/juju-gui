@@ -120,10 +120,10 @@ describe('ACL', function() {
 
   it('canRemoveModel', () => {
     const model = makeModel('who', {
-      who: 'admin',
-      dalek: 'admin',
-      rose: 'write',
-      cyberman: 'read'
+      'who@local': 'admin',
+      'dalek@local': 'admin',
+      'rose@local': 'write',
+      'cyberman@local': 'read'
     });
     let acl = makeACL({});
     assert.strictEqual(acl.canRemoveModel(model), false);
@@ -135,8 +135,11 @@ describe('ACL', function() {
     assert.strictEqual(acl.canRemoveModel(model), false);
     acl = makeACL({user: 'dalek'});
     assert.strictEqual(acl.canRemoveModel(model), false);
-    acl = makeACL({user: 'who'});
+    acl = makeACL({user: 'who@local'});
     assert.strictEqual(acl.canRemoveModel(model), true);
+    const model1 = makeModel('who@external', {'who@external': 'admin'});
+    acl = makeACL({user: 'who@external'});
+    assert.strictEqual(acl.canRemoveModel(model1), true);
     acl = makeACL({user: 'who'});
     const model2 = makeModel('who', {who: 'read'});
     assert.strictEqual(acl.canRemoveModel(model2), false);

@@ -1524,7 +1524,7 @@ YUI.add('juju-models', function(Y) {
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.name = 'machine';
       obj.displayName = this.createDisplayName(obj.id);
-      var info = this.parseMachineName(obj.id);
+      const info = this.parseMachineName(obj.id);
       obj.parentId = info.parentId;
       obj.containerType = info.containerType;
       obj.number = info.number;
@@ -1532,9 +1532,8 @@ YUI.add('juju-models', function(Y) {
         var MANAGE_ENVIRON = environments.machineJobs.MANAGE_ENVIRON;
         obj.isStateServer = obj.jobs.indexOf(MANAGE_ENVIRON) !== -1;
       } else {
-        // If jobs is undefined, then we are in a sandbox environment.
-        // In this case, assume all machines to be able to host units.
-        // Also, no state servers in sandbox mode.
+        // If jobs is undefined then a ghost machine has been added. See the
+        // addGhost method in this module.
         obj.jobs = [environments.machineJobs.HOST_UNITS];
         obj.isStateServer = false;
       }
@@ -2631,8 +2630,7 @@ YUI.add('juju-models', function(Y) {
 
       machineList.each(function(machine) {
         var parentId = machine.parentId;
-        // parentId is undefined in sandboxed env and null in a real one.
-        if (parentId !== undefined && parentId !== null) {
+        if (parentId !== null) {
           // We don't add containers to the machine spec.
           return;
         }

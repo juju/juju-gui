@@ -276,7 +276,6 @@ YUI.add('juju-gui', function(Y) {
       // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
-      window.flags = window.flags || {};
 
       // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
@@ -338,12 +337,41 @@ YUI.add('juju-gui', function(Y) {
       if (window.juju_config) {
         dischargeToken = window.juju_config.dischargeToken;
       }
+      // This creates the juju bakery and stores it; it will be used later.
       this.bakeryFactory.create({
         webhandler: new Y.juju.environments.web.WebHandler(),
         interactive: this.get('interactiveLogin'),
         serviceName: 'juju',
-        dischargeStore: window.localStorage,
-        dischargeToken: dischargeToken
+        user: this.user,
+        dischargeToken: dischargeToken,
+        visitMethod: response => {
+          // Add to the page a notification about accepting the pop up window
+          // for logging into USSO.
+          const url = response.Info.VisitURL;
+          const notification = document.createElement('div');
+          notification.setAttribute('id', 'login-notification');
+          const message = document.createTextNode(
+            'To proceed with the authentication, please accept the pop up ' +
+            'window or ');
+          notification.appendChild(message);
+          const link = document.createElement('a');
+          link.href = url;
+          link.target = '_blank';
+          const text = document.createTextNode('click here');
+          link.appendChild(text);
+          notification.appendChild(link);
+          notification.appendChild(document.createTextNode('.'));
+          document.body.appendChild(notification);
+          // Open the pop up (default behavior for the time being).
+          window.open(url, 'Login');
+        },
+        onSuccess: () => {
+          // Remove the pop up notification from the page.
+          const notification = document.getElementById('login-notification');
+          if (notification) {
+            notification.remove();
+          }
+        }
       });
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
@@ -418,15 +446,7 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
-      let user = null;
-      let password = null;
-      let macaroons = null;
-      let credentials = this.user.controller;
-      if (credentials.areAvailable) {
-        user = credentials.user;
-        password = credentials.password;
-        macaroons = credentials.macaroons;
-      }
+      const controllerCreds = this.user.controller;
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
@@ -439,7 +459,11 @@ YUI.add('juju-gui', function(Y) {
         entityPromise = this._fetchEntityFromUserState(pathState.state.user);
       }
       this.controllerAPI = this.setUpControllerAPI(
-        controllerAPI, user, password, macaroons, entityPromise);
+        controllerAPI,
+        controllerCreds.user,
+        controllerCreds.password,
+        controllerCreds.macaroons,
+        entityPromise);
       const getBundleChanges = this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI);
       // Create Romulus API client instances.
@@ -519,7 +543,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('model connected');
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
-        const credentials = this.user.controller;
+        const credentials = this.user.model;
         if (credentials.areAvailable) {
           this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
           return;
@@ -785,15 +809,16 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
-      // We make sure controller credentials are set in the user object for
-      // the apis.
-      if (credentials) {
-        this.user.controller = credentials;
-      }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (!api) {
           return;
+        }
+        // Ensure the credentials are set, if available.
+        if (credentials && api.name === 'model-api') {
+          this.user.model = credentials;
+        } else if (credentials) {
+          this.user.controller = credentials;
         }
         if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
@@ -1063,9 +1088,6 @@ YUI.add('juju-gui', function(Y) {
       @method _renderISVProfile
     */
     _renderISVProfile: function() {
-      if (!window.flags || !window.flags.blues) {
-        return;
-      }
       ReactDOM.render(
         <window.juju.components.ISVProfile
           d3={d3} />,
@@ -1095,6 +1117,9 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification={this.db.notifications.add.bind(
               this.db.notifications)}
+          createPaymentMethod={
+            this.payment && this.payment.createPaymentMethod.bind(this.payment)}
+          createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
@@ -1102,6 +1127,8 @@ YUI.add('juju-gui', function(Y) {
           getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
             views.utils)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          removePaymentMethod={
+            this.payment && this.payment.removePaymentMethod.bind(this.payment)}
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
           sendAnalytics={this.sendAnalytics}
@@ -1369,8 +1396,7 @@ YUI.add('juju-gui', function(Y) {
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           modelCommitted={this.env.get('connected')}
-          sendAnalytics={this.sendAnalytics}
-          showInstall={!!this.get('sandbox')} />,
+          sendAnalytics={this.sendAnalytics} />,
         document.getElementById('deployment-bar-container'));
     },
 
@@ -1447,9 +1473,7 @@ YUI.add('juju-gui', function(Y) {
     _renderProviderLogo: function() {
       const container = document.getElementById('provider-logo-container');
       const cloudProvider = this.env.get('providerType');
-      const providerDetails = cloudProvider ?
-        views.utils.getCloudProviderDetails(cloudProvider) :
-        {};
+      let providerDetails = views.utils.getCloudProviderDetails(cloudProvider);
       const currentState = this.state.current || {};
       const isDisabled = (
         // There is no provider.
@@ -1468,6 +1492,11 @@ YUI.add('juju-gui', function(Y) {
         }
       );
       const scale = 0.65;
+      if (!providerDetails) {
+        // It's possible that the GUI is being run on a provider that we have
+        // not yet setup in the cloud provider details.
+        providerDetails = {};
+      }
       ReactDOM.render(
         <div className={classes}>
           <window.juju.components.SvgIcon
@@ -1721,6 +1750,7 @@ YUI.add('juju-gui', function(Y) {
             this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel}
           setPageTitle={this.setPageTitle.bind(this)}
+          showTerms={this.terms.showTerms.bind(this.terms)}
           urllib={window.jujulib.URL}
         />,
         document.getElementById('charmbrowser-container'));
@@ -2198,7 +2228,7 @@ YUI.add('juju-gui', function(Y) {
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
           macaroon: existingMacaroons,
-          dischargeStore: window.localStorage,
+          user: this.user,
           dischargeToken: existingDischargeToken
         });
         this.set('charmstore', new Charmstore(charmstoreURL, bakery));
@@ -2259,7 +2289,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage,
+        user: this.user,
         dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, plansBakery);
@@ -2269,7 +2299,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage,
+        user: this.user,
         dischargeToken: config.dischargeToken
       });
       this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
@@ -2280,7 +2310,7 @@ YUI.add('juju-gui', function(Y) {
           webhandler: webHandler,
           interactive: interactive,
           cookieStore: storage,
-          dischargeStore: window.localStorage,
+          user: this.user,
           dischargeToken: config.dischargeToken
         });
         this.payment = new window.jujulib.payment(
@@ -2657,12 +2687,12 @@ YUI.add('juju-gui', function(Y) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
         // The GUI will automatically log in when we switch.
-        this.user.controller = {
+        this.user.model = {
           user: username,
           password: password
         };
       };
-      const credentials = this.user.controller;
+      const credentials = this.user.model;
       const onLogin = function(callback) {
         this.env.loading = false;
         if (callback) {
@@ -2682,7 +2712,7 @@ YUI.add('juju-gui', function(Y) {
         // We need to reset the credentials each time we set up a model,
         // b/c we remove the credentials when we close down a model
         // connection in the `close()` method of base.js
-        this.user.controller = credentials;
+        this.user.model = credentials;
         // Reconnect the model if required.
         if (reconnect) {
           model.connect();
@@ -2839,7 +2869,6 @@ YUI.add('juju-gui', function(Y) {
       }
       var options = {
         endpointsController: this.endpointsController,
-        useDragDropImport: this.get('sandbox'),
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,
@@ -2977,7 +3006,7 @@ YUI.add('juju-gui', function(Y) {
       let credentials;
       // Try to retrieve the user from the model connection.
       if (this.env) {
-        credentials = this.user.controller;
+        credentials = this.user.model;
         if (credentials.user) {
           return mkUser(credentials.user, true);
         }

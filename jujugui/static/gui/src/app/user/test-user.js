@@ -24,50 +24,74 @@ chai.config.truncateThreshold = 0;
 
 describe('user auth class', () => {
   it('exists', () => {
-    const user = new window.jujugui.User({storage: {}});
+    const user = new window.jujugui.User();
     assert.isObject(user);
   });
 
-  describe('controller credentials', () => {
-    const getMockStorage = function() {
-      return new function() {
-        return {
-          store: {},
-          setItem: function(name, val) { this.store[name] = val; },
-          getItem: function(name) { return this.store[name] || null; }
-        };
+  const getMockStorage = function() {
+    return new function() {
+      return {
+        store: {},
+        setItem: function(name, val) { this.store[name] = val; },
+        getItem: function(name) { return this.store[name] || null; }
       };
     };
+  };
+
+  describe('identity credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+    });
 
     it('can be set', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({storage: storage});
-      user.controller = {user: 'rose'};
-      assert.deepEqual(JSON.parse(storage.store.credentials), {user: 'rose'});
+      user.identity = 'doctor';
+      assert.equal(storage.store['discharge-token'], 'doctor');
     });
 
     it('can be retrieved', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({storage: storage});
-      user.controller = {password: 'bad wolf'};
+      storage.store['discharge-token'] = 'doctor';
+      assert.equal(user.identity, 'doctor');
+    });
+  });
+
+  describe('controller credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    it('can be set', () => {
+      user.controller = {user: 'rose'};
+      assert.deepEqual(
+        JSON.parse(storage.store.controllerCredentials), {user: 'rose'});
+    });
+
+    it('can be retrieved', () => {
+      user.controller = {user: 'rose', password: 'bad wolf'};
       const creds = user.controller;
       assert.equal(creds.password, 'bad wolf');
     });
 
     it('normalizes user names', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({storage: storage});
-      user.controller = {user: 'rose'};
+      user.controller = {user: 'rose', password: 'bad wolf'};
       let creds = user.controller;
       assert.equal(creds.user, 'rose@local');
-      user.controller = {user: 'doctor@tardis'};
+      user.controller = {user: 'doctor@tardis', password: 'tenant'};
       creds = user.controller;
       assert.equal(creds.user, 'doctor@tardis');
     });
 
     it('determines if credentials are available', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({storage: storage});
       let creds = user.controller;
       assert.equal(creds.areAvailable, false);
       user.controller = {macaroons: ['macaroons']};
@@ -76,14 +100,60 @@ describe('user auth class', () => {
     });
 
     it('determines if creds are external', () => {
-      let storage = getMockStorage();
-      const user = new window.jujugui.User({storage: storage});
       user.controller = {
         user: 'doctor@tardis',
         password: 'bad wolf',
         external: 'foo'
       };
       const creds = user.controller;
+      assert.equal(creds.areExternal, true);
+    });
+  });
+
+  describe('model credentials', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    it('can be set', () => {
+      user.model = {user: 'rose'};
+      assert.deepEqual(
+        JSON.parse(storage.store.modelCredentials), {user: 'rose'});
+    });
+
+    it('can be retrieved', () => {
+      user.model = {user: 'rose', password: 'bad wolf'};
+      const creds = user.model;
+      assert.equal(creds.password, 'bad wolf');
+    });
+
+    it('normalizes user names', () => {
+      user.model = {user: 'rose', password: 'bad wolf'};
+      let creds = user.model;
+      assert.equal(creds.user, 'rose@local');
+      user.model = {user: 'doctor@tardis', password: 'tenant'};
+      creds = user.model;
+      assert.equal(creds.user, 'doctor@tardis');
+    });
+
+    it('determines if credentials are available', () => {
+      let creds = user.model;
+      assert.equal(creds.areAvailable, false);
+      user.model = {macaroons: ['macaroons']};
+      creds = user.model;
+      assert.equal(creds.areAvailable, true);
+    });
+
+    it('determines if creds are external', () => {
+      user.model = {
+        user: 'doctor@tardis',
+        password: 'bad wolf',
+        external: 'foo'
+      };
+      const creds = user.model;
       assert.equal(creds.areExternal, true);
     });
   });

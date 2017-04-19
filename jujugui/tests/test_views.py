@@ -140,7 +140,6 @@ class ConfigTests(ViewTestCase):
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['consoleEnabled'])
         self.assertEqual('', config['jujuCoreVersion'])
-        self.assertIs(False, config['sandbox'])
         self.assertIsNone(config['user'])
         self.assertIsNone(config['password'])
         self.assertEqual('', config['baseUrl'])
@@ -158,7 +157,6 @@ class ConfigTests(ViewTestCase):
             'jujugui.insecure': 'true',
             'jujugui.password': 'secret',
             'jujugui.plans_url': 'http://1.2.3.4/plans-api',
-            'jujugui.sandbox': 'true',
             'jujugui.terms_url': 'http://1.2.3.4/terms-api',
             'jujugui.user': 'who',
         })
@@ -170,9 +168,6 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('http://1.2.3.4/terms-api', config['termsURL'])
         self.assertTrue(config['GTM_enabled'])
         self.assertEqual('blob', config['auth'])
-        # Note that here we are testing that the value is actually True or
-        # False, not that it just evaluates to True/False(like in assertTrue).
-        self.assertIs(True, config['sandbox'])
         # User/password values that are explitly set trump defaults.
         self.assertEqual('who', config['user'])
         self.assertEqual('secret', config['password'])
@@ -184,7 +179,6 @@ class ConfigTests(ViewTestCase):
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
-        self.assertEqual('sandbox', config['jujuEnvUUID'])
         self.assertEqual('/ignore/prefix', config['baseUrl'])
 
     def test_credentials(self):
@@ -195,7 +189,5 @@ class ConfigTests(ViewTestCase):
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
-        # When sandbox mode is disabled, the real credentials are provided.
-        self.assertIs(False, config['sandbox'])
         self.assertEqual('dalek', config['user'])
         self.assertEqual('exterminate!', config['password'])

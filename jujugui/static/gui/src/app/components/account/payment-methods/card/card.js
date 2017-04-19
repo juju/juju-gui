@@ -24,13 +24,24 @@ YUI.add('account-payment-method-card', function() {
     displayName: 'AccountPaymentMethodCard',
 
     propTypes: {
-      card: React.PropTypes.object.isRequired
+      addNotification: React.PropTypes.func,
+      card: React.PropTypes.object.isRequired,
+      onPaymentMethodRemoved: React.PropTypes.func,
+      removePaymentMethod: React.PropTypes.func,
+      username: React.PropTypes.string
     },
 
     getInitialState: function() {
+      this.xhrs = [];
       return {
         cardFlipped: false
       };
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
     },
 
     /**
@@ -44,6 +55,47 @@ YUI.add('account-payment-method-card', function() {
       this.setState({cardFlipped: !this.state.cardFlipped});
     },
 
+    /**
+      Remove the payment method.
+
+      @method _removePaymentMethod
+    */
+    _removePaymentMethod: function() {
+      const xhr = this.props.removePaymentMethod(
+        this.props.username, this.props.card.name, error => {
+          if (error) {
+            const message = 'Unable to remove the payment method';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
+            return;
+          }
+          this.props.onPaymentMethodRemoved();
+        });
+      this.xhrs.push(xhr);
+    },
+
+    /**
+      Generate the card actions.
+
+      @method _generateActions
+    */
+    _generateActions: function() {
+      if (!this.props.removePaymentMethod) {
+        return null;
+      }
+      return (
+        <div className="four-col last-col account__payment-card-actions">
+          <juju.components.GenericButton
+            action={this._removePaymentMethod}
+            type="inline-base"
+            title="Remove payment details" />
+        </div>);
+    },
+
     render: function() {
       const card = this.props.card;
       const cardClasses = classNames(
@@ -51,40 +103,44 @@ YUI.add('account-payment-method-card', function() {
         {'account__payment-card-wrapper--flipped': this.state.cardFlipped}
       );
       const address = card.address;
+      const line2 = address.line2 ? (<p>{address.line2}</p>) : null;
       return (
-        <div className="account__payment-card">
-          <div className={cardClasses}
-            onClick={this._handleCardClick}>
-            <div className="account__payment-card-container">
-              <div className="account__payment-card-front">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-name">
-                  {card.name}
-                </div>
-              </div>
-              <div className="account__payment-card-back">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-number">
-                  xxxx xxxx xxxx {card.last4}
-                </div>
-                <div className="account__payment-card-bottom">
-                  <div className="account__payment-card-expiry">
-                    {card.month}/{card.year}
+        <div className="account__payment-card twelve-col">
+          <div className="eight-col">
+            <div className={cardClasses}
+              onClick={this._handleCardClick}>
+              <div className="account__payment-card-container">
+                <div className="account__payment-card-front">
+                  <div className="account__payment-card-overlay"></div>
+                  <div className="account__payment-card-name">
+                    Click to reveal card details.
                   </div>
-                  <div className="account__payment-card-brand">
-                    {card.brand}
+                </div>
+                <div className="account__payment-card-back">
+                  <div className="account__payment-card-overlay"></div>
+                  <div className="account__payment-card-number">
+                    xxxx xxxx xxxx {card.last4}
+                  </div>
+                  <div className="account__payment-card-bottom">
+                    <div className="account__payment-card-expiry">
+                      {card.month}/{card.year}
+                    </div>
+                    <div className="account__payment-card-brand">
+                      {card.brand}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div className="account__payment-card-info">
+              <h4>Card address</h4>
+              <p>{address.line1}</p>
+              {line2}
+              <p>{address.city} {address.state}</p>
+              <p>{address.country} {address.postcode}</p>
+            </div>
           </div>
-          <div className="account__payment-card-info">
-            <h4>Card address</h4>
-            <p>{address.line1}</p>
-            <p>{address.line2}</p>
-            <p>{address.city} {address.state}</p>
-            <p>{address.country} {address.postcode}</p>
-          </div>
+          {this._generateActions()}
         </div>);
     }
 
@@ -92,5 +148,6 @@ YUI.add('account-payment-method-card', function() {
 
 }, '', {
   requires: [
+    'generic-button'
   ]
 });

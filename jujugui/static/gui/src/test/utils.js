@@ -37,22 +37,22 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             'to cleanup.');
       }
 
-      var container = Y.Node.create('<div>');
+      var container = document.createElement('div');
       if (id) {
-        container.set('id', id);
+        container.setAttribute('id', id);
       }
-      container.appendTo(document.body);
+      document.body.appendChild(container);
       if (visibleContainer !== false) {
-        container.setStyle('position', 'absolute');
-        container.setStyle('top', '-10000px');
-        container.setStyle('left', '-10000px');
+        container.style.position = 'absolute';
+        container.style.top = '-10000px';
+        container.style.left = '-10000px';
       }
 
       // Add the destroy ability to the test hook context to be run on
       // afterEach automatically.
       ctx._cleanups.push(function() {
         container.remove(true);
-        container.destroy();
+        container.remove();
       });
 
       return container;

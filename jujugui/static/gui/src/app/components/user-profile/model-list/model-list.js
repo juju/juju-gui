@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-model-list', function() {
 
   juju.components.UserProfileModelList = React.createClass({
+    displayName: 'UserProfileModelList',
+
     // broadcastStatus is necessary for communicating loading status back to
     // the parent SectionLoadWatcher.
     propTypes: {
@@ -45,11 +47,10 @@ YUI.add('user-profile-model-list', function() {
     },
 
     getInitialState: function() {
-      this.xhrs = [];
-
       return {
+        destroyingModels: [],
         modelList: [],
-        loadingModels: false,
+        loadingModels: false
       };
     },
 
@@ -63,12 +64,6 @@ YUI.add('user-profile-model-list', function() {
 
     componentWillMount: function() {
       this._fetchModels(this.props.facadesExist);
-    },
-
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
-      });
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -97,8 +92,7 @@ YUI.add('user-profile-model-list', function() {
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingModels: true}, () => {
-        const xhr = this.props.listModelsWithInfo(this._fetchModelsCallback);
-        this.xhrs.push(xhr);
+        this.props.listModelsWithInfo(this._fetchModelsCallback);
       });
     },
 
@@ -193,56 +187,65 @@ YUI.add('user-profile-model-list', function() {
       const uuid = model.uuid;
       // Hide the confirmation popup.
       this._displayConfirmation(null);
-      const xhr = this.props.destroyModels([uuid], this._destroyModelCallback);
-      this.xhrs.push(xhr);
+      // Add the model to the list of models being destroyed, then make the
+      // actual API call. The API call is in a callback to avoid race
+      // conditions.
+      this.setState({
+        destroyingModels: this.state.destroyingModels.concat([uuid])
+      }, () => {
+        const callback = this._destroyModelCallback.bind(
+          this, uuid, model.name);
+        this.props.destroyModels([uuid], callback);
+      });
     },
 
     /**
       Callback for the controller delete model call.
 
       @method _destroyModelCallback
+      @param {String} uuid the model being deleted. Bound when the callback is
+        passed into the API call.
+      @param {String} modelName the name of the model being deleted; primarily
+        useful for providing user-friendly notifications messages. Bound when
+        the callback is passed into the API call.
       @param {String} err The error from the request, or null.
-      @param {Array} modelList The list of models.
+      @param {Object} results The result for the model being deleted. The
+        object is keyed to the model UUID.
     */
-    _destroyModelCallback: function(err, results) {
+    _destroyModelCallback: function(uuid, modelName, err, results) {
       const addNotification = this.props.addNotification;
-      // Handle global errors.
-      if (err) {
+      // Handle global errors or model-specific errors.
+      const error = err || results[uuid];
+      if (error) {
         addNotification({
           title: 'Model destruction failed',
-          message: 'The model failed to be destroyed: ' + err,
+          message: `Could not destroy model "${modelName}": ${error}`,
           level: 'error'
         });
-        return;
-      }
-      // Ignore all but the first UUID because the UI only allows deleting one
-      // at a time.
-      const uuid = Object.keys(results)[0];
-      // Check for model-specific errors.
-      const uuidError = results[uuid];
-      if (uuidError) {
+      } else {
+        // Handle a successful deletion.
         addNotification({
-          title: 'Model destruction failed',
-          message: 'The model failed to be destroyed: ' + uuidError,
-          level: 'error'
+          title: 'Model destroyed',
+          message: `The model "${modelName}" is destroyed.`,
+          level: 'important'
         });
-        return;
+        // XXX kadams54: Ideally the model would change in the DB and that would
+        // trigger a re-render. Right now we're getting the data from an API;
+        // eventually, once we re-write the model layer to move away from YUI,
+        // this will hopefully change to become more React-friendly. Until then
+        // this hack will do.
+        const destroyedModel = this.state.modelList.find(model => {
+          return model.uuid === uuid;
+        });
+        destroyedModel.isAlive = false;
       }
-      // Handle a successful deletion.
-      addNotification({
-        title: 'Model destroyed',
-        message: 'The model is currently being destroyed.',
-        level: 'important'
+      // Remove the model UUID from the list of in-flight deletion requests.
+      const destroyingModels = this.state.destroyingModels.filter(id => {
+        return id !== uuid;
       });
-      // XXX kadams54: Ideally the model would change in the DB and that would
-      // trigger a re-render. Right now we're getting the data from an API;
-      // eventually, once we re-write the model layer to move away from YUI,
-      // this will hopefully change to become more React-friendly. Until then
-      // this hack will do.
-      const destroyedModel = this.state.modelList.find(model => {
-        return model.uuid === uuid;
+      this.setState({
+        destroyingModels: destroyingModels
       });
-      destroyedModel.isAlive = false;
     },
 
     /**
@@ -262,13 +265,19 @@ YUI.add('user-profile-model-list', function() {
         'user-profile__entity',
         'user-profile__list-row'
       );
+      // Hide any models that are destroyed.
       if (!model.isAlive) {
+        return null;
+      }
+      // Note any model destruction requests that are in-flight.
+      if (this.state.destroyingModels.indexOf(uuid) >= 0) {
         if (model.name) {
           return (
             <li className={classes}
               key={uuid}>
-              {model.name} is being destroyed.
-            </li>);
+              Requesting that {model.name} be destroyed.
+            </li>
+          );
         } else {
           return null;
         }
@@ -282,6 +291,18 @@ YUI.add('user-profile-model-list', function() {
       if (model.owner) {
         owner = model.owner.split('@')[0];
       }
+
+      const modelUser = model.users ? model.users.filter(user => {
+        return user.displayName === props.userInfo.profile;
+      }) : null;
+
+      // This is purely defensive and we should always know a permission
+      // if you ever see this, sound the alarms.
+      let permission = 'unknown';
+      if (modelUser.length) {
+        permission = modelUser[0].access;
+      }
+
       return (
         <juju.components.UserProfileEntity
           acl={props.acl}
@@ -290,23 +311,27 @@ YUI.add('user-profile-model-list', function() {
           expanded={isCurrent}
           key={uuid}
           switchModel={props.switchModel}
+          permission={permission}
           type="model">
-          <span className="user-profile__list-col three-col">
+          <span className="user-profile__list-col two-col">
             {model.name || '--'}
           </span>
-          <span className="user-profile__list-col four-col">
+          <span className="user-profile__list-col two-col">
+            {owner}
+          </span>
+          <span className="user-profile__list-col two-col">
+            {model.numMachines}
+          </span>
+          <span className="user-profile__list-col two-col">
             {model.cloud + '/' + region}
           </span>
           <span className="user-profile__list-col two-col">
+            {permission}
+          </span>
+          <span className="user-profile__list-col two-col last-col">
             <juju.components.DateDisplay
               date={model.lastConnection || '--'}
               relative={true} />
-          </span>
-          <span className="user-profile__list-col one-col">
-            {model.numMachines}
-          </span>
-          <span className="user-profile__list-col two-col last-col">
-            {owner}
           </span>
         </juju.components.UserProfileEntity>);
     },
@@ -320,21 +345,24 @@ YUI.add('user-profile-model-list', function() {
     _generateHeader: function() {
       return (
         <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col three-col">
+          <span className="user-profile__list-col two-col">
             Name
           </span>
-          <span className="user-profile__list-col four-col">
+          <span className="user-profile__list-col two-col">
+            Owner
+          </span>
+          <span className="user-profile__list-col two-col">
+            Machines
+          </span>
+          <span className="user-profile__list-col two-col">
             Cloud/Region
           </span>
           <span className="user-profile__list-col two-col">
-            Last accessed
-          </span>
-          <span className="user-profile__list-col one-col">
-            Machines
+            Permission
           </span>
           <span className={
             'user-profile__list-col two-col last-col'}>
-            Owner
+            Last accessed
           </span>
         </li>);
     },

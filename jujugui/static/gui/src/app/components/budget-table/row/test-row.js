@@ -142,7 +142,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without plans', function() {
@@ -185,7 +185,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display extra info', function() {
@@ -246,7 +246,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can show an active plan', function() {
@@ -325,7 +325,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a service that does not need a plan', function() {
@@ -383,7 +383,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display editable plans', function() {
@@ -509,7 +509,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can disable controls when read only', function() {
@@ -636,7 +636,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('will abort the request when unmounting', function() {
@@ -714,7 +714,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display applications with terms', function() {
@@ -785,7 +785,7 @@ describe('BudgetTableRow', function() {
         </juju.components.ExpandingRow>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can get terms by name', function() {
@@ -902,24 +902,12 @@ describe('BudgetTableRow', function() {
       .props.action();
     output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <juju.components.TermsPopup
         close={instance._toggleTerms}
-        type="wide">
-        <div className="budget-table-row__terms-container">
-          <ul className="budget-table-row__terms">
-            <li key="landscape">
-              <pre>
-                Landscape terms.
-              </pre>
-            </li>
-            <li key="apache2">
-              <pre>
-                Apache2 terms.
-              </pre>
-            </li>
-          </ul>
-        </div>
-      </juju.components.Popup>);
-    assert.deepEqual(output.props.children[1], expected);
+        terms={[
+          {content: 'Landscape terms.', name: 'landscape'},
+          {content: 'Apache2 terms.', name: 'apache2'}
+        ]} />);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 });

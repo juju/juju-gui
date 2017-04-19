@@ -165,31 +165,10 @@ YUI.add('bundle-importer', function(Y) {
       @param {Object} e The load event from the file load.
     */
     _fileReaderOnload: function(file, e) {
-      var data;
       var notifications = this.db.notifications;
-      // We support dropping a bundle YAML file and a changeSet JSON file onto
-      // the canvas. The JSON file support should only ever be used
-      // for when there is no guiserver is available like in sandbox mode.
       var extension = file.name.split('.').pop();
       var result = e.target.result;
-      if (extension === 'json') {
-        try {
-          data = JSON.parse(result);
-        } catch (e) {
-          notifications.add({
-            title: 'Invalid changeset format',
-            message: 'The supplied file could not be parsed as JSON.',
-            level: 'error'
-          });
-          return;
-        }
-        notifications.add({
-          title: 'Processing File',
-          message: 'Changeset processing started.',
-          level: 'important'
-        });
-        this.importBundleDryRun(data);
-      } else if (extension === 'yaml') {
+      if (extension === 'yaml') {
         notifications.add({
           title: 'Processing File',
           message: 'Changeset processing started.',

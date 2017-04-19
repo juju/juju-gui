@@ -31,8 +31,6 @@ YUI.add('juju-env-bakery', function(Y) {
   var module = Y.namespace('juju.environments.web');
   var macaroon = Y.namespace('macaroon');
 
-  // Define the discharge token header.
-  const DISCHARGE_TOKEN = 'discharge-token';
   // Define the bakery protocol version used by the GUI.
   const PROTOCOL_VERSION = 1;
   // Define the HTTP content type for JSON requests.
@@ -51,20 +49,25 @@ YUI.add('juju-env-bakery', function(Y) {
     Y.Base, [], {
 
       /**
-       Initialize.
+        Create and return the bakery.
 
-       @method initializer
-       @param {Object} cfg A config object providing webhandler and visit method
-           information. A visitMethod can be provided, which becomes the
-           bakery's visitMethod. Alternatively, the bakery can be configured to
-           non interactive mode. If neither is true, the default method is used.
-           setCookiePath is a string representing the endpoint register a
-           macaroon as a cookie back, can be omitted.
-           webhandler is an Y.juju.environments.web.WebHandler handling all the
-           xhr requests.
-           {visitMethod: fn, interactive: boolean, webhandler: obj,
-           serviceName: string, setCookiePath: string}
-       @return {undefined} Nothing.
+        @param {Object} cfg Parameters for the bakery, including:
+          - serviceName: the name of the service for which this bakery is used;
+          - visitMethod: the action used to visit the URL for logging into the
+            identity provider. The callable is provided the idm response
+            including the visit URL as "response.Info.VisitURL". If not
+            specified, a default visit method is used, opening a pop up;
+          - interactive: whether to use interactive mode (the default) or
+            non-interactive mode, in which case the visitMethod is never used,
+            as the bakery is assumed to already have the required tokens;
+          - onSuccess: an optional function to be called once the macaraq has
+            been successfully completed;
+          - setCookiePath: optional string representing the endpoint register a
+            macaroon as a cookie;
+          - cookieStore: an optional customized cookie storage;
+          - dischargeStore: an optional customized discharge storage;
+          - macaroon: an initial macaroon to be included in the storage;
+          - dischargeToken: optional token to be used when discharging.
        */
       initializer: function (cfg) {
         this.webhandler = cfg.webhandler;
@@ -75,14 +78,8 @@ YUI.add('juju-env-bakery', function(Y) {
         } else {
           this.visitMethod = this._defaultVisitMethod;
         }
-        // If there is a cookie that may already be set, such as when coming
-        // from the storefront, use that cookie name instead of the generated
-        // one.
-        if (cfg.existingCookie) {
-          this.macaroonName = cfg.existingCookie;
-        } else {
-          this.macaroonName = 'Macaroons-' + cfg.serviceName;
-        }
+        this._onSuccess = cfg.onSuccess || (() => {});
+        this.macaroonName = 'Macaroons-' + cfg.serviceName;
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
@@ -95,13 +92,13 @@ YUI.add('juju-env-bakery', function(Y) {
             document.cookie = prefix + cfg.macaroon + ';path=/';
           }
         }
-        this.dischargeStore = cfg.dischargeStore;
-        if (!this.dischargeStore) {
-          console.error('bakery instantiated without a discharge store');
+        this.user = cfg.user;
+        if (!this.user) {
+          console.error('bakery instantiated without user authentication');
           return;
         }
         if (cfg.dischargeToken) {
-          this.dischargeStore.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
+          this.user.identity = cfg.dischargeToken;
         }
       },
 
@@ -382,8 +379,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {undefined} Nothing.
        */
       _requestHandler: function (successCallback, failureCallback, response) {
-        var target = response.target;
-        if (target.status >= 400) {
+        if (response.target.status >= 400) {
           failureCallback(response);
           return;
         }
@@ -418,12 +414,16 @@ YUI.add('juju-env-bakery', function(Y) {
           discharge fails. It receives an error message.
       */
       discharge: function(m, successCallback, failureCallback) {
+        const successCB = macaroons => {
+          successCallback(macaroons);
+          this._onSuccess();
+        };
         try {
           macaroon.discharge(
             macaroon.import(m),
             this._obtainThirdPartyDischarge.bind(this),
             function(discharges) {
-              successCallback(macaroon.export(discharges));
+              successCB(macaroon.export(discharges));
             },
             failureCallback
           );
@@ -500,7 +500,7 @@ YUI.add('juju-env-bakery', function(Y) {
                                             successCallback, failureCallback) {
         thirdPartyLocation += '/discharge';
 
-        var dischargeToken = this.dischargeStore.getItem(DISCHARGE_TOKEN);
+        const dischargeToken = this.user.identity;
         var headers = {
           'Bakery-Protocol-Version': 1,
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -537,8 +537,7 @@ YUI.add('juju-env-bakery', function(Y) {
           var json = JSON.parse(response.target.responseText);
           if (json.DischargeToken !== undefined &&
               json.DischargeToken !== '') {
-            this.dischargeStore.setItem(DISCHARGE_TOKEN,
-              btoa(JSON.stringify(json.DischargeToken)));
+            this.user.identity = btoa(JSON.stringify(json.DischargeToken));
           }
           successCallback(macaroon.import(json.Macaroon));
         } catch (ex) {
@@ -560,24 +559,42 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {Object} The asynchronous request instance.
        */
       _interact: function(successCallback, failureCallback, e) {
-        var response = JSON.parse(e.target.responseText);
+        const response = JSON.parse(e.target.responseText);
         if (response.Code !== 'interaction required') {
           failureCallback(response.Code);
           return;
         }
-
         this.visitMethod(response);
-
-        return this.webhandler.sendGetRequest(
-            response.Info.WaitURL,
-            {'Content-Type': JSON_CONTENT_TYPE},
-            null, null, false, null,
-            this._requestHandler.bind(
-              this,
-              this._exportMacaroon.bind(this, successCallback, failureCallback),
-              failureCallback
-            )
-        );
+        const generateRequest = callback => {
+          return this.webhandler.sendGetRequest(
+              response.Info.WaitURL,
+              {'Content-Type': JSON_CONTENT_TYPE},
+              null, null, false, null, callback);
+        };
+        // When performing a "wait" request for the user logging into identity
+        // it is possible that they take longer than the server timeout of
+        // 1 minute: when this happens the server just closes the connection.
+        let retryCounter = 0;
+        const retryCallback = reqResponse => {
+          const target = reqResponse.target;
+          if (target.status === 0 &&
+              target.response === '' &&
+              target.responseText === '') {
+            // Server closed the connection, retry and increment the counter.
+            if (retryCounter < 5) {
+              retryCounter += 1;
+              generateRequest(retryCallback);
+              return;
+            }
+            // We have retried 5 times so fall through to call handler.
+          }
+          // Call the usual request handler if no retry is necessary.
+          this._requestHandler(
+            this._exportMacaroon.bind(this, successCallback, failureCallback),
+            failureCallback,
+            reqResponse);
+        };
+        generateRequest(retryCallback);
       },
 
       /**
@@ -737,7 +754,7 @@ YUI.add('juju-env-bakery', function(Y) {
               `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
           });
         }
-        this.dischargeStore.removeItem(DISCHARGE_TOKEN);
+        this.user.identity = null;
       }
     }
   );

@@ -50,23 +50,8 @@ YUI.add('unit-details', function() {
     },
 
     /**
-      Display the status if there is a status message
-
-      @method _getUnitStatus
-      @param {String} status The unit message.
-      @returns {String} The formatted status.
-    */
-    _getUnitStatus: function(status) {
-      if (!status || status === '') {
-        return;
-      }
-      return ` - ${status}`;
-    },
-
-    /**
       Build a HTML list from an array of port ranges and an IP address.
 
-      @method _getAddressList
       @param {String} address An IP address.
       @param {Array} portRanges A list of port ranges, each one being an object
         with the following attributes:
@@ -77,7 +62,7 @@ YUI.add('unit-details', function() {
       @param {Boolean} clickabl Whether the addresses are clickable.
       @returns {String} HTML of list.
     */
-    _getAddressList: function(address, portRanges, clickable) {
+    _generateAddresses: function(address, portRanges, clickable) {
       if (!address) {
         return;
       }
@@ -111,6 +96,45 @@ YUI.add('unit-details', function() {
       return <ul className="unit-details__list">{items}</ul>;
     },
 
+    /**
+      Build a HTML block of statuses for the given unit.
+
+      @param {Object} unit The unit model instance.
+      @returns {String} The node with the statuses.
+    */
+    _generateStatuses: function(unit) {
+      if (!unit.agent_state) {
+        return <p className="unit-details__property">Status: uncommitted</p>;
+      }
+      let msg = unit.agent_state;
+      if (unit.workloadStatusMessage) {
+        msg = `${msg} - ${unit.workloadStatusMessage}`;
+      }
+      let agent = null;
+      if (unit.agentStatus) {
+        agent = (
+          <p className="unit-details__property">
+            Agent Status: {unit.agentStatus}
+          </p>
+        );
+      }
+      let workload = null;
+      if (unit.workloadStatus) {
+        workload = (
+          <p className="unit-details__property">
+            Workload Status: {unit.workloadStatus}
+          </p>
+        );
+      }
+      return (
+        <div>
+          <p className="unit-details__property">Status: {msg}</p>
+          {agent}
+          {workload}
+        </div>
+      );
+    },
+
     render: function() {
       const props = this.props;
       const unit = props.unit;
@@ -119,17 +143,14 @@ YUI.add('unit-details', function() {
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
-      const privateList = this._getAddressList(
+      const privateList = this._generateAddresses(
         unit.private_address, unit.portRanges, true);
-      const publicList = this._getAddressList(
+      const publicList = this._generateAddresses(
         unit.public_address, unit.portRanges, props.service.get('exposed'));
-      const unitStatus = this._getUnitStatus(unit.workloadStatusMessage);
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
-            <p className="unit-details__property">
-              Status: {unit.agent_state || 'uncommitted'} {unitStatus}
-            </p>
+            {this._generateStatuses(unit)}
             <p className="unit-details__property">
               Public addresses: {publicList ? null : 'none'}
             </p>

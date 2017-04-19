@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var views;
     before(function(done) {
       YUI(GlobalConfig).use(
-          'juju-view-utils', 'node-event-simulate',
+          'juju-view-utils',
           function(Y) {
             views = Y.namespace('juju.views');
             done();
@@ -1053,7 +1053,8 @@ describe('utilities', function() {
           };
         };
       };
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       callback = sinon.stub();
       commit = sinon.stub();
@@ -1416,6 +1417,78 @@ describe('utilities', function() {
       utils.validateForm(fields, refs);
       assert.equal(refs.one.validate.callCount, 1);
       assert.equal(refs.two.validate.callCount, 1);
+    });
+  });
+
+  describe('arrayDedupe', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can remove duplicates from an array', function() {
+      assert.deepEqual(
+        utils.arrayDedupe(
+          ['one', 'four', 'one', 'two', 'three', 'two', 'four']),
+        ['one', 'four', 'two', 'three']);
+    });
+  });
+
+  describe('arrayFlatten', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can flatten an array of arrays', function() {
+      assert.deepEqual(
+        utils.arrayFlatten(
+          [['one', 'two'], ['three'], 'four']),
+        ['one', 'two', 'three', 'four']);
+    });
+
+    it('can flatten nested arrays', function() {
+      assert.deepEqual(
+        utils.arrayFlatten(
+          [[['one', 'two'], ['three']]]),
+        ['one', 'two', 'three']);
+    });
+  });
+
+  describe('arrayZip', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can zip arrays', function() {
+      assert.deepEqual(
+        utils.arrayZip(
+          ['one', 'two'], ['three', 'four']),
+        [['one', 'three'], ['two', 'four']]);
+      assert.deepEqual(
+        utils.arrayZip(
+          [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]),
+        [[1, 4, 7, 10], [2, 5, 8, 11], [3, 6, 9, 12]]);
+    });
+
+    it('can handle arrays of different length', function() {
+      assert.deepEqual(
+        utils.arrayZip(
+          [1, 2], [3], [4, 5, 6]),
+        [[1, 3, 4], [2, 5], [6]]);
     });
   });
 })();

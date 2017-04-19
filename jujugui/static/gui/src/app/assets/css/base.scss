@@ -5,6 +5,7 @@ $font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Cou
 // Shades of grey
 $light-grey: #f7f7f7;
 $light-mid-grey: #d4d4d4;
+$mid-grey: #aea79f;
 $dark-grey: #9fa7aa;
 $dark-warm-grey: #666;
 
@@ -80,6 +81,22 @@ $asset-path: 'static/gui/build/app/assets/';
   transform: translateY(-50%);
 }
 
+// Login pop up notification.
+#login-notification {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: center;
+
+  a {
+    color: #fff;
+  }
+}
 
 // Imports cloud vanilla theme from node_modules
 @import '../../../../../../../node_modules/cloud-vanilla-theme/scss/theme';

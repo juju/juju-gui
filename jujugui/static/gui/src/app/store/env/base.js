@@ -225,9 +225,7 @@ YUI.add('juju-env-base', function(Y) {
 
     /**
       The object handling Web requests to external APIs.
-      This is usually an instance of app/store/web-handler.js:WebHandler when
-      the GUI is connected to a real Juju environment, or
-      app/store/web-sandbox.js:WebSandbox if the GUI is in sandbox mode.
+      This is an instance of app/store/web-handler.js:WebHandler.
 
       @attribute webHandler
       @type {Object}
@@ -282,12 +280,6 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
-      const credentials = this.get('user').controller;
-      if (!credentials.areAvailable) {
-        credentials.user = '';
-        credentials.password = '';
-        this.get('user').controller = credentials;
-      }
     },
 
     destructor: function() {
@@ -356,7 +348,11 @@ YUI.add('juju-env-base', function(Y) {
       }
       this.cleanup(() => {
         this.userIsAuthenticated = false;
-        this.get('user').controller = null;
+        if (this.name === 'model-api') {
+          this.get('user').model = null;
+        } else {
+          this.get('user').controller = null;
+        }
         this.ws.close();
         callback();
       });

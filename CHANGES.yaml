@@ -1,3 +1,30 @@
+- 2.5.2:
+
+   - Unit workload status now shown in unit list view.
+   - User permissions are now shown in profile view.
+   - (Fix) Do not fail if cloud provider logo isn't available.
+   - (Fix) If login times out, retry.
+   - (Fix) Clicking user name in search results links to their profile.
+   - (Fix) Do not allow duplicate credential names.
+   - (Fix) Provide immediate feedback when destroying models.
+
+- 2.5.1:
+
+   - Profile access has been moved to dropdown in top right.
+   - VPC ID and Force VPC options added to the deployment flow for AWS.
+   - Model credentials are now shown in the user profile.
+   - Friendly credential names are now displayed.
+   - Able to open the store from the machine view onboarding messages.
+   - Read only mode has better feedback to show why actions are blocked.
+   - Entity details pages now includes link to latest revision.
+   - (Fix) Owner now links to their profile page, not launchpad.
+   - (Fix) Destroy model button is only shown if user has access.
+   - (Fix) Cookie notice is now shown on login screen.
+   - (Fix) Right-click-open now works for links in the header.
+   - (Fix) JAAS always auto logs into charmstore.
+   - (Fix) Juju logo properly links to root path.
+   - (Fix) Empty search queries now show default store page.
+
 - 2.5.0:
 
    - Removed Juju 1 support.

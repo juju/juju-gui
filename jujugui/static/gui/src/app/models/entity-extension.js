@@ -54,11 +54,17 @@ YUI.add('entity-extension', function(Y) {
       @return {Object} a plain Javascript object containing attributes.
     */
     toEntity: function() {
-      var attrs = this.getAttrs(),
-          type = attrs.entityType;
-      var entity = {
+      const attrs = this.getAttrs();
+      const type = attrs.entityType;
+      let displayName;
+      if (attrs.name === 'canonical-kubernetes') {
+        displayName = 'The Canonical Distribution Of Kubernetes';
+      } else {
+        displayName = attrs.name.split('-').join(' ');
+      }
+      const entity = {
         description: attrs.description,
-        displayName: attrs.name.replace('-', ' '),
+        displayName: displayName,
         downloads: attrs.downloads,
         id: attrs.id,
         storeId: attrs.storeId,

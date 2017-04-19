@@ -43,7 +43,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     beforeEach(function() {
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn, user: userClass});

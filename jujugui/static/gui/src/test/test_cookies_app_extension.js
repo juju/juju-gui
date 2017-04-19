@@ -25,8 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'app-cookies-extension', 'cookie', 'juju-tests-utils',
-        'node-event-simulate'
+        'app-cookies-extension', 'cookie', 'juju-tests-utils'
       ], function(Y) {
         utils = Y.namespace('juju-tests.utils');
         done();
@@ -35,9 +34,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer(this, 'container');
-      container.setHTML('<div class="cookie-policy">' +
-          '<a class="link-cta"></a></div>');
-      node = container.one('.cookie-policy');
+      container.innerHTML = '<div class="cookie-policy">' +
+          '<a class="link-cta"></a></div>';
+      node = container.querySelector('.cookie-policy');
       cookieHandler = new Y.juju.Cookies(node);
     });
 
@@ -47,28 +46,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calling check makes the node visible', function() {
-      assert.isFalse(node.hasClass('display-cookie-notice'));
+      assert.isFalse(node.classList.contains('display-cookie-notice'));
       cookieHandler.check();
-      assert.isTrue(node.hasClass('display-cookie-notice'));
+      assert.isTrue(node.classList.contains('display-cookie-notice'));
     });
 
     it('closing the banner sets the cookie', function() {
       assert.isNull(Y.Cookie.get('_cookies_accepted'));
       cookieHandler.check();
-      node.one('.link-cta').simulate('click');
+      node.querySelector('.link-cta').click();
       assert.equal(Y.Cookie.get('_cookies_accepted'), 'true');
     });
 
     it('the cookie prevents the node from getting visible', function() {
       Y.Cookie.set('_cookies_accepted', 'true');
       cookieHandler.check();
-      assert.isFalse(node.hasClass('display-cookie-notice'));
+      assert.isFalse(node.classList.contains('display-cookie-notice'));
     });
 
     it('the custom setting also does', function() {
       localStorage.setItem('disable-cookie', 'true');
       cookieHandler.check();
-      assert.isFalse(node.hasClass('display-cookie-notice'));
+      assert.isFalse(node.classList.contains('display-cookie-notice'));
     });
 
   });
