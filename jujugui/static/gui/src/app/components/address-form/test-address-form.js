@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('AddressForm', function() {
-  let acl, getCountries;
+  let getCountries;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -32,7 +32,6 @@ describe('AddressForm', function() {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: sinon.stub().returns(false)};
     getCountries = sinon.stub().callsArgWith(0, null, [{
       name: 'Australia',
       code: 'AU'
