@@ -1075,6 +1075,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
+            {this._generateOneClickDeploy()}
             {this._generateLogin()}
           </juju.components.DeploymentPanel>
         );
