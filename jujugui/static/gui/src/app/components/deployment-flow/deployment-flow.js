@@ -599,7 +599,7 @@ YUI.add('deployment-flow', function() {
         <juju.components.DeploymentSection
           instance="deployment-model-name"
           showCheck={false}
-          title="Model name">
+          title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput
               disabled={this.props.acl.isReadOnly()}
