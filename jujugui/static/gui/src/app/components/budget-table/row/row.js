@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('budget-table-row', function() {
 
   juju.components.BudgetTableRow = React.createClass({
+    displayName: 'BudgetTableRow',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
@@ -369,30 +371,10 @@ YUI.add('budget-table-row', function() {
       if (!this.state.showTerms) {
         return;
       }
-      let content;
-      if (this.state.termsLoading) {
-        content = <juju.components.Spinner />;
-      } else {
-        const terms = this.state.terms.map(term => {
-          return (
-            <li key={term.name}>
-              <pre>{term.content}</pre>
-            </li>
-          );
-        });
-        content = (
-          <div className="budget-table-row__terms-container">
-            <ul className="budget-table-row__terms">
-              {terms}
-            </ul>
-          </div>);
-      }
       return (
-        <juju.components.Popup
+        <juju.components.TermsPopup
           close={this._toggleTerms}
-          type="wide">
-          {content}
-        </juju.components.Popup>);
+          terms={this.state.terms} />);
     },
 
     /**
@@ -460,6 +442,6 @@ YUI.add('budget-table-row', function() {
     'expanding-row',
     'generic-button',
     'loading-spinner',
-    'popup'
+    'terms-popup'
   ]
 });
