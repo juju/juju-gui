@@ -47,6 +47,7 @@ describe('Account', () => {
     const removePaymentMethod = sinon.stub();
     const createPaymentMethod= sinon.stub();
     const createToken = sinon.stub();
+    const getCountries = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
@@ -56,6 +57,7 @@ describe('Account', () => {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
+        getCountries={getCountries}
         getUser={getUser}
         listClouds={listClouds}
         removePaymentMethod={removePaymentMethod}
@@ -92,15 +94,24 @@ describe('Account', () => {
               updateCloudCredential={updateCloudCredential}
               username="spinach@external"
               validateForm={validateForm} />
-            <juju.components.AccountPaymentMethod
-              acl={acl}
-              addNotification={addNotification}
-              createPaymentMethod={createPaymentMethod}
-              createToken={createToken}
-              getUser={getUser}
-              removePaymentMethod={removePaymentMethod}
-              username="spinach"
-              validateForm={validateForm} />
+            <div>
+              <juju.components.AccountPaymentMethod
+                acl={acl}
+                addNotification={addNotification}
+                createPaymentMethod={createPaymentMethod}
+                createToken={createToken}
+                getUser={getUser}
+                removePaymentMethod={removePaymentMethod}
+                username="spinach"
+                validateForm={validateForm} />
+              <juju.components.AccountPaymentDetails
+                acl={acl}
+                addNotification={addNotification}
+                getCountries={getCountries}
+                getUser={getUser}
+                username="spinach"
+                validateForm={validateForm} />
+            </div>
           </div>
         </div>
       </juju.components.Panel>);
@@ -127,6 +138,7 @@ describe('Account', () => {
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
         getUser={getUser}
+        getCountries={sinon.stub()}
         listClouds={listClouds}
         revokeCloudCredential={revokeCloudCredential}
         updateCloudCredential={updateCloudCredential}
