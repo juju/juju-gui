@@ -74,7 +74,7 @@ describe('HeaderHelp', function() {
   describe('menu', function () {
     const issueUrl = 'https://github.com/juju/juju-gui/issues';
     const loggedInIssueUrl = 'https://jujucharms.com/support';
-    const docsUrl = 'https://jujucharms.com/docs/stable/getting-started';
+    const docsUrl = 'https://jujucharms.com/docs/stable/getting-started-jaas';
 
     it('opens a menu when clicked', function () {
       const renderer = jsTestUtils.shallowRender(
@@ -82,6 +82,46 @@ describe('HeaderHelp', function() {
           appState={appState}
           gisf={false}
           user={null} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.toggleHelpMenu();
+      const output = renderer.getRenderOutput();
+
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-menu__button header-menu__show-menu');
+
+      const expected = (<juju.components.Panel
+        instanceName="header-menu__menu"
+        visible={true}>
+          <ul className="header-menu__menu-list" role="menubar">
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
+                href={issueUrl} target="_blank">File Issue</a>
+            </li>
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuItem" tabIndex="0"
+              onClick={instance._handleShortcutsLink}>
+              <span className="header-menu__menu-list-item-link">
+                Keyboard shortcuts
+                <span className="header-menu__menu-extra-info">
+                  Shift + ?
+                </span>
+              </span>
+            </li>
+          </ul>
+        </juju.components.Panel>);
+      expect(output.props.children[1]).toEqualJSX(expected);
+    });
+
+    it('show the documentation link if in gisf', function() {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.HeaderHelp.prototype.wrappedComponent
+          appState={appState}
+          gisf={true}
+          user={false} />, true);
       const instance = renderer.getMountedInstance();
       instance.toggleHelpMenu();
       const output = renderer.getRenderOutput();

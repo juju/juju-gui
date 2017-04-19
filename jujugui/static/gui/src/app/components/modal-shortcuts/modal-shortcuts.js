@@ -33,8 +33,35 @@ YUI.add('modal-shortcuts', function() {
     },
 
     /**
+      Makes the modal visible.
+    */
+    show: function() {
+      this.setState({
+        visible: true
+      });
+    },
 
-    @return {Array} An array of the bindings to create ul
+    /**
+      Makes the modal invisble, like a spy.
+    */
+    hide: function() {
+      this.setState({
+        visible: false
+      });
+    },
+
+    /**
+      If it's visible, make it invisible. If it's invisible, make it visible.
+    */
+    toggle: function() {
+      this.setState({
+        visible: !this.state.visible
+      });
+    },
+
+    /**
+
+    @return {Array} An array of the bindings to create ul.
     */
     _generateBindings: function() {
       let bindings = [];
@@ -53,6 +80,11 @@ YUI.add('modal-shortcuts', function() {
       return bindings;
     },
 
+    /**
+      Generate list of keybindings for help modal
+
+      @return {Array} An array of React li elements.
+    */
     _generateList: function() {
       const bindings = this._generateBindings();
 
@@ -68,24 +100,6 @@ YUI.add('modal-shortcuts', function() {
           </div>);
       });
       return components;
-    },
-
-    show: function() {
-      this.setState({
-        visible: true
-      });
-    },
-
-    hide: function() {
-      this.setState({
-        visible: false
-      });
-    },
-
-    toggle: function() {
-      this.setState({
-        visible: !this.state.visible
-      });
     },
 
     render: function() {

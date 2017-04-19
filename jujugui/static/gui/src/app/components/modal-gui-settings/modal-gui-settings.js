@@ -39,24 +39,38 @@ YUI.add('modal-gui-settings', function() {
       return state;
     },
 
+    /**
+      Makes the modal visible.
+    */
     show: function() {
       this.setState({
         visible: true
       });
     },
 
+    /**
+      Makes the modal invisble, like a spy.
+    */
     hide: function() {
       this.setState({
         visible: false
       });
     },
 
+    /**
+      If it's visible, make it invisible. If it's invisible, make it visible.
+    */
     toggle: function() {
       this.setState({
         visible: !this.state.visible
       });
     },
 
+    /**
+      Update the state when an input is changed.
+
+      @param {Object} evt the change event.
+    */
     handleChange: function(evt) {
       const target = evt.target;
       const value = target.checked;
@@ -66,6 +80,9 @@ YUI.add('modal-gui-settings', function() {
       });
     },
 
+    /**
+      When the save button is pressed, commit to localStorage.
+    */
     handleSave: function() {
       Object.keys(this.state).forEach(function (key) {
         if (key !== 'visible') {

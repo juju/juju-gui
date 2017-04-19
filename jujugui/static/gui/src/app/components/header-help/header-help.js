@@ -81,6 +81,21 @@ YUI.add('header-help', function() {
       );
     },
 
+    _generateDocsLink: function() {
+      if (this.props.gisf) {
+        return (<li className="header-menu__menu-list-item
+          header-menu__menu-list-item-with-link"
+          role="menuitem" tabIndex="0">
+          <a
+            className="header-menu__menu-list-item-link"
+            href="https://jujucharms.com/docs/stable/getting-started-jaas"
+            target="_blank">
+            View Documentation</a>
+        </li>);
+      }
+      return;
+    },
+
     /**
      Click the button, get the help.
 
@@ -103,15 +118,7 @@ YUI.add('header-help', function() {
             instanceName="header-menu__menu"
             visible={true}>
               <ul className="header-menu__menu-list" role="menubar">
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                  <a
-                    className="header-menu__menu-list-item-link"
-                    href="https://jujucharms.com/docs/stable/getting-started"
-                    target="_blank">
-                    View Documentation</a>
-                </li>
+                {this._generateDocsLink()}
                 {this._generateIssuesLink()}
                 <li className="header-menu__menu-list-item
                   header-menu__menu-list-item-with-link"
