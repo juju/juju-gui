@@ -36,16 +36,16 @@ describe('UserProfileEntityKPI', () => {
     yesterday.setDate(yesterday.getDate() - 1);
     metrics = [
       {
-        Metric: 'metric',
-        Time: yesterday,
-        Sum: 42,
-        Count: 5
+        metric: 'metric',
+        time: yesterday,
+        sum: 42,
+        count: 5
       },
       {
-        Metric: 'metric',
-        Time: today,
-        Sum: 80,
-        Count: 10
+        metric: 'metric',
+        time: today,
+        sum: 80,
+        count: 10
       }
     ];
   });

@@ -374,8 +374,8 @@ YUI.add('user-profile-entity', function() {
               let metricTypes = this.state.metricTypes;
               charmMetrics.forEach((item) => {
                 // refrain from adding duplicatae types to metricTypes
-                if (metricTypes.indexOf(item.Metric) === -1) {
-                  metricTypes.push(item.Metric);
+                if (metricTypes.indexOf(item.metric) === -1) {
+                  metricTypes.push(item.metric);
                 }
                 metrics.push(item);
               });
@@ -413,6 +413,9 @@ YUI.add('user-profile-entity', function() {
       For charms, generate a button for showing/hiding the metrics component.
     */
     _generateMetrics: function() {
+      if (!this.state.hasMetrics) {
+        return;
+      }
       if (this.props.type === 'charm') {
         return (
           <div>
@@ -506,7 +509,7 @@ YUI.add('user-profile-entity', function() {
               {this._generateDescription()}
               {this._generateTags()}
               {this._generateCommits()}
-              {this.state.hasMetrics ? this._generateMetrics() : ''}
+              {this._generateMetrics()}
             </div>
           </div>
         </juju.components.ExpandingRow>);

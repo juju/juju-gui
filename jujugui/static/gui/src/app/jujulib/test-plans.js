@@ -641,18 +641,27 @@ describe('jujulib plans service', function() {
           '/kpimetrics?charm-url=cs%3Ajuju-gui-42');
         var xhr = makeXHRRequest([{
             Metric: 'metric',
+            Time: 't',
             Sum: 42,
-            Count: 5
+            Count: 5,
+            Min: 'min',
+            Max: 'max'
           },
           {
             Metric: 'bad-wolf',
+            Time: 't',
             Sum: 53,
-            count: 8
+            count: 8,
+            Min: 'min',
+            Max: 'max'
           },
           {
             Metric: 'metric',
+            Time: 't',
             Sum: 80,
-            Count: 10
+            Count: 10,
+            Min: 'min',
+            Max: 'max'
         }]);
         success(xhr);
       }
@@ -661,19 +670,28 @@ describe('jujulib plans service', function() {
     plans.getKpiMetrics('cs:juju-gui-42', {}, function(error, metrics) {
       assert.isNull(error);
       assert.deepEqual(metrics, [{
-          Metric: 'metric',
-          Sum: 42,
-          Count: 5
+          metric: 'metric',
+          time: 't',
+          sum: 42,
+          count: 5,
+          min: 'min',
+          max: 'max',
         },
         {
-          Metric: 'bad-wolf',
-          Sum: 53,
-          count: 8
+          metric: 'bad-wolf',
+          time: 't',
+          sum: 53,
+          count: 8,
+          min: 'min',
+          max: 'max',
         },
         {
-          Metric: 'metric',
-          Sum: 80,
-          Count: 10
+          metric: 'metric',
+          time: 't',
+          sum: 80,
+          count: 10,
+          min: 'min',
+          max: 'max',
       }]);
       done();
     });
