@@ -227,9 +227,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (!withinScreen) {
         this.rescale({
           scale: scale,
-          translate: point.map(function(d, i) {
-            return ((0 - d) * scale) + (size[i] / 2);
-          })
+          translate: point.map((d, i) => ((0 - d) * scale) + (size[i] / 2))
         });
       }
     }
