@@ -727,25 +727,34 @@ YUI.add('juju-gui', function(Y) {
         // If state has a `next` property then that overrides all defaults.
         const specialState = current.special;
         const next = specialState && specialState.next;
-        // There should never be a `next` state if we aren't on login but
-        // adding the state login check here just to be sure.
-        if (state.current.root === 'login' && next) {
-          console.log('redirecting to "next" state', next);
-          const {error, state: newState} = state.generateState(next, false);
-          if (error === null) {
-            // The root at this point will be 'login' and because the `next`
-            // url may not explicitly define a new root path we have to set it
-            // to null to clear 'login' from the url.
-            if (!newState.root) {
-              newState.root = null;
-            }
-            newState.special = null;
+        const dd = specialState && specialState.dd;
+
+        if (state.current.root === 'login') {
+          if (dd) {
+            console.log('Initiating Direct Deploy.');
             this.maskVisibility(false);
-            state.changeState(newState);
+            this._directDeploy(dd);
+            return;
+          } else if (next) {
+            // There should never be a `next` state if we aren't on login but
+            // adding the state login check here just to be sure.
+            console.log('redirecting to "next" state', next);
+            const {error, state: newState} = state.generateState(next, false);
+            if (error === null) {
+              // The root at this point will be 'login' and because the `next`
+              // url may not explicitly define a new root path we have to set it
+              // to null to clear 'login' from the url.
+              if (!newState.root) {
+                newState.root = null;
+              }
+              newState.special = null;
+              this.maskVisibility(false);
+              state.changeState(newState);
+              return;
+            }
+            console.error('error redirecting to previous state', error);
             return;
           }
-          console.error('error redirecting to previous state', error);
-          return;
         }
 
         // If the user is connected to a model then the modelList will be
@@ -1311,15 +1320,16 @@ YUI.add('juju-gui', function(Y) {
 
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
+      @param {String} ddData - The data for one Direct Deploy.
     */
-    _renderDeployment: function(state, next) {
+    _renderDeployment: function(state, next, ddData) {
       const env = this.env;
       const db = this.db;
       const connected = this.env.get('connected');
       const modelName = env.get('environmentName') || 'mymodel';
       const utils = views.utils;
       const currentChangeSet = env.get('ecs').getCurrentChangeSet();
-      if (Object.keys(currentChangeSet).length === 0) {
+      if (Object.keys(currentChangeSet).length === 0 && !ddData) {
         // If there are no changes then close the deployment flow. This is to
         // prevent showing the deployment flow if the user clicks back in the
         // browser or navigates directly to the url. This changeState needs to
@@ -1393,6 +1403,7 @@ YUI.add('juju-gui', function(Y) {
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getCountries={
               this.payment && this.payment.getCountries.bind(this.payment)}
+          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
@@ -1404,6 +1415,7 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           modelCommitted={connected}
           modelName={modelName}
+          ddData={ddData}
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
@@ -2174,6 +2186,10 @@ YUI.add('juju-gui', function(Y) {
           if (this.anonymousMode || userLoggedIn) {
             this.maskVisibility(false);
           }
+          const specialState = state.special;
+          if (specialState && specialState.dd) {
+            this._directDeploy(specialState.dd);
+          }
           break;
         default:
           next();
@@ -2255,6 +2271,22 @@ YUI.add('juju-gui', function(Y) {
         });
       }
       next();
+    },
+
+    /**
+      Calls the necessary methods to setup the GUI and put the user in the
+      Deployment Flow when they have used Direct Deploy.
+
+      @param {Object} dd - The Direct Deploy data from state.
+    */
+    _directDeploy: function(ddData) {
+      this.state.changeState({
+        special: {dd: null}
+      });
+      // Reusing deployTarget state method so faking request signature
+      this._deployTarget({special: {deployTarget: ddData.id}}, ()=>{});
+      // The user must log in first
+      this._renderDeployment(this.state, ()=>{}, ddData);
     },
 
     /**
