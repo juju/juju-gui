@@ -70,7 +70,7 @@ YUI.add('entity-content', function() {
     */
     _getTerms: function() {
       const entityTerms = this.props.entityModel.get('terms');
-      if (!entityTerms || !entityTerms.length || entityTerms.length === 0) {
+      if (!entityTerms || !entityTerms.length) {
         this.setState({termsLoading: false});
         return null;
       }
@@ -85,6 +85,7 @@ YUI.add('entity-content', function() {
                 level: 'error'
               });
               console.error(`${message}: ${error}`);
+              this.setState({termsLoading: false});
               return;
             }
             const terms = this.state.terms;
@@ -302,8 +303,7 @@ YUI.add('entity-content', function() {
       const terms = this.state.terms;
       let content;
       if (this.state.termsLoading) {
-        content = (
-          <juju.components.Spinner />);
+        content = <juju.components.Spinner />;
       } else if (terms.length === 0) {
         return null;
       } else {
