@@ -62,12 +62,16 @@ describe('Charmbrowser', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
+        getModelName={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
-        utils={utils}
         renderMarkdown={sinon.stub()}
-        series={series} />, true);
+        series={series}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        urllib={sinon.stub()}
+        utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -117,13 +121,17 @@ describe('Charmbrowser', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
+        getModelName={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
-        utils={utils}
         renderMarkdown={sinon.stub()}
+        series={seriesList}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
         staticURL='surl'
-        series={seriesList}/>, true);
+        urllib={sinon.stub()}
+        utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -160,11 +168,12 @@ describe('Charmbrowser', function() {
     const getDiagramURL = sinon.spy();
     const listPlansForCharm = sinon.spy();
     const addNotification = sinon.spy();
+    const showTerms = sinon.stub();
     const utils = {
       pluralize: sinon.spy()
     };
     const setPageTitle = sinon.spy();
-    const urllib = {fromLegacyString: sinon.stub()};
+    const urllib = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
@@ -187,6 +196,8 @@ describe('Charmbrowser', function() {
         renderMarkdown={renderMarkdown}
         series={{}}
         setPageTitle={setPageTitle}
+        showTerms={showTerms}
+        staticURL="http://example.com"
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -219,6 +230,7 @@ describe('Charmbrowser', function() {
               addNotification={addNotification}
               pluralize={utils.pluralize}
               setPageTitle={setPageTitle}
+              showTerms={showTerms}
               urllib={urllib}
             />
           </div>
@@ -240,11 +252,12 @@ describe('Charmbrowser', function() {
     const getDiagramURL = sinon.stub();
     const listPlansForCharm = sinon.stub();
     const addNotification = sinon.stub();
+    const showTerms = sinon.stub();
     const utils = {
       pluralize: sinon.stub()
     };
     const setPageTitle = sinon.stub();
-    const urllib = {fromLegacyString: sinon.stub()};
+    const urllib = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
@@ -267,6 +280,8 @@ describe('Charmbrowser', function() {
         renderMarkdown={renderMarkdown}
         series={{}}
         setPageTitle={setPageTitle}
+        showTerms={showTerms}
+        staticURL="http://example.com"
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -299,6 +314,7 @@ describe('Charmbrowser', function() {
               addNotification={addNotification}
               pluralize={utils.pluralize}
               setPageTitle={setPageTitle}
+              showTerms={showTerms}
               urllib={urllib}
             />
           </div>
@@ -325,12 +341,16 @@ describe('Charmbrowser', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
+        getModelName={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.stub()}
-        utils={utils}
         renderMarkdown={sinon.stub()}
-        series={{}} />, true);
+        series={{}}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        urllib={sinon.stub()}
+        utils={utils} />, true);
     const output = renderer.getRenderOutput();
     output.props.clickAction();
     assert.equal(appState.changeState.callCount, 1);

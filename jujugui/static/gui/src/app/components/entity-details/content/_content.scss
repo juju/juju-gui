@@ -13,6 +13,7 @@
     .intro {
       // Apply to a variety of block-level elements.
       blockquote,
+      code,
       dd,
       dt,
       li,
@@ -303,5 +304,9 @@
         border-color: $dark-warm-grey;
       }
     }
+  }
+
+  .popup__panel--wide {
+    top: $navbar-height;
   }
 }

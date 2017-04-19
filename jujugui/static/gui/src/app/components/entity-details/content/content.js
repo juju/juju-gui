@@ -21,8 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-content', function() {
 
   juju.components.EntityContent = React.createClass({
-    /* Define and validate the properites available on this component. */
+    displayName: 'EntityContent',
+
     propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
@@ -31,6 +33,66 @@ YUI.add('entity-content', function() {
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
+    },
+
+    getInitialState: function() {
+      this.xhrs = [];
+      return {
+        terms: [],
+        termsLoading: false
+      };
+    },
+
+    componentWillMount: function() {
+      this._getTerms();
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach(xhr => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    /**
+      Get the list of terms for the charm, updating the state with these
+      terms.
+
+      @method _getTerms
+    */
+    _getTerms: function() {
+      const entityTerms = this.props.entityModel.get('terms');
+      if (!entityTerms || !entityTerms.length) {
+        this.setState({termsLoading: false});
+        return null;
+      }
+      this.setState({termsLoading: true}, () => {
+        entityTerms.forEach(term => {
+          const xhr = this.props.showTerms(term, null, (error, response) => {
+            if (error) {
+              const message = `Failed to load terms for ${term}`;
+              this.props.addNotification({
+                title: message,
+                message: `${message}: ${error}`,
+                level: 'error'
+              });
+              console.error(`${message}: ${error}`);
+              this.setState({termsLoading: false});
+              return;
+            }
+            const terms = this.state.terms;
+            terms.push(response);
+            this.setState({terms: terms}, () => {
+              // If all the terms have loaded then we can finally hide the
+              // loading spinner.
+              if (terms.length === entityTerms.length) {
+                this.setState({termsLoading: false});
+              }
+            });
+          });
+          this.xhrs.push(xhr);
+        });
+      });
     },
 
     /**
@@ -224,6 +286,68 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of terms if available.
+
+      @method _generateTerms
+      @return {Array} The terms markup.
+    */
+    _generateTerms: function() {
+      const terms = this.state.terms;
+      let content;
+      if (this.state.termsLoading) {
+        content = <juju.components.Spinner />;
+      } else if (terms.length === 0) {
+        return null;
+      } else {
+        const items = terms.map(item => {
+          return (
+            <li className="link"
+              key={item.name}
+              onClick={this._toggleTerms.bind(this, item)}>
+              {item.name}
+            </li>
+          );
+        });
+        content = (
+          <ul>
+            {items}
+          </ul>);
+      }
+      return (
+        <div className="four-col entity-content__metadata">
+          <h4>Terms</h4>
+          {content}
+        </div>);
+    },
+
+    /**
+      Generate the list of terms if available.
+
+      @method _toggleTerms
+      @param {Object} terms The terms to display.
+    */
+    _toggleTerms: function(terms=null) {
+      this.setState({showTerms: terms});
+    },
+
+    /**
+      Generate the terms popup.
+
+      @method _generateTermsPopup
+      @returns {Object} The terms popup markup.
+    */
+    _generateTermsPopup: function() {
+      const terms = this.state.showTerms;
+      if (!terms) {
+        return null;
+      }
+      return (
+        <juju.components.TermsPopup
+          close={this._toggleTerms}
+          terms={[terms]} />);
+    },
+
+    /**
       Generate the description if it is a charm.
 
       @method _generateDescription
@@ -244,6 +368,7 @@ YUI.add('entity-content', function() {
                 </div>
               </div>
               {this._generateTags()}
+              {this._generateTerms()}
             </div>
           </div>
         );
@@ -496,6 +621,7 @@ YUI.add('entity-content', function() {
             </div>
           </div>
           {this._generateOptionsList(entityModel)}
+          {this._generateTermsPopup()}
         </div>
       );
     }
@@ -511,6 +637,7 @@ YUI.add('entity-content', function() {
     'entity-resources',
     'expanding-row',
     'loading-spinner',
-    'svg-icon'
+    'svg-icon',
+    'terms-popup'
   ]
 });
