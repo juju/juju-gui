@@ -1932,6 +1932,50 @@ YUI.add('juju-view-utils', function(Y) {
     return formValid;
   };
 
+  /**
+    Remove duplicate entries from an array.
+
+    @method arrayDedupe
+    @returns {Array} An array with no duplicates.
+  */
+  utils.arrayDedupe = function(array) {
+    // Sets can only contain unique values, so use that to do the dedupe and
+    // then turn it back into an array.
+    return [...new Set(array)];
+  };
+
+  /**
+    Turn an array of arrays into a single array.
+
+    @method arrayFlatten
+    @returns {Array} A single depth array.
+  */
+  utils.arrayFlatten = function(array) {
+    return array.reduce((flattened, current) => {
+      return flattened.concat(
+        // If this is an array then flatten it before concat, otherwise concat
+        // the current value.
+        Array.isArray(current) ? utils.arrayFlatten(current) : current);
+    }, []);
+  };
+
+  /**
+    Map two arrays into an array of pairs for each position from the original
+    arrays e.g. [1, 2] and [3, 4] would become [[1, 3], [2, 4]]
+
+    @method arrayZip
+    @returns {Array} A positionally grouped array.
+  */
+  utils.arrayZip = function(...arrays) {
+    // Get the length of the longest array.
+    const longest = Math.max(...arrays.map(array => array.length));
+    return [...Array(longest)].map((value, i) => {
+      // Get the values at the current position from all the arrays, filtering
+      // out those that don't have a value for that position.
+      return arrays.filter(array => array[i]).map(array => array[i]);
+    });
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
