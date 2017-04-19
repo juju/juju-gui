@@ -69,7 +69,7 @@ describe('Model Controller Promises', function() {
     [env, db, modelController].forEach(instance => {
       instance.destroy();
     });
-    yui.Array.each(cleanups, function(cleanup) {
+    cleanups.forEach(cleanup => {
       cleanup();
     });
   });
