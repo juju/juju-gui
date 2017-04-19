@@ -225,9 +225,7 @@ YUI.add('juju-env-base', function(Y) {
 
     /**
       The object handling Web requests to external APIs.
-      This is usually an instance of app/store/web-handler.js:WebHandler when
-      the GUI is connected to a real Juju environment, or
-      app/store/web-sandbox.js:WebSandbox if the GUI is in sandbox mode.
+      This is an instance of app/store/web-handler.js:WebHandler.
 
       @attribute webHandler
       @type {Object}

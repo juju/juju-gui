@@ -3094,7 +3094,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var providers = [
         'all',
         'azure',
-        'demonstration',
         'ec2',
         'joyent',
         'lxd',
