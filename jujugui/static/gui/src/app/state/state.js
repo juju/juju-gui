@@ -699,14 +699,28 @@ const State = class State {
     @return {Object} The updated state to contain the root value, if any.
   */
   _parseSpecial(query, state, allowStateModifications = true) {
-    if (!query) {
-      return state;
-    }
-    let deployTarget = query['deploy-target'];
-    if (deployTarget) {
+    const setupSpecial = state => {
       if (!state.special) {
         state.special = {};
       }
+    };
+    if (!query) {
+      return state;
+    }
+    let dd = query['dd'];
+    if (dd) {
+      // XXX The spec calls for additional query parameters which directly
+      // relate to the direct deploy. These will also need to be extracted and
+      // setup here. The dd state is an object in preparation for these
+      // additional values.
+      setupSpecial(state);
+      state.special.dd = {
+        id: dd
+      };
+    }
+    let deployTarget = query['deploy-target'];
+    if (deployTarget) {
+      setupSpecial(state);
       state.special.deployTarget = deployTarget;
       // Push the state so that any special query string is removed now,
       // therefore avoiding multiple dispatches of the same special callback.
@@ -716,9 +730,7 @@ const State = class State {
     }
     let next = query.next;
     if (next) {
-      if (!state.special) {
-        state.special = {};
-      }
+      setupSpecial(state);
       state.special.next = next;
     }
     return state;
