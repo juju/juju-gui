@@ -49,12 +49,12 @@ YUI.add('model-controller', function(Y) {
       @param {Object} store Object which stores the various promises of a
         specific type.
       @param {Function} fn Promise executor function.
-      @return {Y.Promise} Stored promise matching the provided key.
+      @return {Promise} Stored promise matching the provided key.
     */
     _getPromise: function(key, store, fn) {
       var promise = store[key];
       if (!promise) {
-        store[key] = promise = new Y.Promise(fn);
+        store[key] = promise = new Promise(fn);
         var cleanUp = function() {
           delete store[key];
         };
@@ -69,7 +69,7 @@ YUI.add('model-controller', function(Y) {
 
       @method getCharm
       @param {String} charmId The charmId that you want to populate.
-      @return {Y.Promise} A promise for the charm model.
+      @return {Promise} A promise for the charm model.
     */
     getCharm: function(charmId) {
       var db = this.get('db'),
@@ -98,7 +98,7 @@ YUI.add('model-controller', function(Y) {
 
       @method getService
       @param {String} serviceId A string ID for the service to fetch.
-      @return {Y.Promise} A promise for fully populated service data.
+      @return {Promise} A promise for fully populated service data.
     */
     getService: function(serviceId) {
       var db = this.get('db'),
@@ -189,4 +189,4 @@ YUI.add('model-controller', function(Y) {
 
   Y.namespace('juju').ModelController = ModelController;
 
-}, '', { requires: ['base-build', 'base', 'promise'] });
+}, '', { requires: ['base-build', 'base'] });

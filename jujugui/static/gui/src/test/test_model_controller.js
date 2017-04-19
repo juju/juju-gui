@@ -144,7 +144,7 @@ describe('Model Controller Promises', function() {
         charm = db.charms.add({id: charmId});
     charm.loaded = true;
     var promise = modelController.getCharm(charmId);
-    assert(yui.Promise.isPromise(promise), true);
+    assert(promise instanceof Promise, true);
     assert(!!db.charms.getById(charmId), true);
     promise.then(
         function(charm) {
@@ -163,7 +163,7 @@ describe('Model Controller Promises', function() {
     clobberLoad();
     var charmId = 'cs:precise/wordpress-7',
         promise = modelController.getCharm(charmId);
-    assert(yui.Promise.isPromise(promise), true);
+    assert(promise instanceof Promise, true);
     assert(db.charms.getById(charmId), null);
     promise.then(
         function(charm) {
@@ -183,7 +183,7 @@ describe('Model Controller Promises', function() {
       id: serviceId,
       loaded: true});
     var promise = modelController.getService(serviceId);
-    assert(yui.Promise.isPromise(promise), true);
+    assert(promise instanceof Promise, true);
     assert(!!db.services.getById(serviceId), true);
     promise.then(
         function(service) {
@@ -203,7 +203,7 @@ describe('Model Controller Promises', function() {
     clobberGetApplicationConfig();
     var serviceId = 'wordpress',
         promise = modelController.getService(serviceId);
-    assert(yui.Promise.isPromise(promise), true);
+    assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
         function(service) {
@@ -222,7 +222,7 @@ describe('Model Controller Promises', function() {
     clobberGetApplicationConfig();
     var serviceId = 'wordpress',
         promise = modelController.getService(serviceId);
-    assert(yui.Promise.isPromise(promise), true);
+    assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
         function() {
@@ -247,7 +247,7 @@ describe('Model Controller Promises', function() {
           charm: charmId
         });
         var promise = modelController.getServiceWithCharm(serviceId);
-        assert(yui.Promise.isPromise(promise), true);
+        assert(promise instanceof Promise, true);
         promise.then(
             function(result) {
               assert(result.service.get('id'), serviceId);

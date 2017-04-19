@@ -2946,7 +2946,6 @@ YUI.add('juju-models', function(Y) {
     'juju-view-utils',
     'juju-charm-models',
     'juju-env-api',
-    'promise',
     'relation-utils'
   ]
 });
