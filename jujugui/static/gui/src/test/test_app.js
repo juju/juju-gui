@@ -1416,7 +1416,7 @@ describe('App', function() {
   });
 
   describe('configuration parsing', function() {
-    var app, getLocation, Y;
+    var app, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -1427,15 +1427,9 @@ describe('App', function() {
 
     beforeEach(function() {
       container = testUtils.makeContainer(this);
-      // Monkey patch.
-      getLocation = Y.getLocation;
-      Y.getLocation = function() {
-        return {port: 71070, hostname: 'example.net'};
-      };
     });
 
     afterEach(function() {
-      Y.getLocation = getLocation;
       container.remove();
       app.destroy();
     });
