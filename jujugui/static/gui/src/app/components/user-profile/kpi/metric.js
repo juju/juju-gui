@@ -34,9 +34,9 @@ YUI.add('user-profile-entity-metric', function() {
       }
       let max = 0, data = [];
       metric.forEach((d) => {
-        const mean = d.Sum / d.Count;
+        const mean = d.sum / d.count;
         max = mean > max ? mean : max;
-        data.push({date: Date.parse(d.Time), mean: mean});
+        data.push({date: Date.parse(d.time), mean: mean});
       });
       const d3 = this.props.d3;
       d3.select(el).selectAll('*').remove();

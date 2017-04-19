@@ -47,10 +47,10 @@ YUI.add('user-profile-entity-kpi', function() {
       // now, just render the first metric at hand. See also the comment in
       // in componentDidMount
       // Makyo 2017-04-03
-      metric = this.props.metrics[0].Metric;
+      metric = this.props.metrics[0].metric;
       this.setState({
         currentMetric: this.props.metrics.filter((d) => {
-          return d.Metric === metric;
+          return d.metric === metric;
         })
       });
     },

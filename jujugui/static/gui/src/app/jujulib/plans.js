@@ -346,12 +346,27 @@ var module = module;
       @param {Function} callback A callback for handling the retrieved metrics
     */
     getKpiMetrics: function(charmId, filters, callback) {
-      var url = `${this.url}/kpimetrics`;
-      var payload = filters || {};
+      function handler(error, charmMetrics) {
+        if (charmMetrics) {
+          charmMetrics = charmMetrics.map((metric) => {
+            return {
+              metric: metric.Metric,
+              time: metric.Time,
+              sum: metric.Sum,
+              count: metric.Count,
+              min: metric.Min,
+              max: metric.Max
+            };
+          });
+        }
+        callback(error, charmMetrics);
+      }
+      let url = `${this.url}/kpimetrics`;
+      let payload = filters || {};
       payload['charm-url'] = charmId;
-      var qs = jujulib.serializeObject(payload);
+      const qs = jujulib.serializeObject(payload);
       url += '?' + qs;
-      return jujulib._makeRequest(this.bakery, url, 'GET', payload, callback);
+      return jujulib._makeRequest(this.bakery, url, 'GET', payload, handler);
     }
 
   };
