@@ -347,6 +347,23 @@ var module = module;
     },
 
     /**
+      Remove a billing address.
+
+      @public removeBillingAddress
+      @param name {String} The user's username.
+      @param id {String} The address id.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    removeBillingAddress: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses/${id}`;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+    },
+
+    /**
       Generate an ID of this payment method. The ID only needs to be unique per
       user so using the full timestamp should be enough.
 

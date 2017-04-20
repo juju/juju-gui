@@ -764,7 +764,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when removing a payment method', (done) => {
+    it('handles errors when removing an address', (done) => {
       const bakery = {
         sendDeleteRequest: function(path, success, failure) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -773,6 +773,53 @@ describe('jujulib payment service', function() {
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removeAddress('spinach', 'address1',(error, response) => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
+
+  describe('removeBillingAddress', () => {
+    it('can remove a biling address', () => {
+      const originalMakeRequest = jujulib._makeRequest;
+      const makeRequest = sinon.stub();
+      jujulib._makeRequest = makeRequest;
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.removeBillingAddress('spinach', 'address1', sinon.stub());
+      // Restore the original method on the lib.
+      jujulib._makeRequest = originalMakeRequest;
+      assert.equal(makeRequest.callCount, 1);
+      assert.strictEqual(makeRequest.args[0][3], null);
+    });
+
+    it('can return when there are no errors', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/billing-addresses/address1');
+          const xhr = makeXHRRequest('success');
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeBillingAddress('spinach', 'address1', (error, response) => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when removing a billing address', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeBillingAddress('spinach', 'address1',(error, response) => {
         assert.equal(error, 'Uh oh!');
         done();
       });
