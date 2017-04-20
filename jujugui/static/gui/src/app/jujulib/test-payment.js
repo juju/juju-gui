@@ -60,6 +60,7 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         countryCode: null,
         phones: []
@@ -72,6 +73,7 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         countryCode: null,
         phones: []
@@ -178,6 +180,7 @@ describe('jujulib payment service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
+          county: null,
           postcode: null,
           countryCode: null,
           phones: []
@@ -256,6 +259,7 @@ describe('jujulib payment service', function() {
         line1: null,
         line2: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         'country-code': null,
         phones: []
@@ -268,6 +272,7 @@ describe('jujulib payment service', function() {
         line1: null,
         line2: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         'country-code': null,
         phones: []
@@ -584,6 +589,76 @@ describe('jujulib payment service', function() {
           assert.equal(error, 'Uh oh!');
           done();
         });
+    });
+  });
+
+  describe('addAddress', () => {
+    let address;
+
+    beforeEach(() => {
+      address = {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        county: 'Bunnyhug',
+        city: 'Sasquatch',
+        postcode: '90210',
+        countryCode: 'CA'
+      };
+    });
+
+    it('can add an address', () => {
+      const originalMakeRequest = jujulib._makeRequest;
+      const makeRequest = sinon.stub();
+      jujulib._makeRequest = makeRequest;
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.addAddress( 'spinach', address, sinon.stub());
+      // Restore the original method on the lib.
+      jujulib._makeRequest = originalMakeRequest;
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        city: 'Sasquatch',
+        county: 'Bunnyhug',
+        postcode: '90210',
+        'country-code': 'CA',
+        phones: []
+      });
+    });
+
+    it('can successfully create the address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/addresses');
+          const xhr = makeXHRRequest();
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addAddress('spinach', address, error => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when adding an address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addAddress('spinach', address, error => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
     });
   });
 });
