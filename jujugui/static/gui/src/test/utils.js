@@ -175,7 +175,10 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       url = GlobalConfig.test_url + url;
       while (true) {
         try {
-          response = Y.io(url, {sync: true}).responseText;
+          const request = new XMLHttpRequest();
+          request.open('GET', url, false);
+          request.send(null);
+          response = request.responseText;
           if (parseJson) {
             response = JSON.parse(response);
           }

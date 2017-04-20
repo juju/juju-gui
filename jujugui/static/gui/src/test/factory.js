@@ -39,7 +39,10 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var charms = {};
       names.forEach(function(charmName) {
         var url = 'data/' + charmName + '-apiv4-response.json';
-        charms[charmName] = Y.io(url, {sync: true}).responseText;
+        const request = new XMLHttpRequest();
+        request.open('GET', url, false);
+        request.send(null);
+        charms[charmName] = request.responseText;
       });
       return charms;
     },

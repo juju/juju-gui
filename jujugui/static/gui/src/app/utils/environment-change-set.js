@@ -346,8 +346,9 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
-      this.levelTimer = Y.later(200, this, this._waitOnLevel,
-          [env, currentIndex], true);
+      this.levelTimer = window.setInterval(this._waitOnLevel.bind(this), 200,
+        env, currentIndex);
+
     },
 
     /**
@@ -361,10 +362,10 @@ YUI.add('environment-change-set', function(Y) {
     */
     _waitOnLevel: function(env, currentIndex) {
       if (this.levelRecordCount === 0) {
-        this.levelTimer.cancel();
+        window.clearInterval(this.levelTimer);
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(this._commitNext.bind(this, env, currentIndex));
+          window.setTimeout(this._commitNext.bind(this, env, currentIndex), 0);
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;

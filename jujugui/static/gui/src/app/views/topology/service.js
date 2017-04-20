@@ -1141,7 +1141,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceAddRelMouseDown: function(box, context) {
       var evt = d3.event;
       var topo = context.get('component');
-      context.longClickTimer = Y.later(250, this, function(d, e) {
+      context.longClickTimer = window.setTimeout((d, e) => {
         // Provide some leeway for accidental dragging.
         if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
                 2 > 5) {
@@ -1160,7 +1160,7 @@ YUI.add('juju-topology-service', function(Y) {
           // relation
           topo.fire('addRelationDragStart', {service: box});
         }
-      }, [box, evt], false);
+      }, 250, box, evt);
     },
 
     /**
@@ -1173,7 +1173,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceAddRelMouseUp: function(box, context) {
       // Cancel the long-click timer if it exists.
       if (context.longClickTimer) {
-        context.longClickTimer.cancel();
+        window.clearInterval(context.longClickTimer);
       }
     },
     /**
@@ -1264,7 +1264,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
       }
       if (self.longClickTimer) {
-        self.longClickTimer.cancel();
+        window.clearInterval(self.longClickTimer);
       }
       // Translate the service (and, potentially, menu).  If a position was
       // provided, update the box's coordinates and the selection's bound
