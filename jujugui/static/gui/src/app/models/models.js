@@ -2178,6 +2178,15 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Dispatch an event.
+
+     @method fireEvent
+    */
+    fireEvent: function(event) {
+      document.dispatchEvent(new Event(event));
+    },
+
+    /**
      * Resolve from an id to a Database entity. The lookup pattern is such that
      * "env" -> environment model
      * <int> -> machine
@@ -2265,7 +2274,7 @@ YUI.add('juju-models', function(Y) {
       this.services.each(function(service) {
         units.update_service_unit_aggregates(service);
       }.bind(this));
-      this.fire('update');
+      this.fireEvent('update');
     },
 
     /**
@@ -2758,7 +2767,7 @@ YUI.add('juju-models', function(Y) {
         unit.displayName = `${serviceName}/${unit.number}`;
       });
       // Fire an update event to trigger the UI update.
-      this.fire('update');
+      this.fireEvent('update');
     },
 
     /**

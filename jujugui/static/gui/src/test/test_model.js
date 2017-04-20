@@ -181,7 +181,7 @@ describe('test_model.js', function() {
       ]);
       var service = db.services.getById('mysql');
       service.set('name', 'notmysql');
-      db.on('update', function() {
+      document.addEventListener('update', () => {
         // Make sure it fires update so that the GUI can re-render;
         // Check that both the service and master unit gets get updated.
         assert.equal(service.get('units').item(0).displayName, 'notmysql/0');

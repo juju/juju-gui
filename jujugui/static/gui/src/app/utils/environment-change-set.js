@@ -454,7 +454,7 @@ YUI.add('environment-change-set', function(Y) {
       this.currentIndex += 1;
       this.currentCommit = [];
       this.fire('changeSetModified');
-      this.get('db').fire('update');
+      this.get('db').fireEvent('update');
     },
 
     /**
@@ -1069,7 +1069,7 @@ YUI.add('environment-change-set', function(Y) {
           var unitModel = units.revive(unit);
           unitModel.set('deleted', true);
           units.free(unitModel);
-          db.fire('update');
+          db.fireEvent('update');
         });
         // XXX We would like to be able to update subordinate units here, but
         // as this doesn't actually remove them from the database, the unit

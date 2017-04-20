@@ -85,7 +85,7 @@ describe('App', function() {
   });
 
   describe('Application basics', function() {
-    var Y, app, juju;
+    var Y, app, env, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -105,9 +105,17 @@ describe('App', function() {
       window._gaq = [];
     });
 
-    afterEach(function() {
-      if (app) {
+    afterEach(function(done) {
+      const cleanup = () => {
         app.destroy();
+        done();
+      };
+      if (env && env.connect) {
+        env.close(() => {
+          cleanup();
+        });
+      } else {
+        cleanup();
       }
     });
 
@@ -131,15 +139,8 @@ describe('App', function() {
       if (config.env && config.env.connect) {
         config.env.connect();
         config.env.ecs = new juju.EnvironmentChangeSet();
+        env = config.env;
       }
-      context._cleanups.push(() => {
-        const env = config.env;
-        if (env && env.connect) {
-          env.close(app.destroy.bind(app));
-        } else {
-          app.destroy();
-        }
-      });
       app.navigate = function() {};
       app.showView(new Y.View());
       injectData(app);
@@ -351,15 +352,15 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[1][0], 'dragenter');
+        assert.equal(args[2][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[2][0], 'dragover');
+        assert.equal(args[3][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[3][0], 'dragleave');
+        assert.equal(args[4][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
-      it('removes the drag handlers', function(done) {
+      it('removes the drag handlers', function() {
         var stub = sinon.stub(document, 'removeEventListener');
         this._cleanups.push(stub.restore);
 
@@ -374,19 +375,15 @@ describe('App', function() {
             user: userClass
           })
         }, this);
-
-        app.after('destroy', function() {
-          assert.equal(stub.callCount, 3);
-          var args = stub.args;
-          assert.equal(args[0][0], 'dragenter');
-          assert.isFunction(args[0][1]);
-          assert.equal(args[1][0], 'dragover');
-          assert.isFunction(args[1][1]);
-          assert.equal(args[2][0], 'dragleave');
-          assert.isFunction(args[2][1]);
-          done();
-        });
-        app.destroy();
+        app.destructor();
+        assert.equal(stub.callCount >= 3, true);
+        var args = stub.args;
+        assert.equal(args[0][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[1][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[2][0], 'dragleave');
+        assert.isFunction(args[2][1]);
       });
     });
 
@@ -773,7 +770,7 @@ describe('App', function() {
           size: function() {return 0;}
         },
         reset: sinon.stub(),
-        fire: sinon.stub(),
+        fireEvent: sinon.stub(),
         environment: {
           set: () => {},
           get: () => {}
@@ -897,8 +894,8 @@ describe('App', function() {
           assert.strictEqual(modelConnected, false, 'model connect');
           // The database has been reset and updated.
           assert.strictEqual(app.db.reset.calledOnce, true, 'db.reset');
-          assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
-          assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
+          assert.strictEqual(app.db.fireEvent.calledOnce, true, 'db.fireEvent');
+          assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
           assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
           // The login mask has been displayed.
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
@@ -994,7 +991,7 @@ describe('App', function() {
         resetCalled: false,
         fireSignal: null,
         reset: function() { this.resetCalled = true; },
-        fire: function(signal) { this.fireSignal = signal; }
+        fireEvent: function(signal) { this.fireSignal = signal; }
       };
       // Create a mock topology instance for the switchEnv setting the
       // centerOnLoad property on the topology.

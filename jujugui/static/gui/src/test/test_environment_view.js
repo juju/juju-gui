@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'd3', 'juju-gui',
+        'd3', 'juju-models', 'juju-view-environment',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {
@@ -266,6 +266,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      db.fireEvent = sinon.stub();
       var charmData = testUtils.loadFixture('data/mysql-api-response.json',
                                             true);
       charm = new models.Charm(charmData.charm);
@@ -349,15 +350,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var beforeResizeEventFired = false;
       view.render();
 
-      document.addEventListener('beforePageSizeRecalculation', () => {
+      const beforeHandler = e => {
+        document.removeEventListener(
+          'beforePageSizeRecalculation', beforeHandler);
         // This event must be fired.
         beforeResizeEventFired = true;
-      });
-      document.addEventListener('afterPageSizeRecalculation', () => {
+      };
+      const afterHandler = e => {
+        document.removeEventListener(
+          'afterPageSizeRecalculation', afterHandler);
         // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
-      });
+      };
+      document.addEventListener('beforePageSizeRecalculation', beforeHandler);
+      document.addEventListener('afterPageSizeRecalculation', afterHandler);
       window.dispatchEvent(new Event('resize'));
     });
 

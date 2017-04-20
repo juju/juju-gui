@@ -601,7 +601,8 @@ YUI.add('juju-gui', function(Y) {
 
       // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
-      this.db.on('update', this.on_database_changed, this);
+      this.bound_on_database_changed = this.on_database_changed.bind(this);
+      document.addEventListener('update', this.bound_on_database_changed);
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -626,9 +627,10 @@ YUI.add('juju-gui', function(Y) {
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
-      document.addEventListener('initiateDeploy', e => {
+      this._onInitiateDeploy = e => {
         this.deployService(e.detail.charm, e.detail.ghostAttributes);
-      }, this);
+      };
+      document.addEventListener('initiateDeploy', this._onInitiateDeploy);
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
       // These are manually detached in the destructor.
@@ -2492,6 +2494,8 @@ YUI.add('juju-gui', function(Y) {
       ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
         document.removeEventListener(eventName, this._boundAppDragOverHandler);
       });
+      document.removeEventListener('update', this.bound_on_database_changed);
+      document.removeEventListener('initiateDeploy', this._onInitiateDeploy);
     },
 
     /**
@@ -2571,7 +2575,7 @@ YUI.add('juju-gui', function(Y) {
           this.maskVisibility(true);
           this.env.get('ecs').clear();
           this.db.reset();
-          this.db.fire('update');
+          this.db.fireEvent('update');
           this.state.changeState({
             model: null,
             profile: null,
@@ -2768,7 +2772,7 @@ YUI.add('juju-gui', function(Y) {
       }
       if (clearDB) {
         this.db.reset();
-        this.db.fire('update');
+        this.db.fireEvent('update');
       }
       // Reset canvas centering to new env will center on load.
       const instance = this.views.environment.instance;
@@ -3195,6 +3199,7 @@ YUI.add('juju-gui', function(Y) {
     'panel-component',
     'settings',
     'sharing',
+    'svg-icon',
     'shortcuts',
     'user-menu',
     'user-profile',
