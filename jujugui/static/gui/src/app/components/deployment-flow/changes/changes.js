@@ -21,38 +21,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-changes', function() {
 
   juju.components.DeploymentChanges = React.createClass({
+    displayName: 'DeploymentChanges',
+
     propTypes: {
-      changes: React.PropTypes.object.isRequired,
-      generateAllChangeDescriptions: React.PropTypes.func.isRequired
+      generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      getCurrentChangeSet: React.PropTypes.func.isRequired
     },
 
-    /**
-      Generate the list of change items.
+    getInitialState: function() {
+      this.interval = null;
+      return {
+        changes: this.props.getCurrentChangeSet()
+      };
+    },
 
-      @method _generateChanges
-      @returns {Array} A list of change elements.
-    */
-    _generateChanges: function() {
-      const descriptions = this.props.generateAllChangeDescriptions(
-        this.props.changes);
-      return descriptions.map(change => (
-        <juju.components.DeploymentChangeItem
-          change={change}
-          key={change.id}
-          showTime={false} />));
+    componentDidMount: function() {
+      // poll the changeset every second for updates as there is no way that
+      // we can be sure when a bundle import will be complete.
+      this.interval = setInterval(() => {
+        this.setState({changes: this.props.getCurrentChangeSet()});
+      }, 1000);
+    },
+
+    componentWillUnmount: function() {
+      clearInterval(this.interval);
     },
 
     render: function() {
+      const state = this.state;
       return (
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={true}>
           <div>
-            Show changes ({Object.keys(this.props.changes).length})
+            Show changes ({Object.keys(state.changes).length})
             &rsaquo;
           </div>
           <ul className="deployment-changes">
-            {this._generateChanges()}
+            {this.props.generateAllChangeDescriptions(state.changes)
+              .map(change => (
+                <juju.components.DeploymentChangeItem
+                  change={change}
+                  key={change.id}
+                  showTime={false} />))}
           </ul>
         </juju.components.ExpandingRow>
       );

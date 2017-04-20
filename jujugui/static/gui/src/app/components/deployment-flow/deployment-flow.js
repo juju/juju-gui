@@ -49,6 +49,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
+      getCurrentChangeSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func,
       getDischargeToken: React.PropTypes.func,
       getUser: React.PropTypes.func,
@@ -916,7 +917,7 @@ YUI.add('deployment-flow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-            changes={this.props.changes}
+            getCurrentChangeSet={this.props.getCurrentChangeSet}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions} />
         </juju.components.DeploymentSection>);

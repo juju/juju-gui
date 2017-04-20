@@ -1328,7 +1328,8 @@ YUI.add('juju-gui', function(Y) {
       const connected = this.env.get('connected');
       const modelName = env.get('environmentName') || 'mymodel';
       const utils = views.utils;
-      const currentChangeSet = env.get('ecs').getCurrentChangeSet();
+      const ecs = env.get('ecs');
+      const currentChangeSet = ecs.getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0 && !ddData) {
         // If there are no changes then close the deployment flow. This is to
         // prevent showing the deployment flow if the user clicks back in the
@@ -1401,6 +1402,7 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
+          getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
           getCountries={
               this.payment && this.payment.getCountries.bind(this.payment)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
