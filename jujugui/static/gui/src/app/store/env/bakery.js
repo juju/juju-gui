@@ -83,6 +83,7 @@ YUI.add('juju-env-bakery', function(Y) {
         this.macaroonName = 'Macaroons-' + cfg.serviceName;
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
+        this.setCookie = cfg.setCookie;
         this.nonceLen = 24;
         this.user = cfg.user;
         if (!this.user) {
@@ -90,7 +91,8 @@ YUI.add('juju-env-bakery', function(Y) {
           return;
         }
         if (cfg.macaroon) {
-          this.user.addMacaroon(this.macaroonName, cfg.macaroon, cfg.setCookie);
+          this.user.setMacaroon(
+            this.macaroonName, cfg.macaroon, this.setCookie);
         }
         if (cfg.dischargeToken) {
           this.user.identity = cfg.dischargeToken;
@@ -445,6 +447,8 @@ YUI.add('juju-env-bakery', function(Y) {
           this._successfulDischarges(requestFunc, macaroons);
           return;
         }
+        const btoaMacaroon = btoa(JSON.stringify(macaroons));
+        this.user.setMacaroon(this.macaroonName, btoaMacaroon, this.setCookie);
         return this.webhandler.sendPutRequest(
           this.setCookiePath,
           null, content, null, null, true, null,
@@ -467,14 +471,8 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {undefined} Nothing.
        */
       _successfulDischarges: function (originalRequest, jsonMacaroon) {
-        if (this.cookieStore) {
-          this.cookieStore.setItem(this.macaroonName,
-            btoa(JSON.stringify(jsonMacaroon)));
-        } else {
-          var prefix = this.macaroonName + '=';
-          document.cookie = prefix + btoa(JSON.stringify(jsonMacaroon))
-            + ';path=/';
-        }
+        const btoaMacaroon = btoa(JSON.stringify(jsonMacaroon));
+        this.user.setMacaroon(this.macaroonName, btoaMacaroon, this.setCookie);
         originalRequest();
       },
 
@@ -711,21 +709,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {String} Macaroon that was set in local cookie.
        */
       getMacaroon: function() {
-        if (this.cookieStore) {
-          return this.cookieStore.getItem(this.macaroonName);
-        } else {
-          var name = this.macaroonName + '=',
-              macaroon = null;
-          document.cookie.split(';').some(cookie => {
-            cookie = cookie.trim();
-            if (cookie.indexOf(name) === 0) {
-              macaroon = cookie.substring(name.length, cookie.length);
-              return true;
-            }
-            return false;
-          });
-          return macaroon;
-        }
+        return this.user.getMacaroon(this.macaroonName);
       },
 
       /**
@@ -734,21 +718,7 @@ YUI.add('juju-env-bakery', function(Y) {
         @method clearCookie
       */
       clearCookie: function() {
-        var name = this.macaroonName;
-        var pathParts = '/profile'.split('/');
-        var currentPath = ' path=';
-
-        if (this.cookieStore) {
-          this.cookieStore.removeItem(this.macaroonName);
-        } else {
-          // Delete the / cookie first
-          document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
-          pathParts.forEach(part => {
-            currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
-            document.cookie =
-              `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
-          });
-        }
+        this.user.clearMacaroon(this.macaroonName, this.setCookie);
         this.user.identity = null;
       }
     }
