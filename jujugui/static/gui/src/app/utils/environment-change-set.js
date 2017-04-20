@@ -365,7 +365,7 @@ YUI.add('environment-change-set', function(Y) {
         window.clearInterval(this.levelTimer);
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(this._commitNext.bind(this, env, currentIndex));
+          window.setTimeout(this._commitNext.bind(this, env, currentIndex), 0);
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
