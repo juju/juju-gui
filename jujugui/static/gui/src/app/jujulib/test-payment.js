@@ -661,4 +661,74 @@ describe('jujulib payment service', function() {
       });
     });
   });
+
+  describe('addBillingAddress', () => {
+    let address;
+
+    beforeEach(() => {
+      address = {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        county: 'Bunnyhug',
+        city: 'Sasquatch',
+        postcode: '90210',
+        countryCode: 'CA'
+      };
+    });
+
+    it('can add a billing address', () => {
+      const originalMakeRequest = jujulib._makeRequest;
+      const makeRequest = sinon.stub();
+      jujulib._makeRequest = makeRequest;
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.addBillingAddress( 'spinach', address, sinon.stub());
+      // Restore the original method on the lib.
+      jujulib._makeRequest = originalMakeRequest;
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        city: 'Sasquatch',
+        county: 'Bunnyhug',
+        postcode: '90210',
+        'country-code': 'CA',
+        phones: []
+      });
+    });
+
+    it('can successfully create the billing address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/billing-addresses');
+          const xhr = makeXHRRequest();
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addBillingAddress('spinach', address, error => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when adding a billing address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addBillingAddress('spinach', address, error => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
 });
