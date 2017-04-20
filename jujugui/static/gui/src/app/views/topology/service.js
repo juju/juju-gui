@@ -1070,7 +1070,10 @@ YUI.add('juju-topology-service', function(Y) {
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
           var charm = new models.Charm(entityData);
-          Y.fire('initiateDeploy', charm, ghostAttributes);
+          document.dispatchEvent(new CustomEvent('initiateDeploy', {'detail': {
+            charm: charm,
+            ghostAttributes: ghostAttributes
+          }}));
         } else {
           this.get('component').get('db').notifications.add({
             title: 'Processing File',

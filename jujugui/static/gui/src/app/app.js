@@ -637,8 +637,8 @@ YUI.add('juju-gui', function(Y) {
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
-      Y.on('initiateDeploy', function(charm, ghostAttributes) {
-        this.deployService(charm, ghostAttributes);
+      document.addEventListener('initiateDeploy', e => {
+        this.deployService(e.detail.charm, e.detail.ghostAttributes);
       }, this);
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);

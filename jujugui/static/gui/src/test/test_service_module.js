@@ -387,19 +387,19 @@ describe.skip('service module events', function() {
             clientY: 153
           }
         };
-
-    var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
-      eventHandle.detach();
+    const listener = e => {
+      document.removeEventListener('initiateDeploy', listener);
       // After the translation and calculations the above x and y coords should
       // place the element at -245, -18
-      assert.deepEqual(ghostAttributes, {
+      assert.deepEqual(e.detail.ghostAttributes, {
         coordinates: [170, 317],
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.
       assert.equal(preventCount, 1);
       done();
-    });
+    };
+    document.addEventListener('initiateDeploy', listener);
     serviceModule.set('component', topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
