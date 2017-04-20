@@ -496,7 +496,6 @@ describe('Environment Change Set', function() {
         var fire = sinon.stub(ecs, 'fire');
         this._cleanups.push(fire.restore);
         ecs.levelRecordCount = 0;
-        ecs.levelTimer = { cancel: sinon.stub() };
         ecs._waitOnLevel(null, 0);
         assert.equal(fire.lastCall.args[0], 'currentCommitFinished');
         assert.deepEqual(fire.lastCall.args[1], {index: 0});
