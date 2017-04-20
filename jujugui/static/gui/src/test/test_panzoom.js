@@ -19,10 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('pan zoom module', function() {
-  var db, models, utils, view, viewContainer, views, Y, pz, topo, vis;
+  var db, models, utils, view, viewContainer, views, pz, topo, vis;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use(['node',
       'juju-models',
       'juju-views',
       'juju-gui',
