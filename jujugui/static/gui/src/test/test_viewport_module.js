@@ -69,7 +69,7 @@ describe('views.ViewportModule (Topology module)', function() {
     // Catch global custom page resize events.
     ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(
       evt => {
-        Y.on(evt, function() {
+        document.addEventListener(evt, () => {
           events.push(evt);
         });
       });

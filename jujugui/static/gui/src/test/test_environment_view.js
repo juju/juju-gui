@@ -349,11 +349,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var beforeResizeEventFired = false;
       view.render();
 
-      Y.once('beforePageSizeRecalculation', function() {
+      document.addEventListener('beforePageSizeRecalculation', () => {
         // This event must be fired.
         beforeResizeEventFired = true;
       });
-      Y.once('afterPageSizeRecalculation', function() {
+      document.addEventListener('afterPageSizeRecalculation', () => {
         // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();

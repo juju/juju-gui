@@ -233,14 +233,6 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Export the model',
         label: 'Shift + d'
-      },
-
-      'C-S-d': {
-        callback: function(evt) {
-          Y.fire('saveWebsocketLog');
-        },
-        help: 'Save the websocket log to a file',
-        label: 'Control + Shift + s'
       }
     },
 
