@@ -48,9 +48,6 @@ YUI.add('juju-view-environment', function(Y) {
      * @method EnvironmentView.initializer
      */
     initializer: function() {
-      this.publish('navigateTo', {
-        broadcast: true,
-        preventable: false});
     },
 
     /**

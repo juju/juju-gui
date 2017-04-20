@@ -193,13 +193,6 @@ YUI.add('juju-gui', function(Y) {
         help: 'Display this help',
         label: 'Shift + ?'
       },
-      'A-e': {
-        callback: function(evt) {
-          this.fire('navigateTo', { url: '/:gui:/' });
-        },
-        help: 'Navigate to the model overview',
-        label: 'Alt + e'
-      },
       'S-+': {
         fire: 'zoom_in',
         help: 'Zoom In',
@@ -552,10 +545,6 @@ YUI.add('juju-gui', function(Y) {
       // Listen for window unloads and trigger the unloadWindow function.
       window.onbeforeunload = views.utils.unloadWindow.bind(this);
 
-      this.on('*:navigateTo', function(e) {
-        this.navigate(e.url);
-      }, this);
-
       // When the environment name becomes available, display it.
       this.env.after('environmentNameChange',
           this.onEnvironmentNameChange, this);
@@ -649,7 +638,6 @@ YUI.add('juju-gui', function(Y) {
       });
       // In Juju >= 2 we connect to the controller and then to the model.
       this.controllerAPI.connect();
-      this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       this.state.bootstrap();
     },
 
