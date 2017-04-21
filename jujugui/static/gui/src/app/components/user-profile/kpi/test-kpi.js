@@ -32,19 +32,19 @@ describe('UserProfileEntityKPI', () => {
     metricTypes = ['metric', 'bad-wolf'];
     metrics = [
       {
-        Metric: 'metric',
-        Sum: 42,
-        Count: 5
+        metric: 'metric',
+        sum: 42,
+        count: 5
       },
       {
-        Metric: 'bad-wolf',
-        Sum: 53,
+        metric: 'bad-wolf',
+        sum: 53,
         count: 8
       },
       {
-        Metric: 'metric',
-        Sum: 80,
-        Count: 10
+        metric: 'metric',
+        sum: 80,
+        count: 10
       }
     ];
   });

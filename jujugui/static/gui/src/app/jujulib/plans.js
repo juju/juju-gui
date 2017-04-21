@@ -348,7 +348,7 @@ var module = module;
     getKpiMetrics: function(charmId, filters, callback) {
       function handler(error, charmMetrics) {
         if (charmMetrics) {
-          charmMetrics = charmMetrics.map((metric) => {
+          charmMetrics = charmMetrics.map(metric => {
             return {
               metric: metric.Metric,
               time: metric.Time,

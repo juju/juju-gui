@@ -353,8 +353,8 @@ YUI.add('user-profile-entity', function() {
           // To QA, uncomment the following line and comment out the line
           // after that.
           // Makyo - 2017-03-17
-          //'cs:~canonical/jimm-0',
-          this.props.entity.id,
+          'cs:~canonical/jimm-0',
+          // this.props.entity.id,
           filters,
           (error, charmMetrics) => {
             if (error) {
@@ -372,8 +372,8 @@ YUI.add('user-profile-entity', function() {
             if (charmMetrics.length > 0) {
               let metrics = [];
               let metricTypes = this.state.metricTypes;
-              charmMetrics.forEach((item) => {
-                // refrain from adding duplicatae types to metricTypes
+              charmMetrics.forEach(item => {
+                // refrain from adding duplicate types to metricTypes
                 if (metricTypes.indexOf(item.metric) === -1) {
                   metricTypes.push(item.metric);
                 }
