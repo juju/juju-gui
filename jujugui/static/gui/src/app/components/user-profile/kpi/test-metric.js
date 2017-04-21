@@ -20,11 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('UserProfileEntityKPI', () => {
+describe('UserProfileEntityMetrics', () => {
   let d3, metrics, metricTypes;
 
   beforeAll((done) => {
-    YUI().use(['user-profile-entity-kpi', 'd3'], (Y) => {
+    YUI().use(['user-profile-entity-metric', 'd3'], (Y) => {
       d3 = Y.namespace('d3');
       done();
     });
@@ -50,11 +50,7 @@ describe('UserProfileEntityKPI', () => {
     ];
   });
 
-  // The current state of the GUI does not allow choosing from a list of
-  // metrics yet. There are bugs to be created in the future, but for now
-  // we only test the fact that the KPI component can render its children.
-  // Makyo 2017-04-03
-  it('can render a default metric', () => {
+  it('renders a chart', () => {
     let renderer = jsTestUtils.shallowRender(
         <juju.components.UserProfileEntityMetric
           d3={d3}

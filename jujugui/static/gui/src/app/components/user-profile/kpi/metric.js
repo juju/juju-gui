@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity-metric', function() {
 
   juju.components.UserProfileEntityMetric = React.createClass({
+    displayName: 'Profile entity metrics',
 
     propTypes: {
       d3: React.PropTypes.object.isRequired,
@@ -33,7 +34,7 @@ YUI.add('user-profile-entity-metric', function() {
         return;
       }
       let max = 0, data = [];
-      metric.forEach((d) => {
+      metric.forEach(d => {
         const mean = d.sum / d.count;
         max = mean > max ? mean : max;
         data.push({date: Date.parse(d.time), mean: mean});

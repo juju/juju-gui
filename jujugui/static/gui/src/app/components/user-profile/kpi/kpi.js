@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity-kpi', function() {
 
   juju.components.UserProfileEntityKPI = React.createClass({
+    displayName: 'Profile KPIs',
 
     propTypes: {
       d3: React.PropTypes.object.isRequired,
@@ -35,7 +36,7 @@ YUI.add('user-profile-entity-kpi', function() {
     },
 
     /**
-      Tell the metric component to render a graph of specific metric.
+      Tell the metric component to render a graph of a specific metric.
 
       @method _showMetric
       @param {String} metric The metric to show (selected from metricTypes)
@@ -49,9 +50,7 @@ YUI.add('user-profile-entity-kpi', function() {
       // Makyo 2017-04-03
       metric = this.props.metrics[0].metric;
       this.setState({
-        currentMetric: this.props.metrics.filter((d) => {
-          return d.metric === metric;
-        })
+        currentMetric: this.props.metrics.filter(d => d.metric === metric)
       });
     },
 
