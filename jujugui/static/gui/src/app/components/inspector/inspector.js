@@ -40,7 +40,6 @@ YUI.add('inspector-component', function() {
       getAvailableEndpoints: React.PropTypes.func.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
-      getMacaroon: React.PropTypes.func.isRequired,
       getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
@@ -373,7 +372,6 @@ YUI.add('inspector-component', function() {
                 addNotification={this.props.addNotification}
                 charmId={service.get('charm')}
                 service={service}
-                getMacaroon={this.props.getMacaroon}
                 addCharm={this.props.addCharm}
                 setCharm={this.props.setCharm}
                 getCharm={this.props.getCharm}

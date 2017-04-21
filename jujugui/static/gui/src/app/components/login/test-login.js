@@ -208,7 +208,6 @@ describe('LoginComponent', function() {
     const getDischargeToken = sinon.stub().returns('foo');
     const charmstore = sinon.stub();
     charmstore.bakery = sinon.stub();
-    charmstore.bakery.fetchMacaroonFromStaticPath = sinon.stub();
     const storeUser = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login

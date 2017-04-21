@@ -27,7 +27,6 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/jujulib/terms.js',
       'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',
       'jujugui/static/gui/src/app/jujulib/urls.js',
-      'jujugui/static/gui/src/app/jujulib/bakery-factory.js',
       'jujugui/static/gui/src/app/jujulib/bundleservice.js',
       'jujugui/static/gui/src/app/jujulib/test-*.js',
 
