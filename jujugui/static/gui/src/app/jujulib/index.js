@@ -41,65 +41,62 @@ var module = module;
      @param redirect {Boolean} Whether or not to redirect on a 401 within
         the bakery.
   */
-  var _makeRequest = function(
-    bakery, path, method, params, callback, parse, redirect) {
-    /**
-       Success callback that attempts to parse any error messages out of the
-       JSON response.
-
-       @param xhr {Object} the XHR response object.
-    */
-    var success = function(xhr) {
-      var data = xhr.target.responseText,
-          error = null;
-
-      if (parse !== false && data) {
-        try {
-          data = JSON.parse(data);
-          if (data.error || data.Error) {
-            error = data.error || data.Error;
-          }
-        } catch(e) {
-          error = e;
-        }
+  const _makeRequest = function(
+    bakery, url, method, params, callback, parse, redirect) {
+    const wrappedCallback = (err, response) => {
+      if (err) {
+        callback(err, null);
+        return;
       }
-      callback(error, data);
-    };
-    /**
-       Failure callback that attempts to parse any error messages out of the
-       JSON response, before invoking the user-specified callback.
-
-       @param xhrOrMessage {Object} the XHR response object; can also be a
-                                    plain error string.
-    */
-    var failure = function(xhrOrMessage) {
-      var data;
+      const text = response.target.responseText;
+      if (!text) {
+        callback(null, null);
+        return;
+      }
+      // TODO frankban: we should really avoid defaulting optional
+      // parameters to true.
+      if (parse !== undefined && !parse) {
+        callback(null, text);
+        return;
+      }
+      let jsonResponse;
       try {
-        data = JSON.parse(xhrOrMessage.target.responseText);
-      } catch (e) {
-        data = { error: xhrOrMessage };
+        jsonResponse = JSON.parse(text);
+      } catch(err) {
+        callback(err, null);
+        return;
       }
-      var error = data.Message || data.message || data.Error || data.error;
-      callback(error, data);
+      err = jsonResponse.error || jsonResponse.Error;
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      callback(null, jsonResponse);
     };
+    const headers = null;
     // Invoke the proper bakery function, based on request type.
     switch (method) {
       case 'GET':
-        return bakery.sendGetRequest(path, success, failure, redirect);
-      case 'POST':
-        return bakery.sendPostRequest(
-            path, JSON.stringify(params), success, failure, redirect);
-      case 'PUT':
-        return bakery.sendPutRequest(
-            path, JSON.stringify(params), success, failure, redirect);
-      case 'PATCH':
-        return bakery.sendPatchRequest(
-            path, JSON.stringify(params), success, failure, redirect);
+        return bakery.get(url, headers, wrappedCallback);
+        break;
       case 'DELETE':
-        return bakery.sendDeleteRequest(path, success, failure, redirect);
+        return bakery.delete(url, headers, wrappedCallback);
+        break;
+      case 'POST':
+        return bakery.post(
+          url, headers, JSON.stringify(params), wrappedCallback);
+        break;
+      case 'PUT':
+        return bakery.put(
+          url, headers, JSON.stringify(params), wrappedCallback);
+        break;
+      case 'PATCH':
+        return bakery.patch(
+          url, headers, JSON.stringify(params), wrappedCallback);
+        break;
       default:
-        console.error(
-          'Supplied request method "' + method + '" not supported.');
+        console.error(`method "${method}" not supported`);
+        break;
     }
   };
 
