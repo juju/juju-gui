@@ -52,34 +52,33 @@ YUI.add('ghost-deployer-extension', function(Y) {
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
       charm.set('plans', plans);
-      var db = this.db;
+      const db = this.db;
       db.charms.add(charm);
-      var ghostService = db.services.ghostService(charm);
+      const ghostService = db.services.ghostService(charm);
 
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
-      var config = {};
-      var ghostServiceId = ghostService.get('id');
+      const config = {};
+      const ghostServiceId = ghostService.get('id');
       const charmOptions = charm.get('options') || {};
       Object.keys(charmOptions).forEach(k => {
         const v = charmOptions[k];
         config[k] = v['default'];
       });
-      var series = charm.get('series');
+      const series = charm.get('series');
       // If series is an array then pick the first one. This will be the
       // case if it is a multi-series charm and we're picking the default
       // and preferred series.
-      var activeSeries = Array.isArray(series) ? series[0] : series;
+      const activeSeries = Array.isArray(series) ? series[0] : series;
       ghostService.set('config', config);
       ghostService.set('activePlan', activePlan);
       ghostService.set('series', activeSeries);
-      var serviceName = ghostService.get('name');
-      var charmId = charm.get('id');
+      const serviceName = ghostService.get('name');
+      const charmId = charm.get('id');
       if (charm.get('id').indexOf('local:') === -1) {
-        // TODO frankban: add support for fetching delegatable macaroons that
-        // can be used to add private charms.
         this.env.addCharm(
-          charmId, null, this._addCharmCallbackHandler.bind(this, charm),
+          charmId, this.get('charmstore'),
+          this._addCharmCallbackHandler.bind(this, charm),
           // Options used by ECS, ignored by environment.
           {applicationId: ghostServiceId});
       }
@@ -122,8 +121,8 @@ YUI.add('ghost-deployer-extension', function(Y) {
         // can safely assume the first unit to be unit 0. Each subsequent
         // unit added to the ghost service would have number
         // `ghostService.get('units').size()`.
-        var unitId = ghostServiceId + '/0';
-        var ghostUnit = db.addUnits({
+        const unitId = ghostServiceId + '/0';
+        const ghostUnit = db.addUnits({
           id: unitId,
           displayName: serviceName + '/0',
           charmUrl: charmId,
