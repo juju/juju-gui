@@ -276,6 +276,94 @@ var module = module;
     },
 
     /**
+      Add an address.
+
+      @public addAddress
+      @param username {String} The user's username.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - countryCode {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    addAddress: function(username, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/addresses`;
+      const payload = this._unparseAddress(address);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Add a billing address.
+
+      @public addBillingAddress
+      @param username {String} The user's username.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - countryCode {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    addBillingAddress: function(username, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses`;
+      const payload = this._unparseAddress(address);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Remove an address.
+
+      @public removeAddress
+      @param name {String} The user's username.
+      @param id {String} The address id.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    removeAddress: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/addresses/${id}`;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+    },
+
+    /**
+      Remove a billing address.
+
+      @public removeBillingAddress
+      @param name {String} The user's username.
+      @param id {String} The address id.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    removeBillingAddress: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses/${id}`;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+    },
+
+    /**
       Generate an ID of this payment method. The ID only needs to be unique per
       user so using the full timestamp should be enough.
 
@@ -393,6 +481,7 @@ var module = module;
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
+        county: address.county || null,
         postcode: address.postcode || null,
         countryCode: address['country-code'] || null,
         phones: address.phones || []
@@ -425,6 +514,7 @@ var module = module;
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
+        county: address.county || null,
         postcode: address.postcode || null,
         'country-code': address.countryCode || null,
         phones: address.phones || []

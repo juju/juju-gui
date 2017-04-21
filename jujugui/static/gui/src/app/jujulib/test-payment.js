@@ -60,6 +60,7 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         countryCode: null,
         phones: []
@@ -72,6 +73,7 @@ describe('jujulib payment service', function() {
         line2: null,
         name: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         countryCode: null,
         phones: []
@@ -178,6 +180,7 @@ describe('jujulib payment service', function() {
           line2: null,
           name: null,
           city: 'New Orleans',
+          county: null,
           postcode: null,
           countryCode: null,
           phones: []
@@ -223,9 +226,7 @@ describe('jujulib payment service', function() {
   });
 
   it('can create a user', function() {
-    const originalMakeRequest = jujulib._makeRequest;
-    const makeRequest = sinon.stub();
-    jujulib._makeRequest = makeRequest;
+    const makeRequest = sinon.stub(jujulib, '_makeRequest');
     const payment = new window.jujulib.payment('http://1.2.3.4/', {});
     const newUser = {
       name: 'Geoffrey Spinach',
@@ -246,7 +247,7 @@ describe('jujulib payment service', function() {
     };
     payment.createUser(newUser, sinon.stub());
     // Restore the original method on the lib.
-    jujulib._makeRequest = originalMakeRequest;
+    makeRequest.restore();
     assert.equal(makeRequest.callCount, 1);
     assert.deepEqual(makeRequest.args[0][3], {
       name: 'Geoffrey Spinach',
@@ -256,6 +257,7 @@ describe('jujulib payment service', function() {
         line1: null,
         line2: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         'country-code': null,
         phones: []
@@ -268,6 +270,7 @@ describe('jujulib payment service', function() {
         line1: null,
         line2: null,
         city: 'New Orleans',
+        county: null,
         postcode: '70130',
         'country-code': null,
         phones: []
@@ -445,15 +448,13 @@ describe('jujulib payment service', function() {
 
   describe('createPaymentMethod', () => {
     it('can create a payment method', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.createPaymentMethod(
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.equal(
         makeRequest.args[0][3],
@@ -533,15 +534,13 @@ describe('jujulib payment service', function() {
 
   describe('removePaymentMethod', () => {
     it('can remove a payment method', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.removePaymentMethod(
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
         'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
@@ -584,6 +583,232 @@ describe('jujulib payment service', function() {
           assert.equal(error, 'Uh oh!');
           done();
         });
+    });
+  });
+
+  describe('addAddress', () => {
+    let address;
+
+    beforeEach(() => {
+      address = {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        county: 'Bunnyhug',
+        city: 'Sasquatch',
+        postcode: '90210',
+        countryCode: 'CA'
+      };
+    });
+
+    it('can add an address', () => {
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.addAddress( 'spinach', address, sinon.stub());
+      // Restore the original method on the lib.
+      makeRequest.restore();
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        city: 'Sasquatch',
+        county: 'Bunnyhug',
+        postcode: '90210',
+        'country-code': 'CA',
+        phones: []
+      });
+    });
+
+    it('can successfully create the address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/addresses');
+          const xhr = makeXHRRequest();
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addAddress('spinach', address, error => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when adding an address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addAddress('spinach', address, error => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
+
+  describe('addBillingAddress', () => {
+    let address;
+
+    beforeEach(() => {
+      address = {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        county: 'Bunnyhug',
+        city: 'Sasquatch',
+        postcode: '90210',
+        countryCode: 'CA'
+      };
+    });
+
+    it('can add a billing address', () => {
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.addBillingAddress( 'spinach', address, sinon.stub());
+      // Restore the original method on the lib.
+      makeRequest.restore();
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        name: 'Home',
+        line1: '1 Maple St',
+        line2: null,
+        city: 'Sasquatch',
+        county: 'Bunnyhug',
+        postcode: '90210',
+        'country-code': 'CA',
+        phones: []
+      });
+    });
+
+    it('can successfully create the billing address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/billing-addresses');
+          const xhr = makeXHRRequest();
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addBillingAddress('spinach', address, error => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when adding a billing address', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.addBillingAddress('spinach', address, error => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
+
+  describe('removeAddress', () => {
+    it('can remove an address', () => {
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.removeAddress('spinach', 'address1', sinon.stub());
+      // Restore the original method on the lib.
+      makeRequest.restore();
+      assert.equal(makeRequest.callCount, 1);
+      assert.strictEqual(makeRequest.args[0][3], null);
+    });
+
+    it('can return when there are no errors', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/addresses/address1');
+          const xhr = makeXHRRequest('success');
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeAddress('spinach', 'address1', (error, response) => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when removing an address', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeAddress('spinach', 'address1',(error, response) => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
+
+  describe('removeBillingAddress', () => {
+    it('can remove a biling address', () => {
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      payment.removeBillingAddress('spinach', 'address1', sinon.stub());
+      // Restore the original method on the lib.
+      makeRequest.restore();
+      assert.equal(makeRequest.callCount, 1);
+      assert.strictEqual(makeRequest.args[0][3], null);
+    });
+
+    it('can return when there are no errors', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/billing-addresses/address1');
+          const xhr = makeXHRRequest('success');
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeBillingAddress('spinach', 'address1', (error, response) => {
+        assert.strictEqual(error, null);
+        done();
+      });
+    });
+
+    it('handles errors when removing a billing address', (done) => {
+      const bakery = {
+        sendDeleteRequest: function(path, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.removeBillingAddress('spinach', 'address1',(error, response) => {
+        assert.equal(error, 'Uh oh!');
+        done();
+      });
     });
   });
 });
