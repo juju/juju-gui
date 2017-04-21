@@ -33,7 +33,8 @@ describe('user auth class', () => {
       return {
         store: {},
         setItem: function(name, val) { this.store[name] = val; },
-        getItem: function(name) { return this.store[name] || null; }
+        getItem: function(name) { return this.store[name] || null; },
+        removeItem: function(name) { delete this.store[name]; }
       };
     };
   };
@@ -155,6 +156,31 @@ describe('user auth class', () => {
       };
       const creds = user.model;
       assert.equal(creds.areExternal, true);
+    });
+  });
+
+  describe('macaroons', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+    });
+
+    it('can set a macaroon', () => {
+      user.setMacaroon('test', 'foo-bar');
+      assert.equal(storage.getItem('test'), 'foo-bar');
+    });
+
+    it('can get a macaroon', () => {
+      storage.setItem('test', 'foo-bar');
+      assert.equal(user.getMacaroon('test'), 'foo-bar');
+    });
+
+    it('can clear a macaroon', () => {
+      user.setMacaroon('test', 'foo-bar');
+      user.clearMacaroon('test');
+      assert.deepEqual(storage.getItem('test'), null);
     });
   });
 });
