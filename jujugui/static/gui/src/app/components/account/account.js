@@ -31,6 +31,7 @@ YUI.add('account', function() {
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       removePaymentMethod: React.PropTypes.func,
@@ -51,15 +52,24 @@ YUI.add('account', function() {
     _generatePaymentDetails: function() {
       if (this.props.showPay) {
         return (
-          <juju.components.AccountPaymentMethod
-            acl={this.props.acl}
-            addNotification={this.props.addNotification}
-            createPaymentMethod={this.props.createPaymentMethod}
-            createToken={this.props.createToken}
-            getUser={this.props.getUser}
-            removePaymentMethod={this.props.removePaymentMethod}
-            username={this.props.userInfo.profile}
-            validateForm={this.props.validateForm} />);
+          <div>
+            <juju.components.AccountPaymentMethod
+              acl={this.props.acl}
+              addNotification={this.props.addNotification}
+              createPaymentMethod={this.props.createPaymentMethod}
+              createToken={this.props.createToken}
+              getUser={this.props.getUser}
+              removePaymentMethod={this.props.removePaymentMethod}
+              username={this.props.userInfo.profile}
+              validateForm={this.props.validateForm} />
+            <juju.components.AccountPaymentDetails
+              acl={this.props.acl}
+              addNotification={this.props.addNotification}
+              getCountries={this.props.getCountries}
+              getUser={this.props.getUser}
+              username={this.props.userInfo.profile}
+              validateForm={this.props.validateForm} />
+          </div>);
       } else {
         return null;
       }
@@ -105,6 +115,7 @@ YUI.add('account', function() {
   requires: [
     'account-credentials',
     'account-payment-method',
+    'account-payment-details',
     'panel-component',
     'user-profile-header'
   ]

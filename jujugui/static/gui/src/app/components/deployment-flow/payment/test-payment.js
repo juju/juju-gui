@@ -221,8 +221,8 @@ describe('DeploymentPayment', function() {
                 error: 'This field is required.'
               }]} />
             <juju.components.AddressForm
-              acl={acl}
               addNotification={addNotification}
+              disabled={false}
               getCountries={getCountries}
               ref="userAddress"
               validateForm={validateForm} />
@@ -345,8 +345,8 @@ describe('DeploymentPayment', function() {
                 error: 'This field is required.'
               }]} />
             <juju.components.AddressForm
-              acl={acl}
               addNotification={addNotification}
+              disabled={false}
               getCountries={getCountries}
               ref="userAddress"
               validateForm={validateForm} />
@@ -419,8 +419,8 @@ describe('DeploymentPayment', function() {
           Card address
         </h2>
         <juju.components.AddressForm
-          acl={acl}
           addNotification={addNotification}
+          disabled={false}
           getCountries={getCountries}
           ref="cardAddress"
           validateForm={validateForm} />
@@ -431,8 +431,8 @@ describe('DeploymentPayment', function() {
           Billing address
         </h2>
         <juju.components.AddressForm
-          acl={acl}
           addNotification={addNotification}
+          disabled={false}
           getCountries={getCountries}
           ref="billingAddress"
           validateForm={validateForm} />
