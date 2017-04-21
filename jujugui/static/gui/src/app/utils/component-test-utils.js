@@ -128,9 +128,9 @@ var jsTestUtils = {
     var diff = JsDiff.diffLines(stringA, stringB);
     diff.forEach(function (part) {
       if (part.added === true) {
-        console.log('+ ' + part.value);
+        console.log('\x1b[32m+ ' + part.value + '\x1b[0m');
       } else if (part.removed === true) {
-        console.log('- ' + part.value);
+        console.log('\x1b[31m- ' + part.value + '\x1b[0m');
       } else {
         console.log(part.value);
       }
