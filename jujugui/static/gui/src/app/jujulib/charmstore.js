@@ -462,6 +462,53 @@ var module = module;
     },
 
     /**
+      Retrieve a macaroon from the charm store.
+
+      @param callback {Function} A callback to handle errors or accept the data
+        from the request. Must accept an error message or null as its first
+        parameter and the response data as its second.
+    */
+    getMacaroon: function(callback) {
+      const path = this._generatePath('macaroon');
+      const body = null;
+      jujulib._makeRequest(this.bakery, path, 'GET', body, (err, data) => {
+        callback(err, data);
+      });
+    },
+
+    /**
+      Retrieve a delegatable macaroon for adding a charm.
+
+      @param charmURL {String} The charm or bundle old-style URL the
+        delegatable macaroon is valid for.
+      @param callback {Function} A callback to handle errors or accept the data
+        from the request. Must accept an error message or null as its first
+        parameter and the response data as its second.
+    */
+    getDelegatableMacaroon: function(charmURL, callback) {
+      const id = encodeURIComponent(charmURL);
+      const path = this._generatePath('delegatable-macaroon', `id=${id}`);
+      const body = null;
+      jujulib._makeRequest(this.bakery, path, 'GET', body, (err, data) => {
+        callback(err, data);
+      });
+    },
+
+    /**
+      Set the provided macaroons as charm store cookies.
+
+      @param macaroons {Array} The macaroons to store in the cookie.
+      @param callback {Function} A callback to handle errors or accept the data
+        from the request. Must accept an error message or null as its first
+        parameter and the response data as its second.
+    */
+    setAuthCookie: function(macaroons, callback) {
+      const path = this._generatePath('set-auth-cookie');
+      const body = {'Macaroons': macaroons};
+      jujulib._makeRequest(this.bakery, path, 'PUT', body, callback);
+    },
+
+    /**
       Takes the bundle id and fetches the bundle YAML contents. Required for
       deploying a bundle via the deployer.
 

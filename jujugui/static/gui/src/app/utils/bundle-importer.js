@@ -561,6 +561,9 @@ YUI.add('bundle-importer', function(Y) {
             charm.loaded = true;
             db.charms.add(charm);
           }
+          // TODO frankban: provide the charm store API instance as second
+          // argument, so that it can be used to retrieve a delegatable
+          // macaroon.
           this.modelAPI.addCharm(charmId, null, () => {});
           this._saveModelToRequires(record.id, charm);
           next();
