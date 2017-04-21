@@ -64,23 +64,23 @@ YUI.add('user-profile', function() {
       @method _interactiveLogin
     */
     _interactiveLogin: function() {
-      const bakery = this.props.charmstore.bakery;
-      bakery.fetchMacaroonFromStaticPath(this._fetchMacaroonCallback);
-    },
-
-    /**
-      Callback for fetching the macaroon.
-
-      @method _fetchMacaroonCallback
-      @param {String|Object|Null} error The error response from the callback.
-      @param {String} macaroon The resolved macaroon.
-    */
-    _fetchMacaroonCallback: function(error, macaroon) {
-      if (error) {
-        console.log(error);
+      const props = this.props;
+      const handler = err => {
+        if (err) {
+          console.log('cannot retrieve charm store macaroon:', err);
+          return;
+        }
+        props.storeUser('charmstore', true);
+      };
+      // TODO frankban: should pass an user object as prop here instead.
+      const macaroon = props.charmstore.bakery.storage.get('charmstore');
+      if (macaroon) {
+        handler(null);
         return;
       }
-      this.props.storeUser('charmstore', true);
+      props.charmstore.getMacaroon((err, macaroon) => {
+        handler(err);
+      });
     },
 
     /**

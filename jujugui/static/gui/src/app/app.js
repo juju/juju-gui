@@ -375,58 +375,27 @@ YUI.add('juju-gui', function(Y) {
       // modeling on a new canvas.
       this.anonymousMode = false;
 
-      this.bakeryFactory = new window.jujulib.bakeryFactory(
-        Y.juju.environments.web.Bakery);
+      const config = window.juju_config || {};
+      config.interactiveLogin = this.get('interactiveLogin');
 
       // Set up a client side database to store state.
       this.db = new models.Database();
       // Create a user store to track authentication details.
       this.user = this.get('user') || new window.jujugui.User();
+
+      // Instantiate a macaroon bakery, which is used to handle the macaroon
+      // acquisition over HTTP.
+      const webHandler = new Y.juju.environments.web.WebHandler();
+      const charmstoreCookieSetter = (value, callback) => {
+        this.get('charmstore').setAuthCookie(value, callback);
+      };
+      this.bakery = Y.juju.bakeryutils.newBakery(
+        config, this.user, charmstoreCookieSetter, webHandler);
+
       // Create and set up a new instance of the charmstore.
-      this._setupCharmstore(window.jujulib.charmstore);
+      this._setupCharmstore(config, window.jujulib.charmstore);
       // Create and set up a new instance of the bundleservice.
       this._setupBundleservice(window.jujulib.bundleservice);
-      // Set up juju bakery service.
-      let dischargeToken;
-      if (window.juju_config) {
-        dischargeToken = window.juju_config.dischargeToken;
-      }
-      // This creates the juju bakery and stores it; it will be used later.
-      this.bakeryFactory.create({
-        webhandler: new Y.juju.environments.web.WebHandler(),
-        interactive: this.get('interactiveLogin'),
-        serviceName: 'juju',
-        user: this.user,
-        dischargeToken: dischargeToken,
-        visitMethod: response => {
-          // Add to the page a notification about accepting the pop up window
-          // for logging into USSO.
-          const url = response.Info.VisitURL;
-          const notification = document.createElement('div');
-          notification.setAttribute('id', 'login-notification');
-          const message = document.createTextNode(
-            'To proceed with the authentication, please accept the pop up ' +
-            'window or ');
-          notification.appendChild(message);
-          const link = document.createElement('a');
-          link.href = url;
-          link.target = '_blank';
-          const text = document.createTextNode('click here');
-          link.appendChild(text);
-          notification.appendChild(link);
-          notification.appendChild(document.createTextNode('.'));
-          document.body.appendChild(notification);
-          // Open the pop up (default behavior for the time being).
-          window.open(url, 'Login');
-        },
-        onSuccess: () => {
-          // Remove the pop up notification from the page.
-          const notification = document.getElementById('login-notification');
-          if (notification) {
-            notification.remove();
-          }
-        }
-      });
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
@@ -651,7 +620,7 @@ YUI.add('juju-gui', function(Y) {
       @method _sendGISFPostBack
     */
     _sendGISFPostBack: function() {
-      const dischargeToken = window.localStorage.getItem('discharge-token');
+      const dischargeToken = this.user.getMacaroon('identity');
       if (!dischargeToken) {
         console.error('no discharge token in local storage after login');
         return;
@@ -666,22 +635,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Auto logs the user into the charmstore as part of the login process
-      when the gui operates in a gisf context.
+      Auto log the user into the charm store as part of the login process
+      when the GUI operates in a gisf context.
 
       @method _loginToCharmstore
     */
     _loginToCharmstore: function() {
-      const bakery = this.get('charmstore').bakery;
-      const fetchMacaroonCallback = (error, macaroon) => {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        this.storeUser('charmstore', true);
-        console.log('logged into charmstore');
-      };
-      bakery.fetchMacaroonFromStaticPath(fetchMacaroonCallback);
+      if (!this.user.getMacaroon('charmstore')) {
+        this.get('charmstore').getMacaroon((err, macaroon) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          this.storeUser('charmstore', true);
+          console.log('logged into charmstore');
+        });
+      }
     },
 
     /**
@@ -853,7 +822,7 @@ YUI.add('juju-gui', function(Y) {
           if (api && api.get('connected')) {
             console.log(`logging into ${api.name} with macaroons`);
             api.loginWithMacaroon(
-              this.bakeryFactory.get('juju'),
+              this.bakery,
               this._apiLoginHandler.bind(this, api));
           }
         });
@@ -948,7 +917,7 @@ YUI.add('juju-gui', function(Y) {
       // We want to use loginToAPIs everywhere since it handles more.
       const loginToController =
         this.controllerAPI.loginWithMacaroon.bind(
-          this.controllerAPI, this.bakeryFactory.get('juju'));
+          this.controllerAPI, this.bakery);
       const controllerIsConnected = () => {
         return this.controllerAPI && this.controllerAPI.get('connected');
       };
@@ -974,25 +943,26 @@ YUI.add('juju-gui', function(Y) {
         console.error(`no linkContainerId: ${linkContainerId}`);
         return;
       }
-      const bakeryFactory = this.bakeryFactory;
       const charmstore = this.get('charmstore');
+      const bakery = this.bakery;
       const USSOLoginLink = (<window.juju.components.USSOLoginLink
-          displayType={'text'}
-          loginToController={controllerAPI.loginWithMacaroon.bind(
-            controllerAPI, bakeryFactory.get('juju'))}
-        />);
+        displayType={'text'}
+        loginToController={controllerAPI.loginWithMacaroon.bind(
+          controllerAPI, bakery)}
+      />);
+
       const LogoutLink = (<window.juju.components.Logout
-          logout={this.logout.bind(this)}
-          clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
-          gisfLogout={window.juju_config.gisfLogout || ''}
-          gisf={window.juju_config.gisf || false}
-          charmstoreLogoutUrl={charmstore.getLogoutUrl()}
-          getUser={this.getUser.bind(this, 'charmstore')}
-          clearUser={this.clearUser.bind(this, 'charmstore')}
-          // If the charmbrowser is open then don't show the logout link.
-          visible={!this.state.current.store}
-          locationAssign={window.location.assign.bind(window.location)}
-        />);
+        logout={this.logout.bind(this)}
+        clearCookie={bakery.storage.clear.bind(bakery.storage, () => {})}
+        gisfLogout={window.juju_config.gisfLogout || ''}
+        gisf={window.juju_config.gisf || false}
+        charmstoreLogoutUrl={charmstore.getLogoutUrl()}
+        getUser={this.getUser.bind(this, 'charmstore')}
+        clearUser={this.clearUser.bind(this, 'charmstore')}
+        // If the charmbrowser is open then don't show the logout link.
+        visible={!this.state.current.store}
+        locationAssign={window.location.assign.bind(window.location)}
+      />);
 
       const navigateUserProfile = () => {
         const auth = this._getAuth();
@@ -1331,9 +1301,8 @@ YUI.add('juju-gui', function(Y) {
         const credentials = this.user.controller;
         return credentials ? credentials.user : undefined;
       };
-      const loginToController =
-        controllerAPI.loginWithMacaroon.bind(
-          controllerAPI, this.bakeryFactory.get('juju'));
+      const loginToController = controllerAPI.loginWithMacaroon.bind(
+        controllerAPI, this.bakery);
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
@@ -1372,7 +1341,8 @@ YUI.add('juju-gui', function(Y) {
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getCountries={
-              this.payment && this.payment.getCountries.bind(this.payment)}
+              this.payment && this.payment.getCountries.bind(this.payment)
+              || null}
           getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
@@ -1677,7 +1647,6 @@ YUI.add('juju-gui', function(Y) {
               this, this.endpointsController, db, models.getEndpoints)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
               charmstore)}
-            getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             getServiceById={db.services.getById.bind(db.services)}
             getServiceByName={db.services.getServiceByName.bind(db.services)}
             linkify={utils.linkify}
@@ -2238,47 +2207,24 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Creates a new instance of the new charmstore api and assigns it to the
-      charmstore attribute. Idempotent.
+      Creates a new instance of the charm store API and assigns it to the
+      "charmstore" attribute. This method is idempotent.
 
-      @method _setupCharmstore
-      @param {Object} Charmstore The Charmstore class to instantiate and store
-        in the app.
+      @param {object} jujuConfig The app configuration.
+      @param {Object} Charmstore The Charmstore class.
     */
-    _setupCharmstore: function(Charmstore) {
+    _setupCharmstore: function(jujuConfig, Charmstore) {
       if (this.get('charmstore') === undefined) {
-        var jujuConfig = window.juju_config;
-        var charmstoreURL = '';
-        var existingMacaroons, existingDischargeToken;
-        if (!jujuConfig || !jujuConfig.charmstoreURL) {
-          console.error('no juju config for charmstoreURL available');
-        } else {
-          charmstoreURL = views.utils.ensureTrailingSlash(
-            jujuConfig.charmstoreURL);
-          existingMacaroons = jujuConfig.charmstoreMacaroons;
-          existingDischargeToken = jujuConfig.dischargeToken;
-        }
-        var apiVersion = window.jujulib.charmstoreAPIVersion;
-        var bakery = this.bakeryFactory.create({
-          webhandler: new Y.juju.environments.web.WebHandler(),
-          interactive: this.get('interactiveLogin'),
-          setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
-          staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
-          serviceName: 'charmstore',
-          setCookie: true,
-          macaroon: existingMacaroons,
-          user: this.user,
-          dischargeToken: existingDischargeToken
-        });
-        this.set('charmstore', new Charmstore(charmstoreURL, bakery));
+        this.set('charmstore', new Charmstore(
+          jujuConfig.charmstoreURL, this.bakery));
         // Store away the charmstore auth info.
-        var macaroon = bakery.getMacaroon();
-        if (macaroon) {
+        if (this.bakery.storage.get(jujuConfig.charmstoreURL)) {
           this.get('users')['charmstore'] = {loading: true};
           this.storeUser('charmstore', false, true);
         }
       }
     },
+
     /**
       Creates a new instance of the bundleservice API and stores it in the
       app in an idempotent fashion.
@@ -2318,38 +2264,11 @@ YUI.add('juju-gui', function(Y) {
         console.error(
           'romulus services are being redefined:', this.plans, this.terms);
       }
-      var interactive = this.get('interactiveLogin');
-      var webHandler = new Y.juju.environments.web.WebHandler();
-      const macaroons = this.user.controller.macaroons;
-      const plansBakery = this.bakeryFactory.create({
-        serviceName: 'plans',
-        macaroon: macaroons,
-        webhandler: webHandler,
-        interactive: interactive,
-        user: this.user,
-        dischargeToken: config.dischargeToken
-      });
-      this.plans = new window.jujulib.plans(config.plansURL, plansBakery);
-      const termsBakery = this.bakeryFactory.create({
-        serviceName: 'terms',
-        macaroon: macaroons,
-        webhandler: webHandler,
-        interactive: interactive,
-        user: this.user,
-        dischargeToken: config.dischargeToken
-      });
-      this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
+      this.plans = new window.jujulib.plans(config.plansURL, this.bakery);
+      this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
       if (config.payFlag) {
-        const paymentBakery = this.bakeryFactory.create({
-          serviceName: 'payment',
-          macaroon: macaroons,
-          webhandler: webHandler,
-          interactive: interactive,
-          user: this.user,
-          dischargeToken: config.dischargeToken
-        });
         this.payment = new window.jujulib.payment(
-          config.paymentURL, paymentBakery);
+          config.paymentURL, this.bakery);
         this.stripe = new window.jujulib.stripe(
           'https://js.stripe.com/', config.stripeKey);
       }
@@ -3168,12 +3087,12 @@ YUI.add('juju-gui', function(Y) {
     'juju-bundle-models',
     'juju-controller-api',
     'juju-endpoints-controller',
-    'juju-env-bakery',
     'juju-env-base',
     'juju-env-api',
     'juju-env-web-handler',
     'juju-models',
     'jujulib-utils',
+    'bakery-utils',
     'net-utils',
     // React components
     'account',

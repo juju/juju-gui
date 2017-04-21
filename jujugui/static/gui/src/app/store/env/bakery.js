@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2015 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -18,721 +18,535 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
- * Bakery holds the context for making HTTP requests
- * that automatically acquire and discharge macaroons.
- *
- * @module env
- * @submodule env.bakery
- */
-
 YUI.add('juju-env-bakery', function(Y) {
-
-  var module = Y.namespace('juju.environments.web');
-  var macaroon = Y.namespace('macaroon');
+  const module = Y.namespace('juju.environments.web');
+  const macaroonlib = Y.namespace('macaroon');
 
   // Define the bakery protocol version used by the GUI.
   const PROTOCOL_VERSION = 1;
-  // Define the HTTP content type for JSON requests.
+  // Define the HTTP content type for JSON and encoded form requests.
   const JSON_CONTENT_TYPE = 'application/json';
+  const WWW_FORM_CONTENT_TYPE = 'application/x-www-form-urlencoded';
+  // Define HTTP statuses.
+  const STATUS_UNAUTHORIZED = 401;
+  const STATUS_PROXY_AUTH_REQUIRED = 407;
+  // Define bakery specific errors.
+  const ERR_DISCHARGE_REQUIRED = 'macaroon discharge required';
+  const ERR_INTERACTION_REQUIRED = 'interaction required';
 
   /**
-   * Bakery client inspired by the equivalent GO code.
-   *
-   * This object exposes the ability to perform requests
-   * that automatically acquire and discharge macaroons.
-   *
-   * @class Bakery
-   */
+    Serialize the given macaroons.
 
-  var Bakery = Y.Base.create('Bakery',
-    Y.Base, [], {
+    @param {Array} macaroons The macaroons to be serialized.
+    @return {string} The resulting serialized string.
+  */
+  const serialize = macaroons => {
+    return btoa(JSON.stringify(macaroons));
+  };
 
-      /**
-        Create and return the bakery.
+  /**
+    De-serialize the given serialized macaroons.
 
-        @param {Object} cfg Parameters for the bakery, including:
-          - serviceName: the name of the service for which this bakery is used;
-          - visitMethod: the action used to visit the URL for logging into the
-            identity provider. The callable is provided the idm response
-            including the visit URL as "response.Info.VisitURL". If not
-            specified, a default visit method is used, opening a pop up;
-          - interactive: whether to use interactive mode (the default) or
-            non-interactive mode, in which case the visitMethod is never used,
-            as the bakery is assumed to already have the required tokens;
-          - onSuccess: an optional function to be called once the macaraq has
-            been successfully completed;
-          - setCookie: An optional boolean indicating whether to add a macaroon
-            to the document cookies;
-          - setCookiePath: optional string representing the endpoint register a
-            macaroon as a cookie;
-          - dischargeStore: an optional customized discharge storage;
-          - macaroon: an initial macaroon to be included in the storage;
-          - dischargeToken: optional token to be used when discharging.
-       */
-      initializer: function (cfg) {
-        this.webhandler = cfg.webhandler;
-        if (cfg.visitMethod) {
-          this.visitMethod = cfg.visitMethod;
-        } else if (cfg.interactive !== undefined && !cfg.interactive) {
-          this.visitMethod = this._nonInteractiveVisitMethod;
-        } else {
-          this.visitMethod = this._defaultVisitMethod;
-        }
-        this._onSuccess = cfg.onSuccess || (() => {});
-        this.macaroonName = 'Macaroons-' + cfg.serviceName;
-        this.staticMacaroonPath = cfg.staticMacaroonPath;
-        this.setCookiePath = cfg.setCookiePath;
-        this.setCookie = cfg.setCookie;
-        this.nonceLen = 24;
-        this.user = cfg.user;
-        if (!this.user) {
-          console.error('bakery instantiated without user authentication');
-          return;
-        }
-        if (cfg.macaroon) {
-          this.user.setMacaroon(
-            this.macaroonName, cfg.macaroon, this.setCookie);
-        }
-        if (cfg.dischargeToken) {
-          this.user.identity = cfg.dischargeToken;
-        }
-      },
+    @param {string} serialized The serialized macaroons.
+    @return {Array} The resulting macaroon slice.
+  */
+  const deserialize = serialized => {
+    return JSON.parse(atob(serialized));
+  };
 
+  /**
+    A macaroon bakery implementation.
 
-      /**
-        Returns a macaroon for this bakery instance. If a macaroon has already
-        been stored it will return that. If not, it makes a request to the
-        staticMacaroonPath to fetch and discharge and store a new macaroon for
-        later use.
+    The bakery implements the protocol used to acquire and discharge macaroons
+    over HTTP.
+  */
+  const Bakery = class Bakery {
 
-        @method fetchMacaroonFromStaticPath
-        @param {Function} callback The callback that gets called for success
-          or failure at any point in the macaroon chain.
-        @return {undefined}
-      */
-      fetchMacaroonFromStaticPath: function(callback) {
-        var savedMacaroon = this.getMacaroon();
-        if (savedMacaroon !== null) {
-          callback(null, savedMacaroon);
-          return;
-        }
-        if (!this.staticMacaroonPath) {
-          callback('Static macaroon path was not defined.');
-          return;
-        }
-        return this.webhandler.sendGetRequest(
-          this.staticMacaroonPath, null, null, null, false, null,
-          this._interactivePrefetch.bind(this, callback));
-      },
+    /**
+      Initialize a bakery with the given HTTP client (used to make requests)
+      and storage (used to persist macaroons).
 
-      /**
-        Handler for the interactive macaroon prefetch.
-
-        @method _interactivePrefetch
-        @param {Function} callback The callback to be called after success
-          or failure.
-        @param {Object} The response object from the staticMacaroonPath fetch.
-        @return {undefined}
-      */
-      _interactivePrefetch: function(callback, res) {
-        var macaroon = {};
-        try {
-          macaroon = JSON.parse(res.target.responseText);
-        } catch(e) {
-          callback(e);
-          return;
-        }
-        this._authenticate(macaroon, function() {
-          callback(null, this.getMacaroon());
-        }.bind(this), callback);
-      },
-
-      /**
-       Prepare and return HTTP request headers for macaraq requests.
-
-       @param {Object} overrides Any additional headers.
-       @return {Object} The resulting request headers.
-      */
-      _prepareHeaders: function(overrides) {
-        const headers = {'Bakery-Protocol-Version': PROTOCOL_VERSION};
-        Object.keys(overrides || {}).forEach(key => {
-          headers[key] = overrides[key];
+      @param {Object} httpClient The client used to send HTTP requests. It must
+        implement a "send{Method}Request" method for every HTTP method. An
+        instance of WebHandler is usually provided.
+      @param {Object} storage The storage used to persist macaroons. It must
+        implement the following interface:
+          - get(key) -> value;
+          - set(key, value, callback): the callback is called without arguments
+            when the set operation has been performed;
+          - clear(): clear all stored data.
+      @param {Object} params Optional parameters including:
+        - nonInteractive: whether to switch to non-interactive mode while
+          acquiring macaroons. If set the visitPage parameter below is ignored;
+        - onSuccess: a function to be called when the request completes
+          properly. It defaults to a no-op function.
+        - visitPage: the function used to visit the identity provider page when
+          required, receiving the URL. It defaults to opening a pop up window.
+    */
+    constructor(httpClient, storage, params={}) {
+      this._client = httpClient;
+      this.storage = storage;
+      this._onSuccess = params.onSuccess || (() => {});
+      this._noRedirects = !!params.noRedirects;
+      if (params.nonInteractive) {
+        this._visitPage = this._nonInteractiveVisitPage;
+      } else {
+        this._visitPage = params.visitPage || (visitURL => {
+          window.open(visitURL, 'Login');
         });
-        const macaroons = this.getMacaroon();
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-        return headers;
-      },
-
-      /**
-       Takes the path supplied by the caller and makes a get request to the
-       requestHandlerWithInteraction instance. If setCookiePath is set then
-       it is used to set a cookie back to the ui after authentication.
-
-       @param {String} The path to make the api request to.
-       @param {Function} successCallback Called when the api request completes
-              successfully.
-       @param {Function} failureCallback Called when the api request fails
-              with a response of >= 400 except 401 and a WWW-Authenticate
-              header will trigger authentication.
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @return {Object} The asynchronous request instance.
-      */
-      sendGetRequest: function(
-        path, successCallback, failureCallback, redirect) {
-        const onAuthDone = this._requestHandler.bind(
-          this, successCallback, failureCallback);
-        const onAuthRequired = function() {
-          return this.webhandler.sendGetRequest(
-            path, this._prepareHeaders(null), null, null, false, null,
-            onAuthDone);
-        }.bind(this);
-        return this.webhandler.sendGetRequest(
-          path, this._prepareHeaders(null), null, null, false, null,
-          this._requestHandlerWithInteraction.bind(
-            this, onAuthRequired, onAuthDone, failureCallback, redirect)
-        );
-      },
-
-      /**
-       Takes the path supplied by the caller and makes a delete request to the
-       requestHandlerWithInteraction instance. If setCookiePath is set then
-       it is used to set a cookie back to the ui after authentication.
-
-       @param {String} The path to make the api request to.
-       @param {Function} successCallback Called when the api request completes
-              successfully.
-       @param {Function} failureCallback Called when the api request fails
-              with a response of >= 400 except 401 and a WWW-Authenticate
-              header will trigger authentication.
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @return {Object} The asynchronous request instance.
-      */
-      sendDeleteRequest: function(
-        path, successCallback, failureCallback, redirect) {
-        const onAuthDone = this._requestHandler.bind(
-          this, successCallback, failureCallback);
-        const onAuthRequired = function() {
-          return this.webhandler.sendDeleteRequest(
-            path, this._prepareHeaders(null), null, null, false, null,
-            onAuthDone);
-        }.bind(this);
-        return this.webhandler.sendDeleteRequest(
-          path, this._prepareHeaders(null), null, null, false, null,
-          this._requestHandlerWithInteraction.bind(
-            this, onAuthRequired, onAuthDone, failureCallback, redirect)
-        );
-      },
-
-      /**
-       Takes the path supplied by the caller and makes a post request to the
-       requestHandlerWithInteraction instance. If setCookiePath is set then
-       it is used to set a cookie back to the ui after authentication.
-
-       @param path {String} The path to make the api request to.
-       @param data {String} Stringified JSON of parameters to send to the POST
-              endpoint.
-       @param successCallback {Function} Called when the api request completes
-              successfully.
-       @param failureCallback {Function} Called when the api request fails
-              with a response of >= 400 except 401/407 where it does
-              authentication.
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @param {Object} response The XHR response object from initial request.
-      */
-      sendPostRequest: function(
-        path, data, successCallback, failureCallback, redirect) {
-        const onAuthDone = this._requestHandler.bind(
-          this, successCallback, failureCallback);
-        const onAuthRequired = function() {
-          return this.webhandler.sendPostRequest(
-            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-            data, null, null, false, null, onAuthDone);
-        }.bind(this);
-        return this.webhandler.sendPostRequest(
-          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-          data, null, null, false, null,
-          this._requestHandlerWithInteraction.bind(
-            this, onAuthRequired, onAuthDone, failureCallback, redirect)
-        );
-      },
-
-      /**
-       Takes the path supplied by the caller and makes a put request to the
-       requestHandlerWithInteraction instance. If setCookiePath is set then
-       it is used to set a cookie back to the ui after authentication.
-
-       @param path {String} The path to make the api request to.
-       @param data {String} Stringified JSON of parameters to send to the POST
-              endpoint.
-       @param successCallback {Function} Called when the api request completes
-              successfully.
-       @param failureCallback {Function} Called when the api request fails
-              with a response of >= 400 except 401/407 where it does
-              authentication.
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @param {Object} response The XHR response object from initial request.
-      */
-      sendPutRequest: function(
-        path, data, successCallback, failureCallback, redirect) {
-        const onAuthDone = this._requestHandler.bind(
-          this, successCallback, failureCallback);
-        const onAuthRequired = function() {
-          return this.webhandler.sendPutRequest(
-            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-            data, null, null, false, null, onAuthDone);
-        }.bind(this);
-        return this.webhandler.sendPutRequest(
-          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-          data, null, null, false, null,
-          this._requestHandlerWithInteraction.bind(
-            this, onAuthRequired, onAuthDone, failureCallback, redirect)
-        );
-      },
-
-      /**
-       Takes the path supplied by the caller and makes a patch request to the
-       requestHandlerWithInteraction instance. If setCookiePath is set then
-       it is used to set a cookie back to the ui after authentication.
-
-       @param path {String} The path to make the api request to.
-       @param data {String} Stringified JSON of parameters to send to the PATCH
-              endpoint.
-       @param successCallback {Function} Called when the api request completes
-              successfully.
-       @param failureCallback {Function} Called when the api request fails
-              with a response of >= 400 except 401/407 where it does
-              authentication.
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @param {Object} response The XHR response object from initial request.
-      */
-      sendPatchRequest: function(
-        path, data, successCallback, failureCallback, redirect) {
-        const onAuthDone = this._requestHandler.bind(
-          this, successCallback, failureCallback);
-        const onAuthRequired = function() {
-          return this.webhandler.sendPatchRequest(
-            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-            data, null, null, false, null, onAuthDone);
-        }.bind(this);
-        return this.webhandler.sendPatchRequest(
-          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
-          data, null, null, false, null,
-          this._requestHandlerWithInteraction.bind(
-            this, onAuthRequired, onAuthDone, failureCallback, redirect)
-        );
-      },
-
-      /**
-        Handle sending requests after authenticating using macaroons.
-
-        @method _requestHandlerWithInteraction
-        @param {Function} onAuthRequired The original request to be performed
-          after authenticating.
-        @param {Function} onAuthDone Called when the response is finally
-          available.
-        @param {Function} onFailure Called when there are errors in the
-          authentication process.
-        @param {Boolean} redirect Whether the handler should redirect if there
-          is a 401 on the request.
-        @param {Object} response The XHR response object.
-      */
-      _requestHandlerWithInteraction: function (
-        onAuthRequired, onAuthDone, onFailure, redirect=true, response) {
-        const target = response.target;
-        // XXX I reliably recieve a 401 when signing in for the first time.
-        // This may not be the best path forward. Makyo 2016-04-25
-        if (
-          target.status === 401 &&
-          target.getResponseHeader('Www-Authenticate') === 'Macaroon' &&
-          redirect === true
-        ) {
-          const jsonResponse = JSON.parse(target.responseText);
-          this._authenticate(
-            jsonResponse.Info.Macaroon, onAuthRequired, onFailure);
-          return;
-        }
-        onAuthDone(response);
-      },
-
-      /**
-       Handles the request response from the _makeRequest method, calling the
-       supplied failure callback if the response status was >= 400 or passing
-       the response object to the supplied success callback.
-
-       @method _requestHandler
-       @param {Function} successCallback Called when the api request completes
-              successfully.
-       @param {Function} failureCallback Called when the api request fails
-              with a response of >= 400.
-       @param {Object} response The XHR response object.
-       @return {undefined} Nothing.
-       */
-      _requestHandler: function (successCallback, failureCallback, response) {
-        if (response.target.status >= 400) {
-          failureCallback(response);
-          return;
-        }
-        successCallback(response);
-      },
-
-      /**
-       Authenticate by discharging the macaroon and
-       then set the cookie by calling the authCookiePath provided.
-
-       @method authenticate
-       @param {Macaroon} The macaroon to be discharged.
-       @param {Function} The request to be sent again in case of
-              successful authentication.
-       @param {Function} The callback failure in case of wrong authentication.
-       @return {undefined} Nothing.
-       */
-      _authenticate: function (m, requestFunc, failureCallback) {
-        var successCallback = this._processDischarges.bind(
-          this, requestFunc, failureCallback);
-        this.discharge(m, successCallback, failureCallback);
-      },
-
-      /**
-        Discharge the macaroon.
-
-        @method discharge
-        @param {Macaroon} m The macaroon to be discharged.
-        @param {Function} successCallback The callable to be called if the
-          discharge succeeds. It receives the resulting macaroons array.
-        @param {Function} failureCallback The callable to be called if the
-          discharge fails. It receives an error message.
-      */
-      discharge: function(m, successCallback, failureCallback) {
-        const successCB = macaroons => {
-          successCallback(macaroons);
-          this._onSuccess();
-        };
-        try {
-          macaroon.discharge(
-            macaroon.import(m),
-            this._obtainThirdPartyDischarge.bind(this),
-            function(discharges) {
-              successCB(macaroon.export(discharges));
-            },
-            failureCallback
-          );
-        } catch (exc) {
-          failureCallback('discharge failed: ' + exc.message);
-        }
-      },
-
-      /**
-       Process the discharged macaroon and call the end point to be able to set
-       a cookie for the origin domain only when an auth cookie path is
-       provided, then call the original function.
-
-       @method _processDischarges
-       @param {Function} The request to be sent again in case of
-              successful authentication.
-       @param {Function} The callback failure in case of wrong authentication.
-       @param {[Macaroon]} The macaroons being discharged.
-       @return {Object} The asynchronous request instance.
-       */
-      _processDischarges: function (requestFunc, failureCallback, macaroons) {
-        var content = JSON.stringify({'Macaroons': macaroons});
-        if (this.setCookiePath === undefined) {
-          this._successfulDischarges(requestFunc, macaroons);
-          return;
-        }
-        const btoaMacaroon = btoa(JSON.stringify(macaroons));
-        this.user.setMacaroon(this.macaroonName, btoaMacaroon, this.setCookie);
-        return this.webhandler.sendPutRequest(
-          this.setCookiePath,
-          null, content, null, null, true, null,
-          this._requestHandler.bind(
-            this,
-            this._successfulDischarges.bind(this, requestFunc, macaroons),
-            failureCallback
-          )
-        );
-      },
-
-      /**
-       Process successful discharge by setting Macaroons Cookie
-       and invoke the original request.
-
-       @method _successfulDischarges
-       @param {Function} The path where to send put request
-              to set the cookie back.
-       @param {Object} an exported Macaroon.
-       @return {undefined} Nothing.
-       */
-      _successfulDischarges: function (originalRequest, jsonMacaroon) {
-        const btoaMacaroon = btoa(JSON.stringify(jsonMacaroon));
-        this.user.setMacaroon(this.macaroonName, btoaMacaroon, this.setCookie);
-        originalRequest();
-      },
-
-      /**
-       Go to the discharge endpoint to obtain the third party discharge.
-
-       @method obtainThirdPartyDischarge
-       @param {String} The origin location.
-       @param {String} The third party location where to discharge.
-       @param {Function} The macaroon to be discharge.
-       @param {Function} The request to be sent again in case of
-              successful authentication.
-       @param {Function} The callback failure in case of wrong authentication.
-       @return {Object} The asynchronous request instance.
-       */
-      _obtainThirdPartyDischarge: function (location,
-                                            thirdPartyLocation, condition,
-                                            successCallback, failureCallback) {
-        thirdPartyLocation += '/discharge';
-
-        const dischargeToken = this.user.identity;
-        var headers = {
-          'Bakery-Protocol-Version': 1,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        };
-        if (dischargeToken) {
-          headers['Macaroons'] = dischargeToken;
-        }
-        var content = 'id=' + encodeURIComponent(condition) +
-          '&location=' + encodeURIComponent(location);
-        return this.webhandler.sendPostRequest(
-          thirdPartyLocation,
-          headers, content, null, null, false, null,
-          this._requestHandler.bind(
-            this,
-            this._exportMacaroon.bind(this, successCallback, failureCallback),
-            this._interact.bind(this, successCallback, failureCallback)
-          )
-        );
-      },
-
-      /**
-       Get a JSON response from authentication either trusted or with
-       interaction that contains a macaroon.
-
-       @method _exportMacaroon
-       @param {Function} The callback function to be sent in case of
-              successful authentication
-       @param {Function} The callback function failure in case of
-              wrong authentication
-       @param {Object} response The XHR response object from initial request.
-      */
-      _exportMacaroon: function (successCallback, failureCallback, response) {
-        try {
-          var json = JSON.parse(response.target.responseText);
-          if (json.DischargeToken !== undefined &&
-              json.DischargeToken !== '') {
-            this.user.identity = btoa(JSON.stringify(json.DischargeToken));
-          }
-          successCallback(macaroon.import(json.Macaroon));
-        } catch (ex) {
-          failureCallback(ex.message);
-        }
-      },
-
-      /**
-       Interact to be able to sign-in to get authenticated.
-
-       @method _interact
-       @param {Function} The callback function to be sent in case of
-              successful authentication.
-       @param {Function} The callback function failure in case of
-              wrong authentication.
-       @param {Function} The callback function failure in case of
-              wrong authentication.
-       @param {Object} response The XHR response object from initial request.
-       @return {Object} The asynchronous request instance.
-       */
-      _interact: function(successCallback, failureCallback, e) {
-        const response = JSON.parse(e.target.responseText);
-        if (response.Code !== 'interaction required') {
-          failureCallback(response.Code);
-          return;
-        }
-        this.visitMethod(response);
-        const generateRequest = callback => {
-          return this.webhandler.sendGetRequest(
-              response.Info.WaitURL,
-              {'Content-Type': JSON_CONTENT_TYPE},
-              null, null, false, null, callback);
-        };
-        // When performing a "wait" request for the user logging into identity
-        // it is possible that they take longer than the server timeout of
-        // 1 minute: when this happens the server just closes the connection.
-        let retryCounter = 0;
-        const retryCallback = reqResponse => {
-          const target = reqResponse.target;
-          if (target.status === 0 &&
-              target.response === '' &&
-              target.responseText === '') {
-            // Server closed the connection, retry and increment the counter.
-            if (retryCounter < 5) {
-              retryCounter += 1;
-              generateRequest(retryCallback);
-              return;
-            }
-            // We have retried 5 times so fall through to call handler.
-          }
-          // Call the usual request handler if no retry is necessary.
-          this._requestHandler(
-            this._exportMacaroon.bind(this, successCallback, failureCallback),
-            failureCallback,
-            reqResponse);
-        };
-        generateRequest(retryCallback);
-      },
-
-      /**
-       Non interactive visit method which sends the jujugui "auth" blob
-       to the IdM to login.
-
-       @method _nonInteractiveVisitMethod
-       @param {Object} response The XHR response object from initial request.
-       @return {Object} The asynchronous request instance.
-      */
-      _nonInteractiveVisitMethod: function(response) {
-        var acceptHeaders = {'Accept': JSON_CONTENT_TYPE};
-        var contentHeaders = {'Content-Type': JSON_CONTENT_TYPE};
-        var login = function(response) {
-          var method = JSON.parse(response.target.responseText).jujugui;
-          var data = JSON.stringify({login: window.juju_config.auth});
-          return this.webhandler.sendPostRequest(
-              method, contentHeaders, data,
-              null, null, false, null, null);
-        };
-
-        return this.webhandler.sendGetRequest(
-            response.Info.VisitURL,
-            acceptHeaders, null, null, false, null, login.bind(this));
-      },
-
-      /**
-       Adds a public-key encrypted third party caveat.
-
-       @method addThirdPartyCaveat
-       @param {macaroon object} The macaroon to add the caveat to.
-       @param {String} The condition for the third party to verify.
-       @param {String} The URL of the third party.
-       @param {Uint8Array} The third party public key to use (as returned
-              by nacl.box.keyPair().publicKey.
-       @param {Object} The encoding party's key pair (as returned
-              by nacl.box.keyPair()).
-       @return {undefined} Nothing.
-       */
-      addThirdPartyCaveat: function(m, condition, location,
-                                    thirdPartyPublicKey, myKeyPair) {
-        var nonce = nacl.randomBytes(this.nonceLen);
-        var rootKey = nacl.randomBytes(this.nonceLen);
-        var plain = JSON.stringify({
-          RootKey: nacl.util.encodeBase64(rootKey), Condition: condition
-        });
-        var sealed = nacl.box(nacl.util.decodeUTF8(plain), nonce,
-                              thirdPartyPublicKey, myKeyPair.secretKey);
-        var caveatIdObj = {
-          ThirdPartyPublicKey: nacl.util.encodeBase64(thirdPartyPublicKey),
-          FirstPartyPublicKey: nacl.util.encodeBase64(myKeyPair.publicKey),
-          Nonce:               nacl.util.encodeBase64(nonce),
-          Id:                  nacl.util.encodeBase64(sealed),
-        };
-        var caveatId = JSON.stringify(caveatIdObj);
-
-        m.addThirdPartyCaveat(rootKey, caveatId, location);
-      },
-
-      /**
-       Discharges a public-key encrypted third party caveat.
-
-       @param {String} The third party caveat id to check.
-       @param {Object} The third party's key pair (as returned
-              by nacl.box.keyPair()).
-       @param {function} A function that is called to check the condition.
-              It should throw an exception if the condition is not met.
-       @return {macaroon} The macaroon that discharges the caveat.
-       */
-      dischargeThirdPartyCaveat: function(caveatId, myKeyPair, check) {
-        var caveatIdObj = {};
-        try {
-          caveatIdObj = JSON.parse(caveatId);
-        } catch(ex) {
-          throw new Exception('Unable to parse caveatId');
-        }
-        if(nacl.util.encodeBase64(myKeyPair.publicKey) !==
-           caveatIdObj.ThirdPartyPublicKey) {
-          throw new Exception('public key mismatch');
-        }
-        var nonce = nacl.util.decodeBase64(caveatIdObj.Nonce);
-        var firstPartyPub = nacl.util.decodeBase64(
-          caveatIdObj.FirstPartyPublicKey
-        );
-        if(nonce.length !== this.nonceLen) {
-          throw new Exception('bad nonce length');
-        }
-        var sealed = nacl.util.decodeBase64(caveatIdObj.Id);
-        var unsealed = nacl.box.open(sealed, nonce, firstPartyPub,
-                                     myKeyPair.secretKey);
-
-        var unsealedStr = nacl.util.encodeUTF8(unsealed);
-        var plain = JSON.parse(unsealedStr);
-        if(plain.Condition === undefined) {
-          throw new Exception('empty condition in third party caveat');
-        }
-        // Check that the condition actually holds.
-        check(plain.Condition);
-        return macaroon.newMacaroon(
-            nacl.util.decodeBase64(plain.RootKey), caveatId, '');
-      },
-
-      /**
-       Non interactive visit method which sends the jujugui "auth" blob
-       to the IdM to login.
-
-       @method _nonInteractiveVisitMethod
-       @param {Object} response The XHR response object from initial request.
-       @return {undefined} Nothing.
-      */
-      _defaultVisitMethod: function(response) {
-        window.open(response.Info.VisitURL, 'Login');
-      },
-
-      /**
-       Get macaroon from local cookie.
-
-       @method getMacaroon
-       @return {String} Macaroon that was set in local cookie.
-       */
-      getMacaroon: function() {
-        return this.user.getMacaroon(this.macaroonName);
-      },
-
-      /**
-        Clears the cookies saved for macaroons.
-
-        @method clearCookie
-      */
-      clearCookie: function() {
-        this.user.clearMacaroon(this.macaroonName, this.setCookie);
-        this.user.identity = null;
       }
     }
-  );
+
+    /**
+      Send an HTTP request to the given URL with the given HTTP method, headers
+      and body. The given callback receives an error and a response when the
+      request is complete.
+
+      @param {String} url The URL to which to send the request.
+      @param {String} method The HTTP method, like "get" or "POST".
+      @param {Object} headers Headers that must be included in the request.
+        Note that bakery specific headers are automatically added internally.
+      @param {String} body The request body if it applies, or null.
+      @param {Function} callback A function called when the response is
+        received from the remote URL. It receives a tuple (error, response).
+        If the request succeeds the error is null.
+      @return {Object} the XHR instance.
+    */
+    sendRequest(url, method, headers, body, callback) {
+      method = method.toLowerCase();
+      // Prepare the send method and wrap the provided callback.
+      const methodStr = method.charAt(0).toUpperCase() + method.slice(1);
+      const send = this._client[`send${methodStr}Request`].bind(this._client);
+      const wrappedCallback = this._wrapCallback(
+        url, method, headers, body, callback);
+      // Prepare the header. Include already stored macaroons in the header if
+      // present for the current URL.
+      const allHeaders = {'Bakery-Protocol-Version': PROTOCOL_VERSION};
+      const macaroons = this.storage.get(url);
+      if (macaroons) {
+        allHeaders['Macaroons'] = macaroons;
+      }
+      Object.keys(headers || {}).forEach(key => {
+        const value = headers[key];
+        allHeaders[key] = value;
+      });
+      // Prepare the parameters for sending the HTTP request.
+      const username = null;
+      const password = null;
+      const withCredentials = false;
+      const progressCallback = null;
+      // Send the request.
+      if (method === 'post' || method === 'put' || method === 'patch') {
+        return send(
+          url, allHeaders, body, username, password, withCredentials,
+          progressCallback, wrappedCallback);
+      }
+      return send(
+        url, allHeaders, username, password, withCredentials,
+        progressCallback, wrappedCallback);
+    }
+
+    /**
+      Send an HTTP GET request to the given URL with the given headers.
+      The given callback receives an error and a response when the request is
+      complete.
+
+      See the "sendRequest" method above for a description of the parameters.
+    */
+    get(url, headers, callback) {
+      return this.sendRequest(url, 'get', headers, null, callback);
+    }
+
+    /**
+      Send an HTTP DELETE request to the given URL with the given headers.
+      The given callback receives an error and a response when the request is
+      complete.
+
+      See the "sendRequest" method above for a description of the parameters.
+    */
+    delete(url, headers, callback) {
+      return this.sendRequest(url, 'delete', headers, null, callback);
+    }
+
+    /**
+      Send an HTTP POST request to the given URL with the given headers and
+      body. The given callback receives an error and a response when the
+      request is complete.
+
+      See the "sendRequest" method above for a description of the parameters.
+    */
+    post(url, headers, body, callback) {
+      return this.sendRequest(url, 'post', headers, body, callback);
+    }
+
+    /**
+      Send an HTTP PUT request to the given URL with the given headers and
+      body. The given callback receives an error and a response when the
+      request is complete.
+
+      See the "sendRequest" method above for a description of the parameters.
+    */
+    put(url, headers, body, callback) {
+      return this.sendRequest(url, 'put', headers, body, callback);
+    }
+
+    /**
+      Send an HTTP PATCH request to the given URL with the given headers and
+      body. The given callback receives an error and a response when the
+      request is complete.
+
+      See the "sendRequest" method above for a description of the parameters.
+    */
+    patch(url, headers, body, callback) {
+      return this.sendRequest(url, 'patch', headers, body, callback);
+    }
+
+    /**
+      Discharge the given macaroon. Acquire any third party discharges.
+
+      @param {Object} macaroon The decoded macaroon to be discharged.
+      @param {Function} onSuccess The function to be called if the
+        discharge succeeds. It receives the resulting macaroons array.
+      @param {Function} onFailure The function to be called if the
+        discharge fails. It receives an error message.
+    */
+    discharge(macaroon, onSuccess, onFailure) {
+      try {
+        macaroonlib.discharge(
+          macaroonlib.import(macaroon),
+          this._getThirdPartyDischarge.bind(this),
+          discharges => {
+            onSuccess(macaroonlib.export(discharges));
+          },
+          onFailure
+        );
+      } catch (exc) {
+        onFailure(`discharge failed: ${exc.message}`);
+      }
+    }
+
+    /**
+      Wrap the given callback function so that "discharge required" and
+      "interaction required" errors in the response are internally handled.
+
+      See the "sendRequest" method above for a description of the parameters.
+
+      @return {Function} A callable accepting an HTTP response.
+    */
+    _wrapCallback(url, method, headers, body, callback) {
+      return response => {
+        // This is the bakery exit point when everything goes well there is
+        // nothing to be done further.
+        const exitSuccessfully = resp => {
+          callback(null, resp);
+          this._onSuccess();
+        };
+        const error = this._getError(response.target);
+        if (!error) {
+          // No discharge or interaction required.
+          exitSuccessfully(response);
+          return;
+        }
+        // At this point we must either discharge or make the user interact.
+        let onSuccess;
+        const onFailure = msg => {
+          callback(msg, null);
+        };
+        switch (error.Code) {
+          case ERR_INTERACTION_REQUIRED:
+            onSuccess = resp => {
+              // Once the interaction is done, store any resulting macaroons
+              // and then exit successfully. From now on, the stored macaroons
+              // will be reused and included in all requests to the same URL.
+              const jsonResponse = JSON.parse(resp.target.responseText);
+              const macaroons = macaroonlib.import(jsonResponse.Macaroon);
+              this.storage.set(url, serialize(macaroons), () => {
+                if (jsonResponse.DischargeToken) {
+                  const token = serialize(jsonResponse.DischargeToken);
+                  this.storage.set('identity', token, () => {
+                    exitSuccessfully(resp);
+                  });
+                  return;
+                }
+                exitSuccessfully(resp);
+              });
+            };
+            const info = error.Info;
+            this._interact(info.VisitURL, info.WaitURL, onSuccess, onFailure);
+            break;
+          case ERR_DISCHARGE_REQUIRED:
+            onSuccess = macaroons => {
+              // Once the discharge is acquired, store any resulting macaroons
+              // and then retry the original requests again. This time the
+              // resulting macaroons will be properly included in the request
+              // header.
+              this.storage.set(url, serialize(macaroons), () => {
+                this.sendRequest(url, method, headers, body, callback);
+              });
+            };
+            this.discharge(error.Info.Macaroon, onSuccess, onFailure);
+            break;
+          default:
+            // An unexpected error has been encountered.
+            callback(this._getErrorMessage(error), null);
+            break;
+        }
+      };
+    }
+
+    /**
+      Obtain a discharge macaroon for the given third party location.
+
+      @param {String} location The origin location.
+      @param {String} thirdPartyLocation The third party location where to
+        discharge.
+      @param {String} condition The caveat to be discharged.
+      @param {Function} onSuccess A function that will be called with the
+        discharge macaroon when the acquisition is successfully completed.
+      @param {Function} onFailure A function that will be called with an error
+        message when the third party discharge fails.
+    */
+    _getThirdPartyDischarge(
+      location, thirdPartyLocation, condition, onSuccess, onFailure) {
+      const url = thirdPartyLocation + '/discharge';
+      const headers = {'Content-Type': WWW_FORM_CONTENT_TYPE};
+      const encodedCondition = encodeURIComponent(condition);
+      const encodedLocation = encodeURIComponent(location);
+      const body = `id=${encodedCondition}&location=${encodedLocation}`;
+      const callback = (err, response) => {
+        if (err) {
+          onFailure(err);
+          return;
+        }
+        const jsonResponse = JSON.parse(response.target.responseText);
+        const macaroons = macaroonlib.import(jsonResponse.Macaroon);
+        onSuccess(macaroons);
+      };
+      // Use the bakery itself to get the third party discharge, so that we
+      // support recursive discharge requests.
+      this.post(url, headers, body, callback);
+    }
+
+    /**
+      Interact to be able to acquire authentication macaroons.
+
+      @param {String} visitURL The URL that must be visited to authenticate.
+      @param {String} waitURL The URL where to wait for the authentication to
+        be completed, and that will eventually provide the authentication
+        macaroons and the discharge token.
+      @param {Function} onSuccess The function that will be called with the
+        macaroon when the acquisition succeeds.
+      @param {Function} onFailure The function that will be called with an
+        error string when the acquisition fails.
+    */
+    _interact(visitURL, waitURL, onSuccess, onFailure) {
+      this._visitPage(visitURL);
+      const generateRequest = callback => {
+        const headers = {'Content-Type': JSON_CONTENT_TYPE};
+        const username = null;
+        const password = null;
+        const withCredentials = false;
+        const progressCallback = null;
+        return this._client.sendGetRequest(
+          waitURL, headers, username, password, withCredentials,
+          progressCallback, callback);
+      };
+      // When performing a "wait" request for the user logging into identity
+      // it is possible that they take longer than the server timeout of
+      // 1 minute: when this happens the server just closes the connection.
+      let retryCounter = 0;
+      const retryCallback = response => {
+        const target = response.target;
+        if (
+          target.status === 0 &&
+          target.response === '' &&
+          target.responseText === ''
+        ) {
+          // Server closed the connection, retry and increment the counter.
+          if (retryCounter < 5) {
+            retryCounter += 1;
+            generateRequest(retryCallback);
+            return;
+          }
+          // We have retried 5 times so fall through to call handler.
+        }
+        const error = this._getError(target);
+        if (error) {
+          // The interaction failed.
+          onFailure('cannot interact: ' + this._getErrorMessage(error));
+          return;
+        }
+        // The interaction succeeded.
+        onSuccess(response);
+      };
+      generateRequest(retryCallback);
+    }
+
+    /**
+      Return any error present in the given response.
+
+      @param {Object} target The XHR response.target.
+      @return {Object or String} The error as found in the request.
+    */
+    _getError(target) {
+      // Check bakery statuses.
+      if (
+        target.status !== STATUS_UNAUTHORIZED &&
+        target.status !== STATUS_PROXY_AUTH_REQUIRED
+      ) {
+        return null;
+      }
+      // Bakery protocol errors always have JSON payloads.
+      if (target.getResponseHeader('Content-Type') !== JSON_CONTENT_TYPE) {
+        return null;
+      }
+      // At this point it should be possible to decode the error response.
+      let error;
+      try {
+        error = JSON.parse(target.responseText);
+      } catch(err) {
+        return 'cannot parse error response';
+      }
+      return error;
+    }
+
+    /**
+      Try to parse the given JSON decoded response in order to retrieve a
+      human friendly error.
+
+      @param {Object} jsonResponse The JSON decoded response text.
+      @return {String} The error message.
+    */
+    _getErrorMessage(jsonResponse) {
+      return (
+        jsonResponse.Message ||
+        jsonResponse.message ||
+        jsonResponse.Error ||
+        jsonResponse.error ||
+        'unexpected error: ' + JSON.stringify(jsonResponse)
+      );
+    }
+
+  };
+
+  /**
+    A storage for the macaroon bakery.
+
+    The storage is used to persist macaroons.
+  */
+  const BakeryStorage = class BakeryStorage {
+
+    /**
+      Initialize a bakery storage with the given underlaying store and params.
+
+      @param {Object} store A store object implement the following interface:
+        - getItem(key) -> value;
+        - setItem(key, value);
+        - clear().
+      @param {Object} params Optional parameters including:
+        - initial: a map of key/value pairs that must be initially included in
+          the storage;
+        - services: a map of service names (like "charmstore" or "terms") to
+          the base URL of their corresponding API endpoints. This is used to
+          simplify and reduce the URLs passed as keys to the storage;
+        - charmstoreCookieSetter: a function that can be used to register
+          macaroons to the charm store service. The function accepts a value
+          and a callback, which receives an error and a response.
+    */
+    constructor(store, params) {
+      this._store = store;
+      this._services = params.services || {};
+      this._charmstoreCookieSetter = params.charmstoreCookieSetter || null;
+      const initial = params.initial || {};
+      Object.keys(initial).forEach(key => {
+        const value = initial[key];
+        if (value) {
+          this.set(key, value);
+        }
+      });
+    }
+
+    /**
+      Retrieve and return the value for the provided key.
+
+      @param {String} key The storage key, usually a URL.
+      @return {String} The corresponding value, usually a serialized macaroon.
+    */
+    get(key) {
+      key = this._getKey(key);
+      return this._store.getItem(key);
+    }
+
+    /**
+      Store the given value in the given storage key.
+
+      Call the callback when done.
+
+      @param {String} key The storage key, usually a URL.
+      @param {String} value The value, usually a serialized macaroon.
+      @param {Function} callback A function called without arguments when the
+        value is properly stored.
+    */
+    set(key, value, callback) {
+      key = this._getKey(key);
+      this._store.setItem(key, value);
+      if (key === 'charmstore' && this._charmstoreCookieSetter) {
+        // Set the cookie so that images can be retrieved from the charm store.
+        const macaroons = deserialize(value);
+        this._charmstoreCookieSetter(macaroons, (err, resp) => {
+          if (err) {
+            console.error('cannot set charm store cookie:', err);
+          }
+          callback();
+        });
+        return;
+      }
+      callback();
+    }
+
+    /**
+      Remove all key/value pairs from the storage.
+    */
+    clear() {
+      this._store.clear();
+    }
+
+    /**
+      Turn the given key (usually a URL) into a more friendly service name,
+      when possible. This also means that different endpoints of the same
+      service are reduced to the same service name key, which is ok given that
+      all our services use the same macaroon root id for all endpoints.
+
+      If the given key is not a URL, then return it untouched, so that it is
+      still possible to set arbitrary keys in the storage. For instance, it is
+      surely useful to be able to set or retrieve a service macaroon by using
+      its corresponding service name (and not necessarily a URL).
+
+      @param {String} key The original key.
+      @return {String} A possibly simplified/reduced key.
+    */
+    _getKey(key) {
+      // This is an ugly special case, required because it is possible to
+      // provide an initial discharge token from outside the GUI, and because
+      // the GUI doesn't (and shouldn't) know the identity service location.
+      // So here we are just guessing how an identity endpoint URL should be,
+      // but there is surely area of improvement.
+      if (key.indexOf('/identity/') !== -1) {
+        return 'identity';
+      }
+      let result = key;
+      const services = this._services;
+      Object.keys(services).forEach(service => {
+        const baseURL = services[service];
+        if (key.indexOf(baseURL) === 0) {
+          result = service;
+        }
+      });
+      return result;
+    }
+
+  };
 
   module.Bakery = Bakery;
-
-}, '0.1.0', {
-  requires: [
-    'base',
-    'cookie',
-    'node',
-    'juju-env-base',
-    'juju-env-web-handler',
-    'macaroon'
-  ]
+  module.BakeryStorage = BakeryStorage;
 });
