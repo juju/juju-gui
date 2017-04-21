@@ -24,6 +24,8 @@ YUI.add('deployment-flow', function() {
   const INITIAL_VPC_ID = null;
 
   juju.components.DeploymentFlow = React.createClass({
+    displayName: 'DeploymentFlow',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addAgreement: React.PropTypes.func.isRequired,
@@ -35,6 +37,7 @@ YUI.add('deployment-flow', function() {
       charmsGetById: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      controllerIsAvailable: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
@@ -735,6 +738,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
+            controllerIsAvailable={this.props.controllerIsAvailable}
             listClouds={this.props.listClouds}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             setCloud={this._setCloud} />

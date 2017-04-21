@@ -1360,6 +1360,10 @@ YUI.add('juju-gui', function(Y) {
         const credentials = this.user.controller;
         return credentials ? credentials.user : undefined;
       };
+      const controllerIsAvailable = () =>
+        this.controllerAPI &&
+        this.controllerAPI.get('connected') &&
+        !this.controllerAPI.pendingLoginResponse;
       const loginToController =
         controllerAPI.loginWithMacaroon.bind(
           controllerAPI, this.bakeryFactory.get('juju'));
@@ -1379,6 +1383,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
+          controllerIsAvailable={controllerIsAvailable}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           createCardElement={
             this.stripe && this.stripe.createCardElement.bind(this.stripe)}
