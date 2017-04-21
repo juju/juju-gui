@@ -512,6 +512,23 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Handle delegated events.
+
+      @method _delegate
+      @param {String} event The event to attach.
+      @param {Function} handler The function to call when the event fires.
+      @param {Function} target The class to use for the delegated events.
+    */
+    _delegate: function(event, handler, target) {
+      const container = this.getContainer(this);
+      container.addEventListener(event, e => {
+        if (e.target.classList.contains(target)) {
+          handler(e);
+        }
+      });
+    },
+
+    /**
       Attaches the drag and drop events for this view. These events need to be
       here because attaching them in the events object causes drag and drop
       events to stop bubbling at odd places cross browser.
@@ -519,19 +536,18 @@ YUI.add('juju-topology-service', function(Y) {
       @method _attachDragEvents
     */
     _attachDragEvents: function() {
-      var container = Y.Node(this.get('container')),
-          ZP = '.zoom-plane',
-          EC = '.environment-help';
+      const ZP = 'zoom-plane';
+      const EC = 'environment-help';
 
-      container.delegate('drop', this.canvasDropHandler, ZP, this);
-      container.delegate('dragenter', this._ignore, ZP, this);
-      container.delegate('dragover', this._ignore, ZP, this);
+      this._delegate('drop', this.canvasDropHandler.bind(this), ZP);
+      this._delegate('dragenter', this._ignore.bind(this), ZP);
+      this._delegate('dragover', this._ignore.bind(this), ZP);
 
       // allows the user to drop the charm on the 'drop here' help text in
       // IE10.
-      container.delegate('drop', this.canvasDropHandler, EC, this);
-      container.delegate('dragenter', this._ignore, EC, this);
-      container.delegate('dragover', this._ignore, EC, this);
+      this._delegate('drop', this.canvasDropHandler.bind(this), EC);
+      this._delegate('dragenter', this._ignore.bind(this), EC);
+      this._delegate('dragover', this._ignore.bind(this), EC);
     },
 
     /**
@@ -838,12 +854,12 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasDropHandler: function(evt) {
       // Prevent Ubuntu FF 22.0 from refreshing the page.
-      evt.halt();
-      var files = evt._event.dataTransfer.files;
+      evt.preventDefault();
+      var files = evt.dataTransfer.files;
       var topo = this.get('component');
       var env = topo.get('env');
       var db = topo.get('db');
-      return this._canvasDropHandler(files, topo, env, db, evt._event);
+      return this._canvasDropHandler(files, topo, env, db, evt);
     },
 
     /**
