@@ -968,7 +968,11 @@ YUI.add('deployment-flow', function() {
         </div>);
     },
 
-    _generateOneClickDeploy: function() {
+    /**
+      Generates the Direct Deploy component if necessary
+      @returns {Object} The React elements.
+    */
+    _generateDirectDeploy: function() {
       const props = this.props;
       const ddEntityId = props.ddData && props.ddData.id;
       if (!ddEntityId) {
@@ -1050,7 +1054,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
-            {this._generateOneClickDeploy()}
+            {this._generateDirectDeploy()}
             {this._generateModelNameSection()}
             {this._generateCloudSection()}
             {this._generateCredentialSection()}
@@ -1080,7 +1084,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
-            {this._generateOneClickDeploy()}
+            {this._generateDirectDeploy()}
             {this._generateLogin()}
           </juju.components.DeploymentPanel>
         );
@@ -1102,6 +1106,7 @@ YUI.add('deployment-flow', function() {
     'deployment-services',
     'deployment-ssh-key',
     'deployment-vpc',
+    'entity-content-diagram',
     'generic-button',
     'generic-input',
     'usso-login-link'

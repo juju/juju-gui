@@ -29,6 +29,10 @@ describe('State', () => {
     state: {special: {deployTarget: 'cs:trusty/kibana-15'}},
     error: null
   }, {
+    path: 'http://abc.com:123/new/?dd=trusty/kibana-15',
+    state: {root: 'new', special: {dd: {id: 'trusty/kibana-15'}}},
+    error: null
+  }, {
     path: 'http://abc.com:123/login?next=/u/frankban/prod',
     state: {root: 'login', special: {next: '/u/frankban/prod'}},
     error: null
