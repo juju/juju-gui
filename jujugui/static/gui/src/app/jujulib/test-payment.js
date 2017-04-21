@@ -226,9 +226,7 @@ describe('jujulib payment service', function() {
   });
 
   it('can create a user', function() {
-    const originalMakeRequest = jujulib._makeRequest;
-    const makeRequest = sinon.stub();
-    jujulib._makeRequest = makeRequest;
+    const makeRequest = sinon.stub(jujulib, '_makeRequest');
     const payment = new window.jujulib.payment('http://1.2.3.4/', {});
     const newUser = {
       name: 'Geoffrey Spinach',
@@ -249,7 +247,7 @@ describe('jujulib payment service', function() {
     };
     payment.createUser(newUser, sinon.stub());
     // Restore the original method on the lib.
-    jujulib._makeRequest = originalMakeRequest;
+    makeRequest.restore();
     assert.equal(makeRequest.callCount, 1);
     assert.deepEqual(makeRequest.args[0][3], {
       name: 'Geoffrey Spinach',
@@ -450,15 +448,13 @@ describe('jujulib payment service', function() {
 
   describe('createPaymentMethod', () => {
     it('can create a payment method', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.createPaymentMethod(
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.equal(
         makeRequest.args[0][3],
@@ -538,15 +534,13 @@ describe('jujulib payment service', function() {
 
   describe('removePaymentMethod', () => {
     it('can remove a payment method', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.removePaymentMethod(
         'spinach', 'payment-method-created-2017-3-11-13-49-42-186',
         sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
         'payment-method-name': 'payment-method-created-2017-3-11-13-49-42-186'
@@ -608,13 +602,11 @@ describe('jujulib payment service', function() {
     });
 
     it('can add an address', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.addAddress( 'spinach', address, sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
         name: 'Home',
@@ -678,13 +670,11 @@ describe('jujulib payment service', function() {
     });
 
     it('can add a billing address', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.addBillingAddress( 'spinach', address, sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
         name: 'Home',
@@ -734,13 +724,11 @@ describe('jujulib payment service', function() {
 
   describe('removeAddress', () => {
     it('can remove an address', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.removeAddress('spinach', 'address1', sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.strictEqual(makeRequest.args[0][3], null);
     });
@@ -781,13 +769,11 @@ describe('jujulib payment service', function() {
 
   describe('removeBillingAddress', () => {
     it('can remove a biling address', () => {
-      const originalMakeRequest = jujulib._makeRequest;
-      const makeRequest = sinon.stub();
-      jujulib._makeRequest = makeRequest;
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
       payment.removeBillingAddress('spinach', 'address1', sinon.stub());
       // Restore the original method on the lib.
-      jujulib._makeRequest = originalMakeRequest;
+      makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.strictEqual(makeRequest.args[0][3], null);
     });
