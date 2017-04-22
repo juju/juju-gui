@@ -390,8 +390,8 @@ YUI.add('juju-topology-service', function(Y) {
       scene: {
         '.service': {
           click: 'serviceClick',
-          mouseenter: 'serviceMouseEnter',
-          mouseleave: 'serviceMouseLeave',
+          mouseover: 'serviceMouseEnter',
+          mouseout: 'serviceMouseLeave',
           mousemove: 'serviceMouseMove'
         },
         // See _attachDragEvents for the drag and drop event registrations
@@ -794,7 +794,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var topo = context.get('component');
       topo.fire('hoverService', {id: box.id});
-      var rect = this;
+      var rect = this.closest('.service');
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
