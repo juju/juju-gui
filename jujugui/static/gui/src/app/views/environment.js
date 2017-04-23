@@ -209,6 +209,7 @@ YUI.add('juju-view-environment', function(Y) {
      */
     rendered: function() {
       this.topo.fire('rendered');
+      document.dispatchEvent(new Event('topo.rendered'));
       // Bind d3 events (manually).
       this.topo.bindAllD3Events();
     },

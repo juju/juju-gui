@@ -298,6 +298,35 @@ YUI.add('d3-components', function(Y) {
           }
         });
       }
+      if (modEvents.topo) {
+        let resolvedHandler = {};
+        Object.keys(modEvents.topo).forEach(name => {
+          const handler = this._normalizeHandler(
+            modEvents.topo[name], module, name);
+          resolvedHandler[name] = handler;
+        });
+        // Bind resolved event handlers as a group.
+        if (Object.keys(resolvedHandler).length) {
+          Object.keys(resolvedHandler).forEach(name => {
+            const handler = resolvedHandler[name];
+            const callable = e => {
+              let detail = e.detail || [];
+              if (e.detail && !Array.isArray(detail)) {
+                detail = [detail];
+              }
+              handler.callback.apply(handler.context, detail);
+            };
+            // All events are fired from the document so scope the events to
+            // avoid conflicts.
+            const event = `topo.${name}`;
+            document.addEventListener(event, callable);
+            subscriptions.push({
+              event: event,
+              callable: callable
+            });
+          });
+        }
+      }
       return subscriptions;
     },
 

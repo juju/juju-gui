@@ -43,7 +43,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
   var PanZoomModule = Y.Base.create('PanZoomModule', components.Module, [], {
 
     events: {
-      yui: {
+      topo: {
         /**
           Fired when the canvas is zoomed.
 
@@ -70,6 +70,24 @@ YUI.add('juju-topology-panzoom', function(Y) {
                             .domain([options.minZoom, options.maxZoom])
                             .range([options.minZoom, options.maxZoom])
                             .clamp(true);
+    },
+
+    /**
+     * Handler for 'zoom_in' event.
+     *
+     * @method zoom_in
+     */
+    zoom_in: function(evt) {
+      // Not implemented.
+    },
+
+    /**
+     * Handler for 'zoom_out' event.
+     *
+     * @method zoom_out
+     */
+    zoom_out: function(evt) {
+      // Not implemented.
     },
 
     /**

@@ -194,12 +194,12 @@ YUI.add('juju-gui', function(Y) {
         label: 'Shift + ?'
       },
       'S-+': {
-        fire: 'zoom_in',
+        fire: 'topo.zoom_in',
         help: 'Zoom In',
         label: 'Shift + "+"'
       },
       'S--': {
-        fire: 'zoom_out',
+        fire: 'topo.zoom_out',
         help: 'Zoom Out',
         label: 'Shift + -'
       },
@@ -303,7 +303,11 @@ YUI.add('juju-gui', function(Y) {
           if (spec.callback) { spec.callback.call(this, evt, target); }
           // HACK w/o context/view restriction but right direction
           if (spec.fire) {
-            this.views.environment.instance.topo.fire(spec.fire);
+            if (spec.fire.startsWith('topo.')) {
+              document.dispatchEvent(new Event(spec.fire));
+            } else {
+              this.views.environment.instance.topo.fire(spec.fire);
+            }
           }
           // If we handled the event nothing else has to.
           evt.stopPropagation();

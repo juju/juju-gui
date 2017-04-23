@@ -711,7 +711,9 @@ YUI.add('juju-topology-service', function(Y) {
       var node = this.getServiceNode(id);
       if (node) {
         var box = d3.select(node).datum();
-        this.get('component').fire('panToPoint', {point: [box.x, box.y]});
+        document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+          detail: [{point: [box.x, box.y]}]
+        }));
       }
     },
 
@@ -1418,7 +1420,9 @@ YUI.add('juju-topology-service', function(Y) {
           new_service_boxes[0].x = coords[0];
           new_service_boxes[0].y = coords[1];
           // Set the centroid to the new service's position
-          topo.fire('panToPoint', {point: coords});
+          document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+            detail: [{point: coords}]
+          }));
         } else {
           d3.layout.pack()
           // Set the size of the visualization to the size of the
@@ -1518,9 +1522,10 @@ YUI.add('juju-topology-service', function(Y) {
     @return {undefined} Side effects only.
     */
     findCentroid: function(vertices) {
-      var topo = this.get('component'),
-          centroid = topoUtils.centroid(vertices);
-      topo.fire('panToPoint', {point: centroid});
+      const centroid = topoUtils.centroid(vertices);
+      document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+        detail: [{point: centroid}]
+      }));
     },
 
     /**
