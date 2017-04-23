@@ -299,35 +299,56 @@ YUI.add('d3-components', function(Y) {
         });
       }
       if (modEvents.topo) {
-        let resolvedHandler = {};
-        Object.keys(modEvents.topo).forEach(name => {
-          const handler = this._normalizeHandler(
-            modEvents.topo[name], module, name);
-          resolvedHandler[name] = handler;
-        });
-        // Bind resolved event handlers as a group.
-        if (Object.keys(resolvedHandler).length) {
-          Object.keys(resolvedHandler).forEach(name => {
-            const handler = resolvedHandler[name];
-            const callable = e => {
-              let detail = e.detail || [];
-              if (e.detail && !Array.isArray(detail)) {
-                detail = [detail];
-              }
-              handler.callback.apply(handler.context, detail);
-            };
-            // All events are fired from the document so scope the events to
-            // avoid conflicts.
-            const event = `topo.${name}`;
-            document.addEventListener(event, callable);
-            subscriptions.push({
-              event: event,
-              callable: callable
-            });
-          });
-        }
+        subscriptions = subscriptions.concat(
+          this._attachEvents(module, modEvents.topo, 'topo'));
+      }
+      if (modEvents.window) {
+        subscriptions = subscriptions.concat(
+          this._attachEvents(module, modEvents.window, null, window));
       }
       return subscriptions;
+    },
+
+    /*
+      Attach the events for a module.
+
+      @method _attachEvents
+      @param module {Object} The module the events are for.
+      @param group {Object} The collection of events.
+      @param prefix {String} The event prefix to attach.
+      @param parent {String} The parent to attach to.
+      @returns {Array} The subscriptions added.
+    */
+    _attachEvents: function(module, group, prefix, parent=document) {
+      let subscriptions = [];
+      let resolvedHandler = {};
+      Object.keys(group).forEach(name => {
+        const handler = this._normalizeHandler(group[name], module, name);
+        resolvedHandler[name] = handler;
+      });
+      // Bind resolved event handlers as a group.
+      if (Object.keys(resolvedHandler).length) {
+        Object.keys(resolvedHandler).forEach(name => {
+          // All events are fired from the document or window so scope the
+          // events to avoid conflicts.
+          const event = prefix ? `${prefix}.${name}` : name;
+          const handler = resolvedHandler[name];
+          const callable = e => {
+            let detail = e.detail || [];
+            if (e.detail && !Array.isArray(detail)) {
+              detail = [detail];
+            }
+            handler.callback.apply(handler.context, detail);
+          };
+          parent.addEventListener(event, callable);
+          subscriptions.push({
+            event: event,
+            callable: callable,
+            parent: parent
+          });
+        });
+        return subscriptions;
+      }
     },
 
     /**
@@ -457,7 +478,6 @@ YUI.add('d3-components', function(Y) {
     unbind: function(moduleName) {
       var eventSet = this.events,
           filtered = {};
-      const container = this.get('container');
 
       function _unbind(modEvents) {
         Object.keys(modEvents.subscriptions || {}).forEach(key => {
@@ -466,7 +486,8 @@ YUI.add('d3-components', function(Y) {
             if (handler.detach) {
               handler.detach();
             } else if (handler.event) {
-              container.removeEventListener(handler.event, handler.callable);
+              parent = handler.parent ? handler.parent : document;
+              parent.removeEventListener(handler.event, handler.callable);
             }
           }
         });

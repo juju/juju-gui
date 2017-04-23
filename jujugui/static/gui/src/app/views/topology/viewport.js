@@ -45,8 +45,10 @@ YUI.add('juju-topology-viewport', function(Y) {
   views.ViewportModule = Y.Base.create('ViewportModule', comp.Module, [], {
 
     events: {
-      yui: {
-        windowresize: 'resized',
+      window: {
+        resize: 'resized',
+      },
+      topo: {
         rendered: 'resized'
       }
     },
