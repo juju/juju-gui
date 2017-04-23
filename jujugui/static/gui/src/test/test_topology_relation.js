@@ -49,7 +49,7 @@ describe('topology relation module', function() {
     // addModule.  Three types of events are supported: "scene", "yui", and
     // "d3".
     assert.deepProperty(view, 'events.scene');
-    assert.deepProperty(view, 'events.yui');
+    assert.deepProperty(view, 'events.topo');
     assert.deepProperty(view, 'events.d3');
   });
 

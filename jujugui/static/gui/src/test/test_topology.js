@@ -36,7 +36,7 @@ describe('topology', function() {
         events: {
           scene: { '.thing': {click: 'decorateThing'}},
           d3: {'.target': {click: 'targetTarget'}},
-          yui: {
+          topo: {
             cancel: 'cancelHandler'
           }
         },
