@@ -1055,7 +1055,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assertClassPresent('show');
         done();
       });
-      view.topo.fire('show', {serviceNames: ['mysql']});
+      document.dispatchEvent(new CustomEvent('topo.show', {
+        detail: [{serviceNames: ['mysql']}]
+      }));
     });
 
     it('must be able to add a relation from the service menu',

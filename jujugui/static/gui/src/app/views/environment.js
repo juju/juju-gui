@@ -94,7 +94,8 @@ YUI.add('juju-view-environment', function(Y) {
           db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
-      topo.once('rendered', this.updateHelpIndicator.bind(this));
+      document.addEventListener(
+          'topo.rendered', this.updateHelpIndicator.bind(this));
       return this;
     },
 
@@ -208,7 +209,6 @@ YUI.add('juju-view-environment', function(Y) {
      * @method render.rendered
      */
     rendered: function() {
-      this.topo.fire('rendered');
       document.dispatchEvent(new Event('topo.rendered'));
       // Bind d3 events (manually).
       this.topo.bindAllD3Events();

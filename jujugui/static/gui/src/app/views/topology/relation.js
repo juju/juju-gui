@@ -75,7 +75,7 @@ YUI.add('juju-topology-relation', function(Y) {
           mousemove: {callback: 'mousemove'}
         }
       },
-      yui: {
+      topo: {
         /**
           Ensure the dragline follows the cursor when moved.
 
