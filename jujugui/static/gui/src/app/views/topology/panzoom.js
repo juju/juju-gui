@@ -164,7 +164,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       this.rescale(evt);
       // TODO Makyo - pan to center of canvas, card on board.
-      topo.fire('panToCenter');
+      document.dispatchEvent(new Event('topo.clearState'));
     },
 
     /**

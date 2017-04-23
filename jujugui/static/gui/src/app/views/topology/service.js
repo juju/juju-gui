@@ -403,7 +403,7 @@ YUI.add('juju-topology-service', function(Y) {
           'mouseup.addrel': 'serviceAddRelMouseUp'
         }
       },
-      yui: {
+      topo: {
         /**
           Highlight a service and, if specified, related services.
 
@@ -841,7 +841,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Don't clear the canvas state if the click event was from dragging the
       // canvas around.
       if (!topo.zoomed) {
-        topo.fire('clearState');
+        document.dispatchEvent(new Event('topo.clearState'));
       }
     },
 
@@ -1876,8 +1876,7 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     backgroundClicked: function() {
-      var topo = this.get('component');
-      topo.fire('clearState');
+      document.dispatchEvent(new Event('topo.clearState'));
     },
 
     /**

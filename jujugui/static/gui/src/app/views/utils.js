@@ -1055,7 +1055,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} topo The topology object.
   */
   utils.clearState = function(topo) {
-    topo.fire('clearState');
+    document.dispatchEvent(new Event('topo.clearState'));
   };
 
   /**

@@ -98,7 +98,7 @@ describe('service module annotations', function() {
     const topo = serviceModule.get('component');
     const changeState = sinon.stub();
     topo.set('state', {changeState: changeState});
-    topo.fire('clearState');
+    document.dispatchEvent(new Event('topo.clearState'));
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       root: null,
