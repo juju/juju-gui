@@ -50,8 +50,12 @@ describe('service module annotations', function() {
         location['gui-x'] = data['gui-x'];
         location['gui-y'] = data['gui-y'];},
       get: function() {}};
-    var view = new views.environment(
-      { container: viewContainer, db: db, env: env});
+    const view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env,
+      state: {changeState: sinon.stub()}
+    });
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -140,7 +144,9 @@ describe('service updates', function() {
         db: db,
         env: {
           update_annotations: function() {}
-        }});
+        },
+        state: {changeState: sinon.stub()}
+      });
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -223,7 +229,8 @@ describe.skip('service module events', function() {
         update_annotations: function() {},
         get: function() {}
       },
-      charmstore: fakeStore
+      charmstore: fakeStore,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -824,7 +831,8 @@ describe('canvasDropHandler', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -882,7 +890,8 @@ describe('_canvasDropHandler', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -947,7 +956,8 @@ describe('updateElementVisibility', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -990,12 +1000,7 @@ describe('updateElementVisibility', function() {
     }, {
       id: 'foo4'
     }]);
-    serviceModule.set('component', {
-      get: function() {
-        return {
-          services: serviceList
-        };
-      }});
+    serviceModule.get('component').get('db').services = serviceList;
     serviceModule.updateElementVisibility();
     assert.equal(fade.callCount, 1);
     assert.deepEqual(fade.lastCall.args[0], { serviceNames: ['foo1'] });

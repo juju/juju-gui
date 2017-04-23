@@ -94,9 +94,16 @@ YUI.add('juju-view-environment', function(Y) {
           db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
-      document.addEventListener(
-          'topo.rendered', this.updateHelpIndicator.bind(this));
+      this.boundRenderedHandler = this.updateHelpIndicator.bind(this);
+      document.addEventListener('topo.rendered', this.boundRenderedHandler);
       return this;
+    },
+
+    destroy: function() {
+      if (this.boundRenderedHandler) {
+        document.removeEventListener(
+          'topo.rendered', this.boundRenderedHandler);
+      }
     },
 
     /**

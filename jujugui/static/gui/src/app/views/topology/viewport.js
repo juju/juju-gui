@@ -101,7 +101,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       // leave the pan alone.
       if (oldSize[0] !== dimensions.width ||
           oldSize[1] !== dimensions.height) {
-        document.dispatchEvent(new Event('topo.clearState'));
+        document.dispatchEvent(new Event('topo.panToCenter'));
       }
     },
 
