@@ -78,7 +78,6 @@ describe('application hotkeys', function() {
     app.showView(new Y.View());
     app.activateHotkeys();
     app.render();
-    app._renderModals();
     keyboard = Keysim.Keyboard.US_ENGLISH;
   });
 
@@ -94,13 +93,19 @@ describe('application hotkeys', function() {
   it('should listen for "?" events', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
-    assert.equal(app.modalShortcuts.state.visible, true);
+
+    const shortcuts = document.querySelector('#modal-shortcuts');
+    assert.equal(shortcuts.children.length > 0, true,
+      'The shortcuts component did not render');
   });
 
   it('should listen for "!" events', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
-    assert.equal(app.modalGUISettings.state.visible, true);
+
+    const settings = document.querySelector('#modal-gui-settings');
+    assert.equal(settings.children.length > 0, true,
+      'The settings component did not render');
   });
 
   it('should listen for Alt-S key events', function() {

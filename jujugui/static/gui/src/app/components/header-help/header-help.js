@@ -28,8 +28,8 @@ YUI.add('header-help', function() {
 
     propTypes: {
       appState: React.PropTypes.object.isRequired,
+      displayShortcutsModal: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,
-      modalShortcuts: React.PropTypes.object.isRequired,
       user: React.PropTypes.object
     },
 
@@ -103,7 +103,7 @@ YUI.add('header-help', function() {
     */
     _handleShortcutsLink: function(evt) {
       this.toggleHelpMenu();
-      this.props.modalShortcuts.show();
+      this.props.displayShortcutsModal();
     },
 
     /**

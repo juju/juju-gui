@@ -110,8 +110,8 @@ YUI.add('juju-gui', function(Y) {
       'S-1': {
         target: '#modal-gui-settings',
         callback: function() {
-          this.modalShortcuts.hide();
-          this.modalGUISettings.toggle();
+          this._clearShortcutsModal();
+          this._displaySettingsModal();
         },
         help: 'GUI Settings',
         label: 'Shift + !'
@@ -119,8 +119,8 @@ YUI.add('juju-gui', function(Y) {
       'S-/': {
         target: '#modal-shortcuts',
         callback: function() {
-          this.modalGUISettings.hide();
-          this.modalShortcuts.toggle();
+          this._clearSettingsModal();
+          this._displayShortcutsModal();
         },
         help: 'Display this help',
         label: 'Shift + ?'
@@ -150,8 +150,8 @@ YUI.add('juju-gui', function(Y) {
       'esc': {
         fire: 'clearState',
         callback: function() {
-          this.modalGUISettings.hide();
-          this.modalShortcuts.hide();
+          this._clearSettingsModal();
+          this._clearShortcutsModal();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -1185,26 +1185,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
-    _renderModals: function() {
-      this.modalShortcuts = ReactDOM.render(
-        <window.juju.components.ModalShortcuts
-          keybindings={this.keybindings} />,
-        document.getElementById('modal-shortcuts'));
-      this.modalGUISettings = ReactDOM.render(
-        <window.juju.components.ModalGUISettings
-          disableCookie={localStorage.getItem('disable-cookie')}
-          disableAutoPlace={localStorage.getItem('disable-auto-place')}
-          forceContainers={localStorage.getItem('force-containers')}
-          localStorage={localStorage} />,
-        document.getElementById('modal-gui-settings'));
-    },
-
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
-          modalShortcuts={this.modalShortcuts}
+          displayShortcutsModal={this._displayShortcutsModal.bind(this)}
           user={this._getAuth()} />,
         document.getElementById('header-help'));
     },
@@ -1779,6 +1765,44 @@ YUI.add('juju-gui', function(Y) {
       if (next) {
         next();
       }
+    },
+
+    _displayShortcutsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalShortcuts
+          closeModal={this._clearShortcutsModal.bind(this)}
+          keybindings={this.keybindings} />,
+        document.getElementById('modal-shortcuts'));
+    },
+
+    _displaySettingsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalGUISettings
+          closeModal={this._clearSettingsModal.bind(this)}
+          disableCookie={
+            localStorage.getItem('disable-cookie') === 'true'}
+          disableAutoPlace={
+            localStorage.getItem('disable-auto-place') === 'true'}
+          forceContainers={
+            localStorage.getItem('force-containers') === 'true'}
+          localStorage={localStorage} />,
+        document.getElementById('modal-gui-settings'));
+    },
+
+    /**
+      The cleanup dispatcher keyboard shortcuts modal.
+    */
+    _clearShortcutsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-shortcuts'));
+    },
+
+    /**
+      The cleanup dispatcher global settings modal.
+    */
+    _clearSettingsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-gui-settings'));
     },
 
     /**
@@ -2849,7 +2873,6 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
-      this._renderModals();
       this._renderHeaderHelp();
       this._renderHeaderLogo();
       const gui = this.state.current.gui;

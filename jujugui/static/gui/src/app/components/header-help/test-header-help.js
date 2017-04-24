@@ -214,19 +214,16 @@ describe('HeaderHelp', function() {
       }
     );
 
-    it('keyboard shortcuts link calls keyboard shortcut show()', () => {
+    it('keyboard shortcuts link calls app._displayShortcutsModal', () => {
       const showFunc = sinon.stub();
-      const modalShortcuts = {
-        show: showFunc
-      };
       const evt = {
         stopPropagation: sinon.stub()
       };
       const renderer = jsTestUtils.shallowRender(
         <juju.components.HeaderHelp.prototype.wrappedComponent
           appState={appState}
+          displayShortcutsModal={showFunc}
           gisf={true}
-          modalShortcuts={modalShortcuts}
           user={{}} />, true);
       const instance = renderer.getMountedInstance();
       instance.setState({

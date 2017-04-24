@@ -31,10 +31,6 @@ describe('ModalGUISettings', function() {
     YUI().use('modal-gui-settings', function() { done(); });
   });
 
-  function invisibleRender() {
-    return <div id="#shortcut-settings"></div>;
-  }
-
   function visibleRender(
     hide = sinon.stub(),
     handleChange = sinon.stub(),
@@ -89,44 +85,23 @@ describe('ModalGUISettings', function() {
     </div>);
   }
 
-  it('renders empty', function() {
+  it('renders', function() {
+    const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModalGUISettings
-        localStorage={_localStorage} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = invisibleRender();
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('shows and hides when asked', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModalGUISettings
+        closeModal={close}
         localStorage={_localStorage} />, true);
     const instance = renderer.getMountedInstance();
-    instance.show();
     let output = renderer.getRenderOutput();
-    let expected = visibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.hide();
-    output = renderer.getRenderOutput();
-    expected = invisibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.toggle();
-    output = renderer.getRenderOutput();
-    expected = visibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.toggle();
-    output = renderer.getRenderOutput();
-    expected = invisibleRender();
+    let expected = visibleRender(close);
     expect(output).toEqualJSX(expected);
   });
 
   it('saves state', function() {
+    const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModalGUISettings
+        closeModal={close}
         disableAutoPlace={true}
         localStorage={_localStorage} />, true);
     const instance = renderer.getMountedInstance();

@@ -23,47 +23,19 @@ YUI.add('modal-gui-settings', function() {
   juju.components.ModalGUISettings = React.createClass({
 
     propTypes: {
+      closeModal: React.PropTypes.func.isRequired,
       disableAutoPlace: React.PropTypes.bool,
       disableCookie: React.PropTypes.bool,
       forceContainers: React.PropTypes.bool,
-      localStorage: React.PropTypes.object.required
+      localStorage: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
-      let state = {
-        visible: false
-      };
+      let state = {};
       state['disable-cookie'] = this.props.disableCookie;
       state['disable-auto-place'] = this.props.disableAutoPlace;
       state['force-containers'] = this.props.forceContainers;
       return state;
-    },
-
-    /**
-      Makes the modal visible.
-    */
-    show: function() {
-      this.setState({
-        visible: true
-      });
-    },
-
-    /**
-      Makes the modal invisble, like a spy.
-    */
-    hide: function() {
-      this.setState({
-        visible: false
-      });
-    },
-
-    /**
-      If it's visible, make it invisible. If it's invisible, make it visible.
-    */
-    toggle: function() {
-      this.setState({
-        visible: !this.state.visible
-      });
     },
 
     /**
@@ -93,18 +65,17 @@ YUI.add('modal-gui-settings', function() {
           }
         }
       }.bind(this));
+
+      this.props.closeModal();
     },
 
     render: function() {
-      if (!this.state.visible) {
-        return (<div id="#shortcut-settings"></div>);
-      }
       return (
         <div id="#shortcut-settings">
           <div className="twelve-col no-margin-bottom">
             <h2 className="bordered">Custom GUI Settings</h2>
             <span className="close" tabIndex="0" role="button"
-              onClick={this.hide}>
+              onClick={this.props.closeModal}>
               <juju.components.SvgIcon name="close_16"
                 size="16" />
             </span>

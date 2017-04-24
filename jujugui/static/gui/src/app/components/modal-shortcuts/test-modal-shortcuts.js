@@ -32,10 +32,6 @@ describe('ModalSortcuts', function() {
     YUI().use('modal-shortcuts', function() { done(); });
   });
 
-  function invisibleRender() {
-    return <div id="#shortcut-help"></div>;
-  }
-
   function visibleRender(hide = sinon.stub()) {
     return (<div id="#shortcut-help">
       <div className="twelve-col no-margin-bottom">
@@ -69,38 +65,15 @@ describe('ModalSortcuts', function() {
     </div>);
   }
 
-  it('renders empty', function() {
+  it('renders', function() {
+    const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModalShortcuts
-      keybindings={keybindings} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = invisibleRender();
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('shows and hides when asked', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModalShortcuts
+        closeModal={close}
         keybindings={keybindings} />, true);
     const instance = renderer.getMountedInstance();
-    instance.show();
     let output = renderer.getRenderOutput();
-    let expected = visibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.hide();
-    output = renderer.getRenderOutput();
-    expected = invisibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.toggle();
-    output = renderer.getRenderOutput();
-    expected = visibleRender();
-    expect(output).toEqualJSX(expected);
-
-    instance.toggle();
-    output = renderer.getRenderOutput();
-    expected = invisibleRender();
+    let expected = visibleRender(close);
     expect(output).toEqualJSX(expected);
   });
 });

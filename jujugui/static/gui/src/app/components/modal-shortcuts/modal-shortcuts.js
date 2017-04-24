@@ -23,40 +23,8 @@ YUI.add('modal-shortcuts', function() {
   juju.components.ModalShortcuts = React.createClass({
 
     propTypes: {
+      closeModal: React.PropTypes.func.isRequired,
       keybindings: React.PropTypes.object.isRequired
-    },
-
-    getInitialState: function() {
-      return {
-        visible: false
-      };
-    },
-
-    /**
-      Makes the modal visible.
-    */
-    show: function() {
-      this.setState({
-        visible: true
-      });
-    },
-
-    /**
-      Makes the modal invisble, like a spy.
-    */
-    hide: function() {
-      this.setState({
-        visible: false
-      });
-    },
-
-    /**
-      If it's visible, make it invisible. If it's invisible, make it visible.
-    */
-    toggle: function() {
-      this.setState({
-        visible: !this.state.visible
-      });
     },
 
     /**
@@ -103,15 +71,12 @@ YUI.add('modal-shortcuts', function() {
     },
 
     render: function() {
-      if (!this.state.visible) {
-        return (<div id="#shortcut-help"></div>);
-      }
       return (
         <div id="#shortcut-help">
           <div className="twelve-col no-margin-bottom">
             <h2 className="bordered">Keyboard Shortcuts</h2>
             <span className="close" tabIndex="0" role="button"
-              onClick={this.hide}>
+              onClick={this.props.closeModal}>
               <juju.components.SvgIcon name="close_16"
                 size="16" />
             </span>
