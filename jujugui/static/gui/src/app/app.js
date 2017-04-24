@@ -1165,6 +1165,10 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
+          addAddress={
+            this.payment && this.payment.addAddress.bind(this.payment)}
+          addBillingAddress={
+            this.payment && this.payment.addBillingAddress.bind(this.payment)}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           createCardElement={
@@ -1183,6 +1187,11 @@ YUI.add('juju-gui', function(Y) {
           getCountries={
             this.payment && this.payment.getCountries.bind(this.payment)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          removeAddress={
+            this.payment && this.payment.removeAddress.bind(this.payment)}
+          removeBillingAddress={
+            this.payment && this.payment.removeBillingAddress.bind(
+              this.payment)}
           removePaymentMethod={
             this.payment && this.payment.removePaymentMethod.bind(this.payment)}
           revokeCloudCredential={
