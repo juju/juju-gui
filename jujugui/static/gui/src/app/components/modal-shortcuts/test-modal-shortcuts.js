@@ -71,7 +71,6 @@ describe('ModalSortcuts', function() {
       <juju.components.ModalShortcuts
         closeModal={close}
         keybindings={keybindings} />, true);
-    const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     let expected = visibleRender(close);
     expect(output).toEqualJSX(expected);

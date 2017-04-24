@@ -91,7 +91,6 @@ describe('ModalGUISettings', function() {
       <juju.components.ModalGUISettings
         closeModal={close}
         localStorage={_localStorage} />, true);
-    const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     let expected = visibleRender(close);
     expect(output).toEqualJSX(expected);
