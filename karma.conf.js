@@ -61,7 +61,10 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/net-utils.js',
       'jujugui/static/gui/build/app/utils/test-net-utils.js',
       'jujugui/static/gui/build/app/utils/analytics.js',
-      'jujugui/static/gui/build/app/utils/test-analytics.js'
+      'jujugui/static/gui/build/app/utils/test-analytics.js',
+
+      'jujugui/static/gui/src/app/store/env/bakery.js',
+      'jujugui/static/gui/src/test/test-bakery.js'
     ],
 
     // list of files to exclude
