@@ -33,7 +33,13 @@ describe('AccountPaymentDetails', () => {
   });
 
   it('can display the details', () => {
+    const addNotification = sinon.stub();
     const getCountries = sinon.stub();
+    const addAddress = sinon.stub();
+    const addBillingAddress = sinon.stub();
+    const removeAddress = sinon.stub();
+    const removeBillingAddress = sinon.stub();
+    const validateForm = sinon.stub();
     const paymentUser ={
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -64,11 +70,16 @@ describe('AccountPaymentDetails', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetails
         acl={acl}
-        addNotification={sinon.stub()}
+        addAddress={addAddress}
+        addBillingAddress={addBillingAddress}
+        addNotification={addNotification}
         getCountries={getCountries}
         paymentUser={paymentUser}
+        removeAddress={removeAddress}
+        removeBillingAddress={removeBillingAddress}
         username="spinach"
-        validateForm={sinon.stub()} />, true);
+        validateForm={validateForm} />, true);
+    const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
       <div className="account__section">
@@ -76,61 +87,87 @@ describe('AccountPaymentDetails', () => {
           Account details
         </h2>
         <div className="account__payment-details-view twelve-col">
-          <juju.components.GenericInput
-            disabled={true}
-            label="Name"
-            value="Geoffrey Spinach" />
-         <juju.components.GenericInput
-           disabled={true}
-           label="Email address"
-           value="spinach@example.com" />
-         <juju.components.GenericInput
-           disabled={true}
-           label="VAT number (optional)"
-           value="1234" />
-         <juju.components.GenericInput
-           disabled={true}
-           label="Business name"
-           value="Spinachy business" />
+          <div className="account__payment-details-fields">
+            <juju.components.GenericInput
+              disabled={true}
+              label="Name"
+              value="Geoffrey Spinach" />
+           <juju.components.GenericInput
+             disabled={true}
+             label="Email address"
+             value="spinach@example.com" />
+           <juju.components.GenericInput
+             disabled={true}
+             label="VAT number (optional)"
+             value="1234" />
+           <juju.components.GenericInput
+             disabled={true}
+             label="Business name"
+             value="Spinachy business" />
+           </div>
           <h4>
             Addresses
+            <juju.components.GenericButton
+              action={instance._toggleAddressEdit}
+              disabled={false}
+              type="inline-base"
+              title="Edit" />
           </h4>
           <ul className="account__payment-details-addresses">
-            {[<li key="Geoffrey Spinach">
-              <juju.components.AddressForm
-                disabled={true}
-                address={{
-                  name: 'Geoffrey Spinach',
-                  line1: '10 Maple St',
-                  line2: '',
-                  city: 'Sasquatch',
-                  state: 'Bunnyhug',
-                  postcode: '90210',
-                  countryCode: 'CA',
-                  phones: ['12341234']
-                }}
-                getCountries={getCountries} />
-              </li>]}
+            {[<juju.components.AccountPaymentDetailsAddress
+              acl={acl}
+              addNotification={addNotification}
+              addAddress={addAddress}
+              address={{
+                name: 'Geoffrey Spinach',
+                line1: '10 Maple St',
+                line2: '',
+                city: 'Sasquatch',
+                state: 'Bunnyhug',
+                postcode: '90210',
+                countryCode: 'CA',
+                phones: ['12341234']
+              }}
+              close={instance._toggleAddressEdit}
+              getCountries={getCountries}
+              key="Geoffrey Spinach"
+              removeAddress={removeAddress}
+              showEdit={false}
+              updated={instance._getUser}
+              username="spinach"
+              validateForm={validateForm} />]}
           </ul>
           <h4>
             Billing addresses
+            <juju.components.GenericButton
+              action={instance._toggleBillingAddressEdit}
+              disabled={false}
+              type="inline-base"
+              title="Edit" />
           </h4>
           <ul className="account__payment-details-addresses">
-            {[<li key="Bruce Dundee">
-              <juju.components.AddressForm
-                disabled={true}
-                address={{
-                  name: 'Bruce Dundee',
-                  line1: '9 Kangaroo St',
-                  line2: '',
-                  city: 'Snake',
-                  state: 'Spider',
-                  postcode: '9000',
-                  countryCode: 'AU',
-                  phones: ['00001111']
-                }}
-                getCountries={getCountries} />
-              </li>]}
+            {[<juju.components.AccountPaymentDetailsAddress
+              acl={acl}
+              addNotification={addNotification}
+              addAddress={addBillingAddress}
+              address={{
+                name: 'Bruce Dundee',
+                line1: '9 Kangaroo St',
+                line2: '',
+                city: 'Snake',
+                state: 'Spider',
+                postcode: '9000',
+                countryCode: 'AU',
+                phones: ['00001111']
+              }}
+              close={instance._toggleBillingAddressEdit}
+              getCountries={getCountries}
+              key="Geoffrey Spinach"
+              removeAddress={removeBillingAddress}
+              showEdit={false}
+              updated={instance._getUser}
+              username="spinach"
+              validateForm={validateForm} />]}
           </ul>
         </div>
       </div>);
