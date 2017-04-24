@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('modal-gui-settings', function() {
 
   juju.components.ModalGUISettings = React.createClass({
-
+    displayName: 'Custom GUI Settings',
+    
     propTypes: {
       closeModal: React.PropTypes.func.isRequired,
       disableAutoPlace: React.PropTypes.bool,
