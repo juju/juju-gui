@@ -1,26 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
-YUI.add('juju-env-bakery', function(Y) {
-  const module = Y.namespace('juju.environments.web');
-  const macaroonlib = Y.namespace('macaroon');
+var module = module;
+
+(function (exports) {
+
+  const jujulib = exports.jujulib;
+  const macaroonlib = require('js-macaroon');
 
   // Define the bakery protocol version used by the GUI.
   const PROTOCOL_VERSION = 1;
@@ -212,11 +199,11 @@ YUI.add('juju-env-bakery', function(Y) {
     */
     discharge(macaroon, onSuccess, onFailure) {
       try {
-        macaroonlib.discharge(
-          macaroonlib.import(macaroon),
+        macaroonlib.dischargeMacaroon(
+          macaroonlib.generateMacaroons(macaroon),
           this._getThirdPartyDischarge.bind(this),
           discharges => {
-            onSuccess(macaroonlib.export(discharges));
+            onSuccess(discharges.map(m => m.exportAsObject()));
           },
           onFailure
         );
@@ -259,7 +246,8 @@ YUI.add('juju-env-bakery', function(Y) {
               // and then exit successfully. From now on, the stored macaroons
               // will be reused and included in all requests to the same URL.
               const jsonResponse = JSON.parse(resp.target.responseText);
-              const macaroons = macaroonlib.import(jsonResponse.Macaroon);
+              const macaroons =
+                macaroonlib.generateMacaroons(jsonResponse.Macaroon);
               this.storage.set(url, serialize(macaroons), () => {
                 if (jsonResponse.DischargeToken) {
                   const token = serialize(jsonResponse.DischargeToken);
@@ -319,7 +307,7 @@ YUI.add('juju-env-bakery', function(Y) {
           return;
         }
         const jsonResponse = JSON.parse(response.target.responseText);
-        const macaroons = macaroonlib.import(jsonResponse.Macaroon);
+        const macaroons = macaroonlib.generateMacaroons(jsonResponse.Macaroon);
         onSuccess(macaroons);
       };
       // Use the bakery itself to get the third party discharge, so that we
@@ -547,6 +535,7 @@ YUI.add('juju-env-bakery', function(Y) {
 
   };
 
-  module.Bakery = Bakery;
-  module.BakeryStorage = BakeryStorage;
-});
+  jujulib.Bakery = Bakery;
+  jujulib.BakeryStorage = BakeryStorage;
+
+}((module && module.exports) ? module.exports : this));
