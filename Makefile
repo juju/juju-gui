@@ -22,7 +22,6 @@ NODE_MODULES := node_modules
 MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
-JS_MACAROON := $(NODE_MODULES)/js-macaroon/build/yui-macaroon.js
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
@@ -145,7 +144,6 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js $(NODE_MODULES
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
-	cp $(JS_MACAROON) $(JS_ASSETS)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" | \
