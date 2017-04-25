@@ -25,7 +25,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('bakery-utils', function(Y) {
 
   const module = Y.namespace('juju.bakeryutils');
-  const web = Y.namespace('juju.environments.web');
 
   /**
     Implement the bakery storage store interface by using the user local
@@ -64,12 +63,15 @@ YUI.add('bakery-utils', function(Y) {
     @param {Function} charmstoreCookieSetter A function that can be used to
       send macaroons to the charm store so that they are stored as cookies.
     @param {Object} webHandler The HTTP client that will be used by the bakery.
+    @param {Object} BakeryStorage A reference to the BakeryStorage constructor.
+    @param {Object} Bakery A reference to the Bakery constructor.
     @return {Object} A bakery instance ready to be used.
   */
-  const newBakery = (config, user, charmstoreCookieSetter, webHandler) => {
+  const newBakery = (config, user, charmstoreCookieSetter, webHandler,
+    BakeryStorage, Bakery) => {
     // Use the user object to persist macaroons.
     const userStore = new UserStore(user);
-    const storage = new web.BakeryStorage(userStore, {
+    const storage = new BakeryStorage(userStore, {
       charmstoreCookieSetter: charmstoreCookieSetter,
       // Some initial macaroons may be provided in the GUI configuration.
       initial: {
@@ -85,7 +87,7 @@ YUI.add('bakery-utils', function(Y) {
         terms: config.termsURL
       }
     });
-    return new web.Bakery(webHandler, storage, {
+    return new Bakery(webHandler, storage, {
       nonInteractive: !config.interactiveLogin,
       visitPage: url => {
         // Add to the page a notification about accepting the pop up window
@@ -118,4 +120,4 @@ YUI.add('bakery-utils', function(Y) {
   };
   module.newBakery = newBakery;
 
-}, '0.1.0', {requires: ['base', 'juju-env-bakery']});
+}, '0.1.0', {requires: []});
