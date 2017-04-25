@@ -390,7 +390,8 @@ YUI.add('juju-gui', function(Y) {
         this.get('charmstore').setAuthCookie(value, callback);
       };
       this.bakery = Y.juju.bakeryutils.newBakery(
-        config, this.user, charmstoreCookieSetter, webHandler);
+        config, this.user, charmstoreCookieSetter, webHandler,
+        jujulib.BakeryStorage, jujulib.Bakery);
 
       // Create and set up a new instance of the charmstore.
       this._setupCharmstore(config, window.jujulib.charmstore);
