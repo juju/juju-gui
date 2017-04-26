@@ -18,15 +18,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Bakery', () => {
-  let bakery, fakeLocalStorage, macaroonlib, Y, storage, client;
+fdescribe('Bakery', () => {
+  let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll((done) => {
-    Y = YUI().use(['juju-env-bakery', 'macaroon'], (y) => {
-      Y = y;
-      macaroonlib = Y.macaroon;
-      done();
-    });
+    macaroonlib = require('js-macaroon');
+    done();
   });
 
   beforeEach(() => {
@@ -62,9 +59,9 @@ describe('Bakery', () => {
       },
     };
 
-    storage = new Y.juju.environments.web.BakeryStorage(
+    storage = new jujulib.BakeryStorage(
       fakeLocalStorage, {services: {charmstore: 'http://example.com/'}});
-    bakery = new Y.juju.environments.web.Bakery(client, storage);
+    bakery = new jujulib.Bakery(client, storage);
   });
 
   afterEach(() => {
@@ -72,7 +69,6 @@ describe('Bakery', () => {
   });
 
   it('exists', () => {
-    bakery = new Y.juju.environments.web.Bakery({});
     assert.isObject(bakery);
   });
 
@@ -130,23 +126,20 @@ describe('Bakery', () => {
   });
 
   describe('macaroon discharges', () => {
-    let dischargeStub, importStub, exportStub;
+    let dischargeStub, generateStub;
 
     beforeEach(() => {
-      dischargeStub = sinon.stub(macaroonlib, 'discharge');
-      importStub = sinon.stub(macaroonlib, 'import');
-      exportStub = sinon.stub(macaroonlib, 'export').returnsArg(0);
+      dischargeStub = sinon.stub(macaroonlib, 'dischargeMacaroon');
+      generateStub = sinon.stub(macaroonlib, 'generateMacaroons');
     });
 
     afterEach(() => {
       dischargeStub.restore();
-      importStub.restore();
-      exportStub.restore();
+      generateStub.restore();
     });
 
     it('discharges macaroons', () => {
       const macaroon = 'this is a macaroon';
-      dischargeStub.callsArgWith(2, macaroon);
       const success = discharges => {
         assert.equal(discharges, macaroon);
       };
@@ -154,19 +147,17 @@ describe('Bakery', () => {
         console.error(msg);
         assert.fail();
       };
-      bakery.discharge('macaroons', success, failure);
+      bakery.discharge(macaroon, success, failure);
       assert.equal(
         dischargeStub.callCount, 1,
         'macaroonlib discharge not called');
-      assert.equal(importStub.callCount, 1, 'macaroonlib import not called');
-      assert.equal(exportStub.callCount, 1, 'macaroonlib export not called');
     });
 
     it('handles failures discharging macaroons', () => {
       const macaroon = 'this is a macaroon';
       const error = { message: 'bad wolf' };
       dischargeStub.callsArgWith(2, macaroon);
-      importStub.throws(error);
+      generateStub.throws(error);
       const success = () => {};
       const failure = msg => {
         assert.equal(msg, `discharge failed: ${error.message}`);

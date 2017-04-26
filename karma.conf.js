@@ -19,19 +19,6 @@ module.exports = function(config) {
     // files.
     files: [
       'node_modules/keysim/dist/keysim.js',
-      'jujugui/static/gui/src/app/jujulib/index.js',
-      'jujugui/static/gui/src/app/jujulib/charmstore.js',
-      'jujugui/static/gui/src/app/jujulib/plans.js',
-      'jujugui/static/gui/src/app/jujulib/payment.js',
-      'jujugui/static/gui/src/app/jujulib/stripe.js',
-      'jujugui/static/gui/src/app/jujulib/terms.js',
-      'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',
-      'jujugui/static/gui/src/app/jujulib/urls.js',
-      'jujugui/static/gui/src/app/jujulib/bundleservice.js',
-      'jujugui/static/gui/src/app/jujulib/test-*.js',
-
-      'jujugui/static/gui/src/app/state/*.js',
-
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',
@@ -44,12 +31,25 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/diff.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism-languages.js',
+      'jujugui/static/gui/build/app/assets/javascripts/js-macaroon.js',
       'jujugui/static/gui/build/app/utils/component-test-utils.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/build/app/assets/javascripts/yui-macaroon.js',
+      'jujugui/static/gui/src/app/jujulib/index.js',
+      'jujugui/static/gui/src/app/jujulib/charmstore.js',
+      'jujugui/static/gui/src/app/jujulib/plans.js',
+      'jujugui/static/gui/src/app/jujulib/payment.js',
+      'jujugui/static/gui/src/app/jujulib/stripe.js',
+      'jujugui/static/gui/src/app/jujulib/terms.js',
+      'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',
+      'jujugui/static/gui/src/app/jujulib/urls.js',
+      'jujugui/static/gui/src/app/jujulib/bundleservice.js',
+      'jujugui/static/gui/src/app/jujulib/bakery.js',
+      'jujugui/static/gui/src/app/jujulib/test-*.js',
+
+      'jujugui/static/gui/src/app/state/*.js',
 
       'jujugui/static/gui/src/app/components/**/*.js',
 
@@ -63,10 +63,7 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/net-utils.js',
       'jujugui/static/gui/build/app/utils/test-net-utils.js',
       'jujugui/static/gui/build/app/utils/analytics.js',
-      'jujugui/static/gui/build/app/utils/test-analytics.js',
-
-      'jujugui/static/gui/src/app/store/env/bakery.js',
-      'jujugui/static/gui/src/test/test-bakery.js'
+      'jujugui/static/gui/build/app/utils/test-analytics.js'
     ],
 
     // list of files to exclude
