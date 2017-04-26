@@ -969,7 +969,7 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
-      Generates the Direct Deploy component if necessary
+      Generates the Direct Deploy component if necessary.
       @returns {Object} The React elements.
     */
     _generateDirectDeploy: function() {
@@ -978,7 +978,7 @@ YUI.add('deployment-flow', function() {
       if (!ddEntityId) {
         return;
       };
-      let diagram = undefined;
+      let diagram = null;
       if (ddEntityId.indexOf('bundle') !== -1) {
         diagram = <juju.components.EntityContentDiagram
           getDiagramURL={this.props.getDiagramURL}

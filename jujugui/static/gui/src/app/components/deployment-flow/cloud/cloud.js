@@ -49,7 +49,7 @@ YUI.add('deployment-cloud', function() {
         }
         this.props.listClouds((error, clouds) => {
           if (error) {
-            console.error('Unable to list clouds', error);
+            console.error('unable to list clouds:', error);
             return;
           }
           let cloudList = [];

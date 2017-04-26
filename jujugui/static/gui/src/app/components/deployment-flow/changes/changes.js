@@ -29,22 +29,9 @@ YUI.add('deployment-changes', function() {
     },
 
     getInitialState: function() {
-      this.interval = null;
       return {
         changes: this.props.getCurrentChangeSet()
       };
-    },
-
-    componentDidMount: function() {
-      // poll the changeset every second for updates as there is no way that
-      // we can be sure when a bundle import will be complete.
-      this.interval = setInterval(() => {
-        this.setState({changes: this.props.getCurrentChangeSet()});
-      }, 1000);
-    },
-
-    componentWillUnmount: function() {
-      clearInterval(this.interval);
     },
 
     render: function() {

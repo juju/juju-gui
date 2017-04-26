@@ -731,7 +731,7 @@ YUI.add('juju-gui', function(Y) {
 
         if (state.current.root === 'login') {
           if (dd) {
-            console.log('Initiating Direct Deploy.');
+            console.log('initiating direct deploy');
             this.maskVisibility(false);
             this._directDeploy(dd);
             return;
@@ -2284,15 +2284,15 @@ YUI.add('juju-gui', function(Y) {
       Calls the necessary methods to setup the GUI and put the user in the
       Deployment Flow when they have used Direct Deploy.
 
-      @param {Object} dd - The Direct Deploy data from state.
+      @param {Object} ddData - The Direct Deploy data from state.
     */
     _directDeploy: function(ddData) {
       this.state.changeState({
         special: {dd: null}
       });
-      // Reusing deployTarget state method so faking request signature
+      // The deployTarget method is called directly by state. We're reusing it
+      // here so the state call signature needs to be replicated.
       this._deployTarget({special: {deployTarget: ddData.id}}, ()=>{});
-      // The user must log in first
       this._renderDeployment(this.state, ()=>{}, ddData);
     },
 
