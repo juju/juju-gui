@@ -191,10 +191,31 @@ YUI.add('d3-components', function(Y) {
         if (handler.context === 'component') {
           result.context = this;
         } else if (handler.context === 'window') {
-          result.context = Y.one('window');
+          result.context = window;
         }
       }
       return result;
+    },
+
+    /**
+      Handle delegated events.
+
+      @method _delegate
+      @param {String} event The event to attach.
+      @param {Function} handler The function to call when the event fires.
+      @param {Function} target The class to use for the delegated events.
+      @returns {Function} The function called by the listener.
+    */
+    _delegate: function(event, handler, target, context) {
+      const container = this.get('container');
+      const callable = e => {
+        const selector = target.replace('.', '');
+        if (e.target.classList.contains(selector) || e.target.closest(target)) {
+          handler.call(context, e);
+        }
+      };
+      container.addEventListener(event, callable);
+      return callable;
     },
 
     /**
@@ -202,28 +223,26 @@ YUI.add('d3-components', function(Y) {
      * Module.events.yui.
      **/
     _bindEvents: function(modName) {
-      var self = this,
+      const self = this,
           modEvents = this.events[modName],
-          module = this.modules[modName],
-          container = this.get('container'),
-          subscriptions = [];
+          module = this.modules[modName];
+      let subscriptions = [];
 
-      function _bindEvent(name, handler, container, selector, context) {
-        // Adapt between d3 events and YUI delegates.
-        var d3Adapter = function(evt) {
-          var selection = d3.select(evt.currentTarget.getDOMNode()),
+      const _bindEvent = (name, handler, selector, context) => {
+        // Adapt between d3 events and delegates.
+        const d3Adapter = evt => {
+          const selection = d3.select(evt.target),
               d = selection.data()[0];
           // This is a minor violation (extension)
           // of the interface, but suits us well.
           d3.event = evt;
-          //console.debug('Handler for', name, selector, d3.event);
-          return handler.call(
-              evt.currentTarget.getDOMNode(), d, context);
+          return handler.call(evt.target, d, context);
         };
-
-        subscriptions.push(
-            Y.delegate(name, d3Adapter, container, selector, context));
-      }
+        subscriptions.push({
+          event: name,
+          callable: this._delegate(name, d3Adapter, selector, context)
+        });
+      };
 
       this.unbind(modName);
 
@@ -234,8 +253,7 @@ YUI.add('d3-components', function(Y) {
           const handler = self._normalizeHandler(
             handlers[trigger], module, selector);
           if (utils.isValue(handler)) {
-            _bindEvent(trigger, handler.callback,
-                       container, selector, handler.context);
+            _bindEvent(trigger, handler.callback, selector, handler.context);
           }
         });
       });
@@ -410,12 +428,17 @@ YUI.add('d3-components', function(Y) {
     unbind: function(moduleName) {
       var eventSet = this.events,
           filtered = {};
+      const container = this.get('container');
 
       function _unbind(modEvents) {
         Object.keys(modEvents.subscriptions || {}).forEach(key => {
           const handler = modEvents.subscriptions[key];
           if (handler) {
-            handler.detach();
+            if (handler.detach) {
+              handler.detach();
+            } else if (handler.event) {
+              container.removeEventListener(handler.event, handler.callable);
+            }
           }
         });
         delete modEvents.subscriptions;
@@ -543,7 +566,6 @@ YUI.add('d3-components', function(Y) {
 }, '0.1', {
   'requires': ['d3',
     'base',
-    'array-extras',
     'event',
     'event-resize',
     'juju-view-utils'

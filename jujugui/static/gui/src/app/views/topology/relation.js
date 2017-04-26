@@ -626,15 +626,18 @@ YUI.add('juju-topology-relation', function(Y) {
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
       if (!this.draglineOverService) {
+        const mouse = d3.mouse(this.get('dragplane'));
+        const mouseX = mouse[0];
+        const mouseY = mouse[1];
         // Create a BoundingBox for our cursor. If one doesn't exist, events
         // bubbled improperly, and we didn't have addRelationDragStart called
         // first; so ensure that is called.
         if (!this.cursorBox) {
           this.addRelationDragStart(evt);
         }
-        this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
+        this.cursorBox.pos = {x: mouseX, y: mouseY, w: 0, h: 0};
 
-        var imagePos = (d3.event.x - 8) + ', ' + (d3.event.y - 8);
+        var imagePos = (mouseX - 8) + ', ' + (mouseY - 8);
         // Draw the relation line from the connector point nearest the
         // cursor to the cursor itself.
         var connectors = this.cursorBox.getConnectorPair(d),
@@ -642,16 +645,17 @@ YUI.add('juju-topology-relation', function(Y) {
         this.dragline.select('line')
               .attr('x1', s[0])
               .attr('y1', s[1])
-              .attr('x2', d3.event.x)
-              .attr('y2', d3.event.y);
+              .attr('x2', mouseX)
+              .attr('y2', mouseY);
         this.dragline.select('circle')
-              .attr('cx', d3.event.x)
-              .attr('cy', d3.event.y);
+              .attr('cx', mouseX)
+              .attr('cy', mouseY);
         this.dragline.select('image')
               .attr('transform',
                 'translate(' + imagePos + ')');
       }
     },
+
     addRelationDragEnd: function() {
       // Get the line, the endpoint service, and the target <rect>.
       var self = this;
@@ -1140,7 +1144,8 @@ YUI.add('juju-topology-relation', function(Y) {
     relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
-      const relationId = this.parentNode.getAttribute('data-relationid');
+      const relationId = this.closest('.relation-container').getAttribute(
+        'data-relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
       topo.fire('clearState');
