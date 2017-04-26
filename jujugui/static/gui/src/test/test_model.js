@@ -1936,6 +1936,27 @@ describe('test_model.js', function() {
       assert.strictEqual(result.relations.length, 0);
     });
 
+    it('properly exports ambiguous relations', function() {
+      db.charms.add([
+        {id: 'hadoop-resourcemanager-14'},
+        {id: 'hadoop-namenode-13'}
+      ]);
+      db.services.add({
+        id: 'resourcemanager', charm: 'hadoop-resourcemanager-14'});
+      db.services.add({
+        id: 'namenode', charm: 'hadoop-namenode-13' });
+      db.relations.add({
+        id: 'relation-0',
+        endpoints: [
+          ['resourcemanager', {role: 'server'}],
+          ['namenode', {role: 'client'}]],
+        'interface': 'db'
+      });
+      assert.deepEqual(db.exportDeployer(true).relations, [[
+        'resourcemanager', 'namenode'
+      ]]);
+    });
+
     it('does not export the juju-gui service', function() {
       db.services.add([
         {id: 'juju-gui', charm: 'precise/juju-gui-42'},
