@@ -74,7 +74,9 @@ describe('AccountPaymentMethodCard', () => {
                     {3}/{2017}
                   </div>
                   <div className="account__payment-card-brand">
-                    Fancy
+                    <juju.components.SvgIcon
+                      size="40"
+                      name="card-fancy" />
                   </div>
                 </div>
               </div>
