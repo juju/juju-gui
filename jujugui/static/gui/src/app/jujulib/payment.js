@@ -345,6 +345,7 @@ var module = module;
 
       @public updateAddress
       @param username {String} The user's username.
+      @param id {String} The id for an address.
       @param address {Object} An address containing:
         - name {String} The name for the address e.g. "Geoffrey Spinach" or
           "Tuque LTD"
@@ -363,6 +364,34 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/addresses/${id}`;
+      const payload = this._unparseAddress(address);
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
+      Update a billing address.
+
+      @public updateBillingAddress
+      @param username {String} The user's username.
+      @param id {String} The id for a billing address.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - countryCode {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    updateBillingAddress: function(username, id, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses/${id}`;
       const payload = this._unparseAddress(address);
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
