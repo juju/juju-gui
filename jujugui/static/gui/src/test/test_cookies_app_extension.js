@@ -22,6 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('app-cookies-extension', function() {
     var container, cookieHandler, node, utils, Y;
+    let cookieResets = [];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -41,8 +42,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
-      Y.Cookie.remove('_cookies_accepted');
+      cookieResets.push('_cookies_accepted');
       localStorage.removeItem('disable-cookie');
+      cookieResets.forEach(cookie => {
+        document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      });
     });
 
     it('calling check makes the node visible', function() {
@@ -52,14 +56,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('closing the banner sets the cookie', function() {
-      assert.isNull(Y.Cookie.get('_cookies_accepted'));
+      assert.isNull(cookieHandler._getCookie('_cookies_accepted'));
       cookieHandler.check();
       node.querySelector('.link-cta').click();
-      assert.equal(Y.Cookie.get('_cookies_accepted'), 'true');
+      assert.equal(cookieHandler._getCookie('_cookies_accepted'), 'true');
     });
 
     it('the cookie prevents the node from getting visible', function() {
-      Y.Cookie.set('_cookies_accepted', 'true');
+      cookieHandler._setCookie('_cookies_accepted', 'true');
       cookieHandler.check();
       assert.isFalse(node.classList.contains('display-cookie-notice'));
     });
@@ -70,6 +74,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isFalse(node.classList.contains('display-cookie-notice'));
     });
 
+    it('can get a cookie', function() {
+      document.cookie = 'cookie1=value;';
+      document.cookie = 'cookie2=value2;';
+      cookieResets.push('cookie1');
+      cookieResets.push('cookie2');
+      assert.equal(cookieHandler._getCookie('cookie2'), 'value2');
+    });
+
+    it('can get a cookie with whitespace', function() {
+      document.cookie = ' cookie1 = value ;';
+      document.cookie = ' cookie2 = value2 ';
+      cookieResets.push('cookie1');
+      cookieResets.push('cookie2');
+      assert.equal(cookieHandler._getCookie('cookie1'), 'value');
+    });
+
+    it('can get a cookie without a value', function() {
+      document.cookie = 'cookie1=;';
+      document.cookie = 'cookie2=value2';
+      cookieResets.push('cookie1');
+      cookieResets.push('cookie2');
+      assert.equal(cookieHandler._getCookie('cookie1'), '');
+    });
+
+    it('can not get a cookie that does not exist', function() {
+      document.cookie = 'cookie1=';
+      document.cookie = 'cookie2=value2';
+      cookieResets.push('cookie1');
+      cookieResets.push('cookie2');
+      assert.strictEqual(cookieHandler._getCookie('cookie3'), null);
+    });
+
+    it('can set a cookie', function() {
+      cookieHandler._setCookie('cookie1', 'value1');
+      cookieResets.push('cookie1');
+      assert.equal(document.cookie, 'cookie1=value1');
+    });
+
+    it('can set a cookie with an expiry', function() {
+      cookieHandler._setCookie(
+        'cookie1', 'value1', new Date('January 12, 2025'));
+      cookieResets.push('cookie1');
+      assert.equal(document.cookie, 'cookie1=value1');
+    });
+
+    it('can pass the right values to set a cookie with an expiry', function() {
+      const setDocumentCookie = sinon.stub(cookieHandler, '_setDocumentCookie');
+      cookieHandler._setCookie(
+        'cookie1', 'value1', 'Sun Jan 12 2025 00:00:00 GMT+1100 (AEDT)');
+      assert.equal(setDocumentCookie.callCount, 1);
+      assert.equal(
+        setDocumentCookie.args[0][0],
+        'cookie1=value1; expiry=Sun Jan 12 2025 00:00:00 GMT+1100 (AEDT)');
+      setDocumentCookie.restore();
+    });
   });
 
 })();
