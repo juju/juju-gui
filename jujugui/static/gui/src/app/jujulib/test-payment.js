@@ -912,7 +912,8 @@ describe('jujulib payment service', function() {
     it('can update a billing address', () => {
       const makeRequest = sinon.stub(jujulib, '_makeRequest');
       const payment = new window.jujulib.payment('http://1.2.3.4/', {});
-      payment.updateBillingAddress('spinach', 'address1', address, sinon.stub());
+      payment.updateBillingAddress(
+        'spinach', 'address1', address, sinon.stub());
       // Restore the original method on the lib.
       makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
