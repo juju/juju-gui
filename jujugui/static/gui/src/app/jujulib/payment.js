@@ -365,6 +365,9 @@ var module = module;
       };
       const url = `${this.url}/u/${username}/addresses/${id}`;
       const payload = this._unparseAddress(address);
+      // The API uses the id on the address object, not the id in the URL to do
+      // the lookup, so attach the id here.
+      payload.id = id;
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
 
@@ -393,6 +396,9 @@ var module = module;
       };
       const url = `${this.url}/u/${username}/billing-addresses/${id}`;
       const payload = this._unparseAddress(address);
+      // The API uses the id on the address object, not the id in the URL to do
+      // the lookup, so attach the id here.
+      payload.id = id;
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
 

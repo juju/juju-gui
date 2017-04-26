@@ -848,6 +848,7 @@ describe('jujulib payment service', function() {
       makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
+        id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
         line2: null,
@@ -916,6 +917,7 @@ describe('jujulib payment service', function() {
       makeRequest.restore();
       assert.equal(makeRequest.callCount, 1);
       assert.deepEqual(makeRequest.args[0][3], {
+        id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
         line2: null,
