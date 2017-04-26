@@ -2181,6 +2181,7 @@ YUI.add('juju-models', function(Y) {
       Dispatch an event.
 
      @method fireEvent
+     @param {String} event The name of the event to fire.
     */
     fireEvent: function(event) {
       document.dispatchEvent(new Event(event));
