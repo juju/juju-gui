@@ -30,12 +30,14 @@ describe('AccountPaymentMethodCard', () => {
 
   beforeEach(() => {
     card = {
-      name: 'payment-method-created-2017-3-11-13-49-42-186',
+      id: 'paymentmethod1',
+      name: 'personal',
       last4: 1234,
       month: 3,
       year: 2017,
       brand: 'Fancy',
       address: {
+        id: 'address1',
         line1: '1 Maple',
         line2: 'St',
         city: 'Sasquatch',
@@ -137,9 +139,7 @@ describe('AccountPaymentMethodCard', () => {
     output.props.children[1].props.children.props.action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
-    assert.equal(
-      removePaymentMethod.args[0][1],
-      'payment-method-created-2017-3-11-13-49-42-186');
+    assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
     assert.equal(onPaymentMethodRemoved.callCount, 1);
   });
 
