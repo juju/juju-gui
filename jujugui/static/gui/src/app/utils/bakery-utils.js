@@ -63,15 +63,12 @@ YUI.add('bakery-utils', function(Y) {
     @param {Function} charmstoreCookieSetter A function that can be used to
       send macaroons to the charm store so that they are stored as cookies.
     @param {Object} webHandler The HTTP client that will be used by the bakery.
-    @param {Object} BakeryStorage A reference to the BakeryStorage constructor.
-    @param {Object} Bakery A reference to the Bakery constructor.
     @return {Object} A bakery instance ready to be used.
   */
-  const newBakery = (config, user, charmstoreCookieSetter, webHandler,
-    BakeryStorage, Bakery) => {
+  const newBakery = (config, user, charmstoreCookieSetter, webHandler) => {
     // Use the user object to persist macaroons.
     const userStore = new UserStore(user);
-    const storage = new BakeryStorage(userStore, {
+    const storage = new jujulib.BakeryStorage(userStore, {
       charmstoreCookieSetter: charmstoreCookieSetter,
       // Some initial macaroons may be provided in the GUI configuration.
       initial: {
@@ -87,7 +84,7 @@ YUI.add('bakery-utils', function(Y) {
         terms: config.termsURL
       }
     });
-    return new Bakery(webHandler, storage, {
+    return new jujulib.Bakery(webHandler, storage, {
       nonInteractive: !config.interactiveLogin,
       visitPage: url => {
         // Add to the page a notification about accepting the pop up window
