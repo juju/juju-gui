@@ -910,7 +910,10 @@ YUI.add('deployment-flow', function() {
     */
     _generateChangeSection: function() {
       var status = this._getSectionStatus('changes');
-      if (!status.visible) {
+      // Do not show the changes if we're performing a Direct Deploy.
+      const ddData = this.props.ddData;
+      const inDD = !!(ddData && Object.keys(ddData).length);
+      if (!status.visible || inDD) {
         return;
       }
       return (
