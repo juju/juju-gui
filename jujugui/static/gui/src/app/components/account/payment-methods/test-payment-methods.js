@@ -290,7 +290,7 @@ describe('AccountPaymentMethod', () => {
       paymentMethods: []
     });
     const createToken = sinon.stub().callsArgWith(1, null, {id: 'token123'});
-    const createPaymentMethod = sinon.stub().callsArg(2, null, null);
+    const createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentMethod
         acl={acl}
@@ -366,7 +366,7 @@ describe('AccountPaymentMethod', () => {
       paymentMethods: []
     });
     const createToken = sinon.stub().callsArgWith(1, null, {id: 'token123'});
-    const createPaymentMethod = sinon.stub().callsArgWith(2, 'Uh oh!', null);
+    const createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentMethod

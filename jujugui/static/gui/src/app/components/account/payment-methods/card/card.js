@@ -76,7 +76,7 @@ YUI.add('account-payment-method-card', function() {
     */
     _removePaymentMethod: function() {
       const xhr = this.props.removePaymentMethod(
-        this.props.username, this.props.card.name, error => {
+        this.props.username, this.props.card.id, error => {
           if (error) {
             const message = 'Unable to remove the payment method';
             this.props.addNotification({

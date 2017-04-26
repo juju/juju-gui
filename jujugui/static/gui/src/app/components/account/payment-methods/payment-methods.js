@@ -162,7 +162,7 @@ YUI.add('account-payment-method', function() {
     */
     _createPaymentMethod: function(token) {
       const xhr = this.props.createPaymentMethod(
-        this.props.username, token, (error, method) => {
+        this.props.username, token, null, (error, method) => {
           if (error) {
             const message = 'Could not create the payment method';
             this.props.addNotification({
