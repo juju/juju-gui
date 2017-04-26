@@ -521,9 +521,10 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _delegate: function(event, handler, target) {
       const container = this.getContainer(this);
-      container.addEventListener(event, e => {
-        if (e.target.classList.contains(target)) {
-          handler(e);
+      container.addEventListener(event, evt => {
+        if (evt.target.classList.contains(target) ||
+          evt.target.closest(`.${target}`)) {
+          handler(evt);
         }
       });
     },
