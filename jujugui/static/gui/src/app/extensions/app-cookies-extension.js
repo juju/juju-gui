@@ -56,7 +56,7 @@ YUI.add('app-cookies-extension', function(Y) {
       Set a cookie. This is here so that we can test that the right values were
       passed.
 
-      @method _setCookie
+      @method _setDocumentCookie
       @param cookie {String} A cookie to set.
     */
     _setDocumentCookie: function(cookie) {
