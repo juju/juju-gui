@@ -107,19 +107,4 @@ describe('application hotkeys', function() {
     // Did charm-search-field get the focus?
     assert.equal(searchInput, document.activeElement);
   });
-
-  it('should listen for alt-E events', function(done) {
-    var altEtriggered = false;
-    app.on('navigateTo', function(ev) {
-      if (ev && ev.url === '/:gui:/') {
-        altEtriggered = true;
-      }
-      // Avoid URL change performed by additional listeners.
-      ev.stopImmediatePropagation();
-      assert.isTrue(altEtriggered);
-      done();
-    });
-    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.ALT, 69);
-    keyboard.dispatchEventsForKeystroke(keystroke, container);
-  });
 });

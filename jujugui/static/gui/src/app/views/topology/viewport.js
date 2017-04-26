@@ -124,12 +124,12 @@ YUI.add('juju-topology-viewport', function(Y) {
       }
       var topo = this.get('component');
       var zoomPlane = container.querySelector('.zoom-plane');
-      Y.fire('beforePageSizeRecalculation');
+      document.dispatchEvent(new Event('beforePageSizeRecalculation'));
       // This sets the minimum viewport size - y was reduced to 200 to render
       // properly on 7" tablets in horizontal view.
       var dimensions = utils.getEffectiveViewportSize(true, 800, 200);
       this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
-      Y.fire('afterPageSizeRecalculation');
+      document.dispatchEvent(new Event('afterPageSizeRecalculation'));
     }
 
   }, {

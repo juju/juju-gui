@@ -86,7 +86,7 @@ YUI.add('model-controller', function(Y) {
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
                   function(err, data) {
-                    db.fire('update');
+                    db.fireEvent('update');
                     resolve(db.charms.getById(charmId));
                   });
             }
