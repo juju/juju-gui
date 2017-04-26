@@ -147,6 +147,8 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" | \
+		-not -name "js-macaroon*" | \
+		-not -name "d3-min.js" | \
 		sed s/\.js$$//g | \
 		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
 
