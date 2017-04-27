@@ -999,13 +999,6 @@ YUI.add('deployment-flow', function() {
       if (this.props.modelCommitted) {
         return true;
       }
-      // When a new model will be created, check that the SSH key, if required,
-      // has been provided.
-      // TODO frankban: avoid duplicating the logic already implemented in the
-      // DeploymentSSHKey component.
-      if (this.state.cloud.cloudType === 'azure' && !this.state.sshKey) {
-        return false;
-      }
       // A new model is ready to be created.
       return true;
     },
