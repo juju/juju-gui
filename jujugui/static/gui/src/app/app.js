@@ -1170,6 +1170,8 @@ YUI.add('juju-gui', function(Y) {
           createPaymentMethod={
             this.payment && this.payment.createPaymentMethod.bind(this.payment)}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
+          createUser={
+              this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={

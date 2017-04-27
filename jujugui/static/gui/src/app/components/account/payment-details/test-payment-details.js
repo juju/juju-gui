@@ -32,52 +32,9 @@ describe('AccountPaymentDetails', () => {
     acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
-  it('can display the loading spinner', () => {
-    const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        getCountries={sinon.stub()}
-        getUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
-    const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
-          Account details
-        </h2>
-        <juju.components.Spinner />
-      </div>);
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('can display when there is no user', () => {
-    const getUser = sinon.stub().callsArgWith(1, null, null);
-    const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        getCountries={sinon.stub()}
-        getUser={getUser}
-        username="spinach"
-        validateForm={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
-    const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
-          Account details
-        </h2>
-        <div className="account__payment-details-none">
-          You do not have any payment details.
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
-  });
-
   it('can display the details', () => {
     const getCountries = sinon.stub();
-    const getUser = sinon.stub().callsArgWith(1, null, {
+    const paymentUser ={
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       business: true,
@@ -103,13 +60,13 @@ describe('AccountPaymentDetails', () => {
         countryCode: 'AU',
         phones: ['00001111']
       }],
-    });
+    };
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetails
         acl={acl}
         addNotification={sinon.stub()}
         getCountries={getCountries}
-        getUser={getUser}
+        paymentUser={paymentUser}
         username="spinach"
         validateForm={sinon.stub()} />, true);
     const output = component.getRenderOutput();
@@ -178,40 +135,5 @@ describe('AccountPaymentDetails', () => {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
-  });
-
-  it('can handle errors when getting a user', () => {
-    const addNotification = sinon.stub();
-    const getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetails
-        acl={acl}
-        addNotification={addNotification}
-        getCountries={sinon.stub()}
-        getUser={getUser}
-        username="spinach"
-        validateForm={sinon.stub()} />, true);
-    component.getRenderOutput();
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Could not load user info',
-      message: 'Could not load user info: Uh oh!',
-      level: 'error'
-    });
-  });
-
-  it('can abort requests when unmounting', () => {
-    const abort = sinon.stub();
-    const getUser = sinon.stub().returns({abort: abort});
-    const component = jsTestUtils.shallowRender(
-    <juju.components.AccountPaymentDetails
-      acl={acl}
-      addNotification={sinon.stub()}
-      getCountries={sinon.stub()}
-      getUser={getUser}
-      username="spinach"
-      validateForm={sinon.stub()} />, true);
-    component.unmount();
-    assert.equal(abort.callCount, 1);
   });
 });

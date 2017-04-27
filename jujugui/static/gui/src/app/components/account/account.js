@@ -28,6 +28,7 @@ YUI.add('account', function() {
       addNotification: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func,
       createToken: React.PropTypes.func,
+      createUser: React.PropTypes.func,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
@@ -52,24 +53,17 @@ YUI.add('account', function() {
     _generatePaymentDetails: function() {
       if (this.props.showPay) {
         return (
-          <div>
-            <juju.components.AccountPaymentMethod
-              acl={this.props.acl}
-              addNotification={this.props.addNotification}
-              createPaymentMethod={this.props.createPaymentMethod}
-              createToken={this.props.createToken}
-              getUser={this.props.getUser}
-              removePaymentMethod={this.props.removePaymentMethod}
-              username={this.props.userInfo.profile}
-              validateForm={this.props.validateForm} />
-            <juju.components.AccountPaymentDetails
-              acl={this.props.acl}
-              addNotification={this.props.addNotification}
-              getCountries={this.props.getCountries}
-              getUser={this.props.getUser}
-              username={this.props.userInfo.profile}
-              validateForm={this.props.validateForm} />
-          </div>);
+          <juju.components.AccountPayment
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            createPaymentMethod={this.props.createPaymentMethod}
+            createToken={this.props.createToken}
+            createUser={this.props.createUser}
+            getCountries={this.props.getCountries}
+            getUser={this.props.getUser}
+            removePaymentMethod={this.props.removePaymentMethod}
+            username={this.props.userInfo.profile}
+            validateForm={this.props.validateForm} />);
       } else {
         return null;
       }
@@ -114,8 +108,7 @@ YUI.add('account', function() {
 }, '', {
   requires: [
     'account-credentials',
-    'account-payment-method',
-    'account-payment-details',
+    'account-payment',
     'panel-component',
     'user-profile-header'
   ]

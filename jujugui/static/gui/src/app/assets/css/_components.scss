@@ -2,6 +2,7 @@
 
 @import '../../components/account/account';
 @import '../../components/account/credentials/credentials';
+@import '../../components/account/payment/payment';
 @import '../../components/account/payment-details/payment-details';
 @import '../../components/account/payment-methods/payment-methods';
 @import '../../components/account/payment-methods/card/card';
@@ -18,6 +19,7 @@
 @import '../../components/constraints/constraints';
 @import '../../components/copy-to-clipboard/copy-to-clipboard';
 @import '../../components/create-model-button/create-model-button';
+@import '../../components/create-payment-user/create-payment-user';
 @import '../../components/deployment-bar/deployment-bar';
 @import '../../components/deployment-bar/notification/notification';
 @import '../../components/deployment-flow/deployment-flow';

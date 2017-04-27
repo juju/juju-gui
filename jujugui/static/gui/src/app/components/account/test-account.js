@@ -48,12 +48,14 @@ describe('Account', () => {
     const createPaymentMethod= sinon.stub();
     const createToken = sinon.stub();
     const getCountries = sinon.stub();
+    const createUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
         createPaymentMethod={createPaymentMethod}
         createToken={createToken}
+        createUser={createUser}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -94,24 +96,17 @@ describe('Account', () => {
               updateCloudCredential={updateCloudCredential}
               username="spinach@external"
               validateForm={validateForm} />
-            <div>
-              <juju.components.AccountPaymentMethod
-                acl={acl}
-                addNotification={addNotification}
-                createPaymentMethod={createPaymentMethod}
-                createToken={createToken}
-                getUser={getUser}
-                removePaymentMethod={removePaymentMethod}
-                username="spinach"
-                validateForm={validateForm} />
-              <juju.components.AccountPaymentDetails
-                acl={acl}
-                addNotification={addNotification}
-                getCountries={getCountries}
-                getUser={getUser}
-                username="spinach"
-                validateForm={validateForm} />
-            </div>
+            <juju.components.AccountPayment
+              acl={acl}
+              addNotification={addNotification}
+              createPaymentMethod={createPaymentMethod}
+              createToken={createToken}
+              createUser={createPaymentMethod}
+              getCountries={getCountries}
+              getUser={getUser}
+              removePaymentMethod={removePaymentMethod}
+              username="spinach"
+              validateForm={validateForm} />
           </div>
         </div>
       </juju.components.Panel>);
