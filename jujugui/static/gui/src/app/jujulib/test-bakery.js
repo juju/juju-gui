@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-fdescribe('Bakery', () => {
+describe('Bakery', () => {
   let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll((done) => {
@@ -74,25 +74,32 @@ fdescribe('Bakery', () => {
 
   describe('can send requests', () => {
     it('sets the method', () => {
-      bakery.sendRequest('http://example.com/', 'GET');
-      assert.equal(client._sendRequest.args[0][0], 'get');
-      client._sendRequest.reset();
-
-      bakery.sendRequest('http://example.com/', 'POST');
-      assert.equal(client._sendRequest.args[0][0], 'post');
-      client._sendRequest.reset();
-
-      bakery.sendRequest('http://example.com/', 'PUT');
-      assert.equal(client._sendRequest.args[0][0], 'put');
-      client._sendRequest.reset();
-
-      bakery.sendRequest('http://example.com/', 'DELETE');
-      assert.equal(client._sendRequest.args[0][0], 'delete');
-      client._sendRequest.reset();
-
-      bakery.sendRequest('http://example.com/', 'PATCH');
-      assert.equal(client._sendRequest.args[0][0], 'patch');
-      client._sendRequest.reset();
+      const url = 'http://example.com/';
+      const headers = {header: 42};
+      const callback = response => 42;
+      let body = 'content';
+      let args;
+      ['PATCH', 'post', 'PUT'].forEach(method => {
+        bakery.sendRequest(url, method, headers, body, callback);
+        assert.equal(client._sendRequest.callCount, 1);
+        args = client._sendRequest.args[0];
+        assert.equal(args[0], method.toLowerCase());
+        assert.equal(args[1], url);
+        assert.deepEqual(args[2], {header: 42, 'Bakery-Protocol-Version': 1});
+        assert.equal(args[3], body);
+        assert.isFunction(args[8]);
+        client._sendRequest.reset();
+      });
+      ['GET', 'delete'].forEach(method => {
+        bakery.sendRequest(url, method, headers, callback);
+        assert.equal(client._sendRequest.callCount, 1);
+        args = client._sendRequest.args[0];
+        assert.equal(args[0], method.toLowerCase());
+        assert.equal(args[1], url);
+        assert.deepEqual(args[2], {header: 42, 'Bakery-Protocol-Version': 1});
+        assert.isFunction(args[7]);
+        client._sendRequest.reset();
+      });
     });
 
     it('sets the headers', () => {
