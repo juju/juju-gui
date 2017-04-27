@@ -27,50 +27,9 @@ YUI.add('account-payment-details', function() {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
-      getUser: React.PropTypes.func.isRequired,
+      paymentUser: React.PropTypes.object.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
-    },
-
-    getInitialState: function() {
-      this.xhrs = [];
-      return {
-        loading: false,
-        user: null
-      };
-    },
-
-    componentWillMount: function() {
-      this._getUser();
-    },
-
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
-      });
-    },
-
-    /**
-      Get a payment user.
-
-      @method _getUser
-    */
-    _getUser: function() {
-      this.setState({loading: true}, () => {
-        const xhr = this.props.getUser(this.props.username, (error, user) => {
-          if (error) {
-            this.props.addNotification({
-              title: 'Could not load user info',
-              message: `Could not load user info: ${error}`,
-              level: 'error'
-            });
-            console.error('Could not load user info', error);
-            return;
-          }
-          this.setState({user: user, loading: false});
-        });
-        this.xhrs.push(xhr);
-      });
     },
 
     /**
@@ -79,16 +38,7 @@ YUI.add('account-payment-details', function() {
       @method _generateDetails
     */
     _generateDetails: function() {
-      if (this.state.loading) {
-        return <juju.components.Spinner />;
-      }
-      const user = this.state.user;
-      if (!user) {
-        return (
-          <div className="account__payment-details-none">
-            You do not have any payment details.
-          </div>);
-      }
+      const user = this.props.paymentUser;
       const business = user.business;
       return (
         <div className="account__payment-details-view twelve-col">
@@ -161,7 +111,6 @@ YUI.add('account-payment-details', function() {
   requires: [
     'address-form',
     'expanding-row',
-    'generic-button',
-    'loading-spinner'
+    'generic-button'
   ]
 });
