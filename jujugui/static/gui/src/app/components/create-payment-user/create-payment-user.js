@@ -162,20 +162,20 @@ YUI.add('create-payment-user', function() {
       Update the state when the billing checkbox changes.
 
       @method _handleBillingSameChange
-      @param {Object} The change event from the checkbox.
+      @param evt {Object} The change event from the checkbox.
     */
-    _handleBillingSameChange: function(e) {
-      this.setState({billingAddressSame: e.currentTarget.checked});
+    _handleBillingSameChange: function(evt) {
+      this.setState({billingAddressSame: evt.currentTarget.checked});
     },
 
     /**
       Update the state when the card checkbox changes.
 
       @method _handleCardSameChange
-      @param {Object} The change event from the checkbox.
+      @param evt {Object} The change event from the checkbox.
     */
-    _handleCardSameChange: function(e) {
-      this.setState({cardAddressSame: e.currentTarget.checked});
+    _handleCardSameChange: function(evt) {
+      this.setState({cardAddressSame: evt.currentTarget.checked});
     },
 
     /**

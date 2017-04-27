@@ -113,7 +113,7 @@ YUI.add('account-payment', function() {
     /**
       Generate the details for the payment method.
 
-      @method _generatePaymentMethods
+      @returns {Object} The payment details markup.
     */
     _generatePaymentDetails: function() {
       return (
