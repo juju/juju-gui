@@ -1,0 +1,57 @@
+.create-payment-user {
+  &__form {
+    @extend %floating-panel;
+    padding: 20px;
+
+    // Clearfix.
+    :after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    &-content {
+      width: 65%;
+    }
+
+    &-type {
+      @extend %list-style;
+
+      &-option {
+        display: inline-block;
+
+        &:first-child {
+          margin-right: 40px;
+          padding-right: 40px;
+          border-right: 1px solid $light-mid-grey;
+        }
+      }
+    }
+  }
+
+  &__title {
+    margin: 20px 0 15px 0;
+    font-size: 20px;
+  }
+
+  &__vat {
+    margin-top: 30px;
+  }
+
+  &__add {
+    text-align: right;
+  }
+
+  .inset-select {
+    margin-bottom: 20px;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .generic-input__errors {
+    margin-bottom: 0;
+  }
+}
