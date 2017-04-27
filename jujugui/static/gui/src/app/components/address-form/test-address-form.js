@@ -134,18 +134,7 @@ describe('AddressForm', function() {
                 }]}
                 value={undefined}/>
             </div>
-            <div className="four-col">
-              <juju.components.InsetSelect
-                disabled={false}
-                label="Country code"
-                options={[{
-                  label: 'AU',
-                  value: 'AU'
-                }]}
-                ref="countryCode"
-                value="GB" />
-            </div>
-            <div className="eight-col last-col">
+            <div className="twelve-col">
               <juju.components.GenericInput
                 disabled={false}
                 label="Phone number"
@@ -248,7 +237,6 @@ describe('AddressForm', function() {
       city: 'Sasquatch',
       state: 'Bunnyhug',
       postcode: '90210',
-      countryCode: 'CA',
       phones: ['12341234']
     });
   });

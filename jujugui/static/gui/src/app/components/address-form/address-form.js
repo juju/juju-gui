@@ -114,7 +114,6 @@ YUI.add('address-form', function() {
         city: refs.city.getValue(),
         state: refs.state.getValue(),
         postcode: refs.postcode.getValue(),
-        countryCode: refs.country.getValue(),
         phones: [refs.phoneNumber.getValue()]
       };
     },
@@ -129,21 +128,6 @@ YUI.add('address-form', function() {
       return this.state.countries.map(country => {
         return {
           label: country.name,
-          value: country.code
-        };
-      });
-    },
-
-    /**
-      Generate the country code values for a select box.
-
-      @method _generateCountryCodeOptions
-      @returns {Array} The list of country code options.
-    */
-    _generateCountryCodeOptions: function() {
-      return this.state.countries.map(country => {
-        return {
-          label: country.code,
           value: country.code
         };
       });
@@ -215,15 +199,7 @@ YUI.add('address-form', function() {
                   validate={[required]}
                   value={address.postcode} />
               </div>
-              <div className="four-col">
-                <juju.components.InsetSelect
-                  disabled={disabled}
-                  label="Country code"
-                  options={this._generateCountryCodeOptions()}
-                  ref="countryCode"
-                  value={address.countryCode || 'GB'} />
-              </div>
-              <div className="eight-col last-col">
+              <div className="twelve-col">
                 <juju.components.GenericInput
                   disabled={disabled}
                   label="Phone number"
