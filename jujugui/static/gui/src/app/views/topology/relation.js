@@ -585,15 +585,14 @@ YUI.add('juju-topology-relation', function(Y) {
             height: 16,
             transform: 'translate(-8, -8)'
           });
-        var self = this;
 
         // Start the line between the cursor and the nearest connector
         // point on the service.
         this.set('dragplane', document.querySelector('.the-canvas g'));
         var mouse = d3.mouse(this.get('dragplane'));
-        self.cursorBox = new views.BoundingBox();
-        self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
-        var point = self.cursorBox.getConnectorPair(d);
+        this.cursorBox = new views.BoundingBox();
+        this.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
+        const point = this.cursorBox.getConnectorPair(d);
         var imagePos = (point[0][0] - 8) + ', ' + (point[0][1] - 8);
 
         dragline.select('line')
@@ -608,10 +607,10 @@ YUI.add('juju-topology-relation', function(Y) {
         dragline.select('image')
                 .attr('transform',
                   'translate(' + imagePos + ')');
-        self.dragline = dragline;
+        this.dragline = dragline;
         vis.select('.plus-service').classed('fade', true);
         // Start the add-relation process.
-        self.addRelationStart(d, self);
+        this.addRelationStart(d, this);
       }
     },
 
@@ -634,6 +633,12 @@ YUI.add('juju-topology-relation', function(Y) {
         // first; so ensure that is called.
         if (!this.cursorBox) {
           this.addRelationDragStart(evt);
+          if (!this.cursorBox) {
+            // If the cursorBox still doesn't exist that means a relation is
+            // already in progress and we don't need to drag it around e.g. when
+            // the ambiguous relation selection box is visible.
+            return;
+          }
         }
         this.cursorBox.pos = {x: mouseX, y: mouseY, w: 0, h: 0};
 
