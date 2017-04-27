@@ -44,6 +44,8 @@ YUI.add('account', function() {
       revokeCloudCredential: React.PropTypes.func.isRequired,
       sendAnalytics: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
+      updateAddress: React.PropTypes.func,
+      updateBillingAddress: React.PropTypes.func,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired,
@@ -72,6 +74,8 @@ YUI.add('account', function() {
             removeAddress={this.props.removeAddress}
             removeBillingAddress={this.props.removeBillingAddress}
             removePaymentMethod={this.props.removePaymentMethod}
+            updateAddress={this.props.updateAddress}
+            updateBillingAddress={this.props.updateBillingAddress}
             username={this.props.userInfo.profile}
             validateForm={this.props.validateForm} />);
       } else {

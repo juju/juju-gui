@@ -31,6 +31,7 @@ describe('AccountPaymentDetailsAddress', () => {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     address = {
+      id: 'address1',
       name: 'Geoffrey Spinach',
       line1: '10 Maple St',
       line2: '',
@@ -66,6 +67,7 @@ describe('AccountPaymentDetailsAddress', () => {
         getCountries={getCountries}
         removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={sinon.stub()}
         updated={sinon.stub()}
         username="spinach"
         validateForm={validateForm} />, true);
@@ -121,6 +123,7 @@ describe('AccountPaymentDetailsAddress', () => {
         getCountries={sinon.stub()}
         removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={sinon.stub()}
         updated={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub()} />, true);
@@ -139,8 +142,9 @@ describe('AccountPaymentDetailsAddress', () => {
         address={{}}
         close={sinon.stub()}
         getCountries={sinon.stub()}
-        removeAddress={removeAddress}
+        removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={sinon.stub()}
         updated={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(false)} />, true);
@@ -149,21 +153,21 @@ describe('AccountPaymentDetailsAddress', () => {
     assert.equal(removeAddress.callCount, 0);
   });
 
-  it('can remove and old address and add the new one', () => {
-    const addAddress = sinon.stub().callsArgWith(2, null);
-    const removeAddress = sinon.stub().callsArgWith(2, null);
+  it('can update the address', () => {
+    const updateAddress = sinon.stub().callsArgWith(3, null);
     const close = sinon.stub();
     const updated = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetailsAddress
         acl={acl}
-        addAddress={addAddress}
+        addAddress={sinon.stub()}
         addNotification={sinon.stub()}
         address={address}
         close={close}
         getCountries={sinon.stub()}
-        removeAddress={removeAddress}
+        removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={updateAddress}
         updated={updated}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -175,30 +179,28 @@ describe('AccountPaymentDetailsAddress', () => {
     };
     const output = component.getRenderOutput();
     output.props.children[1].props.children[1].props.children[1].props.action();
-    assert.equal(removeAddress.callCount, 1);
-    assert.equal(removeAddress.args[0][0], 'spinach');
-    assert.equal(removeAddress.args[0][1], 'Bruce Dundee');
-    assert.equal(addAddress.callCount, 1);
-    assert.equal(addAddress.args[0][0], 'spinach');
-    assert.deepEqual(addAddress.args[0][1], newAddress);
+    assert.equal(updateAddress.callCount, 1);
+    assert.equal(updateAddress.args[0][0], 'spinach');
+    assert.equal(updateAddress.args[0][1], 'address1');
+    assert.deepEqual(updateAddress.args[0][2], newAddress);
     assert.equal(updated.callCount, 1);
     assert.equal(close.callCount, 1);
   });
 
-  it('can handle errors when removing the address', () => {
-    const addAddress = sinon.stub();
-    const removeAddress = sinon.stub().callsArgWith(2, 'Uh oh!');
+  it('can handle errors when updating the address', () => {
+    const updateAddress = sinon.stub().callsArgWith(3, 'Uh oh!');
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetailsAddress
         acl={acl}
-        addAddress={addAddress}
+        addAddress={sinon.stub()}
         addNotification={addNotification}
         address={address}
         close={sinon.stub()}
         getCountries={sinon.stub()}
-        removeAddress={removeAddress}
+        removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={updateAddress}
         updated={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -212,48 +214,15 @@ describe('AccountPaymentDetailsAddress', () => {
     output.props.children[1].props.children[1].props.children[1].props.action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
-      title: 'Could not remove address',
-      message: 'Could not remove address: Uh oh!',
-      level: 'error'
-    });
-  });
-
-  it('can handle errors when adding the address', () => {
-    const addAddress = sinon.stub().callsArgWith(2, 'Uh oh!');
-    const removeAddress = sinon.stub().callsArgWith(2, null);
-    const addNotification = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
-        acl={acl}
-        addAddress={addAddress}
-        addNotification={addNotification}
-        address={address}
-        close={sinon.stub()}
-        getCountries={sinon.stub()}
-        removeAddress={removeAddress}
-        showEdit={true}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    instance.refs = {
-      addressForm: {
-        getValue: sinon.stub().returns(newAddress)
-      }
-    };
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1].props.action();
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Could not add address',
-      message: 'Could not add address: Uh oh!',
+      title: 'Could not update address',
+      message: 'Could not update address: Uh oh!',
       level: 'error'
     });
   });
 
   it('get abort the requests when unmountin', () => {
     const abort = sinon.stub();
-    const removeAddress = sinon.stub().returns({abort: abort});
+    const updateAddress = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetailsAddress
         acl={acl}
@@ -262,8 +231,9 @@ describe('AccountPaymentDetailsAddress', () => {
         address={address}
         close={sinon.stub()}
         getCountries={sinon.stub()}
-        removeAddress={removeAddress}
+        removeAddress={sinon.stub()}
         showEdit={true}
+        updateAddress={updateAddress}
         updated={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);

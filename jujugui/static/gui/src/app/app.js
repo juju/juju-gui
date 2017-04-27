@@ -1200,6 +1200,11 @@ YUI.add('juju-gui', function(Y) {
           showPay={window.juju_config.payFlag || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          updateAddress={
+            this.payment && this.payment.updateAddress.bind(this.payment)}
+          updateBillingAddress={
+            this.payment && this.payment.updateBillingAddress.bind(
+              this.payment)}
           user={this.user.controller.user}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,

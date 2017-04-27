@@ -40,6 +40,8 @@ describe('AccountPaymentDetails', () => {
     const removeAddress = sinon.stub();
     const removeBillingAddress = sinon.stub();
     const validateForm = sinon.stub();
+    const updateAddress = sinon.stub();
+    const updateBillingAddress = sinon.stub();
     const paymentUser ={
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -77,6 +79,8 @@ describe('AccountPaymentDetails', () => {
         paymentUser={paymentUser}
         removeAddress={removeAddress}
         removeBillingAddress={removeBillingAddress}
+        updateAddress={updateAddress}
+        updateBillingAddress={updateBillingAddress}
         username="spinach"
         validateForm={validateForm} />, true);
     const instance = component.getMountedInstance();
@@ -133,6 +137,7 @@ describe('AccountPaymentDetails', () => {
               key="Geoffrey Spinach"
               removeAddress={removeAddress}
               showEdit={false}
+              updateAddress={updateAddress}
               updated={instance._getUser}
               username="spinach"
               validateForm={validateForm} />]}
@@ -166,6 +171,7 @@ describe('AccountPaymentDetails', () => {
               removeAddress={removeBillingAddress}
               showEdit={false}
               updated={instance._getUser}
+              updateAddress={updateAddress}
               username="spinach"
               validateForm={validateForm} />]}
           </ul>

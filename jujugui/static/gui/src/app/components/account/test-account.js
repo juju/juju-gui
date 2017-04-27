@@ -54,6 +54,8 @@ describe('Account', () => {
     const addBillingAddress = sinon.stub();
     const removeAddress = sinon.stub();
     const removeBillingAddress = sinon.stub();
+    const updateAddress = sinon.stub();
+    const updateBillingAddress = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
@@ -74,6 +76,8 @@ describe('Account', () => {
         removeBillingAddress={removeBillingAddress}
         removePaymentMethod={removePaymentMethod}
         revokeCloudCredential={revokeCloudCredential}
+        updateAddress={updateAddress}
+        updateBillingAddress={updateBillingAddress}
         updateCloudCredential={updateCloudCredential}
         sendAnalytics={sendAnalytics}
         showPay={true}
@@ -120,6 +124,8 @@ describe('Account', () => {
               removeAddress={removeAddress}
               removeBillingAddress={removeBillingAddress}
               removePaymentMethod={removePaymentMethod}
+              updateAddress={updateAddress}
+              updateBillingAddress={updateBillingAddress}
               username="spinach"
               validateForm={validateForm} />
           </div>

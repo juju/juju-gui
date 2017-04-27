@@ -32,6 +32,7 @@ YUI.add('account-payment-details-address', function() {
       getCountries: React.PropTypes.func.isRequired,
       removeAddress: React.PropTypes.func.isRequired,
       showEdit: React.PropTypes.bool,
+      updateAddress: React.PropTypes.func.isRequired,
       updated: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
@@ -60,43 +61,21 @@ YUI.add('account-payment-details-address', function() {
       }
       const address = this.refs.addressForm.getValue();
       const username = this.props.username;
-      const xhr = this.props.removeAddress(username, address.name, error => {
-        if (error) {
-          const message = 'Could not remove address';
-          this.props.addNotification({
-            title: message,
-            message: `${message}: ${error}`,
-            level: 'error'
-          });
-          console.error(message, error);
-          return;
-        }
-        this._addAddress(address);
-      });
-      this.xhrs.push(xhr);
-    },
-
-    /**
-      Add an address.
-
-      @method _addAddress
-      @param address {Object} The address data.
-    */
-    _addAddress: function(address) {
-      const xhr = this.props.addAddress(this.props.username, address, error => {
-        if (error) {
-          const message = 'Could not add address';
-          this.props.addNotification({
-            title: message,
-            message: `${message}: ${error}`,
-            level: 'error'
-          });
-          console.error(message, error);
-          return;
-        }
-        this.props.updated();
-        this.props.close();
-      });
+      const xhr = this.props.updateAddress(
+        username, this.props.address.id, address, error => {
+          if (error) {
+            const message = 'Could not update address';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
+            return;
+          }
+          this.props.updated();
+          this.props.close();
+        });
       this.xhrs.push(xhr);
     },
 
