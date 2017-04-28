@@ -1317,12 +1317,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully adds a charm', function() {
-      var err, url;
-      env.addCharm('wily/django-42', null, function(data) {
+      let err, url;
+      const charmstore = {};
+      env.addCharm('wily/django-42', charmstore, function(data) {
         err = data.err;
         url = data.url;
       }, {immediate: true});
-      var expectedMessage = {
+      const expectedMessage = {
         type: 'Client',
         version: 1,
         request: 'AddCharm',
@@ -1336,24 +1337,86 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(err, undefined);
     });
 
-    it('successfully adds a charm with a macaroon', function() {
-      var err, url;
-      env.addCharm('trusty/django-0', 'MACAROON', function(data) {
+    it('successfully adds a charm with authorization', function() {
+      let err, url;
+      const charmstore = {
+        getDelegatableMacaroon: (url, callback) => {
+          callback(null, `macaroon for adding ${url}`);
+        }
+      };
+      env.addCharm('trusty/django-0', charmstore, function(data) {
         err = data.err;
         url = data.url;
       }, {immediate: true});
-      var expectedMessage = {
+      // Mimic responses.
+      conn.msg({
+        'request-id': 1,
+        error: 'bad wolf',
+        'error-code': 'unauthorized access'
+      });
+      conn.msg({'request-id': 2, response: {}});
+      const expectedMessages = [{
+        type: 'Client',
+        version: 1,
+        request: 'AddCharm',
+        params: {url: 'trusty/django-0'},
+        'request-id': 1
+      }, {
         type: 'Client',
         request: 'AddCharmWithAuthorization',
         version: 1,
-        params: {macaroon: 'MACAROON', url: 'trusty/django-0'},
-        'request-id': 1
-      };
-      assert.deepEqual(expectedMessage, conn.last_message());
-      // Mimic response.
-      conn.msg({'request-id': 1, response: {}});
+        params: {
+          macaroon: 'macaroon for adding trusty/django-0',
+          url: 'trusty/django-0'
+        },
+        'request-id': 2
+      }];
+      assert.deepEqual(expectedMessages, conn.messages);
       assert.strictEqual(url, 'trusty/django-0');
       assert.strictEqual(err, undefined);
+    });
+
+    it('fails adding charm for authorization errors', function() {
+      let err, url;
+      const charmstore = {
+        getDelegatableMacaroon: (url, callback) => {
+          callback(null, `macaroon for adding ${url}`);
+        }
+      };
+      env.addCharm('trusty/django-0', charmstore, function(data) {
+        err = data.err;
+        url = data.url;
+      }, {immediate: true});
+      // Mimic responses.
+      conn.msg({
+        'request-id': 1,
+        error: 'first bad wolf',
+        'error-code': 'unauthorized access'
+      });
+      conn.msg({'request-id': 2, error: 'second bad wolf'});
+      assert.strictEqual(url, 'trusty/django-0');
+      assert.strictEqual(err, 'second bad wolf');
+    });
+
+    it('fails adding charm for macaraq errors', function() {
+      let err, url;
+      const charmstore = {
+        getDelegatableMacaroon: (url, callback) => {
+          callback('macaraq bad wolf', null);
+        }
+      };
+      env.addCharm('trusty/django-0', charmstore, function(data) {
+        err = data.err;
+        url = data.url;
+      }, {immediate: true});
+      // Mimic responses.
+      conn.msg({
+        'request-id': 1,
+        error: 'first bad wolf',
+        'error-code': 'unauthorized access'
+      });
+      assert.strictEqual(url, 'trusty/django-0');
+      assert.strictEqual(err, 'macaraq bad wolf');
     });
 
     it('handles failed addCharm calls', function() {
