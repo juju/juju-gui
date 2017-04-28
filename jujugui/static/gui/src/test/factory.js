@@ -50,7 +50,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
     makeFakeCharmstore: function() {
       var charms = this._fetchCharmData();
       var fakeBakery = {
-        sendGetRequest: function(path, success, failure) {
+        get: function(path, headers, callback) {
           // Remove the includes and the charmstore path.
           path = path.split('/meta/any')[0].replace('local/v5/', '');
           // Get just the charm name
@@ -60,11 +60,11 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
           var xhr = { target: { responseText: null}};
           if (charms[path]) {
             xhr.target.responseText = charms[path];
-            success(xhr);
+            callback(null, xhr);
           } else {
             xhr.target.responseText = JSON.stringify(
                 {message: 'Unable to load charm ' + path});
-            failure(xhr);
+            callback('bad wolf', xhr);
           }
         }
       };
