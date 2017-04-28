@@ -89,6 +89,7 @@ var module = module;
               - last4 {String} The last four digits of the card number
               - month {Int} The card expiry month
               - name {String} The user provided identifier of the card
+              - cardHolder {String} The name of the card owner
               - valid {Boolean} Whether the card is valid e.g. the card has not
                 expired
               - Year {Int} The card expiry year
