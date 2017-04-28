@@ -24,9 +24,9 @@ YUI.add('notification', function() {
 
     propTypes: {
       content: React.PropTypes.object.isRequired,
-      type: React.PropTypes.string,
+      dismiss: React.PropTypes.func,
       extraClasses: React.PropTypes.string,
-      canDismiss: React.PropTypes.bool
+      type: React.PropTypes.string
     },
 
     _generateClasses: function() {
@@ -38,9 +38,11 @@ YUI.add('notification', function() {
     },
 
     _generateDismiss: function() {
-        if (this.props.canDismiss) {
+        if (this.props.dismiss) {
             return (
-                <button className="p-notification__action">
+                <button
+                  className="p-notification__action"
+                  onClick={this.props.dismiss}>
                     <window.juju.components.SvgIcon
                     name="close_16" size="16" />
                 </button>);
