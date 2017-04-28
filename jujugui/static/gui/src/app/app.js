@@ -402,7 +402,15 @@ YUI.add('juju-gui', function(Y) {
           // Add to the page a notification about accepting the pop up window
           // for logging into USSO.
           const url = response.Info.VisitURL;
-          const notification = document.createElement('div');
+          const content = (
+            <span>To proceed with the authentication, please accept the pop up window or <a href={url} target="_blank">click here</a>.</span>);
+          const notification = 
+          ReactDOM.render(
+            <window.juju.components.Notification
+              canDismiss={true}
+              content={content} />,
+              document.getElementById('login-notification'));
+          /*const notification = document.createElement('div');
           notification.setAttribute('id', 'login-notification');
           const message = document.createTextNode(
             'To proceed with the authentication, please accept the pop up ' +
@@ -415,7 +423,8 @@ YUI.add('juju-gui', function(Y) {
           link.appendChild(text);
           notification.appendChild(link);
           notification.appendChild(document.createTextNode('.'));
-          document.body.appendChild(notification);
+          document.body.appendChild(notification);*/
+
           // Open the pop up (default behavior for the time being).
           window.open(url, 'Login');
         },
@@ -3197,6 +3206,7 @@ YUI.add('juju-gui', function(Y) {
     'machine-view',
     'login-component',
     'logout-component',
+    'notification',
     'notification-list',
     'panel-component',
     'settings',
