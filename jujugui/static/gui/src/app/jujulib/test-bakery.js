@@ -66,10 +66,7 @@ describe('Bakery', () => {
 
   afterEach(() => {
     bakery = null;
-  });
-
-  it('exists', () => {
-    assert.isObject(bakery);
+    storage = null;
   });
 
   describe('can send requests', () => {
@@ -248,6 +245,89 @@ describe('Bakery', () => {
       assert.equal(dischargeStub.callCount, 1);
       const args = dischargeStub.args[0];
       assert.equal(args[0], 'macaroon');
+    });
+  });
+
+  describe('interact handling', () => {
+    const getResponse = fail => {
+      let response = {
+        target: {
+          status: 200,
+          responseText: '',
+          response: '',
+        }
+      };
+      if (fail) {
+        response.target.status = 0;
+      }
+      return response;
+    };
+
+    it('accepts a visit page method', () => {
+      const params = {
+        visitPage: () => { return 'visits'; }
+      };
+      bakery = new jujulib.Bakery(client, storage, params);
+      assert.equal(bakery._visitPage(), 'visits');
+    });
+
+    it('opens the visit page', () => {
+      const windowStub = sinon.stub(window, 'open');
+      const url = 'http://example.com';
+      bakery._visitPage(url);
+      assert.equal(windowStub.callCount, 1);
+      assert.equal(windowStub.args[0][0], url);
+      windowStub.restore();
+    });
+
+    it('sets the content type correctly for the wait call', () => {
+      bakery._interact(
+        'http://example.com/visit', 'http://example.com/wait', ()=>{}, ()=>{});
+      assert.equal(client._sendRequest.callCount, 1);
+      assert.equal(
+        client._sendRequest.args[0][1], 'http://example.com/wait');
+      assert.equal(
+        client._sendRequest.args[0][2]['Content-Type'], 'application/json');
+    });
+
+    it('handles retry', () => {
+      client._sendRequest
+        .onFirstCall().callsArgWith(7, getResponse(true))
+        .onSecondCall().callsArgWith(7, getResponse(false));
+      bakery._interact(
+        'http://example.com/visit', 'http://example.com/wait', ()=>{}, ()=>{});
+      assert.equal(client._sendRequest.callCount, 2);
+    });
+
+    it('limits retries', () => {
+      client._sendRequest.callsArgWith(7, getResponse(true));
+      bakery._interact(
+        'http://example.com/visit', 'http://example.com/wait', ()=>{}, ()=>{});
+      assert.equal(client._sendRequest.callCount, 6); // 6 is retrycount limit
+    });
+
+    it('handles errors', () => {
+      client._sendRequest.callsArgWith(7, getResponse(true));
+      sinon.stub(bakery, '_getError');
+        .returns({'message': 'bad wolf'});
+      const ok = sinon.stub();
+      const fail = sinon.stub();
+      bakery._interact(
+        'http://example.com/visit', 'http://example.com/wait', ok, fail);
+      assert.equal(ok.callCount, 0);
+      assert.equal(fail.callCount, 1);
+      assert.equal(fail.args[0][0], 'cannot interact: bad wolf');
+    });
+
+    it('handles success', () => {
+      client._sendRequest.callsArgWith(7, getResponse(true));
+      sinon.stub(bakery, '_getError').returns(null);
+      const ok = sinon.stub();
+      const fail = sinon.stub();
+      bakery._interact(
+        'http://example.com/visit', 'http://example.com/wait', ok, fail);
+      assert.equal(ok.callCount, 1);
+      assert.equal(fail.callCount, 0);
     });
   });
 });
