@@ -175,4 +175,24 @@ describe('jujulib Stripe service', function() {
       assert.isNull(callback.args[0][1]);
     });
   });
+
+  describe('createCardElement', function() {
+    it('can create a card element', function() {
+      const callback = sinon.stub();
+      const create = sinon.stub().returns({
+        created: 'created'
+      });
+      fakeStripe.elements = sinon.stub().returns({
+        create: create
+      });
+      const stripe = new window.jujulib.stripe('http://example.com/');
+      stripe.stripe = fakeStripe;
+      stripe.createCardElement(callback);
+      assert.equal(create.callCount, 1);
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0][0], {
+        created: 'created'
+      });
+    });
+  });
 });

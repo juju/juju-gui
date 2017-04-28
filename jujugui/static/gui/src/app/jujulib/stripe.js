@@ -173,6 +173,21 @@ var module = module;
         address_country: card.addressCountry
       };
       this._getStripe(stripe => {stripe.card.createToken(data, handler);});
+    },
+
+    /**
+      Create a card element.
+
+      @param callback {Function} The function to call when the element has been
+        created.
+      @returns {Object} The created card.
+    */
+    createCardElement: function(callback) {
+      this._getStripe(stripe => {
+        const elements = stripe.elements();
+        const card = elements.create('card');
+        callback(card);
+      });
     }
   };
 
