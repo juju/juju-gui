@@ -1063,12 +1063,12 @@ YUI.add('juju-env-api', function(Y) {
 
       @method addCharm
     */
-    addCharm: function(url, macaroon, callback, options) {
+    addCharm: function(url, charmstore, callback, options) {
       if (options && options.immediate) {
-        this._addCharm(url, macaroon, callback);
+        this._addCharm(url, charmstore, callback);
         return;
       }
-      this.get('ecs').lazyAddCharm([url, macaroon, callback], options);
+      this.get('ecs').lazyAddCharm([url, charmstore, callback], options);
     },
 
     /**

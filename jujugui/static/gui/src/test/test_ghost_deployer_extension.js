@@ -131,11 +131,10 @@ describe('Ghost Deployer Extension', function() {
   it('calls to add the charm before deploying', function() {
     var charm = makeCharm();
     var addCharmCalled = false;
-    ghostDeployer.env.addCharm = function(charmId, macaroon, callback, opt) {
+    ghostDeployer.env.addCharm = function(charmId, charmstore, callback, opt) {
       addCharmCalled = true;
       assert.equal(charmId, charm.get('id'));
-      // It should fetch the macaroon when adding the charm.
-      assert.strictEqual(macaroon, null);
+      assert.deepEqual(charmstore, ghostDeployer.get('charmstore'));
       assert.equal(typeof callback, 'function');
       assert.deepEqual(opt, {
         applicationId: 'ghost-service-id'
