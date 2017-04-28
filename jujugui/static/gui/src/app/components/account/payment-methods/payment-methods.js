@@ -26,6 +26,7 @@ YUI.add('account-payment-method', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      createCardElement: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func.isRequired,
       createToken: React.PropTypes.func.isRequired,
       paymentUser: React.PropTypes.object.isRequired,
@@ -106,19 +107,20 @@ YUI.add('account-payment-method', function() {
         return;
       }
       const card = this.refs.cardForm.getValue();
-      const xhr = this.props.createToken(card, (error, token) => {
-        if (error) {
-          const message = 'Could not create Stripe token';
-          this.props.addNotification({
-            title: message,
-            message: `${message}: ${error}`,
-            level: 'error'
-          });
-          console.error(message, error);
-          return;
-        }
-        this._createPaymentMethod(token.id);
-      });
+      const xhr = this.props.createToken(
+        card.card, {name: card.name}, (error, token) => {
+          if (error) {
+            const message = 'Could not create Stripe token';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
+            return;
+          }
+          this._createPaymentMethod(token.id);
+        });
       this.xhrs.push(xhr);
     },
 
@@ -176,6 +178,7 @@ YUI.add('account-payment-method', function() {
             <div className="account__payment-form-fields">
               <juju.components.CardForm
                 acl={this.props.acl}
+                createCardElement={this.props.createCardElement}
                 ref="cardForm"
                 validateForm={this.props.validateForm} />
             </div>

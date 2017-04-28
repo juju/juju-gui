@@ -423,10 +423,12 @@ describe('DeploymentFlow', function() {
     const getCountries = sinon.stub();
     const getUser = sinon.stub();
     const validateForm = sinon.stub();
+    const createCardElement = sinon.stub();
     const renderer = createDeploymentFlow({
       acl: acl,
       addNotification: addNotification,
       cloud: {name: 'cloud'},
+      createCardElement: createCardElement,
       createToken: createToken,
       createUser: createUser,
       credential: 'cred',
@@ -449,6 +451,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentPayment
           acl={acl}
           addNotification={addNotification}
+          createCardElement={createCardElement}
           createToken={createToken}
           createUser={createUser}
           getCountries={getCountries}

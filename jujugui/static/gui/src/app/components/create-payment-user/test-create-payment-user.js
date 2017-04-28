@@ -53,10 +53,7 @@ describe('CreatePaymentUser', function() {
       },
       cardForm: {
         getValue: sinon.stub().returns({
-          number: '1234567812345678',
-          cvc: '123',
-          expMonth: '03',
-          expYear: '17',
+          card: {card: 'value'},
           name: 'Mr Geoffrey Spinach'
         })
       }
@@ -66,10 +63,12 @@ describe('CreatePaymentUser', function() {
   it('can display a personal form', function() {
     const addNotification = sinon.stub();
     const validateForm = sinon.stub();
+    const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -133,6 +132,7 @@ describe('CreatePaymentUser', function() {
             </h2>
             <juju.components.CardForm
               acl={acl}
+              createCardElement={createCardElement}
               ref="cardForm"
               validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
@@ -171,10 +171,12 @@ describe('CreatePaymentUser', function() {
   it('can display a business form', function() {
     const addNotification = sinon.stub();
     const validateForm = sinon.stub();
+    const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -255,6 +257,7 @@ describe('CreatePaymentUser', function() {
             </h2>
             <juju.components.CardForm
               acl={acl}
+              createCardElement={createCardElement}
               ref="cardForm"
               validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
@@ -297,6 +300,7 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -344,6 +348,7 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={createToken}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -364,6 +369,7 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={createToken}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -381,6 +387,7 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={createToken}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -392,11 +399,8 @@ describe('CreatePaymentUser', function() {
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createToken.callCount, 1);
-    assert.deepEqual(createToken.args[0][0], {
-      number: '1234567812345678',
-      cvc: '123',
-      expMonth: '03',
-      expYear: '17',
+    assert.deepEqual(createToken.args[0][0], {card: 'value'});
+    assert.deepEqual(createToken.args[0][1], {
       name: 'Mr Geoffrey Spinach',
       addressLine1: '10 Maple St',
       addressLine2: '',
@@ -413,6 +417,7 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={createToken}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -440,11 +445,8 @@ describe('CreatePaymentUser', function() {
     output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createToken.callCount, 1);
-    assert.deepEqual(createToken.args[0][0], {
-      number: '1234567812345678',
-      cvc: '123',
-      expMonth: '03',
-      expYear: '17',
+    assert.deepEqual(createToken.args[0][0], {card: 'value'});
+    assert.deepEqual(createToken.args[0][1], {
       name: 'Mr Geoffrey Spinach',
       addressLine1: '9 Kangaroo St',
       addressLine2: '',
@@ -461,7 +463,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
-        createToken={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, 'Uh oh!', null)}
         createUser={sinon.stub()}
         getCountries={getCountries}
         onUserCreated={onUserCreated}
@@ -485,7 +488,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
-        createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, null, {id: 'token_123'})}
         createUser={createUser}
         getCountries={getCountries}
         onUserCreated={onUserCreated}
@@ -533,7 +537,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
-        createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, null, {id: 'token_123'})}
         createUser={createUser}
         getCountries={getCountries}
         onUserCreated={onUserCreated}
@@ -568,7 +573,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
-        createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, null, {id: 'token_123'})}
         createUser={createUser}
         getCountries={getCountries}
         onUserCreated={onUserCreated}
@@ -632,7 +638,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
-        createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, null, {id: 'token_123'})}
         createUser={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
         getCountries={getCountries}
         onUserCreated={onUserCreated}
@@ -655,7 +662,8 @@ describe('CreatePaymentUser', function() {
       <juju.components.CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
-        createToken={sinon.stub().callsArgWith(1, null, {id: 'token_123'})}
+        createCardElement={sinon.stub()}
+        createToken={sinon.stub().callsArgWith(2, null, {id: 'token_123'})}
         createUser={sinon.stub().callsArgWith(1, null, null)}
         getCountries={getCountries}
         onUserCreated={onUserCreated}

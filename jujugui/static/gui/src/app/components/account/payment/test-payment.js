@@ -51,6 +51,7 @@ describe('AccountPayment', function() {
       <juju.components.AccountPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
@@ -73,10 +74,12 @@ describe('AccountPayment', function() {
     const createToken = sinon.stub();
     const removePaymentMethod = sinon.stub();
     const validateForm = sinon.stub();
+    const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createPaymentMethod={createPaymentMethod}
         createToken={createToken}
         createUser={sinon.stub()}
@@ -93,6 +96,7 @@ describe('AccountPayment', function() {
           <juju.components.AccountPaymentMethod
             acl={acl}
             addNotification={addNotification}
+            createCardElement={createCardElement}
             createPaymentMethod={createPaymentMethod}
             createToken={createToken}
             paymentUser={user}
@@ -119,6 +123,7 @@ describe('AccountPayment', function() {
       <juju.components.AccountPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
@@ -145,6 +150,7 @@ describe('AccountPayment', function() {
       <juju.components.AccountPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
         createToken={createToken}
         createUser={createUser}
@@ -178,11 +184,13 @@ describe('AccountPayment', function() {
     const validateForm = sinon.stub();
     const createUser = sinon.stub();
     const createToken = sinon.stub();
+    const createCardElement = sinon.stub();
     getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createPaymentMethod={sinon.stub()}
         createToken={createToken}
         createUser={createUser}
@@ -205,6 +213,7 @@ describe('AccountPayment', function() {
             <juju.components.CreatePaymentUser
               acl={acl}
               addNotification={addNotification}
+              createCardElement={createCardElement}
               createToken={createToken}
               createUser={createUser}
               getCountries={getCountries}
@@ -224,6 +233,7 @@ describe('AccountPayment', function() {
       <juju.components.AccountPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
