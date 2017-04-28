@@ -237,6 +237,7 @@ describe('AddressForm', function() {
       city: 'Sasquatch',
       state: 'Bunnyhug',
       postcode: '90210',
+      countryCode: 'CA',
       phones: ['12341234']
     });
   });

@@ -34,6 +34,7 @@ YUI.add('account-payment-details', function() {
       removeBillingAddress: React.PropTypes.func.isRequired,
       updateAddress: React.PropTypes.func.isRequired,
       updateBillingAddress: React.PropTypes.func.isRequired,
+      updateUser: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -147,7 +148,7 @@ YUI.add('account-payment-details', function() {
             updateAddress={
               billing ? this.props.updateBillingAddress :
               this.props.updateAddress}
-            updated={this._getUser}
+            updated={this.props.updateUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />);
       });

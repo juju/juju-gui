@@ -147,6 +147,7 @@ YUI.add('account-payment', function() {
             removeBillingAddress={this.props.removeBillingAddress}
             updateAddress={this.props.updateAddress}
             updateBillingAddress={this.props.updateBillingAddress}
+            updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
         </div>);

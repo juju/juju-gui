@@ -114,6 +114,7 @@ YUI.add('address-form', function() {
         city: refs.city.getValue(),
         state: refs.state.getValue(),
         postcode: refs.postcode.getValue(),
+        countryCode: refs.country.getValue(),
         phones: [refs.phoneNumber.getValue()]
       };
     },

@@ -75,9 +75,18 @@ describe('AccountPayment', function() {
     const removePaymentMethod = sinon.stub();
     const validateForm = sinon.stub();
     const createCardElement = sinon.stub();
+    const addAddress = sinon.stub();
+    const addBillingAddress = sinon.stub();
+    const removeAddress = sinon.stub();
+    const removeBillingAddress = sinon.stub();
+    const updateAddress = sinon.stub();
+    const updateBillingAddress = sinon.stub();
+    const updateUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={addAddress}
+        addBillingAddress={addBillingAddress}
         addNotification={addNotification}
         createCardElement={createCardElement}
         createPaymentMethod={createPaymentMethod}
@@ -85,7 +94,12 @@ describe('AccountPayment', function() {
         createUser={sinon.stub()}
         getCountries={sinon.stub()}
         getUser={getUser}
+        removeAddress={removeAddress}
+        removeBillingAddress={removeBillingAddress}
         removePaymentMethod={removePaymentMethod}
+        updateAddress={updateAddress}
+        updateBillingAddress={updateBillingAddress}
+        updateUser={updateUser}
         username="spinach"
         validateForm={validateForm} />, true);
     const instance = renderer.getMountedInstance();
@@ -106,9 +120,16 @@ describe('AccountPayment', function() {
             validateForm={validateForm} />
           <juju.components.AccountPaymentDetails
             acl={acl}
+            addAddress={addAddress}
+            addBillingAddress={addBillingAddress}
             addNotification={addNotification}
             getCountries={getCountries}
             paymentUser={user}
+            removeAddress={removeAddress}
+            removeBillingAddress={removeBillingAddress}
+            updateAddress={updateAddress}
+            updateBillingAddress={updateBillingAddress}
+            updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
         </div>
