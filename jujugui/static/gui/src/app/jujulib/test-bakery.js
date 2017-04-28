@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Bakery', () => {
+fdescribe('Bakery', () => {
   let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll((done) => {
