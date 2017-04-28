@@ -472,6 +472,7 @@ var module = module;
           postcode: address.postcode || null,
           country: address.country || null
         },
+        cardHolder: paymentMethod['card-holder'] || null,
         id: paymentMethod.id,
         brand: paymentMethod.brand || null,
         last4: paymentMethod.last4 || null,
