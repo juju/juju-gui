@@ -112,9 +112,9 @@ YUI.add('address-form', function() {
         line1: refs.line1.getValue(),
         line2: refs.line2.getValue(),
         city: refs.city.getValue(),
-        state: refs.state.getValue(),
+        county: refs.state.getValue(),
         postcode: refs.postcode.getValue(),
-        countryCode: refs.country.getValue(),
+        country: refs.country.getValue(),
         phones: [refs.phoneNumber.getValue()]
       };
     },

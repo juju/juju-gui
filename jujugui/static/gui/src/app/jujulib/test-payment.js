@@ -68,7 +68,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        countryCode: null,
+        country: null,
         phones: []
       }],
       vat: '1234',
@@ -82,7 +82,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        countryCode: null,
+        country: null,
         phones: []
       }],
       paymentMethods: [{
@@ -187,7 +187,7 @@ describe('jujulib payment service', function() {
           city: 'New Orleans',
           county: null,
           postcode: null,
-          countryCode: null,
+          country: null,
           phones: []
         }],
         paymentMethods: [{
@@ -267,7 +267,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        'country-code': null,
+        country: null,
         phones: []
       }],
       vat: '1234',
@@ -280,7 +280,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        'country-code': null,
+        country: null,
         phones: []
       }],
       'allow-email': true,
@@ -613,7 +613,7 @@ describe('jujulib payment service', function() {
         county: 'Bunnyhug',
         city: 'Sasquatch',
         postcode: '90210',
-        countryCode: 'CA'
+        country: 'CA'
       };
     });
 
@@ -631,7 +631,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        'country-code': 'CA',
+        country: 'CA',
         phones: []
       });
     });
@@ -681,7 +681,7 @@ describe('jujulib payment service', function() {
         county: 'Bunnyhug',
         city: 'Sasquatch',
         postcode: '90210',
-        countryCode: 'CA'
+        country: 'CA'
       };
     });
 
@@ -699,7 +699,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        'country-code': 'CA',
+        country: 'CA',
         phones: []
       });
     });
@@ -839,7 +839,7 @@ describe('jujulib payment service', function() {
         county: 'Bunnyhug',
         city: 'Sasquatch',
         postcode: '90210',
-        countryCode: 'CA'
+        country: 'CA'
       };
     });
 
@@ -858,7 +858,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        'country-code': 'CA',
+        country: 'CA',
         phones: []
       });
     });
@@ -908,7 +908,7 @@ describe('jujulib payment service', function() {
         county: 'Bunnyhug',
         city: 'Sasquatch',
         postcode: '90210',
-        countryCode: 'CA'
+        country: 'CA'
       };
     });
 
@@ -928,7 +928,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        'country-code': 'CA',
+        country: 'CA',
         phones: []
       });
     });

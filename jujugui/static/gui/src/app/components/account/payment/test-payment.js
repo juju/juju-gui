@@ -50,6 +50,8 @@ describe('AccountPayment', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={sinon.stub()}
+        addBillingAddress={sinon.stub()}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
@@ -57,7 +59,11 @@ describe('AccountPayment', function() {
         createUser={sinon.stub()}
         getCountries={sinon.stub()}
         getUser={sinon.stub()}
+        removeAddress={sinon.stub()}
+        removeBillingAddress={sinon.stub()}
         removePaymentMethod={sinon.stub()}
+        updateAddress={sinon.stub()}
+        updateBillingAddress={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -143,6 +149,8 @@ describe('AccountPayment', function() {
     jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={sinon.stub()}
+        addBillingAddress={sinon.stub()}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
@@ -150,7 +158,11 @@ describe('AccountPayment', function() {
         createUser={sinon.stub()}
         getCountries={sinon.stub()}
         getUser={getUser}
+        removeAddress={sinon.stub()}
+        removeBillingAddress={sinon.stub()}
         removePaymentMethod={sinon.stub()}
+        updateAddress={sinon.stub()}
+        updateBillingAddress={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
@@ -170,6 +182,8 @@ describe('AccountPayment', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={sinon.stub()}
+        addBillingAddress={sinon.stub()}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
@@ -177,7 +191,11 @@ describe('AccountPayment', function() {
         createUser={createUser}
         getCountries={getCountries}
         getUser={getUser}
+        removeAddress={sinon.stub()}
+        removeBillingAddress={sinon.stub()}
         removePaymentMethod={sinon.stub()}
+        updateAddress={sinon.stub()}
+        updateBillingAddress={sinon.stub()}
         username="spinach"
         validateForm={validateForm} />, true);
     const instance = renderer.getMountedInstance();
@@ -210,6 +228,8 @@ describe('AccountPayment', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={sinon.stub()}
+        addBillingAddress={sinon.stub()}
         addNotification={addNotification}
         createCardElement={createCardElement}
         createPaymentMethod={sinon.stub()}
@@ -217,7 +237,11 @@ describe('AccountPayment', function() {
         createUser={createUser}
         getCountries={getCountries}
         getUser={getUser}
+        removeAddress={sinon.stub()}
+        removeBillingAddress={sinon.stub()}
         removePaymentMethod={sinon.stub()}
+        updateAddress={sinon.stub()}
+        updateBillingAddress={sinon.stub()}
         username="spinach"
         validateForm={validateForm} />, true);
     const instance = renderer.getMountedInstance();
@@ -253,6 +277,8 @@ describe('AccountPayment', function() {
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
+        addAddress={sinon.stub()}
+        addBillingAddress={sinon.stub()}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
         createPaymentMethod={sinon.stub()}
@@ -260,7 +286,11 @@ describe('AccountPayment', function() {
         createUser={sinon.stub()}
         getCountries={sinon.stub()}
         getUser={getUser}
+        removeAddress={sinon.stub()}
+        removeBillingAddress={sinon.stub()}
         removePaymentMethod={sinon.stub()}
+        updateAddress={sinon.stub()}
+        updateBillingAddress={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub()} />, true);
     component.unmount();
