@@ -387,19 +387,19 @@ describe.skip('service module events', function() {
             clientY: 153
           }
         };
-
-    var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
-      eventHandle.detach();
+    const listener = e => {
+      document.removeEventListener('initiateDeploy', listener);
       // After the translation and calculations the above x and y coords should
       // place the element at -245, -18
-      assert.deepEqual(ghostAttributes, {
+      assert.deepEqual(e.detail.ghostAttributes, {
         coordinates: [170, 317],
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.
       assert.equal(preventCount, 1);
       done();
-    });
+    };
+    document.addEventListener('initiateDeploy', listener);
     serviceModule.set('component', topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
@@ -835,8 +835,8 @@ describe('canvasDropHandler', function() {
   it('defers its implementatino to _canvasDropHandler', function() {
     var files = {length: 2};
     var evt = {
-      _event: {dataTransfer: {files: files}},
-      halt: function() {}
+      dataTransfer: {files: files},
+      preventDefault: sinon.stub()
     };
     // Calling both functions with arguments that result in an early-out is the
     // easiest way to show that the one is just a shim around the other.
@@ -847,8 +847,8 @@ describe('canvasDropHandler', function() {
 
   it('halts the event so FF does not try to reload the page', function(done) {
     var evt = {
-      _event: {dataTransfer: {files: {length: 2}}},
-      halt: function() {done();}
+      dataTransfer: {files: {length: 2}},
+      preventDefault: () => {done();}
     };
     serviceModule.canvasDropHandler(evt);
   });

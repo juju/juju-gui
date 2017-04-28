@@ -28,9 +28,11 @@ YUI.add('account', function() {
       addNotification: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func,
       createToken: React.PropTypes.func,
+      createUser: React.PropTypes.func,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       removePaymentMethod: React.PropTypes.func,
@@ -51,11 +53,13 @@ YUI.add('account', function() {
     _generatePaymentDetails: function() {
       if (this.props.showPay) {
         return (
-          <juju.components.AccountPaymentMethod
+          <juju.components.AccountPayment
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
+            createUser={this.props.createUser}
+            getCountries={this.props.getCountries}
             getUser={this.props.getUser}
             removePaymentMethod={this.props.removePaymentMethod}
             username={this.props.userInfo.profile}
@@ -104,7 +108,7 @@ YUI.add('account', function() {
 }, '', {
   requires: [
     'account-credentials',
-    'account-payment-method',
+    'account-payment',
     'panel-component',
     'user-profile-header'
   ]

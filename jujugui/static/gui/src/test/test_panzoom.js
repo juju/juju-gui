@@ -19,10 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('pan zoom module', function() {
-  var db, models, utils, view, viewContainer, views, Y, pz, topo, vis;
+  var db, models, utils, view, viewContainer, views, pz, topo, vis;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use(['node',
       'juju-models',
       'juju-views',
       'juju-gui',
@@ -52,16 +52,6 @@ describe('pan zoom module', function() {
     viewContainer.remove();
   });
 
-  function fixTranslate(translate) {
-    if (Array.isArray(translate) &&
-        translate[0] === 0 &&
-        translate[1] === 0 &&
-        Y.UA.ie) {
-      return 0;
-    }
-    return translate;
-  }
-
   // Test the zoom calculations.
   it('should handle fractional values within the limit for rescale',
      function() {
@@ -75,7 +65,7 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.609);
-       var translate = fixTranslate(evt.translate);
+       var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(0.609)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
@@ -92,7 +82,7 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(2.0);
-       var translate = fixTranslate(evt.translate);
+       var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(2)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
@@ -109,7 +99,7 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.25);
-       var translate = fixTranslate(evt.translate);
+       var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(0.25)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);

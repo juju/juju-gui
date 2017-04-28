@@ -30,10 +30,6 @@ describe('Bakery', function() {
   });
 
   beforeEach(function () {
-    bakery = new Y.juju.environments.web.Bakery({
-      webhandler: new Y.juju.environments.web.WebHandler(),
-      serviceName: 'test'
-    });
     fakeLocalStorage = {
       store: {},
       getItem: function(item) {
@@ -46,6 +42,11 @@ describe('Bakery', function() {
         delete this.store[item];
       }
     };
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      user: new window.jujugui.User({localStorage: fakeLocalStorage})
+    });
   });
 
   afterEach(function () {
@@ -80,6 +81,7 @@ describe('Bakery', function() {
     bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test',
+      user: new window.jujugui.User({localStorage: fakeLocalStorage}),
       macaroon: 'foo-bar'
     });
     assert.equal(bakery.getMacaroon(), 'foo-bar');
@@ -235,7 +237,8 @@ describe('Bakery', function() {
       bakery = new Y.juju.environments.web.Bakery({
         webhandler: new Y.juju.environments.web.WebHandler(),
         serviceName: 'test',
-        setCookiePath: 'set-auth-cookie'
+        setCookiePath: 'set-auth-cookie',
+        user: new window.jujugui.User({localStorage: fakeLocalStorage})
       });
       const onAuthRequired = sinon.stub().withArgs();
       const onAuthDone = sinon.stub();

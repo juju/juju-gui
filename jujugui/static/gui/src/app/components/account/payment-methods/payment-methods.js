@@ -28,8 +28,9 @@ YUI.add('account-payment-method', function() {
       addNotification: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func.isRequired,
       createToken: React.PropTypes.func.isRequired,
-      getUser: React.PropTypes.func.isRequired,
+      paymentUser: React.PropTypes.object.isRequired,
       removePaymentMethod: React.PropTypes.func.isRequired,
+      updateUser: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -37,14 +38,8 @@ YUI.add('account-payment-method', function() {
     getInitialState: function() {
       this.xhrs = [];
       return {
-        loading: false,
-        showAdd: false,
-        user: null
+        showAdd: false
       };
-    },
-
-    componentWillMount: function() {
-      this._getUser();
     },
 
     componentWillUnmount: function() {
@@ -54,40 +49,13 @@ YUI.add('account-payment-method', function() {
     },
 
     /**
-      Get a payment user.
-
-      @method _getUser
-    */
-    _getUser: function() {
-      this.setState({loading: true}, () => {
-        const xhr = this.props.getUser(this.props.username, (error, user) => {
-          if (error) {
-            this.props.addNotification({
-              title: 'Could not load user info',
-              message: `Could not load user info: ${error}`,
-              level: 'error'
-            });
-            console.error('Could not load user info', error);
-            return;
-          }
-          this.setState({user: user, loading: false});
-        });
-        this.xhrs.push(xhr);
-      });
-    },
-
-    /**
       Generate a list of payment method details.
 
       @method _generatePaymentMethods
     */
     _generatePaymentMethods: function() {
-      const user = this.state.user;
-      if (this.state.loading) {
-        return (
-          <juju.components.Spinner />);
-      }
-      if (!user || user.paymentMethods.length === 0) {
+      const user = this.props.paymentUser;
+      if (!user.paymentMethods.length) {
         return (
           <div className="account__payment-no-methods">
             You do not have a payment method.
@@ -115,7 +83,7 @@ YUI.add('account-payment-method', function() {
               <juju.components.AccountPaymentMethodCard
                 addNotification={this.props.addNotification}
                 card={method}
-                onPaymentMethodRemoved={this._getUser}
+                onPaymentMethodRemoved={this.props.updateUser}
                 removePaymentMethod={this.props.removePaymentMethod}
                 username={this.props.username} />
             </div>
@@ -162,7 +130,7 @@ YUI.add('account-payment-method', function() {
     */
     _createPaymentMethod: function(token) {
       const xhr = this.props.createPaymentMethod(
-        this.props.username, token, (error, method) => {
+        this.props.username, token, null, (error, method) => {
           if (error) {
             const message = 'Could not create the payment method';
             this.props.addNotification({
@@ -175,7 +143,7 @@ YUI.add('account-payment-method', function() {
           }
           this._toggleAdd();
           // Reload the user to get the new payment method.
-          this._getUser();
+          this.props.updateUser();
         });
       this.xhrs.push(xhr);
     },
@@ -245,7 +213,6 @@ YUI.add('account-payment-method', function() {
     'account-payment-method-card',
     'card-form',
     'expanding-row',
-    'generic-button',
-    'loading-spinner'
+    'generic-button'
   ]
 });

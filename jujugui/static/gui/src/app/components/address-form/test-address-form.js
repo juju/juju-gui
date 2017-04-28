@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('AddressForm', function() {
-  let acl, getCountries;
+  let getCountries;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -32,7 +32,6 @@ describe('AddressForm', function() {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: sinon.stub().returns(false)};
     getCountries = sinon.stub().callsArgWith(0, null, [{
       name: 'Australia',
       code: 'AU'
@@ -42,8 +41,8 @@ describe('AddressForm', function() {
   it('can display a loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={sinon.stub()}
+        disabled={false}
         getCountries={sinon.stub()}
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -57,8 +56,8 @@ describe('AddressForm', function() {
   it('can display the form', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={sinon.stub()}
+        disabled={false}
         getCountries={getCountries}
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -82,7 +81,8 @@ describe('AddressForm', function() {
             validate={[{
               regex: /\S+/,
               error: 'This field is required.'
-            }]} />
+            }]}
+            value={undefined} />
           <juju.components.GenericInput
             disabled={false}
             label="Address line 1"
@@ -91,12 +91,14 @@ describe('AddressForm', function() {
             validate={[{
               regex: /\S+/,
               error: 'This field is required.'
-            }]} />
+            }]}
+            value={undefined} />
           <juju.components.GenericInput
             disabled={false}
             label="Address line 2 (optional)"
             ref="line2"
-            required={false} />
+            required={false}
+            value={undefined} />
           <juju.components.GenericInput
             disabled={false}
             label="State/province"
@@ -105,7 +107,8 @@ describe('AddressForm', function() {
             validate={[{
               regex: /\S+/,
               error: 'This field is required.'
-            }]} />
+            }]}
+            value={undefined} />
           <div className="twelve-col">
             <div className="six-col">
               <juju.components.GenericInput
@@ -116,7 +119,8 @@ describe('AddressForm', function() {
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
-                }]} />
+                }]}
+                value={undefined} />
             </div>
             <div className="six-col last-col">
               <juju.components.GenericInput
@@ -127,20 +131,10 @@ describe('AddressForm', function() {
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
-                }]} />
-            </div>
-            <div className="four-col">
-              <juju.components.InsetSelect
-                disabled={false}
-                label="Country code"
-                options={[{
-                  label: 'AU',
-                  value: 'AU'
                 }]}
-                ref="countryCode"
-                value="GB" />
+                value={undefined}/>
             </div>
-            <div className="eight-col last-col">
+            <div className="twelve-col">
               <juju.components.GenericInput
                 disabled={false}
                 label="Phone number"
@@ -149,7 +143,8 @@ describe('AddressForm', function() {
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
-                }]} />
+                }]}
+                value="" />
             </div>
           </div>
         </div>
@@ -160,8 +155,8 @@ describe('AddressForm', function() {
   it('can validate the form', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={sinon.stub()}
+        disabled={false}
         getCountries={getCountries}
         validateForm={sinon.stub().returns(false)} />, true);
     const instance = renderer.getMountedInstance();
@@ -174,8 +169,8 @@ describe('AddressForm', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={addNotification}
+        disabled={false}
         getCountries={getCountries}
         validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
@@ -191,8 +186,8 @@ describe('AddressForm', function() {
     getCountries = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={sinon.stub()}
+        disabled={false}
         getCountries={getCountries}
         validateForm={sinon.stub()} />, true);
     component.unmount();
@@ -203,8 +198,8 @@ describe('AddressForm', function() {
   it('can get the address', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AddressForm
-        acl={acl}
         addNotification={sinon.stub()}
+        disabled={false}
         getCountries={getCountries}
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
@@ -242,7 +237,6 @@ describe('AddressForm', function() {
       city: 'Sasquatch',
       state: 'Bunnyhug',
       postcode: '90210',
-      countryCode: 'CA',
       phones: ['12341234']
     });
   });

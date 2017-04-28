@@ -91,7 +91,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       // The charm is generated and populated in loadCharmDetails() then passed
       // here and fired in this event which the deployService() method of the
       // application catches to show the ghostInspector.
-      Y.fire('initiateDeploy', charm, {});
+      document.dispatchEvent(new CustomEvent('initiateDeploy', {'detail': {
+        charm: charm,
+        ghostAttributes: {}
+      }}));
     },
 
 

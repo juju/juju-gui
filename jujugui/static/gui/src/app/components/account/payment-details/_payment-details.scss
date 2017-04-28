@@ -1,0 +1,13 @@
+.account__payment-details {
+  &-addresses {
+    @extend %list-style;
+
+    .inset-select--disabled {
+      margin-bottom: 20px;
+    }
+  }
+
+  &-view {
+    width: 60%;
+  }
+}

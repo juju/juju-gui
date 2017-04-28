@@ -83,16 +83,15 @@ YUI.add('juju-landscape', function(Y) {
         // This is needed to be able to detect and clear annotations
         // at the service/environment level when the unit level flags
         // are cleared.
-        // The inner loop uses Y.some allowing it to stop on the
+        // The inner loop uses .some allowing it to stop on the
         // first true value.
         var serviceFlagged = false;
         db.services.toArray().forEach(service => {
           /*jslint bitwise: true*/
           // The above lint is needed to allow a |= expression
           // to pass the linter.
-          serviceFlagged |= service[annotationName] = Y.some(
-              service.get('units'),
-              function(unit) {
+          serviceFlagged |= service[annotationName] = service.get('units').some(
+              unit => {
                 var annotations = unit.annotations;
                 return Boolean(
                     annotations && annotations[annotationName]);

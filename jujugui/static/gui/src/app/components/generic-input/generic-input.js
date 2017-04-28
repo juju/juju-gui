@@ -205,7 +205,8 @@ YUI.add('generic-input', function() {
       var classes = classNames(
         'generic-input__label', {
           'generic-input__label--focus': this.state.focus,
-          'generic-input__label--value-present': !!this.getValue(),
+          'generic-input__label--value-present': !!this.getValue() ||
+            this.props.value,
           'generic-input__label--placeholder-present': !!this.props.placeholder
         }
       );

@@ -125,13 +125,6 @@ YUI.add('juju-gui', function(Y) {
         help: 'Display this help',
         label: 'Shift + ?'
       },
-      'A-e': {
-        callback: function(evt) {
-          this.fire('navigateTo', { url: '/:gui:/' });
-        },
-        help: 'Navigate to the model overview',
-        label: 'Alt + e'
-      },
       'S-+': {
         fire: 'zoom_in',
         help: 'Zoom In',
@@ -164,14 +157,6 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Export the model',
         label: 'Shift + d'
-      },
-
-      'C-S-d': {
-        callback: function(evt) {
-          Y.fire('saveWebsocketLog');
-        },
-        help: 'Save the websocket log to a file',
-        label: 'Control + Shift + s'
       }
     },
 
@@ -467,8 +452,7 @@ YUI.add('juju-gui', function(Y) {
       const getBundleChanges = this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI);
       // Create Romulus API client instances.
-      this._setupRomulusServices(
-        window.juju_config, window.jujulib, window.localStorage);
+      this._setupRomulusServices(window.juju_config, window.jujulib);
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
@@ -491,10 +475,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Listen for window unloads and trigger the unloadWindow function.
       window.onbeforeunload = views.utils.unloadWindow.bind(this);
-
-      this.on('*:navigateTo', function(e) {
-        this.navigate(e.url);
-      }, this);
 
       // When the environment name becomes available, display it.
       this.env.after('environmentNameChange',
@@ -552,7 +532,8 @@ YUI.add('juju-gui', function(Y) {
 
       // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
-      this.db.on('update', this.on_database_changed, this);
+      this.bound_on_database_changed = this.on_database_changed.bind(this);
+      document.addEventListener('update', this.bound_on_database_changed);
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -577,9 +558,10 @@ YUI.add('juju-gui', function(Y) {
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
-      Y.on('initiateDeploy', function(charm, ghostAttributes) {
-        this.deployService(charm, ghostAttributes);
-      }, this);
+      this._onInitiateDeploy = evt => {
+        this.deployService(evt.detail.charm, evt.detail.ghostAttributes);
+      };
+      document.addEventListener('initiateDeploy', this._onInitiateDeploy);
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
       // These are manually detached in the destructor.
@@ -589,7 +571,6 @@ YUI.add('juju-gui', function(Y) {
       });
       // In Juju >= 2 we connect to the controller and then to the model.
       this.controllerAPI.connect();
-      this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       this.state.bootstrap();
     },
 
@@ -1120,12 +1101,16 @@ YUI.add('juju-gui', function(Y) {
           createPaymentMethod={
             this.payment && this.payment.createPaymentMethod.bind(this.payment)}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
+          createUser={
+              this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
             views.utils)}
+          getCountries={
+            this.payment && this.payment.getCountries.bind(this.payment)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           removePaymentMethod={
             this.payment && this.payment.removePaymentMethod.bind(this.payment)}
@@ -2251,6 +2236,7 @@ YUI.add('juju-gui', function(Y) {
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
+          setCookie: true,
           macaroon: existingMacaroons,
           user: this.user,
           dischargeToken: existingDischargeToken
@@ -2293,9 +2279,8 @@ YUI.add('juju-gui', function(Y) {
       @method _setupRomulusServices
       @param {Object} config The GUI application configuration.
       @param {Object} jujulib The Juju API client library.
-      @param {Object} storage The place where to store macaroons.
     */
-    _setupRomulusServices: function(config, jujulib, storage) {
+    _setupRomulusServices: function(config, jujulib) {
       if (!config) {
         // We are probably running tests.
         return;
@@ -2312,7 +2297,6 @@ YUI.add('juju-gui', function(Y) {
         macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage,
         user: this.user,
         dischargeToken: config.dischargeToken
       });
@@ -2322,7 +2306,6 @@ YUI.add('juju-gui', function(Y) {
         macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage,
         user: this.user,
         dischargeToken: config.dischargeToken
       });
@@ -2333,7 +2316,6 @@ YUI.add('juju-gui', function(Y) {
           macaroon: macaroons,
           webhandler: webHandler,
           interactive: interactive,
-          cookieStore: storage,
           user: this.user,
           dischargeToken: config.dischargeToken
         });
@@ -2483,6 +2465,8 @@ YUI.add('juju-gui', function(Y) {
       ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
         document.removeEventListener(eventName, this._boundAppDragOverHandler);
       });
+      document.removeEventListener('update', this.bound_on_database_changed);
+      document.removeEventListener('initiateDeploy', this._onInitiateDeploy);
     },
 
     /**
@@ -2562,7 +2546,7 @@ YUI.add('juju-gui', function(Y) {
           this.maskVisibility(true);
           this.env.get('ecs').clear();
           this.db.reset();
-          this.db.fire('update');
+          this.db.fireEvent('update');
           this.state.changeState({
             model: null,
             profile: null,
@@ -2759,7 +2743,7 @@ YUI.add('juju-gui', function(Y) {
       }
       if (clearDB) {
         this.db.reset();
-        this.db.fire('update');
+        this.db.fireEvent('update');
       }
       // Reset canvas centering to new env will center on load.
       const instance = this.views.environment.instance;
@@ -3187,6 +3171,8 @@ YUI.add('juju-gui', function(Y) {
     'notification-list',
     'panel-component',
     'sharing',
+    'svg-icon',
+    'shortcuts',
     'user-menu',
     'user-profile',
     'zoom',
