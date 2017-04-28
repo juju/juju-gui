@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Bakery', () => {
+fdescribe('Bakery', () => {
   let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll((done) => {
@@ -60,7 +60,13 @@ describe('Bakery', () => {
     };
 
     storage = new jujulib.BakeryStorage(
-      fakeLocalStorage, {services: {charmstore: 'http://example.com/'}});
+      fakeLocalStorage, {
+        services: {
+          charmstore: 'http://example.com/charmstore',
+          otherService: 'http://example.com/other'
+        }
+      }
+    );
     bakery = new jujulib.Bakery(client, storage);
   });
 
@@ -114,7 +120,7 @@ describe('Bakery', () => {
       fakeLocalStorage.store['charmstore'] = 'doctor';
       fakeLocalStorage.store['identity'] = 'bad wolf';
 
-      bakery.sendRequest('http://example.com/', 'GET');
+      bakery.sendRequest('http://example.com/charmstore', 'GET');
       const expectedHeaders = {
         'Bakery-Protocol-Version': 1,
         'Macaroons': 'doctor'
@@ -308,8 +314,7 @@ describe('Bakery', () => {
 
     it('handles errors', () => {
       client._sendRequest.callsArgWith(7, getResponse(true));
-      sinon.stub(bakery, '_getError');
-        .returns({'message': 'bad wolf'});
+      sinon.stub(bakery, '_getError').returns({'message': 'bad wolf'});
       const ok = sinon.stub();
       const fail = sinon.stub();
       bakery._interact(
@@ -329,6 +334,50 @@ describe('Bakery', () => {
       assert.equal(ok.callCount, 1);
       assert.equal(fail.callCount, 0);
     });
+  });
+
+  describe('storage', () => {
+    it('sets items', () => {
+      storage.set('http://example.com/charmstore', 'foo', () => {});
+      assert.equal(fakeLocalStorage.store['charmstore'], 'foo');
+    });
+
+    it('gets items', () => {
+      fakeLocalStorage.store['charmstore'] = 'foo';
+      assert.equal('foo', storage.get('http://example.com/charmstore'));
+    });
+
+    it('sets cookies for charmstore', () => {
+      const cookieSet = sinon.stub();
+      const params = {
+        services: {
+          charmstore: 'http://example.com/charmstore',
+        },
+        charmstoreCookieSetter: cookieSet
+      };
+      storage = new jujulib.BakeryStorage(fakeLocalStorage, params);
+      const macaroonValue = btoa(JSON.stringify('macaroon'));
+      storage.set('http://example.com/charmstore', macaroonValue, () => {});
+      assert.equal(cookieSet.callCount, 1);
+      assert.equal(cookieSet.args[0][0], 'macaroon');
+    });
+
+    describe('keys', () => {
+      it('special cases identity', () => {
+        // There's no identity url in services
+        Object.keys(storage._services).forEach(key => {
+          assert.notEqual('identity', key);
+        });
+        assert.equal(
+          'identity', storage._getKey('http://example.com/identity/'));
+      });
+
+      it('gets keys from services', () => {
+        assert.equal(
+          'charmstore', storage._getKey('http://example.com/charmstore'));
+      });
+    });
+
   });
 });
 
