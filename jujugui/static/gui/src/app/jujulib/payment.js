@@ -573,7 +573,7 @@ var module = module;
         city: address.city || null,
         county: address.county || null,
         postcode: address.postcode || null,
-        country: address.country || null,
+        'country-code': address.country || null,
         phones: address.phones || []
       };
     }

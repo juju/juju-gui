@@ -146,6 +146,15 @@ YUI.add('address-form', function() {
           error: 'This field is required.'
         };
         const disabled = this.props.disabled;
+        let countryCode = 'GB';
+        // Map the country name to code so that the select box can display the
+        // correct value.
+        this.state.countries.some(country => {
+          if (country.name === address.country) {
+            countryCode = country.code;
+            return true;
+          }
+        });
         content = (
           <div>
             <juju.components.InsetSelect
@@ -153,7 +162,7 @@ YUI.add('address-form', function() {
               label="Country"
               options={this._generateCountryOptions()}
               ref="country"
-              value={address.country || 'GB'} />
+              value={countryCode} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Full name"

@@ -248,7 +248,8 @@ describe('jujulib payment service', function() {
       businessName: 'Spinachy business',
       billingAddresses: [{
         city: 'New Orleans',
-        postcode: '70130'
+        postcode: '70130',
+        country: 'US'
       }],
       allowEmail: true,
       token: '54321'
@@ -267,7 +268,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        country: null,
+        'country-code': null,
         phones: []
       }],
       vat: '1234',
@@ -280,7 +281,7 @@ describe('jujulib payment service', function() {
         city: 'New Orleans',
         county: null,
         postcode: '70130',
-        country: null,
+        'country-code': 'US',
         phones: []
       }],
       'allow-email': true,
@@ -631,7 +632,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        country: 'CA',
+        'country-code': 'CA',
         phones: []
       });
     });
@@ -699,7 +700,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        country: 'CA',
+        'country-code': 'CA',
         phones: []
       });
     });
@@ -858,7 +859,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        country: 'CA',
+        'country-code': 'CA',
         phones: []
       });
     });
@@ -928,7 +929,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        country: 'CA',
+        'country-code': 'CA',
         phones: []
       });
     });
