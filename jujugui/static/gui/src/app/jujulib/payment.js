@@ -470,6 +470,29 @@ var module = module;
     },
 
     /**
+      Get the charges for a user.
+
+      @param name {String} The user's username.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and a list of charges as its second.
+    */
+    getCharges: function(username, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, response);
+      };
+      const url = `${this.url}/charges`;
+      const payload = {
+        nickname: username
+      };
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
       Reformat payment method objects for easier use with JavaScript.
 
       @public _parsePaymentMethods

@@ -1036,4 +1036,41 @@ describe('jujulib payment service', function() {
       });
     });
   });
+
+  describe('getCharges', () => {
+    it('can get a list of charges', (done) => {
+      const bakery = {
+        sendPostRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/charges');
+          const xhr = makeXHRRequest(['charge1', 'charge2']);
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getCharges('spinach', (error, response) => {
+        assert.strictEqual(error, null);
+        assert.deepEqual(response, ['charge1', 'charge2']);
+        done();
+      });
+    });
+
+    it('handles errors when getting charges', (done) => {
+      const bakery = {
+        sendPostRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getCharges('spinach', (error, response) => {
+        assert.equal(error, 'Uh oh!');
+        assert.strictEqual(response, null);
+        done();
+      });
+    });
+  });
 });
