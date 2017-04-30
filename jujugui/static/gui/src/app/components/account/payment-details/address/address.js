@@ -55,7 +55,7 @@ YUI.add('account-payment-details-address', function() {
       @method _updateAddress
     */
     _updateAddress: function() {
-      const valid = this.props.validateForm(['addressForm'], this.refs);;
+      const valid = this.props.validateForm(['addressForm'], this.refs);
       if (!valid) {
         return;
       }
