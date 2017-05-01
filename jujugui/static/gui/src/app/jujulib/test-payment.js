@@ -1060,7 +1060,7 @@ describe('jujulib payment service', function() {
               'line-items': [{
                 name: 'this is line 1',
                 details: 'a bit more details for line 1',
-                usage: 'some units',
+                usage: 'something',
                 price: '48'
               }],
               'payment-received-at': '2017-04-28T07:49:39.925Z',
@@ -1109,7 +1109,7 @@ describe('jujulib payment service', function() {
           lineItems: [{
             name: 'this is line 1',
             details: 'a bit more details for line 1',
-            usage: 'some units',
+            usage: 'something',
             price: '48'
           }],
           paymentReceivedAt: '2017-04-28T07:49:39.925Z',
