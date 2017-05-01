@@ -1046,14 +1046,98 @@ describe('jujulib payment service', function() {
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/charges');
-          const xhr = makeXHRRequest(['charge1', 'charge2']);
+          const xhr = makeXHRRequest({
+            charges:[{
+              id: 'TEST-12344',
+              'statement-id': '12344',
+              price: 10000,
+              vat: 2000,
+              currency: 'USD',
+              nickname: 'spinach',
+              for: '2016-01-02T15:04:05Z',
+              origin: 'TEST',
+              state: 'done',
+              'line-items': [{
+                name: 'this is line 1',
+                details: 'a bit more details for line 1',
+                usage: 'some units',
+                price: '48'
+              }],
+              'payment-received-at': '2017-04-28T07:49:39.925Z',
+              'payment-method-used': {
+                address: {
+                  id: 'address1',
+                  name: 'Home',
+                  line1: '1 Maple St',
+                  line2: null,
+                  county: 'Bunnyhug',
+                  city: 'Sasquatch',
+                  postcode: '90210',
+                  country: 'North of the Border'
+                },
+                id: 'paymentmethod1',
+                brand: 'Brand',
+                last4: '1234',
+                month: 3,
+                name: 'Main',
+                'card-holder': 'Mr G Spinach',
+                valid: true,
+                year: 2017
+              },
+              'payment-retry-delay': 10,
+              'payment-retry-max': 2,
+              'payment-method-update-retry-delay': 10,
+              'payment-method-update-retry-max': 100
+            }]
+          });
           success(xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.getCharges('spinach', (error, response) => {
         assert.strictEqual(error, null);
-        assert.deepEqual(response, ['charge1', 'charge2']);
+        assert.deepEqual(response, [{
+          id: 'TEST-12344',
+          statementId: '12344',
+          price: 10000,
+          vat: 2000,
+          currency: 'USD',
+          nickname: 'spinach',
+          for: '2016-01-02T15:04:05Z',
+          origin: 'TEST',
+          state: 'done',
+          lineItems: [{
+            name: 'this is line 1',
+            details: 'a bit more details for line 1',
+            usage: 'some units',
+            price: '48'
+          }],
+          paymentReceivedAt: '2017-04-28T07:49:39.925Z',
+          paymentMethodUsed: {
+            address: {
+              id: 'address1',
+              name: 'Home',
+              line1: '1 Maple St',
+              line2: null,
+              state: 'Bunnyhug',
+              city: 'Sasquatch',
+              postcode: '90210',
+              country: 'North of the Border'
+            },
+            id: 'paymentmethod1',
+            brand: 'Brand',
+            last4: '1234',
+            month: 3,
+            name: 'Main',
+            cardHolder: 'Mr G Spinach',
+            valid: true,
+            year: 2017
+          },
+          paymentRetryDelay: 10,
+          paymentRetryMax: 2,
+          paymentMethodUpdateRetryDelay: 10,
+          paymentMethodUpdateRetryMax: 100
+        }]);
         done();
       });
     });
