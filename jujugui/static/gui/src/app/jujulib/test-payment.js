@@ -47,6 +47,7 @@ describe('jujulib payment service', function() {
         last4: '1234',
         month: 3,
         name: 'Main',
+        'card-holder': 'Mr G Spinach',
         valid: true,
         year: 2017
       }],
@@ -100,6 +101,7 @@ describe('jujulib payment service', function() {
         last4: '1234',
         month: 3,
         name: 'Main',
+        cardHolder: 'Mr G Spinach',
         valid: true,
         year: 2017
       }],
@@ -204,6 +206,7 @@ describe('jujulib payment service', function() {
           last4: null,
           month: null,
           name: null,
+          cardHolder: null,
           valid: false,
           year: null
         }],

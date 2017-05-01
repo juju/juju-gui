@@ -26,6 +26,7 @@ YUI.add('account-payment', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      createCardElement: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func.isRequired,
       createToken: React.PropTypes.func.isRequired,
       createUser: React.PropTypes.func.isRequired,
@@ -121,6 +122,7 @@ YUI.add('account-payment', function() {
           <juju.components.AccountPaymentMethod
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
             updateUser={this._getUser}
@@ -153,6 +155,7 @@ YUI.add('account-payment', function() {
             <juju.components.CreatePaymentUser
               acl={this.props.acl}
               addNotification={this.props.addNotification}
+              createCardElement={this.props.createCardElement}
               createToken={this.props.createToken}
               createUser={this.props.createUser}
               getCountries={this.props.getCountries}

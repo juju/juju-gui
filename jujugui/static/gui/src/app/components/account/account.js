@@ -26,6 +26,7 @@ YUI.add('account', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      createCardElement: React.PropTypes.func,
       createPaymentMethod: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
@@ -56,6 +57,7 @@ YUI.add('account', function() {
           <juju.components.AccountPayment
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
             createUser={this.props.createUser}

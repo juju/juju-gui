@@ -49,10 +49,12 @@ describe('Account', () => {
     const createToken = sinon.stub();
     const getCountries = sinon.stub();
     const createUser = sinon.stub();
+    const createCardElement = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createPaymentMethod={createPaymentMethod}
         createToken={createToken}
         createUser={createUser}
@@ -99,6 +101,7 @@ describe('Account', () => {
             <juju.components.AccountPayment
               acl={acl}
               addNotification={addNotification}
+              createCardElement={createCardElement}
               createPaymentMethod={createPaymentMethod}
               createToken={createToken}
               createUser={createPaymentMethod}

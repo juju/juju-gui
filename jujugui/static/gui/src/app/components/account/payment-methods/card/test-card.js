@@ -36,6 +36,7 @@ describe('AccountPaymentMethodCard', () => {
       month: 3,
       year: 2017,
       brand: 'Fancy',
+      cardHolder: 'MR G Spinach',
       address: {
         id: 'address1',
         line1: '1 Maple',
@@ -63,7 +64,7 @@ describe('AccountPaymentMethodCard', () => {
               <div className="account__payment-card-front">
                 <div className="account__payment-card-overlay"></div>
                 <div className="account__payment-card-name">
-                  Click to reveal card details.
+                  MR G Spinach
                 </div>
               </div>
               <div className="account__payment-card-back">

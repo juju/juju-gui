@@ -1165,13 +1165,15 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
-          addNotification={this.db.notifications.add.bind(
-              this.db.notifications)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
+          createCardElement={
+            this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createPaymentMethod={
             this.payment && this.payment.createPaymentMethod.bind(this.payment)}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           createUser={
-              this.payment && this.payment.createUser.bind(this.payment)}
+            this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
@@ -1353,6 +1355,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
+          createCardElement={
+            this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createUser={
               this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}
