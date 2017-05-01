@@ -190,7 +190,7 @@ YUI.add('account-payment-method', function() {
               <juju.components.GenericButton
                 action={this._createToken}
                 type="inline-positive"
-                title="Add payment method" />
+                title="Add" />
             </div>
           </div>
         </juju.components.ExpandingRow>);

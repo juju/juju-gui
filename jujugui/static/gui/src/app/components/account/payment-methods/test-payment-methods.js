@@ -198,7 +198,7 @@ describe('AccountPaymentMethod', () => {
             <juju.components.GenericButton
               action={instance._createToken}
               type="inline-positive"
-              title="Add payment method" />
+              title="Add" />
           </div>
         </div>
       </juju.components.ExpandingRow>);
