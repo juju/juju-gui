@@ -49,20 +49,20 @@ describe('topology relation module', function() {
     // addModule.  Three types of events are supported: "scene", "yui", and
     // "d3".
     assert.deepProperty(view, 'events.scene');
-    assert.deepProperty(view, 'events.yui');
+    assert.deepProperty(view, 'events.topo');
     assert.deepProperty(view, 'events.d3');
   });
 
-  it('fires a "clearState" event if a drag line is clicked', function() {
-    var firedEventName;
-    var topo = {
-      fire: function(eventName) {
-        firedEventName = eventName;
-      }
+  it('fires a "clearState" event if a drag line is clicked', function(done) {
+    let called = false;
+    const handler = () => {
+      document.removeEventListener('topo.clearState', handler);
+      called = true;
+      done();
     };
-    view.set('component', topo);
+    document.addEventListener('topo.clearState', handler);
     view.draglineClicked(undefined, view);
-    assert.equal(firedEventName, 'clearState');
+    assert.equal(called, true);
   });
 
   it('fires \'addRelationEnd\' event when done making a relation', function() {

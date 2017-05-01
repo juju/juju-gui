@@ -45,8 +45,10 @@ YUI.add('juju-topology-viewport', function(Y) {
   views.ViewportModule = Y.Base.create('ViewportModule', comp.Module, [], {
 
     events: {
-      yui: {
-        windowresize: 'resized',
+      window: {
+        resize: 'resized',
+      },
+      topo: {
         rendered: 'resized'
       }
     },
@@ -99,7 +101,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       // leave the pan alone.
       if (oldSize[0] !== dimensions.width ||
           oldSize[1] !== dimensions.height) {
-        topo.fire('panToCenter');
+        document.dispatchEvent(new Event('topo.panToCenter'));
       }
     },
 

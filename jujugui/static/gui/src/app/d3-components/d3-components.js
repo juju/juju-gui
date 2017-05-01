@@ -34,14 +34,14 @@ YUI.add('d3-components', function(Y) {
     _defaultEvents: {
       scene: {},
       d3: {},
-      yui: {}
+      topo: {},
+      window: {}
     },
 
     /**
      * Declarative events include
      *    scene
      *    d3
-     *    yui
      *
      * See Component below for a description of these elements.
      *
@@ -105,7 +105,7 @@ YUI.add('d3-components', function(Y) {
      *            delegation
      *   - d3 {selector: event-type: handlerName} -> Bound using
      *          specialized d3 event handling
-     *   - yui {event-type: handlerName} -> collection of global and custom
+     *   - topo {event-type: handlerName} -> collection of global and custom
      *          events the module reacts to.
      *
      * @method addModule
@@ -220,7 +220,7 @@ YUI.add('d3-components', function(Y) {
 
     /**
      * Internal implementation of binding both Module.events.scene and
-     * Module.events.yui.
+     * Module.events.topo.
      **/
     _bindEvents: function(modName) {
       const self = this,
@@ -257,48 +257,59 @@ YUI.add('d3-components', function(Y) {
           }
         });
       });
-
-      // Bind 'yui' custom/global subscriptions
-      // yui: {str: str_or_function}
-      // TODO {str: str/func/obj}
-      //       where object includes phase (before, on, after)
-      if (modEvents.yui) {
-        // Resolve any 'string' handlers to methods on module.
-        ['after', 'before', 'on'].forEach(eventPhase => {
-          var resolvedHandler = {};
-          Object.keys(modEvents.yui).forEach(name => {
-            const handler = self._normalizeHandler(
-              modEvents.yui[name], module, name);
-            if (!handler || handler.phase !== eventPhase) {
-              return;
-            }
-            resolvedHandler[name] = handler;
-          }, this);
-          // Bind resolved event handlers as a group.
-          if (Object.keys(resolvedHandler).length) {
-            Object.keys(resolvedHandler).forEach(name => {
-              const handler = resolvedHandler[name];
-              // DOM and synthetic events are subscribed using Y.on with
-              // this signature: Y.on(event, callback, target, context).
-              // For this reason, it is not possible here to just pass the
-              // context as third argument.
-              var target = self,
-                  callback = handler.callback.bind(handler.context);
-              if (['windowresize'].indexOf(name) !== -1) {
-                target = Y;
-                handler.context = null;
-              } else {
-                // (re)Register the event to bubble.
-                self.publish(name, {emitFacade: true});
-              }
-              subscriptions.push(
-                  target[eventPhase](
-                  name, callback, handler.context));
-            });
-          }
-        });
+      if (modEvents.topo) {
+        subscriptions = subscriptions.concat(
+          this._attachEvents(module, modEvents.topo, 'topo'));
+      }
+      if (modEvents.window) {
+        subscriptions = subscriptions.concat(
+          this._attachEvents(module, modEvents.window, null, window));
       }
       return subscriptions;
+    },
+
+    /*
+      Attach the events for a module.
+
+      @method _attachEvents
+      @param module {Object} The module the events are for.
+      @param group {Object} The collection of events.
+      @param prefix {String} The event prefix to attach.
+      @param parent {String} The parent to attach to.
+      @returns {Array} The subscriptions added.
+    */
+    _attachEvents: function(module, group, prefix, parent=document) {
+      let subscriptions = [];
+      let resolvedHandler = {};
+      Object.keys(group).forEach(name => {
+        const handler = this._normalizeHandler(group[name], module, name);
+        resolvedHandler[name] = handler;
+      });
+      // Bind resolved event handlers as a group.
+      if (Object.keys(resolvedHandler).length) {
+        Object.keys(resolvedHandler).forEach(name => {
+          // All events are fired from the document or window so scope the
+          // events to avoid conflicts.
+          const event = prefix ? `${prefix}.${name}` : name;
+          const handler = resolvedHandler[name];
+          const callable = e => {
+            // Pass the extra parameters supplied to the event as parameters to
+            // the callback.
+            let detail = e.detail || [];
+            if (e.detail && !Array.isArray(detail)) {
+              detail = [detail];
+            }
+            handler.callback.apply(handler.context, detail);
+          };
+          parent.addEventListener(event, callable);
+          subscriptions.push({
+            event: event,
+            callable: callable,
+            parent: parent
+          });
+        });
+        return subscriptions;
+      }
     },
 
     /**
@@ -318,7 +329,7 @@ YUI.add('d3-components', function(Y) {
 
       Object.keys(eventSet).forEach(name => {
         this.events[name].subscriptions = this._bindEvents(name);
-      }, this);
+      });
       return this;
     },
 
@@ -428,21 +439,21 @@ YUI.add('d3-components', function(Y) {
     unbind: function(moduleName) {
       var eventSet = this.events,
           filtered = {};
-      const container = this.get('container');
 
-      function _unbind(modEvents) {
+      const _unbind = modEvents => {
         Object.keys(modEvents.subscriptions || {}).forEach(key => {
           const handler = modEvents.subscriptions[key];
           if (handler) {
             if (handler.detach) {
               handler.detach();
             } else if (handler.event) {
-              container.removeEventListener(handler.event, handler.callable);
+              parent = handler.parent ? handler.parent : document;
+              parent.removeEventListener(handler.event, handler.callable);
             }
           }
         });
         delete modEvents.subscriptions;
-      }
+      };
 
       if (moduleName) {
         filtered[moduleName] = eventSet[moduleName];
