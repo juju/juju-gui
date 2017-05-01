@@ -768,6 +768,7 @@ YUI.add('deployment-flow', function() {
             addNotification={this.props.addNotification}
             credential={this.state.credential}
             cloud={cloud}
+            controllerIsAvailable={this.props.controllerIsAvailable}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
