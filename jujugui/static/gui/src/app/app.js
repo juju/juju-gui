@@ -823,7 +823,10 @@ YUI.add('juju-gui', function(Y) {
           this.maskVisibility(false);
           return;
         }
-        if (!creds.areAvailable) {
+        if (!creds.areAvailable ||
+          // When using direct deploy when a user is not logged in it will
+          // navigate to show the login if we do not have this state check.
+            (currentState.special && currentState.special.dd)) {
           this._displayLogin();
           return;
         }
@@ -1320,9 +1323,8 @@ YUI.add('juju-gui', function(Y) {
 
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
-      @param {String} ddData - The data for one Direct Deploy.
     */
-    _renderDeployment: function(state, next, ddData) {
+    _renderDeployment: function(state, next) {
       const env = this.env;
       const db = this.db;
       const connected = this.env.get('connected');
@@ -1330,6 +1332,8 @@ YUI.add('juju-gui', function(Y) {
       const utils = views.utils;
       const ecs = env.get('ecs');
       const currentChangeSet = ecs.getCurrentChangeSet();
+      const deployState = state.gui.deploy;
+      const ddData = deployState ? JSON.parse(deployState) : null;
       if (Object.keys(currentChangeSet).length === 0 && !ddData) {
         // If there are no changes then close the deployment flow. This is to
         // prevent showing the deployment flow if the user clicks back in the
@@ -1363,7 +1367,8 @@ YUI.add('juju-gui', function(Y) {
       const controllerIsAvailable = () =>
         this.controllerAPI &&
         this.controllerAPI.get('connected') &&
-        !this.controllerAPI.pendingLoginResponse;
+        !this.controllerAPI.pendingLoginResponse &&
+        this.controllerAPI.userIsAuthenticated;
       const loginToController =
         controllerAPI.loginWithMacaroon.bind(
           controllerAPI, this.bakeryFactory.get('juju'));
@@ -2216,13 +2221,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Handles the deploy target functionality.
+      State handler for he deploy target functionality.
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
     */
     _deployTarget: function(state, next) {
-      const charmstore = this.get('charmstore');
-      const entityId = state.special['deployTarget'];
       // Remove the deployTarget from state so that we don't end up
       // dispatching it again by accident.
       this.state.changeState({
@@ -2230,6 +2233,16 @@ YUI.add('juju-gui', function(Y) {
           deployTarget: null
         }
       });
+      this.deployTarget(state.special['deployTarget'], this.get('charmstore'));
+      next();
+    },
+
+    /**
+      Deploys the supplied entity Id from the supplied charmstore instance.
+      @param {String} entityId The entity id to deploy.
+      @param {Object} charmstore The charmstore instance to fetch the entity.
+    */
+    deployTarget: function(entityId, charmstore) {
       /**
         Handles parsing and displaying the failure notification returned from
         the charmstore api.
@@ -2277,7 +2290,6 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
-      next();
     },
 
     /**
@@ -2287,13 +2299,20 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} ddData - The Direct Deploy data from state.
     */
     _directDeploy: function(ddData) {
+      const current = this.state.current;
+      if (current &&
+          current.gui &&
+          current.gui.deploy) {
+        // If we're already in the deployment flow then return to stop
+        // infinitely updating state.
+        return;
+      }
+      this.deployTarget(ddData.id, this.get('charmstore'));
       this.state.changeState({
-        special: {dd: null}
+        gui: {
+          deploy: JSON.stringify(ddData)
+        }
       });
-      // The deployTarget method is called directly by state. We're reusing it
-      // here so the state call signature needs to be replicated.
-      this._deployTarget({special: {deployTarget: ddData.id}}, ()=>{});
-      this._renderDeployment(this.state, ()=>{}, ddData);
     },
 
     /**
