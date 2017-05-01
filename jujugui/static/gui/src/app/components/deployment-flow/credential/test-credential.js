@@ -51,6 +51,7 @@ describe('DeploymentCredential', function() {
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
+        controllerIsAvailable={sinon.stub().returns(true)}
         cloud={cloud}
         editable={true}
         getCloudCredentials={sinon.stub()}
@@ -84,6 +85,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
@@ -135,6 +137,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         credential="lxd_admin@local_default"
         editable={false}
         generateCloudCredentialName={sinon.stub()}
@@ -203,6 +206,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={null}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
@@ -252,6 +256,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -314,6 +319,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -341,6 +347,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -371,6 +378,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -434,6 +442,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -474,6 +483,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -528,6 +538,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
@@ -554,6 +565,7 @@ describe('DeploymentCredential', function() {
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
+        controllerIsAvailable={sinon.stub().returns(true)}
         credential={credential}
         editable={true}
         generateCloudCredentialName={sinon.stub()}

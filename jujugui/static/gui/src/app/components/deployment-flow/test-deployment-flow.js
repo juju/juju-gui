@@ -195,6 +195,7 @@ describe('DeploymentFlow', function() {
             addNotification={props.addNotification}
             credential={undefined}
             cloud={null}
+            controllerIsAvailable={props.controllerIsAvailable}
             getCloudProviderDetails={props.getCloudProviderDetails}
             editable={true}
             generateCloudCredentialName={props.generateCloudCredentialName}
