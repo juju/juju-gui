@@ -8,8 +8,8 @@ chai.config.truncateThreshold = 0;
 describe('jujulib payment service', function() {
   let parsedUser, returnedUser;
 
-  const makeXHRRequest = function(obj) {
-    return {target: {responseText: JSON.stringify(obj)}};
+  const makeXHRRequest = function(obj, json=true) {
+    return {target: {responseText: json ? JSON.stringify(obj) : obj}};
   };
 
   beforeEach(function() {
@@ -1151,6 +1151,43 @@ describe('jujulib payment service', function() {
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.getCharges('spinach', (error, response) => {
+        assert.equal(error, 'Uh oh!');
+        assert.strictEqual(response, null);
+        done();
+      });
+    });
+  });
+
+  describe('getReceipt', () => {
+    it('can get a receipt', function(done) {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/receipts/charge123');
+          const xhr = makeXHRRequest('<html>...</html>', false);
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getReceipt('charge123', (error, response) => {
+        assert.strictEqual(error, null);
+        assert.equal(response, '<html>...</html>');
+        done();
+      });
+    });
+
+    it('handles errors when getting a receipt', function(done) {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getReceipt('charge123', (error, response) => {
         assert.equal(error, 'Uh oh!');
         assert.strictEqual(response, null);
         done();

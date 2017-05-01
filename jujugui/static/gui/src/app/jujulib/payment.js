@@ -569,6 +569,27 @@ var module = module;
     },
 
     /**
+      Get the receipt for a charge.
+
+      @param chargeId {String} A charge ID.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and a receipt string as its second.
+    */
+    getReceipt: function(chargeId, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, response);
+      };
+      const url = `${this.url}/receipts/${chargeId}`;
+      return jujulib._makeRequest(
+        this.bakery, url, 'GET', null, handler, false);
+    },
+
+    /**
       Reformat payment method objects for easier use with JavaScript.
 
       @public _parsePaymentMethods
