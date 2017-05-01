@@ -32,7 +32,9 @@ YUI.add('account-payment', function() {
       createPaymentMethod: React.PropTypes.func.isRequired,
       createToken: React.PropTypes.func.isRequired,
       createUser: React.PropTypes.func.isRequired,
+      getCharges: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
+      getReceipt: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
       removeAddress: React.PropTypes.func.isRequired,
       removeBillingAddress: React.PropTypes.func.isRequired,
@@ -154,6 +156,12 @@ YUI.add('account-payment', function() {
             username={this.props.username}
             validateForm={this.props.validateForm} />
         </div>);
+      // <juju.components.AccountPaymentCharges
+      //   acl={this.props.acl}
+      //   addNotification={this.props.addNotification}
+      //   getCharges={this.props.getCharges}
+      //   getReceipt={this.props.getReceipt}
+      //   username={this.props.username} />
     },
 
     /**
