@@ -204,12 +204,12 @@ YUI.add('juju-gui', function(Y) {
         label: 'Shift + -'
       },
       'S-0': {
-        fire: 'panToCenter',
+        fire: 'topo.panToCenter',
         help: 'Center the model overview',
         label: 'Shift + 0'
       },
       'esc': {
-        fire: 'clearState',
+        fire: 'topo.clearState',
         callback: function() {
           // Explicitly hide anything we might care about.
           document.querySelector('#shortcut-help').classList.add('hidden');
@@ -303,11 +303,7 @@ YUI.add('juju-gui', function(Y) {
           if (spec.callback) { spec.callback.call(this, evt, target); }
           // HACK w/o context/view restriction but right direction
           if (spec.fire) {
-            if (spec.fire.startsWith('topo.')) {
-              document.dispatchEvent(new Event(spec.fire));
-            } else {
-              this.views.environment.instance.topo.fire(spec.fire);
-            }
+            document.dispatchEvent(new Event(spec.fire));
           }
           // If we handled the event nothing else has to.
           evt.stopPropagation();
