@@ -1,0 +1,21 @@
+.account-payment-details-address {
+  &__edit {
+    padding: 20px;
+  }
+
+  &__buttons {
+    text-align: right;
+
+    .button--inline-neutral {
+      margin-right: 10px;
+    }
+  }
+
+  .address-form {
+    width: 60%;
+
+    .inset-select {
+      margin-bottom: 20px;
+    }
+  }
+}

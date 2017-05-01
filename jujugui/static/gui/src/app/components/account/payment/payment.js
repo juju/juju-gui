@@ -25,6 +25,8 @@ YUI.add('account-payment', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addAddress: React.PropTypes.func.isRequired,
+      addBillingAddress: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func.isRequired,
       createPaymentMethod: React.PropTypes.func.isRequired,
@@ -32,7 +34,11 @@ YUI.add('account-payment', function() {
       createUser: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
+      removeAddress: React.PropTypes.func.isRequired,
+      removeBillingAddress: React.PropTypes.func.isRequired,
       removePaymentMethod: React.PropTypes.func.isRequired,
+      updateAddress: React.PropTypes.func.isRequired,
+      updateBillingAddress: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -132,9 +138,16 @@ YUI.add('account-payment', function() {
             validateForm={this.props.validateForm} />
           <juju.components.AccountPaymentDetails
             acl={this.props.acl}
+            addAddress={this.props.addAddress}
+            addBillingAddress={this.props.addBillingAddress}
             addNotification={this.props.addNotification}
             getCountries={this.props.getCountries}
             paymentUser={this.state.paymentUser}
+            removeAddress={this.props.removeAddress}
+            removeBillingAddress={this.props.removeBillingAddress}
+            updateAddress={this.props.updateAddress}
+            updateBillingAddress={this.props.updateBillingAddress}
+            updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
         </div>);
