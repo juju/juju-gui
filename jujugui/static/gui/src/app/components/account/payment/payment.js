@@ -155,13 +155,13 @@ YUI.add('account-payment', function() {
             updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
+          <juju.components.AccountPaymentCharges
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getCharges={this.props.getCharges}
+            getReceipt={this.props.getReceipt}
+            username={this.props.username} />
         </div>);
-      // <juju.components.AccountPaymentCharges
-      //   acl={this.props.acl}
-      //   addNotification={this.props.addNotification}
-      //   getCharges={this.props.getCharges}
-      //   getReceipt={this.props.getReceipt}
-      //   username={this.props.username} />
     },
 
     /**
@@ -234,6 +234,7 @@ YUI.add('account-payment', function() {
 
 }, '0.1.0', {
   requires: [
+    'account-payment-charges',
     'account-payment-details',
     'account-payment-methods',
     'create-payment-user',

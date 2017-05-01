@@ -1129,12 +1129,16 @@ YUI.add('juju-gui', function(Y) {
             this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
+          getCharges={
+            this.payment && this.payment.getCharges.bind(this.payment)}
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
             views.utils)}
           getCountries={
             this.payment && this.payment.getCountries.bind(this.payment)}
+          getReceipt={
+            this.payment && this.payment.getReceipt.bind(this.payment)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           removeAddress={
             this.payment && this.payment.removeAddress.bind(this.payment)}
