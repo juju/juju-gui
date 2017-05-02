@@ -28,7 +28,17 @@ YUI.add('address-form', function() {
       address: React.PropTypes.object,
       disabled: React.PropTypes.bool,
       getCountries: React.PropTypes.func,
+      showName: React.PropTypes.bool,
+      showPhone: React.PropTypes.bool,
       validateForm: React.PropTypes.func
+    },
+
+    getDefaultProps: function() {
+      return {
+        address: {},
+        showName: true,
+        showPhone: true
+      };
     },
 
     getInitialState: function() {
@@ -47,10 +57,6 @@ YUI.add('address-form', function() {
       this.xhrs.forEach((xhr) => {
         xhr && xhr.abort && xhr.abort();
       });
-    },
-
-    getDefaultProps: function() {
-      return {address: {}};
     },
 
     /**
@@ -87,16 +93,20 @@ YUI.add('address-form', function() {
       @returns {Boolean} Whether the form is valid.
     */
     validate: function() {
-      const fields = [
+      let fields = [
         'line1',
         'line2',
         'city',
         'state',
         'postcode',
-        'country',
-        'phoneNumber',
-        'name'
+        'country'
       ];
+      if (this.props.showName) {
+        fields.push('name');
+      }
+      if (this.props.showPhone) {
+        fields.push('phoneNumber');
+      }
       return this.props.validateForm(fields, this.refs);
     },
 
@@ -108,14 +118,14 @@ YUI.add('address-form', function() {
     getValue: function() {
       const refs = this.refs;
       return {
-        name: refs.name.getValue(),
+        name: this.props.showName ? refs.name.getValue() : null,
         line1: refs.line1.getValue(),
         line2: refs.line2.getValue(),
         city: refs.city.getValue(),
         county: refs.state.getValue(),
         postcode: refs.postcode.getValue(),
         country: refs.country.getValue(),
-        phones: [refs.phoneNumber.getValue()]
+        phones: this.props.showPhone ? [refs.phoneNumber.getValue()] : null
       };
     },
 
@@ -132,6 +142,54 @@ YUI.add('address-form', function() {
           value: country.code
         };
       });
+    },
+
+    /**
+      Generate the name field.
+
+      @returns {Object} The name field markup.
+    */
+    _generateNameField: function() {
+      if (!this.props.showName) {
+        return null;
+      }
+      const address = this.props.address;
+      return (
+        <juju.components.GenericInput
+          disabled={this.props.disabled}
+          label="Full name"
+          ref="name"
+          required={true}
+          validate={[{
+            regex: /\S+/,
+            error: 'This field is required.'
+          }]}
+          value={address.name} />);
+    },
+
+    /**
+      Generate the phone field.
+
+      @returns {Object} The phone field markup.
+    */
+    _generatePhoneField: function() {
+      if (!this.props.showPhone) {
+        return null;
+      }
+      const address = this.props.address;
+      return (
+        <div className="twelve-col">
+          <juju.components.GenericInput
+            disabled={this.props.disabled}
+            label="Phone number"
+            ref="phoneNumber"
+            required={true}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]}
+            value={(address.phones || []).join(', ')} />
+        </div>);
     },
 
     render: function() {
@@ -163,13 +221,7 @@ YUI.add('address-form', function() {
               options={this._generateCountryOptions()}
               ref="country"
               value={countryCode} />
-            <juju.components.GenericInput
-              disabled={disabled}
-              label="Full name"
-              ref="name"
-              required={true}
-              validate={[required]}
-              value={address.name} />
+            {this._generateNameField()}
             <juju.components.GenericInput
               disabled={disabled}
               label="Address line 1"
@@ -209,15 +261,7 @@ YUI.add('address-form', function() {
                   validate={[required]}
                   value={address.postcode} />
               </div>
-              <div className="twelve-col">
-                <juju.components.GenericInput
-                  disabled={disabled}
-                  label="Phone number"
-                  ref="phoneNumber"
-                  required={true}
-                  validate={[required]}
-                  value={(address.phones || []).join(', ')} />
-              </div>
+              {this._generatePhoneField()}
             </div>
           </div>);
       }

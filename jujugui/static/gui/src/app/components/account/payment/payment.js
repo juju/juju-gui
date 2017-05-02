@@ -131,6 +131,7 @@ YUI.add('account-payment', function() {
             createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
+            getCountries={this.props.getCountries}
             updateUser={this._getUser}
             paymentUser={this.state.paymentUser}
             removePaymentMethod={this.props.removePaymentMethod}
