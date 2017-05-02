@@ -112,8 +112,9 @@ YUI.add('address-form', function() {
         line1: refs.line1.getValue(),
         line2: refs.line2.getValue(),
         city: refs.city.getValue(),
-        state: refs.state.getValue(),
+        county: refs.state.getValue(),
         postcode: refs.postcode.getValue(),
+        country: refs.country.getValue(),
         phones: [refs.phoneNumber.getValue()]
       };
     },
@@ -145,6 +146,15 @@ YUI.add('address-form', function() {
           error: 'This field is required.'
         };
         const disabled = this.props.disabled;
+        let countryCode = 'GB';
+        // Map the country name to code so that the select box can display the
+        // correct value.
+        this.state.countries.some(country => {
+          if (country.name === address.country) {
+            countryCode = country.code;
+            return true;
+          }
+        });
         content = (
           <div>
             <juju.components.InsetSelect
@@ -152,7 +162,7 @@ YUI.add('address-form', function() {
               label="Country"
               options={this._generateCountryOptions()}
               ref="country"
-              value={address.country || 'GB'} />
+              value={countryCode} />
             <juju.components.GenericInput
               disabled={disabled}
               label="Full name"

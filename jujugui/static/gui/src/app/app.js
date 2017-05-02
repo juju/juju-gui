@@ -194,22 +194,22 @@ YUI.add('juju-gui', function(Y) {
         label: 'Shift + ?'
       },
       'S-+': {
-        fire: 'zoom_in',
+        fire: 'topo.zoom_in',
         help: 'Zoom In',
         label: 'Shift + "+"'
       },
       'S--': {
-        fire: 'zoom_out',
+        fire: 'topo.zoom_out',
         help: 'Zoom Out',
         label: 'Shift + -'
       },
       'S-0': {
-        fire: 'panToCenter',
+        fire: 'topo.panToCenter',
         help: 'Center the model overview',
         label: 'Shift + 0'
       },
       'esc': {
-        fire: 'clearState',
+        fire: 'topo.clearState',
         callback: function() {
           // Explicitly hide anything we might care about.
           document.querySelector('#shortcut-help').classList.add('hidden');
@@ -303,7 +303,7 @@ YUI.add('juju-gui', function(Y) {
           if (spec.callback) { spec.callback.call(this, evt, target); }
           // HACK w/o context/view restriction but right direction
           if (spec.fire) {
-            this.views.environment.instance.topo.fire(spec.fire);
+            document.dispatchEvent(new Event(spec.fire));
           }
           // If we handled the event nothing else has to.
           evt.stopPropagation();
@@ -1162,13 +1162,19 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
-          addNotification={this.db.notifications.add.bind(
-              this.db.notifications)}
+          addAddress={
+            this.payment && this.payment.addAddress.bind(this.payment)}
+          addBillingAddress={
+            this.payment && this.payment.addBillingAddress.bind(this.payment)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
+          createCardElement={
+            this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createPaymentMethod={
             this.payment && this.payment.createPaymentMethod.bind(this.payment)}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           createUser={
-              this.payment && this.payment.createUser.bind(this.payment)}
+            this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getCloudCredentialNames={
@@ -1178,6 +1184,11 @@ YUI.add('juju-gui', function(Y) {
           getCountries={
             this.payment && this.payment.getCountries.bind(this.payment)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          removeAddress={
+            this.payment && this.payment.removeAddress.bind(this.payment)}
+          removeBillingAddress={
+            this.payment && this.payment.removeBillingAddress.bind(
+              this.payment)}
           removePaymentMethod={
             this.payment && this.payment.removePaymentMethod.bind(this.payment)}
           revokeCloudCredential={
@@ -1186,6 +1197,11 @@ YUI.add('juju-gui', function(Y) {
           showPay={window.juju_config.payFlag || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          updateAddress={
+            this.payment && this.payment.updateAddress.bind(this.payment)}
+          updateBillingAddress={
+            this.payment && this.payment.updateBillingAddress.bind(
+              this.payment)}
           user={this.user.controller.user}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,
@@ -1350,6 +1366,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
+          createCardElement={
+            this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createUser={
               this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}

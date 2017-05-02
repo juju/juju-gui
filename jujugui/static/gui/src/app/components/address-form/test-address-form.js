@@ -235,8 +235,9 @@ describe('AddressForm', function() {
       line1: '10 Maple St',
       line2: '',
       city: 'Sasquatch',
-      state: 'Bunnyhug',
+      county: 'Bunnyhug',
       postcode: '90210',
+      country: 'CA',
       phones: ['12341234']
     });
   });

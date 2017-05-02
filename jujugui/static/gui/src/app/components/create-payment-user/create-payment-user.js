@@ -26,10 +26,11 @@ YUI.add('create-payment-user', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
-      createToken: React.PropTypes.func,
-      createUser: React.PropTypes.func,
-      getCountries: React.PropTypes.func,
-      onUserCreated: React.PropTypes.func,
+      createCardElement: React.PropTypes.func.isRequired,
+      createToken: React.PropTypes.func.isRequired,
+      createUser: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func.isRequired,
+      onUserCreated: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -90,15 +91,17 @@ YUI.add('create-payment-user', function() {
       const refs = this.refs;
       const cardAddress = this.refs[
         `${this.state.cardAddressSame ? 'user' : 'card'}Address`].getValue();
-      const card = Object.assign(refs.cardForm.getValue(), {
+      const card = refs.cardForm.getValue();
+      const extra = {
+        name: card.name,
         addressLine1: cardAddress.line1,
         addressLine2: cardAddress.line2,
         addressCity: cardAddress.city,
         addressState: cardAddress.state,
         addressZip: cardAddress.postcode,
         addressCountry: cardAddress.countryCode
-      });
-      const xhr = this.props.createToken(card, (error, token) => {
+      };
+      const xhr = this.props.createToken(card.card, extra, (error, token) => {
         if (error) {
           const message = 'Could not create Stripe token';
           this.props.addNotification({
@@ -328,6 +331,7 @@ YUI.add('create-payment-user', function() {
               </h2>
               <juju.components.CardForm
                 acl={this.props.acl}
+                createCardElement={this.props.createCardElement}
                 ref="cardForm"
                 validateForm={this.props.validateForm} />
               <label htmlFor="cardAddressSame">

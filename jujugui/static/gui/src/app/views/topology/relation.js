@@ -75,7 +75,7 @@ YUI.add('juju-topology-relation', function(Y) {
           mousemove: {callback: 'mousemove'}
         }
       },
-      yui: {
+      topo: {
         /**
           Ensure the dragline follows the cursor when moved.
 
@@ -475,8 +475,7 @@ YUI.add('juju-topology-relation', function(Y) {
     draglineClicked: function(d, self) {
       // It was technically the dragline that was clicked, but the
       // intent was to click on the background, so...
-      var topo = self.get('component');
-      topo.fire('clearState');
+      document.dispatchEvent(new Event('topo.clearState'));
     },
 
     /**
@@ -850,7 +849,9 @@ YUI.add('juju-topology-relation', function(Y) {
       this.clickAddRelation = true;
 
       // make sure all services are shown (not faded or hidden)
-      topo.fire('show', { selection: vis.selectAll('.service') });
+      document.dispatchEvent(new CustomEvent('topo.show', {
+        detail: [{selection: vis.selectAll('.service')}]
+      }));
 
       var db = topo.get('db');
       var endpointsController = topo.get('endpointsController');
@@ -880,8 +881,12 @@ YUI.add('juju-topology-relation', function(Y) {
                 return (d.id in invalidRelationTargets &&
                           d.id !== service.get('id'));
               });
-      topo.fire('fade', { selection: sel,
-        serviceNames: Object.keys(invalidRelationTargets) });
+      document.dispatchEvent(new CustomEvent('topo.fade', {
+        detail: [{
+          selection: sel,
+          serviceNames: Object.keys(invalidRelationTargets)
+        }]
+      }));
       sel.classed('selectable-service', false);
 
       // Store possible endpoints.
@@ -1153,7 +1158,7 @@ YUI.add('juju-topology-relation', function(Y) {
         'data-relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
-      topo.fire('clearState');
+      document.dispatchEvent(new Event('topo.clearState'));
       if (relation.isSubordinate && !relation.relations[0].pending) {
         db.notifications.add({
           title: 'Subordinate relations can\'t be removed',
@@ -1166,7 +1171,7 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       // The state needs to be cleared after the relation is destroyed as well
       // to hide the destroy relation popup.
-      topo.fire('clearState');
+      document.dispatchEvent(new Event('topo.clearState'));
     },
 
     /**

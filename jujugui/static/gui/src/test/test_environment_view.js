@@ -549,7 +549,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       var addSubordinate = {
         result: [
@@ -1051,11 +1052,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should show services and relations', function(done) {
       view.render();
-      view.topo.after('show', function() {
+      const handler = () => {
+        document.removeEventListener('topo.show', handler);
         assertClassPresent('show');
         done();
-      });
-      view.topo.fire('show', {serviceNames: ['mysql']});
+      };
+      document.addEventListener('topo.show', handler);
+      document.dispatchEvent(new CustomEvent('topo.show', {
+        detail: [{serviceNames: ['mysql']}]
+      }));
     });
 
     it('must be able to add a relation from the service menu',
