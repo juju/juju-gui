@@ -26,39 +26,55 @@ YUI.add('notification', function() {
       content: React.PropTypes.object.isRequired,
       dismiss: React.PropTypes.func,
       extraClasses: React.PropTypes.string,
+      // Types: positive, caution, negative
       type: React.PropTypes.string
     },
 
+    /**
+      Generate classes based on 'type' and extra classes.
+
+      @return {string} The class string.
+    */
     _generateClasses: function() {
-        let classes = 'p-notification';
-        if (this.props.extraClasses) {
-            classes = `${classes} ${this.props.extraClasses}`;
-        }
-        return classes;
+      let classes = 'p-notification';
+      if (this.props.type) {
+        classes = `${classes}--${this.props.type}`;
+      }
+      if (this.props.extraClasses) {
+        classes = `${classes} ${this.props.extraClasses}`;
+      }
+      return classes;
     },
 
+    /**
+      Generates the dismiss button if a dismiss function is provided.
+      The parent is tasked with calling the correct dismiss functionality as
+      it will be on a per use basis.
+
+      @return {object} React Button node.
+    */
     _generateDismiss: function() {
-        if (this.props.dismiss) {
-            return (
-                <button
-                  className="p-notification__action"
-                  onClick={this.props.dismiss}>
-                    <window.juju.components.SvgIcon
-                    name="close_16" size="16" />
-                </button>);
-        }
-        return;
+      if (this.props.dismiss) {
+        return (
+          <button
+            className="p-notification__action"
+            onClick={this.props.dismiss}>
+              <window.juju.components.SvgIcon
+              name="close_16" size="16" />
+          </button>);
+      }
+      return;
     },
 
     render: function() {
-        return (
-            <div className={this._generateClasses()}>
-                <p className="p-notification__response">
-                    {this.props.content}
-                    {this._generateDismiss()}
-                </p>
-            </div>
-        );
+      return (
+        <div className={this._generateClasses()}>
+          <p className="p-notification__response">
+            {this.props.content}
+            {this._generateDismiss()}
+          </p>
+        </div>
+      );
     }
   });
 

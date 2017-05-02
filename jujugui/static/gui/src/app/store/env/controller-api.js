@@ -279,10 +279,6 @@ YUI.add('juju-controller-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     loginWithMacaroon: function(bakery, callback) {
-      if (this.pendingLoginResponse) {
-        return;
-      }
-
       // Ensure we always have a callback.
       var cback = function(err, response) {
         this.handleLogin({error: err, response: response});
@@ -356,7 +352,6 @@ YUI.add('juju-controller-api', function(Y) {
 
       // Perform the API call.
       var macaroons = this.get('user').controller.macaroons;
-      this.pendingLoginResponse = true;
       sendLoginRequest(
         macaroons,
         handleResponse.bind(this, bakery, macaroons, cback)

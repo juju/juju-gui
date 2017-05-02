@@ -82,10 +82,18 @@ $sp-large: 2rem;
 }
 
 #login-notification {
-  position: absolute;
-  top: 80px;
-  width: 1030px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
+  .p-notification {
+    position: absolute;
+    top: 80px;
+    width: 960px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+
+    @media screen and (max-width: 960px) {
+      width: 90%;
+      left: 5%;
+      transform: translateX(0);
+    }
+  }
 }
