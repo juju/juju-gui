@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  let app, container, env, juju, jujuConfig, utils, Y;
+  let app, container, env, juju, jujuConfig, utils;
   const requirements = [
     'juju-gui',
     'juju-tests-utils',
@@ -30,7 +30,7 @@ describe('application hotkeys', function() {
   const keyboard = Keysim.Keyboard.US_ENGLISH;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+    YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
 
@@ -81,7 +81,7 @@ describe('application hotkeys', function() {
       app.destroy({remove: true});
       container.remove(true);
       done();
-   });
+    });
   });
 
   const getMockStorage = function() {
