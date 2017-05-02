@@ -1,0 +1,11 @@
+.card-form {
+  &__card {
+    @extend %input;
+    width: calc(100% - 20px);
+    margin-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    box-sizing: content-box;
+    min-height: 18px;
+  }
+}

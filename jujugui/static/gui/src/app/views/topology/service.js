@@ -240,7 +240,7 @@ YUI.add('juju-topology-service', function(Y) {
     });
 
     if (rerenderRelations) {
-      topo.fire('rerenderRelations');
+      document.dispatchEvent(new Event('topo.rerenderRelations'));
     }
 
     // Draw a subordinate relation indicator.
@@ -403,7 +403,7 @@ YUI.add('juju-topology-service', function(Y) {
           'mouseup.addrel': 'serviceAddRelMouseUp'
         }
       },
-      yui: {
+      topo: {
         /**
           Highlight a service and, if specified, related services.
 
@@ -711,7 +711,9 @@ YUI.add('juju-topology-service', function(Y) {
       var node = this.getServiceNode(id);
       if (node) {
         var box = d3.select(node).datum();
-        this.get('component').fire('panToPoint', {point: [box.x, box.y]});
+        document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+          detail: [{point: [box.x, box.y]}]
+        }));
       }
     },
 
@@ -797,7 +799,9 @@ YUI.add('juju-topology-service', function(Y) {
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
-      topo.fire('snapToService', { service: box, rect: rect });
+      document.dispatchEvent(new CustomEvent('topo.snapToService', {
+        detail: [{service: box, rect: rect}]
+      }));
     },
 
     serviceMouseLeave: function(box, context) {
@@ -812,7 +816,7 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
 
-      topo.fire('snapOutOfService');
+      document.dispatchEvent(new Event('topo.snapOutOfService'));
     },
 
     /**
@@ -824,8 +828,7 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     serviceMouseMove: function(box, context) {
-      var topo = context.get('component');
-      topo.fire('mouseMove');
+      document.dispatchEvent(new Event('topo.mouseMove'));
     },
 
     /**
@@ -839,7 +842,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Don't clear the canvas state if the click event was from dragging the
       // canvas around.
       if (!topo.zoomed) {
-        topo.fire('clearState');
+        document.dispatchEvent(new Event('topo.clearState'));
       }
     },
 
@@ -1176,7 +1179,9 @@ YUI.add('juju-topology-service', function(Y) {
         if (!topo.buildingRelation) {
           // Start the process of adding a relation if not already building a
           // relation
-          topo.fire('addRelationDragStart', {service: box});
+          document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
+            detail: [{service: box}]
+          }));
         }
       }, 250, box, evt);
     },
@@ -1232,7 +1237,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
       if (topo.buildingRelation && this.clickTimer) {
         topo.ignoreServiceClick = true;
-        topo.fire('addRelationDragEnd');
+        document.dispatchEvent(new Event('topo.addRelationDragEnd'));
         topo.lastBoxClicked = undefined;
       } else {
         // If the service hasn't been dragged (in the case of long-click to
@@ -1275,7 +1280,9 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (topo.buildingRelation) {
         if (box) {
-          topo.fire('addRelationDrag', { box: box });
+          document.dispatchEvent(new CustomEvent('topo.addRelationDrag', {
+            detail: [{box: box}]
+          }));
           return;
         } else {
           topo.buildingRelation = false;
@@ -1313,9 +1320,11 @@ YUI.add('juju-topology-service', function(Y) {
       if (box.inDrag === views.DRAG_START) {
         box.inDrag = views.DRAG_ACTIVE;
       }
-      topo.fire('cancelRelationBuild');
+      document.dispatchEvent(new Event('topo.cancelRelationBuild'));
       // Update relation lines for just this service.
-      topo.fire('serviceMoved', { service: box });
+      document.dispatchEvent(new CustomEvent('topo.serviceMoved', {
+        detail: [{service: box}]
+      }));
     },
 
     /**
@@ -1418,7 +1427,9 @@ YUI.add('juju-topology-service', function(Y) {
           new_service_boxes[0].x = coords[0];
           new_service_boxes[0].y = coords[1];
           // Set the centroid to the new service's position
-          topo.fire('panToPoint', {point: coords});
+          document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+            detail: [{point: coords}]
+          }));
         } else {
           d3.layout.pack()
           // Set the size of the visualization to the size of the
@@ -1518,9 +1529,10 @@ YUI.add('juju-topology-service', function(Y) {
     @return {undefined} Side effects only.
     */
     findCentroid: function(vertices) {
-      var topo = this.get('component'),
-          centroid = topoUtils.centroid(vertices);
-      topo.fire('panToPoint', {point: centroid});
+      const centroid = topoUtils.centroid(vertices);
+      document.dispatchEvent(new CustomEvent('topo.panToPoint', {
+        detail: [{point: centroid}]
+      }));
     },
 
     /**
@@ -1620,10 +1632,14 @@ YUI.add('juju-topology-service', function(Y) {
           'stroke-width': 1.1
         })
         .on('mousedown', function(d) {
-          self.get('component').fire('addRelationDragStart', { service: d });
+          document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
+            detail: [{service: d}]
+          }));
         })
         .on('click', function(d) {
-          self.get('component').fire('addRelationDragStart', { service: d });
+          document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
+            detail: [{service: d}]
+          }));
         });
 
       relationButton.append('image')
@@ -1871,8 +1887,7 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     backgroundClicked: function() {
-      var topo = this.get('component');
-      topo.fire('clearState');
+      document.dispatchEvent(new Event('topo.clearState'));
     },
 
     /**

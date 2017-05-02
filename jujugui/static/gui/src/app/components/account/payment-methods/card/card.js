@@ -127,7 +127,7 @@ YUI.add('account-payment-method-card', function() {
                 <div className="account__payment-card-front">
                   <div className="account__payment-card-overlay"></div>
                   <div className="account__payment-card-name">
-                    Click to reveal card details.
+                    {card.cardHolder}
                   </div>
                 </div>
                 <div className="account__payment-card-back">

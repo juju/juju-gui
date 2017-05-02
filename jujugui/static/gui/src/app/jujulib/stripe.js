@@ -13,7 +13,7 @@ var module = module;
     Provides access to the Stripe API.
   */
 
-  const stripeAPIVersion = 'v2';
+  const stripeAPIVersion = 'v3';
 
   /**
     Initializer.
@@ -75,8 +75,7 @@ var module = module;
         return;
       }
       this._loadScript(() => {
-        this.stripe = this._getStripeModule();
-        this.stripe.setPublishableKey(this.stripeKey);
+        this.stripe = this._getStripeModule()(this.stripeKey);
         callback(this.stripe);
       });
     },
@@ -85,12 +84,8 @@ var module = module;
       Create a Stripe card token.
 
       @public createToken
-      @param card {Object} The data for a card, containing:
-        - number {String} The card number.
-        - cvc {String|Null} The card's security number (optional).
-        - expMonth {String} The two digit number of the month the card expires.
-        - expYear {String} The two or four digit number of the year the card
-          expires.
+      @param card {Object} The card element.
+      @param extra {Object} The data for a card, containing:
         - name {String|Null} The cardholder's name (optional).
         - addressLine1 {String|Null} The first line of the cardholder's address.
         - addressLine2 {String|Null} The second line of the cardholder's
@@ -126,15 +121,16 @@ var module = module;
           - object {String} The type of object, in this case always "token".
           - used {Boolean} Whether this token has been used.
     */
-    createToken: function(card, callback) {
-      const handler = (status, response) => {
-        if (response && response.error) {
+    createToken: function(card, extra, callback) {
+      const handler = response => {
+        if (response.error) {
           callback(response.error.message, null);
           return;
         }
-        const card = response.card;
-        const token = {
-          id: response.id,
+        const token = response.token;
+        const card = token.card;
+        const data = {
+          id: token.id,
           card: {
             name: card.name || null,
             addressLine1: card['address_line1'] || null,
@@ -151,28 +147,41 @@ var module = module;
             brand: card.brand,
             funding: card.funding
           },
-          created: response.created,
-          livemode: response.livemode,
-          type: response.type,
-          object: response.object,
-          used: response.used
+          created: token.created,
+          livemode: token.livemode,
+          type: token.type,
+          object: token.object,
+          used: token.used
         };
-        callback(null, token);
+        callback(null, data);
       };
       const data = {
-        number: card.number,
-        cvc: card.cvc,
-        exp_month: card.expMonth,
-        exp_year: card.expYear,
-        name: card.name,
-        address_line1: card.addressLine1,
-        address_line2: card.addressLine2,
-        address_city: card.addressCity,
-        address_state: card.addressState,
-        address_zip: card.addressZip,
-        address_country: card.addressCountry
+        name: extra.name,
+        address_line1: extra.addressLine1,
+        address_line2: extra.addressLine2,
+        address_city: extra.addressCity,
+        address_state: extra.addressState,
+        address_zip: extra.addressZip,
+        address_country: extra.addressCountry
       };
-      this._getStripe(stripe => {stripe.card.createToken(data, handler);});
+      this._getStripe(stripe => {
+        stripe.createToken(card, data).then(handler);
+      });
+    },
+
+    /**
+      Create a card element.
+
+      @param callback {Function} The function to call when the element has been
+        created.
+      @returns {Object} The created card.
+    */
+    createCardElement: function(callback) {
+      this._getStripe(stripe => {
+        const elements = stripe.elements();
+        const card = elements.create('card');
+        callback(card);
+      });
     }
   };
 
