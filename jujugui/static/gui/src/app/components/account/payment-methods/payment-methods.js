@@ -18,10 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('account-payment-method', function() {
+YUI.add('account-payment-methods', function() {
 
-  juju.components.AccountPaymentMethod = React.createClass({
-    displayName: 'AccountPaymentMethod',
+  juju.components.AccountPaymentMethods = React.createClass({
+    displayName: 'AccountPaymentMethods',
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
@@ -32,6 +32,7 @@ YUI.add('account-payment-method', function() {
       getCountries: React.PropTypes.func.isRequired,
       paymentUser: React.PropTypes.object.isRequired,
       removePaymentMethod: React.PropTypes.func.isRequired,
+      updatePaymentMethod: React.PropTypes.func.isRequired,
       updateUser: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
@@ -68,29 +69,19 @@ YUI.add('account-payment-method', function() {
               title="Add payment method" />
           </div>);
       }
-      const classes = {
-        'user-profile__list-row': true,
-        'twelve-col': true
-      };
       const methods = user.paymentMethods.map(method => {
         return (
-          <juju.components.ExpandingRow
-            classes={classes}
-            clickable={false}
-            expanded={true}
-            key={method.name}>
-            <div>
-              {method.name}
-            </div>
-            <div className="account__payment-details">
-              <juju.components.AccountPaymentMethodCard
-                addNotification={this.props.addNotification}
-                card={method}
-                onPaymentMethodRemoved={this.props.updateUser}
-                removePaymentMethod={this.props.removePaymentMethod}
-                username={this.props.username} />
-            </div>
-          </juju.components.ExpandingRow>);
+          <juju.components.AccountPaymentMethod
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getCountries={this.props.getCountries}
+            key={method.id}
+            paymentMethod={method}
+            removePaymentMethod={this.props.removePaymentMethod}
+            updatePaymentMethod={this.props.updatePaymentMethod}
+            updateUser={this.props.updateUser}
+            username={this.props.username}
+            validateForm={this.props.validateForm} />);
       });
       return (
         <ul className="user-profile__list twelve-col">
@@ -271,7 +262,7 @@ YUI.add('account-payment-method', function() {
 
 }, '', {
   requires: [
-    'account-payment-method-card',
+    'account-payment-method',
     'address-form',
     'card-form',
     'expanding-row',
