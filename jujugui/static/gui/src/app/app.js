@@ -1367,7 +1367,6 @@ YUI.add('juju-gui', function(Y) {
       const controllerIsAvailable = () =>
         this.controllerAPI &&
         this.controllerAPI.get('connected') &&
-        !this.controllerAPI.pendingLoginResponse &&
         this.controllerAPI.userIsAuthenticated;
       const loginToController =
         controllerAPI.loginWithMacaroon.bind(
