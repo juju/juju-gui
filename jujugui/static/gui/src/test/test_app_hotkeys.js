@@ -19,13 +19,67 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  let app, container, env, juju, jujuConfig, keyboard, utils, Y;
-  const requirements = ['juju-gui', 'juju-tests-utils'];
+  let app, container, env, juju, jujuConfig, utils;
+  const requirements = [
+    'juju-gui',
+    'juju-tests-utils',
+    'node-event-simulate',
+    'modal-gui-settings',
+    'modal-shortcuts'
+  ];
+  const keyboard = Keysim.Keyboard.US_ENGLISH;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+    YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
+
+      // 02-05-2016 Luke: I've moved this to 'before' rather then 'beforeEach'.
+      // 'beforeEach' duplicated the 'keydown' event listener on subsequent
+      // inits of the 'container' 'app' resulting in keyboard events firing
+      // multiple times.
+      jujuConfig = window.juju_config;
+      window.juju_config = {
+        charmstoreURL: 'http://1.2.3.4/',
+        plansURL: 'http://plans.example.com/',
+        termsURL: 'http://terms.example.com/'
+      };
+      container = utils.makeAppContainer();
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      env = new juju.environments.GoEnvironment({
+        conn: new utils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet(),
+        user: userClass
+      });
+      env.connect();
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        consoleEnabled: true,
+        controllerAPI: new juju.ControllerAPI({
+          conn: new utils.SocketStub(),
+          user: userClass
+        }),
+        env: env,
+        container: container,
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0',
+        controllerSocketTemplate: '',
+        user: userClass
+      });
+      app.showView(new Y.View());
+      app.activateHotkeys();
+      app.render();
+
+      done();
+    });
+  });
+
+  after(function(done) {
+    window.juju_config = jujuConfig;
+    env.close(() => {
+      app.destroy({remove: true});
+      container.remove(true);
       done();
     });
   });
@@ -40,70 +94,32 @@ describe('application hotkeys', function() {
     };
   };
 
-  beforeEach(function() {
-    jujuConfig = window.juju_config;
-    window.juju_config = {
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
-    };
-    container = utils.makeAppContainer();
-    container.querySelector('#shortcut-help').classList.add('hidden');
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
-    env = new juju.environments.GoEnvironment({
-      conn: new utils.SocketStub(),
-      ecs: new juju.EnvironmentChangeSet(),
-      user: userClass
-    });
-    env.connect();
-    app = new Y.juju.App({
-      baseUrl: 'http://example.com/',
-      consoleEnabled: true,
-      controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub(),
-        user: userClass
-      }),
-      env: env,
-      container: container,
-      viewContainer: container,
-      jujuCoreVersion: '2.0.0',
-      controllerSocketTemplate: '',
-      user: userClass
-    });
-    app.showView(new Y.View());
-    app.activateHotkeys();
-    app.render();
-    keyboard = Keysim.Keyboard.US_ENGLISH;
-  });
-
-  afterEach(function(done) {
-    window.juju_config = jujuConfig;
-    env.close(() => {
-      app.destroy({remove: true});
-      container.remove(true);
-      done();
-    });
-  });
-
   it('should listen for "?" events', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
-    const help = document.querySelector('#shortcut-help');
-    assert.equal(help.classList.contains('hidden'), false,
-                 'Shortcut help not displayed');
-    assert.equal(
-      help.children.length > 0, true, 'The shortcut component not rendered');
-    container.querySelector('#shortcut-help').classList.add('hidden');
+
+    const shortcuts = document.getElementById('modal-shortcuts');
+    assert.equal(shortcuts.children.length > 0, true,
+      'The shortcuts component did not render');
+  });
+
+  it('should listen for "!" events', function() {
+    const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
+    keyboard.dispatchEventsForKeystroke(keystroke, container);
+
+    const settings = document.getElementById('modal-gui-settings');
+    assert.equal(settings.children.length > 0, true,
+      'The settings component did not render');
   });
 
   it('should listen for Alt-S key events', function() {
-    var searchInput = document.createElement('input');
+    let searchInput = document.createElement('input');
     searchInput.setAttribute('id', 'charm-search-field');
     container.appendChild(searchInput);
+
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.ALT, 83);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
+
     // Did charm-search-field get the focus?
     assert.equal(searchInput, document.activeElement);
   });

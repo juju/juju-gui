@@ -74,7 +74,7 @@ describe('HeaderHelp', function() {
   describe('menu', function () {
     const issueUrl = 'https://github.com/juju/juju-gui/issues';
     const loggedInIssueUrl = 'https://jujucharms.com/support';
-    const docsUrl = 'https://jujucharms.com/docs/stable/getting-started';
+    const docsUrl = 'https://jujucharms.com/docs/stable/getting-started-jaas';
 
     it('opens a menu when clicked', function () {
       const renderer = jsTestUtils.shallowRender(
@@ -97,27 +97,71 @@ describe('HeaderHelp', function() {
             <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
               role="menuitem" tabIndex="0">
-              <a
+              <a className="header-menu__menu-list-item-link"
+                href={issueUrl} target="_blank">File Issue</a>
+            </li>
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuItem" tabIndex="0"
+              onClick={instance._handleShortcutsLink}>
+              <span className="header-menu__menu-list-item-link">
+                Keyboard shortcuts
+                <span className="header-menu__menu-extra-info">
+                  Shift + ?
+                </span>
+              </span>
+            </li>
+          </ul>
+        </juju.components.Panel>);
+      expect(output.props.children[1]).toEqualJSX(expected);
+    });
+
+    it('show the documentation link if in gisf', function() {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.HeaderHelp.prototype.wrappedComponent
+          appState={appState}
+          gisf={true}
+          user={false} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.toggleHelpMenu();
+      const output = renderer.getRenderOutput();
+
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-menu__button header-menu__show-menu');
+
+      const expected = (<juju.components.Panel
+        instanceName="header-menu__menu"
+        visible={true}>
+          <ul className="header-menu__menu-list" role="menubar">
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
                 href={docsUrl}
                 target="_blank">
                 View Documentation</a>
             </li>
             <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="1">
-              <a href={issueUrl} target="_blank">File Issue</a>
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
+                href={issueUrl} target="_blank">File Issue</a>
             </li>
             <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-info"
-              role="menuItem" tabIndex="2">
-              Keyboard shortcuts
-              <span className="header-menu__menu-extra-info">
-                Shift + ?
+              header-menu__menu-list-item-with-link"
+              role="menuItem" tabIndex="0"
+              onClick={instance._handleShortcutsLink}>
+              <span className="header-menu__menu-list-item-link">
+                Keyboard shortcuts
+                <span className="header-menu__menu-extra-info">
+                  Shift + ?
+                </span>
               </span>
             </li>
           </ul>
         </juju.components.Panel>);
-      assert.deepEqual(output.props.children[1], expected);
+      expect(output.props.children[1]).toEqualJSX(expected);
     });
 
     it('shows the jujuchams issues page if in gisf and logged in',
@@ -135,34 +179,60 @@ describe('HeaderHelp', function() {
         assert.deepEqual(output.props.children[0].props.className,
           'header-menu__button header-menu__show-menu');
 
-        assert.deepEqual(output.props.children[1],
-          <juju.components.Panel
-            instanceName="header-menu__menu"
-            visible={true}>
-              <ul className="header-menu__menu-list" role="menubar">
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                  <a
-                    href={docsUrl}
-                    target="_blank">
-                    View Documentation</a>
-                </li>
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="1">
-                  <a href={loggedInIssueUrl} target="_blank">Get Support</a>
-                </li>
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-info"
-                  role="menuItem" tabIndex="2">
+        const expected = (<juju.components.Panel
+          instanceName="header-menu__menu"
+          visible={true}>
+            <ul className="header-menu__menu-list" role="menubar">
+              <li className="header-menu__menu-list-item
+                header-menu__menu-list-item-with-link"
+                role="menuitem" tabIndex="0">
+                <a className="header-menu__menu-list-item-link"
+                  href={docsUrl}
+                  target="_blank">
+                  View Documentation</a>
+              </li>
+              <li className="header-menu__menu-list-item
+                header-menu__menu-list-item-with-link"
+                role="menuitem" tabIndex="0">
+                <a className="header-menu__menu-list-item-link"
+                  href={loggedInIssueUrl} target="_blank">Get Support</a>
+              </li>
+              <li className="header-menu__menu-list-item
+                header-menu__menu-list-item-with-link"
+                role="menuItem" tabIndex="0"
+                onClick={instance._handleShortcutsLink}>
+                <span className="header-menu__menu-list-item-link">
                   Keyboard shortcuts
                   <span className="header-menu__menu-extra-info">
                     Shift + ?
                   </span>
-                </li>
-              </ul>
-            </juju.components.Panel>);
+                </span>
+              </li>
+            </ul>
+          </juju.components.Panel>);
+        expect(output.props.children[1]).toEqualJSX(expected);
+      }
+    );
+
+    it('keyboard shortcuts link calls app._displayShortcutsModal', () => {
+      const showFunc = sinon.stub();
+      const evt = {
+        stopPropagation: sinon.stub()
+      };
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.HeaderHelp.prototype.wrappedComponent
+          appState={appState}
+          displayShortcutsModal={showFunc}
+          gisf={true}
+          user={{}} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.setState({
+        showHelpMenu: true
       });
+      instance._handleShortcutsLink(evt);
+
+      assert.equal(showFunc.callCount, 1);
+      assert.equal(instance.state.showHelpMenu, false);
+    });
   });
 });

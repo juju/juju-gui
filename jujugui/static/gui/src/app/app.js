@@ -108,86 +108,26 @@ YUI.add('juju-gui', function(Y) {
         help: 'Select the charm Search'
       },
       'S-1': {
-        target: '#shortcut-settings',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutHelp = document.querySelector('#shortcut-help');
-          if (shortcutHelp) {
-            shortcutHelp.classList.add('hidden');
-          }
-
-          if (target && !target.children.length) {
-            ReactDOM.render(
-              <window.juju.components.Settings
-                disableCookie={localStorage.getItem('disable-cookie')}
-                disableAutoPlace={localStorage.getItem('disable-auto-place')}
-                forceContainers={localStorage.getItem('force-containers')} />,
-              ReactDOM.findDOMNode(target));
-
-            // This is only added to the DOM once and is checked if it exists
-            // above. It's hidden and then shown, so this event is not auto
-            // cleaned up, but can only occur once.
-            target.querySelector('#save-settings').addEventListener(
-              'click', ev => {
-                const fields = target.querySelectorAll('input');
-                fields.each(function(node) {
-                  // If it's a checkbox:
-                  if (node.get('type') === 'checkbox') {
-                    // and if it's checked set that value to localStorage.
-                    if (node.get('checked')) {
-                      localStorage.setItem(node.getAttribute('name'), true);
-                    } else {
-                      // otherwise unset it from the localStorage.
-                      localStorage.removeItem(node.getAttribute('name'));
-                    }
-                  } else {
-                    localStorage.setItem(
-                        node.getAttribute('name'), node.get('value'));
-                  }
-                });
-              });
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-settings').classList.add(
-                'hidden');
-            });
+        callback: function() {
+          this._clearShortcutsModal();
+          if (document.getElementById('modal-gui-settings').
+            children.length > 0) {
+            this._clearSettingsModal();
+          } else {
+            this._displaySettingsModal();
           }
         },
         help: 'GUI Settings',
         label: 'Shift + !'
       },
       'S-/': {
-        target: '#shortcut-help',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutSettings = document.querySelector('#shortcut-settings');
-          if (shortcutSettings) {
-            shortcutSettings.classList.add('hidden');
-          }
-
-          // This could be its own view.
-          if (target && !target.children.length) {
-            var bindings = [];
-            Object.keys(this.keybindings).forEach(k => {
-              const v = this.keybindings[k];
-              if (v.help && (v.condition === undefined ||
-                             v.condition.call(this) === true)) {
-                // TODO: translate keybindings to
-                // human <Alt> m
-                // <Control> <Shift> N (note caps)
-                // also 'g then i' style
-                bindings.push({key: k, label: v.label || k, help: v.help});
-              }
-            }, this);
-
-            ReactDOM.render(
-              <window.juju.components.Shortcuts
-                bindings={bindings} />,
-              ReactDOM.findDOMNode(target));
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-help').classList.add('hidden');
-            });
+        callback: function() {
+          this._clearSettingsModal();
+          if (document.getElementById('modal-shortcuts').
+            children.length > 0) {
+            this._clearShortcutsModal();
+          } else {
+            this._displayShortcutsModal();
           }
         },
         help: 'Display this help',
@@ -211,9 +151,8 @@ YUI.add('juju-gui', function(Y) {
       'esc': {
         fire: 'topo.clearState',
         callback: function() {
-          // Explicitly hide anything we might care about.
-          document.querySelector('#shortcut-help').classList.add('hidden');
-          document.querySelector('#shortcut-settings').classList.add('hidden');
+          this._clearSettingsModal();
+          this._clearShortcutsModal();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -237,7 +176,7 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-        '/': 191, '?': 63, '+': 187, '-': 189,
+        '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
@@ -1265,12 +1204,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
-
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
+          displayShortcutsModal={this._displayShortcutsModal.bind(this)}
           user={this._getAuth()} />,
         document.getElementById('header-help'));
     },
@@ -1858,6 +1797,38 @@ YUI.add('juju-gui', function(Y) {
       if (next) {
         next();
       }
+    },
+
+    _displayShortcutsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalShortcuts
+          closeModal={this._clearShortcutsModal.bind(this)}
+          keybindings={this.keybindings} />,
+        document.getElementById('modal-shortcuts'));
+    },
+
+    _displaySettingsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalGUISettings
+          closeModal={this._clearSettingsModal.bind(this)}
+          localStorage={localStorage} />,
+        document.getElementById('modal-gui-settings'));
+    },
+
+    /**
+      The cleanup dispatcher keyboard shortcuts modal.
+    */
+    _clearShortcutsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-shortcuts'));
+    },
+
+    /**
+      The cleanup dispatcher global settings modal.
+    */
+    _clearSettingsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-gui-settings'));
     },
 
     /**
@@ -3270,10 +3241,11 @@ YUI.add('juju-gui', function(Y) {
     'machine-view',
     'login-component',
     'logout-component',
+    'modal-gui-settings',
+    'modal-shortcuts',
     'notification',
     'notification-list',
     'panel-component',
-    'settings',
     'sharing',
     'svg-icon',
     'shortcuts',

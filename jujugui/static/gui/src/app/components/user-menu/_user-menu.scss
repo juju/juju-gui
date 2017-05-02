@@ -3,6 +3,12 @@
     margin-right: 10px;
   }
 
+  .logout-link {
+    display: block;
+    padding: 10px 20px 10px;
+    text-decoration: none;
+  }
+
   .usso-login {
     &__action {
       text-decoration: none;
