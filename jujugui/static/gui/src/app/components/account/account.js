@@ -25,18 +25,27 @@ YUI.add('account', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addAddress: React.PropTypes.func,
+      addBillingAddress: React.PropTypes.func,
       addNotification: React.PropTypes.func.isRequired,
+      createCardElement: React.PropTypes.func,
       createPaymentMethod: React.PropTypes.func,
       createToken: React.PropTypes.func,
+      createUser: React.PropTypes.func,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
+      removeAddress: React.PropTypes.func,
+      removeBillingAddress: React.PropTypes.func,
       removePaymentMethod: React.PropTypes.func,
       revokeCloudCredential: React.PropTypes.func.isRequired,
       sendAnalytics: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
+      updateAddress: React.PropTypes.func,
+      updateBillingAddress: React.PropTypes.func,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired,
@@ -51,13 +60,22 @@ YUI.add('account', function() {
     _generatePaymentDetails: function() {
       if (this.props.showPay) {
         return (
-          <juju.components.AccountPaymentMethod
+          <juju.components.AccountPayment
             acl={this.props.acl}
+            addAddress={this.props.addAddress}
+            addBillingAddress={this.props.addBillingAddress}
             addNotification={this.props.addNotification}
+            createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
+            createUser={this.props.createUser}
+            getCountries={this.props.getCountries}
             getUser={this.props.getUser}
+            removeAddress={this.props.removeAddress}
+            removeBillingAddress={this.props.removeBillingAddress}
             removePaymentMethod={this.props.removePaymentMethod}
+            updateAddress={this.props.updateAddress}
+            updateBillingAddress={this.props.updateBillingAddress}
             username={this.props.userInfo.profile}
             validateForm={this.props.validateForm} />);
       } else {
@@ -104,7 +122,7 @@ YUI.add('account', function() {
 }, '', {
   requires: [
     'account-credentials',
-    'account-payment-method',
+    'account-payment',
     'panel-component',
     'user-profile-header'
   ]

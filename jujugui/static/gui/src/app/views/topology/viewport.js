@@ -45,8 +45,10 @@ YUI.add('juju-topology-viewport', function(Y) {
   views.ViewportModule = Y.Base.create('ViewportModule', comp.Module, [], {
 
     events: {
-      yui: {
-        windowresize: 'resized',
+      window: {
+        resize: 'resized',
+      },
+      topo: {
         rendered: 'resized'
       }
     },
@@ -99,7 +101,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       // leave the pan alone.
       if (oldSize[0] !== dimensions.width ||
           oldSize[1] !== dimensions.height) {
-        topo.fire('panToCenter');
+        document.dispatchEvent(new Event('topo.panToCenter'));
       }
     },
 
@@ -124,12 +126,12 @@ YUI.add('juju-topology-viewport', function(Y) {
       }
       var topo = this.get('component');
       var zoomPlane = container.querySelector('.zoom-plane');
-      Y.fire('beforePageSizeRecalculation');
+      document.dispatchEvent(new Event('beforePageSizeRecalculation'));
       // This sets the minimum viewport size - y was reduced to 200 to render
       // properly on 7" tablets in horizontal view.
       var dimensions = utils.getEffectiveViewportSize(true, 800, 200);
       this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
-      Y.fire('afterPageSizeRecalculation');
+      document.dispatchEvent(new Event('afterPageSizeRecalculation'));
     }
 
   }, {

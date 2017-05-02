@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'd3', 'juju-gui',
+        'd3', 'juju-models', 'juju-view-environment',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {
@@ -266,6 +266,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      db.fireEvent = sinon.stub();
       var charmData = testUtils.loadFixture('data/mysql-api-response.json',
                                             true);
       charm = new models.Charm(charmData.charm);
@@ -349,15 +350,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var beforeResizeEventFired = false;
       view.render();
 
-      Y.once('beforePageSizeRecalculation', function() {
+      const beforeHandler = e => {
+        document.removeEventListener(
+          'beforePageSizeRecalculation', beforeHandler);
         // This event must be fired.
         beforeResizeEventFired = true;
-      });
-      Y.once('afterPageSizeRecalculation', function() {
+      };
+      const afterHandler = e => {
+        document.removeEventListener(
+          'afterPageSizeRecalculation', afterHandler);
         // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
-      });
+      };
+      document.addEventListener('beforePageSizeRecalculation', beforeHandler);
+      document.addEventListener('afterPageSizeRecalculation', afterHandler);
       window.dispatchEvent(new Event('resize'));
     });
 
@@ -542,7 +549,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       var addSubordinate = {
         result: [
@@ -1044,18 +1052,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should show services and relations', function(done) {
       view.render();
-      view.topo.after('show', function() {
+      const handler = () => {
+        document.removeEventListener('topo.show', handler);
         assertClassPresent('show');
         done();
-      });
-      view.topo.fire('show', {serviceNames: ['mysql']});
+      };
+      document.addEventListener('topo.show', handler);
+      document.dispatchEvent(new CustomEvent('topo.show', {
+        detail: [{serviceNames: ['mysql']}]
+      }));
     });
 
     it('must be able to add a relation from the service menu',
        function() {
-         if (Y.UA.phantomjs) {
-           return;
-         }
          var view = new views.environment({
            container: container,
            db: db,

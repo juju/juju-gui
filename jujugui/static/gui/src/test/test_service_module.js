@@ -50,8 +50,12 @@ describe('service module annotations', function() {
         location['gui-x'] = data['gui-x'];
         location['gui-y'] = data['gui-y'];},
       get: function() {}};
-    var view = new views.environment(
-      { container: viewContainer, db: db, env: env});
+    const view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env,
+      state: {changeState: sinon.stub()}
+    });
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -98,7 +102,7 @@ describe('service module annotations', function() {
     const topo = serviceModule.get('component');
     const changeState = sinon.stub();
     topo.set('state', {changeState: changeState});
-    topo.fire('clearState');
+    document.dispatchEvent(new Event('topo.clearState'));
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       root: null,
@@ -140,7 +144,9 @@ describe('service updates', function() {
         db: db,
         env: {
           update_annotations: function() {}
-        }});
+        },
+        state: {changeState: sinon.stub()}
+      });
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -223,7 +229,8 @@ describe.skip('service module events', function() {
         update_annotations: function() {},
         get: function() {}
       },
-      charmstore: fakeStore
+      charmstore: fakeStore,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -387,19 +394,19 @@ describe.skip('service module events', function() {
             clientY: 153
           }
         };
-
-    var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
-      eventHandle.detach();
+    const listener = e => {
+      document.removeEventListener('initiateDeploy', listener);
       // After the translation and calculations the above x and y coords should
       // place the element at -245, -18
-      assert.deepEqual(ghostAttributes, {
+      assert.deepEqual(e.detail.ghostAttributes, {
         coordinates: [170, 317],
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.
       assert.equal(preventCount, 1);
       done();
-    });
+    };
+    document.addEventListener('initiateDeploy', listener);
     serviceModule.set('component', topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
@@ -824,7 +831,8 @@ describe('canvasDropHandler', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -835,8 +843,8 @@ describe('canvasDropHandler', function() {
   it('defers its implementatino to _canvasDropHandler', function() {
     var files = {length: 2};
     var evt = {
-      _event: {dataTransfer: {files: files}},
-      halt: function() {}
+      dataTransfer: {files: files},
+      preventDefault: sinon.stub()
     };
     // Calling both functions with arguments that result in an early-out is the
     // easiest way to show that the one is just a shim around the other.
@@ -847,8 +855,8 @@ describe('canvasDropHandler', function() {
 
   it('halts the event so FF does not try to reload the page', function(done) {
     var evt = {
-      _event: {dataTransfer: {files: {length: 2}}},
-      halt: function() {done();}
+      dataTransfer: {files: {length: 2}},
+      preventDefault: () => {done();}
     };
     serviceModule.canvasDropHandler(evt);
   });
@@ -882,7 +890,8 @@ describe('_canvasDropHandler', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -947,7 +956,8 @@ describe('updateElementVisibility', function() {
     var view = new views.environment({
       container: viewContainer,
       db: db,
-      env: env
+      env: env,
+      state: {changeState: sinon.stub()}
     });
     view.render();
     view.rendered();
@@ -990,12 +1000,7 @@ describe('updateElementVisibility', function() {
     }, {
       id: 'foo4'
     }]);
-    serviceModule.set('component', {
-      get: function() {
-        return {
-          services: serviceList
-        };
-      }});
+    serviceModule.get('component').get('db').services = serviceList;
     serviceModule.updateElementVisibility();
     assert.equal(fade.callCount, 1);
     assert.deepEqual(fade.lastCall.args[0], { serviceNames: ['foo1'] });

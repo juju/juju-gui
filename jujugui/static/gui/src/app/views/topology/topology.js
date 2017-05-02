@@ -245,8 +245,10 @@ YUI.add('juju-topology', function(Y) {
       this.zoom.x(this.xScale)
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
-               .on('zoom', function(evt) {
-                 self.fire('zoom', d3.event);
+               .on('zoom', evt => {
+                 document.dispatchEvent(new CustomEvent('topo.zoom', {
+                   detail: [d3.event]
+                 }));
                  // If the canvas has actually been moved then set the flag.
                  self.zoomed = true;
                })

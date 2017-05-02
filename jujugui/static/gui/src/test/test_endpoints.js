@@ -26,9 +26,9 @@ describe('Relation endpoints logic', function() {
       env, ecs, sample_env;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['array-extras', 'io', 'json-parse',
-      'juju-tests-utils', 'juju-views', 'juju-models', 'juju-gui',
-      'juju-tests-utils', 'juju-controllers', 'environment-change-set'],
+    Y = YUI(GlobalConfig).use([
+      'juju-tests-utils', 'juju-models', 'juju-gui',
+      'juju-controllers', 'environment-change-set'],
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
@@ -83,6 +83,7 @@ describe('Relation endpoints logic', function() {
     app.navigate = function() { return true; };
     app.showView(new Y.View());
     db = app.db;
+    db.fireEvent = sinon.stub();
   });
 
   afterEach(function(done) {

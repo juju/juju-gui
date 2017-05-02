@@ -19,11 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('d3-components', function() {
-  var Y, NS, TestModule, modA, state,
+  let NS, TestModule, modA, state,
       container, comp, utils, viewUtils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['d3-components',
+    YUI(GlobalConfig).use(['d3-components',
       'juju-tests-utils',
       'juju-view-utils',
       'node'],
@@ -34,8 +34,11 @@ describe('d3-components', function() {
         events: {
           scene: { '.thing': {click: 'decorateThing'}},
           d3: {'.target': {click: 'targetTarget'}},
-          yui: {
+          topo: {
             cancel: 'cancelHandler'
+          },
+          window: {
+            resize: 'windowResizeHandler'
           }
         },
 
@@ -94,7 +97,7 @@ describe('d3-components', function() {
     comp.addModule(TestModule);
 
     // Test that default bindings work by simulating
-    comp.fire('cancel');
+    document.dispatchEvent(new Event('topo.cancel'));
     state.cancelled.should.equal(true);
 
     // XXX: While on the plane I determined that things like
@@ -105,12 +108,12 @@ describe('d3-components', function() {
     state.cancelled = false;
     comp.removeModule('TestModule');
 
-    comp.fire('cancel');
+    document.dispatchEvent(new Event('topo.cancel'));
     state.cancelled.should.equal(false);
 
     // Adding the module back again doesn't create any issues.
     comp.addModule(TestModule);
-    comp.fire('cancel');
+    document.dispatchEvent(new Event('topo.cancel'));
     state.cancelled.should.equal(true);
 
     // Simulated events on DOM handlers better work.
@@ -162,17 +165,11 @@ describe('d3-components', function() {
     var resized = false;
     modA.windowResizeHandler = function(evt) {
       resized = true;
-    };
-    modA.events.yui.windowresize = {
-      callback: 'windowResizeHandler',
-      context: 'window'};
-    comp.addModule(modA);
-    var subscription = Y.after('windowresize', function(evt) {
-      subscription.detach();
-      assert.isTrue(resized);
       done();
-    });
+    };
+    comp.addModule(modA);
     window.dispatchEvent(new Event('resize'));
+    assert.isTrue(resized);
   });
 
   it('deep clones event objects to avoid shared bindings', function() {
@@ -185,10 +182,12 @@ describe('d3-components', function() {
     compB.addModule(TestModule);
     compB.render();
 
-    assert.notEqual(compA.events.TestModule.subscriptions[1].evt.id,
-                    compB.events.TestModule.subscriptions[1].evt.id);
+    assert.notEqual(compA.events.TestModule.subscriptions[1].callable,
+                    compB.events.TestModule.subscriptions[1].callable);
 
     // Cleanup
+    compA.unbind();
+    compB.unbind();
     compA.destroy();
     compB.destroy();
   });

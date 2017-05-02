@@ -49,7 +49,8 @@ describe('GenericInput', function() {
     const expected = (
       <div className="generic-input">
         <label className={
-          'generic-input__label generic-input__label--placeholder-present'}
+          'generic-input__label generic-input__label--value-present ' +
+          'generic-input__label--placeholder-present'}
           htmlFor="Region">
           Region
         </label>
@@ -94,7 +95,8 @@ describe('GenericInput', function() {
     const expected = (
       <div className="generic-input">
         <label className={
-          'generic-input__label generic-input__label--placeholder-present'}
+          'generic-input__label generic-input__label--value-present ' +
+          'generic-input__label--placeholder-present'}
           htmlFor="Region">
           Region
         </label>
@@ -132,7 +134,8 @@ describe('GenericInput', function() {
     const expected = (
       <div className="generic-input">
         <label className={
-          'generic-input__label generic-input__label--placeholder-present'}
+          'generic-input__label generic-input__label--value-present ' +
+          'generic-input__label--placeholder-present'}
           htmlFor="Region">
           Region
         </label>

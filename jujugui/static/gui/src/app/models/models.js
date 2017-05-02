@@ -2178,6 +2178,16 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Dispatch an event.
+
+     @method fireEvent
+     @param {String} event The name of the event to fire.
+    */
+    fireEvent: function(event) {
+      document.dispatchEvent(new Event(event));
+    },
+
+    /**
      * Resolve from an id to a Database entity. The lookup pattern is such that
      * "env" -> environment model
      * <int> -> machine
@@ -2265,7 +2275,7 @@ YUI.add('juju-models', function(Y) {
       this.services.each(function(service) {
         units.update_service_unit_aggregates(service);
       }.bind(this));
-      this.fire('update');
+      this.fireEvent('update');
     },
 
     /**
@@ -2515,14 +2525,14 @@ YUI.add('juju-models', function(Y) {
         relations.
     */
     _generateRelationSpec: function(relationList, includeUncommitted) {
-      var relations = [];
-      relationList.each(function(relation) {
+      const relations = [];
+      relationList.each(relation => {
         if (!includeUncommitted &&
           relation.get('id').indexOf('pending-') === 0) {
           // Skip pending relations
           return;
         }
-        var endpoints = relation.get('endpoints');
+        const endpoints = relation.get('endpoints');
         // Skip peer relations: they should be added automatically.
         if (endpoints.length === 1) {
           return;
@@ -2531,18 +2541,14 @@ YUI.add('juju-models', function(Y) {
         // to have relation established with other charms, but this can change
         // in the future, and also this can be the case when an extraneous
         // service is named "juju-gui".
-        var serviceNames = endpoints.map(function(endpoint) {
-          return endpoint[0];
-        });
+        const serviceNames = endpoints.map(endpoint => endpoint[0]);
         if (serviceNames.indexOf(JUJU_GUI_APPLICATION_NAME) !== -1) {
           return;
         }
         // Export this relation.
-        var relationData = endpoints.map(function(endpoint) {
-          return endpoint[0] + ':' + endpoint[1].name;
-        });
-        relations.push(relationData);
-      }, this);
+        relations.push(endpoints.map(endpoint =>
+          endpoint[0] + (endpoint[1].name ? `:${endpoint[1].name}` : '')));
+      });
       return relations;
     },
 
@@ -2758,7 +2764,7 @@ YUI.add('juju-models', function(Y) {
         unit.displayName = `${serviceName}/${unit.number}`;
       });
       // Fire an update event to trigger the UI update.
-      this.fire('update');
+      this.fireEvent('update');
     },
 
     /**
@@ -2946,7 +2952,6 @@ YUI.add('juju-models', function(Y) {
     'juju-view-utils',
     'juju-charm-models',
     'juju-env-api',
-    'promise',
     'relation-utils'
   ]
 });

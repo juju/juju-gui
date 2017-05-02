@@ -47,6 +47,7 @@ var module = module;
           - business {Boolean} whether this is a business account
           - addresses {Array} A list of address objects, the
             objects contain:
+              - id {String} The unique address id.
               - name {String} The name for the address e.g. "Geoffrey Spinach"
                 or "Tuque LTD"
               - line1 {String} The first address line
@@ -54,12 +55,13 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postcode {String} The address post code
-              - countryCode {String} The address country code
+              - country {String} The address country code
               - phones {Array} a list of phone number strings
           - vat {String|Null} The VAT number
           - businessName {String|Null} The business name
 	        - billingAddresses {Array} A list of billing address objects,
             the objects contain:
+              - id {String} The unique address id.
               - name {String} The name for the address e.g. "Geoffrey Spinach"
                 or "Tuque LTD"
               - line1 {String} The first address line
@@ -67,11 +69,12 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postcode {String} The address post code
-              - countryCode {String} The address country code
+              - country {String} The address country code
               - phones {Array} a list of phone number strings
 	        - paymentMethods {Array} A list of payment method objects,
             the objects contain:
               - address {Object} The card address object containing
+                - id {String} The unique address id.
                 - name {String|Null} The name for the address e.g.
                   "Geoffrey Spinach" or "Tuque LTD"
                 - line1 {String|Null} The first address line
@@ -79,12 +82,14 @@ var module = module;
                 - county {String|Null} The address county
                 - city {String|Null} The address city
                 - postcode {String|Null} The address post code
-                - countryCode {String|Null} The address country code
+                - country {String|Null} The address country code
                 - phones {Array} a list of phone number strings
+              - id {String} The unique payment method id.
               - brand {String} The card brand name
               - last4 {String} The last four digits of the card number
               - month {Int} The card expiry month
               - name {String} The user provided identifier of the card
+              - cardHolder {String} The name of the card owner
               - valid {Boolean} Whether the card is valid e.g. the card has not
                 expired
               - Year {Int} The card expiry year
@@ -120,7 +125,7 @@ var module = module;
           - county {String} The address county
           - city {String} The address city
           - postcode {String} The address post code
-          - countryCode {String} The address country code
+          - country {String} The address country code
           - phones {Array} a list of phone number strings
         - vat {String|Null} The VAT number
         - business {Boolean} whether this is a business account
@@ -134,10 +139,11 @@ var module = module;
             - county {String} The address county
             - city {String} The address city
             - postcode {String} The address post code
-            - countryCode {String} The address country code
+            - country {String} The address country code
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
         - token {String|Null} A Stripe token
+        - paymentMethodName {String|Null} A payment method name
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and a user object as its second (see the getUser object
@@ -163,7 +169,7 @@ var module = module;
         'billing-addresses': this._unparseAddresses(user.billingAddresses),
         'allow-email': user.allowEmail || false,
         token: user.token,
-        'payment-method-name': this._generatePaymentMethodName()
+        'payment-method-name': user.paymentMethodName || null
       };
       return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
@@ -201,6 +207,7 @@ var module = module;
         first parameter and the payment methods as its second. The payment
         methods is an array of payment method objects containing:
           - address {Object} The card address object containing
+            - id {String} The unique address id.
             - name {String|Null} The name for the address e.g.
               "Geoffrey Spinach" or "Tuque LTD"
             - line1 {String|Null} The first address line
@@ -208,7 +215,8 @@ var module = module;
             - county {String|Null} The address county
             - city {String|Null} The address city
             - postcode {String|Null} The address post code
-            - countryCode {String|Null} The address country code
+            - country {String|Null} The address country code
+          - id {String} The unique payment method id.
           - brand {String} The card brand name
           - last4 {String} The last four digits of the card number
           - year {Int} The card expiry year
@@ -237,12 +245,13 @@ var module = module;
       @public createPaymentMethod
       @param username {String} The user's username.
       @param token {String} A Stripe token.
+      @param methodName {String} A name for this payment method.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and a payment method object as its second (see the
         getPaymentMethods docstring for the fields it returns).
     */
-    createPaymentMethod: function(username, token, callback) {
+    createPaymentMethod: function(username, token, methodName, callback) {
       const handler = (error, response) => {
         if (error !== null) {
           callback(error, null);
@@ -250,9 +259,12 @@ var module = module;
         }
         callback(null, this._parsePaymentMethod(response, true));
       };
-      const id = this._generatePaymentMethodName();
-      const url = `${this.url}/u/${username}/payment-methods/${id}`;
-      return jujulib._makeRequest(this.bakery, url, 'PUT', token, handler);
+      const url = `${this.url}/u/${username}/payment-methods`;
+      const payload = {
+        'payment-method-name': methodName,
+        token: token
+      };
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
 
     /**
@@ -276,24 +288,153 @@ var module = module;
     },
 
     /**
-      Generate an ID of this payment method. The ID only needs to be unique per
-      user so using the full timestamp should be enough.
+      Add an address.
 
-      @public _generatePaymentMethodName
-      @returns {String} A datestamp based id.
+      @public addAddress
+      @param username {String} The user's username.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - country {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
     */
-    _generatePaymentMethodName: function() {
-      const date = new Date();
-      const parts = [
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        date.getHours(),
-        date.getMinutes(),
-        date.getSeconds(),
-        date.getMilliseconds()
-      ];
-      return `payment-method-created-${parts.join('-')}`;
+    addAddress: function(username, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/addresses`;
+      const payload = this._unparseAddress(address);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Add a billing address.
+
+      @public addBillingAddress
+      @param username {String} The user's username.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - country {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    addBillingAddress: function(username, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses`;
+      const payload = this._unparseAddress(address);
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Update an address.
+
+      @public updateAddress
+      @param username {String} The user's username.
+      @param id {String} The id for an address.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - country {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    updateAddress: function(username, id, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/addresses/${id}`;
+      const payload = this._unparseAddress(address);
+      // The API uses the id on the address object, not the id in the URL to do
+      // the lookup, so attach the id here.
+      payload.id = id;
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
+      Update a billing address.
+
+      @public updateBillingAddress
+      @param username {String} The user's username.
+      @param id {String} The id for a billing address.
+      @param address {Object} An address containing:
+        - name {String} The name for the address e.g. "Geoffrey Spinach" or
+          "Tuque LTD"
+        - line1 {String} The first address line
+        - line2 {String} The second address line
+        - county {String} The address county
+        - city {String} The address city
+        - postcode {String} The address post code
+        - country {String} The address country code
+        - phones {Array} a list of phone number strings
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
+    */
+    updateBillingAddress: function(username, id, address, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses/${id}`;
+      const payload = this._unparseAddress(address);
+      // The API uses the id on the address object, not the id in the URL to do
+      // the lookup, so attach the id here.
+      payload.id = id;
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
+      Remove an address.
+
+      @public removeAddress
+      @param name {String} The user's username.
+      @param id {String} The unique address id.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    removeAddress: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/addresses/${id}`;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+    },
+
+    /**
+      Remove a billing address.
+
+      @public removeBillingAddress
+      @param name {String} The user's username.
+      @param id {String} The unique address id.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    removeBillingAddress: function(username, id, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/billing-addresses/${id}`;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
     },
 
     /**
@@ -322,6 +463,7 @@ var module = module;
       const address = paymentMethod.address;
       const parsed = {
         address: {
+          id: address.id,
           name: address.name || null,
           line1: address.line1 || null,
           line2: address.line2 || null,
@@ -330,6 +472,8 @@ var module = module;
           postcode: address.postcode || null,
           country: address.country || null
         },
+        cardHolder: paymentMethod['card-holder'] || null,
+        id: paymentMethod.id,
         brand: paymentMethod.brand || null,
         last4: paymentMethod.last4 || null,
         month: paymentMethod.month || null,
@@ -389,12 +533,14 @@ var module = module;
     */
     _parseAddress: function(address) {
       return {
+        id: address.id,
         name: address.name || null,
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
+        county: address.county || null,
         postcode: address.postcode || null,
-        countryCode: address['country-code'] || null,
+        country: address.country || null,
         phones: address.phones || []
       };
     },
@@ -425,8 +571,9 @@ var module = module;
         line1: address.line1 || null,
         line2: address.line2 || null,
         city: address.city || null,
+        county: address.county || null,
         postcode: address.postcode || null,
-        'country-code': address.countryCode || null,
+        'country-code': address.country || null,
         phones: address.phones || []
       };
     }

@@ -181,7 +181,7 @@ describe('test_model.js', function() {
       ]);
       var service = db.services.getById('mysql');
       service.set('name', 'notmysql');
-      db.on('update', function() {
+      document.addEventListener('update', () => {
         // Make sure it fires update so that the GUI can re-render;
         // Check that both the service and master unit gets get updated.
         assert.equal(service.get('units').item(0).displayName, 'notmysql/0');
@@ -1934,6 +1934,27 @@ describe('test_model.js', function() {
       assert.isDefined(result.services.wordpress);
       // But not its peer relation.
       assert.strictEqual(result.relations.length, 0);
+    });
+
+    it('properly exports ambiguous relations', function() {
+      db.charms.add([
+        {id: 'hadoop-resourcemanager-14'},
+        {id: 'hadoop-namenode-13'}
+      ]);
+      db.services.add({
+        id: 'resourcemanager', charm: 'hadoop-resourcemanager-14'});
+      db.services.add({
+        id: 'namenode', charm: 'hadoop-namenode-13' });
+      db.relations.add({
+        id: 'relation-0',
+        endpoints: [
+          ['resourcemanager', {role: 'server'}],
+          ['namenode', {role: 'client'}]],
+        'interface': 'db'
+      });
+      assert.deepEqual(db.exportDeployer(true).relations, [[
+        'resourcemanager', 'namenode'
+      ]]);
     });
 
     it('does not export the juju-gui service', function() {

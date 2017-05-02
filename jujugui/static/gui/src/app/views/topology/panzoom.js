@@ -43,7 +43,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
   var PanZoomModule = Y.Base.create('PanZoomModule', components.Module, [], {
 
     events: {
-      yui: {
+      topo: {
         /**
           Fired when the canvas is zoomed.
 
@@ -70,6 +70,24 @@ YUI.add('juju-topology-panzoom', function(Y) {
                             .domain([options.minZoom, options.maxZoom])
                             .range([options.minZoom, options.maxZoom])
                             .clamp(true);
+    },
+
+    /**
+     * Handler for 'zoom_in' event.
+     *
+     * @method zoom_in
+     */
+    zoom_in: function(evt) {
+      // Not implemented.
+    },
+
+    /**
+     * Handler for 'zoom_out' event.
+     *
+     * @method zoom_out
+     */
+    zoom_out: function(evt) {
+      // Not implemented.
     },
 
     /**
@@ -146,7 +164,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       this.rescale(evt);
       // TODO Makyo - pan to center of canvas, card on board.
-      topo.fire('panToCenter');
+      document.dispatchEvent(new Event('topo.panToCenter'));
     },
 
     /**
@@ -208,16 +226,28 @@ YUI.add('juju-topology-panzoom', function(Y) {
       @return {undefined} Side effects only.
     */
     panToPoint: function(evt) {
-      var point = evt.point,
+      const point = evt.point,
           topo = this.get('component'),
           scale = topo.get('scale'),
           size = [window.innerWidth, window.innerHeight];
-      this.rescale({
-        scale: scale,
-        translate: point.map(function(d, i) {
-          return ((0 - d) * scale) + (size[i] / 2);
-        })
-      });
+      const offset = topo.zoom.translate();
+      const screenWidth = size[0];
+      const screenHeight = size[1];
+      // Translate the points to values that can be compared with the current
+      // screen area.
+      const pointX = (point[0] * scale) + offset[0];
+      const pointY = (point[1] * scale) + offset[1];
+      // Find out if the points we have are within the screen rectangle.
+      const withinScreen = pointX > 0 && pointX < screenWidth && pointY > 0 &&
+        pointY < screenHeight;
+      // If the object is not within the screen the move the screen so it is
+      // visible.
+      if (!withinScreen) {
+        this.rescale({
+          scale: scale,
+          translate: point.map((d, i) => ((0 - d) * scale) + (size[i] / 2))
+        });
+      }
     }
   }, {
     ATTRS: {

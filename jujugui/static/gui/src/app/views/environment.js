@@ -48,9 +48,6 @@ YUI.add('juju-view-environment', function(Y) {
      * @method EnvironmentView.initializer
      */
     initializer: function() {
-      this.publish('navigateTo', {
-        broadcast: true,
-        preventable: false});
     },
 
     /**
@@ -97,8 +94,16 @@ YUI.add('juju-view-environment', function(Y) {
           db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
-      topo.once('rendered', this.updateHelpIndicator.bind(this));
+      this.boundRenderedHandler = this.updateHelpIndicator.bind(this);
+      document.addEventListener('topo.rendered', this.boundRenderedHandler);
       return this;
+    },
+
+    destroy: function() {
+      if (this.boundRenderedHandler) {
+        document.removeEventListener(
+          'topo.rendered', this.boundRenderedHandler);
+      }
     },
 
     /**
@@ -211,7 +216,7 @@ YUI.add('juju-view-environment', function(Y) {
      * @method render.rendered
      */
     rendered: function() {
-      this.topo.fire('rendered');
+      document.dispatchEvent(new Event('topo.rendered'));
       // Bind d3 events (manually).
       this.topo.bindAllD3Events();
     },

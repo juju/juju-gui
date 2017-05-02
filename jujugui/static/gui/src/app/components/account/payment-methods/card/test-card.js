@@ -30,12 +30,15 @@ describe('AccountPaymentMethodCard', () => {
 
   beforeEach(() => {
     card = {
-      name: 'payment-method-created-2017-3-11-13-49-42-186',
+      id: 'paymentmethod1',
+      name: 'personal',
       last4: 1234,
       month: 3,
       year: 2017,
       brand: 'Fancy',
+      cardHolder: 'MR G Spinach',
       address: {
+        id: 'address1',
         line1: '1 Maple',
         line2: 'St',
         city: 'Sasquatch',
@@ -61,7 +64,7 @@ describe('AccountPaymentMethodCard', () => {
               <div className="account__payment-card-front">
                 <div className="account__payment-card-overlay"></div>
                 <div className="account__payment-card-name">
-                  Click to reveal card details.
+                  MR G Spinach
                 </div>
               </div>
               <div className="account__payment-card-back">
@@ -74,7 +77,9 @@ describe('AccountPaymentMethodCard', () => {
                     {3}/{2017}
                   </div>
                   <div className="account__payment-card-brand">
-                    Fancy
+                    <juju.components.SvgIcon
+                      size="40"
+                      name="card-fancy" />
                   </div>
                 </div>
               </div>
@@ -137,9 +142,7 @@ describe('AccountPaymentMethodCard', () => {
     output.props.children[1].props.children.props.action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
-    assert.equal(
-      removePaymentMethod.args[0][1],
-      'payment-method-created-2017-3-11-13-49-42-186');
+    assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
     assert.equal(onPaymentMethodRemoved.callCount, 1);
   });
 
