@@ -119,7 +119,16 @@ var module = module;
       // Prepare the parameters for sending the HTTP request.
       const username = null;
       const password = null;
-      const withCredentials = false;
+
+      // The only time we need the with credentials header is for cookie auth;
+      // it's not pretty, but special casing here is the most direct solution.
+      // Another option is to implement a factory method on bakery, e.g.
+      // bakery.withCredentials(), which would return a bakery that sets the
+      // withCredentials param to true rather than false.
+      let withCredentials = false;
+      if (method === 'put' && url.indexOf('/set-auth-cookie') !== -1) {
+        withCredentials = true;
+      }
       const progressCallback = null;
       // Send the request.
       if (method === 'post' || method === 'put' || method === 'patch') {

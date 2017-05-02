@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-fdescribe('Bakery', () => {
+describe('Bakery', () => {
   let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll((done) => {
@@ -103,6 +103,14 @@ fdescribe('Bakery', () => {
         assert.isFunction(args[7]);
         client._sendRequest.reset();
       });
+    });
+
+    it('properly handles cookie auth', () => {
+      bakery.sendRequest('http://example.com/set-auth-cookie', 'PUT');
+      // check that withCredentials is properly sent to the client
+      assert.deepEqual(client._sendRequest.args[0][6], true);
+      bakery.sendRequest('http://example.com/', 'PUT');
+      assert.deepEqual(client._sendRequest.args[0][6], false);
     });
 
     it('sets the headers', () => {
