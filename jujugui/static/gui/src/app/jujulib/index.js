@@ -95,7 +95,7 @@ var module = module;
           url, headers, JSON.stringify(params), wrappedCallback);
         break;
       default:
-        console.error(`method "${method}" not supported`);
+        console.error(`method "${method}" is not supported`);
         break;
     }
   };
