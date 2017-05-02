@@ -611,7 +611,7 @@ var module = module;
     */
     _parsePaymentMethod: function(paymentMethod) {
       const address = paymentMethod.address;
-      let parsed = {
+      const parsed = {
         address: {
           id: address.id,
           name: address.name || null,

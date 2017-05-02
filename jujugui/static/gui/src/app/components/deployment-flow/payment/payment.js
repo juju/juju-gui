@@ -62,6 +62,8 @@ YUI.add('deployment-payment', function() {
     _getUser: function() {
       this.setState({loading: true}, () => {
         const xhr = this.props.getUser(this.props.username, (error, user) => {
+          // If the user is not found we don't want to display the error, but
+          // rather display a message about creating a user.
           if (error && error !== 'not found') {
             const message = 'Could not load user info';
             this.props.addNotification({

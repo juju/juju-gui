@@ -57,7 +57,7 @@ YUI.add('receipt-popup', function() {
       this.setState({loading: true}, () => {
         const chargeId = this.props.chargeId;
         const xhr = this.props.getReceipt(chargeId, (error, response) => {
-          if (error && error !== 'not found') {
+          if (error) {
             const message = 'Could not load the receipt';
             this.props.addNotification({
               title: message,

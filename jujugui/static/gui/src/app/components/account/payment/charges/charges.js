@@ -68,7 +68,7 @@ YUI.add('account-payment-charges', function() {
       this.setState({loading: true}, () => {
         const username = this.props.username;
         const xhr = this.props.getCharges(username, (error, response) => {
-          if (error && error !== 'not found') {
+          if (error) {
             const message = 'Could not load the list of charges';
             this.props.addNotification({
               title: message,
@@ -111,7 +111,7 @@ YUI.add('account-payment-charges', function() {
               {item.usage}
             </div>
             <div className="three-col last-col no-margin-bottom">
-              {item.price / 100}
+              {item.price}
             </div>
           </li>);
       });

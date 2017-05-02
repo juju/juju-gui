@@ -162,7 +162,7 @@ describe('AccountPaymentCharges', function() {
                         something
                       </div>
                       <div className="three-col last-col no-margin-bottom">
-                        0.48
+                        48
                       </div>
                     </li>
                   </ul>
