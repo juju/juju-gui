@@ -269,13 +269,9 @@ var module = module;
     */
     getFile: function(entityId, filename, callback) {
       entityId = entityId.replace('cs:', '');
-      return jujulib._makeRequest(
-          this.bakery,
-          this._generatePath(entityId, null, '/archive/' + filename),
-          'GET',
-          null,
-          callback,
-          false);
+      const url = this._generatePath(entityId, null, '/archive/' + filename);
+      const headers = null;
+      return this.bakery.get(url, headers, jujulib._wrap(callback));
     },
 
     /**
@@ -308,12 +304,11 @@ var module = module;
         }
         callback(null, data.Id);
       };
-      jujulib._makeRequest(
-        this.bakery,
-        this._generatePath(entityId.replace('cs:', ''), null, '/meta/id'),
-        'GET',
-        null,
-        handler);
+      const url = this._generatePath(
+        entityId.replace('cs:', ''), null, '/meta/id');
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
     /**
       Makes a request to the charmstore api for the supplied id. Whether that
@@ -328,7 +323,7 @@ var module = module;
     getEntity: function(entityId, callback) {
       // Make sure we strip the ID of any extraneous strings.
       entityId = entityId.replace('cs:', '');
-      var endpoints = 'include=' + [
+      const endpoints = 'include=' + [
         'bundle-metadata',
         'bundle-machine-count',
         'charm-config',
@@ -346,12 +341,12 @@ var module = module;
         'supported-series',
         'tags'
       ].join('&include=');
-      return jujulib._makeRequest(
-          this.bakery,
-          this._generatePath(entityId, endpoints, '/meta/any'),
-          'GET',
-          null,
-          this._transformQueryResults.bind(this, callback));
+      const url = this._generatePath(entityId, endpoints, '/meta/any');
+      const headers = null;
+      const wrappedCallback =
+        jujulib._wrap(
+          this._transformQueryResults.bind(this,callback), {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
@@ -367,8 +362,8 @@ var module = module;
       @param limit {Integer} The number of results to get.
     */
     search: function(filters, callback, limit) {
-      var qs = '';
-      var keys = Object.keys(filters);
+      let qs = '';
+      const keys = Object.keys(filters);
       if (keys.length > 0) {
         keys.forEach(function(key, i) {
           var value = filters[key];
@@ -381,7 +376,7 @@ var module = module;
           }
         });
       }
-      var includes = [
+      const includes = [
         qs,
         'limit=' + (limit || 30),
         'autocomplete=1',
@@ -394,13 +389,12 @@ var module = module;
         'include=owner',
         'include=stats'
       ];
-      var path = this._generatePath('search', includes.join('&'));
-      return jujulib._makeRequest(
-          this.bakery,
-          path,
-          'GET',
-          null,
-          this._transformQueryResults.bind(this, callback));
+      const url = this._generatePath('search', includes.join('&'));
+      const headers = null;
+      const wrappedCallback =
+        jujulib._wrap(
+          this._transformQueryResults.bind(this,callback), {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
@@ -418,7 +412,7 @@ var module = module;
     list: function(author, callback, type) {
       author = encodeURIComponent(author);
       type = encodeURIComponent(type || 'charm');
-      var qs = [
+      const qs = [
         'owner=' + author,
         'type=' + type,
         'include=charm-metadata',
@@ -428,14 +422,12 @@ var module = module;
         'include=supported-series',
         'include=stats'
       ];
-      qs = qs.join('&');
-      var path = this._generatePath('list', qs);
-      return jujulib._makeRequest(
-        this.bakery,
-        path,
-        'GET',
-        null,
-        this._transformQueryResults.bind(this, callback));
+      const url = this._generatePath('list', qs.join('&'));
+      const headers = null;
+      const wrappedCallback =
+        jujulib._wrap(
+          this._transformQueryResults.bind(this,callback), {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
@@ -447,18 +439,12 @@ var module = module;
           parameter and the response data as its second.
     */
     whoami: function(callback) {
-      var path = this._generatePath('whoami');
-      return jujulib._makeRequest(
-        this.bakery,
-        path,
-        'GET',
-        null,
-        jujulib._transformAuthObject.bind(this, callback),
-        true,
-        // turn off redirect, we want to silently fail
-        // if the macaroon is valid.
-        false
-      );
+      const url = this._generatePath('whoami');
+      const headers = null;
+      const wrappedCallback =
+        jujulib._wrap(
+          jujulib._transformAuthObject.bind(this,callback), {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
@@ -469,11 +455,10 @@ var module = module;
         parameter and the response data as its second.
     */
     getMacaroon: function(callback) {
-      const path = this._generatePath('macaroon');
-      const body = null;
-      jujulib._makeRequest(this.bakery, path, 'GET', body, (err, data) => {
-        callback(err, data);
-      });
+      const url = this._generatePath('macaroon');
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -487,11 +472,10 @@ var module = module;
     */
     getDelegatableMacaroon: function(charmURL, callback) {
       const id = encodeURIComponent(charmURL);
-      const path = this._generatePath('delegatable-macaroon', `id=${id}`);
-      const body = null;
-      jujulib._makeRequest(this.bakery, path, 'GET', body, (err, data) => {
-        callback(err, data);
-      });
+      const url = this._generatePath('delegatable-macaroon', `id=${id}`);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -503,9 +487,11 @@ var module = module;
         parameter and the response data as its second.
     */
     setAuthCookie: function(macaroons, callback) {
-      const path = this._generatePath('set-auth-cookie');
-      const body = {'Macaroons': macaroons};
-      jujulib._makeRequest(this.bakery, path, 'PUT', body, callback);
+      const url = this._generatePath('set-auth-cookie');
+      const headers = null;
+      const body = JSON.stringify({'Macaroons': macaroons});
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -535,9 +521,9 @@ var module = module;
       @param bundle {Array} An array containing the requested bundle model.
     */
     _getBundleYAMLResponse: function(callback, error, bundle) {
-      return jujulib._makeRequest(
-          this.bakery, bundle[0].deployerFileUrl, 'GET',
-          null, callback, false);
+      const url = bundle[0].deployerFileUrl;
+      const headers = null;
+      return this.bakery.get(url, headers, jujulib._wrap(callback));
     },
 
     /**
@@ -551,13 +537,13 @@ var module = module;
     */
     getAvailableVersions: function(charmId, callback) {
       charmId = charmId.replace('cs:', '');
-      var series = charmId.split('/')[0];
-      return jujulib._makeRequest(
-          this.bakery,
-          this._generatePath(charmId, null, '/expand-id'),
-          'GET',
-          null,
-          this._processAvailableVersions.bind(this, series, callback));
+      const series = charmId.split('/')[0];
+      const url = this._generatePath(charmId, null, '/expand-id');
+      const headers = null;
+      const wrappedCallback = jujulib._wrap(
+        this._processAvailableVersions.bind(this, series, callback),
+        {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
@@ -599,12 +585,11 @@ var module = module;
     */
     getResources: function(charmId, callback) {
       charmId = charmId.replace('cs:', '');
-      return jujulib._makeRequest(
-          this.bakery,
-          this._generatePath(charmId, null, '/meta/resources'),
-          'GET',
-          null,
-          this._processResources.bind(this, callback));
+      const url = this._generatePath(charmId, null, '/meta/resources');
+      const headers = null;
+      const wrappedCallback = jujulib._wrap(
+        this._processResources.bind(this, callback), {parseJSON: true});
+      return this.bakery.get(url, headers, wrappedCallback);
     },
 
     /**
