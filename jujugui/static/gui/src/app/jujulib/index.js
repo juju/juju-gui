@@ -107,8 +107,46 @@ var module = module;
     @return a query string serialized from the object.
   */
   const serializeObject = function(obj) {
-    return Object.keys(obj).map(p => 
+    return Object.keys(obj).map(p =>
         `${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`).join('&');
+  };
+  /**
+    @param {Function} callback The callback to wrap.
+    @param {Object} options Any options for the callback wrapper.
+      parseJSON: {Boolean} false - Whether the response should be passed
+        through JSON.parse.
+    @return {Function} The wrapped callback.
+  */
+  const _wrap = (callback, options={}) => {
+    return (err, response) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      const target = response.target;
+      const text = target && target.responseText;
+      if (!text) {
+        callback(null, null);
+        return;
+      }
+      if (!options.parseJSON) {
+        callback(null, text);
+        return;
+      }
+      let jsonResponse;
+      try {
+        jsonResponse = JSON.parse(text);
+        err = jsonResponse.error || jsonResponse.Error;
+        if (err) {
+          callback(err, null);
+          return;
+        }
+        callback(null, jsonResponse);
+      } catch(err) {
+        callback(err, null);
+        return;
+      }
+    };
   };
 
   var _transformAuthObject = function(callback, error, data) {
@@ -134,7 +172,8 @@ var module = module;
   exports.jujulib = {
     _makeRequest: _makeRequest,
     _transformAuthObject: _transformAuthObject,
-    serializeObject: serializeObject
+    serializeObject: serializeObject,
+    _wrap
   };
 
 }((module && module.exports) ? module.exports : this));
