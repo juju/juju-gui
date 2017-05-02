@@ -20,6 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('notification', function() {
 
+  /**
+    Renders a new vanilla style notification
+    (https://docs.vanillaframework.io/en/patterns/notification). Can be
+    dismissed if a 'dismiss' function is passed, otherwise just displays
+    'content' in the desired style.
+  */
   juju.components.Notification = React.createClass({
 
     propTypes: {

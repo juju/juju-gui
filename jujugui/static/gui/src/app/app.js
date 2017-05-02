@@ -408,8 +408,9 @@ YUI.add('juju-gui', function(Y) {
               please accept the pop up window or&nbsp;
               <a href={url} target="_blank">click here</a>.</span>);
           const dismiss = this.state.current.root === 'login' ?
-            null :
-            () => {ReactDOM.unmountComponentAtNode(holder);};
+            null : () => {
+              ReactDOM.unmountComponentAtNode(holder);
+            };
           ReactDOM.render(
             <window.juju.components.Notification
               dismiss={dismiss}
