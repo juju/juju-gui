@@ -27,13 +27,61 @@ describe('application hotkeys', function() {
     'modal-gui-settings',
     'modal-shortcuts'
   ];
+  const keyboard = Keysim.Keyboard.US_ENGLISH;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
+
+      // 02-05-2016 Luke: I've moved this to 'before' rather then 'beforeEach'.
+      // 'beforeEach' duplicated the 'keydown' event listener on subsequent
+      // inits of the 'container' 'app' resulting in keyboard events firing
+      // multiple times.
+      jujuConfig = window.juju_config;
+      window.juju_config = {
+        charmstoreURL: 'http://1.2.3.4/',
+        plansURL: 'http://plans.example.com/',
+        termsURL: 'http://terms.example.com/'
+      };
+      container = utils.makeAppContainer();
+      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      env = new juju.environments.GoEnvironment({
+        conn: new utils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet(),
+        user: userClass
+      });
+      env.connect();
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        consoleEnabled: true,
+        controllerAPI: new juju.ControllerAPI({
+          conn: new utils.SocketStub(),
+          user: userClass
+        }),
+        env: env,
+        container: container,
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0',
+        controllerSocketTemplate: '',
+        user: userClass
+      });
+      app.showView(new Y.View());
+      app.activateHotkeys();
+      app.render();
+
       done();
     });
+  });
+
+  after(function(done) {
+    window.juju_config = jujuConfig;
+    env.close(() => {
+      app.destroy({remove: true});
+      container.remove(true);
+      done();
+   });
   });
 
   const getMockStorage = function() {
@@ -46,52 +94,7 @@ describe('application hotkeys', function() {
     };
   };
 
-  beforeEach(function() {
-    jujuConfig = window.juju_config;
-    window.juju_config = {
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
-    };
-    container = utils.makeAppContainer();
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
-    env = new juju.environments.GoEnvironment({
-      conn: new utils.SocketStub(),
-      ecs: new juju.EnvironmentChangeSet(),
-      user: userClass
-    });
-    env.connect();
-    app = new Y.juju.App({
-      baseUrl: 'http://example.com/',
-      consoleEnabled: true,
-      controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub(),
-        user: userClass
-      }),
-      env: env,
-      container: container,
-      viewContainer: container,
-      jujuCoreVersion: '2.0.0',
-      controllerSocketTemplate: '',
-      user: userClass
-    });
-    app.showView(new Y.View());
-    app.activateHotkeys();
-    app.render();
-  });
-
-  afterEach(function(done) {
-    window.juju_config = jujuConfig;
-    env.close(() => {
-      app.destroy({remove: true});
-      container.remove(true);
-      done();
-    });
-  });
-
   it('should listen for "?" events', function() {
-    const keyboard = Keysim.Keyboard.US_ENGLISH;
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
@@ -101,7 +104,6 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for "!" events', function() {
-    const keyboard = Keysim.Keyboard.US_ENGLISH;
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
@@ -111,12 +113,13 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for Alt-S key events', function() {
-    const keyboard = Keysim.Keyboard.US_ENGLISH;
-    var searchInput = document.createElement('input');
+    let searchInput = document.createElement('input');
     searchInput.setAttribute('id', 'charm-search-field');
     container.appendChild(searchInput);
+
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.ALT, 83);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
+
     // Did charm-search-field get the focus?
     assert.equal(searchInput, document.activeElement);
   });

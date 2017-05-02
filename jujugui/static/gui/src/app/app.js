@@ -189,7 +189,6 @@ YUI.add('juju-gui', function(Y) {
         // This gets triggered by different types of elements some YUI some
         // React. So try and use the native tagName property first, if that
         // fails then fall back to ReactDOM.findDOMNode().
-        console.log(evt);
         var tagName = evt.target.tagName;
         var contentEditable = evt.target.contentEditable;
         var currentKey;
