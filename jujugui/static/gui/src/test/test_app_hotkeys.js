@@ -24,6 +24,7 @@ describe('application hotkeys', function() {
     'juju-gui',
     'juju-tests-utils',
     'node-event-simulate',
+    'modal-gui-settings',
     'modal-shortcuts'
   ];
 
@@ -94,7 +95,7 @@ describe('application hotkeys', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
-    const shortcuts = document.querySelector('#modal-shortcuts');
+    const shortcuts = document.getElementById('modal-shortcuts');
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
   });
@@ -103,7 +104,7 @@ describe('application hotkeys', function() {
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
-    const settings = document.querySelector('#modal-gui-settings');
+    const settings = document.getElementById('modal-gui-settings');
     assert.equal(settings.children.length > 0, true,
       'The settings component did not render');
   });

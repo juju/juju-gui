@@ -37,7 +37,7 @@ YUI.add('modal-shortcuts', function() {
       Object.keys(this.props.keybindings).forEach(key => {
         const binding = this.props.keybindings[key];
         if (binding.help && (binding.condition === undefined ||
-                       binding.condition.call(this) === true)) {
+          binding.condition.call(this) === true)) {
           bindings.push({
             key: key,
             label: binding.label || key,
@@ -56,8 +56,7 @@ YUI.add('modal-shortcuts', function() {
     */
     _generateList: function() {
       const bindings = this._generateBindings();
-
-      const components = bindings.map((binding) => {
+      const components = bindings.map(binding => {
         return(
           <div key={binding.label}>
             <div className="two-col">

@@ -23,7 +23,8 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 describe('ModalGUISettings', function() {
   const _localStorage = {
     setItem: sinon.stub(),
-    removeItem: sinon.stub()
+    removeItem: sinon.stub(),
+    getItem: sinon.stub().returns(false)
   };
 
   beforeAll(function(done) {
@@ -34,7 +35,11 @@ describe('ModalGUISettings', function() {
   function visibleRender(
     hide = sinon.stub(),
     handleChange = sinon.stub(),
-    state = {},
+    state = {
+      'disable-cookie': false,
+      'force-containers': false,
+      'disable-auto-place': false
+    },
     handleSave = sinon.stub()) {
     return (<div id="#shortcut-settings">
       <div className="twelve-col no-margin-bottom">
@@ -101,7 +106,6 @@ describe('ModalGUISettings', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModalGUISettings
         closeModal={close}
-        disableAutoPlace={true}
         localStorage={_localStorage} />, true);
     const instance = renderer.getMountedInstance();
     instance.setState({

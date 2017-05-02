@@ -108,19 +108,27 @@ YUI.add('juju-gui', function(Y) {
         help: 'Select the charm Search'
       },
       'S-1': {
-        target: '#modal-gui-settings',
         callback: function() {
           this._clearShortcutsModal();
-          this._displaySettingsModal();
+          if (document.getElementById('modal-gui-settings').
+            children.length > 0) {
+            this._clearSettingsModal();
+          } else {
+            this._displaySettingsModal();
+          }
         },
         help: 'GUI Settings',
         label: 'Shift + !'
       },
       'S-/': {
-        target: '#modal-shortcuts',
         callback: function() {
           this._clearSettingsModal();
-          this._displayShortcutsModal();
+          if (document.getElementById('modal-shortcuts').
+            children.length > 0) {
+            this._clearShortcutsModal();
+          } else {
+            this._displayShortcutsModal();
+          }
         },
         help: 'Display this help',
         label: 'Shift + ?'
@@ -1782,12 +1790,6 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.ModalGUISettings
           closeModal={this._clearSettingsModal.bind(this)}
-          disableCookie={
-            localStorage.getItem('disable-cookie') === 'true'}
-          disableAutoPlace={
-            localStorage.getItem('disable-auto-place') === 'true'}
-          forceContainers={
-            localStorage.getItem('force-containers') === 'true'}
           localStorage={localStorage} />,
         document.getElementById('modal-gui-settings'));
     },

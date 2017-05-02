@@ -22,20 +22,23 @@ YUI.add('modal-gui-settings', function() {
 
   juju.components.ModalGUISettings = React.createClass({
     displayName: 'Custom GUI Settings',
-    
+
     propTypes: {
       closeModal: React.PropTypes.func.isRequired,
-      disableAutoPlace: React.PropTypes.bool,
-      disableCookie: React.PropTypes.bool,
-      forceContainers: React.PropTypes.bool,
       localStorage: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
       let state = {};
-      state['disable-cookie'] = this.props.disableCookie;
-      state['disable-auto-place'] = this.props.disableAutoPlace;
-      state['force-containers'] = this.props.forceContainers;
+      const localStorage = this.props.localStorage;
+      // We have to check for the 'true' string. Because localStorage is all
+      // about the strings.
+      state['disable-cookie'] = localStorage.
+        getItem('disable-cookie') === 'true';
+      state['disable-auto-place'] = localStorage.
+        getItem('disable-auto-place') === 'true';
+      state['force-containers'] = localStorage.
+        getItem('force-containers') === 'true';
       return state;
     },
 
