@@ -508,7 +508,7 @@ YUI.add('search-results', function(Y) {
       return (<div className="clearfix community-results">
         {button}
         <div className={holderClasses}>
-          <h4 className="community-header">Community <span className="count">
+          <h4>Community <span className="count">
             ({community.length})
           </span></h4>
           <ul className="list-block__list">
