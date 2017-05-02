@@ -300,7 +300,6 @@ YUI.add('search-results', function(Y) {
       };
       var currentType = nextProps.type !== undefined ?
           nextProps.type : this.props.type;
-      state.currentType = currentType;
       switch (state.activeComponent) {
         case 'loading':
           state.activeChild = {
@@ -469,6 +468,12 @@ YUI.add('search-results', function(Y) {
       window.history.back();
     },
 
+    /**
+      Generate the promulgated search results list.
+
+      @param {Array} promulgated The list of promulgated results.
+      @return {Object} JSX div containing heading and list.
+    */
     _generatePromulgatedResults: function(promulgated) {
       return (<div className="clearfix promulgated-results">
         <h4>Recommended <span className="count">
@@ -484,12 +489,22 @@ YUI.add('search-results', function(Y) {
       </div>);
     },
 
+    /**
+      Toggles the visibility of community results.
+    */
     _toggleCommunityResults: function() {
       let state = this.state;
       state.showCommunity = !this.state.showCommunity;
       this.setState(this.generateState(state));
     },
 
+    /**
+      Generate community search results list.
+
+      @param {Array} community The array of community results.
+      @param {Boolean} hasPromulgated Do promulgated results exist?
+      @return {Object} JSX div containing toggle button, header and list.
+    */
     _generateCommunityResults: function(community, hasPromulgated) {
       const holderClasses = classNames(
         'clearfix',
