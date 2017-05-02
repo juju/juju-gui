@@ -111,7 +111,7 @@ YUI.add('account-payment-charges', function() {
               {item.usage}
             </div>
             <div className="three-col last-col no-margin-bottom">
-              {item.price}
+              {item.price / 100}
             </div>
           </li>);
       });
@@ -173,13 +173,13 @@ YUI.add('account-payment-charges', function() {
                   relative={true} />
               </div>
               <div className="two-col no-margin-bottom">
-                {charge.price} {charge.currency}
+                {charge.price / 100} {charge.currency}
               </div>
               <div className="two-col no-margin-bottom">
-                {charge.vat} {charge.currency}
+                {charge.vat / 100} {charge.currency}
               </div>
               <div className="two-col last-col no-margin-bottom">
-                {charge.price + charge.vat} {charge.currency}
+                {(charge.price + charge.vat) / 100} {charge.currency}
               </div>
               <div className="two-col last-col no-margin-bottom">
               <juju.components.GenericButton

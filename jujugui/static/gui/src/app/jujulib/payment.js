@@ -478,8 +478,8 @@ var module = module;
         an array of objects containing:
         - id {String} The unique charge ID,
         - statementId {String} The ID for the statement,
-        - price {Integer} The total price,
-        - vat {Integer} The VAT component of the price,
+        - price {Integer} The total price in cents,
+        - vat {Integer} The VAT component of the price in cents,
         - currency {String} The currency for the charge,
         - nickname {String} The user's nickname,
         - for {String} The date for the charge,
@@ -489,7 +489,7 @@ var module = module;
           - name {String} The name of the item,
           - details {String} The details of the item,
           - usage {String} The usage for the item,
-          - price {String} The price for the item,
+          - price {String} The price for the item in cents,
         - paymentReceivedAt {String} The date the payment was received,
         - paymentMethodUsed {Object} The payment method used, containing:
           - address {Object} The card address object containing:

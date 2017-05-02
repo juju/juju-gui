@@ -60,7 +60,7 @@ describe('ReceiptPopup', function() {
         type="wide">
         <div className="receipt-popup__container">
           <iframe height="100%"
-            src="data:text/html;charset=utf-8,<html>...</html>"
+            src="data:text/html;charset=utf-8,%3Chtml%3E...%3C%2Fhtml%3E"
             width="100%">
           </iframe>
         </div>

@@ -82,7 +82,8 @@ YUI.add('receipt-popup', function() {
         content = (
           <div className="receipt-popup__container">
             <iframe height="100%"
-              src={`data:text/html;charset=utf-8,${receipt}`}
+              src={
+                `data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
               width="100%">
             </iframe>
           </div>);

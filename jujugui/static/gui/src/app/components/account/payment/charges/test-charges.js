@@ -113,13 +113,13 @@ describe('AccountPaymentCharges', function() {
                     relative={true} />
                 </div>
                 <div className="two-col no-margin-bottom">
-                  {10000} {'USD'}
+                  {100} {'USD'}
                 </div>
                 <div className="two-col no-margin-bottom">
-                  {2000} {'USD'}
+                  {20} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
-                  {12000} {'USD'}
+                  {120} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
                   <juju.components.GenericButton
@@ -162,7 +162,7 @@ describe('AccountPaymentCharges', function() {
                         something
                       </div>
                       <div className="three-col last-col no-margin-bottom">
-                        48
+                        0.48
                       </div>
                     </li>
                   </ul>
@@ -260,13 +260,13 @@ describe('AccountPaymentCharges', function() {
                     relative={true} />
                 </div>
                 <div className="two-col no-margin-bottom">
-                  {10000} {'USD'}
+                  {100} {'USD'}
                 </div>
                 <div className="two-col no-margin-bottom">
-                  {2000} {'USD'}
+                  {20} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
-                  {12000} {'USD'}
+                  {120} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
                   <juju.components.GenericButton

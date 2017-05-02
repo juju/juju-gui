@@ -53,7 +53,8 @@ describe('CardForm', function() {
             regex: /\S+/,
             error: 'This field is required.'
           }]} />
-        <div className="card-form__card"></div>
+        <div className="card-form__card"
+          ref="cardNode"></div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -69,6 +70,7 @@ describe('CardForm', function() {
         createCardElement={createCardElement}
         validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
+    instance.refs = {cardNode: {}};
     instance.componentDidMount();
     assert.equal(mount.callCount, 1);
   });
