@@ -60,8 +60,7 @@ var module = module;
         implement the following interface:
           - get(key) -> value;
           - set(key, value, callback): the callback is called without arguments
-            when the set operation has been performed;
-          - clear(): clear all stored data.
+            when the set operation has been performed.
       @param {Object} params Optional parameters including:
         - nonInteractive: whether to switch to non-interactive mode while
           acquiring macaroons. If set the visitPage parameter below is ignored;

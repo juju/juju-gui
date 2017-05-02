@@ -636,11 +636,9 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Auto log the user into the charm store as part of the login process
-      when the GUI operates in a gisf context.
-
-      @method _loginToCharmstore
+      when the GUI operates in a GISF context.
     */
-    _loginToCharmstore: function() {
+    _ensureLoggedIntoCharmstore: function() {
       if (!this.user.getMacaroon('charmstore')) {
         this.get('charmstore').getMacaroon((err, macaroon) => {
           if (err) {
@@ -690,7 +688,7 @@ YUI.add('juju-gui', function(Y) {
         // logged into the charmstore.
         if (this.get('gisf')) {
           this._sendGISFPostBack();
-          this._loginToCharmstore();
+          this._ensureLoggedIntoCharmstore();
         }
 
         // If state has a `next` property then that overrides all defaults.
@@ -953,7 +951,7 @@ YUI.add('juju-gui', function(Y) {
 
       const LogoutLink = (<window.juju.components.Logout
         logout={this.logout.bind(this)}
-        clearCookie={bakery.storage.clear.bind(bakery.storage, () => {})}
+        clearCookie={bakery.storage.clear.bind(bakery.storage)}
         gisfLogout={window.juju_config.gisfLogout || ''}
         gisf={window.juju_config.gisf || false}
         charmstoreLogoutUrl={charmstore.getLogoutUrl()}
