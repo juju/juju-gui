@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  let app, container, env, juju, jujuConfig, keyboard, utils, Y;
+  let app, container, env, juju, jujuConfig, utils, Y;
   const requirements = [
     'juju-gui',
     'juju-tests-utils',
@@ -79,7 +79,6 @@ describe('application hotkeys', function() {
     app.showView(new Y.View());
     app.activateHotkeys();
     app.render();
-    keyboard = Keysim.Keyboard.US_ENGLISH;
   });
 
   afterEach(function(done) {
@@ -92,6 +91,7 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for "?" events', function() {
+    const keyboard = Keysim.Keyboard.US_ENGLISH;
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
@@ -101,6 +101,7 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for "!" events', function() {
+    const keyboard = Keysim.Keyboard.US_ENGLISH;
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 49);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 
@@ -110,6 +111,7 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for Alt-S key events', function() {
+    const keyboard = Keysim.Keyboard.US_ENGLISH;
     var searchInput = document.createElement('input');
     searchInput.setAttribute('id', 'charm-search-field');
     container.appendChild(searchInput);

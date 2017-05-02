@@ -176,7 +176,7 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-        '/': 191, '?': 63, '+': 187, '-': 189,
+        '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
@@ -189,6 +189,7 @@ YUI.add('juju-gui', function(Y) {
         // This gets triggered by different types of elements some YUI some
         // React. So try and use the native tagName property first, if that
         // fails then fall back to ReactDOM.findDOMNode().
+        console.log(evt);
         var tagName = evt.target.tagName;
         var contentEditable = evt.target.contentEditable;
         var currentKey;
