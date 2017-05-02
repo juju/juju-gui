@@ -402,29 +402,27 @@ YUI.add('juju-gui', function(Y) {
           // Add to the page a notification about accepting the pop up window
           // for logging into USSO.
           const url = response.Info.VisitURL;
-          const notification = document.createElement('div');
-          notification.setAttribute('id', 'login-notification');
-          const message = document.createTextNode(
-            'To proceed with the authentication, please accept the pop up ' +
-            'window or ');
-          notification.appendChild(message);
-          const link = document.createElement('a');
-          link.href = url;
-          link.target = '_blank';
-          const text = document.createTextNode('click here');
-          link.appendChild(text);
-          notification.appendChild(link);
-          notification.appendChild(document.createTextNode('.'));
-          document.body.appendChild(notification);
+          const holder = document.getElementById('login-notification');
+          const content = (
+            <span>To proceed with the authentication,
+              please accept the pop up window or&nbsp;
+              <a href={url} target="_blank">click here</a>.</span>);
+          const dismiss = this.state.current.root === 'login' ?
+            null : () => {
+              ReactDOM.unmountComponentAtNode(holder);
+            };
+          ReactDOM.render(
+            <window.juju.components.Notification
+              dismiss={dismiss}
+              content={content} />,
+              holder);
           // Open the pop up (default behavior for the time being).
           window.open(url, 'Login');
         },
         onSuccess: () => {
-          // Remove the pop up notification from the page.
-          const notification = document.getElementById('login-notification');
-          if (notification) {
-            notification.remove();
-          }
+          ReactDOM.unmountComponentAtNode(
+            document.getElementById('login-notification')
+          );
         }
       });
       // Set up a new modelController instance.
@@ -3215,6 +3213,7 @@ YUI.add('juju-gui', function(Y) {
     'machine-view',
     'login-component',
     'logout-component',
+    'notification',
     'notification-list',
     'panel-component',
     'settings',
