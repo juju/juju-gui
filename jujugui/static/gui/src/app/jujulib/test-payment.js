@@ -554,6 +554,75 @@ describe('jujulib payment service', function() {
     });
   });
 
+  describe('updatePaymentMethod', () => {
+    it('can update a payment method', () => {
+      const makeRequest = sinon.stub(jujulib, '_makeRequest');
+      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const address = {
+        line1: '10 Maple St',
+        line2: '',
+        city: 'Sasquatch',
+        county: 'Bunnyhug',
+        postcode: '90210',
+        country: 'CA',
+      };
+      payment.updatePaymentMethod(
+        'spinach', 'paymentmethod1', address, '12/17', sinon.stub());
+      // Restore the original method on the lib.
+      makeRequest.restore();
+      assert.equal(makeRequest.callCount, 1);
+      assert.deepEqual(makeRequest.args[0][3], {
+        address: {
+          name: null,
+          line1: '10 Maple St',
+          line2: null,
+          city: 'Sasquatch',
+          county: 'Bunnyhug',
+          postcode: '90210',
+          'country-code': 'CA',
+          phones: []
+        },
+        month: 12,
+        year: 17
+      });
+    });
+
+    it('can return when there are no errors', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/u/spinach/payment-methods/paymentmethod1');
+          const xhr = makeXHRRequest('success');
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.updatePaymentMethod(
+        'spinach', 'paymentmethod1', {}, '12/17', error => {
+          assert.strictEqual(error, null);
+          done();
+        });
+    });
+
+    it('handles errors when updating a payment method', (done) => {
+      const bakery = {
+        sendPutRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.updatePaymentMethod(
+        'spinach', 'paymentmethod1', {}, '12/17', error => {
+          assert.equal(error, 'Uh oh!');
+          done();
+        });
+    });
+  });
+
   describe('removePaymentMethod', () => {
     it('can remove a payment method', () => {
       const makeRequest = sinon.stub(jujulib, '_makeRequest');

@@ -28,6 +28,7 @@ YUI.add('account-payment-method-card', function() {
       card: React.PropTypes.object.isRequired,
       onPaymentMethodRemoved: React.PropTypes.func,
       removePaymentMethod: React.PropTypes.func,
+      updatePaymentMethod: React.PropTypes.func,
       username: React.PropTypes.string
     },
 
@@ -107,6 +108,10 @@ YUI.add('account-payment-method-card', function() {
             action={this._removePaymentMethod}
             type="inline-base"
             title="Remove payment details" />
+          <juju.components.GenericButton
+            action={this.props.updatePaymentMethod}
+            type="inline-base"
+            title="Update payment details" />
         </div>);
     },
 

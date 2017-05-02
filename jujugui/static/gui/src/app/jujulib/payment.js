@@ -268,6 +268,38 @@ var module = module;
     },
 
     /**
+      Update a new payment method. The method MUST be provided the address and
+      expiry, even if it is the existing data.
+
+      @public updatePaymentMethod
+      @param username {String} The user's username.
+      @param id {String} The payment method id.
+      @param address {Object} The new payment method address, containing:
+        - line1 {String} The first address line,
+        - line2 {String} The second address line,
+        - county {String} The address county,
+        - city {String} The address city,
+        - postcode {String} The address post code,
+        - country {String} The address country,
+      @param expiry {String} The new payment method expiry in the format: MM/YY.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    updatePaymentMethod: function(username, id, address, expiry, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/payment-methods/${id}`;
+      const parts = expiry.split('/');
+      const payload = {
+        address: this._unparseAddress(address),
+        month: parseInt(parts[0]),
+        year: parseInt(parts[1])
+      };
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
       Remove a new payment method.
 
       @public removePaymentMethod

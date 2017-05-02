@@ -1154,6 +1154,8 @@ YUI.add('juju-gui', function(Y) {
           updateBillingAddress={
             this.payment && this.payment.updateBillingAddress.bind(
               this.payment)}
+          updatePaymentMethod={
+            this.payment && this.payment.updatePaymentMethod.bind(this.payment)}
           user={this.user.controller.user}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,

@@ -39,6 +39,7 @@ YUI.add('account-payment', function() {
       removePaymentMethod: React.PropTypes.func.isRequired,
       updateAddress: React.PropTypes.func.isRequired,
       updateBillingAddress: React.PropTypes.func.isRequired,
+      updatePaymentMethod: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -125,15 +126,17 @@ YUI.add('account-payment', function() {
     _generatePaymentDetails: function() {
       return (
         <div>
-          <juju.components.AccountPaymentMethod
+          <juju.components.AccountPaymentMethods
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
-            updateUser={this._getUser}
+            getCountries={this.props.getCountries}
             paymentUser={this.state.paymentUser}
             removePaymentMethod={this.props.removePaymentMethod}
+            updatePaymentMethod={this.props.updatePaymentMethod}
+            updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
           <juju.components.AccountPaymentDetails
@@ -223,8 +226,8 @@ YUI.add('account-payment', function() {
 
 }, '0.1.0', {
   requires: [
-    'account-payment-method',
     'account-payment-details',
+    'account-payment-methods',
     'create-payment-user',
     'loading-spinner'
   ]
