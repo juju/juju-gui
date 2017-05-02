@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('modal-gui-settings', function() {
 
   juju.components.ModalGUISettings = React.createClass({
-    displayName: 'Custom GUI Settings',
+    displayName: 'ModalGUISettings',
 
     propTypes: {
       closeModal: React.PropTypes.func.isRequired,
@@ -60,7 +60,7 @@ YUI.add('modal-gui-settings', function() {
       When the save button is pressed, commit to localStorage.
     */
     handleSave: function() {
-      Object.keys(this.state).forEach(function (key) {
+      Object.keys(this.state).forEach(key => {
         if (key !== 'visible') {
           if (this.state[key] === true) {
             this.props.localStorage.setItem(key, true);
@@ -68,7 +68,7 @@ YUI.add('modal-gui-settings', function() {
             this.props.localStorage.removeItem(key);
           }
         }
-      }.bind(this));
+      });
 
       this.props.closeModal();
     },

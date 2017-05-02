@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('modal-shortcuts', function() {
 
   juju.components.ModalShortcuts = React.createClass({
-    displayName: 'Keyboard Shortcuts',
+    displayName: 'ModalShortcuts',
 
     propTypes: {
       closeModal: React.PropTypes.func.isRequired,
@@ -44,7 +44,7 @@ YUI.add('modal-shortcuts', function() {
             help: binding.help
           });
         }
-      }, this);
+      });
 
       return bindings;
     },
