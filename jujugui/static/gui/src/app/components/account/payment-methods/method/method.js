@@ -109,6 +109,8 @@ YUI.add('account-payment-method', function() {
     */
     _generateEditForm: function() {
       const paymentMethod = this.props.paymentMethod;
+      // Zero pad the month if it is less than 10.
+      const month = `0${paymentMethod.month}`.slice(-2);
       return (
         <div className="account-payment-method__form">
           <juju.components.AddressForm
@@ -133,7 +135,7 @@ YUI.add('account-payment-method', function() {
                 regex: /[\d]{2}\/[\d]{2}/,
                 error: 'The expiry must be in the format MM/YY'
               }]}
-              value={`${paymentMethod.month}/${paymentMethod.year}`} />
+              value={`${month}/${paymentMethod.year}`} />
           </div>
           <div className="twelve-col account-payment-method__buttons">
             <juju.components.GenericButton

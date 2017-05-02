@@ -41,7 +41,9 @@ describe('AccountPaymentMethod', () => {
         postcode: '90210',
         country: 'North of the Border'
       },
-      id: 'method1'
+      id: 'method1',
+      month: 4,
+      year: 22
     };
     refs = {
       cardAddress: {
@@ -144,7 +146,7 @@ describe('AccountPaymentMethod', () => {
               regex: /[\d]{2}\/[\d]{2}/,
               error: 'The expiry must be in the format MM/YY'
             }]}
-            value={`${paymentMethod.month}/${paymentMethod.year}`} />
+            value="04/22" />
         </div>
         <div className="twelve-col account-payment-method__buttons">
           <juju.components.GenericButton

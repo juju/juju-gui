@@ -222,6 +222,7 @@ YUI.add('account-payment-methods', function() {
                 validateForm={this.props.validateForm} />
               <label htmlFor="cardAddressSame">
                 <input checked={this.state.cardAddressSame}
+                  className="account__payment-form-checkbox"
                   id="cardAddressSame"
                   name="cardAddressSame"
                   onChange={this._handleCardSameChange}
