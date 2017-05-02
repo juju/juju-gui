@@ -105,6 +105,14 @@ describe('Bakery', () => {
       });
     });
 
+    it('properly handles cookie auth', () => {
+      bakery.sendRequest('http://example.com/set-auth-cookie', 'PUT');
+      // check that withCredentials is properly sent to the client
+      assert.deepEqual(client._sendRequest.args[0][6], true);
+      bakery.sendRequest('http://example.com/', 'PUT');
+      assert.deepEqual(client._sendRequest.args[0][6], false);
+    });
+
     it('sets the headers', () => {
       bakery.sendRequest('http://example.com/', 'GET', {'foo': 'bar'});
       const expectedHeaders = {

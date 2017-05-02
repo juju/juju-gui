@@ -121,32 +121,16 @@ const User = class User {
     this._setCredentials('model', credentials);
   }
 
-  setMacaroon(service, macaroon, setCookie = false) {
+  setMacaroon(service, macaroon) {
     this.localStorage.setItem(service, macaroon);
-    if (setCookie) {
-      const prefix = cookieName(service) + '=';
-      document.cookie = prefix + macaroon + ';path=/';
-    }
   }
 
   getMacaroon(service) {
     return this.localStorage.getItem(service);
   }
 
-  clearMacaroon(service, removeCookie = false) {
+  clearMacaroon(service) {
     this.localStorage.removeItem(service);
-    if (removeCookie) {
-      const name = cookieName(service);
-      const pathParts = '/profile'.split('/');
-      let currentPath = ' path=';
-      // Delete the / cookie first
-      document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
-      pathParts.forEach(part => {
-        currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
-        document.cookie =
-          `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
-      });
-    }
   }
 
   clearMacaroons() {
