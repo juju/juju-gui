@@ -1546,6 +1546,18 @@ YUI.add('juju-view-utils', function(Y) {
         });
         callback(null);
       };
+      const current = app.state.current;
+      const rootState = current.root;
+      if (rootState && rootState === 'new') {
+        // If root is set to new then set it to null otherwise when the app
+        // dispatches again it'll disconnect the model being deployed to.
+        app.state.changeState({root: null});
+      }
+      const special = current.special;
+      if (special && special.dd) {
+        // Cleanup the direct deploy state so that we don't dispatch it again.
+        app.state.changeState({special: {dd: null}});
+      }
       app.set('modelUUID', model.uuid);
       const socketUrl = app.createSocketURL(
         app.get('socketTemplate'), model.uuid);

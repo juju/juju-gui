@@ -1082,6 +1082,7 @@ describe('utilities', function() {
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
         state: {
+          current: {},
           changeState: sinon.stub()
         },
         user: userClass,
@@ -1171,6 +1172,33 @@ describe('utilities', function() {
           uuid: 'the-uuid'
         }
       }]);
+    });
+
+    it('calls changeState when deploying if state matches rules', () => {
+      const modelData = {
+        id: 'abc123',
+        name: 'model-name',
+        owner: 'foo@external',
+        uuid: 'the-uuid'
+      };
+      app.state.current = {
+        root: 'new',
+        special: {dd: {id: 'cs:apache'}}
+      };
+      const args = {model: 'args'};
+      envGet.withArgs('connected').returns(false);
+      const commit = sinon.stub();
+      envGet.withArgs('ecs').returns({commit});
+      sinon.stub(utils, '_switchModel');
+      utils.deploy(app, callback, false, 'my-model', args);
+      // Call the handler for the createModel callCount
+      app.controllerAPI.createModel.args[0][3](null, modelData);
+      // Check to make sure that the state was changed.
+      assert.equal(app.state.changeState.callCount, 2);
+      assert.deepEqual(app.state.changeState.args, [
+        [{root: null}],
+        [{special: {dd: null}}]
+      ]);
     });
 
     it('can display an error notification', function() {

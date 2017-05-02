@@ -69,8 +69,10 @@ const createDeploymentFlow = (props = {}) => {
     changesFilterByParent: sinon.stub(),
     charmsGetById: charmsGetById,
     charmstore: {},
+    controllerIsAvailable: sinon.stub(),
     createToken: sinon.stub(),
     createUser: sinon.stub(),
+    ddData: {},
     deploy: sinon.stub().callsArg(0),
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
@@ -78,6 +80,8 @@ const createDeploymentFlow = (props = {}) => {
     getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
     getCountries: sinon.stub(),
+    getCurrentChangeSet: sinon.stub(),
+    getDiagramURL:sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
     groupedChanges: groupedChanges,
@@ -141,10 +145,11 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentPanel
         changeState={props.changeState}
         title="Pavlova">
+        {undefined}
         <juju.components.DeploymentSection
           instance="deployment-model-name"
           showCheck={false}
-          title="Model name">
+          title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput
               disabled={false}
@@ -175,6 +180,7 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentCloud
             acl={props.acl}
             cloud={null}
+            controllerIsAvailable={props.controllerIsAvailable}
             listClouds={props.listClouds}
             getCloudProviderDetails={props.getCloudProviderDetails}
             setCloud={instance._setCloud} />
@@ -189,6 +195,7 @@ describe('DeploymentFlow', function() {
             addNotification={props.addNotification}
             credential={undefined}
             cloud={null}
+            controllerIsAvailable={props.controllerIsAvailable}
             getCloudProviderDetails={props.getCloudProviderDetails}
             editable={true}
             generateCloudCredentialName={props.generateCloudCredentialName}
@@ -270,7 +277,7 @@ describe('DeploymentFlow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-            changes={props.changes}
+            getCurrentChangeSet={props.getCurrentChangeSet}
             generateAllChangeDescriptions={
               props.generateAllChangeDescriptions}/>
         </juju.components.DeploymentSection>
@@ -288,7 +295,52 @@ describe('DeploymentFlow', function() {
           </div>
         </div>
       </juju.components.DeploymentPanel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('renders the Direct Deploy for a charm', () => {
+    const id = 'cs:apache-21';
+    const renderer = createDeploymentFlow({
+      ddData: {id},
+      modelCommitted: false
+    });
+    const dd = renderer.getRenderOutput().props.children[0];
+    const expected = (
+      <juju.components.DeploymentSection
+        instance="deployment-one-click"
+        showCheck={false}
+        title="Direct Deploy">
+        <p>
+          The following steps will guide you through deploying {id}
+        </p>
+        {undefined}
+      </juju.components.DeploymentSection>
+    );
+    expect(dd).toEqualJSX(expected);
+  });
+
+  it('renders the Direct Deploy for a bundle', () => {
+    const id = 'cs:bundles/kubernetes-core-8';
+    const renderer = createDeploymentFlow({
+      ddData: {id},
+      modelCommitted: false
+    });
+    const instance = renderer.getMountedInstance();
+    const dd = renderer.getRenderOutput().props.children[0];
+    const expected = (
+      <juju.components.DeploymentSection
+        instance="deployment-one-click"
+        showCheck={false}
+        title="Direct Deploy">
+        <p>
+          The following steps will guide you through deploying {id}
+        </p>
+        <juju.components.EntityContentDiagram
+          getDiagramURL={instance.props.getDiagramURL}
+          id={id} />
+      </juju.components.DeploymentSection>
+    );
+    expect(dd).toEqualJSX(expected);
   });
 
   it('can display the cloud section as complete', function() {
@@ -299,7 +351,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.setState({cloud: {name: 'cloud'}});
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[1].props.completed, true);
+    assert.strictEqual(output.props.children[2].props.completed, true);
   });
 
   it('does not display the cloud section if complete + committed', function() {
@@ -324,7 +376,7 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow();
     const output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children[1].props.title, 'Choose cloud to deploy to');
+      output.props.children[2].props.title, 'Choose cloud to deploy to');
   });
 
   it('can clear the cloud and credential when changing clouds', function() {
@@ -338,7 +390,7 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     assert.isNotNull(instance.state.cloud);
     assert.isNotNull(instance.state.credential);
-    output.props.children[1].props.buttons[0].action();
+    output.props.children[2].props.buttons[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
     assert.equal(instance.props.sendAnalytics.callCount, 1);
@@ -354,7 +406,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.setState({cloud: {name: 'cloud'}});
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[2].props.disabled, false);
+    assert.strictEqual(output.props.children[3].props.disabled, false);
   });
 
   it('can hide the credential section', function() {
@@ -364,7 +416,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.setState({cloud: {name: 'cloud'}});
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[2], undefined);
+    assert.strictEqual(output.props.children[3], undefined);
   });
 
   it('can enable the machines section', function() {
@@ -374,7 +426,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[5].props.disabled, false);
+    assert.strictEqual(output.props.children[6].props.disabled, false);
   });
 
   it('can enable the services section', function() {
@@ -401,7 +453,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
       </juju.components.DeploymentSection>
     );
-    assert.deepEqual(output.props.children[4], expectedOutput);
+    assert.deepEqual(output.props.children[5], expectedOutput);
   });
 
   it('can enable the budget section', function() {
@@ -461,7 +513,7 @@ describe('DeploymentFlow', function() {
           username="spinach"
           validateForm={validateForm} />
       </juju.components.DeploymentSection>);
-    assert.deepEqual(output.props.children[9], expected);
+    assert.deepEqual(output.props.children[10], expected);
   });
 
   it('can hide the agreements section', function() {
@@ -470,7 +522,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[10].props.children.props.children[0]);
+      output.props.children[11].props.children.props.children[0]);
   });
 
   it('can handle the agreements when there are no added apps', function() {
@@ -482,7 +534,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[10].props.children.props.children[0]);
+      output.props.children[11].props.children.props.children[0]);
   });
 
   it('can display the agreements section', function() {
@@ -497,7 +549,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const agreements = output.props.children[10].props.children
+    const agreements = output.props.children[11].props.children
       .props.children[0];
     const expected = (
       <div className="deployment-flow__deploy-option">
@@ -519,7 +571,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: false
     });
     const output = renderer.getRenderOutput();
-    const agreements = output.props.children[10].props.children
+    const agreements = output.props.children[11].props.children
       .props.children[0];
     const className = agreements.props.className;
     const expectedClass = 'deployment-flow__deploy-option--disabled';
@@ -537,7 +589,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const loginLink = output.props.children.props.children.props.children[2]
+    const loginLink = output.props.children[1].props.children.props.children[2]
       .props.children;
     const expected = (
       <juju.components.DeploymentSection
@@ -601,7 +653,7 @@ describe('DeploymentFlow', function() {
         </div>
       </juju.components.DeploymentSection>
     );
-    assert.deepEqual(output.props.children, expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   // Click log in and pass the given error string to the login callback used by
@@ -622,7 +674,7 @@ describe('DeploymentFlow', function() {
       }
     };
     const output = renderer.getRenderOutput();
-    const loginSection = output.props.children.props.children;
+    const loginSection = output.props.children[1].props.children;
     const loginButton = loginSection.props.children[2].props.children;
     const loginToController = instance.props.loginToController;
     // Call the supplied callback function which is called after the user
@@ -664,7 +716,7 @@ describe('DeploymentFlow', function() {
     instance._updateModelName();
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
@@ -701,7 +753,7 @@ describe('DeploymentFlow', function() {
     instance._handleTermsAgreement({target: {checked: true}});
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 0,
       'The deploy function should not be called');
@@ -898,13 +950,13 @@ describe('DeploymentFlow', function() {
       }
     };
     let output = renderer.getRenderOutput();
-    let deployButton = output.props.children[10].props.children.props
+    let deployButton = output.props.children[11].props.children.props
       .children[1].props.children;
     deployButton.props.action();
 
     // .action() rerenders the component so we need to get it again
     output = renderer.getRenderOutput();
-    deployButton = output.props.children[10].props.children.props
+    deployButton = output.props.children[11].props.children.props
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
@@ -925,7 +977,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {};
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -955,7 +1007,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setSSHKey('my SSH key');
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -985,7 +1037,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id');
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -1015,7 +1067,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id', true);
     const output = renderer.getRenderOutput();
-    output.props.children[10].props.children.props.children[1].props.children
+    output.props.children[11].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
