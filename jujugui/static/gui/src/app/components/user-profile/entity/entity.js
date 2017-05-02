@@ -353,8 +353,8 @@ YUI.add('user-profile-entity', function() {
           // To QA, uncomment the following line and comment out the line
           // after that.
           // Makyo - 2017-03-17
-          'cs:~canonical/jimm-0',
-          // this.props.entity.id,
+          // 'cs:~canonical/jimm-0',
+          this.props.entity.id,
           filters,
           (error, charmMetrics) => {
             if (error) {
