@@ -346,10 +346,10 @@ describe('Controller API', function() {
       error = '';
     });
 
-    it('does not proceed if a login is pending', function() {
+    it('allows multiple login attempts if login is pending', function() {
       controllerAPI.pendingLoginResponse = true;
       controllerAPI.loginWithMacaroon();
-      assert.strictEqual(conn.messages.length, 0, 'unexpected messages');
+      assert.strictEqual(conn.messages.length, 1, 'unexpected messages');
     });
 
     it('sends an initial login request without macaroons', function() {
