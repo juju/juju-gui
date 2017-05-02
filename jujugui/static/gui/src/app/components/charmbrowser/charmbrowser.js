@@ -119,7 +119,6 @@ YUI.add('charmbrowser-component', function() {
         state.scrollPosition = 0;
       }
       state.activeComponent = activeComponent;
-      state.showCommunity = false;
       return state;
     },
 
