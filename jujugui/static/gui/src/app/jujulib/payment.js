@@ -107,7 +107,9 @@ var module = module;
         callback(null, this._parseUser(response));
       };
       const url = `${this.url}/u/${name}`;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -159,7 +161,7 @@ var module = module;
         callback(null, parsed);
       };
       const url = `${this.url}/u`;
-      const payload = {
+      const body = JSON.stringify({
         name: user.name,
         email: user.email,
         addresses: this._unparseAddresses(user.addresses),
@@ -170,8 +172,10 @@ var module = module;
         'allow-email': user.allowEmail || false,
         token: user.token,
         'payment-method-name': user.paymentMethodName || null
-      };
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      });
+      const headers = null;
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -194,7 +198,9 @@ var module = module;
         callback(null, response['countries']);
       };
       const url = `${this.url}/country`;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -235,7 +241,9 @@ var module = module;
         callback(null, this._parsePaymentMethods(response['payment-methods']));
       };
       const url = `${this.url}/u/${username}/payment-methods`;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -259,11 +267,13 @@ var module = module;
         callback(null, this._parsePaymentMethod(response));
       };
       const url = `${this.url}/u/${username}/payment-methods`;
-      const payload = {
+      const headers = null;
+      const body = JSON.stringify({
         'payment-method-name': methodName,
         token: token
-      };
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      });
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -312,10 +322,12 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/payment-methods/${id}`;
-      const payload = {
+      const headers = null;
+      const body = JSON.stringify({
         'payment-method-name': id
-      };
-      return jujulib._makeRequest(this.bakery, url, 'DELETE', payload, handler);
+      });
+      return this.bakery.delete(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -341,8 +353,10 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/addresses`;
-      const payload = this._unparseAddress(address);
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      const headers = null;
+      const body = JSON.stringify(this._unparseAddress(address));
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -368,8 +382,10 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/billing-addresses`;
-      const payload = this._unparseAddress(address);
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      const headers = null;
+      const body = JSON.stringify(this._unparseAddress(address));
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -396,11 +412,14 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/addresses/${id}`;
-      const payload = this._unparseAddress(address);
+      const headers = null;
+      const objAddress = this._unparseAddress(address);
       // The API uses the id on the address object, not the id in the URL to do
       // the lookup, so attach the id here.
-      payload.id = id;
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      objAddress.id = id;
+      const body = JSON.stringify(objAddress);
+      this.bakery.post(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -427,11 +446,14 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/billing-addresses/${id}`;
-      const payload = this._unparseAddress(address);
+      const headers = null;
+      const objAddress = this._unparseAddress(address);
       // The API uses the id on the address object, not the id in the URL to do
       // the lookup, so attach the id here.
-      payload.id = id;
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      objAddress.id = id;
+      const body = JSON.stringify(objAddress);
+      this.bakery.post(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -448,7 +470,10 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/addresses/${id}`;
-      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+      const headers = null;
+      const body = null;
+      return this.bakery.delete(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -465,7 +490,10 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/billing-addresses/${id}`;
-      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, handler);
+      const headers = null;
+      const body = null;
+      this.bakery.delete(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
