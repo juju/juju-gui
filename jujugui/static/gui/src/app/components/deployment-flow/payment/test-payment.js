@@ -51,6 +51,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -72,6 +73,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -88,6 +90,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -118,6 +121,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}
@@ -138,10 +142,12 @@ describe('DeploymentPayment', function() {
     const validateForm = sinon.stub();
     const createUser = sinon.stub();
     const createToken = sinon.stub();
+    const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={addNotification}
+        createCardElement={createCardElement}
         createToken={createToken}
         createUser={createUser}
         getCountries={getCountries}
@@ -157,6 +163,7 @@ describe('DeploymentPayment', function() {
         <juju.components.CreatePaymentUser
           acl={acl}
           addNotification={addNotification}
+          createCardElement={createCardElement}
           createToken={createToken}
           createUser={createUser}
           getCountries={getCountries}
@@ -174,6 +181,7 @@ describe('DeploymentPayment', function() {
       <juju.components.DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
+        createCardElement={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
         getCountries={getCountries}

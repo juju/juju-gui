@@ -694,7 +694,11 @@ describe('App', function() {
       // Disconnect and reconnect the WebSocket.
       conn.transient_close();
       conn.open();
-      assert.equal(1, conn.messages.length, 'no login messages sent');
+      // Equals 2 because it hasn't been reset since the first connection
+      // This is a direct result of getting the notification to allow popups
+      // click a link to login working which essentially allows multiple login
+      // attempts without waiting for a timeout. 02/05/2017 Luke
+      assert.equal(2, conn.messages.length, 'no login messages sent');
       var msg = conn.last_message();
       assert.strictEqual(msg.type, 'Admin');
       assert.strictEqual(msg.request, 'Login');
@@ -730,10 +734,10 @@ describe('App', function() {
         sinon.stub(app, 'dispatch');
         sinon.stub(app.state, 'changeState');
         sinon.stub(app, '_sendGISFPostBack');
-        sinon.stub(app, '_loginToCharmstore');
+        sinon.stub(app, '_ensureLoggedIntoCharmstore');
         app.controllerAPI.fire('login');
         assert.equal(app._sendGISFPostBack.callCount, 1);
-        assert.equal(app._loginToCharmstore.callCount, 1);
+        assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
       });
   });
 

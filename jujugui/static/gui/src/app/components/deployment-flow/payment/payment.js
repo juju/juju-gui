@@ -26,6 +26,7 @@ YUI.add('deployment-payment', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      createCardElement: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
       getCountries: React.PropTypes.func,
@@ -109,6 +110,7 @@ YUI.add('deployment-payment', function() {
         <juju.components.CreatePaymentUser
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          createCardElement={this.props.createCardElement}
           createToken={this.props.createToken}
           createUser={this.props.createUser}
           getCountries={this.props.getCountries}

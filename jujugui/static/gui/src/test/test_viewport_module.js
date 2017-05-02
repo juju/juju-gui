@@ -96,7 +96,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
 describe('views.ViewportModule.setAllTheDimensions', function() {
   var views, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
-      eventFired, dimentions;
+      dimentions;
   before(function(done) {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
       'juju-topology-viewport'];
@@ -120,10 +120,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
         // centered.
         return [width + 1, height + 1];
       },
-      vis: {},
-      fire: function(evt) {
-        eventFired = evt;
-      }
+      vis: {}
     };
     topo.set = testUtils.setter(topo);
     topo.vis.attr = testUtils.setter(topo.vis);
@@ -166,8 +163,16 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     assert.equal(topo.vis.height, height);
   });
 
-  it('should center canvas', function() {
-    assert.equal(eventFired, 'panToCenter');
+  it('should center canvas', function(done) {
+    let called = false;
+    const handler = () => {
+      document.removeEventListener('topo.panToCenter', handler);
+      called = true;
+      done();
+    };
+    document.addEventListener('topo.panToCenter', handler);
+    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
+    assert.equal(called, true);
   });
 
   it('should not center canvas if no changes', function() {
@@ -176,8 +181,13 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
       // have been resized, ensuring that the panToCenter event is not fired.
       return [width, height];
     };
-    eventFired = false;
+    let called = false;
+    const handler = () => {
+      document.removeEventListener('topo.panToCenter', handler);
+      called = true;
+    };
+    document.addEventListener('topo.panToCenter', handler);
     view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
-    assert.equal(eventFired, false);
+    assert.equal(called, false);
   });
 });

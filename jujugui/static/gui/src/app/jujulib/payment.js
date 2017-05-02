@@ -55,7 +55,7 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postcode {String} The address post code
-              - countryCode {String} The address country code
+              - country {String} The address country code
               - phones {Array} a list of phone number strings
           - vat {String|Null} The VAT number
           - businessName {String|Null} The business name
@@ -69,7 +69,7 @@ var module = module;
               - county {String} The address county
               - city {String} The address city
               - postcode {String} The address post code
-              - countryCode {String} The address country code
+              - country {String} The address country code
               - phones {Array} a list of phone number strings
 	        - paymentMethods {Array} A list of payment method objects,
             the objects contain:
@@ -82,13 +82,14 @@ var module = module;
                 - county {String|Null} The address county
                 - city {String|Null} The address city
                 - postcode {String|Null} The address post code
-                - countryCode {String|Null} The address country code
+                - country {String|Null} The address country code
                 - phones {Array} a list of phone number strings
               - id {String} The unique payment method id.
               - brand {String} The card brand name
               - last4 {String} The last four digits of the card number
               - month {Int} The card expiry month
               - name {String} The user provided identifier of the card
+              - cardHolder {String} The name of the card owner
               - valid {Boolean} Whether the card is valid e.g. the card has not
                 expired
               - Year {Int} The card expiry year
@@ -124,7 +125,7 @@ var module = module;
           - county {String} The address county
           - city {String} The address city
           - postcode {String} The address post code
-          - countryCode {String} The address country code
+          - country {String} The address country code
           - phones {Array} a list of phone number strings
         - vat {String|Null} The VAT number
         - business {Boolean} whether this is a business account
@@ -138,7 +139,7 @@ var module = module;
             - county {String} The address county
             - city {String} The address city
             - postcode {String} The address post code
-            - countryCode {String} The address country code
+            - country {String} The address country code
             - phones {Array} a list of phone number strings
         - allowEmail {Boolean} Whether the user allows emails
         - token {String|Null} A Stripe token
@@ -214,7 +215,7 @@ var module = module;
             - county {String|Null} The address county
             - city {String|Null} The address city
             - postcode {String|Null} The address post code
-            - countryCode {String|Null} The address country code
+            - country {String|Null} The address country code
           - id {String} The unique payment method id.
           - brand {String} The card brand name
           - last4 {String} The last four digits of the card number
@@ -299,7 +300,7 @@ var module = module;
         - county {String} The address county
         - city {String} The address city
         - postcode {String} The address post code
-        - countryCode {String} The address country code
+        - country {String} The address country code
         - phones {Array} a list of phone number strings
       @param callback {Function} A callback to handle errors. Must accept an
         error message or null as its first parameter.
@@ -326,7 +327,7 @@ var module = module;
         - county {String} The address county
         - city {String} The address city
         - postcode {String} The address post code
-        - countryCode {String} The address country code
+        - country {String} The address country code
         - phones {Array} a list of phone number strings
       @param callback {Function} A callback to handle errors. Must accept an
         error message or null as its first parameter.
@@ -354,7 +355,7 @@ var module = module;
         - county {String} The address county
         - city {String} The address city
         - postcode {String} The address post code
-        - countryCode {String} The address country code
+        - country {String} The address country code
         - phones {Array} a list of phone number strings
       @param callback {Function} A callback to handle errors. Must accept an
         error message or null as its first parameter.
@@ -385,7 +386,7 @@ var module = module;
         - county {String} The address county
         - city {String} The address city
         - postcode {String} The address post code
-        - countryCode {String} The address country code
+        - country {String} The address country code
         - phones {Array} a list of phone number strings
       @param callback {Function} A callback to handle errors. Must accept an
         error message or null as its first parameter.
@@ -471,6 +472,7 @@ var module = module;
           postcode: address.postcode || null,
           country: address.country || null
         },
+        cardHolder: paymentMethod['card-holder'] || null,
         id: paymentMethod.id,
         brand: paymentMethod.brand || null,
         last4: paymentMethod.last4 || null,
@@ -538,7 +540,7 @@ var module = module;
         city: address.city || null,
         county: address.county || null,
         postcode: address.postcode || null,
-        countryCode: address['country-code'] || null,
+        country: address.country || null,
         phones: address.phones || []
       };
     },
@@ -571,7 +573,7 @@ var module = module;
         city: address.city || null,
         county: address.county || null,
         postcode: address.postcode || null,
-        'country-code': address.countryCode || null,
+        'country-code': address.country || null,
         phones: address.phones || []
       };
     }

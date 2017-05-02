@@ -60,16 +60,18 @@ YUI.add('bakery-utils', function(Y) {
 
     @param {Object} config The app configuration.
     @param {Object} user The app user as an instance of "jujulib.User".
-    @param {Function} charmstoreCookieSetter A function that can be used to
-      send macaroons to the charm store so that they are stored as cookies.
+    @param {Object} stateGetter A callable that can be called to retrieve the
+      current state of the GUI.
+    @param {Function} cookieSetter A function that can be used to send
+      macaroons to the charm store so that they are stored as cookies.
     @param {Object} webHandler The HTTP client that will be used by the bakery.
     @return {Object} A bakery instance ready to be used.
   */
-  const newBakery = (config, user, charmstoreCookieSetter, webHandler) => {
+  const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
     // Use the user object to persist macaroons.
     const userStore = new UserStore(user);
     const storage = new jujulib.BakeryStorage(userStore, {
-      charmstoreCookieSetter: charmstoreCookieSetter,
+      charmstoreCookieSetter: cookieSetter,
       // Some initial macaroons may be provided in the GUI configuration.
       initial: {
         charmstore: config.charmstoreMacaroons,
@@ -89,32 +91,35 @@ YUI.add('bakery-utils', function(Y) {
       visitPage: url => {
         // Add to the page a notification about accepting the pop up window
         // for logging into USSO.
-        const notification = document.createElement('div');
-        notification.setAttribute('id', 'login-notification');
-        const message = document.createTextNode(
-          'To proceed with the authentication, please accept the pop up ' +
-          'window or ');
-        notification.appendChild(message);
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        const text = document.createTextNode('click here');
-        link.appendChild(text);
-        notification.appendChild(link);
-        notification.appendChild(document.createTextNode('.'));
-        document.body.appendChild(notification);
+        const holder = document.getElementById('login-notification');
+        const content = (
+          <span>
+            To proceed with the authentication, please accept the pop up
+            window or&nbsp;
+            <a href={url} target="_blank">click here</a>.
+          </span>);
+        let dismiss = null;
+        if (stateGetter().root !== 'login') {
+          dismiss = () => {
+            ReactDOM.unmountComponentAtNode(holder);
+          };
+        }
+        ReactDOM.render(
+          <window.juju.components.Notification
+            dismiss={dismiss}
+            content={content}
+          />, holder);
         // Open the pop up (default behavior for the time being).
         window.open(url, 'Login');
       },
       onSuccess: () => {
         // Remove the pop up notification from the page.
-        const notification = document.getElementById('login-notification');
-        if (notification) {
-          notification.remove();
-        }
+        ReactDOM.unmountComponentAtNode(
+          document.getElementById('login-notification')
+        );
       }
     });
   };
   module.newBakery = newBakery;
 
-}, '0.1.0', {requires: []});
+}, '0.1.0', {requires: ['notification']});

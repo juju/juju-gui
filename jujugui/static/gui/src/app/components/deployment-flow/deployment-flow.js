@@ -35,6 +35,7 @@ YUI.add('deployment-flow', function() {
       charmsGetById: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      createCardElement: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
       credential: React.PropTypes.string,
@@ -882,6 +883,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPayment
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            createCardElement={this.props.createCardElement}
             createToken={this.props.createToken}
             createUser={this.props.createUser}
             getCountries={this.props.getCountries}

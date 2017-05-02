@@ -38,7 +38,11 @@ describe('pan zoom module', function() {
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database();
-    view = new views.environment({container: viewContainer, db: db});
+    view = new views.environment({
+      container: viewContainer,
+      db: db,
+      state: {changeState: sinon.stub()}
+    });
     view.render();
     view.rendered();
     pz = view.topo.modules.PanZoomModule;
