@@ -119,6 +119,7 @@ describe('AccountPayment', function() {
             createCardElement={createCardElement}
             createPaymentMethod={createPaymentMethod}
             createToken={createToken}
+            getCountries={getCountries}
             paymentUser={user}
             removePaymentMethod={removePaymentMethod}
             updateUser={instance._getUser}
