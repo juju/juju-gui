@@ -106,11 +106,25 @@ describe('Bakery', () => {
     });
 
     it('properly handles cookie auth', () => {
-      bakery.sendRequest('http://example.com/set-auth-cookie', 'PUT');
-      // check that withCredentials is properly sent to the client
-      assert.deepEqual(client._sendRequest.args[0][6], true);
-      bakery.sendRequest('http://example.com/', 'PUT');
-      assert.deepEqual(client._sendRequest.args[0][6], false);
+      const sendRequest = client._sendRequest;
+      const assertWithCredentials = (method, path, expectedValue) => {
+        sendRequest.reset();
+        bakery.sendRequest('http://example.com' + path, method);
+        assert.strictEqual(
+          sendRequest.args[0][6], expectedValue, `${method} ${path}`);
+      };
+      // When sending PUT requests to "/set-auth-cookie" endpoints, the
+      // "withCredentials" attribute is properly set to true on the request.
+      assertWithCredentials('PUT', '/set-auth-cookie', true);
+      assertWithCredentials('PUT', '/foo/set-auth-cookie/bar', true);
+      // For other endpoints the "withCredentials" attribute is set to false.
+      assertWithCredentials('PUT', '/', false);
+      assertWithCredentials('PUT', '/foo', false);
+      // For other methods the "withCredentials" attribute is set to false.
+      assertWithCredentials('POST', '/set-auth-cookie', false);
+      assertWithCredentials('POST', '/foo/set-auth-cookie/bar', false);
+      // In all other cases the "withCredentials" attribute is set to false.
+      assertWithCredentials('POST', '/foo', false);
     });
 
     it('sets the headers', () => {
@@ -185,7 +199,7 @@ describe('Bakery', () => {
 
     it('handles third party discharge', () => {
       const condition = 'this is a caveat';
-      const success = macaroons => {}; 
+      const success = macaroons => {};
       const failure = err => {};
       bakery._getThirdPartyDischarge(
         'http://example.com/',
@@ -219,7 +233,7 @@ describe('Bakery', () => {
     };
 
     it('handles requests normally if nothing is needed', () => {
-      const cb = sinon.stub(); 
+      const cb = sinon.stub();
       const wrappedCB = bakery._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget();
@@ -229,7 +243,7 @@ describe('Bakery', () => {
 
     it('handles interaction if needed', () => {
       const interact = sinon.stub(bakery, '_interact');
-      const cb = sinon.stub(); 
+      const cb = sinon.stub();
       const wrappedCB = bakery._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget({
@@ -248,7 +262,7 @@ describe('Bakery', () => {
 
     it('handles discharge if needed', () => {
       const dischargeStub = sinon.stub(bakery, 'discharge');
-      const cb = sinon.stub(); 
+      const cb = sinon.stub();
       const wrappedCB = bakery._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget({
@@ -259,6 +273,26 @@ describe('Bakery', () => {
       assert.equal(dischargeStub.callCount, 1);
       const args = dischargeStub.args[0];
       assert.equal(args[0], 'macaroon');
+    });
+
+    it('do not acquire macaroons if discharge is disabled', () => {
+      bakery = bakery.withoutDischarge();
+      const dischargeStub = sinon.stub(bakery, 'discharge');
+      const cb = sinon.stub();
+      const wrappedCB = bakery._wrapCallback(
+        'http://example.com', 'POST', {}, 'body', cb);
+      const target = getTarget({
+        Code: 'macaroon discharge required',
+        Info: { Macaroon: 'macaroon' }
+      });
+      wrappedCB({target: target});
+      // Discharge has not been called.
+      assert.equal(dischargeStub.callCount, 0, 'discharge call count');
+      assert.equal(cb.callCount, 1, 'callback call count');
+      const args = cb.args[0];
+      assert.equal(args.length, 2, 'callback args');
+      assert.strictEqual(args[0], 'discharge required but disabled');
+      assert.deepEqual(args[1].target, target);
     });
   });
 
