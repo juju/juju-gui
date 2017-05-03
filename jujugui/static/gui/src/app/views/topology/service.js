@@ -793,8 +793,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceMouseEnter: function(box, context) {
-      var topo = context.get('component');
-      topo.fire('hoverService', {id: box.id});
+      document.dispatchEvent(new CustomEvent('topo.hoverService', {
+        detail: {id: box.id}
+      }));
       var rect = this.closest('.service');
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
@@ -806,7 +807,9 @@ YUI.add('juju-topology-service', function(Y) {
 
     serviceMouseLeave: function(box, context) {
       var topo = context.get('component');
-      topo.fire('hoverService', {id: null});
+      document.dispatchEvent(new CustomEvent('topo.hoverService', {
+        detail: {id: null}
+      }));
       context.unhoverServices();
 
       const container = context.getContainer(context);
