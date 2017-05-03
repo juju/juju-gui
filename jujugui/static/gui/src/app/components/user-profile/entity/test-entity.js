@@ -395,6 +395,7 @@ describe('UserProfileEntity', () => {
 
   it('can show metrics button and graph', () => {
     const charm = jsTestUtils.makeEntity().toEntity();
+    charm.series = ['trusty', 'zesty'];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
