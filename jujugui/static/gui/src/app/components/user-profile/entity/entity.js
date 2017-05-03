@@ -210,7 +210,7 @@ YUI.add('user-profile-entity', function() {
       }
       return (
         <div className="twelve-col last-col">
-          Series: {this.props.entity.series}
+          Series: {this.props.entity.series.join(', ')}
         </div>);
     },
 
