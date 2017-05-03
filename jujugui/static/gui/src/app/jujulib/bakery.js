@@ -62,8 +62,6 @@ var module = module;
           - set(key, value, callback): the callback is called without arguments
             when the set operation has been performed.
       @param {Object} params Optional parameters including:
-        - nonInteractive: whether to switch to non-interactive mode while
-          acquiring macaroons. If set the visitPage parameter below is ignored;
         - onSuccess: a function to be called when the request completes
           properly. It defaults to a no-op function.
         - visitPage: the function used to visit the identity provider page when
@@ -73,14 +71,28 @@ var module = module;
       this._client = httpClient;
       this.storage = storage;
       this._onSuccess = params.onSuccess || (() => {});
-      this._noRedirects = !!params.noRedirects;
-      if (params.nonInteractive) {
-        this._visitPage = this._nonInteractiveVisitPage;
-      } else {
-        this._visitPage = params.visitPage || (visitURL => {
-          window.open(visitURL, 'Login');
-        });
-      }
+      this._visitPage = params.visitPage || (visitURL => {
+        window.open(visitURL, 'Login');
+      });
+      this._dischargeDisabled = false;
+    }
+
+    /**
+      Return a new bakery instance from the current one, in which the discharge
+      functionality is disabled.
+
+      Discharge required responses are just returned without executing the
+      macaroon acquisition process.
+
+      @return {Object} The new bakery instance.
+    */
+    withoutDischarge() {
+      const bakery = new Bakery(this._client, this.storage, {
+        onSuccess: this._onSuccess,
+        visitPage: this._visitPage
+      });
+      bakery._dischargeDisabled = true;
+      return bakery;
     }
 
     /**
@@ -271,6 +283,12 @@ var module = module;
             this._interact(info.VisitURL, info.WaitURL, onSuccess, onFailure);
             break;
           case ERR_DISCHARGE_REQUIRED:
+            // In the case discharge has been disabled in this bakery instance
+            // (see the withoutDischarge method above) just return here.
+            if (this._dischargeDisabled) {
+              callback('discharge required but disabled', response);
+              return;
+            }
             onSuccess = macaroons => {
               // Once the discharge is acquired, store any resulting macaroons
               // and then retry the original requests again. This time the

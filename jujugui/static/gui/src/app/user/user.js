@@ -139,8 +139,4 @@ const User = class User {
 
 };
 
-const cookieName = service => {
-  return 'Macaroons-' + service;
-};
-
 this.jujugui.User = User;
