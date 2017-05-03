@@ -68,11 +68,11 @@ var module = module;
     };
   };
 
-  var _transformAuthObject = function(callback, error, data) {
+  const _transformAuthObject = function(callback, error, data) {
     if (error !== null) {
       callback(error, data);
     } else {
-      var auth = {};
+      const auth = {};
       // Mapping from the API's attributes to the lowercase attributes more
       // common in the JS world. Not sure if we want to do this, or if
       // there's a better way (i.e., one that handles deeply nested
