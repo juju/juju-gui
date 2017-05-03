@@ -197,7 +197,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       topo.set('translate', Y.mix(evt.translate));
       vis.attr('transform', 'translate(' + topo.get('translate') + ')' +
               ' scale(' + topo.get('scale') + ')');
-      topo.fire('rescaled');
     },
 
     renderedHandler: function(evt) {

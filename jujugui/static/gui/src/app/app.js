@@ -1566,11 +1566,12 @@ YUI.add('juju-gui', function(Y) {
       // services component will try to render if the user hovers a service
       // when they have the service details open.
       if (this.hoverService) {
-        this.hoverService.detach();
+        document.removeEventListener('topo.hoverService', this.hoverService);
       }
-      this.hoverService = topo.on('hoverService', function(service) {
-        this._renderAddedServices(service.id);
-      }, this);
+      this.hoverService = evt => {
+        this._renderAddedServices(evt.detail.id);
+      };
+      document.addEventListener('topo.hoverService', this.hoverService);
       // Deselect the active service token. This needs to happen so that when a
       // user closes the service details the service token deactivates.
       ServiceModule.deselectNodes();
@@ -1621,7 +1622,7 @@ YUI.add('juju-gui', function(Y) {
       // If there is a hoverService event listener then we need to detach it
       // when rendering the inspector.
       if (this.hoverService) {
-        this.hoverService.detach();
+        document.removeEventListener('topo.hoverService', this.hoverService);
       }
       const model = this.env;
       const db = this.db;
