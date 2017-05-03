@@ -32,6 +32,7 @@ YUI.add('search-results', function(Y) {
       requires: React.PropTypes.string,
       series: React.PropTypes.string,
       seriesList: React.PropTypes.object.isRequired,
+      setPageTitle: React.PropTypes.func.isRequired,
       sort: React.PropTypes.string,
       tags: React.PropTypes.string,
       type: React.PropTypes.string
@@ -263,6 +264,8 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
+      const query = this.props.query ? ` for: ${this.props.query}` : '';
+      this.props.setPageTitle(`Search results${query}`);
       this.searchRequest(
           this.props.query, this.props.tags, this.props.type,
           this.props.sort, this.props.series, this.props.provides,

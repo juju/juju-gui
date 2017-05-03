@@ -46,6 +46,7 @@ describe('Charmbrowser', function() {
     appState.current.search = {text: query};
     var series = {};
     var charmstoreSearch = sinon.stub();
+    var setPageTitle = sinon.stub();
     var makeEntityModel = sinon.spy();
     var utils = {getName: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
@@ -68,7 +69,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         renderMarkdown={sinon.stub()}
         series={series}
-        setPageTitle={sinon.stub()}
+        setPageTitle={setPageTitle}
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);
@@ -96,6 +97,7 @@ describe('Charmbrowser', function() {
               provides={undefined}
               requires={undefined}
               owner={undefined}
+              setPageTitle={setPageTitle}
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);
@@ -104,6 +106,7 @@ describe('Charmbrowser', function() {
 
   it('displays the store when the app state calls for it', function() {
     var charmstoreSearch = sinon.stub();
+    var setPageTitle = sinon.stub();
     var utils = {getName: sinon.stub()};
     var makeEntityModel = sinon.spy();
     var seriesList = {};
@@ -127,7 +130,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         renderMarkdown={sinon.stub()}
         series={seriesList}
-        setPageTitle={sinon.stub()}
+        setPageTitle={setPageTitle}
         showTerms={sinon.stub()}
         staticURL='surl'
         urllib={sinon.stub()}
@@ -147,7 +150,8 @@ describe('Charmbrowser', function() {
               apiVersion="v5"
               charmstoreURL="http://1.2.3.4/"
               changeState={
-                output.props.children.props.children.props.changeState} />
+                output.props.children.props.children.props.changeState}
+              setPageTitle={setPageTitle} />
           </div>
         </juju.components.Panel>);
     assert.deepEqual(output, expected);

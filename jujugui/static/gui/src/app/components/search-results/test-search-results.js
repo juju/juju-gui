@@ -48,7 +48,8 @@ describe('SearchResults', function() {
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}
-            seriesList={{}} />);
+            seriesList={{}}
+            setPageTitle={sinon.stub()} />);
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
@@ -66,7 +67,8 @@ describe('SearchResults', function() {
             charmstoreSearch={charmstoreSearch}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
-            seriesList={{}} />, true);
+            seriesList={{}}
+            setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -98,7 +100,8 @@ describe('SearchResults', function() {
             charmstoreSearch={charmstoreSearch}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
-            seriesList={{}} />, true);
+            seriesList={{}}
+            setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -149,7 +152,8 @@ describe('SearchResults', function() {
             seriesList={series}
             charmstoreSearch={charmstoreSearch}
             getName={sinon.stub()}
-            makeEntityModel={makeEntityModel} />, true);
+            makeEntityModel={makeEntityModel}
+            setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       shallowRenderer.getRenderOutput();
@@ -348,7 +352,8 @@ describe('SearchResults', function() {
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
             getName={getName}
-            makeEntityModel={makeEntityModel} />, true);
+            makeEntityModel={makeEntityModel}
+            setPageTitle={sinon.stub()} />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       const output = shallowRenderer.getRenderOutput();
@@ -368,7 +373,8 @@ describe('SearchResults', function() {
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
             getName={getName}
-            makeEntityModel={makeEntityModel} />, true);
+            makeEntityModel={makeEntityModel}
+            setPageTitle={sinon.stub()} />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       instance._toggleCommunityResults();
@@ -592,7 +598,10 @@ describe('SearchResults', function() {
     });
 
     it('triggers a search request upon component mount', function() {
-      searchResults.props = {query: 'foobar'};
+      searchResults.props = {
+        query: 'foobar',
+        setPageTitle: sinon.stub()
+      };
       searchResults.searchRequest = sinon.spy();
       searchResults.componentDidMount();
       assert.isTrue(searchResults.searchRequest.calledOnce);
@@ -652,7 +661,8 @@ describe('SearchResults', function() {
             charmstoreSearch={charmstoreSearch}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
-            seriesList={{}} />, true);
+            seriesList={{}}
+            setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);
