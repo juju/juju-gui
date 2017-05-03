@@ -25,7 +25,12 @@ YUI.add('store', function() {
       apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstoreURL: React.PropTypes.string.isRequired,
+      setPageTitle: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string
+    },
+
+    componentDidMount: function() {
+      this.props.setPageTitle('Store');
     },
 
     /**
