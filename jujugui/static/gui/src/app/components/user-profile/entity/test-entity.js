@@ -393,6 +393,7 @@ describe('UserProfileEntity', () => {
 
   it('can render a charm', () => {
     const charm = jsTestUtils.makeEntity().toEntity();
+    charm.series = ['trusty', 'zesty'];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
@@ -435,7 +436,7 @@ describe('UserProfileEntity', () => {
           <div className={'expanding-row__expanded-content twelve-col ' +
             'no-margin-bottom'}>
             <div className="twelve-col last-col">
-              Series: {'trusty'}
+              Series: {'trusty, zesty'}
             </div>
             {undefined}
             {undefined}

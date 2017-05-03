@@ -25,6 +25,8 @@
   }
 
   .entity-title {
+    display: inline-block;
+
     &__credential {
       color: $dark-grey;
       font-size: 0.9em;
