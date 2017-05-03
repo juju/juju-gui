@@ -25,7 +25,9 @@ YUI.add('loading-spinner', function() {
 
     render: function() {
       return (
-        <div className="spinner-loading">Loading...</div>
+        <div className="spinner-container">
+            <div className="spinner-loading">Loading...</div>
+        </div>
       );
     }
   });

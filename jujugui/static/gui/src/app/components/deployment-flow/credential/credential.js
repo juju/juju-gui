@@ -27,6 +27,7 @@ YUI.add('deployment-credential', function() {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
+      controllerIsAvailable: React.PropTypes.func.isRequired,
       credential: React.PropTypes.string,
       editable: React.PropTypes.bool,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
@@ -72,7 +73,7 @@ YUI.add('deployment-credential', function() {
     _getCredentials: function(credential) {
       const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
-      if (user) {
+      if (user && this.props.controllerIsAvailable()) {
         this.setState({credentialsLoading: true}, () => {
           this.props.getCloudCredentialNames(
             [[user, cloud]],

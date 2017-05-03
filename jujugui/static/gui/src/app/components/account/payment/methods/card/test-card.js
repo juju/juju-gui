@@ -99,10 +99,12 @@ describe('AccountPaymentMethodCard', () => {
   });
 
   it('can render the actions', () => {
+    const updatePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentMethodCard
         card={card}
-        removePaymentMethod={sinon.stub()} />, true);
+        removePaymentMethod={sinon.stub()}
+        updatePaymentMethod={updatePaymentMethod} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
@@ -111,6 +113,10 @@ describe('AccountPaymentMethodCard', () => {
           action={instance._removePaymentMethod}
           type="inline-base"
           title="Remove payment details" />
+        <juju.components.GenericButton
+          action={updatePaymentMethod}
+          type="inline-base"
+          title="Update payment details" />
       </div>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
@@ -139,7 +145,7 @@ describe('AccountPaymentMethodCard', () => {
         removePaymentMethod={removePaymentMethod}
         username='spinach' />, true);
     const output = component.getRenderOutput();
-    output.props.children[1].props.children.props.action();
+    output.props.children[1].props.children[0].props.action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
     assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
@@ -157,7 +163,7 @@ describe('AccountPaymentMethodCard', () => {
         removePaymentMethod={removePaymentMethod}
         username='spinach' />, true);
     const output = component.getRenderOutput();
-    output.props.children[1].props.children.props.action();
+    output.props.children[1].props.children[0].props.action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to remove the payment method',
@@ -177,7 +183,7 @@ describe('AccountPaymentMethodCard', () => {
         removePaymentMethod={removePaymentMethod}
         username='spinach' />, true);
     const output = component.getRenderOutput();
-    output.props.children[1].props.children.props.action();
+    output.props.children[1].props.children[0].props.action();
     component.unmount();
     assert.equal(abort.callCount, 1);
   });

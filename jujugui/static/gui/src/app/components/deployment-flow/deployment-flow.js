@@ -24,6 +24,8 @@ YUI.add('deployment-flow', function() {
   const INITIAL_VPC_ID = null;
 
   juju.components.DeploymentFlow = React.createClass({
+    displayName: 'DeploymentFlow',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addAgreement: React.PropTypes.func.isRequired,
@@ -35,10 +37,12 @@ YUI.add('deployment-flow', function() {
       charmsGetById: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      controllerIsAvailable: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
       credential: React.PropTypes.string,
+      ddData: React.PropTypes.object,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
@@ -47,7 +51,9 @@ YUI.add('deployment-flow', function() {
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
-      getCountries: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func,
+      getCurrentChangeSet: React.PropTypes.func.isRequired,
+      getDiagramURL: React.PropTypes.func,
       getDischargeToken: React.PropTypes.func,
       getUser: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
@@ -597,7 +603,7 @@ YUI.add('deployment-flow', function() {
         <juju.components.DeploymentSection
           instance="deployment-model-name"
           showCheck={false}
-          title="Model name">
+          title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput
               disabled={this.props.acl.isReadOnly()}
@@ -732,6 +738,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
+            controllerIsAvailable={this.props.controllerIsAvailable}
             listClouds={this.props.listClouds}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             setCloud={this._setCloud} />
@@ -761,6 +768,7 @@ YUI.add('deployment-flow', function() {
             addNotification={this.props.addNotification}
             credential={this.state.credential}
             cloud={cloud}
+            controllerIsAvailable={this.props.controllerIsAvailable}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
@@ -903,7 +911,10 @@ YUI.add('deployment-flow', function() {
     */
     _generateChangeSection: function() {
       var status = this._getSectionStatus('changes');
-      if (!status.visible) {
+      // Do not show the changes if we're performing a Direct Deploy.
+      const ddData = this.props.ddData;
+      const inDD = !!(ddData && Object.keys(ddData).length);
+      if (!status.visible || inDD) {
         return;
       }
       return (
@@ -914,7 +925,7 @@ YUI.add('deployment-flow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-            changes={this.props.changes}
+            getCurrentChangeSet={this.props.getCurrentChangeSet}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions} />
         </juju.components.DeploymentSection>);
@@ -959,6 +970,34 @@ YUI.add('deployment-flow', function() {
             I agree to all terms.
           </label>
         </div>);
+    },
+
+    /**
+      Generates the Direct Deploy component if necessary.
+      @returns {Object} The React elements.
+    */
+    _generateDirectDeploy: function() {
+      const props = this.props;
+      const ddEntityId = props.ddData && props.ddData.id;
+      if (!ddEntityId) {
+        return;
+      };
+      let diagram = null;
+      if (ddEntityId.indexOf('bundle') !== -1) {
+        diagram = <juju.components.EntityContentDiagram
+          getDiagramURL={this.props.getDiagramURL}
+          id={ddEntityId} />;
+      }
+      return (
+        <juju.components.DeploymentSection
+          instance="deployment-one-click"
+          showCheck={false}
+          title="Direct Deploy">
+          <p>
+            The following steps will guide you through deploying {ddEntityId}
+          </p>
+          {diagram}
+        </juju.components.DeploymentSection>);
     },
 
     /**
@@ -1019,6 +1058,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
+            {this._generateDirectDeploy()}
             {this._generateModelNameSection()}
             {this._generateCloudSection()}
             {this._generateCredentialSection()}
@@ -1048,6 +1088,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
             title={this.props.modelName}>
+            {this._generateDirectDeploy()}
             {this._generateLogin()}
           </juju.components.DeploymentPanel>
         );
@@ -1069,6 +1110,7 @@ YUI.add('deployment-flow', function() {
     'deployment-services',
     'deployment-ssh-key',
     'deployment-vpc',
+    'entity-content-diagram',
     'generic-button',
     'generic-input',
     'usso-login-link'

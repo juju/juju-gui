@@ -80,6 +80,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
+        controllerIsAvailable={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={sinon.stub()} />, true);
@@ -135,6 +136,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
+        controllerIsAvailable={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub()}
         setCloud={sinon.stub()} />, true);
@@ -154,6 +156,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={{name: 'google', cloudType: 'gce'}}
+        controllerIsAvailable={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
@@ -180,6 +183,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
+        controllerIsAvailable={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />);
@@ -195,6 +199,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
+        controllerIsAvailable={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />, true);

@@ -32,13 +32,16 @@ YUI.add('account-payment', function() {
       createPaymentMethod: React.PropTypes.func.isRequired,
       createToken: React.PropTypes.func.isRequired,
       createUser: React.PropTypes.func.isRequired,
+      getCharges: React.PropTypes.func.isRequired,
       getCountries: React.PropTypes.func.isRequired,
+      getReceipt: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
       removeAddress: React.PropTypes.func.isRequired,
       removeBillingAddress: React.PropTypes.func.isRequired,
       removePaymentMethod: React.PropTypes.func.isRequired,
       updateAddress: React.PropTypes.func.isRequired,
       updateBillingAddress: React.PropTypes.func.isRequired,
+      updatePaymentMethod: React.PropTypes.func.isRequired,
       username: React.PropTypes.string.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
@@ -99,6 +102,8 @@ YUI.add('account-payment', function() {
     _getUser: function() {
       this.setState({loading: true}, () => {
         const xhr = this.props.getUser(this.props.username, (error, user) => {
+          // If the user is not found we don't want to display the error, but
+          // rather display a message about creating a user.
           if (error && error !== 'not found') {
             const message = 'Could not load user info';
             this.props.addNotification({
@@ -125,15 +130,17 @@ YUI.add('account-payment', function() {
     _generatePaymentDetails: function() {
       return (
         <div>
-          <juju.components.AccountPaymentMethod
+          <juju.components.AccountPaymentMethods
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             createCardElement={this.props.createCardElement}
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
-            updateUser={this._getUser}
+            getCountries={this.props.getCountries}
             paymentUser={this.state.paymentUser}
             removePaymentMethod={this.props.removePaymentMethod}
+            updatePaymentMethod={this.props.updatePaymentMethod}
+            updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
           <juju.components.AccountPaymentDetails
@@ -150,6 +157,12 @@ YUI.add('account-payment', function() {
             updateUser={this._getUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />
+          <juju.components.AccountPaymentCharges
+            acl={this.props.acl}
+            addNotification={this.props.addNotification}
+            getCharges={this.props.getCharges}
+            getReceipt={this.props.getReceipt}
+            username={this.props.username} />
         </div>);
     },
 
@@ -223,8 +236,9 @@ YUI.add('account-payment', function() {
 
 }, '0.1.0', {
   requires: [
-    'account-payment-method',
+    'account-payment-charges',
     'account-payment-details',
+    'account-payment-methods',
     'create-payment-user',
     'loading-spinner'
   ]
