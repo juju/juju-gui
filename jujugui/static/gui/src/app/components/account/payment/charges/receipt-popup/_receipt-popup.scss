@@ -1,0 +1,9 @@
+.receipt-popup {
+  &__container {
+    height: calc(100% - 60px);
+  }
+
+  &.popup__panel--wide {
+    top: $navbar-height;
+  }
+}

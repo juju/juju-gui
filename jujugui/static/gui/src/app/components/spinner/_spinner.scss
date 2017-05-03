@@ -8,6 +8,11 @@
   }
 }
 
+.spinner-container {
+  width: 100%;
+  text-align: center;
+}
+
 .spinner-loading {
   $colour: $mid-grey;
   $size: 60px;

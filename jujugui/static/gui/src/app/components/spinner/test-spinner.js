@@ -32,9 +32,11 @@ describe('Spinner', function() {
   it('renders the spinner', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.Spinner/>);
-    assert.deepEqual(output,
-      <div className="spinner-loading">
-        Loading...
+    expect(output).toEqualJSX(
+      <div className="spinner-container">
+        <div className="spinner-loading">
+          Loading...
+        </div>
       </div>);
   });
 });

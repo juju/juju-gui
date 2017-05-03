@@ -32,7 +32,9 @@ YUI.add('card-form', function() {
     componentDidMount: function() {
       this.props.createCardElement(card => {
         this.card = card;
-        this.card.mount('.card-form__card');
+        if (this.refs.cardNode) {
+          this.card.mount('.card-form__card');
+        }
       });
     },
 
@@ -75,7 +77,8 @@ YUI.add('card-form', function() {
             ref="name"
             required={true}
             validate={[required]} />
-          <div className="card-form__card"></div>
+          <div className="card-form__card"
+            ref="cardNode"></div>
         </div>
       );
     }

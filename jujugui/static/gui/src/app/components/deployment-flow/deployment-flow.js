@@ -51,7 +51,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
-      getCountries: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func,
       getCurrentChangeSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func,
       getDischargeToken: React.PropTypes.func,

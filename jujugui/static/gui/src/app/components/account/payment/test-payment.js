@@ -57,7 +57,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
+        getCharges={sinon.stub()}
         getCountries={sinon.stub()}
+        getReceipt={sinon.stub()}
         getUser={sinon.stub()}
         removeAddress={sinon.stub()}
         removeBillingAddress={sinon.stub()}
@@ -90,6 +92,8 @@ describe('AccountPayment', function() {
     const updateBillingAddress = sinon.stub();
     const updateUser = sinon.stub();
     const updatePaymentMethod = sinon.stub();
+    const getCharges = sinon.stub();
+    const getReceipt = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccountPayment
         acl={acl}
@@ -100,7 +104,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={createPaymentMethod}
         createToken={createToken}
         createUser={sinon.stub()}
+        getCharges={getCharges}
         getCountries={sinon.stub()}
+        getReceipt={getReceipt}
         getUser={getUser}
         removeAddress={removeAddress}
         removeBillingAddress={removeBillingAddress}
@@ -143,6 +149,12 @@ describe('AccountPayment', function() {
             updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
+          <juju.components.AccountPaymentCharges
+            acl={acl}
+            addNotification={addNotification}
+            getCharges={getCharges}
+            getReceipt={getReceipt}
+            username="spinach" />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -161,7 +173,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
+        getCharges={sinon.stub()}
         getCountries={sinon.stub()}
+        getReceipt={sinon.stub()}
         getUser={getUser}
         removeAddress={sinon.stub()}
         removeBillingAddress={sinon.stub()}
@@ -195,7 +209,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={sinon.stub()}
         createToken={createToken}
         createUser={createUser}
+        getCharges={sinon.stub()}
         getCountries={getCountries}
+        getReceipt={sinon.stub()}
         getUser={getUser}
         removeAddress={sinon.stub()}
         removeBillingAddress={sinon.stub()}
@@ -242,7 +258,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={sinon.stub()}
         createToken={createToken}
         createUser={createUser}
+        getCharges={sinon.stub()}
         getCountries={getCountries}
+        getReceipt={sinon.stub()}
         getUser={getUser}
         removeAddress={sinon.stub()}
         removeBillingAddress={sinon.stub()}
@@ -292,7 +310,9 @@ describe('AccountPayment', function() {
         createPaymentMethod={sinon.stub()}
         createToken={sinon.stub()}
         createUser={sinon.stub()}
+        getCharges={sinon.stub()}
         getCountries={sinon.stub()}
+        getReceipt={sinon.stub()}
         getUser={getUser}
         removeAddress={sinon.stub()}
         removeBillingAddress={sinon.stub()}

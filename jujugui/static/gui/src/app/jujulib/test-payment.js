@@ -8,8 +8,8 @@ chai.config.truncateThreshold = 0;
 describe('jujulib payment service', function() {
   let parsedUser, returnedUser;
 
-  const makeXHRRequest = function(obj) {
-    return {target: {responseText: JSON.stringify(obj)}};
+  const makeXHRRequest = function(obj, json=true) {
+    return {target: {responseText: json ? JSON.stringify(obj) : obj}};
   };
 
   beforeEach(function() {
@@ -1032,6 +1032,164 @@ describe('jujulib payment service', function() {
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.updateBillingAddress('spinach', 'address1', address, error => {
         assert.equal(error, 'Uh oh!');
+        done();
+      });
+    });
+  });
+
+  describe('getCharges', () => {
+    it('can get a list of charges', (done) => {
+      const bakery = {
+        sendPostRequest: function(path, params, success, failure) {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/charges');
+          const xhr = makeXHRRequest({
+            charges:[{
+              id: 'TEST-12344',
+              'statement-id': '12344',
+              price: 10000,
+              vat: 2000,
+              currency: 'USD',
+              nickname: 'spinach',
+              for: '2016-01-02T15:04:05Z',
+              origin: 'TEST',
+              state: 'done',
+              'line-items': [{
+                name: 'this is line 1',
+                details: 'a bit more details for line 1',
+                usage: 'something',
+                price: '48'
+              }],
+              'payment-received-at': '2017-04-28T07:49:39.925Z',
+              'payment-method-used': {
+                address: {
+                  id: 'address1',
+                  name: 'Home',
+                  line1: '1 Maple St',
+                  line2: null,
+                  county: 'Bunnyhug',
+                  city: 'Sasquatch',
+                  postcode: '90210',
+                  country: 'North of the Border'
+                },
+                id: 'paymentmethod1',
+                brand: 'Brand',
+                last4: '1234',
+                month: 3,
+                name: 'Main',
+                'card-holder': 'Mr G Spinach',
+                valid: true,
+                year: 2017
+              },
+              'payment-retry-delay': 10,
+              'payment-retry-max': 2,
+              'payment-method-update-retry-delay': 10,
+              'payment-method-update-retry-max': 100
+            }]
+          });
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getCharges('spinach', (error, response) => {
+        assert.strictEqual(error, null);
+        assert.deepEqual(response, [{
+          id: 'TEST-12344',
+          statementId: '12344',
+          price: 10000,
+          vat: 2000,
+          currency: 'USD',
+          nickname: 'spinach',
+          for: '2016-01-02T15:04:05Z',
+          origin: 'TEST',
+          state: 'done',
+          lineItems: [{
+            name: 'this is line 1',
+            details: 'a bit more details for line 1',
+            usage: 'something',
+            price: '48'
+          }],
+          paymentReceivedAt: '2017-04-28T07:49:39.925Z',
+          paymentMethodUsed: {
+            address: {
+              id: 'address1',
+              name: 'Home',
+              line1: '1 Maple St',
+              line2: null,
+              state: 'Bunnyhug',
+              city: 'Sasquatch',
+              postcode: '90210',
+              country: 'North of the Border'
+            },
+            id: 'paymentmethod1',
+            brand: 'Brand',
+            last4: '1234',
+            month: 3,
+            name: 'Main',
+            cardHolder: 'Mr G Spinach',
+            valid: true,
+            year: 2017
+          },
+          paymentRetryDelay: 10,
+          paymentRetryMax: 2,
+          paymentMethodUpdateRetryDelay: 10,
+          paymentMethodUpdateRetryMax: 100
+        }]);
+        done();
+      });
+    });
+
+    it('handles errors when getting charges', (done) => {
+      const bakery = {
+        sendPostRequest: function(path, params, success, failure) {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getCharges('spinach', (error, response) => {
+        assert.equal(error, 'Uh oh!');
+        assert.strictEqual(response, null);
+        done();
+      });
+    });
+  });
+
+  describe('getReceipt', () => {
+    it('can get a receipt', function(done) {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.paymentAPIVersion +
+            '/receipts/charge123');
+          const xhr = makeXHRRequest('<html>...</html>', false);
+          success(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getReceipt('charge123', (error, response) => {
+        assert.strictEqual(error, null);
+        assert.equal(response, '<html>...</html>');
+        done();
+      });
+    });
+
+    it('handles errors when getting a receipt', function(done) {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          const xhr = makeXHRRequest({Message: 'Uh oh!'});
+          failure(xhr);
+        }
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      payment.getReceipt('charge123', (error, response) => {
+        assert.equal(error, 'Uh oh!');
+        assert.strictEqual(response, null);
         done();
       });
     });
