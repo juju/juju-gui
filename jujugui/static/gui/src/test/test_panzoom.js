@@ -63,16 +63,11 @@ describe('pan zoom module', function() {
        var evt =
            { scale: 0.609,
              translate: [0, 0]};
-       var rescaled = false;
-       topo.once('rescaled', function() {
-         rescaled = true;
-       });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.609);
        var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(0.609)';
        vis.attr('transform').should.equal(expected);
-       assert.isTrue(rescaled);
      });
 
   it('should set an upper limit for rescale',
@@ -80,16 +75,11 @@ describe('pan zoom module', function() {
        var evt =
            { scale: 2.1,
              translate: [0, 0]};
-       var rescaled = false;
-       topo.once('rescaled', function() {
-         rescaled = true;
-       });
        pz.rescale(evt);
        topo.get('scale').should.equal(2.0);
        var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(2)';
        vis.attr('transform').should.equal(expected);
-       assert.isTrue(rescaled);
      });
 
   it('should set a lower limit for rescale',
@@ -97,15 +87,10 @@ describe('pan zoom module', function() {
        var evt =
            { scale: 0.2,
              translate: [0, 0]};
-       var rescaled = false;
-       topo.once('rescaled', function() {
-         rescaled = true;
-       });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.25);
        var translate = evt.translate;
        var expected = 'translate(' + translate + ') scale(0.25)';
        vis.attr('transform').should.equal(expected);
-       assert.isTrue(rescaled);
      });
 });
