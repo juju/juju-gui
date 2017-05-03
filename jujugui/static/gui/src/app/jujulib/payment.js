@@ -232,8 +232,7 @@ var module = module;
           callback(error, null);
           return;
         }
-        callback(null, this._parsePaymentMethods(
-          response['payment-methods'], true));
+        callback(null, this._parsePaymentMethods(response['payment-methods']));
       };
       const url = `${this.url}/u/${username}/payment-methods`;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
@@ -257,12 +256,44 @@ var module = module;
           callback(error, null);
           return;
         }
-        callback(null, this._parsePaymentMethod(response, true));
+        callback(null, this._parsePaymentMethod(response));
       };
       const url = `${this.url}/u/${username}/payment-methods`;
       const payload = {
         'payment-method-name': methodName,
         token: token
+      };
+      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+    },
+
+    /**
+      Update a new payment method. The method MUST be provided the address and
+      expiry, even if it is the existing data.
+
+      @public updatePaymentMethod
+      @param username {String} The user's username.
+      @param id {String} The payment method id.
+      @param address {Object} The new payment method address, containing:
+        - line1 {String} The first address line,
+        - line2 {String} The second address line,
+        - county {String} The address county,
+        - city {String} The address city,
+        - postcode {String} The address post code,
+        - country {String} The address country,
+      @param expiry {String} The new payment method expiry in the format: MM/YY.
+      @param callback {Function} A callback to handle errors from the request.
+        Must accept an error message or null as its first parameter.
+    */
+    updatePaymentMethod: function(username, id, address, expiry, callback) {
+      const handler = error => {
+        callback(error);
+      };
+      const url = `${this.url}/u/${username}/payment-methods/${id}`;
+      const parts = expiry.split('/');
+      const payload = {
+        address: this._unparseAddress(address),
+        month: parseInt(parts[0]),
+        year: parseInt(parts[1])
       };
       return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
     },
@@ -438,16 +469,136 @@ var module = module;
     },
 
     /**
+      Get the charges for a user.
+
+      @param name {String} The user's username.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and a list of charges as its second. The charges are
+        an array of objects containing:
+        - id {String} The unique charge ID,
+        - statementId {String} The ID for the statement,
+        - price {Integer} The total price in cents,
+        - vat {Integer} The VAT component of the price in cents,
+        - currency {String} The currency for the charge,
+        - nickname {String} The user's nickname,
+        - for {String} The date for the charge,
+        - origin {String} The origin of the charge,
+        - state {String} The status of the charge,
+        - lineItems {Array} The list of items in the statement, containing:
+          - name {String} The name of the item,
+          - details {String} The details of the item,
+          - usage {String} The usage for the item,
+          - price {String} The price for the item in cents,
+        - paymentReceivedAt {String} The date the payment was received,
+        - paymentMethodUsed {Object} The payment method used, containing:
+          - address {Object} The card address object containing:
+            - id {String} The unique address id,
+            - name {String|Null} The name for the address e.g.
+              "Geoffrey Spinach" or "Tuque LTD",
+            - line1 {String|Null} The first address line,
+            - line2 {String|Null} The second address line,
+            - county {String|Null} The address county,
+            - city {String|Null} The address city,
+            - postcode {String|Null} The address post code,
+            - country {String|Null} The address country code,
+            - phones {Array} a list of phone number strings,
+          - id {String} The unique payment method id,
+          - brand {String} The card brand name,
+          - last4 {String} The last four digits of the card number,
+          - month {Int} The card expiry month,
+          - name {String} The user provided identifier of the card,
+          - cardHolder {String} The name of the card owner,
+          - valid {Boolean} Whether the card is valid e.g. the card has not
+            expired,
+          - Year {Int} The card expiry year,
+        - paymentRetryDelay {Integer} The delay for the retry,
+        - paymentRetryMax {Integer} The maximum number of retries,
+        - paymentMethodUpdateRetryDelay {Integer} The delay for retrying the
+          payment method update,
+        - paymentMethodUpdateRetryMax {Integer} The maximum number of payment
+          method update retries.
+    */
+    getCharges: function(username, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        let parsed = [];
+        if (response.charges) {
+          parsed = response.charges.map(charge => {
+            const lineItems = charge['line-items'].map(item => {
+              return {
+                name: item.name,
+                details: item.details,
+                usage: item.usage,
+                price: item.price
+              };
+            });
+            return {
+              id: charge.id,
+              statementId: charge['statement-id'],
+              price: charge.price,
+              vat: charge.vat,
+              currency: charge.currency,
+              nickname: charge.nickname,
+              for: charge.for,
+              origin: charge.origin,
+              state: charge.state,
+              lineItems: lineItems,
+              paymentReceivedAt: charge['payment-received-at'],
+              paymentMethodUsed: this._parsePaymentMethod(
+                charge['payment-method-used']),
+              paymentRetryDelay: charge['payment-retry-delay'],
+              paymentRetryMax: charge['payment-retry-max'],
+              paymentMethodUpdateRetryDelay: charge[
+                'payment-method-update-retry-delay'],
+              paymentMethodUpdateRetryMax: charge[
+                'payment-method-update-retry-max']
+            };
+          });
+        }
+        callback(null, parsed);
+      };
+      const url = `${this.url}/charges`;
+      const payload = {
+        nickname: username
+      };
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
+      Get the receipt for a charge.
+
+      @param chargeId {String} A charge ID.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and a receipt string as its second.
+    */
+    getReceipt: function(chargeId, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, response);
+      };
+      const url = `${this.url}/receipts/${chargeId}`;
+      return jujulib._makeRequest(
+        this.bakery, url, 'GET', null, handler, false);
+    },
+
+    /**
       Reformat payment method objects for easier use with JavaScript.
 
       @public _parsePaymentMethods
       @param paymentMethods {Array} Payment method reponses from the API.
-      @param parseCardholder {Boolean} Whether to include the card-holder.
       @returns {Array} A list of parsed payment method objects.
     */
-    _parsePaymentMethods: function(paymentMethods, parseCardholder=false) {
+    _parsePaymentMethods: function(paymentMethods) {
       return paymentMethods.map(method => {
-        return this._parsePaymentMethod(method, parseCardholder);
+        return this._parsePaymentMethod(method);
       });
     },
 
@@ -456,10 +607,9 @@ var module = module;
 
       @public _parsePaymentMethod
       @param paymentMethod {Object} A payment method reponse from the API.
-      @param parseCardholder {Boolean} Whether to include the card-holder.
       @returns {Object} A parsed payment method object.
     */
-    _parsePaymentMethod: function(paymentMethod, parseCardholder=false) {
+    _parsePaymentMethod: function(paymentMethod) {
       const address = paymentMethod.address;
       const parsed = {
         address: {
@@ -481,9 +631,6 @@ var module = module;
         valid: paymentMethod.valid || false,
         year: paymentMethod.year || null
       };
-      if (parseCardholder) {
-        parsed.cardHolder = paymentMethod['card-holder'];
-      }
       return parsed;
     },
 

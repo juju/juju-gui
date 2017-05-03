@@ -21,9 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-cloud', function() {
 
   juju.components.DeploymentCloud = React.createClass({
+    displayName: 'DeploymentCloud',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      controllerIsAvailable: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       setCloud: React.PropTypes.func.isRequired
@@ -37,28 +40,37 @@ YUI.add('deployment-cloud', function() {
     },
 
     componentWillMount: function() {
-      this.props.listClouds((error, clouds) => {
-        if (error) {
-          console.error('Unable to list clouds', error);
+      const listClouds = () => {
+        // It is possible that the controller hasn't yet connected so
+        // bounce until it's connected then fetch the clouds list.
+        if (!this.props.controllerIsAvailable()) {
+          setTimeout(listClouds, 500);
           return;
         }
-        let cloudList = [];
-        if (clouds) {
-          cloudList = Object.keys(clouds).map(name => {
-            const cloud = clouds[name];
-            cloud.name = name;
-            return cloud;
+        this.props.listClouds((error, clouds) => {
+          if (error) {
+            console.error('unable to list clouds:', error);
+            return;
+          }
+          let cloudList = [];
+          if (clouds) {
+            cloudList = Object.keys(clouds).map(name => {
+              const cloud = clouds[name];
+              cloud.name = name;
+              return cloud;
+            });
+          }
+          this.setState({
+            clouds: cloudList,
+            cloudsLoading: false
           });
-        }
-        this.setState({
-          clouds: cloudList,
-          cloudsLoading: false
+          // If there is only one cloud then automatically select it.
+          if (cloudList.length === 1) {
+            this.props.setCloud(cloudList[0]);
+          }
         });
-        // If there is only one cloud then automatically select it.
-        if (cloudList.length === 1) {
-          this.props.setCloud(cloudList[0]);
-        }
-      });
+      };
+      listClouds();
     },
 
     /**

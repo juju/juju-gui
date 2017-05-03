@@ -165,142 +165,134 @@ describe('SearchResults', function() {
                    'total results returned is incorrect');
     });
 
-    it('can render the promulgated search results', function() {
-      var changeState = sinon.spy();
-      var getName = (val) => {
-        return val;
-      };
-      var sortItems = [{
-        label: 'Default',
-        value: ''
-      }, {
-        label: 'Most popular',
-        value: '-downloads'
-      }, {
-        label: 'Least popular',
-        value: 'downloads'
-      }, {
-        label: 'Name (a-z)',
-        value: 'name'
-      }, {
-        label: 'Name (z-a)',
-        value: '-name'
-      }, {
-        label: 'Author (a-z)',
-        value: 'owner'
-      }, {
-        label: 'Author (z-a)',
-        value: '-owner'
-      }];
-      var seriesItems = [{
-        label: 'All',
-        value: ''
-      }, {
-        label: 'Vivid Vervet 15.04',
-        value: 'vivid'
-      }, {
-        label: 'Wily Werewolf 15.10',
-        value: 'wily'
-      }];
-      var results = [{
-        name: 'mysql-one',
-        displayName: 'mysql-one',
-        url: 'http://example.com/mysql-one',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: true,
-        id: 'mysql-one',
-        storeId: '~test-owner/mysql-one',
-        type: 'charm'
-      }, {
-        name: 'mysql-two',
-        displayName: 'mysql-two',
-        url: 'http://example.com/mysql-two',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: true,
-        id: 'mysql-two',
-        storeId: '~test-owner/mysql-two',
-        type: 'charm'
-      }, {
-        name: 'mysql-three',
-        displayName: 'mysql-three',
-        url: 'http://example.com/mysql-three',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: false,
-        id: 'mysql-three',
-        storeId: '~test-owner/mysql-three',
-        type: 'charm'
-      }, {
-        name: 'mysql-four',
-        displayName: 'mysql-four',
-        url: 'http://example.com/mysql-four',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: false,
-        id: 'mysql-four',
-        storeId: '~test-owner/mysql-four',
-        type: 'charm'
-      }];
-      var mockData = [{
-        toEntity: sinon.stub().returns(results[0])
-      }, {
-        toEntity: sinon.stub().returns(results[1])
-      }, {
-        toEntity: sinon.stub().returns(results[2])
-      }, {
-        toEntity: sinon.stub().returns(results[3])
-      }];
-      var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
-      var makeEntityModel = sinon.stub().returnsArg(0);
-      var shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            query="mysql"
-            type="charm"
-            sort="-name"
-            series="wily"
-            seriesList={series}
-            changeState={changeState}
-            charmstoreSearch={charmstoreSearch}
-            getName={getName}
-            makeEntityModel={makeEntityModel} />, true);
-      var instance = shallowRenderer.getMountedInstance();
-      instance.componentDidMount();
-      var output = shallowRenderer.getRenderOutput();
-      var expected = (
-        <div className="search-results">
-          <div className="row no-padding-top">
-            <div className="inner-wrapper list-block">
-              <div className="twelve-col list-block__title no-margin-bottom">
-                Your search for &lsquo;{'mysql'}&rsquo; returned {4}{' '}
-                results.
-              </div>
-              <div className="list-block__filters">
-                <juju.components.SearchResultsTypeFilter
-                  changeState={changeState}
-                  currentType="charm" />
-                <div className="six-col last-col">
-                  <div className="list-block__filters--selects">
-                    <form>
-                      <juju.components.SearchResultsSelectFilter
-                        changeState={changeState}
-                        label="Sort by"
-                        filter='sort'
-                        items={sortItems}
-                        currentValue="-name" />
-                      <juju.components.SearchResultsSelectFilter
-                        changeState={changeState}
-                        label="Series"
-                        filter='series'
-                        items={seriesItems}
-                        currentValue="wily" />
-                    </form>
-                  </div>
+    const changeState = sinon.spy();
+    const getName = (val) => {
+      return val;
+    };
+    const sortItems = [{
+      label: 'Default',
+      value: ''
+    }, {
+      label: 'Most popular',
+      value: '-downloads'
+    }, {
+      label: 'Least popular',
+      value: 'downloads'
+    }, {
+      label: 'Name (a-z)',
+      value: 'name'
+    }, {
+      label: 'Name (z-a)',
+      value: '-name'
+    }, {
+      label: 'Author (a-z)',
+      value: 'owner'
+    }, {
+      label: 'Author (z-a)',
+      value: '-owner'
+    }];
+    const seriesItems = [{
+      label: 'All',
+      value: ''
+    }, {
+      label: 'Vivid Vervet 15.04',
+      value: 'vivid'
+    }, {
+      label: 'Wily Werewolf 15.10',
+      value: 'wily'
+    }];
+    const results = [{
+      name: 'mysql-one',
+      displayName: 'mysql-one',
+      url: 'http://example.com/mysql-one',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql-one',
+      storeId: '~test-owner/mysql-one',
+      type: 'charm'
+    }, {
+      name: 'mysql-two',
+      displayName: 'mysql-two',
+      url: 'http://example.com/mysql-two',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql-two',
+      storeId: '~test-owner/mysql-two',
+      type: 'charm'
+    }, {
+      name: 'mysql-three',
+      displayName: 'mysql-three',
+      url: 'http://example.com/mysql-three',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: false,
+      id: 'mysql-three',
+      storeId: '~test-owner/mysql-three',
+      type: 'charm'
+    }, {
+      name: 'mysql-four',
+      displayName: 'mysql-four',
+      url: 'http://example.com/mysql-four',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: false,
+      id: 'mysql-four',
+      storeId: '~test-owner/mysql-four',
+      type: 'charm'
+    }];
+    const mockData = [{
+      toEntity: sinon.stub().returns(results[0])
+    }, {
+      toEntity: sinon.stub().returns(results[1])
+    }, {
+      toEntity: sinon.stub().returns(results[2])
+    }, {
+      toEntity: sinon.stub().returns(results[3])
+    }];
+    const charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
+    const makeEntityModel = sinon.stub().returnsArg(0);
+
+    function renderedResults(
+      changeState,
+      sortItems,
+      seriesItems,
+      results,
+      showCommunity) {
+      return (<div className="search-results">
+        <div className="row no-padding-top">
+          <div className="inner-wrapper list-block">
+            <div className="twelve-col list-block__title no-margin-bottom">
+              Your search for &lsquo;{'mysql'}&rsquo; returned {4}{' '}
+              results.
+            </div>
+            <div className="list-block__filters">
+              <juju.components.SearchResultsTypeFilter
+                changeState={changeState}
+                currentType="charm" />
+              <div className="six-col last-col">
+                <div className="list-block__filters--selects">
+                  <form>
+                    <juju.components.SearchResultsSelectFilter
+                      changeState={changeState}
+                      label="Sort by"
+                      filter='sort'
+                      items={sortItems}
+                      currentValue="-name" />
+                    <juju.components.SearchResultsSelectFilter
+                      changeState={changeState}
+                      label="Series"
+                      filter='series'
+                      items={seriesItems}
+                      currentValue="wily" />
+                  </form>
                 </div>
               </div>
-              <div className="entity-search-results">
-                <div>
+            </div>
+            <div className="entity-search-results">
+              <div>
+                <div className="clearfix promulgated-results">
                   <h4>
                     {'Recommended'}{' '}
                     <span className="count">({2})</span>
@@ -316,11 +308,74 @@ describe('SearchResults', function() {
                       item={results[1]} />
                   </ul>
                 </div>
+                <div className="clearfix community-results">
+                  <juju.components.GenericButton
+                    action={sinon.stub()}
+                    extraClasses="show-community-button"
+                    title={(showCommunity ? 'Hide' : 'Show') +
+                      ' community results'}
+                    type="inline-neutral" />
+                  <div
+                    className={'clearfix' + (showCommunity ? '' : ' hidden')}>
+                    <h4>Community{' '}<span className="count">({2})</span></h4>
+                    <ul className="list-block__list">
+                      <juju.components.SearchResultsItem
+                        changeState={changeState}
+                        key="~test-owner/mysql-three"
+                        item={results[2]} />
+                      <juju.components.SearchResultsItem
+                        changeState={changeState}
+                        key="~test-owner/mysql-four"
+                        item={results[3]} />
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>);
-      assert.deepEqual(output, expected);
+        </div>
+      </div>);
+    }
+
+    it('can render the promulgated search results', function() {
+      const shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            query="mysql"
+            type="charm"
+            sort="-name"
+            series="wily"
+            seriesList={series}
+            changeState={changeState}
+            charmstoreSearch={charmstoreSearch}
+            getName={getName}
+            makeEntityModel={makeEntityModel} />, true);
+      const instance = shallowRenderer.getMountedInstance();
+      instance.componentDidMount();
+      const output = shallowRenderer.getRenderOutput();
+      const expected = renderedResults(changeState, sortItems,
+        seriesItems, results, false);
+      expect(output).toEqualJSX(expected);
+    });
+
+    it('will show community results', function() {
+      const shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            query="mysql"
+            type="charm"
+            sort="-name"
+            series="wily"
+            seriesList={series}
+            changeState={changeState}
+            charmstoreSearch={charmstoreSearch}
+            getName={getName}
+            makeEntityModel={makeEntityModel} />, true);
+      const instance = shallowRenderer.getMountedInstance();
+      instance.componentDidMount();
+      instance._toggleCommunityResults();
+      const output = shallowRenderer.getRenderOutput();
+      const expected = renderedResults(changeState, sortItems,
+        seriesItems, results, true);
+      expect(output).toEqualJSX(expected);
     });
   });
 

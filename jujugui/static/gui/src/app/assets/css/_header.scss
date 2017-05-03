@@ -177,25 +177,21 @@
   &-list-item {
     padding: 10px 20px 10px;
     margin: 0;
+    padding: 0;
 
     &-with-link {
       cursor: pointer;
-      padding: 0;
-
-      a {
-        display: block;
-        padding: 10px 20px 10px;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: none;
-          background-color: $hover-background;
-        }
-      }
     }
 
-    &-info {
-      color: $dark-warm-grey;
+    &-link {
+      display: block;
+      padding: 10px 20px 10px;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: none;
+        background-color: $hover-background;
+      }
     }
   }
 

@@ -37,7 +37,7 @@ describe('DeploymentChanges', function() {
     ];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChanges
-        changes={{one: 1, two: 2}}
+        getCurrentChangeSet={sinon.stub().returns({one: 1, two: 2})}
         generateAllChangeDescriptions={sinon.stub().returns(changes)} />, true);
     var output = renderer.getRenderOutput();
     var expected = (

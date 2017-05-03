@@ -108,86 +108,26 @@ YUI.add('juju-gui', function(Y) {
         help: 'Select the charm Search'
       },
       'S-1': {
-        target: '#shortcut-settings',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutHelp = document.querySelector('#shortcut-help');
-          if (shortcutHelp) {
-            shortcutHelp.classList.add('hidden');
-          }
-
-          if (target && !target.children.length) {
-            ReactDOM.render(
-              <window.juju.components.Settings
-                disableCookie={localStorage.getItem('disable-cookie')}
-                disableAutoPlace={localStorage.getItem('disable-auto-place')}
-                forceContainers={localStorage.getItem('force-containers')} />,
-              ReactDOM.findDOMNode(target));
-
-            // This is only added to the DOM once and is checked if it exists
-            // above. It's hidden and then shown, so this event is not auto
-            // cleaned up, but can only occur once.
-            target.querySelector('#save-settings').addEventListener(
-              'click', ev => {
-                const fields = target.querySelectorAll('input');
-                fields.each(function(node) {
-                  // If it's a checkbox:
-                  if (node.get('type') === 'checkbox') {
-                    // and if it's checked set that value to localStorage.
-                    if (node.get('checked')) {
-                      localStorage.setItem(node.getAttribute('name'), true);
-                    } else {
-                      // otherwise unset it from the localStorage.
-                      localStorage.removeItem(node.getAttribute('name'));
-                    }
-                  } else {
-                    localStorage.setItem(
-                        node.getAttribute('name'), node.get('value'));
-                  }
-                });
-              });
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-settings').classList.add(
-                'hidden');
-            });
+        callback: function() {
+          this._clearShortcutsModal();
+          if (document.getElementById('modal-gui-settings').
+            children.length > 0) {
+            this._clearSettingsModal();
+          } else {
+            this._displaySettingsModal();
           }
         },
         help: 'GUI Settings',
         label: 'Shift + !'
       },
       'S-/': {
-        target: '#shortcut-help',
-        toggle: true,
-        callback: function(evt, target) {
-          const shortcutSettings = document.querySelector('#shortcut-settings');
-          if (shortcutSettings) {
-            shortcutSettings.classList.add('hidden');
-          }
-
-          // This could be its own view.
-          if (target && !target.children.length) {
-            var bindings = [];
-            Object.keys(this.keybindings).forEach(k => {
-              const v = this.keybindings[k];
-              if (v.help && (v.condition === undefined ||
-                             v.condition.call(this) === true)) {
-                // TODO: translate keybindings to
-                // human <Alt> m
-                // <Control> <Shift> N (note caps)
-                // also 'g then i' style
-                bindings.push({key: k, label: v.label || k, help: v.help});
-              }
-            }, this);
-
-            ReactDOM.render(
-              <window.juju.components.Shortcuts
-                bindings={bindings} />,
-              ReactDOM.findDOMNode(target));
-
-            target.querySelector('.close').addEventListener('click', ev => {
-              document.querySelector('#shortcut-help').classList.add('hidden');
-            });
+        callback: function() {
+          this._clearSettingsModal();
+          if (document.getElementById('modal-shortcuts').
+            children.length > 0) {
+            this._clearShortcutsModal();
+          } else {
+            this._displayShortcutsModal();
           }
         },
         help: 'Display this help',
@@ -211,9 +151,8 @@ YUI.add('juju-gui', function(Y) {
       'esc': {
         fire: 'topo.clearState',
         callback: function() {
-          // Explicitly hide anything we might care about.
-          document.querySelector('#shortcut-help').classList.add('hidden');
-          document.querySelector('#shortcut-settings').classList.add('hidden');
+          this._clearSettingsModal();
+          this._clearShortcutsModal();
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -237,7 +176,7 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-        '/': 191, '?': 63, '+': 187, '-': 189,
+        '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
@@ -697,25 +636,34 @@ YUI.add('juju-gui', function(Y) {
         // If state has a `next` property then that overrides all defaults.
         const specialState = current.special;
         const next = specialState && specialState.next;
-        // There should never be a `next` state if we aren't on login but
-        // adding the state login check here just to be sure.
-        if (state.current.root === 'login' && next) {
-          console.log('redirecting to "next" state', next);
-          const {error, state: newState} = state.generateState(next, false);
-          if (error === null) {
-            // The root at this point will be 'login' and because the `next`
-            // url may not explicitly define a new root path we have to set it
-            // to null to clear 'login' from the url.
-            if (!newState.root) {
-              newState.root = null;
-            }
-            newState.special = null;
+        const dd = specialState && specialState.dd;
+
+        if (state.current.root === 'login') {
+          if (dd) {
+            console.log('initiating direct deploy');
             this.maskVisibility(false);
-            state.changeState(newState);
+            this._directDeploy(dd);
+            return;
+          } else if (next) {
+            // There should never be a `next` state if we aren't on login but
+            // adding the state login check here just to be sure.
+            console.log('redirecting to "next" state', next);
+            const {error, state: newState} = state.generateState(next, false);
+            if (error === null) {
+              // The root at this point will be 'login' and because the `next`
+              // url may not explicitly define a new root path we have to set it
+              // to null to clear 'login' from the url.
+              if (!newState.root) {
+                newState.root = null;
+              }
+              newState.special = null;
+              this.maskVisibility(false);
+              state.changeState(newState);
+              return;
+            }
+            console.error('error redirecting to previous state', error);
             return;
           }
-          console.error('error redirecting to previous state', error);
-          return;
         }
 
         // If the user is connected to a model then the modelList will be
@@ -784,7 +732,10 @@ YUI.add('juju-gui', function(Y) {
           this.maskVisibility(false);
           return;
         }
-        if (!creds.areAvailable) {
+        if (!creds.areAvailable ||
+          // When using direct deploy when a user is not logged in it will
+          // navigate to show the login if we do not have this state check.
+            (currentState.special && currentState.special.dd)) {
           this._displayLogin();
           return;
         }
@@ -1151,12 +1102,16 @@ YUI.add('juju-gui', function(Y) {
             this.payment && this.payment.createUser.bind(this.payment)}
           generateCloudCredentialName={views.utils.generateCloudCredentialName}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
+          getCharges={
+            this.payment && this.payment.getCharges.bind(this.payment)}
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={views.utils.getCloudProviderDetails.bind(
             views.utils)}
           getCountries={
             this.payment && this.payment.getCountries.bind(this.payment)}
+          getReceipt={
+            this.payment && this.payment.getReceipt.bind(this.payment)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           removeAddress={
             this.payment && this.payment.removeAddress.bind(this.payment)}
@@ -1176,6 +1131,8 @@ YUI.add('juju-gui', function(Y) {
           updateBillingAddress={
             this.payment && this.payment.updateBillingAddress.bind(
               this.payment)}
+          updatePaymentMethod={
+            this.payment && this.payment.updatePaymentMethod.bind(this.payment)}
           user={this.user.controller.user}
           userInfo={this._getUserInfo(state)}
           validateForm={views.utils.validateForm.bind(views.utils)} />,
@@ -1226,12 +1183,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
-
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
+          displayShortcutsModal={this._displayShortcutsModal.bind(this)}
           user={this._getAuth()} />,
         document.getElementById('header-help'));
     },
@@ -1289,8 +1246,11 @@ YUI.add('juju-gui', function(Y) {
       const connected = this.env.get('connected');
       const modelName = env.get('environmentName') || 'mymodel';
       const utils = views.utils;
-      const currentChangeSet = env.get('ecs').getCurrentChangeSet();
-      if (Object.keys(currentChangeSet).length === 0) {
+      const ecs = env.get('ecs');
+      const currentChangeSet = ecs.getCurrentChangeSet();
+      const deployState = state.gui.deploy;
+      const ddData = deployState ? JSON.parse(deployState) : null;
+      if (Object.keys(currentChangeSet).length === 0 && !ddData) {
         // If there are no changes then close the deployment flow. This is to
         // prevent showing the deployment flow if the user clicks back in the
         // browser or navigates directly to the url. This changeState needs to
@@ -1320,6 +1280,10 @@ YUI.add('juju-gui', function(Y) {
         const credentials = this.user.controller;
         return credentials ? credentials.user : undefined;
       };
+      const controllerIsAvailable = () =>
+        this.controllerAPI &&
+        this.controllerAPI.get('connected') &&
+        this.controllerAPI.userIsAuthenticated;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const getDischargeToken = function() {
@@ -1338,6 +1302,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
+          controllerIsAvailable={controllerIsAvailable}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           createCardElement={
             this.stripe && this.stripe.createCardElement.bind(this.stripe)}
@@ -1361,9 +1326,11 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
+          getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
           getCountries={
               this.payment && this.payment.getCountries.bind(this.payment)
               || null}
+          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
@@ -1375,6 +1342,7 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           modelCommitted={connected}
           modelName={modelName}
+          ddData={ddData}
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
@@ -1809,6 +1777,38 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    _displayShortcutsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalShortcuts
+          closeModal={this._clearShortcutsModal.bind(this)}
+          keybindings={this.keybindings} />,
+        document.getElementById('modal-shortcuts'));
+    },
+
+    _displaySettingsModal: function() {
+      ReactDOM.render(
+        <window.juju.components.ModalGUISettings
+          closeModal={this._clearSettingsModal.bind(this)}
+          localStorage={localStorage} />,
+        document.getElementById('modal-gui-settings'));
+    },
+
+    /**
+      The cleanup dispatcher keyboard shortcuts modal.
+    */
+    _clearShortcutsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-shortcuts'));
+    },
+
+    /**
+      The cleanup dispatcher global settings modal.
+    */
+    _clearSettingsModal: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('modal-gui-settings'));
+    },
+
     /**
       Handles rendering and/or updating the machine UI component.
       @param {Object} state - The app state.
@@ -2144,6 +2144,10 @@ YUI.add('juju-gui', function(Y) {
           if (this.anonymousMode || userLoggedIn) {
             this.maskVisibility(false);
           }
+          const specialState = state.special;
+          if (specialState && specialState.dd) {
+            this._directDeploy(specialState.dd);
+          }
           break;
         default:
           next();
@@ -2163,13 +2167,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Handles the deploy target functionality.
+      State handler for he deploy target functionality.
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
     */
     _deployTarget: function(state, next) {
-      const charmstore = this.get('charmstore');
-      const entityId = state.special['deployTarget'];
       // Remove the deployTarget from state so that we don't end up
       // dispatching it again by accident.
       this.state.changeState({
@@ -2177,6 +2179,16 @@ YUI.add('juju-gui', function(Y) {
           deployTarget: null
         }
       });
+      this.deployTarget(state.special['deployTarget'], this.get('charmstore'));
+      next();
+    },
+
+    /**
+      Deploys the supplied entity Id from the supplied charmstore instance.
+      @param {String} entityId The entity id to deploy.
+      @param {Object} charmstore The charmstore instance to fetch the entity.
+    */
+    deployTarget: function(entityId, charmstore) {
       /**
         Handles parsing and displaying the failure notification returned from
         the charmstore api.
@@ -2224,7 +2236,29 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
-      next();
+    },
+
+    /**
+      Calls the necessary methods to setup the GUI and put the user in the
+      Deployment Flow when they have used Direct Deploy.
+
+      @param {Object} ddData - The Direct Deploy data from state.
+    */
+    _directDeploy: function(ddData) {
+      const current = this.state.current;
+      if (current &&
+          current.gui &&
+          current.gui.deploy) {
+        // If we're already in the deployment flow then return to stop
+        // infinitely updating state.
+        return;
+      }
+      this.deployTarget(ddData.id, this.get('charmstore'));
+      this.state.changeState({
+        gui: {
+          deploy: JSON.stringify(ddData)
+        }
+      });
     },
 
     /**
@@ -3135,9 +3169,10 @@ YUI.add('juju-gui', function(Y) {
     'machine-view',
     'login-component',
     'logout-component',
+    'modal-gui-settings',
+    'modal-shortcuts',
     'notification-list',
     'panel-component',
-    'settings',
     'sharing',
     'svg-icon',
     'shortcuts',

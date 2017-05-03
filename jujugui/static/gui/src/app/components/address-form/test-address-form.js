@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('AddressForm', function() {
-  let getCountries;
+  let getCountries, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -36,6 +36,32 @@ describe('AddressForm', function() {
       name: 'Australia',
       code: 'AU'
     }]);
+    refs = {
+      name: {
+        getValue: sinon.stub().returns('Geoffrey Spinach')
+      },
+      line1: {
+        getValue: sinon.stub().returns('10 Maple St')
+      },
+      line2: {
+        getValue: sinon.stub().returns('')
+      },
+      city: {
+        getValue: sinon.stub().returns('Sasquatch')
+      },
+      state: {
+        getValue: sinon.stub().returns('Bunnyhug')
+      },
+      postcode: {
+        getValue: sinon.stub().returns('90210')
+      },
+      country: {
+        getValue: sinon.stub().returns('CA')
+      },
+      phoneNumber: {
+        getValue: sinon.stub().returns('12341234')
+      }
+    };
   });
 
   it('can display a loading spinner', function() {
@@ -152,6 +178,87 @@ describe('AddressForm', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can display the form without some fields', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.AddressForm
+        addNotification={sinon.stub()}
+        disabled={false}
+        getCountries={getCountries}
+        showName={false}
+        showPhone={false}
+        validateForm={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="address-form">
+        <div>
+          <juju.components.InsetSelect
+            disabled={false}
+            label="Country"
+            options={[{
+              label: 'Australia',
+              value: 'AU'
+            }]}
+            ref="country"
+            value="GB" />
+          {null}
+          <juju.components.GenericInput
+            disabled={false}
+            label="Address line 1"
+            ref="line1"
+            required={true}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]}
+            value={undefined} />
+          <juju.components.GenericInput
+            disabled={false}
+            label="Address line 2 (optional)"
+            ref="line2"
+            required={false}
+            value={undefined} />
+          <juju.components.GenericInput
+            disabled={false}
+            label="State/province"
+            ref="state"
+            required={true}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]}
+            value={undefined} />
+          <div className="twelve-col">
+            <div className="six-col">
+              <juju.components.GenericInput
+                disabled={false}
+                label="Town/city"
+                ref="city"
+                required={true}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]}
+                value={undefined} />
+            </div>
+            <div className="six-col last-col">
+              <juju.components.GenericInput
+                disabled={false}
+                label="Postcode"
+                ref="postcode"
+                required={true}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]}
+                value={undefined}/>
+            </div>
+          {null}
+          </div>
+        </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
   it('can validate the form', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AddressForm
@@ -203,32 +310,7 @@ describe('AddressForm', function() {
         getCountries={getCountries}
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
-    instance.refs = {
-      name: {
-        getValue: sinon.stub().returns('Geoffrey Spinach')
-      },
-      line1: {
-        getValue: sinon.stub().returns('10 Maple St')
-      },
-      line2: {
-        getValue: sinon.stub().returns('')
-      },
-      city: {
-        getValue: sinon.stub().returns('Sasquatch')
-      },
-      state: {
-        getValue: sinon.stub().returns('Bunnyhug')
-      },
-      postcode: {
-        getValue: sinon.stub().returns('90210')
-      },
-      country: {
-        getValue: sinon.stub().returns('CA')
-      },
-      phoneNumber: {
-        getValue: sinon.stub().returns('12341234')
-      }
-    };
+    instance.refs = refs;
     renderer.getRenderOutput();
     assert.deepEqual(instance.getValue(), {
       name: 'Geoffrey Spinach',
@@ -239,6 +321,30 @@ describe('AddressForm', function() {
       postcode: '90210',
       country: 'CA',
       phones: ['12341234']
+    });
+  });
+
+  it('can get the address without some fields', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.AddressForm
+        addNotification={sinon.stub()}
+        disabled={false}
+        getCountries={getCountries}
+        showName={false}
+        showPhone={false}
+        validateForm={sinon.stub().returns(true)} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = refs;
+    renderer.getRenderOutput();
+    assert.deepEqual(instance.getValue(), {
+      name: null,
+      line1: '10 Maple St',
+      line2: '',
+      city: 'Sasquatch',
+      county: 'Bunnyhug',
+      postcode: '90210',
+      country: 'CA',
+      phones: null
     });
   });
 });

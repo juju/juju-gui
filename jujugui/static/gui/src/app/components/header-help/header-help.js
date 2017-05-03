@@ -28,6 +28,7 @@ YUI.add('header-help', function() {
 
     propTypes: {
       appState: React.PropTypes.object.isRequired,
+      displayShortcutsModal: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,
       user: React.PropTypes.object
     },
@@ -73,10 +74,36 @@ YUI.add('header-help', function() {
       return (
         <li className="header-menu__menu-list-item
           header-menu__menu-list-item-with-link"
-          role="menuitem" tabIndex="1">
-          <a href={link} target="_blank">{label}</a>
+          role="menuitem" tabIndex="0">
+          <a className="header-menu__menu-list-item-link"
+            href={link} target="_blank">{label}</a>
         </li>
       );
+    },
+
+    _generateDocsLink: function() {
+      if (this.props.gisf) {
+        return (<li className="header-menu__menu-list-item
+          header-menu__menu-list-item-with-link"
+          role="menuitem" tabIndex="0">
+          <a
+            className="header-menu__menu-list-item-link"
+            href="https://jujucharms.com/docs/stable/getting-started-jaas"
+            target="_blank">
+            View Documentation</a>
+        </li>);
+      }
+      return;
+    },
+
+    /**
+     Click the button, get the help.
+
+      @param {Object} evt The event that triggered the function
+    */
+    _handleShortcutsLink: function(evt) {
+      this.toggleHelpMenu();
+      this.props.displayShortcutsModal();
     },
 
     /**
@@ -91,21 +118,17 @@ YUI.add('header-help', function() {
             instanceName="header-menu__menu"
             visible={true}>
               <ul className="header-menu__menu-list" role="menubar">
-                <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-with-link"
-                  role="menuitem" tabIndex="0">
-                  <a
-                    href="https://jujucharms.com/docs/stable/getting-started"
-                    target="_blank">
-                    View Documentation</a>
-                </li>
+                {this._generateDocsLink()}
                 {this._generateIssuesLink()}
                 <li className="header-menu__menu-list-item
-                  header-menu__menu-list-item-info"
-                  role="menuItem" tabIndex="2">
-                  Keyboard shortcuts
-                  <span className="header-menu__menu-extra-info">
-                    Shift + ?
+                  header-menu__menu-list-item-with-link"
+                  role="menuItem"
+                  tabIndex="0" onClick={this._handleShortcutsLink}>
+                  <span className="header-menu__menu-list-item-link">
+                    Keyboard shortcuts
+                    <span className="header-menu__menu-extra-info">
+                      Shift + ?
+                    </span>
                   </span>
                 </li>
               </ul>

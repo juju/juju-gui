@@ -33,9 +33,11 @@ YUI.add('account', function() {
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getCharges: React.PropTypes.func,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
-      getCountries: React.PropTypes.func.isRequired,
+      getCountries: React.PropTypes.func,
+      getReceipt: React.PropTypes.func,
       getUser: React.PropTypes.func,
       listClouds: React.PropTypes.func.isRequired,
       removeAddress: React.PropTypes.func,
@@ -47,6 +49,7 @@ YUI.add('account', function() {
       updateAddress: React.PropTypes.func,
       updateBillingAddress: React.PropTypes.func,
       updateCloudCredential: React.PropTypes.func.isRequired,
+      updatePaymentMethod: React.PropTypes.func,
       user: React.PropTypes.string.isRequired,
       userInfo: React.PropTypes.object.isRequired,
       validateForm: React.PropTypes.func.isRequired
@@ -69,13 +72,16 @@ YUI.add('account', function() {
             createPaymentMethod={this.props.createPaymentMethod}
             createToken={this.props.createToken}
             createUser={this.props.createUser}
+            getCharges={this.props.getCharges}
             getCountries={this.props.getCountries}
+            getReceipt={this.props.getReceipt}
             getUser={this.props.getUser}
             removeAddress={this.props.removeAddress}
             removeBillingAddress={this.props.removeBillingAddress}
             removePaymentMethod={this.props.removePaymentMethod}
             updateAddress={this.props.updateAddress}
             updateBillingAddress={this.props.updateBillingAddress}
+            updatePaymentMethod={this.props.updatePaymentMethod}
             username={this.props.userInfo.profile}
             validateForm={this.props.validateForm} />);
       } else {

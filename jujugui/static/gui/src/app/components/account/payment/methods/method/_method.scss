@@ -1,0 +1,19 @@
+.account-payment-method {
+  padding: 20px;
+
+  &__form {
+    width: 60%;
+
+    .inset-select {
+      margin-bottom: 20px;
+    }
+  }
+
+  &__buttons {
+    text-align: right;
+
+    .button--inline-positive {
+      margin-left: 20px;
+    }
+  }
+}

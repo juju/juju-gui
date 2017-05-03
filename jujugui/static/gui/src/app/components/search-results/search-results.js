@@ -295,7 +295,8 @@ YUI.add('search-results', function(Y) {
     */
     generateState: function(nextProps) {
       var state = {
-        activeComponent: nextProps.activeComponent || 'loading'
+        activeComponent: nextProps.activeComponent || 'loading',
+        showCommunity: nextProps.showCommunity || false
       };
       var currentType = nextProps.type !== undefined ?
           nextProps.type : this.props.type;
@@ -468,6 +469,75 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
+      Generate the promulgated search results list.
+
+      @param {Array} promulgated The list of promulgated results.
+      @return {Object} JSX div containing heading and list.
+    */
+    _generatePromulgatedResults: function(promulgated) {
+      return (<div className="clearfix promulgated-results">
+        <h4>Recommended <span className="count">
+          ({promulgated.length})
+        </span></h4>
+        <ul className="list-block__list">
+          {promulgated.map(item =>
+            <juju.components.SearchResultsItem
+              changeState={this.props.changeState}
+              key={item.storeId}
+              item={item} />)}
+        </ul>
+      </div>);
+    },
+
+    /**
+      Toggles the visibility of community results.
+    */
+    _toggleCommunityResults: function() {
+      let state = this.state;
+      state.showCommunity = !this.state.showCommunity;
+      this.setState(this.generateState(state));
+    },
+
+    /**
+      Generate community search results list.
+
+      @param {Array} community The array of community results.
+      @param {Boolean} hasPromulgated Do promulgated results exist?
+      @return {Object} JSX div containing toggle button, header and list.
+    */
+    _generateCommunityResults: function(community, hasPromulgated) {
+      const holderClasses = classNames(
+        'clearfix',
+        {
+          'hidden': !this.state.showCommunity && hasPromulgated
+        });
+      const buttonTitle = this.state.showCommunity ?
+        'Hide community results' : 'Show community results';
+      const button = hasPromulgated ? (
+        <juju.components.GenericButton
+          action={this._toggleCommunityResults}
+          type="inline-neutral"
+          extraClasses="show-community-button"
+          title={buttonTitle} />
+      ) : null;
+      return (<div className="clearfix community-results">
+        {button}
+        <div className={holderClasses}>
+          <h4>Community <span className="count">
+            ({community.length})
+          </span></h4>
+          <ul className="list-block__list">
+            {community.map(item =>
+              <juju.components.SearchResultsItem
+                changeState={this.props.changeState}
+                key={item.storeId}
+                item={item} />)}
+          </ul>
+        </div>
+      </div>);
+    },
+
+    /**
       Generate the base classes from on the props.
 
       @method _generateResultsList
@@ -477,27 +547,15 @@ YUI.add('search-results', function(Y) {
       @returns {String} The collection of class names.
     */
     _generateResultsList: function(promulgated, community) {
-      let title = 'Recommended';
-      let results = promulgated;
-      if (!promulgated.length) {
-        title = 'Community';
-        results = community;
-      }
-
+      const hasPromulgated = promulgated.length > 0;
+      const hasCommunity = community.length > 0;
       return (
         <div>
-          <h4>
-            {title} <span className="count">({results.length})</span>
-          </h4>
-          <ul className='list-block__list'>
-            {results.map(item =>
-                <juju.components.SearchResultsItem
-                  changeState={this.props.changeState}
-                  key={item.storeId}
-                  item={item} />)}
-          </ul>
-        </div>
-      );
+          {hasPromulgated ?
+            this._generatePromulgatedResults(promulgated) : null}
+          {hasCommunity ?
+            this._generateCommunityResults(community, hasPromulgated) : null}
+        </div>);
     },
 
     render: function() {
@@ -510,6 +568,7 @@ YUI.add('search-results', function(Y) {
   });
 
 }, '0.1.0', {requires: [
+  'generic-button',
   'loading-spinner',
   'search-results-item',
   'search-results-select-filter',
