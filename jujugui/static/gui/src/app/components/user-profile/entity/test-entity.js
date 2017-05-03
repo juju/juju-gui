@@ -224,6 +224,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="django-cluster"
         expanded={false}>
         <span>Summary details</span>
         <div>
@@ -320,6 +321,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="django-cluster"
         expanded={false}>
         <span>Summary details</span>
         <div>
@@ -391,6 +393,61 @@ describe('UserProfileEntity', () => {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can show metrics button and graph', () => {
+    const charm = jsTestUtils.makeEntity().toEntity();
+    charm.series = ['trusty', 'zesty'];
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        changeState={sinon.stub()}
+        entity={charm}
+        expanded={false}
+        getKpiMetrics={sinon.stub()}
+        d3={{}}
+        type="charm">
+        <span>Summary details</span>
+      </juju.components.UserProfileEntity>, true);
+    let kpiDiv = renderer.getRenderOutput().props.children[1]
+      .props.children[1].props.children[7];
+    assert.equal(kpiDiv, undefined);
+    let instance = renderer.getMountedInstance();
+    instance.setState({
+      hasMetrics: true,
+      metricTypes: ['bad-wolf'],
+      metrics: [
+        {
+          metric: 'bad-wolf',
+          sum: 10,
+          count: 10,
+          time: new Date()
+        }
+      ]
+    });
+    kpiDiv = renderer.getRenderOutput().props.children[1]
+      .props.children[1].props.children[7];
+    const expectedButton = (
+      <div>
+        <juju.components.GenericButton
+          action={function noRefCheck() {}}
+          title="Show KPI Metrics" />
+      </div>);
+    expect(kpiDiv).toEqualJSX(expectedButton);
+    instance.setState({kpiVisible: true});
+    kpiDiv = renderer.getRenderOutput().props.children[1]
+      .props.children[1].props.children[7];
+    const expectedChart = (
+      <div>
+        <juju.components.GenericButton
+          action={function noRefCheck() {}}
+          title="Show KPI Metrics" />
+        <juju.components.UserProfileEntityKPI
+          charmId="cs:django"
+          d3={{}}
+          metricTypes={['bad-wolf']}
+          metrics={[{count: 10, metric: 'bad-wolf', sum: 10, time: {}}]} />
+      </div>);
+    expect(kpiDiv).toEqualJSX(expectedChart);
+  });
+
   it('can render a charm', () => {
     const charm = jsTestUtils.makeEntity().toEntity();
     charm.series = ['trusty', 'zesty'];
@@ -399,6 +456,7 @@ describe('UserProfileEntity', () => {
         changeState={sinon.stub()}
         entity={charm}
         expanded={false}
+        getKpiMetrics={sinon.stub()}
         type="charm">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
@@ -410,6 +468,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
+        key="cs:django"
         expanded={false}>
         <span>Summary details</span>
         <div>

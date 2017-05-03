@@ -30,13 +30,27 @@ YUI.add('user-profile-entity', function() {
         React.PropTypes.object,
         React.PropTypes.array
       ]),
+      d3: React.PropTypes.object,
       displayConfirmation: React.PropTypes.func,
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
+      getKpiMetrics: React.PropTypes.func,
       permission: React.PropTypes.string,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
+    },
+
+    /**
+      Set initial state for KPI metrics
+    */
+    getInitialState: function() {
+      return {
+        hasMetrics: false,
+        kpiVisible: false,
+        metrics: [],
+        metricTypes: []
+      };
     },
 
     /**
@@ -319,6 +333,116 @@ YUI.add('user-profile-entity', function() {
       );
     },
 
+    /**
+      Retrieve metrics from the plans service.
+
+      @method _getMetrics
+      @param {Object} filters Additional filters to add to the metrics query.
+    */
+    _getMetrics: function(filters) {
+      if (this.state.hasMetrics) {
+        return;
+      }
+      // TODO filters such as summary-interval and start/end dates
+      // can be passed in here, but will need UX first.
+      // Makyo - 2017-03-10
+      this.props.getKpiMetrics(
+          // XXX Metrics are not fully implemented in Omnibus yet. Until they
+          // are, a dummy charm is used. The correct implementation is
+          // commented out below, with the dummy charm in its place.
+          // To QA, uncomment the following line and comment out the line
+          // after that.
+          // Makyo - 2017-03-17
+          // 'cs:~yellow/trusty/uptime-0',
+          this.props.entity.id,
+          filters,
+          (error, charmMetrics) => {
+            if (error) {
+              // TODO When there are designs for showing errors for metrics,
+              // we'll be able to implement them here.
+              // Makyo - 2017-04-13
+              console.error(error);
+              // don't render metrics in case of an error
+              this.setState({hasMetrics: false});
+              return;
+            }
+            if (charmMetrics.length > 0) {
+              let metrics = [];
+              let metricTypes = this.state.metricTypes;
+              charmMetrics.forEach(item => {
+                // refrain from adding duplicate types to metricTypes
+                if (metricTypes.indexOf(item.metric) === -1) {
+                  metricTypes.push(item.metric);
+                }
+                metrics.push(item);
+              });
+              this.setState({
+                hasMetrics: true,
+                metrics: metrics,
+                metricTypes: metricTypes
+              });
+            } else {
+              this.setState({
+                hasMetrics: false,
+                metrics: {},
+                metricTypes: []
+              });
+            }
+          });
+    },
+
+    /**
+      Show the metrics component, gated on state.
+
+      @return {Object} The KPI chart component
+    */
+    _showMetrics: function() {
+      return (
+        <juju.components.UserProfileEntityKPI
+          charmId={this.props.entity.id}
+          d3={this.props.d3}
+          metrics={this.state.metrics}
+          metricTypes={this.state.metricTypes} />);
+    },
+
+    /**
+      Set state to make KPI metrics visible/not visible.
+    */
+    _toggleKpiVisibility: function() {
+      this.setState({
+        kpiVisible: !this.state.kpiVisible
+      });
+    },
+
+    /**
+      For charms, generate a button for showing/hiding the metrics component.
+
+      @return {Object} Depending on whether or not there are metrics, either
+        a button which, when clicked, displays the KPI chart, or undefined.
+    */
+    _generateMetrics: function() {
+      if (!this.state.hasMetrics) {
+        return;
+      }
+      if (this.props.type === 'charm') {
+        return (
+          <div>
+            <juju.components.GenericButton
+              title={this.state.kpiMetrics ? 
+                'Hide KPI Metrics' : 'Show KPI Metrics'}
+              action={this._toggleKpiVisibility} />
+            {this.state.kpiVisible ? this._showMetrics() : undefined}
+          </div>
+        );
+      }
+    },
+
+    componentDidMount() {
+      if (this.props.type === 'charm') {
+        this._getMetrics();
+      }
+    },
+
     render: function() {
       const props = this.props;
       const entity = props.entity;
@@ -370,6 +494,7 @@ YUI.add('user-profile-entity', function() {
       };
       return (
         <juju.components.ExpandingRow classes={classes}
+          key={entity.id}
           expanded={props.expanded}>
           {props.children}
           <div>
@@ -395,6 +520,7 @@ YUI.add('user-profile-entity', function() {
               {this._generateDescription()}
               {this._generateTags()}
               {this._generateCommits()}
+              {this._generateMetrics()}
             </div>
           </div>
         </juju.components.ExpandingRow>);
@@ -405,6 +531,7 @@ YUI.add('user-profile-entity', function() {
   requires: [
     'date-display',
     'expanding-row',
-    'generic-button'
+    'generic-button',
+    'user-profile-entity-kpi'
   ]
 });

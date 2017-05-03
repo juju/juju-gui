@@ -103,6 +103,17 @@ var module = module;
     }
   };
 
+  /**
+    Serializes an object into a query string.
+
+    @param obj {Object} the object to serialize
+    @return a query string serialized from the object.
+  */
+  const serializeObject = function(obj) {
+    return Object.keys(obj).map(p => 
+        `${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`).join('&');
+  };
+
   var _transformAuthObject = function(callback, error, data) {
     if (error !== null) {
       callback(error, data);
@@ -125,7 +136,8 @@ var module = module;
   */
   exports.jujulib = {
     _makeRequest: _makeRequest,
-    _transformAuthObject: _transformAuthObject
+    _transformAuthObject: _transformAuthObject,
+    serializeObject: serializeObject
   };
 
 }((module && module.exports) ? module.exports : this));
