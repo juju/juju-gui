@@ -27,10 +27,12 @@ YUI.add('user-profile', function() {
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
+      d3: React.PropTypes.object,
       destroyModels: React.PropTypes.func.isRequired,
       facadesExist: React.PropTypes.bool.isRequired,
       getAgreements: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
+      getKpiMetrics: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
@@ -97,7 +99,7 @@ YUI.add('user-profile', function() {
           staticURL={props.staticURL}
           switchModel={props.switchModel} />
       );
-      // All possible components that can be rendered on the profile page;
+      // All possible components, that can be rendered on the profile page;
       // these may be filtered down to a smaller list depending on the context.
       const lists = [
         <juju.components.UserProfileModelList
@@ -127,7 +129,9 @@ YUI.add('user-profile', function() {
           ref='charmList'
           changeState={props.changeState}
           charmstore={props.charmstore}
+          d3={props.d3}
           getDiagramURL={props.getDiagramURL}
+          getKpiMetrics={props.getKpiMetrics}
           type='charm'
           user={props.userInfo.external}
         />

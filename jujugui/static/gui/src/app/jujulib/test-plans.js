@@ -630,4 +630,64 @@ describe('jujulib plans service', function() {
       }
     );
   });
+
+  it('gets kpi metrics for a charm', function(done) {
+    const bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/kpimetrics?charm-url=cs%3Ajuju-gui-42');
+        const xhr = makeXHRRequest([{
+          Metric: 'metric',
+          Time: 't',
+          Sum: 42,
+          Count: 5,
+          Min: 'min',
+          Max: 'max'
+        }, {
+          Metric: 'bad-wolf',
+          Time: 't',
+          Sum: 53,
+          Count: 8,
+          Min: 'min',
+          Max: 'max'
+        }, {
+          Metric: 'metric',
+          Time: 't',
+          Sum: 80,
+          Count: 10,
+          Min: 'min',
+          Max: 'max'
+        }]);
+        success(xhr);
+      }
+    };
+    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.getKpiMetrics('cs:juju-gui-42', {}, function(error, metrics) {
+      assert.isNull(error);
+      assert.deepEqual(metrics, [{
+        metric: 'metric',
+        time: 't',
+        sum: 42,
+        count: 5,
+        min: 'min',
+        max: 'max',
+      }, {
+        metric: 'bad-wolf',
+        time: 't',
+        sum: 53,
+        count: 8,
+        min: 'min',
+        max: 'max',
+      }, {
+        metric: 'metric',
+        time: 't',
+        sum: 80,
+        count: 10,
+        min: 'min',
+        max: 'max',
+      }]);
+      done();
+    });
+  });
 });
