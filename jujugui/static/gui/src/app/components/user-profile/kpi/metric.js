@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity-metric', function() {
 
   juju.components.UserProfileEntityMetric = React.createClass({
-    displayName: 'Profile entity metrics',
+    displayName: 'UserProfileEntityMetric',
 
     propTypes: {
       d3: React.PropTypes.object.isRequired,
@@ -91,6 +91,10 @@ YUI.add('user-profile-entity-metric', function() {
     },
 
     componentDidUpdate: function() {
+      this._renderChart(this.div);
+    },
+
+    componentDidMount: function() {
       this._renderChart(this.div);
     },
 

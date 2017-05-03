@@ -432,13 +432,13 @@ describe('UserProfileEntity', () => {
     expect(kpiDiv).toEqualJSX(expectedButton);
     instance.setState({kpiVisible: true});
     kpiDiv = renderer.getRenderOutput().props.children[1]
-			.props.children[1].props.children[7];
+      .props.children[1].props.children[7];
     const expectedChart = (
       <div>
         <juju.components.GenericButton
           action={function noRefCheck() {}}
           title="Show KPI Metrics" />
-				<juju.components.UserProfileEntityKPI
+        <juju.components.UserProfileEntityKPI
           charmId="cs:django"
           d3={{}}
           metricTypes={['bad-wolf']}

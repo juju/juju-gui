@@ -353,7 +353,7 @@ YUI.add('user-profile-entity', function() {
           // To QA, uncomment the following line and comment out the line
           // after that.
           // Makyo - 2017-03-17
-          // 'cs:~canonical/jimm-0',
+          // 'cs:~yellow/trusty/uptime-0',
           this.props.entity.id,
           filters,
           (error, charmMetrics) => {
@@ -362,13 +362,10 @@ YUI.add('user-profile-entity', function() {
               // we'll be able to implement them here.
               // Makyo - 2017-04-13
               console.error(error);
+              // don't render metrics in case of an error
+              this.setState({hasMetrics: false});
               return;
             }
-            this.setState({
-              hasMetrics: false,
-              metrics: {},
-              metricTypes: []
-            });
             if (charmMetrics.length > 0) {
               let metrics = [];
               let metricTypes = this.state.metricTypes;
@@ -384,12 +381,20 @@ YUI.add('user-profile-entity', function() {
                 metrics: metrics,
                 metricTypes: metricTypes
               });
+            } else {
+              this.setState({
+                hasMetrics: false,
+                metrics: {},
+                metricTypes: []
+              });
             }
           });
     },
 
     /**
       Show the metrics component, gated on state.
+
+      @return {Object} The KPI chart component
     */
     _showMetrics: function() {
       return (
@@ -411,6 +416,9 @@ YUI.add('user-profile-entity', function() {
 
     /**
       For charms, generate a button for showing/hiding the metrics component.
+
+      @return {Object} Depending on whether or not there are metrics, either
+        a button which, when clicked, displays the KPI chart, or undefined.
     */
     _generateMetrics: function() {
       if (!this.state.hasMetrics) {
@@ -426,6 +434,12 @@ YUI.add('user-profile-entity', function() {
             {this.state.kpiVisible ? this._showMetrics() : undefined}
           </div>
         );
+      }
+    },
+
+    componentDidMount() {
+      if (this.props.type === 'charm') {
+        this._getMetrics();
       }
     },
 
@@ -468,9 +482,6 @@ YUI.add('user-profile-entity', function() {
         });
         destroyButton = this._generateDestroyButton(entity);
       } else {
-        if (isCharm) {
-          this._getMetrics();
-        }
         buttonAction = this._viewEntity.bind(this, entity.id);
       }
       const icon = isCharm ? (

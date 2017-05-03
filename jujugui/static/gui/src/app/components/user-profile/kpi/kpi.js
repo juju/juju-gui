@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity-kpi', function() {
 
   juju.components.UserProfileEntityKPI = React.createClass({
-    displayName: 'Profile KPIs',
+    displayName: 'UserProfileEntityKPI',
 
     propTypes: {
       d3: React.PropTypes.object.isRequired,

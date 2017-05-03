@@ -109,7 +109,7 @@ var module = module;
     @param obj {Object} the object to serialize
     @return a query string serialized from the object.
   */
-  var serializeObject = function(obj) {
+  const serializeObject = function(obj) {
     return Object.keys(obj).map(p => 
         `${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`).join('&');
   };
