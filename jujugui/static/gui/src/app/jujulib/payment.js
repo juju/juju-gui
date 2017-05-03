@@ -300,12 +300,14 @@ var module = module;
       };
       const url = `${this.url}/u/${username}/payment-methods/${id}`;
       const parts = expiry.split('/');
-      const payload = {
+      const body = JSON.stringify({
         address: this._unparseAddress(address),
         month: parseInt(parts[0]),
         year: parseInt(parts[1])
-      };
-      return jujulib._makeRequest(this.bakery, url, 'PUT', payload, handler);
+      });
+      const headers = null;
+      return this.bakery.put(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -590,10 +592,12 @@ var module = module;
         callback(null, parsed);
       };
       const url = `${this.url}/charges`;
-      const payload = {
+      const body = JSON.stringify({
         nickname: username
-      };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      });
+      const headers = null;
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -613,8 +617,8 @@ var module = module;
         callback(null, response);
       };
       const url = `${this.url}/receipts/${chargeId}`;
-      return jujulib._makeRequest(
-        this.bakery, url, 'GET', null, handler, false);
+      const headers = null;
+      return this.bakery.get(url, headers, jujulib._wrap(handler));
     },
 
     /**
