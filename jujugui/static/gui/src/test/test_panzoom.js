@@ -108,4 +108,20 @@ describe('pan zoom module', function() {
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
+
+  it('must be able to handle zoom in/out events', function() {
+    const svg = viewContainer.querySelector('.the-canvas g');
+    // We're not rendering the app so the events aren't available, so just test
+    // the methods directly.
+    pz.zoom_in();
+    let attr = svg.getAttribute('transform');
+    // Ensure that, after simulating the zoom in, that the
+    // scale portion of the transform attribute of the svg
+    // element has been upped by 0.2.  The transform attribute
+    // also contains translate, so test via a regex.
+    /scale\(1\.2\)/.test(attr).should.equal(true);
+    pz.zoom_out();
+    attr = svg.getAttribute('transform');
+    /scale\(1\)/.test(attr).should.equal(true);
+  });
 });
