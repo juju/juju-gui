@@ -6,8 +6,9 @@ describe('jujulib charmstore', function() {
   var charmstore;
 
   beforeEach(function() {
-    var bakery = {
-      sendGetRequest: sinon.stub()
+    const bakery = {
+      get: sinon.stub(),
+      put: sinon.stub(),
     };
     charmstore = new window.jujulib.charmstore('local/', bakery);
   });
@@ -329,14 +330,14 @@ describe('jujulib charmstore', function() {
             'include=stats']);
     });
 
-    it('calls to make a valid charmstore request', function() {
+    it('calls to make a valid charmstore search request', function() {
       var transform = sinon.stub(charmstore, '_transformQueryResults');
       charmstore.search({}, 'cb');
       assert.equal(
-          charmstore.bakery.sendGetRequest.callCount, 1,
+          charmstore.bakery.get.callCount, 1,
           'sendGetRequest not called');
-      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
-      var successCb = requestArgs[1];
+      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
       // Call the success handler to make sure it's passed the callback.
       successCb({target: {responseText: '{}'}});
@@ -373,14 +374,14 @@ describe('jujulib charmstore', function() {
                    'bundle not set in query string');
     });
 
-    it('calls to make a valid charmstore request', function() {
+    it('calls to make a valid charmstore list request', function() {
       var transform = sinon.stub(charmstore, '_transformQueryResults');
       charmstore.list('test-author', 'cb');
       assert.equal(
-          charmstore.bakery.sendGetRequest.callCount, 1,
+          charmstore.bakery.get.callCount, 1,
           'sendGetRequest not called');
-      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
-      var successCb = requestArgs[1];
+      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
       // Call the success handler to make sure it's passed the callback.
       successCb({target: {responseText: '{}'}});
@@ -420,10 +421,10 @@ describe('jujulib charmstore', function() {
     it('_getBundleYAMLResponse fetches yaml file contents', function() {
       charmstore._getBundleYAMLResponse(
           cb, null, [{ deployerFileUrl: 'deployer file' }]);
-      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
+      var requestArgs = charmstore.bakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'deployer file');
       // Should be the anon success callback handler.
-      requestArgs[1]({
+      requestArgs[2](null, {
         target: {
           responseText: 'yaml'
         }
@@ -436,7 +437,7 @@ describe('jujulib charmstore', function() {
   describe('getAvailableVersions', function() {
     it('makes a request to fetch the ids', function() {
       charmstore.getAvailableVersions('cs:precise/ghost-5');
-      assert.equal(charmstore.bakery.sendGetRequest.callCount, 1);
+      assert.equal(charmstore.bakery.get.callCount, 1);
     });
 
     it('calls the success handler with a list of charm ids', function(done) {
@@ -449,11 +450,11 @@ describe('jujulib charmstore', function() {
         done();
       };
       charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
-      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
+      var requestArgs = charmstore.bakery.get.lastCall.args;
       // The path should not have cs: in it.
       assert.equal(requestArgs[0], 'local/v5/precise/ghost-5/expand-id');
       // Call the makeRequest success handler simulating a response object;
-      requestArgs[1](
+      requestArgs[2](null,
           {target: { responseText: '[{"Id": "cs:precise/ghost-4"}]'}});
     });
 
@@ -467,7 +468,7 @@ describe('jujulib charmstore', function() {
       };
       charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
       // Call the makeRequest success handler simulating a response object;
-      charmstore.bakery.sendGetRequest.lastCall.args[1](
+      charmstore.bakery.get.lastCall.args[2](null,
           {target: { responseText: '[notvalidjson]'}});
     });
   });
@@ -475,7 +476,7 @@ describe('jujulib charmstore', function() {
   describe('whoami', function() {
     it('queries who the current user is', function() {
       charmstore.whoami();
-      assert.equal(charmstore.bakery.sendGetRequest.callCount, 1);
+      assert.equal(charmstore.bakery.get.callCount, 1);
     });
 
     it('calls the success handler with an auth object', function(done) {
@@ -488,12 +489,10 @@ describe('jujulib charmstore', function() {
         done();
       };
       charmstore.whoami(cb);
-      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
+      var requestArgs = charmstore.bakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'local/v5/whoami');
-      // Make sure that we have disabled redirect on 401
-      assert.strictEqual(requestArgs[3], false);
       // Call the makeRequest success handler simulating a response object;
-      requestArgs[1](
+      requestArgs[2](null,
           {target: { responseText: '{"User": "test", "Groups": []}'}});
     });
 
@@ -507,7 +506,7 @@ describe('jujulib charmstore', function() {
       };
       charmstore.whoami(cb);
       // Call the makeRequest success handler simulating a response object;
-      charmstore.bakery.sendGetRequest.lastCall.args[1](
+      charmstore.bakery.get.lastCall.args[2](
           {target: { responseText: '[notvalidjson]'}});
     });
   });
@@ -516,12 +515,12 @@ describe('jujulib charmstore', function() {
     it('makes a request to fetch the canonical id for an entity', function() {
       const callback = sinon.stub();
       charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
-      const sendGetRequest = charmstore.bakery.sendGetRequest;
-      assert.equal(sendGetRequest.callCount, 1);
-      const requestPath = sendGetRequest.args[0][0];
+      const bakeryGet = charmstore.bakery.get;
+      assert.equal(bakeryGet.callCount, 1);
+      const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
       // Call the success request callback
-      sendGetRequest.args[0][1]({
+      bakeryGet.args[0][2](null, {
         target: {
           responseText: '{"Id": "cs:ghost"}'
         }
@@ -533,12 +532,12 @@ describe('jujulib charmstore', function() {
     it('properly calls the callback when there is an error', function() {
       const callback = sinon.stub();
       charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
-      const sendGetRequest = charmstore.bakery.sendGetRequest;
-      assert.equal(sendGetRequest.callCount, 1);
-      const requestPath = sendGetRequest.args[0][0];
+      const bakeryGet = charmstore.bakery.get;
+      assert.equal(bakeryGet.callCount, 1);
+      const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
       // Call the error request callback.
-      sendGetRequest.args[0][2]('not found');
+      bakeryGet.args[0][2]('not found');
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], ['not found', null]);
     });
@@ -547,14 +546,14 @@ describe('jujulib charmstore', function() {
   describe('getEntity', function() {
     it('strips cs from bundle IDs', function() {
       charmstore.getEntity('cs:foobar', sinon.stub());
-      var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      var path = charmstore.bakery.get.lastCall.args[0];
       assert.equal(path.indexOf('cs:'), -1,
                    'The string "cs:" should not be found in the path');
     });
 
     it('calls the correct path', function() {
       charmstore.getEntity('cs:foobar', sinon.stub());
-      const path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      const path = charmstore.bakery.get.lastCall.args[0];
       const expectedPath = (
         'local/v5/foobar/meta/any' +
         '?include=bundle-metadata' +
@@ -582,12 +581,12 @@ describe('jujulib charmstore', function() {
     it('can get resources for a charm', function() {
       const callback = sinon.stub();
       charmstore.getResources('cs:xenial/ghost-4', callback);
-      const sendGetRequest = charmstore.bakery.sendGetRequest;
-      assert.equal(sendGetRequest.callCount, 1);
-      const requestPath = sendGetRequest.args[0][0];
+      const bakeryGet = charmstore.bakery.get;
+      assert.equal(bakeryGet.callCount, 1);
+      const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');
       // Call the success request callback
-      sendGetRequest.args[0][1]({
+      bakeryGet.args[0][2](null, {
         target: {
           responseText: '[' +
             '{"Name":"file1","Type":"file","Path":"file1.zip","Description":' +
@@ -610,14 +609,14 @@ describe('jujulib charmstore', function() {
     it('properly calls the callback when there is an error', function() {
       const callback = sinon.stub();
       charmstore.getResources('cs:xenial/ghost-4', callback);
-      const sendGetRequest = charmstore.bakery.sendGetRequest;
-      assert.equal(sendGetRequest.callCount, 1);
-      const requestPath = sendGetRequest.args[0][0];
+      const bakeryGet = charmstore.bakery.get;
+      assert.equal(bakeryGet.callCount, 1);
+      const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');
       // Call the error request callback.
-      sendGetRequest.args[0][2]('not found');
+      bakeryGet.args[0][2]('not found');
       assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.args[0], ['not found', {error: 'not found'}]);
+      assert.deepEqual(callback.args[0], ['not found', null]);
     });
   });
 });

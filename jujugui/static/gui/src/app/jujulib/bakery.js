@@ -165,14 +165,14 @@ var module = module;
     }
 
     /**
-      Send an HTTP DELETE request to the given URL with the given headers.
-      The given callback receives an error and a response when the request is
-      complete.
+      Send an HTTP DELETE request to the given URL with the given headers and
+      body. The given callback receives an error and a response when the
+      request is complete.
 
       See the "sendRequest" method above for a description of the parameters.
     */
-    delete(url, headers, callback) {
-      return this.sendRequest(url, 'delete', headers, null, callback);
+    delete(url, headers, body, callback) {
+      return this.sendRequest(url, 'delete', headers, body, callback);
     }
 
     /**
