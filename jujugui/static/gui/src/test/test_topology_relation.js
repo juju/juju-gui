@@ -65,41 +65,6 @@ describe('topology relation module', function() {
     assert.equal(called, true);
   });
 
-  it('fires \'addRelationEnd\' event when done making a relation', function() {
-    var counter = 0;
-    var topo = {
-      fire: function(e) {
-        // Other events are fired along side this which we do not care about
-        if (e !== 'addRelationEnd') { return; }
-        assert.equal(e, 'addRelationEnd');
-        counter += 1;
-      },
-      // stubs
-      get: function(val) { return true; },
-      update: function() {},
-      vis: {
-        selectAll: function() {
-          return {
-            classed: function() { return; }
-          };
-        }
-      }
-    };
-    // stubs
-    var context = {
-      get: function(val) {
-        if (val === 'component') { return topo; }
-        return true;
-      },
-      set: function() { return; },
-      ambiguousAddRelationCheck: function() { return; }
-    };
-    view.addRelationDragEnd.call(context);
-    view.cancelRelationBuild.call(context);
-    assert.equal(counter, 2, 'Event should be fired if a relation line is ' +
-        'canceled or completed');
-  });
-
   it('has a list of relations', function() {
     assert.deepEqual(view.relations, []);
   });
@@ -373,8 +338,7 @@ describe('topology relation module', function() {
           translate: sinon.stub().returns('translate'),
           scale: sinon.stub().returns('scale')
         },
-        set: set,
-        fire: sinon.stub()
+        set: set
       };
       var locate = sinon.stub(
           Y.juju.topology.utils, 'locateRelativePointOnCanvas').returns(
@@ -396,8 +360,6 @@ describe('topology relation module', function() {
         ['active_service', 'm'],
         ['active_context', 'context']
       ]);
-      assert.equal(topo.fire.callCount, 1, 'fire');
-      assert.equal(topo.fire.lastCall.args[0], 'resized');
     });
   });
 

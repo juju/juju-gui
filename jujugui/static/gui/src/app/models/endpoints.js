@@ -106,7 +106,12 @@ YUI.add('juju-endpoints', function(Y) {
     // Now check every other application to see if it can be a valid target.
     db.services.each(target => {
       const targetId = target.get('id');
-      const targetProvides = endpointsMap[targetId].provides.concat();
+      let targetProvides = [];
+      // TODO frankban: it's not clear why a target should not be included in
+      // the endpoints map. But it happens. This needs investigation.
+      if (endpointsMap[targetId] && endpointsMap[targetId].provides) {
+        targetProvides = endpointsMap[targetId].provides.concat();
+      }
       const targetIsSubordinate = target.get('subordinate');
       // Ignore ourselves, peer relations are automatically established when an
       // application is deployed. The GUI only needs to concern itself with

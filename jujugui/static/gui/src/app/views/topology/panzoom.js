@@ -62,6 +62,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
       }
     },
 
+    STEP: 0.2,
+
     componentBound: function() {
       var topo = this.get('component'),
           options = topo.options;
@@ -77,8 +79,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
      *
      * @method zoom_in
      */
-    zoom_in: function(evt) {
-      // Not implemented.
+    zoom_in: function() {
+      this._fire_zoom(this.get('component').get('scale') + this.STEP);
     },
 
     /**
@@ -86,8 +88,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
      *
      * @method zoom_out
      */
-    zoom_out: function(evt) {
-      // Not implemented.
+    zoom_out: function() {
+      this._fire_zoom(this.get('component').get('scale') - this.STEP);
     },
 
     /**
@@ -195,7 +197,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       topo.set('translate', Y.mix(evt.translate));
       vis.attr('transform', 'translate(' + topo.get('translate') + ')' +
               ' scale(' + topo.get('scale') + ')');
-      topo.fire('rescaled');
     },
 
     renderedHandler: function(evt) {

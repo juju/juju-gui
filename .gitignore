@@ -46,3 +46,5 @@ virtualenv
 xvfb_pid
 yuidoc
 yui-macaroon.js
+._.DS_Store
+.DS_Store
