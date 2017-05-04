@@ -37,89 +37,28 @@ describe('StringConfig', function() {
       description: 'test config for strings'
     };
     var config = 'the value';
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.StringConfig
         config={config}
-        option={option} />);
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     var typeString = ` (${option.type})`;
     var expected = (
       <div className="string-config">
         <span className="string-config__label">{option.key}{typeString}</span>
-        <div
-          className="string-config--value"
-          contentEditable={true}
-          ref="editableInput"
-          onInput={output.props.children[1].props.onInput}
-          onBlur={output.props.children[1].props.onBlur}
-          dangerouslySetInnerHTML={{__html: config}}>
+        <div className="string-config--value">
+          <juju.components.StringConfigInput
+            config={config}
+            disabled={false}
+            ref="editableInput"
+            setValue={instance._setValue} />
         </div>
         <span className="string-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
         </span>
       </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  function stubRef(instance, output) {
-    // Because shallow render doesn't support refs we have to fake it.
-    // Should be 'editableInput'.
-    var inputRef = output.props.children[1].ref;
-    instance.refs = {};
-    instance.refs[inputRef] = {
-      innerText: 'initial'
-    };
-  }
-
-  it('can update when new config is provided', function() {
-    var option = {
-      key: 'testconfig',
-      type: 'text',
-      description: 'test config for strings'
-    };
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
-        config="initial"
-        option={option} />, true);
-    var output = shallowRenderer.getRenderOutput();
-    var instance = shallowRenderer.getMountedInstance();
-    stubRef(instance, output);
-    assert.equal(instance.state.value, 'initial');
-    shallowRenderer.render(
-      <juju.components.StringConfig
-        config="updated"
-        option={option} />);
-    assert.equal(instance.state.value, 'updated');
-  });
-
-  it('only updates the input on state change if values differ', function() {
-    var option = {
-      key: 'testconfig',
-      type: 'text',
-      description: 'test config for strings'
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
-        config="initial"
-        option={option} />, true);
-    var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
-    stubRef(instance, output);
-    // It should update if state and the value differ
-    assert.equal(
-      instance.shouldComponentUpdate(null, {
-        value: 'not initial'
-      }),
-      true,
-      'Component should have updated');
-    // It should not update if the state and the value are the same. This is
-    // bedcause in FireFox it does not maintain the cursor position when
-    // re-rendering the content editable field.
-    assert.equal(
-      instance.shouldComponentUpdate(null, {
-        value: 'initial'
-      }),
-      false,
-      'Component should not have updated');
+    expect(output).toEqualJSX(expected);
   });
 
   it('does not show a type if none is provided', function() {
@@ -142,20 +81,21 @@ describe('StringConfig', function() {
       description: 'test config for strings'
     };
     var config = 'the value';
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.StringConfig
         config={config}
         disabled={true}
-        option={option} />);
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     var expected = (
-      <div
-        className="string-config--value string-config--disabled"
-        contentEditable={false}
+    <div className="string-config--value string-config--disabled">
+      <juju.components.StringConfigInput
+        config={config}
+        disabled={true}
         ref="editableInput"
-        onInput={output.props.children[1].props.onInput}
-        onBlur={output.props.children[1].props.onBlur}
-        dangerouslySetInnerHTML={{__html: config}}>
-      </div>);
-    assert.deepEqual(output.props.children[1], expected);
+        setValue={instance._setValue} />
+    </div>);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 });

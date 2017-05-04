@@ -53,7 +53,7 @@ describe('BooleanConfig', function() {
               id={option.key}
               onClick={input.props.onClick}
               onChange={input.props.onChange}
-              checked={true}
+              defaultChecked={true}
               className="boolean-config--input" />
             <label
               htmlFor={option.key}
@@ -67,7 +67,7 @@ describe('BooleanConfig', function() {
         </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders an unchecked input based on config prop', function() {
@@ -82,7 +82,7 @@ describe('BooleanConfig', function() {
         option={option} />
     );
     const input = output.props.children[0].props.children[1].props.children[0];
-    assert.deepEqual(output,
+    expect(output).toEqualJSX(
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
           <div className="boolean-config--title">Test</div>
@@ -93,7 +93,7 @@ describe('BooleanConfig', function() {
               id={option.key}
               onClick={input.props.onClick}
               onChange={input.props.onChange}
-              checked={false}
+              defaultChecked={false}
               className="boolean-config--input" />
             <label
               htmlFor={option.key}
@@ -120,7 +120,7 @@ describe('BooleanConfig', function() {
         option={option} />
     );
     const input = output.props.children[0].props.children[1].props.children[0];
-    assert.deepEqual(output,
+    expect(output).toEqualJSX(
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
           <div className="boolean-config--title">Test</div>
@@ -131,11 +131,11 @@ describe('BooleanConfig', function() {
               id={option.key}
               onClick={input.props.onClick}
               onChange={input.props.onChange}
-              checked={true}
+              defaultChecked={true}
               className="boolean-config--input" />
             <label
               htmlFor={option.key}
-              className="boolean-config--label">
+              className="boolean-config--label boolean-config--label-changed">
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -158,7 +158,7 @@ describe('BooleanConfig', function() {
         option={option} />
     );
     const input = output.props.children[0].props.children[1].props.children[0];
-    assert.deepEqual(output,
+    expect(output).toEqualJSX(
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
           <div className="boolean-config--title">Test</div>
@@ -169,11 +169,11 @@ describe('BooleanConfig', function() {
               id={option.key}
               onClick={input.props.onClick}
               onChange={input.props.onChange}
-              checked={false}
+              defaultChecked={false}
               className="boolean-config--input" />
             <label
               htmlFor={option.key}
-              className="boolean-config--label">
+              className="boolean-config--label boolean-config--label-changed">
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -206,26 +206,6 @@ describe('BooleanConfig', function() {
     assert.equal(onChange.callCount, 1);
   });
 
-  it('can update when new config is provided', function() {
-    const option = {
-      key: 'testcheck',
-      description: 'it is a test config option',
-    };
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.BooleanConfig
-        config={true}
-        label="Test"
-        option={option} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    assert.isTrue(instance.state.value);
-    shallowRenderer.render(
-      <juju.components.BooleanConfig
-        config={false}
-        label="Test"
-        option={option} />);
-    assert.isFalse(instance.state.value);
-  });
-
   it('can be disabled', function() {
     const option = {
       key: 'testcheck',
@@ -246,8 +226,8 @@ describe('BooleanConfig', function() {
         id={option.key}
         onClick={input.props.onClick}
         onChange={input.props.onChange}
-        checked={true}
+        defaultChecked={true}
         className="boolean-config--input" />);
-    assert.deepEqual(input, expected);
+    expect(input).toEqualJSX(expected);
   });
 });
