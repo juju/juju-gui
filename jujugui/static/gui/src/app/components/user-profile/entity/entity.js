@@ -343,17 +343,16 @@ YUI.add('user-profile-entity', function() {
       if (this.state.hasMetrics) {
         return;
       }
+      // TODO frankban: metrics are not fully implemented in Omnibus yet.
+      // We can remove this "if" block when they are. For now, only this charm
+      // seems to work.
+      if (this.props.entity.id !== 'cs:~yellow/trusty/uptime-0') {
+        return;
+      }
       // TODO filters such as summary-interval and start/end dates
       // can be passed in here, but will need UX first.
       // Makyo - 2017-03-10
       this.props.getKpiMetrics(
-          // XXX Metrics are not fully implemented in Omnibus yet. Until they
-          // are, a dummy charm is used. The correct implementation is
-          // commented out below, with the dummy charm in its place.
-          // To QA, uncomment the following line and comment out the line
-          // after that.
-          // Makyo - 2017-03-17
-          // 'cs:~yellow/trusty/uptime-0',
           this.props.entity.id,
           filters,
           (error, charmMetrics) => {
@@ -428,7 +427,7 @@ YUI.add('user-profile-entity', function() {
         return (
           <div>
             <juju.components.GenericButton
-              title={this.state.kpiMetrics ? 
+              title={this.state.kpiMetrics ?
                 'Hide KPI Metrics' : 'Show KPI Metrics'}
               action={this._toggleKpiVisibility} />
             {this.state.kpiVisible ? this._showMetrics() : undefined}
