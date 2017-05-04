@@ -43,7 +43,7 @@ describe('Store', function() {
     assert.equal(output.props.children[0].props.children.length, 3);
   }),
 
-  it('can render big data feature in the correct place', function() {
+  fit('can render big data feature in the correct place', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Store
@@ -51,10 +51,12 @@ describe('Store', function() {
         changeState={changeState}
         charmstoreURL="http://1.2.3.4/" />, true);
     var output = renderer.getRenderOutput();
-    var expected = 'Big data charms and bundles';
-    var row = output.props.children[3].props.children;
-    assert.deepEqual(row.props.children[0].props.children[0].props.children,
-      expected);
+    var expected = 'Container management';
+    assert.equal(
+      output.props.children[3].props.
+      children.props.children.props.children[0].props.children,
+      expected
+    );
   }),
 
   it('can render write-your-own correctly', function() {

@@ -20,7 +20,7 @@ if [ -n "$2" ]; then
     xdg-open `cat $fn`
     fg %1
 else
-    $MOCHA -p node_modules/phantomjs-prebuilt/bin/phantomjs -t 40000 `cat $fn`
+    $MOCHA -p node_modules/phantomjs/bin/phantomjs -t 40000 `cat $fn`
     status=$?
     kill %1
     exit $status
