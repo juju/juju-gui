@@ -160,8 +160,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          views.utils.exportEnvironmentFile(
-            this.db, this.env.findFacadeVersion('Application') === null);
+          views.utils.exportEnvironmentFile(this.db);
         },
         help: 'Export the model',
         label: 'Shift + d'
@@ -1478,8 +1477,7 @@ YUI.add('juju-gui', function(Y) {
           appState={this.state}
           changeState={this.state.changeState.bind(this.state)}
           exportEnvironmentFile={
-            utils.exportEnvironmentFile.bind(utils, db,
-              env.findFacadeVersion('Application') === null)}
+            utils.exportEnvironmentFile.bind(utils, db)}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
