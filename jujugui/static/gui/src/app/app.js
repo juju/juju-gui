@@ -396,7 +396,7 @@ YUI.add('juju-gui', function(Y) {
       document.addEventListener(
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.addEventListener(
-          'ecs.currentCommitFinished', this.renderDeploymentBarListener);
+        'ecs.currentCommitFinished', this.renderDeploymentBarListener);
 
       if (this.get('gisf')) {
         document.body.classList.add('u-is-beta');
@@ -2557,7 +2557,7 @@ YUI.add('juju-gui', function(Y) {
       document.removeEventListener(
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.removeEventListener(
-          'ecs.currentCommitFinished', this.renderDeploymentBarListener);
+        'ecs.currentCommitFinished', this.renderDeploymentBarListener);
     },
 
     /**
