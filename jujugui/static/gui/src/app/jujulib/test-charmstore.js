@@ -3,12 +3,16 @@
 'use strict';
 
 describe('jujulib charmstore', function() {
-  var charmstore;
+  let charmstore, withoutDischargeBakery;
 
   beforeEach(function() {
+    withoutDischargeBakery = {
+      get: sinon.stub()
+    };
     const bakery = {
       get: sinon.stub(),
       put: sinon.stub(),
+      withoutDischarge: () => withoutDischargeBakery
     };
     charmstore = new window.jujulib.charmstore('local/', bakery);
   });
@@ -476,7 +480,7 @@ describe('jujulib charmstore', function() {
   describe('whoami', function() {
     it('queries who the current user is', function() {
       charmstore.whoami();
-      assert.equal(charmstore.bakery.get.callCount, 1);
+      assert.equal(withoutDischargeBakery.get.callCount, 1);
     });
 
     it('calls the success handler with an auth object', function(done) {
@@ -489,7 +493,7 @@ describe('jujulib charmstore', function() {
         done();
       };
       charmstore.whoami(cb);
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var requestArgs = withoutDischargeBakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'local/v5/whoami');
       // Call the makeRequest success handler simulating a response object;
       requestArgs[2](null,
@@ -506,7 +510,7 @@ describe('jujulib charmstore', function() {
       };
       charmstore.whoami(cb);
       // Call the makeRequest success handler simulating a response object;
-      charmstore.bakery.get.lastCall.args[2](
+      withoutDischargeBakery.get.lastCall.args[2](
           {target: { responseText: '[notvalidjson]'}});
     });
   });

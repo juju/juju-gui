@@ -398,7 +398,8 @@ var module = module;
       const qs = jujulib.serializeObject(payload);
       url += '?' + qs;
       const headers = null;
-      return this.bakery.get(url, headers, jujulib._wrap(handler));
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     }
   };
 

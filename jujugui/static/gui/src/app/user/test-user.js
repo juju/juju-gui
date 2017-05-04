@@ -39,25 +39,6 @@ describe('user auth class', () => {
     };
   };
 
-  describe('identity credentials', () => {
-    let storage, user;
-
-    beforeEach(() => {
-      storage = getMockStorage();
-      user = new window.jujugui.User({localStorage: storage});
-    });
-
-    it('can be set', () => {
-      user.identity = 'doctor';
-      assert.equal(storage.store['discharge-token'], 'doctor');
-    });
-
-    it('can be retrieved', () => {
-      storage.store['discharge-token'] = 'doctor';
-      assert.equal(user.identity, 'doctor');
-    });
-  });
-
   describe('controller credentials', () => {
     let storage, user;
 
