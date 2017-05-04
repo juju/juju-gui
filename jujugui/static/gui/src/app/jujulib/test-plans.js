@@ -633,8 +633,8 @@ describe('jujulib plans service', function() {
 
   it('gets kpi metrics for a charm', function(done) {
     const bakery = {
-      sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://1.2.3.4/' +
+      get: function(url, headers, callback) {
+        assert.equal(url, 'http://1.2.3.4/' +
           window.jujulib.plansAPIVersion +
           '/kpimetrics?charm-url=cs%3Ajuju-gui-42');
         const xhr = makeXHRRequest([{
@@ -659,7 +659,7 @@ describe('jujulib plans service', function() {
           Min: 'min',
           Max: 'max'
         }]);
-        success(xhr);
+        callback(null, xhr);
       }
     };
     const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);

@@ -133,7 +133,15 @@ describe('UserProfile', () => {
 
   it('can log in to charmstore fetch macaroons from the bakery', () => {
     const storeUser = sinon.stub();
-    const charmstore = {bakery: {}};
+    const getStub = sinon.stub().returns('candy');
+    const charmstore = {
+      bakery: {
+        storage: {
+          get: getStub
+        }
+      },
+      getMacaroon: sinon.stub()
+    };
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
@@ -151,6 +159,9 @@ describe('UserProfile', () => {
       />, true);
     const instance = renderer.getMountedInstance();
     instance._interactiveLogin();
+    if (charmstore.getMacaroon.callCount > 0) {
+      assert.fail('Macaroon should have been fetched from bakery');
+    }
     assert.equal(storeUser.callCount, 1);
   });
 

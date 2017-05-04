@@ -1162,7 +1162,6 @@ describe('Inspector', function() {
   it('displays Change versions when the app state calls for it', function() {
     var addNotification = sinon.stub();
     var service = sinon.stub();
-    var getMacaroon = sinon.stub();
     var addCharm = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
@@ -1198,7 +1197,6 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={getAvailableVersions}
         getCharm={getCharm}
-        getMacaroon={getMacaroon}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1229,14 +1227,13 @@ describe('Inspector', function() {
     assert.deepEqual(header, expectedHeader,
                      'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
-    assert.deepEqual(children,
+    expect(children).toEqualJSX(
       <juju.components.InspectorChangeVersion
         acl={acl}
         addNotification={addNotification}
         changeState={children.props.changeState}
         charmId="cs:demo"
         service={service}
-        getMacaroon={getMacaroon}
         addCharm={addCharm}
         setCharm={setCharm}
         getCharm={getCharm}
