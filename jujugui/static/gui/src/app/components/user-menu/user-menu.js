@@ -102,7 +102,7 @@ YUI.add('user-menu', function() {
               header-menu__menu-list-item-with-link"
               role="menuitem" tabIndex="0">
               <a className="header-menu__menu-list-item-link"
-                role="button" onClick={this._handleProfileClick}>Pofile</a>
+                role="button" onClick={this._handleProfileClick}>Profile</a>
             </li>
             {accountEntry}
             <li className="header-menu__menu-list-item
