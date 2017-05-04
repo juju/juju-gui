@@ -614,7 +614,22 @@ var module = module;
           callback(error, null);
           return;
         }
-        callback(null, response);
+        // Because the api response does not follow the convention this needs
+        // additional processing to determine if it's in error.
+        let resp;
+        try {
+          resp = JSON.parse(response);
+          const parsedError =
+            resp.error || resp.Error || resp.message || resp.Message;
+          if (parsedError) {
+            callback(parsedError, null);
+            return;
+          }
+          callback(null, resp);
+        } catch (e) {
+          // If it can't parse it as json then it's a valid html response.
+          callback(null, response);
+        }
       };
       const url = `${this.url}/receipts/${chargeId}`;
       const headers = null;

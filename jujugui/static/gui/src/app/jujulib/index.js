@@ -52,15 +52,15 @@ var module = module;
         callback(null, text);
         return;
       }
-      let jsonResponse;
+      let jResp;
       try {
-        jsonResponse = JSON.parse(text);
-        err = jsonResponse.error || jsonResponse.Error;
+        jResp = JSON.parse(text);
+        err = jResp.error || jResp.Error || jResp.message || jResp.Message;
         if (err) {
           callback(err, null);
           return;
         }
-        callback(null, jsonResponse);
+        callback(null, jResp);
       } catch(err) {
         callback(err, null);
         return;

@@ -123,14 +123,14 @@ describe('jujulib payment service', function() {
 
   it('can get a user', function(done) {
     const bakery = {
-      sendGetRequest: function(path, success, failure) {
+      get: function(path, headers, callback) {
         assert.equal(
           path,
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest(returnedUser);
-        success(xhr);
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment(
@@ -144,7 +144,7 @@ describe('jujulib payment service', function() {
 
   it('can handle missing fields when getting a user', function(done) {
     const bakery = {
-      sendGetRequest: function(path, success, failure) {
+      get: function(path, headers, callback) {
         assert.equal(
           path,
           'http://1.2.3.4/' +
@@ -163,7 +163,7 @@ describe('jujulib payment service', function() {
             id: 'paymentmethod1'
           }]
         });
-        success(xhr);
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment(
@@ -219,9 +219,9 @@ describe('jujulib payment service', function() {
 
   it('handles errors when getting a user', function(done) {
     const bakery = {
-      sendGetRequest: function(path, success, failure) {
-        const xhr = makeXHRRequest({Message: 'Uh oh!'});
-        failure(xhr);
+      get: function(url, headers, callback) {
+        const xhr = makeXHRRequest({Error: 'Uh oh!'});
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment(
@@ -234,8 +234,10 @@ describe('jujulib payment service', function() {
   });
 
   it('can create a user', function() {
-    const makeRequest = sinon.stub(jujulib, '_makeRequest');
-    const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+    const bakery = {
+      put: sinon.stub()
+    };
+    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
     const newUser = {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -255,10 +257,7 @@ describe('jujulib payment service', function() {
       token: '54321'
     };
     payment.createUser(newUser, sinon.stub());
-    // Restore the original method on the lib.
-    makeRequest.restore();
-    assert.equal(makeRequest.callCount, 1);
-    assert.deepEqual(makeRequest.args[0][3], {
+    assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -292,14 +291,14 @@ describe('jujulib payment service', function() {
 
   it('can return the user when after creating a user', function() {
     const bakery = {
-      sendPutRequest: function(path, params, success, failure) {
+      put: function(url, headers, body, callback) {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
           '/u');
         const xhr = makeXHRRequest(returnedUser);
-        success(xhr);
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment(
@@ -331,9 +330,9 @@ describe('jujulib payment service', function() {
 
   it('handles errors when creating a user', function(done) {
     const bakery = {
-      sendPutRequest: function(path, params, success, failure) {
-        const xhr = makeXHRRequest({Message: 'Uh oh!'});
-        failure(xhr);
+      put: function(url, headers, body, callback) {
+        const xhr = makeXHRRequest({Error: 'Uh oh!'});
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment(
@@ -351,14 +350,14 @@ describe('jujulib payment service', function() {
       code: 'AU'
     }];
     const bakery = {
-      sendGetRequest: (path, success, failure) => {
+      get: (url, headers, callback) => {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.paymentAPIVersion +
           '/country');
         const xhr = makeXHRRequest({countries: countries});
-        success(xhr);
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -371,9 +370,9 @@ describe('jujulib payment service', function() {
 
   it('handles errors when getting the country list', function(done) {
     const bakery = {
-      sendGetRequest: (path, success, failure) => {
-        const xhr = makeXHRRequest({Message: 'Uh oh!'});
-        failure(xhr);
+      get: (url, headers, callback) => {
+        const xhr = makeXHRRequest({Error: 'Uh oh!'});
+        callback(null, xhr);
       }
     };
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -387,9 +386,9 @@ describe('jujulib payment service', function() {
   describe('getPaymentMethods', () => {
     it('can get payment methods for a user', (done) => {
       const bakery = {
-        sendGetRequest: function(path, success, failure) {
+        get: function(url, headers, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/payment-methods');
@@ -415,7 +414,7 @@ describe('jujulib payment service', function() {
               year: 2017
             }]
           });
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -447,9 +446,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when getting a user', (done) => {
       const bakery = {
-        sendGetRequest: function(path, success, failure) {
+        get: function(url, headers, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -463,26 +462,26 @@ describe('jujulib payment service', function() {
 
   describe('createPaymentMethod', () => {
     it('can create a payment method', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        put: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.createPaymentMethod(
         'spinach', 'token123', 'Business',
         sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
+      assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(
-        makeRequest.args[0][3], {
+        bakery.put.args[0][2], JSON.stringify({
           'payment-method-name': 'Business',
           token: 'token123'
-        });
+        }));
     });
 
     it('can return the payment method when it has been created', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/payment-methods');
@@ -506,7 +505,7 @@ describe('jujulib payment service', function() {
             valid: true,
             year: 2017
           });
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -539,9 +538,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when creating a payment method', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -556,8 +555,10 @@ describe('jujulib payment service', function() {
 
   describe('updatePaymentMethod', () => {
     it('can update a payment method', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        put: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       const address = {
         line1: '10 Maple St',
         line2: '',
@@ -568,10 +569,8 @@ describe('jujulib payment service', function() {
       };
       payment.updatePaymentMethod(
         'spinach', 'paymentmethod1', address, '12/17', sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.put.callCount, 1);
+      assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
         address: {
           name: null,
           line1: '10 Maple St',
@@ -584,19 +583,19 @@ describe('jujulib payment service', function() {
         },
         month: 12,
         year: 17
-      });
+      }));
     });
 
     it('can return when there are no errors', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/payment-methods/paymentmethod1');
           const xhr = makeXHRRequest('success');
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -609,9 +608,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when updating a payment method', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -625,27 +624,27 @@ describe('jujulib payment service', function() {
 
   describe('removePaymentMethod', () => {
     it('can remove a payment method', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        delete: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removePaymentMethod('spinach', 'paymentmethod1', sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.delete.callCount, 1);
+      assert.deepEqual(bakery.delete.args[0][2], JSON.stringify({
         'payment-method-name': 'paymentmethod1'
-      });
+      }));
     });
 
     it('can return when there are no errors', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
+        delete: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/payment-methods/paymentmethod1');
           const xhr = makeXHRRequest('success');
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -658,9 +657,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when removing a payment method', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
-          const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+        delete: function(url, headers, body, callback) {
+          const xhr = makeXHRRequest({error: 'Uh oh!'});
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -688,13 +687,13 @@ describe('jujulib payment service', function() {
     });
 
     it('can add an address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        put: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.addAddress('spinach', address, sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.put.callCount, 1);
+      assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
         name: 'Home',
         line1: '1 Maple St',
         line2: null,
@@ -703,19 +702,19 @@ describe('jujulib payment service', function() {
         postcode: '90210',
         'country-code': 'CA',
         phones: []
-      });
+      }));
     });
 
     it('can successfully create the address', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/addresses');
           const xhr = makeXHRRequest();
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -727,9 +726,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when adding an address', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -756,13 +755,13 @@ describe('jujulib payment service', function() {
     });
 
     it('can add a billing address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        put: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.addBillingAddress('spinach', address, sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.put.callCount, 1);
+      assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
         name: 'Home',
         line1: '1 Maple St',
         line2: null,
@@ -771,19 +770,19 @@ describe('jujulib payment service', function() {
         postcode: '90210',
         'country-code': 'CA',
         phones: []
-      });
+      }));
     });
 
     it('can successfully create the billing address', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/billing-addresses');
           const xhr = makeXHRRequest();
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -795,9 +794,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when adding a billing address', (done) => {
       const bakery = {
-        sendPutRequest: function(path, params, success, failure) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -810,25 +809,25 @@ describe('jujulib payment service', function() {
 
   describe('removeAddress', () => {
     it('can remove an address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        delete: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removeAddress('spinach', 'address1', sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.strictEqual(makeRequest.args[0][3], null);
+      assert.equal(bakery.delete.callCount, 1);
+      assert.strictEqual(bakery.delete.args[0][2], null);
     });
 
     it('can return when there are no errors', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
+        delete: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/addresses/address1');
           const xhr = makeXHRRequest('success');
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -840,9 +839,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when removing an address', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
-          const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+        delete: function(url, headers, body, callback) {
+          const xhr = makeXHRRequest({error: 'Uh oh!'});
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -855,25 +854,25 @@ describe('jujulib payment service', function() {
 
   describe('removeBillingAddress', () => {
     it('can remove a biling address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        delete: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.removeBillingAddress('spinach', 'address1', sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.strictEqual(makeRequest.args[0][3], null);
+      assert.equal(bakery.delete.callCount, 1);
+      assert.strictEqual(bakery.delete.args[0][2], null);
     });
 
     it('can return when there are no errors', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
+        delete: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/billing-addresses/address1');
           const xhr = makeXHRRequest('success');
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -885,9 +884,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when removing a billing address', (done) => {
       const bakery = {
-        sendDeleteRequest: function(path, success, failure) {
-          const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+        delete: function(url, headers, body, callback) {
+          const xhr = makeXHRRequest({error: 'Uh oh!'});
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -914,13 +913,13 @@ describe('jujulib payment service', function() {
     });
 
     it('can update an address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        post: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.updateAddress('spinach', 'address1', address, sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.post.callCount, 1);
+      assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
         id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
@@ -935,14 +934,14 @@ describe('jujulib payment service', function() {
 
     it('can successfully update the address', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
+        post: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/addresses/address1');
           const xhr = makeXHRRequest();
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -954,9 +953,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when updating an address', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
+        post: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -983,14 +982,14 @@ describe('jujulib payment service', function() {
     });
 
     it('can update a billing address', () => {
-      const makeRequest = sinon.stub(jujulib, '_makeRequest');
-      const payment = new window.jujulib.payment('http://1.2.3.4/', {});
+      const bakery = {
+        post: sinon.stub()
+      };
+      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.updateBillingAddress(
         'spinach', 'address1', address, sinon.stub());
-      // Restore the original method on the lib.
-      makeRequest.restore();
-      assert.equal(makeRequest.callCount, 1);
-      assert.deepEqual(makeRequest.args[0][3], {
+      assert.equal(bakery.post.callCount, 1);
+      assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
         id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
@@ -1005,14 +1004,14 @@ describe('jujulib payment service', function() {
 
     it('can successfully update the billing address', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
+        post: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/u/spinach/billing-addresses/address1');
           const xhr = makeXHRRequest();
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -1024,9 +1023,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when updating a billing address', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
-          const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+        post: function(url, headers, body, callback) {
+          const xhr = makeXHRRequest({error: 'Uh oh!'});
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -1040,9 +1039,9 @@ describe('jujulib payment service', function() {
   describe('getCharges', () => {
     it('can get a list of charges', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
+        post: function(url, headers, body, callback) {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/charges');
@@ -1090,7 +1089,7 @@ describe('jujulib payment service', function() {
               'payment-method-update-retry-max': 100
             }]
           });
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -1144,9 +1143,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when getting charges', (done) => {
       const bakery = {
-        sendPostRequest: function(path, params, success, failure) {
+        post: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -1161,14 +1160,14 @@ describe('jujulib payment service', function() {
   describe('getReceipt', () => {
     it('can get a receipt', function(done) {
       const bakery = {
-        sendGetRequest: (path, success, failure) => {
+        get: (url, headers, callback) => {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
             '/receipts/charge123');
           const xhr = makeXHRRequest('<html>...</html>', false);
-          success(xhr);
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
@@ -1181,9 +1180,9 @@ describe('jujulib payment service', function() {
 
     it('handles errors when getting a receipt', function(done) {
       const bakery = {
-        sendGetRequest: (path, success, failure) => {
-          const xhr = makeXHRRequest({Message: 'Uh oh!'});
-          failure(xhr);
+        get: (url, headers, callback) => {
+          const xhr = makeXHRRequest({error: 'Uh oh!'});
+          callback(null, xhr);
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
