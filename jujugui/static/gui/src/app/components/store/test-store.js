@@ -43,7 +43,7 @@ describe('Store', function() {
     assert.equal(output.props.children[0].props.children.length, 3);
   }),
 
-  fit('can render big data feature in the correct place', function() {
+  it('can render big data feature in the correct place', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Store
