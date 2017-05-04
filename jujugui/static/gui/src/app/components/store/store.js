@@ -217,48 +217,43 @@ YUI.add('store', function() {
     */
     _featuredSection: function() {
       return (<div className="row equal-height">
-          <div className="box box--kibana align-center four-col">
-              <img src={this._generateLocalImagePath('kabana-promo.png')}
-                alt="" className="box__image" />
-              <div className="align-bottom">
-                  <h2>Kibana</h2>
-                  <span
-                      data-entity="kibana"
-                      onClick={this._handleEntityClick}
-                      className="button--inline-neutral">
-                      View the charm
-                  </span>
-              </div>
-          </div>
           <div className="box box--kubernetes align-center four-col">
-              <img src={this._generateLocalImagePath('kubernetes-promo.png')}
+              <img src="https://assets.ubuntu.com/v1/2847e80a-k8-image.png"
                 alt="" className="box__image" />
               <div className="align-bottom">
-                  <h2>Containers</h2>
-                  <span
-                      data-query="containers"
-                      data-filterkey="type"
-                      data-filtervalue="bundle"
-                      onClick={this._handleSearchClick}
-                      className="button--inline-neutral">
-                      View bundles
-                  </span>
+                  <h2>Kubernetes</h2>
+                  <a target="_blank"
+                    href="https://jujucharms.com/kubernetes"
+                    className="button--inline-neutral">
+                      Find out more
+                  </a>
               </div>
           </div>
-          <div
-            className="box box--openstack align-center four-col last-col">
+          <div className="box box--openstack align-center four-col">
               <img src={this._generateLocalImagePath('openstack-promo.png')}
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>OpenStack</h2>
-                  <span
-                      data-query="openstack"
-                      data-filterkey="type"
-                      data-filtervalue="bundle"
-                      onClick={this._handleSearchClick}
-                      className="button--inline-neutral">
-                      View bundles
-                  </span>
+                  <a target="_blank"
+                    href="https://jujucharms.com/openstack"
+                    className="button--inline-neutral">
+                      Find out more
+                  </a>
+              </div>
+          </div>
+          <div
+            className="box box--hadoop align-center four-col last-col">
+              <img
+                src="https://assets.ubuntu.com/v1/883e4977-hadoop-elephant.png"
+                alt="" className="box__image" />
+              <div className="align-bottom">
+                  <h2>Big Data</h2>
+
+                  <a target="_blank"
+                    href="https://jujucharms.com/big-data"
+                    className="button--inline-neutral">
+                      Find out more
+                  </a>
               </div>
           </div>
       </div>);
@@ -569,26 +564,19 @@ YUI.add('store', function() {
       @return {Object} The contents of the section
     */
     _bigDataSection: function() {
-      return (<div className="row row--bigdata">
+      return (<div className="row row--containers">
         <div className="inner-wrapper clearfix">
-            <div className="six-col">
-                <h2>Big data charms and bundles</h2>
-                <p>Spend time testing, evaluating, and using your Big
-                Data solutions to benefit your business by using one of
-                Juju&rsquo;s pre-configured bundles or expertly
-                created charms.</p>
-                <p><span onClick={this._handleSearchClick}
-                    data-query="bigdata"
-                    className="link">
-                    Big data charms and bundles&nbsp;&rsaquo;
-                </span></p>
-            </div>
-            <div className="four-col last-col prepend-one append-one">
-                <img
-                    src={this._generateLocalImagePath('hadoop-elephant.png')}
-                    className="for-small"
-                    alt="Hadoop logo" />
-            </div>
+          <div className="six-col">
+            <h2>Container management</h2>
+            <p>Juju makes it easy to deploy container management solutions
+            by provisioning, installing and configuring all the systems in
+            the cluster.</p>
+            <p><span onClick={this._handleSearchClick}
+              data-query="containers"
+              className="button--inline-neutral">
+              View bundles
+            </span></p>
+          </div>
         </div>
       </div>);
     },
