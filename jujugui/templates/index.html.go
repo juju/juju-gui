@@ -160,8 +160,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <div id="viewport">
         <div id="content">
-            <div id="modal-shortcuts" class="modal"></div>
-            <div id="modal-gui-settings" class="modal modal--narrow"></div>
+            <div id="modal-shortcuts"></div>
+            <div id="modal-gui-settings"></div>
             <div id="main">
             </div> <!-- /container -->
             <div id="drag-over-notification-container"></div>

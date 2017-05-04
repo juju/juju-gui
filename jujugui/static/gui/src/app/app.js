@@ -3257,7 +3257,6 @@ YUI.add('juju-gui', function(Y) {
     'panel-component',
     'sharing',
     'svg-icon',
-    'shortcuts',
     'user-menu',
     'user-profile',
     'zoom',
