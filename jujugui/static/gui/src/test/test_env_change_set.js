@@ -499,12 +499,16 @@ describe('Environment Change Set', function() {
       });
 
       it('passes the commit index through an event', function() {
-        var fire = sinon.stub(ecs, 'fire');
-        this._cleanups.push(fire.restore);
+        const currentCommitFinishedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.currentCommitFinished', currentCommitFinishedListener);
         ecs.levelRecordCount = 0;
         ecs._waitOnLevel(null, 0);
-        assert.equal(fire.lastCall.args[0], 'currentCommitFinished');
-        assert.deepEqual(fire.lastCall.args[1], {index: 0});
+        assert.equal(currentCommitFinishedListener.callCount, 1);
+        assert.deepEqual(
+          currentCommitFinishedListener.args[0][0].detail, {index: 0});
+        document.removeEventListener(
+          'ecs.currentCommitFinished', currentCommitFinishedListener);
       });
     });
   });

@@ -371,7 +371,11 @@ YUI.add('environment-change-set', function(Y) {
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
-          this.fire('currentCommitFinished', {index: currentIndex});
+          document.dispatchEvent(new CustomEvent('ecs.currentCommitFinished', {
+            detail: {
+              index: currentIndex
+            }
+          }));
         }
       }
     },

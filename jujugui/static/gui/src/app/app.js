@@ -394,7 +394,8 @@ YUI.add('juju-gui', function(Y) {
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
       document.addEventListener(
           'ecs.changeSetModified', this._renderDeploymentBar.bind(this));
-      ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
+      document.addEventListener(
+          'ecs.currentCommitFinished', this._renderDeploymentBar.bind(this));
 
       if (this.get('gisf')) {
         document.body.classList.add('u-is-beta');
