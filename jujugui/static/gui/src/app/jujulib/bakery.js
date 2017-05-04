@@ -65,14 +65,21 @@ var module = module;
         - onSuccess: a function to be called when the request completes
           properly. It defaults to a no-op function.
         - visitPage: the function used to visit the identity provider page when
-          required, receiving the URL. It defaults to opening a pop up window.
+          required, defaulting to opening a pop up window. It receives an
+          error object containing:
+            - Info: an object containing relevant info for the visit handling:
+              - WaitURL: the url to wait on for IdM discharge
+              - VisitURL: the url to visit to authenticate with the IdM
+            - jujugui: an optional value specifying a method to use against
+              idm to authenticate. Used in non interactive authentication
+              scenarios
     */
     constructor(httpClient, storage, params={}) {
       this._client = httpClient;
       this.storage = storage;
       this._onSuccess = params.onSuccess || (() => {});
-      this._visitPage = params.visitPage || (visitURL => {
-        window.open(visitURL, 'Login');
+      this._visitPage = params.visitPage || (error => {
+        window.open(error.Info.VisitURL, 'Login');
       });
       this._dischargeDisabled = false;
     }
@@ -279,8 +286,7 @@ var module = module;
                 exitSuccessfully(resp);
               });
             };
-            const info = error.Info;
-            this._interact(info.VisitURL, info.WaitURL, onSuccess, onFailure);
+            this._interact(error, onSuccess, onFailure);
             break;
           case ERR_DISCHARGE_REQUIRED:
             // In the case discharge has been disabled in this bakery instance
@@ -353,8 +359,8 @@ var module = module;
       @param {Function} onFailure The function that will be called with an
         error string when the acquisition fails.
     */
-    _interact(visitURL, waitURL, onSuccess, onFailure) {
-      this._visitPage(visitURL);
+    _interact(error, onSuccess, onFailure) {
+      this._visitPage(error);
       const generateRequest = callback => {
         const headers = {'Content-Type': JSON_CONTENT_TYPE};
         const username = null;
@@ -362,7 +368,7 @@ var module = module;
         const withCredentials = false;
         const progressCallback = null;
         return this._client.sendGetRequest(
-          waitURL, headers, username, password, withCredentials,
+          error.Info.WaitURL, headers, username, password, withCredentials,
           progressCallback, callback);
       };
       // When performing a "wait" request for the user logging into identity
