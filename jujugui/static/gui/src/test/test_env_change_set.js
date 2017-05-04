@@ -267,17 +267,20 @@ describe('Environment Change Set', function() {
         const changeSetModifiedListener = sinon.stub();
         document.addEventListener(
           'ecs.changeSetModified', changeSetModifiedListener);
+        const taskCompleteListener = sinon.stub();
+        document.addEventListener(
+          'ecs.taskComplete', taskCompleteListener);
         var result = record.command.args[3]();
         assert.equal(result, 'real cb');
-        assert.equal(fire.callCount, 1);
         assert.equal(changeSetModifiedListener.calledOnce, true);
-        var fireArgs = fire.args[0];
-        assert.equal(fireArgs[0], 'taskComplete');
-        assert.equal(fireArgs[1].id, 'service-123');
-        assert.equal(fireArgs[1].record, record);
+        assert.equal(taskCompleteListener.calledOnce, true);
+        assert.equal(taskCompleteListener.args[0][0].detail.id, 'service-123');
+        assert.equal(taskCompleteListener.args[0][0].detail.record, record);
         assert.equal(record.executed, true);
         document.removeEventListener(
           'ecs.changeSetModified', changeSetModifiedListener);
+        document.removeEventListener(
+          'ecs.taskComplete', taskCompleteListener);
       });
     });
 

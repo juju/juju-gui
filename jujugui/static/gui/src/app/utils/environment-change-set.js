@@ -178,11 +178,13 @@ YUI.add('environment-change-set', function(Y) {
           //  under. In most cases this will be `env`.
           result = callback.apply(this, arguments);
         }
-        self.fire('taskComplete', {
-          id: record.id,
-          record: record,
-          result: arguments
-        });
+        document.dispatchEvent(new CustomEvent('ecs.taskComplete', {
+          detail: {
+            id: record.id,
+            record: record,
+            result: arguments
+          }
+        }));
         // Signal that this record has been completed by decrementing the
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
