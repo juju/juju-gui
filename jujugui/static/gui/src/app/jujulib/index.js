@@ -35,6 +35,9 @@ var module = module;
       parseJSON: {Boolean} false - Whether the response should be passed
         through JSON.parse.
     @return {Function} The wrapped callback.
+      The wrapped callback is called with the arguments (error, response). If
+      an error occurred the error will be provided and response will be null.
+      If a response is provided, the error will be null.
   */
   const _wrap = (callback, options={}) => {
     return (err, response) => {

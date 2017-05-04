@@ -626,7 +626,7 @@ var module = module;
             return;
           }
           callback(null, resp);
-        } catch (e) {
+        } catch (_) {
           // If it can't parse it as json then it's a valid html response.
           callback(null, response);
         }

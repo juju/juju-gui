@@ -444,7 +444,8 @@ var module = module;
       const wrappedCallback =
         jujulib._wrap(
           jujulib._transformAuthObject.bind(this,callback), {parseJSON: true});
-      return this.bakery.get(url, headers, wrappedCallback);
+      const localBakery = this.bakery.withoutDischarge();
+      return localBakery.get(url, headers, wrappedCallback);
     },
 
     /**
