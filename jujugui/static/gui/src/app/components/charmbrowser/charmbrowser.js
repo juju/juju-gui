@@ -66,7 +66,9 @@ YUI.add('charmbrowser-component', function() {
     },
 
     componentWillUnmount: function() {
-      this.refs.charmbrowser.removeEventListener('scroll', this._onScroll);
+      if (this.refs.charmbrowser) {
+        this.refs.charmbrowser.removeEventListener('scroll', this._onScroll);
+      }
     },
 
     /**
@@ -141,7 +143,8 @@ YUI.add('charmbrowser-component', function() {
                 changeState={changeState}
                 staticURL={this.props.staticURL}
                 charmstoreURL={this.props.charmstoreURL}
-                apiVersion={this.props.apiVersion} />
+                apiVersion={this.props.apiVersion}
+                setPageTitle={this.props.setPageTitle} />
           );
           break;
         case 'search-results':
@@ -160,6 +163,7 @@ YUI.add('charmbrowser-component', function() {
                 provides={search.provides}
                 requires={search.requires}
                 owner={search.owner}
+                setPageTitle={this.props.setPageTitle}
                 tags={search.tags} />
           );
           break;

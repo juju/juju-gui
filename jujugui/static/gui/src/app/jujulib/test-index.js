@@ -36,4 +36,21 @@ describe('jujulib utility functions', function() {
       assert.equal(callback.args[0][0], error);
     });
   });
+
+  describe('serializeObject', () => {
+    it('serializes an object', () => {
+      assert.equal(
+        window.jujulib.serializeObject({
+          'foo': 'bar',
+          'baz': 'qux'
+        }),
+        'foo=bar&baz=qux');
+    });
+
+    it('serializes an empty object', () => {
+      assert.equal(
+        window.jujulib.serializeObject({}),
+        '');
+    });
+  });
 });

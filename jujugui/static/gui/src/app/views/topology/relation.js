@@ -677,8 +677,6 @@ YUI.add('juju-topology-relation', function(Y) {
         // TODO clean up, abstract
         self.cancelRelationBuild();
       }
-      // Signify that the relation drawing has ended.
-      topo.fire('addRelationEnd');
     },
 
     /**
@@ -713,9 +711,6 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.update();
       vis.selectAll('.service').classed('selectable-service', false);
       vis.selectAll('.plus-service').classed('fade', false);
-      // Signify that the relation drawing has ended.
-      topo.fire('addRelationEnd');
-
     },
 
     /**
@@ -1051,8 +1046,6 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.classList.add('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
-      // Firing resized will ensure the menu's positioned properly.
-      topo.fire('resized');
     },
 
     /*
@@ -1139,9 +1132,6 @@ YUI.add('juju-topology-relation', function(Y) {
       // Shift the arrow to the left by half the menu's width minus half the
       // width of the arrow itself (10px).
       menu.querySelector('.triangle').style.left = menu.clientWidth / 2 - 5;
-
-      // Firing resized will ensure the menu's positioned properly.
-      topo.fire('resized');
     },
 
     /**
