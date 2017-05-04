@@ -347,19 +347,20 @@ var module = module;
     */
     getKpiMetrics: function(charmId, filters, callback) {
       function handler(error, charmMetrics) {
-        if (charmMetrics) {
-          charmMetrics = charmMetrics.map(metric => {
-            return {
-              metric: metric.Metric,
-              time: metric.Time,
-              sum: metric.Sum,
-              count: metric.Count,
-              min: metric.Min,
-              max: metric.Max
-            };
-          });
+        if (error) {
+          callback(error, charmMetrics);
+          return;
         }
-        callback(error, charmMetrics);
+        callback(null, charmMetrics.map(metric => {
+          return {
+            metric: metric.Metric,
+            time: metric.Time,
+            sum: metric.Sum,
+            count: metric.Count,
+            min: metric.Min,
+            max: metric.Max
+          };
+        }));
       }
       let url = `${this.url}/kpimetrics`;
       let payload = filters || {};
