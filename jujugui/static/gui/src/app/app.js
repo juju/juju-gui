@@ -392,7 +392,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
+      document.addEventListener(
+          'ecs.changeSetModified', this._renderDeploymentBar.bind(this));
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
 
       if (this.get('gisf')) {

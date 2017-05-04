@@ -139,7 +139,7 @@ YUI.add('environment-change-set', function(Y) {
         command: command,
         timestamp: Date.now()
       };
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
       this._wrapCallback(this.changeSet[key]);
       return key;
     },
@@ -154,7 +154,7 @@ YUI.add('environment-change-set', function(Y) {
       delete this.changeSet[id];
       // We need to fire this event so other items in the application know this
       // list has changed.
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
     },
 
     /**
@@ -188,7 +188,7 @@ YUI.add('environment-change-set', function(Y) {
         self.levelRecordCount -= 1;
         delete self.changeSet[record.id];
         self._updateChangesetFromResults(record, arguments);
-        self.fire('changeSetModified');
+        document.dispatchEvent(new Event('ecs.changeSetModified'));
         return result;
       };
     },
@@ -453,7 +453,7 @@ YUI.add('environment-change-set', function(Y) {
       });
       this.currentIndex += 1;
       this.currentCommit = [];
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
       this.get('db').fireEvent('update');
     },
 

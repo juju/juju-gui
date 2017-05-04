@@ -237,11 +237,14 @@ describe('Environment Change Set', function() {
       });
 
       it('fires a changeSetModified event', function() {
-        var fire = sinon.stub(ecs, 'fire');
+        const changeSetModifiedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
         ecs.changeSet.abc123 = 'foo';
         ecs._removeExistingRecord('abc123');
-        assert.equal(fire.calledOnce, true);
-        assert.equal(fire.lastCall.args[0], 'changeSetModified');
+        assert.equal(changeSetModifiedListener.calledOnce, true);
+        document.removeEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
       });
     });
 
@@ -261,14 +264,20 @@ describe('Environment Change Set', function() {
         // The callback should now be wrapped.
         var fire = sinon.stub(ecs, 'fire');
         this._cleanups.push(fire.restore);
+        const changeSetModifiedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
         var result = record.command.args[3]();
         assert.equal(result, 'real cb');
-        assert.equal(fire.callCount, 2);
+        assert.equal(fire.callCount, 1);
+        assert.equal(changeSetModifiedListener.calledOnce, true);
         var fireArgs = fire.args[0];
         assert.equal(fireArgs[0], 'taskComplete');
         assert.equal(fireArgs[1].id, 'service-123');
         assert.equal(fireArgs[1].record, record);
         assert.equal(record.executed, true);
+        document.removeEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
       });
     });
 
