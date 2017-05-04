@@ -344,7 +344,9 @@ YUI.add('environment-change-set', function(Y) {
       this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
         record = this.changeSet[changeSetRecord.key];
         this._execute(env, record);
-        this.fire('commit', record);
+        document.dispatchEvent(new CustomEvent('ecs.commit', {
+          detail: record
+        }));
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.

@@ -448,8 +448,8 @@ describe('Environment Change Set', function() {
       it('loops through the changeSet calling execute on them', function() {
         var execute = sinon.stub(ecs, '_execute');
         this._cleanups.push(execute.restore);
-        var fire = sinon.stub(ecs, 'fire');
-        this._cleanups.push(fire.restore);
+        const commitListener = sinon.stub();
+        document.addEventListener('ecs.commit', commitListener);
         var changeSet = {
           'service-568': {
             index: 0,
@@ -463,10 +463,10 @@ describe('Environment Change Set', function() {
         ecs.commit(envObj);
         assert.equal(execute.callCount, 1);
         assert.deepEqual(execute.lastCall.args[1], changeSet['service-568']);
-        assert.equal(fire.callCount, 1);
-        var fireArgs = fire.lastCall.args;
-        assert.equal(fireArgs[0], 'commit');
-        assert.equal(fireArgs[1], changeSet['service-568']);
+        assert.equal(commitListener.callCount, 1);
+        assert.equal(
+          commitListener.args[0][0].detail, changeSet['service-568']);
+        document.removeEventListener('ecs.commit', commitListener);
       });
 
       it('commits one index at a time', function() {
