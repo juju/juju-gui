@@ -48,6 +48,10 @@
     height: 32px;
     border: 1px solid $mid-grey;
 
+    &-changed {
+      border-color: $uncommitted;
+    }
+
     &:after,
     &:before {
       content: '';

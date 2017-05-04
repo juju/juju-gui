@@ -43,12 +43,18 @@ YUI.add('string-config', function() {
       return { value: this.props.config };
     },
 
-    componentWillReceiveProps: function(nextProps) {
-      this.setState({ value: nextProps.config });
-    },
+    /**
+      Set the value of the field.
 
-    shouldComponentUpdate: function(nextProps, nextState) {
-      return nextState.value !== this.refs.editableInput.innerText;
+      @param value {String} The value to set.
+    */
+    _setValue: function(value) {
+      this.setState({value: value}, () => {
+        const onChange = this.props.onChange;
+        if (onChange) {
+          onChange();
+        }
+      });
     },
 
     /**
@@ -60,49 +66,27 @@ YUI.add('string-config', function() {
       return this.state.value;
     },
 
-    /**
-      When the value is updated in the input element then update the state
-      with its innerText.
-
-      @method _updateValue
-      @param {Object} e The input or blur event objects.
-    */
-    _updateValue: function(e) {
-      this.setState({ value: e.currentTarget.innerText });
-    },
-
-    /**
-      Call an on change method if provided.
-
-      @method _handleOnChange
-    */
-    _handleOnChange: function() {
-      const onChange = this.props.onChange;
-      if (onChange) {
-        onChange();
-      }
-    },
-
     render: function() {
       var disabled = this.props.disabled;
       var type = this.props.option.type;
       var typeString = type ? ` (${type})` : '';
       var classes = classNames(
         'string-config--value',
-        {'string-config--disabled': disabled});
+        {
+          'string-config--changed': this.state.value !== this.props.config,
+          'string-config--disabled': disabled,
+        });
       return (
         <div className="string-config">
           <span className="string-config__label">
             {this.props.option.key}{typeString}
           </span>
-          <div
-            className={classes}
-            contentEditable={!disabled}
-            ref="editableInput"
-            onInput={this._updateValue}
-            onBlur={this._updateValue}
-            onChange={this._handleOnChange}
-            dangerouslySetInnerHTML={{__html: this.state.value}}>
+          <div className={classes}>
+            <juju.components.StringConfigInput
+              config={this.props.config}
+              disabled={disabled}
+              ref="editableInput"
+              setValue={this._setValue} />
           </div>
           <span className="string-config--description"
             dangerouslySetInnerHTML={{__html: this.props.option.description}}>
@@ -112,4 +96,6 @@ YUI.add('string-config', function() {
     }
   });
 
-}, '0.1.0', { requires: [] });
+}, '0.1.0', { requires: [
+  'string-config-input'
+] });
