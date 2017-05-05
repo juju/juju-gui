@@ -1534,7 +1534,10 @@ YUI.add('juju-topology-service', function(Y) {
     findCentroid: function(vertices) {
       const centroid = topoUtils.centroid(vertices);
       document.dispatchEvent(new CustomEvent('topo.panToPoint', {
-        detail: [{point: centroid}]
+        detail: [{
+          point: centroid,
+          center: true
+        }]
       }));
     },
 
