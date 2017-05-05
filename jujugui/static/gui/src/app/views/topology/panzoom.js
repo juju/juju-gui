@@ -238,9 +238,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // screen area.
       const pointX = (point[0] * scale) + offset[0];
       const pointY = (point[1] * scale) + offset[1];
-      // Find out if the points we have are within the screen rectangle.
-      const withinScreen = pointX > 0 && pointX < screenWidth && pointY > 0 &&
-        pointY < screenHeight;
+      // Find out if the points we have are within the screen rectangle
+      // (accounting for the size of the app circle).
+      const circleSize = 200 * scale;
+      const withinScreen = pointX > 0 && pointX < screenWidth - circleSize &&
+        pointY > 0 && pointY < screenHeight - circleSize;
       // If the object is not within the screen the move the screen so it is
       // visible.
       if (!withinScreen) {
