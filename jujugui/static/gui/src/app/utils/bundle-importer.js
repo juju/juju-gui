@@ -340,9 +340,9 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addMachines: function(record, next) {
-      var parentKey = record.args[0].parentId;
+      let parentKey = record.args[0].parentId;
       parentKey = parentKey && parentKey.replace(/^\$/, '');
-      var parentId = '';
+      let parentId = '';
       if (parentKey) {
         if (parentKey.indexOf('addMachine') > -1) {
           parentId = record[parentKey].id;
@@ -365,8 +365,12 @@ YUI.add('bundle-importer', function(Y) {
       }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
       // layer where we create ghosts and handle cleaning them up.
-      var machine = this.db.machines.addGhost(
-          record.args[0].parentId, record.args[0].containerType);
+      const params = record.args[0];
+      const machine = this.db.machines.addGhost(
+        params.parentId,
+        params.containerType,
+        {series: params.series, constraints: params.constraints}
+      );
       this.modelAPI.addMachines(record.args, function(machine) {
         this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});

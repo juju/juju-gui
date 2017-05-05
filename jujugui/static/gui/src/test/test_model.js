@@ -1851,7 +1851,7 @@ describe('test_model.js', function() {
       db = new models.Database();
     });
 
-    it('can export in deployer format', function() {
+    it('can export the model as a bundle', function() {
       // Mock a topology that can return positions.
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({
@@ -1887,35 +1887,36 @@ describe('test_model.js', function() {
           }
         }
       ]);
-      var result = db.exportDeployer(true);
+      const result = db.exportBundle();
 
       assert.strictEqual(result.relations.length, 1);
       var relation = result.relations[0];
 
       assert.equal(result.series, 'precise');
-      assert.equal(result.services.mysql.charm, 'precise/mysql-1');
-      assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
+      assert.equal(result.applications.mysql.charm, 'precise/mysql-1');
+      assert.equal(result.applications.wordpress.charm, 'precise/wordpress-1');
       // Services with no units are allowed.
-      assert.equal(result.services.mysql.num_units, 0);
-      assert.equal(result.services.wordpress.num_units, 1);
+      assert.equal(result.applications.mysql.num_units, 0);
+      assert.equal(result.applications.wordpress.num_units, 1);
 
       // A default config value is skipped
-      assert.equal(result.services.wordpress.options.debug, undefined);
+      assert.equal(result.applications.wordpress.options.debug, undefined);
       // A value changed from the default is exported
-      assert.equal(result.services.wordpress.options.username, 'admin');
+      assert.equal(result.applications.wordpress.options.username, 'admin');
       // Ensure that mysql has no options object in the export as no
       // non-default options are defined
-      assert.equal(result.services.mysql.options, undefined);
+      assert.equal(result.applications.mysql.options, undefined);
 
       // Constraints
-      var constraints = result.services.wordpress.constraints;
+      var constraints = result.applications.wordpress.constraints;
       assert.equal(constraints, 'cpu-power=2 cpu-cores=4');
 
       // Export position annotations.
-      assert.equal(result.services.wordpress.annotations['gui-x'], 100);
-      assert.equal(result.services.wordpress.annotations['gui-y'], 200);
+      assert.equal(result.applications.wordpress.annotations['gui-x'], 100);
+      assert.equal(result.applications.wordpress.annotations['gui-y'], 200);
       // Note that ignored wasn't exported.
-      assert.equal(result.services.wordpress.annotations.ignored, undefined);
+      assert.equal(
+        result.applications.wordpress.annotations.ignored, undefined);
 
       assert.equal(relation[0], 'mysql:db');
       assert.equal(relation[1], 'wordpress:app');
@@ -1929,9 +1930,9 @@ describe('test_model.js', function() {
         endpoints: [['wordpress', {name: 'loadbalancer', role: 'peer'}]],
         'interface': 'reversenginx'
       });
-      var result = db.exportDeployer(true);
+      const result = db.exportBundle();
       // The service has been exported.
-      assert.isDefined(result.services.wordpress);
+      assert.isDefined(result.applications.wordpress);
       // But not its peer relation.
       assert.strictEqual(result.relations.length, 0);
     });
@@ -1952,63 +1953,17 @@ describe('test_model.js', function() {
           ['namenode', {role: 'client'}]],
         'interface': 'db'
       });
-      assert.deepEqual(db.exportDeployer(true).relations, [[
+      assert.deepEqual(db.exportBundle().relations, [[
         'resourcemanager', 'namenode'
       ]]);
-    });
-
-    it('does not export the juju-gui service', function() {
-      db.services.add([
-        {id: 'juju-gui', charm: 'precise/juju-gui-42'},
-        {id: 'django', charm: 'trusty/django-47'}
-      ]);
-      db.charms.add([{id: 'precise/juju-gui-42'}, {id: 'trusty/django-47'}]);
-      var result = db.exportDeployer(true);
-      assert.strictEqual(Object.keys(result.services).length, 1);
-      assert.isDefined(result.services.django);
-    });
-
-    it('does not export juju-gui relations', function() {
-      db.services.add([
-        {id: 'wordpress', charm: 'precise/wordpress-42'},
-        // Someone gave the name "juju-gui" to a wordpress service.
-        {id: 'juju-gui', charm: 'precise/wordpress-42'},
-        {id: 'mysql', charm: 'trusty/mysql-47'}
-      ]);
-      db.charms.add([{id: 'precise/wordpress-42'}, {id: 'trusty/mysql-47'}]);
-      // The two wordpress instances are connected to the database.
-      db.relations.add([
-        {
-          id: 'wordpress:db mysql:db',
-          endpoints: [
-            ['mysql', {name: 'db', role: 'provider'}],
-            ['wordpress', {name: 'db', role: 'requirer'}]
-          ],
-          'interface': 'mysql'
-        },
-        {
-          id: 'juju-gui:db mysql:db',
-          endpoints: [
-            ['mysql', {name: 'db', role: 'provider'}],
-            ['juju-gui', {name: 'db', role: 'requirer'}]
-          ],
-          'interface': 'mysql'
-        }
-      ]);
-      var result = db.exportDeployer(true);
-      // The juju-gui service has not been exported.
-      assert.isUndefined(result.services['juju-gui']);
-      // The only exported relation is between wordpress and mysql.
-      assert.strictEqual(result.relations.length, 1);
-      assert.deepEqual(result.relations[0], ['mysql:db', 'wordpress:db']);
     });
 
     it('exports subordinate services with no num_units', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
-      var result = db.exportDeployer(true);
-      assert.equal(result.services.puppet.num_units, undefined);
+      const result = db.exportBundle();
+      assert.equal(result.applications.puppet.num_units, undefined);
     });
 
     it('exports applications for juju 2', function() {
@@ -2016,7 +1971,7 @@ describe('test_model.js', function() {
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
       // Pass false for the instance when facades show Juju 2.
-      var result = db.exportDeployer(false);
+      const result = db.exportBundle();
       assert.isDefined(result.applications.puppet);
     });
 
@@ -2042,12 +1997,12 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer(true);
-      assert.strictEqual(result.services.wordpress.options.one, 'foo');
-      assert.strictEqual(result.services.wordpress.options.two, 2);
-      assert.strictEqual(result.services.wordpress.options.three, 3.14);
-      assert.strictEqual(result.services.wordpress.options.four, true);
-      assert.strictEqual(result.services.wordpress.options.five, false);
+      const result = db.exportBundle();
+      assert.strictEqual(result.applications.wordpress.options.one, 'foo');
+      assert.strictEqual(result.applications.wordpress.options.two, 2);
+      assert.strictEqual(result.applications.wordpress.options.three, 3.14);
+      assert.strictEqual(result.applications.wordpress.options.four, true);
+      assert.strictEqual(result.applications.wordpress.options.five, false);
     });
 
     it('avoid exporting options set to their default values', function() {
@@ -2072,12 +2027,12 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer(true);
-      assert.isUndefined(result.services.wordpress.options.one);
-      assert.strictEqual(result.services.wordpress.options.two, 2);
-      assert.isUndefined(result.services.wordpress.options.three);
-      assert.strictEqual(result.services.wordpress.options.four, false);
-      assert.isUndefined(result.services.wordpress.options.five, false);
+      const result = db.exportBundle();
+      assert.isUndefined(result.applications.wordpress.options.one);
+      assert.strictEqual(result.applications.wordpress.options.two, 2);
+      assert.isUndefined(result.applications.wordpress.options.three);
+      assert.strictEqual(result.applications.wordpress.options.four, false);
+      assert.isUndefined(result.applications.wordpress.options.five, false);
     });
 
     it('exports non-default options', function() {
@@ -2108,22 +2063,22 @@ describe('test_model.js', function() {
           }
         }
       ]);
-      var result = db.exportDeployer(true);
-      assert.equal(result.services.wordpress.options.one, '1');
-      assert.equal(result.services.wordpress.options.two, '2');
-      assert.equal(result.services.wordpress.options.three, '3');
-      assert.equal(result.services.wordpress.options.four, '4');
-      assert.equal(result.services.wordpress.options.five, true);
+      const result = db.exportBundle();
+      assert.equal(result.applications.wordpress.options.one, '1');
+      assert.equal(result.applications.wordpress.options.two, '2');
+      assert.equal(result.applications.wordpress.options.three, '3');
+      assert.equal(result.applications.wordpress.options.four, '4');
+      assert.equal(result.applications.wordpress.options.five, true);
     });
 
     it('exports exposed flag', function() {
       db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
       db.charms.add([{id: 'precise/wordpress-4'}]);
-      var result = db.exportDeployer(true);
-      assert.isUndefined(result.services.wordpress.expose);
+      let result = db.exportBundle();
+      assert.isUndefined(result.applications.wordpress.expose);
       db.services.getById('wordpress').set('exposed', true);
-      result = db.exportDeployer(true);
-      assert.isTrue(result.services.wordpress.expose);
+      result = db.exportBundle();
+      assert.isTrue(result.applications.wordpress.expose);
     });
 
     it('can determine simple machine placement for services', function() {
@@ -2295,67 +2250,44 @@ describe('test_model.js', function() {
       db.services.add(services);
       db.charms.add(charms);
       db.units.add(units, true);
-      var output = db.exportDeployer(true);
-      var expected = {
+      const bundle = db.exportBundle();
+      const expectedMachines = {
         '0': { series: 'trusty' },
         '1': { series: 'trusty' },
         '2': { series: 'trusty' }
       };
-      assert.deepEqual(output.machines, expected);
+      assert.deepEqual(bundle.machines, expectedMachines);
     });
 
-    it('ignores uncommmitted units when determining placement', function() {
-      var machine = { id: '0' };
-      var units = [{
-        service: 'wordpress',
-        id: 'wordpress/0',
-        machine: '0'
+    it('includes machines without series and hardware', function() {
+      const machines = [{id: '4'}, {id: '5', constraints: 'foo=bar'}];
+      const units = [{
+        service: 'apache2',
+        id: 'apache2/1',
+        machine: '4'
       }, {
         service: 'mysql',
-        id: 'mysql/0',
-        agent_state: 'started',
-        machine: '0'
-      }, {
-        service: 'apache2',
-        id: 'apache2/0',
-        agent_state: 'started',
-        machine: '0'
+        id: 'mysql/2',
+        machine: '5'
       }];
-      db.machines.add(machine);
+      const services = [
+        {id: 'apache2', charm: 'cs:trusty/apache2-27'},
+        {id: 'mysql', charm: 'cs:trusty/mysql-27'}
+      ];
+      const charms = [
+        {id: 'cs:trusty/apache2-27'},
+        {id: 'cs:trusty/mysql-27'}
+      ];
+      db.machines.add(machines);
+      db.services.add(services);
+      db.charms.add(charms);
       db.units.add(units, true);
-      var placement = db._mapServicesToMachines(db.machines);
-      var expected = {
-        mysql: ['0'],
-        apache2: ['0']
-      };
-      assert.deepEqual(placement, expected);
+      const bundle = db.exportBundle();
+      const expectedMachines = {'0': {}, '1': {constraints: 'foo=bar'}};
+      assert.deepEqual(bundle.machines, expectedMachines);
     });
 
-    it('ignores uncommitted machines when determining placements', function() {
-      var machine = { id: 'new0', commitStatus: 'uncommitted' };
-      var units = [{
-        service: 'wordpress',
-        id: 'wordpress/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }, {
-        service: 'mysql',
-        id: 'mysql/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }, {
-        service: 'apache2',
-        id: 'apache2/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }];
-      db.machines.add(machine);
-      db.units.add(units, true);
-      var placement = db._mapServicesToMachines(db.machines);
-      assert.deepEqual(placement, {});
-    });
-
-    it('can include uncommmitted units when determining placement', function() {
+    it('includes uncommmitted units when determining placement', function() {
       var machine = { id: '0' };
       var units = [{
         service: 'wordpress',
@@ -2383,34 +2315,33 @@ describe('test_model.js', function() {
       assert.deepEqual(placement, expected);
     });
 
-    it('can include uncommitted machines when determining placements',
-      function() {
-        var machine = { id: 'new0', commitStatus: 'uncommitted' };
-        var units = [{
-          service: 'wordpress',
-          id: 'wordpress/0',
-          agent_state: 'started',
-          machine: 'new0'
-        }, {
-          service: 'mysql',
-          id: 'mysql/0',
-          agent_state: 'started',
-          machine: 'new0'
-        }, {
-          service: 'apache2',
-          id: 'apache2/0',
-          agent_state: 'started',
-          machine: 'new0'
-        }];
-        db.machines.add(machine);
-        db.units.add(units, true);
-        var placement = db._mapServicesToMachines(db.machines, true);
-        assert.deepEqual(placement, {
-          wordpress: ['new0'],
-          mysql: ['new0'],
-          apache2: ['new0']
-        });
+    it('includes uncommitted machines when determining placement', function() {
+      var machine = { id: 'new0', commitStatus: 'uncommitted' };
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }];
+      db.machines.add(machine);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines, true);
+      assert.deepEqual(placement, {
+        wordpress: ['new0'],
+        mysql: ['new0'],
+        apache2: ['new0']
       });
+    });
 
     it('ignores machines with no units when determining placements',
         function() {
@@ -2468,8 +2399,8 @@ describe('test_model.js', function() {
           }
         }
       }]);
-      var result = db.exportDeployer(true);
-      assert.deepEqual(result.services.mysql.to, ['0']);
+      const result = db.exportBundle();
+      assert.deepEqual(result.applications.mysql.to, ['0']);
     });
   });
 

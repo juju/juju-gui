@@ -35,8 +35,6 @@ YUI.add('juju-models', function(Y) {
   // Define strings representing juju-core entities' Life state.
   var ALIVE = 'alive';
   var DYING = 'dying';
-  // The default Juju GUI service name.
-  var JUJU_GUI_APPLICATION_NAME = 'juju-gui';
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
@@ -2281,34 +2279,19 @@ YUI.add('juju-models', function(Y) {
     /**
        Maps machine placement for services.
 
-       @method _mapServicesToMachines
        @param {Object} machineList The list of machines.
-       @param {Boolean} includeUncommitted whether to include uncommitted
-         machines.
      */
-    _mapServicesToMachines: function(machineList, includeUncommitted) {
-      var machinePlacement = {};
-      var owners = {};
-      var machineNames = {};
-      let machines;
-
-      if (includeUncommitted) {
-        machines = machineList.toArray();
-      } else {
-        // Strip uncommitted machines and containers from the machine list.
-        machines = machineList.filter(machine => {
-          if (machine.commitStatus === 'uncommitted' ||
-            machine.commitStatus === 'in-progress' ||
-            this.units.filterByMachine(machine.id).length === 0) {
-            return false;
-          }
-          return true;
-        });
-      }
+    _mapServicesToMachines: function(machineList) {
+      const machinePlacement = {};
+      const owners = {};
+      const machineNames = {};
+      const machines = machineList.filter(machine => {
+        return this.units.filterByMachine(machine.id).length !== 0;
+      });
 
       // "Sort" machines w/ parents (e.g. containers) to the back of the list.
       machines.sort(function(a, b) {
-        var aLxc = 0,
+        let aLxc = 0,
             bLxc = 0;
         if (a.parentId) {
           aLxc = -1;
@@ -2320,23 +2303,14 @@ YUI.add('juju-models', function(Y) {
       });
 
       machines.forEach(function(machine) {
-        let units;
-        if (includeUncommitted) {
-          units = this.units.filterByMachine(machine.id);
-        } else {
-          // Otherwise, we're only intested in committed units on the machine.
-          units = this.units.filterByMachine(machine.id).filter(
-            function(unit) {
-              return unit.agent_state;
-            });
-        }
-
-        var machineName;
-        var containerType = machine.containerType;
+        const units = this.units.filterByMachine(machine.id);
+        const containerType = machine.containerType;
+        let machineName;
+        let owner;
         if (containerType !== null && containerType !== undefined) {
           // If the machine is an LXC, we just base the name off of the
           // machine's parent, which we've already created a name for.
-          var machineId = machine.parentId;
+          const machineId = machine.parentId;
           if (machineNames[machineId]) {
             machineName = containerType + ':' + machineNames[machineId];
           } else {
@@ -2350,24 +2324,21 @@ YUI.add('juju-models', function(Y) {
           // We need to get both the "owner" of the machine and how many times
           // we have seen the owner to generate a deployer designation (e.g.
           // wordpress=2, the second machine owned by wordpress).
-          var owner = units[0].service;
-          var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
+          owner = units[0].service;
+          const ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
           owners[owner] = ownerIndex;
           machineName = owner + '/' + ownerIndex;
           machineNames[machine.id] = machineName;
         }
 
         units.forEach(function(unit) {
-          var serviceName = unit.service;
-
+          const serviceName = unit.service;
           if (!machinePlacement[serviceName]) {
             machinePlacement[serviceName] = [];
           }
-
           if (serviceName === owner) {
             machineName = unit.machine;
           }
-
           machinePlacement[serviceName].push(machineName);
         });
       }, this);
@@ -2375,39 +2346,22 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-     * Export deployer formatted dump of the current environment.
-     * Note: When we have a selection UI in place this should honor
-     * that.
-     *
-     * @method exportDeployer
-     * @param legacyServicesKey boolean Whether to use 'services' or
-     * 'applications' as the key for the bundle.
-     * @param {Boolean} includeUncommitted whether to include uncommitted
-     *   changes.
-     * @return {Object} export object suitable for serialization.
-     */
-    exportDeployer: function(legacyServicesKey, includeUncommitted) {
-      var defaultSeries = this.environment.get('defaultSeries'),
-          result = {};
+      Export the current model as a bundle, including uncommitted changes.
 
+      @return {Object} The JSON decoded bundle.
+    */
+    exportBundle: function() {
+      const defaultSeries = this.environment.get('defaultSeries');
+      const result = {};
       if (defaultSeries) {
         result.series = defaultSeries;
       }
-
-      var applications = this._generateServiceList(
-        this.services, includeUncommitted);
-      if (legacyServicesKey) {
-        result.services = applications;
-      } else {
-        result.applications = applications;
-      }
-      var machinePlacement = this._mapServicesToMachines(
-        this.machines, includeUncommitted);
-      result.relations = this._generateRelationSpec(
-        this.relations, includeUncommitted);
+      const applications = this._generateServiceList(this.services);
+      result.applications = applications;
+      const machinePlacement = this._mapServicesToMachines(this.machines);
+      result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(
           machinePlacement, this.machines, applications);
-
       return result;
     },
 
@@ -2418,10 +2372,8 @@ YUI.add('juju-models', function(Y) {
       @method _generateServiceList
       @param {Object} serviceList The service list.
       @return {Object} The services list for the export.
-      @param {Boolean} includeUncommitted whether to include uncommitted
-        applications.
     */
-    _generateServiceList: function(serviceList, includeUncommitted) {
+    _generateServiceList: function(serviceList) {
       var services = {};
       serviceList.each(function(service) {
         var units = service.get('units');
@@ -2429,19 +2381,6 @@ YUI.add('juju-models', function(Y) {
         var serviceOptions = {};
         var charmOptions = charm.get('options');
         var serviceName = service.get('id');
-
-        if (!includeUncommitted) {
-          // Exclude this service if it is a ghost or if it is named "juju-gui".
-          // This way we prevent the Juju GUI service to be exported when the
-          // bundle is created from a live environment. Note that this is a weak
-          // check: in theory, each deployed charm can be named "juju-gui", but
-          // we still assume this convention since there are no other (more
-          // solid) ways to exclude the Juju GUI service.
-          if (service.get('pending') === true ||
-          serviceName === JUJU_GUI_APPLICATION_NAME) {
-            return;
-          }
-        }
 
         // Process the service_options removing any values
         // that are the default value for the charm.
@@ -2521,28 +2460,13 @@ YUI.add('juju-models', function(Y) {
       @method _generateRelationSpec
       @param {Object} relationList The relation list.
       @return {Object} The relations list for the export.
-      @param {Boolean} includeUncommitted whether to include uncommitted
-        relations.
     */
-    _generateRelationSpec: function(relationList, includeUncommitted) {
+    _generateRelationSpec: function(relationList) {
       const relations = [];
       relationList.each(relation => {
-        if (!includeUncommitted &&
-          relation.get('id').indexOf('pending-') === 0) {
-          // Skip pending relations
-          return;
-        }
         const endpoints = relation.get('endpoints');
         // Skip peer relations: they should be added automatically.
         if (endpoints.length === 1) {
-          return;
-        }
-        // Skip relations on the juju-gui service. The Juju GUI is not supposed
-        // to have relation established with other charms, but this can change
-        // in the future, and also this can be the case when an extraneous
-        // service is named "juju-gui".
-        const serviceNames = endpoints.map(endpoint => endpoint[0]);
-        if (serviceNames.indexOf(JUJU_GUI_APPLICATION_NAME) !== -1) {
           return;
         }
         // Export this relation.
@@ -2572,13 +2496,6 @@ YUI.add('juju-models', function(Y) {
       var machineIdMap = {};
       Object.keys(machinePlacement).forEach(function(serviceName) {
         machinePlacement[serviceName].forEach(function(machineId) {
-          // Check to make sure the charm name for this service is juju-gui
-          // This is in case the user has renamed the gui instance on deploy.
-          var charmName = this.services.getById(serviceName).get('name');
-          if (charmName === JUJU_GUI_APPLICATION_NAME) {
-            // Don't add the GUI machine into the machine list;
-            return;
-          }
           // Checking for dupes before adding to the list
           var idExists = machineIdList.some(function(id) {
             if (id === machineId) {
@@ -2616,24 +2533,24 @@ YUI.add('juju-models', function(Y) {
           }
         }, this);
         // Add the machine placement information to the services 'to' directive.
-        if (serviceName !== JUJU_GUI_APPLICATION_NAME) {
-          serviceList[serviceName].to = machinePlacement[serviceName].map(
-              function(machineId) {
-                var parts = machineId.split(':');
-                if (parts.length === 2) {
-                  // It's a container
-                  var partInt = parseInt(parts[1], 10);
-                  if (!isNaN(partInt)) {
-                    parts[1] = machineIdMap[partInt];
-                  }
-                  return parts.join(':');
-                } else {
-                  return machineIdMap[machineId] + '';
-                }
-              });
-        }
+        serviceList[serviceName].to = machinePlacement[serviceName].map(
+          function(machineId) {
+            let parts = machineId.split(':');
+            if (parts.length === 2) {
+              // It's a container
+              let partInt = parseInt(parts[1], 10);
+              if (!isNaN(partInt)) {
+                parts[1] = machineIdMap[partInt];
+              }
+              return parts.join(':');
+            } else {
+              return machineIdMap[machineId] + '';
+            }
+          }
+        );
       }, this);
 
+      const defaultSeries = this.environment.get('defaultSeries');
       machineList.each(function(machine) {
         var parentId = machine.parentId;
         if (parentId !== null) {
@@ -2660,10 +2577,17 @@ YUI.add('juju-models', function(Y) {
             machineId = parts[1];
           }
           machines[machineIdMap[machineId]] = {};
-          machines[machineIdMap[machineId]].series = machine.series ||
-            this.environment.get('defaultSeries');
-          var constraints = this._collapseMachineConstraints(machine.hardware);
-          if (constraints.length > 0) {
+          const series = machine.series || defaultSeries;
+          if (series) {
+            machines[machineIdMap[machineId]].series = series;
+          }
+          // The machine object can include a constraints field in the case
+          // the machine is not yet committed.
+          let constraints = machine.constraints;
+          if (machine.hardware) {
+            constraints = this._collapseMachineConstraints(machine.hardware);
+          }
+          if (constraints && constraints.length > 0) {
             machines[machineIdMap[machineId]].constraints = constraints;
           }
         }
@@ -2676,7 +2600,7 @@ YUI.add('juju-models', function(Y) {
       expected by Juju.
 
       @method _collapseMachineConstraints
-      @param {Object} constraints The harware constraints object from the
+      @param {Object} constraints The hardware constraints object from the
         machine model.
       @return {String} The constraints in a string format.
     */
