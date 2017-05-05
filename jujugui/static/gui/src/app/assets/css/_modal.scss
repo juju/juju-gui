@@ -5,7 +5,7 @@
   right: 8%;
   top: 15%;
   bottom: auto;
-  z-index: index($z-indexed-elements, shortcut-help);
+  z-index: index($z-indexed-elements, modal);
   background-color: $white;
   border-radius: $border-radius;
   overflow: auto;

@@ -42,15 +42,12 @@
     padding: 0;
   }
 
-  .show-community-button {
-    margin: 10px 10px 10px 0;
-    float: right;
-  }
+  .promulgated-results + .community-results .button-wrapper--ruled {
+    margin: 0 10px 10px;
 
-  .promulgated-results + .community-results {
-    h4 {
-      margin-top: 20px;
-      float: left;
+    &:before,
+    &:after {
+      background: transparent;
     }
   }
 

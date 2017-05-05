@@ -66,14 +66,22 @@ YUI.add('autodeploy-extension', function(Y) {
       @return {Object} The newly created ghost machine model instance.
     */
     _createMachine: function(containerType, parentId, series, constraints) {
-      var db = this.get('db') || this.db;
-      var env = this.get('env') || this.env;
-      var machine = db.machines.addGhost(parentId, containerType);
+      const db = this.get('db') || this.db;
+      const env = this.get('env') || this.env;
+      const cons = Object.keys(constraints || {}).reduce((collected, key) => {
+        const value = constraints[key];
+        if (value) {
+          collected.push(key + '=' + value);
+        }
+        return collected;
+      }, []).join(' ');
+      const machine = db.machines.addGhost(
+        parentId, containerType, {series: series, constraints: cons});
       // XXX A callback param MUST be provided even if it's just an
       // empty function, the ECS relies on wrapping this function so if
       // it's null it'll just stop executing. This should probably be
       // handled properly on the ECS side. Jeff May 12 2014
-      var callback = this._onMachineCreated.bind(this, machine);
+      const callback = this._onMachineCreated.bind(this, machine);
       env.addMachines([{
         series: series,
         containerType: containerType,
