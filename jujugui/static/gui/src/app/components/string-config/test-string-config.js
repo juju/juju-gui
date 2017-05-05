@@ -32,11 +32,11 @@ describe('StringConfig', function() {
   });
 
   beforeEach(() => {
-      option = {
-        key: 'testconfig',
-        type: 'text',
-        description: 'test config for strings'
-      };
+    option = {
+      key: 'testconfig',
+      type: 'text',
+      description: 'test config for strings'
+    };
   });
 
   it('renders a string config', function() {
