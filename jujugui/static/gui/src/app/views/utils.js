@@ -618,19 +618,18 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Export the YAML for this environment.
+    Export the YAML for the current model, including uncommitted changes.
 
-    @method _exportFile
-    @param {Object} db Reference to the app db.
+    @param {Object} db The application database.
   */
-  utils.exportEnvironmentFile = function(db, legacyServicesKey) {
+  utils.exportEnvironmentFile = function(db) {
     const apps = db.services.toArray();
     const idMap = new Map();
     // Store a map of all the temporary app ids to the real ids.
     apps.forEach(app => {
       idMap.set(app.get('id'), app.get('name'));
     });
-    var result = db.exportDeployer(legacyServicesKey, true);
+    var result = db.exportBundle();
     var exportData = jsyaml.dump(result);
     // Replace the temporary app ids with the real ids.
     idMap.forEach((name, id) => {
@@ -900,9 +899,12 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.createMachinesPlaceUnits = function(
       db, env, service, numUnits, constraints) {
-    var machine;
-    for (var i = 0; i < parseInt(numUnits, 10); i += 1) {
-      machine = db.machines.addGhost();
+    let machine;
+    let parentId = null;
+    let containerType =null;
+    for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
+      machine = db.machines.addGhost(
+        parentId, containerType, {constraints: constraints});
       env.addMachines([{
         constraints: constraints
       }], function(machine) {

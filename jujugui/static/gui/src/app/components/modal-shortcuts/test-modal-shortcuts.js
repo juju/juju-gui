@@ -33,7 +33,7 @@ describe('ModalSortcuts', function() {
   });
 
   function visibleRender(hide = sinon.stub()) {
-    return (<div id="#shortcut-help">
+    return (<div className="modal">
       <div className="twelve-col no-margin-bottom">
         <h2 className="bordered">Keyboard Shortcuts</h2>
         <span className="close" tabIndex="0" role="button"

@@ -75,7 +75,7 @@ YUI.add('modal-gui-settings', function() {
 
     render: function() {
       return (
-        <div id="#shortcut-settings">
+        <div className="modal modal--narrow">
           <div className="twelve-col no-margin-bottom">
             <h2 className="bordered">Custom GUI Settings</h2>
             <span className="close" tabIndex="0" role="button"
