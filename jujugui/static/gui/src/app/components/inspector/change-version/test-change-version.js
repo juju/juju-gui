@@ -292,29 +292,28 @@ describe('InspectorChangeVersion', function() {
     // The charm needs to be added to the model first.
     assert.equal(addCharm.callCount, 1);
     assert.equal(addCharm.args[0][0], 'cs:django-4');
-    assert.equal(addCharm.args[0][1], null);
-    // Call the callback
-    addCharm.args[0][2]({});
+    // Call the callback.
+    addCharm.args[0][1]({});
     assert.equal(serviceSet.callCount, 1);
     assert.equal(serviceSet.args[0][1], 'cs:django-4');
   });
 
   it('adds a notification if it can not add a charm', function() {
-    var addNotification = sinon.stub();
-    var changeState = sinon.stub();
-    var serviceSet = sinon.stub();
-    var getMacaroon = sinon.stub().returns('macaroon');
-    var setCharm = sinon.stub();
-    var service = {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const serviceSet = sinon.stub();
+    const getMacaroon = sinon.stub().returns('macaroon');
+    const setCharm = sinon.stub();
+    const service = {
       get: sinon.stub().returns('django'),
       set: serviceSet
     };
-    var addCharm = sinon.stub().callsArgWith(2, {err: 'error'});
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
+    const addCharm = sinon.stub().callsArgWith(1, {err: 'error'});
+    const getCharm = sinon.stub();
+    const getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
           acl={acl}
           changeState={changeState}
@@ -327,7 +326,7 @@ describe('InspectorChangeVersion', function() {
           getCharm={getCharm}
           getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+    const output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
@@ -362,8 +361,8 @@ describe('InspectorChangeVersion', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
-    // call the addCharm callback
-    addCharm.args[0][2]({});
+    // Call the addCharm callback.
+    addCharm.args[0][1]({});
     assert.equal(addNotification.callCount, 1);
   });
 
@@ -397,8 +396,8 @@ describe('InspectorChangeVersion', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
-    // call the addCharm callback
-    addCharm.args[0][2]({});
+    // Call the addCharm callback.
+    addCharm.args[0][1]({});
     assert.equal(addNotification.callCount, 1);
   });
 

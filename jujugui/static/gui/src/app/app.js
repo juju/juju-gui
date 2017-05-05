@@ -1610,10 +1610,13 @@ YUI.add('juju-gui', function(Y) {
         const relatableApplications = relationUtils.getRelatableApplications(
           db, models.getEndpoints(service, this.endpointsController));
         const ecs = model.get('ecs');
+        const addCharm = (url, callback, options) => {
+          model.addCharm(url, charmstore, callback, options);
+        };
         inspector = (
           <window.juju.components.Inspector
             acl={this.acl}
-            addCharm={model.addCharm.bind(model)}
+            addCharm={addCharm}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
               this, db, model, service)}
             addNotification={db.notifications.add.bind(db.notifications)}
