@@ -515,14 +515,15 @@ YUI.add('search-results', function(Y) {
           'hidden': !this.state.showCommunity && hasPromulgated
         });
       const buttonTitle = this.state.showCommunity ?
-        'Hide community results' : 'Show community results';
+        'Hide community results' : `Show ${community.length} community results`;
       const button = hasPromulgated ? (
-        <juju.components.GenericButton
-          action={this._toggleCommunityResults}
-          type="inline-neutral"
-          extraClasses="show-community-button"
-          title={buttonTitle} />
-      ) : null;
+        <div className="button-wrapper--ruled">
+          <juju.components.GenericButton
+            action={this._toggleCommunityResults}
+            type="inline-neutral"
+            extraClasses="show-community-button"
+            title={buttonTitle} />
+          </div>) : null;
       return (<div className="clearfix community-results">
         {button}
         <div className={holderClasses}>

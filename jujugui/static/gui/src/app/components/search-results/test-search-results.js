@@ -313,12 +313,14 @@ describe('SearchResults', function() {
                   </ul>
                 </div>
                 <div className="clearfix community-results">
-                  <juju.components.GenericButton
-                    action={sinon.stub()}
-                    extraClasses="show-community-button"
-                    title={(showCommunity ? 'Hide' : 'Show') +
-                      ' community results'}
-                    type="inline-neutral" />
+                  <div className="button-wrapper--ruled">
+                    <juju.components.GenericButton
+                      action={sinon.stub()}
+                      extraClasses="show-community-button"
+                      title={(showCommunity ? 'Hide' : `Show ${2}`) +
+                        ' community results'}
+                      type="inline-neutral" />
+                  </div>
                   <div
                     className={'clearfix' + (showCommunity ? '' : ' hidden')}>
                     <h4>Community{' '}<span className="count">({2})</span></h4>
