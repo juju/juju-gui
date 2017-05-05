@@ -21,6 +21,15 @@ $sp-large: 2rem;
   width: 100%;
 }
 
+.p-notification__blocker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($light-grey, .6);
+}
+
 .p-notification {
   @include notification;
 
@@ -82,12 +91,14 @@ $sp-large: 2rem;
 }
 
 #login-notification {
+  .p-notification__blocker {
+    z-index: 500;
+  }
   .p-notification {
     position: absolute;
-    top: 80px;
-    width: 960px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 50;
 
     @media screen and (max-width: 960px) {

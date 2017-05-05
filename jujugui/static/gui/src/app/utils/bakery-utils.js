@@ -106,8 +106,10 @@ YUI.add('bakery-utils', function(Y) {
         }
         ReactDOM.render(
           <window.juju.components.Notification
-            dismiss={dismiss}
             content={content}
+            dismiss={dismiss}
+            extraClasses="four-col"
+            isBlocking={true}
           />, holder);
         // Open the pop up (default behavior for the time being).
         window.open(url, 'Login');
