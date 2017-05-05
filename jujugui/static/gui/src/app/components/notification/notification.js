@@ -29,6 +29,7 @@ YUI.add('notification', function() {
   juju.components.Notification = React.createClass({
 
     propTypes: {
+      isBlocking: React.PropTypes.bool,
       content: React.PropTypes.object.isRequired,
       dismiss: React.PropTypes.func,
       extraClasses: React.PropTypes.string,
@@ -72,15 +73,25 @@ YUI.add('notification', function() {
       return;
     },
 
-    render: function() {
-      return (
-        <div className={this._generateClasses()}>
+    _generateComponent: function() {
+      const content = (<div className={this._generateClasses()}>
           <p className="p-notification__response">
             {this.props.content}
             {this._generateDismiss()}
           </p>
-        </div>
-      );
+        </div>);
+      if (this.props.isBlocking) {
+        return (
+          <div className="p-notification__blocker">
+            {content}
+          </div>
+        )
+      }
+      return content;
+    },
+
+    render: function() {
+      return _generateComponent();
     }
   });
 
