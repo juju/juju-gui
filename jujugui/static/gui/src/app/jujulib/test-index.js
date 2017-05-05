@@ -5,37 +5,55 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib utility functions', function() {
-  describe('_makeRequest', function() {
-    var bakery;
+describe('jujulib utility functions', () => {
+  const wrap = window.jujulib._wrap;
 
-    beforeEach(function() {
-      bakery = {};
-      bakery.sendGetRequest = sinon.stub();
-      bakery.sendPostRequest = sinon.stub();
-      bakery.sendPutRequest = sinon.stub();
-      bakery.sendPatchRequest = sinon.stub();
-      bakery.sendDeleteRequest = sinon.stub();
+  describe('_wrap', () => {
+    it('returns a wrapped version of the supplied function', () => {
+      const stub = sinon.stub();
+      const wrapped = wrap(stub);
+      assert.equal(typeof wrapped, 'function');
+      assert.notEqual(stub, wrapped);
     });
 
-    it('handles error strings', function() {
-      var error = 'test error';
-      bakery.sendGetRequest.callsArgWith(2, error);
-      var callback = sinon.stub();
-      window.jujulib._makeRequest(bakery, '', 'GET', {}, callback, false, '');
-      assert.equal(callback.args[0][0], error);
+    const of = 'calls the original function';
+
+    it(of + 'with error', () => {
+      const stub = sinon.stub();
+      wrap(stub)('error');
+      assert.deepEqual(stub.args, [['error', null]]);
     });
 
-    it('handles XHR error objects', function() {
-      var error = 'test error';
-      var json = `{"error": "${error}"}`;
-      var xhr = {target: {responseText: json}};
-      bakery.sendGetRequest.callsArgWith(2, xhr);
-      var callback = sinon.stub();
-      window.jujulib._makeRequest(bakery, '', 'GET', {}, callback, false, '');
-      assert.equal(callback.args[0][0], error);
+    it(of + 'without response text', () => {
+      const stub = sinon.stub();
+      wrap(stub)(null, {});
+      assert.deepEqual(stub.args, [[null, null]]);
+    });
+
+    it(of + 'without json parsed response', () => {
+      const stub = sinon.stub();
+      wrap(stub)(null, {target: {responseText: '{"data": "data"}'}});
+      assert.deepEqual(stub.args, [[null, '{"data": "data"}']]);
+    });
+
+    it(of + 'with json parsed response', () => {
+      const stub = sinon.stub();
+      wrap(stub, {parseJSON: true})(
+        null, {target: {responseText: '{"data": "data"}'}});
+      assert.deepEqual(stub.args, [[null, {data: 'data'}]]);
+    });
+
+    it(of + 'when json parsing fails', () => {
+      const stub = sinon.stub();
+      wrap(stub, {parseJSON: true})(
+        null, {target: {responseText: '{"invalid "json}'}});
+      assert.equal(
+        stub.args[0][0],
+        'SyntaxError: Unexpected token j in JSON at position 11');
+      assert.equal(stub.args[0][1], null);
     });
   });
+
 
   describe('serializeObject', () => {
     it('serializes an object', () => {
@@ -53,4 +71,20 @@ describe('jujulib utility functions', function() {
         '');
     });
   });
+
+  describe('_transformAuthObject', () => {
+    const transform = window.jujulib._transformAuthObject;
+    it('calls supplied callback if error', () => {
+      const stub = sinon.stub();
+      transform(stub, 'error', 'data');
+      assert.deepEqual(stub.args, [['error', 'data']]);
+    });
+
+    it('lowercases data keys and calls supplied callback', () => {
+      const stub = sinon.stub();
+      transform(stub, null, {Upper: 'case', Keys: 'here'});
+      assert.deepEqual(stub.args, [[null, {upper: 'case', keys: 'here'}]]);
+    });
+  });
+
 });

@@ -52,7 +52,7 @@ var module = module;
         If the terms is not found, the second argument is null.
     */
     showTerms: function(name, revision, callback) {
-      var handler = function(error, response) {
+      const handler = function(error, response) {
         if (error !== null) {
           callback(error, null);
           return;
@@ -61,8 +61,8 @@ var module = module;
           callback(null, null);
           return;
         }
-        var terms = response[0];
-        var milliseconds = Date.parse(terms['created-on']);
+        const terms = response[0];
+        const milliseconds = Date.parse(terms['created-on']);
         callback(null, {
           name: terms.name,
           owner: terms.owner,
@@ -72,11 +72,13 @@ var module = module;
           createdAt: new Date(milliseconds)
         });
       };
-      var url = this.url + '/terms/' + name;
+      let url = this.url + '/terms/' + name;
       if (revision === 0 || revision) {
         url += '?revision=' + revision;
       }
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -113,29 +115,31 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     addAgreement: function(terms, callback) {
-      var self = this;
-      var handler = function(error, response) {
+      const handler = (error, response) => {
         if (error !== null) {
           callback(error, null);
           return;
         }
-        var terms = response.agreements.map(function(term) {
-          return self._formatTerm(term);
-        });
+        const terms = response.agreements.map(term => this._formatTerm(term));
         callback(null, terms);
       };
-      var url = this.url + '/agreement';
-      var payload = terms.map(function(term) {
-        const args = {
-          termname: term.name,
-          termrevision: term.revision
-        };
-        if (term.owner) {
-          args.termowner = term.owner;
-        }
-        return args;
-      });
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+      const url = this.url + '/agreement';
+      const body = JSON.stringify(
+        terms.map(term => {
+          const args = {
+            termname: term.name,
+            termrevision: term.revision
+          };
+          if (term.owner) {
+            args.termowner = term.owner;
+          }
+          return args;
+        }));
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -153,8 +157,7 @@ var module = module;
         If the agreements are not found, the second argument is null.
     */
     getAgreements: function(callback) {
-      var self = this;
-      var handler = function(error, response) {
+      const handler = (error, response) => {
         if (error !== null) {
           callback(error, null);
           return;
@@ -163,13 +166,13 @@ var module = module;
           callback(null, null);
           return;
         }
-        var terms = response.map(function(term) {
-          return self._formatTerm(term);
-        });
+        const terms = response.map(term => this._formatTerm(term));
         callback(null, terms);
       };
-      var url = this.url + '/agreements';
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const url = this.url + '/agreements';
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -204,8 +207,10 @@ var module = module;
       };
       const terms = termList.reduce(
         (acc, val, idx) => `${acc}${idx === 0 ? '' : '&'}Terms=${val}`, '');
-      return jujulib._makeRequest(
-        this.bakery, `${this.url}/agreement?${terms}`, 'GET', null, handler);
+      const url = `${this.url}/agreement?${terms}`;
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     }
 
   };

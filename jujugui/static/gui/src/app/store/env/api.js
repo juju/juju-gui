@@ -1058,12 +1058,12 @@ YUI.add('juju-env-api', function(Y) {
 
       @method addCharm
     */
-    addCharm: function(url, macaroon, callback, options) {
+    addCharm: function(url, charmstore, callback, options) {
       if (options && options.immediate) {
-        this._addCharm(url, macaroon, callback);
+        this._addCharm(url, charmstore, callback);
         return;
       }
-      this.get('ecs').lazyAddCharm([url, macaroon, callback], options);
+      this.get('ecs').lazyAddCharm([url, charmstore, callback], options);
     },
 
     /**
@@ -1071,9 +1071,8 @@ YUI.add('juju-env-api', function(Y) {
 
       @method _addCharm
       @param {String} url The URL of the charm. It must include the revision.
-      @param {Object} macaroon The optional JSON decoded delegatable macaroon
-        to use in order to authorize access to a non-public charm. This is only
-        required when adding non-public charms.
+      @param {Object} charmstore The charm store API client instance, used in
+        case a delegatable macaroon must be retrieved for adding the charm.
       @param {Function} callback A callable that must be called once the
         operation is performed. The callback is called passing an object like
         the following:
@@ -1083,27 +1082,56 @@ YUI.add('juju-env-api', function(Y) {
           }
       @return {undefined} Sends a message to the server only.
     */
-    _addCharm: function(url, macaroon, callback) {
+    _addCharm: function(url, charmstore, callback) {
+      if (!callback) {
+        callback = resp => {
+          console.log('data returned by addCharm API call:', resp);
+        };
+      }
+      let authAttempted = false;
+
       // Define the API callback.
-      var handleAddCharm = function(userCallback, url, data) {
-        if (!userCallback) {
-          console.log('data returned by addCharm API call:', data);
+      const handler = data => {
+        if (!data.error) {
+          callback({url: url});
           return;
         }
-        userCallback({err: data.error, url: url});
-      }.bind(this, callback, url);
-      // Build the API call parameters.
-      var request = {
-        type: 'Client',
-        request: 'AddCharm',
-        params: {url: url}
+        // If the error is not related to authorization, then just notify
+        // callers about the failure. Same if the macaroon was already included
+        // in the request.
+        if (authAttempted || (data['error-code'] !== 'unauthorized access')) {
+          callback({err: data.error, url: url});
+          return;
+        }
+        authAttempted = true;
+        // If the user is not authorized then it probably means that agreement
+        // to terms is required in order to add this charm. Retry again with
+        // a delegatable macaroon obtained from the charm store.
+        charmstore.getDelegatableMacaroon(url, (err, macaroon) => {
+          if (err) {
+            callback({err: err, url: url});
+            return;
+          }
+          sendRequest(macaroon);
+        });
       };
-      if (macaroon) {
-        request.request = 'AddCharmWithAuthorization';
-        request.params.macaroon = macaroon;
-      }
+
+      // Define a function to send the request.
+      const sendRequest = macaroon => {
+        const request = {
+          type: 'Client',
+          request: 'AddCharm',
+          params: {url: url}
+        };
+        if (macaroon) {
+          request.request = 'AddCharmWithAuthorization';
+          request.params.macaroon = macaroon;
+        }
+        this._send_rpc(request, handler);
+      };
+
       // Perform the API call.
-      this._send_rpc(request, handleAddCharm);
+      sendRequest(null);
     },
 
     /**

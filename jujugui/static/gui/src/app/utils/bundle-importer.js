@@ -565,7 +565,7 @@ YUI.add('bundle-importer', function(Y) {
             charm.loaded = true;
             db.charms.add(charm);
           }
-          this.modelAPI.addCharm(charmId, null, () => {});
+          this.modelAPI.addCharm(charmId, charmstore, () => {});
           this._saveModelToRequires(record.id, charm);
           next();
         });

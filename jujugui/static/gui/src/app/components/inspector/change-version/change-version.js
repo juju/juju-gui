@@ -30,7 +30,6 @@ YUI.add('inspector-change-version', function() {
       charmId: React.PropTypes.string.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
-      getMacaroon: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
       setCharm: React.PropTypes.func.isRequired
     },
@@ -81,16 +80,10 @@ YUI.add('inspector-change-version', function() {
         @param {Object} e The click event.
     */
     _versionButtonAction: function(charmId, e) {
-      // In Juju 2.0+ we have to add the charm before we set it. This is just
-      // good practice for 1.25.
-      // TODO frankban: add support for fetching delegatable macaroons that can
-      // be used to add private charms.
-      this.props.addCharm(charmId, null,
-        this._addCharmCallback.bind(this, charmId), {
-          // XXX hatch: the ecs doesn't yet support addCharm so we are going to
-          // send the command to juju immedaitely.
-          immediate: true
-        });
+      const callback = this._addCharmCallback.bind(this, charmId);
+      // XXX hatch: the ecs doesn't yet support addCharm so we are going to
+      // send the command to juju immediately.
+      this.props.addCharm(charmId, callback, {immediate: true});
     },
 
     /**

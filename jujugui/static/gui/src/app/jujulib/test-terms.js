@@ -8,7 +8,7 @@ chai.config.truncateThreshold = 0;
 describe('jujulib terms service', function() {
   let cleanups = [];
 
-  var makeXHRRequest = function(obj) {
+  const makeXHRRequest = function(obj) {
     return {target: {responseText: JSON.stringify(obj)}};
   };
 
@@ -19,29 +19,29 @@ describe('jujulib terms service', function() {
   });
 
   it('exists', function() {
-    var bakery = {};
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const bakery = {};
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     assert.strictEqual(terms instanceof window.jujulib.terms, true);
     assert.strictEqual(
       terms.url, 'http://1.2.3.4/' + window.jujulib.termsAPIVersion);
   });
 
   it('is smart enough to handle missing trailing slash in URL', function() {
-    var bakery = {};
-    var terms = new window.jujulib.terms('http://1.2.3.4', bakery);
+    const bakery = {};
+    const terms = new window.jujulib.terms('http://1.2.3.4', bakery);
     assert.strictEqual(
       terms.url, 'http://1.2.3.4/' + window.jujulib.termsAPIVersion);
   });
 
   it('shows terms with revision', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
+    const bakery = {
+      get: function(url, headers, callback) {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
           '/terms/canonical?revision=42');
-        var xhr = makeXHRRequest([{
+        const xhr = makeXHRRequest([{
           name: 'canonical',
           owner: 'spinach',
           title: 'canonical terms',
@@ -49,10 +49,10 @@ describe('jujulib terms service', function() {
           'created-on': '2016-06-09T22:07:24Z',
           content: 'Terms and conditions'
         }]);
-        success(xhr);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.showTerms('canonical', 42, function(error, terms) {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
@@ -68,14 +68,14 @@ describe('jujulib terms service', function() {
   });
 
   it('shows most recent terms', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
+    const bakery = {
+      get: function(url, headers, callback) {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
           '/terms/canonical');
-        var xhr = makeXHRRequest([{
+        const xhr = makeXHRRequest([{
           name: 'canonical',
           owner: 'spinach',
           title: 'canonical recent terms',
@@ -83,10 +83,10 @@ describe('jujulib terms service', function() {
           'created-on': '2016-06-09T22:07:24Z',
           content: 'Terms and conditions'
         }]);
-        success(xhr);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.showTerms('canonical', null, function(error, terms) {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
@@ -102,13 +102,13 @@ describe('jujulib terms service', function() {
   });
 
   it('handles missing terms', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
-        var xhr = makeXHRRequest([]);
-        success(xhr);
+    const bakery = {
+      get: function(url, headers, callback) {
+        const xhr = makeXHRRequest([]);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.showTerms('canonical', null, function(error, terms) {
       assert.strictEqual(error, null);
       assert.strictEqual(terms, null);
@@ -117,13 +117,13 @@ describe('jujulib terms service', function() {
   });
 
   it('handles errors fetching terms', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
-        var xhr = makeXHRRequest({Message: 'bad wolf'});
-        failure(xhr);
+    const bakery = {
+      get: function(url, headers, callback) {
+        const xhr = makeXHRRequest({error: 'bad wolf'});
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.showTerms('canonical', null, function(error, terms) {
       assert.equal(error, 'bad wolf');
       assert.strictEqual(terms, null);
@@ -132,23 +132,23 @@ describe('jujulib terms service', function() {
   });
 
   it('handles adding an agreement', function(done) {
-    var bakery = {
-      sendPostRequest: function(path, params, success, failure) {
+    const bakery = {
+      post: function(url, headers, body, callback) {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
           '/agreement');
-        var xhr = makeXHRRequest({agreements: [{
+        const xhr = makeXHRRequest({agreements: [{
           user: 'spinach',
           term: 'these-terms',
           revision: 42,
           'created-on': '2016-06-09T22:07:24Z'
         }]});
-        success(xhr);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.addAgreement(
       [{name: 'canonical', revision: 5}],
       function(error, terms) {
@@ -169,36 +169,35 @@ describe('jujulib terms service', function() {
   });
 
   it('passes the agreements request the correct args', function() {
-    const makeRequest = sinon.stub(window.jujulib, '_makeRequest');
-    cleanups.push(makeRequest.restore);
-    var terms = new window.jujulib.terms('http://1.2.3.4/', {});
+    const bakery = {
+      post: sinon.stub()
+    };
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.addAgreement([{name: 'canonical', owner: 'spinach', revision: 5}]);
-    assert.equal(makeRequest.callCount, 1);
-    assert.deepEqual(makeRequest.args[0][3][0], {
-      termname: 'canonical',
-      termowner: 'spinach',
-      termrevision: 5
-    });
+    assert.equal(bakery.post.callCount, 1);
+    assert.equal(
+      bakery.post.args[0][2],
+      '[{"termname":"canonical","termrevision":5,"termowner":"spinach"}]');
   });
 
   it('can get agreements for a user', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
+    const bakery = {
+      get: function(url, headers, callback) {
         assert.equal(
-          path,
+          url,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
           '/agreements');
-        var xhr = makeXHRRequest([{
+        const xhr = makeXHRRequest([{
           user: 'spinach',
           term: 'One fancy term',
           revision: 47,
           'created-on': '2016-06-09T22:07:24Z'
         }]);
-        success(xhr);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.getAgreements(function(error, terms) {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, [{
@@ -216,13 +215,13 @@ describe('jujulib terms service', function() {
   });
 
   it('handles missing agreements', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
+    const bakery = {
+      get: function(url, headers, callback) {
         var xhr = makeXHRRequest([]);
-        success(xhr);
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.getAgreements(function(error, terms) {
       assert.strictEqual(error, null);
       assert.strictEqual(terms, null);
@@ -231,13 +230,13 @@ describe('jujulib terms service', function() {
   });
 
   it('handles errors fetching agreements', function(done) {
-    var bakery = {
-      sendGetRequest: function(path, success, failure) {
-        var xhr = makeXHRRequest({Message: 'bad wolf'});
-        failure(xhr);
+    const bakery = {
+      get: function(url, headers, callback) {
+        const xhr = makeXHRRequest({Message: 'bad wolf'});
+        callback(null, xhr);
       }
     };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+    const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.getAgreements(function(error, terms) {
       assert.equal(error, 'bad wolf');
       assert.strictEqual(terms, null);
@@ -248,13 +247,13 @@ describe('jujulib terms service', function() {
   describe('getAgreementsByTerms', () => {
     it('makes a proper request with a single term supplied', done => {
       const bakery = {
-        sendGetRequest: (path, success, failure) => {
+        get: (url, headers, callback) => {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.termsAPIVersion +
             '/agreement?Terms=hatch/test-term1');
-          success(makeXHRRequest([{
+          callback(null, makeXHRRequest([{
             'created-on': '2016-06-09T22:07:24Z',
             content: 'I am term1\n',
             id: 'hatch/test-term1',
@@ -283,13 +282,13 @@ describe('jujulib terms service', function() {
 
     it('makes a proper request with multiple terms supplied', done => {
       const bakery = {
-        sendGetRequest: (path, success, failure) => {
+        get: (url, headers, callback) => {
           assert.equal(
-            path,
+            url,
             'http://1.2.3.4/' +
             window.jujulib.termsAPIVersion +
             '/agreement?Terms=hatch/test-term1&Terms=hatch/test-term2');
-          success(makeXHRRequest([{
+          callback(null, makeXHRRequest([{
             'created-on': '2016-06-09T22:07:24Z',
             content: 'I am term1\n',
             name: 'test-term1',
@@ -319,8 +318,8 @@ describe('jujulib terms service', function() {
 
     it('handles failures fetching agreements', done => {
       const bakery = {
-        sendGetRequest: (path, success, failure) => {
-          failure(makeXHRRequest({Message: 'it broke'}));
+        get: (url, headers, callback) => {
+          callback(null, makeXHRRequest({Message: 'it broke'}));
         }
       };
       const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);

@@ -49,16 +49,18 @@ var module = module;
     */
     authorizePlan: function(uuid, charmUrl, applicationName, planUrl, budget,
         limit, callback) {
-      var url = this.url + '/plan/authorize';
-      var payload = {
+      const url = this.url + '/plan/authorize';
+      const body = JSON.stringify({
         'env-uuid': uuid,
         'charm-url': charmUrl,
         'service-name': applicationName,
         'plan-url': planUrl,
         'budget': budget,
         'limit': limit
-      };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+      });
+      const headers = null;
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -79,7 +81,7 @@ var module = module;
             (not really useful in this context).
     */
     listPlansForCharm: function(charmUrl, callback) {
-      var handler = function(error, plans) {
+      const handler = function(error, plans) {
         if (error !== null) {
           callback(error, null);
           return;
@@ -89,8 +91,10 @@ var module = module;
       if (charmUrl.substring(0, 3) !== 'cs:') {
         charmUrl = 'cs:' + charmUrl;
       }
-      var url = this.url + '/charm?charm-url=' + charmUrl;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const url = this.url + '/charm?charm-url=' + charmUrl;
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -112,21 +116,23 @@ var module = module;
             (not really useful in this context).
     */
     showActivePlan: function(modelUUID, applicationName, callback) {
-      var handler = function(error, response) {
+      const handler = function(error, response) {
         if (error !== null) {
           callback(error, null, []);
           return;
         }
-        var availablePlans = response['available-plans'];
-        var plans = Object.keys(availablePlans).map(function(key) {
+        const availablePlans = response['available-plans'];
+        const plans = Object.keys(availablePlans).map(function(key) {
           return _handlePlan(availablePlans[key]);
         });
-        var current = availablePlans[response['current-plan']];
+        const current = availablePlans[response['current-plan']];
         callback(null, _handlePlan(current), plans);
       };
-      var url = this.url + '/plan/model/' + modelUUID +
+      const url = this.url + '/plan/model/' + modelUUID +
         '/service/' + applicationName;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -141,15 +147,17 @@ var module = module;
           - total: an object container then summary of all budgets.
     */
     listBudgets: function(callback) {
-      var handler = function(error, data) {
+      const handler = function(error, data) {
         if (error !== null) {
           callback(error, null);
           return;
         }
         callback(null, data);
       };
-      var url = this.url + '/budget';
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const url = this.url + '/budget';
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -163,12 +171,14 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     createBudget: function(budget, limit, callback) {
-      var url = this.url + '/budget';
-      var payload = {
+      const url = this.url + '/budget';
+      const body = JSON.stringify({
         'budget': budget,
         'limit': limit
-      };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+      });
+      const headers = null;
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -182,9 +192,11 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateBudget: function(budgetId, limit, callback) {
-      var url = this.url + '/budget/' + budgetId;
-      var payload = { limit: limit };
-      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+      const url = this.url + '/budget/' + budgetId;
+      const body = JSON.stringify({ limit: limit });
+      const headers = null;
+      return this.bakery.patch(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -197,8 +209,11 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     removeBudget: function(budgetId, callback) {
-      var url = this.url + '/budget/' + budgetId;
-      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
+      const url = this.url + '/budget/' + budgetId;
+      const headers = null;
+      const body = null;
+      return this.bakery.delete(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -214,13 +229,15 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     createAllocation: function(budgetId, application, model, limit, callback) {
-      var url = this.url + '/budget/' + budgetId + '/allocation';
-      var payload = {
+      const url = this.url + '/budget/' + budgetId + '/allocation';
+      const body = JSON.stringify({
         services: [application],
         model: model,
         limit: limit
-      };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+      });
+      const headers = null;
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -235,10 +252,12 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateAllocation: function(model, app, limit, callback) {
-      var url = this.url + '/model/' + model +
+      const url = this.url + '/model/' + model +
         '/service/' + app + '/allocation';
-      var payload = { limit: limit };
-      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+      const body = JSON.stringify({ limit: limit });
+      const headers = null;
+      return this.bakery.patch(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -252,9 +271,12 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     removeAllocation: function(app, model, callback) {
-      var url = this.url + '/environment/' + model +
+      const url = this.url + '/environment/' + model +
         '/service/' + app + '/allocation';
-      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
+      const body = null;
+      const headers = null;
+      return this.bakery.delete(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -271,15 +293,17 @@ var module = module;
           - allocations: an array of allocation details.
     */
     showBudget: function(budget, callback) {
-      var handler = function(error, data) {
+      const handler = function(error, data) {
         if (error !== null) {
           callback(error, null);
           return;
         }
         callback(null, data);
       };
-      var url = this.url + '/budget/' + budget;
-      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+      const url = this.url + '/budget/' + budget;
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**
@@ -296,14 +320,16 @@ var module = module;
     */
     createProfile: function(
       user, limit, defaultBudget, defaultLimit, callback) {
-      var url = this.url + '/profile';
-      var payload = {
+      const url = this.url + '/profile';
+      const body = JSON.stringify({
         'user': user,
         'limit': limit,
         'default-budget': defaultBudget,
         'default-budget-limit': defaultLimit
-      };
-      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+      });
+      const headers = null;
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -317,9 +343,11 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateCreditLimit: function(user, limit, callback) {
-      var url = this.url + '/profile/' + user;
-      var payload = { update: { limit: limit } };
-      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+      const url = this.url + '/profile/' + user;
+      const body = JSON.stringify({ update: { limit: limit } });
+      const headers = null;
+      return this.bakery.patch(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -332,9 +360,11 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateDefaultBudget: function(defaultBudget, callback) {
-      var url = this.url + '/profile';
-      var payload = { update: { 'default-budget': defaultBudget } };
-      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+      const url = this.url + '/profile';
+      const body = JSON.stringify({update: {'default-budget': defaultBudget}});
+      const headers = null;
+      return this.bakery.patch(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
 
     /**
@@ -367,9 +397,10 @@ var module = module;
       payload['charm-url'] = charmId;
       const qs = jujulib.serializeObject(payload);
       url += '?' + qs;
-      return jujulib._makeRequest(this.bakery, url, 'GET', payload, handler);
+      const headers = null;
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     }
-
   };
 
   /**

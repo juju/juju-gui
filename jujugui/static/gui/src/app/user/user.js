@@ -22,8 +22,6 @@ if (typeof this.jujugui === 'undefined') {
   this.jujugui = {};
 }
 
-const DISCHARGE_TOKEN = 'discharge-token';
-
 /** Class representing a user's authorizations in the GUI **/
 const User = class User {
 
@@ -34,16 +32,6 @@ const User = class User {
   }
 
   // TODO get username
-
-  /**
-   Macaroon tokens from the identity manager.
-   */
-  get identity() {
-    return this.localStorage.getItem(DISCHARGE_TOKEN);
-  }
-  set identity(token) {
-    this.localStorage.setItem(DISCHARGE_TOKEN, token);
-  }
 
   /**
    Gets credentials out of sessionStorage.
@@ -133,33 +121,22 @@ const User = class User {
     this._setCredentials('model', credentials);
   }
 
-  setMacaroon(macaroonName, macaroon, setCookie = false) {
-    this.localStorage.setItem(macaroonName, macaroon);
-    if (setCookie) {
-      const prefix = macaroonName + '=';
-      document.cookie = prefix + macaroon + ';path=/';
-    }
+  setMacaroon(service, macaroon) {
+    this.localStorage.setItem(service, macaroon);
   }
 
-  getMacaroon(macaroonName) {
-    return this.localStorage.getItem(macaroonName); 
+  getMacaroon(service) {
+    return this.localStorage.getItem(service);
   }
 
-  clearMacaroon(macaroonName, removeCookie = false) {
-    this.localStorage.removeItem(macaroonName);
-    if (removeCookie) {
-      const name = this.macaroonName;
-      const pathParts = '/profile'.split('/');
-      let currentPath = ' path=';
-      // Delete the / cookie first
-      document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
-      pathParts.forEach(part => {
-        currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
-        document.cookie =
-          `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
-      });
-    }
+  clearMacaroon(service) {
+    this.localStorage.removeItem(service);
   }
+
+  clearMacaroons() {
+    this.localStorage.clear();
+  }
+
 };
 
 this.jujugui.User = User;

@@ -273,10 +273,8 @@ describe('App', function() {
         }, this);
         assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
         assert.strictEqual(app.plans.url, 'http://plans.example.com/v2');
-        assert.strictEqual(app.plans.bakery.macaroonName, 'Macaroons-plans');
         assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
-        assert.strictEqual(app.terms.bakery.macaroonName, 'Macaroons-terms');
       });
     });
 
@@ -736,10 +734,10 @@ describe('App', function() {
         sinon.stub(app, 'dispatch');
         sinon.stub(app.state, 'changeState');
         sinon.stub(app, '_sendGISFPostBack');
-        sinon.stub(app, '_loginToCharmstore');
+        sinon.stub(app, '_ensureLoggedIntoCharmstore');
         app.controllerAPI.fire('login');
         assert.equal(app._sendGISFPostBack.callCount, 1);
-        assert.equal(app._loginToCharmstore.callCount, 1);
+        assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
       });
   });
 
