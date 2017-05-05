@@ -1287,18 +1287,12 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI.userIsAuthenticated;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
-      const getDischargeToken = function() {
-        return window.localStorage.getItem('discharge-token');
-      };
-      const webhandler = new Y.juju.environments.web.WebHandler();
-      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addAgreement={this.terms.addAgreement.bind(this.terms)}
           addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
-          charmstore={charmstore}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
@@ -1332,7 +1326,6 @@ YUI.add('juju-gui', function(Y) {
               this.payment && this.payment.getCountries.bind(this.payment)
               || null}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          getDischargeToken={getDischargeToken}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
           gisf={this.get('gisf')}
@@ -1346,11 +1339,9 @@ YUI.add('juju-gui', function(Y) {
           ddData={ddData}
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
-          sendPost={webhandler.sendPostRequest.bind(webhandler)}
           servicesGetById={services.getById.bind(services)}
           showPay={window.juju_config.payFlag || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
-          storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
           validateForm={utils.validateForm.bind(utils)}

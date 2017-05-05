@@ -204,21 +204,12 @@ describe('LoginComponent', function() {
   it('automatically logs in for gisf via usso', function() {
     const loginToController = sinon.stub().callsArg(0);
     const controllerIsConnected = sinon.stub().returns(true);
-    const sendPost = sinon.stub();
-    const getDischargeToken = sinon.stub().returns('foo');
-    const charmstore = sinon.stub();
-    charmstore.bakery = sinon.stub();
-    const storeUser = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
-        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
-        getDischargeToken={getDischargeToken}
         gisf={true}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToController}
-        sendPost={sendPost}
-        storeUser={storeUser} />);
+        loginToController={loginToController} />);
     assert.equal(
       loginToController.callCount, 1, 'loginToController not called');
   });
@@ -226,14 +217,12 @@ describe('LoginComponent', function() {
   it('eventually fails auto login if controller does not connect', function() {
     var loginToController = sinon.stub();
     var controllerIsConnected = sinon.stub().returns(false);
-    var sendPost = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
         controllerIsConnected={controllerIsConnected}
         gisf={true}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToController}
-        sendPost={sendPost} />);
+        loginToController={loginToController} />);
     assert.equal(
       loginToController.callCount, 0, 'loginToController not called');
   });

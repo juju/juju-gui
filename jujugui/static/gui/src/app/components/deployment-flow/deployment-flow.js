@@ -35,7 +35,6 @@ YUI.add('deployment-flow', function() {
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       charmsGetById: React.PropTypes.func.isRequired,
-      charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
       controllerIsAvailable: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
@@ -54,7 +53,6 @@ YUI.add('deployment-flow', function() {
       getCountries: React.PropTypes.func,
       getCurrentChangeSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func,
-      getDischargeToken: React.PropTypes.func,
       getUser: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
@@ -68,12 +66,10 @@ YUI.add('deployment-flow', function() {
       profileUsername: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       sendAnalytics: React.PropTypes.func.isRequired,
-      sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       setModelName: React.PropTypes.func.isRequired,
       showPay: React.PropTypes.bool,
       showTerms: React.PropTypes.func.isRequired,
-      storeUser: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
       validateForm: React.PropTypes.func.isRequired,
@@ -687,12 +683,8 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-login__login">
               <juju.components.USSOLoginLink
                 gisf={this.props.gisf}
-                charmstore={this.props.charmstore}
                 callback={callback}
                 displayType={'button'}
-                sendPost={this.props.sendPost}
-                storeUser={this.props.storeUser}
-                getDischargeToken={this.props.getDischargeToken}
                 loginToController={this.props.loginToController}>
                 Login
               </juju.components.USSOLoginLink>
@@ -701,12 +693,8 @@ YUI.add('deployment-flow', function() {
               Do not have an account?
               <juju.components.USSOLoginLink
                 gisf={this.props.gisf}
-                charmstore={this.props.charmstore}
                 callback={callback}
                 displayType="text"
-                sendPost={this.props.sendPost}
-                storeUser={this.props.storeUser}
-                getDischargeToken={this.props.getDischargeToken}
                 loginToController={this.props.loginToController}>
                 Sign up
               </juju.components.USSOLoginLink>
