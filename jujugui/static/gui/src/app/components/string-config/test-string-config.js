@@ -24,18 +24,22 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('StringConfig', function() {
+  let option;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('string-config', function() { done(); });
   });
 
+  beforeEach(() => {
+      option = {
+        key: 'testconfig',
+        type: 'text',
+        description: 'test config for strings'
+      };
+  });
+
   it('renders a string config', function() {
-    var option = {
-      key: 'testconfig',
-      type: 'text',
-      description: 'test config for strings'
-    };
     var config = 'the value';
     const renderer = jsTestUtils.shallowRender(
       <juju.components.StringConfig
@@ -75,11 +79,6 @@ describe('StringConfig', function() {
   });
 
   it('can be disabled', function() {
-    var option = {
-      key: 'testconfig',
-      type: 'text',
-      description: 'test config for strings'
-    };
     var config = 'the value';
     const renderer = jsTestUtils.shallowRender(
       <juju.components.StringConfig
@@ -97,5 +96,31 @@ describe('StringConfig', function() {
         setValue={instance._setValue} />
     </div>);
     expect(output.props.children[1]).toEqualJSX(expected);
+  });
+
+  it('can display a changed value', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config="the value"
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    instance._setValue('different value');
+    const output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'string-config--value string-config--changed');
+  });
+
+  it('correctly compares existing numbers', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config={123}
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    instance._setValue('123');
+    const output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'string-config--value');
   });
 });

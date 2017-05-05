@@ -159,8 +159,7 @@ YUI.add('inspector-config', function() {
       var props = this.props;
       if (serviceName) {
         var service = props.service;
-        var nameValue = serviceName.state.value;
-        console.log(nameValue);
+        var nameValue = serviceName.getValue();
         var serviceExists = props.getServiceByName(nameValue);
         // We want to allow them to set it to itself.
         if (service.get('name') !== nameValue && serviceExists !== null) {
@@ -201,7 +200,7 @@ YUI.add('inspector-config', function() {
         // Just in case we ever have any sub components which have refs
         // and aren't a configuration component.
         if (ref.split('-')[0] === 'Config') {
-          configValues[activeRef.props.option.key] = activeRef.state.value;
+          configValues[activeRef.getKey()] = activeRef.getValue();
         }
       });
       return this._getChangedValues(configValues);
@@ -220,7 +219,7 @@ YUI.add('inspector-config', function() {
       var serviceConfig = this.props.service.get('config');
       var changedValues = {};
       Object.keys(serviceConfig).forEach((key) => {
-        if (serviceConfig[key] !== configValues[key]) {
+        if (serviceConfig[key].toString() !== configValues[key].toString()) {
           changedValues[key] = configValues[key];
         }
       });

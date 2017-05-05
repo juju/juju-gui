@@ -58,6 +58,15 @@ YUI.add('string-config', function() {
     },
 
     /**
+      Get the option key.
+
+      @returns {String} the option key.
+    */
+    getKey: function() {
+      return this.props.option.key;
+    },
+
+    /**
       Get the value of the field.
 
       @method getValue
@@ -73,7 +82,8 @@ YUI.add('string-config', function() {
       var classes = classNames(
         'string-config--value',
         {
-          'string-config--changed': this.state.value !== this.props.config,
+          'string-config--changed':
+            this.state.value.toString() !== this.props.config.toString(),
           'string-config--disabled': disabled,
         });
       return (

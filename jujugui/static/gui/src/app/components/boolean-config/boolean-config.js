@@ -42,6 +42,24 @@ YUI.add('boolean-config', function() {
     },
 
     /**
+      Get the option key.
+
+      @returns {String} the option key.
+    */
+    getKey: function() {
+      return this.props.option.key;
+    },
+
+    /**
+      Get the value of the field.
+
+     @returns {String} the value.
+    */
+    getValue: function() {
+      return this.state.value;
+    },
+
+    /**
       Handles cleaning the config from the props.
 
       @method _cleanConfig

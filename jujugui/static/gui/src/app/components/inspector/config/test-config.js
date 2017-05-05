@@ -722,7 +722,15 @@ describe('Configuration', function() {
     instance.refs = {
       file: {files: ['apache2.yaml']},
       'file-form': {reset: sinon.stub()},
-      ServiceName: {getValue: sinon.stub()}
+      ServiceName: {getValue: sinon.stub()},
+      'Config-option1': {
+        getKey: sinon.stub().returns(option1.key),
+        getValue: sinon.stub().returns('')
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns(option2.key),
+        getValue: sinon.stub().returns('')
+      }
     };
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.children[2].props.children.props.onChange();
@@ -789,7 +797,15 @@ describe('Configuration', function() {
     instance.refs = {
       file: {files: ['apache2.yaml']},
       'file-form': {reset: sinon.stub()},
-      ServiceName: {getValue: sinon.stub()}
+      ServiceName: {getValue: sinon.stub()},
+      'Config-option1': {
+        getKey: sinon.stub().returns(option1.key),
+        getValue: sinon.stub().returns('')
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns(option2.key),
+        getValue: sinon.stub().returns('')
+      }
     };
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
