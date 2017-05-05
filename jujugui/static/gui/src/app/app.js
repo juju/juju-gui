@@ -1287,12 +1287,14 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI.userIsAuthenticated;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
+      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addAgreement={this.terms.addAgreement.bind(this.terms)}
           addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
+          charmstore={charmstore}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}

@@ -35,6 +35,7 @@ YUI.add('deployment-flow', function() {
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       charmsGetById: React.PropTypes.func.isRequired,
+      charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
       controllerIsAvailable: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
