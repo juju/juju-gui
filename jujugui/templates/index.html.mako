@@ -50,7 +50,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
     <script src="${config_url}"></script>
     <script type="text/javascript">
-        let GUI_VERSION = {'version': '', 'commit': ''};
+        window.GUI_VERSION = {'version': '', 'commit': ''};
     </script>
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <link rel="shortcut icon" href="${static_url}/static/gui/build/app/favicon.ico">
