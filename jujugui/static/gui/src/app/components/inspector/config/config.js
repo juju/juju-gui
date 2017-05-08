@@ -235,14 +235,15 @@ YUI.add('inspector-config', function() {
       var configElements = [];
 
       Object.keys(charmOptions).forEach((key) => {
-        var option = charmOptions[key];
+        // Clone the options so that we're not updating the stored options.
+        const option = this._clone(charmOptions[key]);
         option.key = key;
         option.description = this.props.linkify(option.description);
-        var ref = 'Config-' + key;
+        const ref = 'Config-' + key;
         // We use one component for numeric and string values and
         // another for boolean values.
         if (option.type === 'boolean') {
-          var label = option.key + ':';
+          const label = option.key + ':';
           configElements.push(
               <juju.components.BooleanConfig
                 disabled={disabled}
