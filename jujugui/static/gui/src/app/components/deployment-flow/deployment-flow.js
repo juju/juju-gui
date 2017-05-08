@@ -37,7 +37,7 @@ YUI.add('deployment-flow', function() {
       charmsGetById: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
-      controllerIsAvailable: React.PropTypes.func.isRequired,
+      controllerIsReady: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
       createToken: React.PropTypes.func,
       createUser: React.PropTypes.func,
@@ -727,7 +727,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
-            controllerIsAvailable={this.props.controllerIsAvailable}
+            controllerIsReady={this.props.controllerIsReady}
             listClouds={this.props.listClouds}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             setCloud={this._setCloud} />
@@ -757,7 +757,7 @@ YUI.add('deployment-flow', function() {
             addNotification={this.props.addNotification}
             credential={this.state.credential}
             cloud={cloud}
-            controllerIsAvailable={this.props.controllerIsAvailable}
+            controllerIsReady={this.props.controllerIsReady}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}

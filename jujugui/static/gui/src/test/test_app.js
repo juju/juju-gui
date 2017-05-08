@@ -1788,6 +1788,65 @@ describe('App', function() {
     });
   });
 
+  describe('_controllerIsReady', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub(),
+          user: userClass
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: userClass
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0',
+        user: userClass
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('reports true when the controller API is ready', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = true;
+      assert.strictEqual(app._controllerIsReady(), true);
+    });
+
+    it('reports false when the controller API is not ready', () => {
+      const controllerAPI = app.controllerAPI;
+      controllerAPI.set('connected', false);
+      controllerAPI.userIsAuthenticated = false;
+      // Without a controller API object the controller is not ready.
+      app.controllerAPI = null;
+      assert.strictEqual(app._controllerIsReady(), false, 'no controller');
+      // Before the API is connected the controller is not ready.
+      app.controllerAPI = controllerAPI;
+      assert.strictEqual(app._controllerIsReady(), false, 'not connected');
+      // Before the API is properly logged in the controller is not ready.
+      app.controllerAPI.set('connected', true);
+      assert.strictEqual(app._controllerIsReady(), false, 'not authenticated');
+    });
+  });
+
   describe('_listAndSwitchModel', function() {
     let app, modelList, juju, Y;
 

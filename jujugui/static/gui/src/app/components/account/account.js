@@ -28,6 +28,7 @@ YUI.add('account', function() {
       addAddress: React.PropTypes.func,
       addBillingAddress: React.PropTypes.func,
       addNotification: React.PropTypes.func.isRequired,
+      controllerIsReady: React.PropTypes.func.isRequired,
       createCardElement: React.PropTypes.func,
       createPaymentMethod: React.PropTypes.func,
       createToken: React.PropTypes.func,
@@ -106,6 +107,7 @@ YUI.add('account', function() {
               <juju.components.AccountCredentials
                 acl={this.props.acl}
                 addNotification={this.props.addNotification}
+                controllerIsReady={this.props.controllerIsReady}
                 generateCloudCredentialName={
                   this.props.generateCloudCredentialName}
                 getCloudCredentialNames={this.props.getCloudCredentialNames}
