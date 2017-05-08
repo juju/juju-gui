@@ -39,6 +39,9 @@ describe('Configuration', function() {
   it('renders binary and string config inputs', function() {
     var option1 = { key: 'option1key', type: 'string' };
     var option2 = { key: 'option2key', type: 'boolean' };
+    const linkify = sinon.stub();
+    linkify.onCall(0).returns('description 1');
+    linkify.onCall(1).returns('description 2');
     var option1key = 'string body value';
     var option2key = true;
     var charm = {
@@ -63,7 +66,7 @@ describe('Configuration', function() {
         charm={charm}
         getServiceByName={sinon.stub()}
         getYAMLConfig={sinon.stub()}
-        linkify={sinon.stub()}
+        linkify={linkify}
         service={service}
         serviceRelations={[]}
         setConfig={setConfig}
@@ -74,13 +77,21 @@ describe('Configuration', function() {
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
-        option={option1}
+        option={{
+          description: 'description 1',
+          key: 'option1',
+          type: 'string'
+        }}
         config={option1key} />,
       <juju.components.BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
-        option={option2}
+        option={{
+          description: 'description 2',
+          key: 'option2',
+          type: 'boolean'
+        }}
         config={option2key} />
     ]);
   });
@@ -664,6 +675,11 @@ describe('Configuration', function() {
   it('can apply the uploaded config', function() {
     var option1 = { key: 'option1key', type: 'string' };
     var option2 = { key: 'option2key', type: 'boolean' };
+    const linkify = sinon.stub();
+    linkify.onCall(0).returns('description 1');
+    linkify.onCall(1).returns('description 2');
+    linkify.onCall(2).returns('description 1');
+    linkify.onCall(3).returns('description 2');
     var option1key = 'string body value';
     var option2key = true;
     var charmGet = sinon.stub();
@@ -688,7 +704,7 @@ describe('Configuration', function() {
         charm={charm}
         getServiceByName={sinon.stub()}
         getYAMLConfig={getYAMLConfig}
-        linkify={sinon.stub()}
+        linkify={linkify}
         service={service}
         serviceRelations={[]}
         setConfig={sinon.stub()}
@@ -706,13 +722,21 @@ describe('Configuration', function() {
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
-        option={option1}
+        option={{
+          description: 'description 1',
+          key: 'option1',
+          type: 'string'
+        }}
         config="my apache2" />,
       <juju.components.BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
-        option={option2}
+        option={{
+          description: 'description 2',
+          key: 'option2',
+          type: 'boolean'
+        }}
         config={false} />
     ]);
   });
@@ -770,6 +794,9 @@ describe('Configuration', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var option1 = { key: 'option1key', type: 'string' };
     var option2 = { key: 'option2key', type: 'boolean' };
+    const linkify = sinon.stub();
+    linkify.onCall(0).returns('description 1');
+    linkify.onCall(1).returns('description 2');
     var option1key = 'string body value';
     var option2key = true;
     var charm = {
@@ -796,7 +823,7 @@ describe('Configuration', function() {
         charm={charm}
         getServiceByName={sinon.stub()}
         getYAMLConfig={sinon.stub()}
-        linkify={sinon.stub()}
+        linkify={linkify}
         service={service}
         serviceRelations={[]}
         setConfig={setConfig}
@@ -849,13 +876,21 @@ describe('Configuration', function() {
               disabled={true}
               key="Config-option1"
               ref="Config-option1"
-              option={option1}
+              option={{
+                description: 'description 1',
+                key: 'option1',
+                type: 'string'
+              }}
               config={option1key} />,
             <juju.components.BooleanConfig
               disabled={true}
               key="Config-option2"
               ref="Config-option2"
-              option={option2}
+              option={{
+                description: 'description 2',
+                key: 'option2',
+                type: 'boolean'
+              }}
               label="option2:"
               config={option2key} />
           ]}
