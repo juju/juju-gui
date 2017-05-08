@@ -68,7 +68,6 @@ const createDeploymentFlow = (props = {}) => {
     changes: {},
     changesFilterByParent: sinon.stub(),
     charmsGetById: charmsGetById,
-    charmstore: {},
     controllerIsAvailable: sinon.stub(),
     createToken: sinon.stub(),
     createUser: sinon.stub(),
@@ -95,7 +94,6 @@ const createDeploymentFlow = (props = {}) => {
     setModelName: sinon.stub(),
     showPay: false,
     showTerms: sinon.stub(),
-    storeUser: sinon.stub(),
     validateForm: sinon.stub(),
     withPlans: true
   };
@@ -582,10 +580,8 @@ describe('DeploymentFlow', function() {
   it('renders the login when necessary', function() {
     const renderer = createDeploymentFlow({
       getAuth: sinon.stub().returns(null),
-      getDischargeToken: sinon.stub(),
       loginToController: sinon.stub(),
       modelCommitted: true,
-      sendPost: sinon.stub()
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -626,12 +622,8 @@ describe('DeploymentFlow', function() {
           <div className="deployment-login__login">
             <juju.components.USSOLoginLink
               gisf={instance.props.gisf}
-              charmstore={instance.props.charmstore}
               callback={loginLink.props.callback}
               displayType={'button'}
-              sendPost={instance.props.sendPost}
-              storeUser={instance.props.storeUser}
-              getDischargeToken={instance.props.getDischargeToken}
               loginToController={instance.props.loginToController}>
               Login
             </juju.components.USSOLoginLink>
@@ -640,12 +632,8 @@ describe('DeploymentFlow', function() {
             Do not have an account?
             <juju.components.USSOLoginLink
               gisf={instance.props.gisf}
-              charmstore={instance.props.charmstore}
               callback={loginLink.props.callback}
               displayType={'text'}
-              sendPost={instance.props.sendPost}
-              storeUser={instance.props.storeUser}
-              getDischargeToken={instance.props.getDischargeToken}
               loginToController={instance.props.loginToController}>
               Sign up
             </juju.components.USSOLoginLink>
@@ -661,10 +649,8 @@ describe('DeploymentFlow', function() {
   const login = function(err) {
     const renderer = createDeploymentFlow({
       getAuth: sinon.stub().returns(null),
-      getDischargeToken: sinon.stub(),
       loginToController: sinon.stub(),
       modelCommitted: true,
-      sendPost: sinon.stub()
     });
     const instance = renderer.getMountedInstance();
     assert.strictEqual(instance.state.loggedIn, false);
