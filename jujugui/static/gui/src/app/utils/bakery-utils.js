@@ -86,41 +86,64 @@ YUI.add('bakery-utils', function(Y) {
         terms: config.termsURL
       }
     });
-    return new jujulib.Bakery(webHandler, storage, {
-      nonInteractive: !config.interactiveLogin,
-      visitPage: url => {
-        // Add to the page a notification about accepting the pop up window
-        // for logging into USSO.
-        const holder = document.getElementById('login-notification');
-        const content = (
+    const interactiveVisit = error => {
+      // Add to the page a notification about accepting the pop up window
+      // for logging into USSO.
+      const url = error.Info.VisitURL;
+      const holder = document.getElementById('login-notification');
+      const content = (
           <span>
-            To proceed with the authentication, please accept the pop up
-            window or&nbsp;
-            <a href={url} target="_blank">click here</a>.
+          To proceed with the authentication, please accept the pop up
+        window or&nbsp;
+          <a href={url} target="_blank">click here</a>.
           </span>);
-        let dismiss = null;
-        if (stateGetter().root !== 'login') {
-          dismiss = () => {
-            ReactDOM.unmountComponentAtNode(holder);
-          };
-        }
-        ReactDOM.render(
-          <window.juju.components.Notification
-            content={content}
-            dismiss={dismiss}
-            extraClasses="four-col"
-            isBlocking={true}
-          />, holder);
-        // Open the pop up (default behavior for the time being).
-        window.open(url, 'Login');
-      },
-      onSuccess: () => {
+      let dismiss = null;
+      if (stateGetter().root !== 'login') {
+        dismiss = () => {
+          ReactDOM.unmountComponentAtNode(holder);
+        };
+      }
+      ReactDOM.render(
+        <window.juju.components.Notification
+          content={content}
+          dismiss={dismiss}
+          extraClasses="four-col"
+          isBlocking={true}
+        />, holder);
+      // Open the pop up (default behavior for the time being).
+      window.open(url, 'Login');
+    };
+
+    const nonInteractiveVisit = error => {
+      const JSON_CONTENT_TYPE = 'application/json';
+      const acceptHeaders = {'Accept': JSON_CONTENT_TYPE};
+      const contentHeaders = {'Content-Type': JSON_CONTENT_TYPE};
+      const login = function(response) {
+        const method = error.jujugui;
+        const data = JSON.stringify({login: config.auth});
+        return webHandler.sendPostRequest(
+          method, contentHeaders, data, null, null, false, null, null);
+      };
+
+      return webHandler.sendGetRequest(
+        error.Info.VisitURL, acceptHeaders, null, null, false, null, login);
+    };
+
+    let params = {};
+
+    if (config.interactiveLogin) {
+      params.visitPage = interactiveVisit;
+      params.onSuccess = () => {
         // Remove the pop up notification from the page.
         ReactDOM.unmountComponentAtNode(
           document.getElementById('login-notification')
         );
-      }
-    });
+      };
+    } else {
+      params.visitPage = nonInteractiveVisit;
+    }
+
+    return new jujulib.Bakery(webHandler, storage, params);
   };
   module.newBakery = newBakery;
 
