@@ -237,11 +237,14 @@ describe('Environment Change Set', function() {
       });
 
       it('fires a changeSetModified event', function() {
-        var fire = sinon.stub(ecs, 'fire');
+        const changeSetModifiedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
         ecs.changeSet.abc123 = 'foo';
         ecs._removeExistingRecord('abc123');
-        assert.equal(fire.calledOnce, true);
-        assert.equal(fire.lastCall.args[0], 'changeSetModified');
+        assert.equal(changeSetModifiedListener.calledOnce, true);
+        document.removeEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
       });
     });
 
@@ -261,14 +264,23 @@ describe('Environment Change Set', function() {
         // The callback should now be wrapped.
         var fire = sinon.stub(ecs, 'fire');
         this._cleanups.push(fire.restore);
+        const changeSetModifiedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
+        const taskCompleteListener = sinon.stub();
+        document.addEventListener(
+          'ecs.taskComplete', taskCompleteListener);
         var result = record.command.args[3]();
         assert.equal(result, 'real cb');
-        assert.equal(fire.callCount, 2);
-        var fireArgs = fire.args[0];
-        assert.equal(fireArgs[0], 'taskComplete');
-        assert.equal(fireArgs[1].id, 'service-123');
-        assert.equal(fireArgs[1].record, record);
+        assert.equal(changeSetModifiedListener.calledOnce, true);
+        assert.equal(taskCompleteListener.calledOnce, true);
+        assert.equal(taskCompleteListener.args[0][0].detail.id, 'service-123');
+        assert.equal(taskCompleteListener.args[0][0].detail.record, record);
         assert.equal(record.executed, true);
+        document.removeEventListener(
+          'ecs.changeSetModified', changeSetModifiedListener);
+        document.removeEventListener(
+          'ecs.taskComplete', taskCompleteListener);
       });
     });
 
@@ -436,8 +448,8 @@ describe('Environment Change Set', function() {
       it('loops through the changeSet calling execute on them', function() {
         var execute = sinon.stub(ecs, '_execute');
         this._cleanups.push(execute.restore);
-        var fire = sinon.stub(ecs, 'fire');
-        this._cleanups.push(fire.restore);
+        const commitListener = sinon.stub();
+        document.addEventListener('ecs.commit', commitListener);
         var changeSet = {
           'service-568': {
             index: 0,
@@ -451,10 +463,10 @@ describe('Environment Change Set', function() {
         ecs.commit(envObj);
         assert.equal(execute.callCount, 1);
         assert.deepEqual(execute.lastCall.args[1], changeSet['service-568']);
-        assert.equal(fire.callCount, 1);
-        var fireArgs = fire.lastCall.args;
-        assert.equal(fireArgs[0], 'commit');
-        assert.equal(fireArgs[1], changeSet['service-568']);
+        assert.equal(commitListener.callCount, 1);
+        assert.equal(
+          commitListener.args[0][0].detail, changeSet['service-568']);
+        document.removeEventListener('ecs.commit', commitListener);
       });
 
       it('commits one index at a time', function() {
@@ -487,12 +499,16 @@ describe('Environment Change Set', function() {
       });
 
       it('passes the commit index through an event', function() {
-        var fire = sinon.stub(ecs, 'fire');
-        this._cleanups.push(fire.restore);
+        const currentCommitFinishedListener = sinon.stub();
+        document.addEventListener(
+          'ecs.currentCommitFinished', currentCommitFinishedListener);
         ecs.levelRecordCount = 0;
         ecs._waitOnLevel(null, 0);
-        assert.equal(fire.lastCall.args[0], 'currentCommitFinished');
-        assert.deepEqual(fire.lastCall.args[1], {index: 0});
+        assert.equal(currentCommitFinishedListener.callCount, 1);
+        assert.deepEqual(
+          currentCommitFinishedListener.args[0][0].detail, {index: 0});
+        document.removeEventListener(
+          'ecs.currentCommitFinished', currentCommitFinishedListener);
       });
     });
   });

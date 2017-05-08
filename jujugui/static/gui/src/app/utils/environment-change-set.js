@@ -139,7 +139,7 @@ YUI.add('environment-change-set', function(Y) {
         command: command,
         timestamp: Date.now()
       };
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
       this._wrapCallback(this.changeSet[key]);
       return key;
     },
@@ -154,7 +154,7 @@ YUI.add('environment-change-set', function(Y) {
       delete this.changeSet[id];
       // We need to fire this event so other items in the application know this
       // list has changed.
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
     },
 
     /**
@@ -178,17 +178,19 @@ YUI.add('environment-change-set', function(Y) {
           //  under. In most cases this will be `env`.
           result = callback.apply(this, arguments);
         }
-        self.fire('taskComplete', {
-          id: record.id,
-          record: record,
-          result: arguments
-        });
+        document.dispatchEvent(new CustomEvent('ecs.taskComplete', {
+          detail: {
+            id: record.id,
+            record: record,
+            result: arguments
+          }
+        }));
         // Signal that this record has been completed by decrementing the
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
         delete self.changeSet[record.id];
         self._updateChangesetFromResults(record, arguments);
-        self.fire('changeSetModified');
+        document.dispatchEvent(new Event('ecs.changeSetModified'));
         return result;
       };
     },
@@ -342,7 +344,9 @@ YUI.add('environment-change-set', function(Y) {
       this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
         record = this.changeSet[changeSetRecord.key];
         this._execute(env, record);
-        this.fire('commit', record);
+        document.dispatchEvent(new CustomEvent('ecs.commit', {
+          detail: record
+        }));
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
@@ -369,7 +373,11 @@ YUI.add('environment-change-set', function(Y) {
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
-          this.fire('currentCommitFinished', {index: currentIndex});
+          document.dispatchEvent(new CustomEvent('ecs.currentCommitFinished', {
+            detail: {
+              index: currentIndex
+            }
+          }));
         }
       }
     },
@@ -453,7 +461,7 @@ YUI.add('environment-change-set', function(Y) {
       });
       this.currentIndex += 1;
       this.currentCommit = [];
-      this.fire('changeSetModified');
+      document.dispatchEvent(new Event('ecs.changeSetModified'));
       this.get('db').fireEvent('update');
     },
 

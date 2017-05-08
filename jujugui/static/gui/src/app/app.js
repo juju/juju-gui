@@ -365,8 +365,11 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
-      ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
+      this.renderDeploymentBarListener = this._renderDeploymentBar.bind(this);
+      document.addEventListener(
+        'ecs.changeSetModified', this.renderDeploymentBarListener);
+      document.addEventListener(
+        'ecs.currentCommitFinished', this.renderDeploymentBarListener);
 
       if (this.get('gisf')) {
         document.body.classList.add('u-is-beta');
@@ -2474,6 +2477,10 @@ YUI.add('juju-gui', function(Y) {
       });
       document.removeEventListener('update', this.bound_on_database_changed);
       document.removeEventListener('initiateDeploy', this._onInitiateDeploy);
+      document.removeEventListener(
+        'ecs.changeSetModified', this.renderDeploymentBarListener);
+      document.removeEventListener(
+        'ecs.currentCommitFinished', this.renderDeploymentBarListener);
     },
 
     /**
