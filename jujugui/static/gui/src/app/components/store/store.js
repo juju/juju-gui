@@ -25,6 +25,7 @@ YUI.add('store', function() {
       apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstoreURL: React.PropTypes.string.isRequired,
+      gisf: React.PropTypes.bool.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string
     },
@@ -221,17 +222,47 @@ YUI.add('store', function() {
       @return {Object} The contents of the section
     */
     _featuredSection: function() {
+      let kubernetesButton = (<a target="_blank"
+          href="https://jujucharms.com/kubernetes"
+          className="button--inline-neutral">
+            Find out more
+        </a>);
+      let openstackButton = (<a target="_blank"
+          href="https://jujucharms.com/openstack"
+          className="button--inline-neutral">
+            Find out more
+        </a>);
+      let bigdataButton = (<a target="_blank"
+          href="https://jujucharms.com/big-data"
+          className="button--inline-neutral">
+            Find out more
+        </a>);
+
+      if (!this.props.gisf) {
+        kubernetesButton = (<span onClick={this._handleSearchClick}
+          data-query="kubernetes"
+          className="button--inline-neutral">
+          View
+        </span>);
+        openstackButton = (<span onClick={this._handleSearchClick}
+            data-query="openstack"
+            className="button--inline-neutral">
+            View
+          </span>);
+        bigdataButton = (<span onClick={this._handleSearchClick}
+            data-query="hadoop"
+            className="button--inline-neutral">
+            View
+          </span>);
+      }
+
       return (<div className="row equal-height">
           <div className="box box--kubernetes align-center four-col">
               <img src="https://assets.ubuntu.com/v1/2847e80a-k8-image.png"
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>Kubernetes</h2>
-                  <a target="_blank"
-                    href="https://jujucharms.com/kubernetes"
-                    className="button--inline-neutral">
-                      Find out more
-                  </a>
+                  {kubernetesButton}
               </div>
           </div>
           <div className="box box--openstack align-center four-col">
@@ -239,11 +270,7 @@ YUI.add('store', function() {
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>OpenStack</h2>
-                  <a target="_blank"
-                    href="https://jujucharms.com/openstack"
-                    className="button--inline-neutral">
-                      Find out more
-                  </a>
+                  {openstackButton}
               </div>
           </div>
           <div
@@ -253,12 +280,7 @@ YUI.add('store', function() {
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>Big Data</h2>
-
-                  <a target="_blank"
-                    href="https://jujucharms.com/big-data"
-                    className="button--inline-neutral">
-                      Find out more
-                  </a>
+                  {bigdataButton}
               </div>
           </div>
       </div>);

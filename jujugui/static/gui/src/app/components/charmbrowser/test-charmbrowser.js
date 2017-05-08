@@ -64,6 +64,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         getModelName={sinon.stub()}
+        gisf={true}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
@@ -125,6 +126,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         getModelName={sinon.stub()}
+        gisf={true}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
@@ -151,6 +153,7 @@ describe('Charmbrowser', function() {
               charmstoreURL="http://1.2.3.4/"
               changeState={
                 output.props.children.props.children.props.changeState}
+              gisf={true}
               setPageTitle={setPageTitle} />
           </div>
         </juju.components.Panel>);
@@ -193,6 +196,7 @@ describe('Charmbrowser', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        gisf={true}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
@@ -277,6 +281,7 @@ describe('Charmbrowser', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        gisf={true}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
@@ -346,6 +351,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         getModelName={sinon.stub()}
+        gisf={true}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.stub()}
