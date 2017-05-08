@@ -104,7 +104,9 @@ YUI.add('deployment-flow', function() {
     },
 
     componentWillMount: function() {
-      this._getAgreements();
+      if (this.state.loggedIn) {
+        this._getAgreements();
+      }
     },
 
     componentDidMount: function() {
@@ -647,6 +649,7 @@ YUI.add('deployment-flow', function() {
       const callback = err => {
         if (!err) {
           this.setState({loggedIn: true});
+          this._getAgreements();
         }
       };
       return (
