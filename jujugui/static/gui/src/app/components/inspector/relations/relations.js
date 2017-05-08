@@ -148,7 +148,7 @@ YUI.add('inspector-relations', function() {
         gui: {
           inspector: {
             activeComponent: 'relation',
-            unit: index
+            relation: index
           }
         }
       });
