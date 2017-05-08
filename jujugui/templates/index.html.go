@@ -49,9 +49,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          below.
     -->
     <script src="{{.configURL}}"></script>
-	<!-- Load the version file to be displayed in the GUI.
-	--->
-	<script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
+    <script type="text/javascript">
+        window.GUI_VERSION = {'version': '', 'commit': ''};
+    </script
+    <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <link rel="shortcut icon" href="{{.staticURL}}/static/gui/build/app/favicon.ico">
     <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/juju-gui.css">
 

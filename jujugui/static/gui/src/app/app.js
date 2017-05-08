@@ -1790,11 +1790,10 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _displayShortcutsModal: function() {
-      const guiVersion = GUI_VERSION; // eslint-disable-line no-undef
       ReactDOM.render(
         <window.juju.components.ModalShortcuts
           closeModal={this._clearShortcutsModal.bind(this)}
-          guiVersion={guiVersion.version}
+          guiVersion={window.GUI_VERSION.version}
           keybindings={this.keybindings} />,
         document.getElementById('modal-shortcuts'));
     },
