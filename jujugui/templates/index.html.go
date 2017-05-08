@@ -51,7 +51,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="{{.configURL}}"></script>
 	<!-- Load the version file to be displayed in the GUI.
 	--->
-	<script src="{{.staticURL}}/static/gui/build/app/assets/javascripts/version.js"></script>
+	<script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <link rel="shortcut icon" href="{{.staticURL}}/static/gui/build/app/favicon.ico">
     <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/juju-gui.css">
 
