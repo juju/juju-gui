@@ -62,6 +62,11 @@ describe('ModalSortcuts', function() {
           </div>
         </div>
       </div>
+      <div className="twelve-col">
+        <div className="content">
+          Juju GUI version 1.2.3
+        </div>
+      </div>
     </div>);
   }
 
@@ -70,6 +75,7 @@ describe('ModalSortcuts', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModalShortcuts
         closeModal={close}
+        guiVersion="1.2.3"
         keybindings={keybindings} />, true);
     let output = renderer.getRenderOutput();
     let expected = visibleRender(close);

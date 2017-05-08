@@ -145,6 +145,7 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js $(NODE_MODULES
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
+	echo 'const GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
 		-not -name "js-macaroon*" \
