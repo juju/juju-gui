@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('State', () => {
+fdescribe('State', () => {
 
   const specialStateTests = [{
     path: 'http://abc.com:123/?deploy-target=cs:ghost-4',
@@ -157,6 +157,15 @@ describe('State', () => {
       hash: 'mustard',
       search: {
         series: 'yakkety'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/ssl/u/hatch/mymodel',
+    state: {
+      user: 'hatch/mymodel',
+      search: {
+        text: 'ssl'
       }
     },
     error: null
@@ -608,9 +617,9 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(state._parseSearch([], {}, {}), {});
+      assert.deepEqual(state._parseSearch('', {}, {}), {});
       assert.deepEqual(
-        state._parseSearch(['k8s', 'core'], {}, {}), {
+        state._parseSearch('k8s/core', {}, {}), {
           search: {
             text: 'k8s/core'
           }
@@ -622,10 +631,10 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(state._parseSearch([], {}, {}),{});
+      assert.deepEqual(state._parseSearch('', {}, {}),{});
       assert.deepEqual(
         state._parseSearch(
-          ['k8s', 'core'], {tags: 'ops,db', series: 'yakkety'}, {}), {
+          'k8s/core', {tags: 'ops,db', series: 'yakkety'}, {}), {
             search: {
               series: 'yakkety',
               tags: ['ops', 'db'],

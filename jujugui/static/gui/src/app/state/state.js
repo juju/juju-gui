@@ -525,9 +525,17 @@ const State = class State {
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
     if (!invalidParts(parts) && parts[0] === PATH_DELIMETERS.get('search')) {
-      state = this._parseSearch(parts.splice(1), query, state);
-      // If we have a search path in the URL then we can ignore everything else.
-      return {error, state};
+      parts.splice(0, 1); // Remove the search path delimiter from the array.
+      // Because the search query goes at the root, any searches performed from
+      // active models will also include the user portion of the url. This
+      // needs to only grab the query portion.
+      const userIndex = parts.indexOf(PATH_DELIMETERS.get('user'));
+      const urlPartsLength = parts.length;
+      let far = urlPartsLength;
+      if (userIndex > -1) {
+        far = userIndex;
+      }
+      state = this._parseSearch(parts.splice(0, far).join('/'), query, state);
     }
     // We should be done parsing the parts and query now so if there are
     // no more valid parts we can dump out early.
@@ -756,16 +764,16 @@ const State = class State {
   /**
     Parses the search portion of the URL without the
     PATH_DELIMETERS.get('search') key value.
-    @param {Array} urlParts - The URL path split into parts.
+    @param {String} text - The search query portion of the url.
     @param {Object} query - The query portion of the path.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the search value, if any.
   */
-  _parseSearch(urlParts, query, state) {
-    if (urlParts.length > 0) {
+  _parseSearch(text, query, state) {
+    if (text) {
       state.search = {
-        text: urlParts.join('/')
+        text
       };
     }
     if (query) {
