@@ -620,8 +620,8 @@ YUI.add('juju-gui', function(Y) {
         const state = this.state;
         const current = this.state.current;
         this.anonymousMode = false;
-        if (evt.err) {
-          this._renderLogin(evt.err);
+        if (evt.detail && evt.detail.err) {
+          this._renderLogin(evt.detail.err);
           return;
         }
         this._renderUserMenu();
@@ -2650,8 +2650,8 @@ YUI.add('juju-gui', function(Y) {
         // it can't get fired again.
         document.removeEventListener('login', this.boundOnLogin);
       }
-      if (evt.err) {
-        this._renderLogin(evt.err);
+      if (evt.detail && evt.detail.err) {
+        this._renderLogin(evt.detail.err);
         return;
       }
       // The login was a success.
