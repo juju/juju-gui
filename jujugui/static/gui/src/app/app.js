@@ -463,7 +463,8 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
       // Once the user logs in, we need to redraw.
-      this.env.after('login', this.onLogin, this);
+      this.onLoginHandler = this.onLogin.bind(this);
+      document.addEventListener('login', this.onLoginHandler);
 
       // Once we know about MAAS server, update the header accordingly.
       let maasServer = this.env.get('maasServer');
@@ -615,7 +616,7 @@ YUI.add('juju-gui', function(Y) {
       const external = this._getExternalAuth();
       this.user.controller = { user, password, macaroons, external };
 
-      controllerAPI.after('login', evt => {
+      this.controllerLoginHandler = evt => {
         const state = this.state;
         const current = this.state.current;
         this.anonymousMode = false;
@@ -710,7 +711,8 @@ YUI.add('juju-gui', function(Y) {
           }
           state.changeState(newState);
         }
-      });
+      };
+      document.addEventListener('login', this.controllerLoginHandler);
 
       controllerAPI.after('connectedChange', evt => {
         if (!evt.newVal) {
@@ -2493,6 +2495,11 @@ YUI.add('juju-gui', function(Y) {
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.removeEventListener(
         'ecs.currentCommitFinished', this.renderDeploymentBarListener);
+      document.removeEventListener('login', this.onLoginHandler);
+      if (this.boundOnLogin) {
+        document.removeEventListener('login', this.boundOnLogin);
+      }
+      document.removeEventListener('login', this.controllerLoginHandler);
     },
 
     /**
@@ -2638,6 +2645,11 @@ YUI.add('juju-gui', function(Y) {
       @private
     */
     onLogin: function(evt) {
+      if (this.boundOnLogin) {
+        // We want this event only fire once, so if it exists then remove it so
+        // it can't get fired again.
+        document.removeEventListener('login', this.boundOnLogin);
+      }
       if (evt.err) {
         this._renderLogin(evt.err);
         return;
@@ -2727,7 +2739,7 @@ YUI.add('juju-gui', function(Y) {
         };
       };
       const credentials = this.user.model;
-      const onLogin = function(callback) {
+      const onLogin = callback => {
         this.env.loading = false;
         if (callback) {
           callback(this.env);
@@ -2735,7 +2747,8 @@ YUI.add('juju-gui', function(Y) {
       };
       // Delay the callback until after the env login as everything should be
       // set up by then.
-      this.env.onceAfter('login', onLogin.bind(this, callback), this);
+      this.boundOnLogin = onLogin.bind(this, callback);
+      document.addEventListener('login', this.boundOnLogin);
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();

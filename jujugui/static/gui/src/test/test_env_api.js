@@ -384,10 +384,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('fires a login event on successful login', function() {
         let fired = false;
         let err;
-        env.on('login', evt => {
+        const listener = evt => {
           fired = true;
           err = evt.err;;
-        });
+        };
+        document.addEventListener('login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({
@@ -400,6 +401,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.strictEqual(fired, true);
         assert.strictEqual(err, null);
+        document.removeEventListener('login', listener);
       });
 
       it('resets failed markers on successful login', function() {
@@ -420,15 +422,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('fires a login event on failed login', function() {
         let fired = false;
         let err;
-        env.on('login', evt => {
+        const listener = evt => {
           fired = true;
           err = evt.err;;
-        });
+        };
+        document.addEventListener('login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
         assert.strictEqual(fired, true);
         assert.strictEqual(err, 'Invalid user or password');
+        document.removeEventListener('login', listener);
       });
 
       it('avoids sending login requests without credentials', function() {
@@ -1097,12 +1101,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
-        const handler = env.on('login', evt => {
+        const listener = evt => {
           assert.deepEqual(evt.err, 'cannot upload files anonymously');
-          handler.detach();
           done();
-        });
+        };
+        document.addEventListener('login', listener);
         env.uploadLocalCharm();
+        document.removeEventListener('login', listener);
       });
 
       it('uses the stored webHandler to perform requests', function() {

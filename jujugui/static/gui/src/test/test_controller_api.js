@@ -233,10 +233,11 @@ describe('Controller API', function() {
     it('fires a login event on successful login', function() {
       let fired = false;
       let err;
-      controllerAPI.on('login', evt => {
+      const listener = evt => {
         fired = true;
         err = evt.err;
-      });
+      };
+      document.addEventListener('login', listener);
       controllerAPI.login();
       // Assume login to be the first request.
       conn.msg({
@@ -249,6 +250,7 @@ describe('Controller API', function() {
       });
       assert.strictEqual(fired, true);
       assert.strictEqual(err, null);
+      document.removeEventListener('login', listener);
     });
 
     it('resets failed markers on successful login', function() {
@@ -269,15 +271,17 @@ describe('Controller API', function() {
     it('fires a login event on failed login', function() {
       let fired = false;
       let err;
-      controllerAPI.on('login', evt => {
+      const listener = evt => {
         fired = true;
         err = evt.err;
-      });
+      };
+      document.addEventListener('login', listener);
       controllerAPI.login();
       // Assume login to be the first request.
       conn.msg({'request-id': 1, error: 'Invalid user or password'});
       assert.strictEqual(fired, true);
       assert.strictEqual(err, 'Invalid user or password');
+      document.removeEventListener('login', listener);
     });
 
     it('avoids sending login requests without credentials', function() {

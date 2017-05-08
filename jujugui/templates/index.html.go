@@ -354,7 +354,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
           const model = app.controllerAPI ? app.controllerAPI : app.env;
-          model.once('login', () => messageRotator.stop());
+          const stopHandler = () => {
+            document.removeEventListener('login', stopHandler);
+            messageRotator.stop()
+          };
+          document.addEventListener('login', stopHandler);
         });
 
       };
