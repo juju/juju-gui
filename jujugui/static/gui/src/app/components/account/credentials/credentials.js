@@ -26,6 +26,7 @@ YUI.add('account-credentials', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
+      controllerIsReady: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
@@ -275,6 +276,7 @@ YUI.add('account-credentials', function() {
              <juju.components.DeploymentCloud
                acl={this.props.acl}
                cloud={this.state.cloud}
+               controllerIsReady={this.props.controllerIsReady}
                listClouds={this.props.listClouds}
                getCloudProviderDetails={this.props.getCloudProviderDetails}
                setCloud={this._setCloud} />

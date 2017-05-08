@@ -68,7 +68,7 @@ const createDeploymentFlow = (props = {}) => {
     changes: {},
     changesFilterByParent: sinon.stub(),
     charmsGetById: charmsGetById,
-    controllerIsAvailable: sinon.stub(),
+    controllerIsReady: sinon.stub(),
     createToken: sinon.stub(),
     createUser: sinon.stub(),
     ddData: {},
@@ -178,7 +178,7 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentCloud
             acl={props.acl}
             cloud={null}
-            controllerIsAvailable={props.controllerIsAvailable}
+            controllerIsReady={props.controllerIsReady}
             listClouds={props.listClouds}
             getCloudProviderDetails={props.getCloudProviderDetails}
             setCloud={instance._setCloud} />
@@ -193,7 +193,7 @@ describe('DeploymentFlow', function() {
             addNotification={props.addNotification}
             credential={undefined}
             cloud={null}
-            controllerIsAvailable={props.controllerIsAvailable}
+            controllerIsReady={props.controllerIsReady}
             getCloudProviderDetails={props.getCloudProviderDetails}
             editable={true}
             generateCloudCredentialName={props.generateCloudCredentialName}

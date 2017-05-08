@@ -26,7 +26,7 @@ YUI.add('deployment-cloud', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
-      controllerIsAvailable: React.PropTypes.func.isRequired,
+      controllerIsReady: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       setCloud: React.PropTypes.func.isRequired
@@ -43,7 +43,7 @@ YUI.add('deployment-cloud', function() {
       const listClouds = () => {
         // It is possible that the controller hasn't yet connected so
         // bounce until it's connected then fetch the clouds list.
-        if (!this.props.controllerIsAvailable()) {
+        if (!this.props.controllerIsReady()) {
           setTimeout(listClouds, 500);
           return;
         }

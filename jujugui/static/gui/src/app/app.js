@@ -1097,6 +1097,7 @@ YUI.add('juju-gui', function(Y) {
             this.payment && this.payment.addBillingAddress.bind(this.payment)}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
+          controllerIsReady={this._controllerIsReady.bind(this)}
           createCardElement={
             this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createPaymentMethod={
@@ -1284,10 +1285,6 @@ YUI.add('juju-gui', function(Y) {
         const credentials = this.user.controller;
         return credentials ? credentials.user : undefined;
       };
-      const controllerIsAvailable = () =>
-        this.controllerAPI &&
-        this.controllerAPI.get('connected') &&
-        this.controllerAPI.userIsAuthenticated;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const charmstore = this.get('charmstore');
@@ -1302,7 +1299,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
-          controllerIsAvailable={controllerIsAvailable}
+          controllerIsReady={this._controllerIsReady.bind(this)}
           createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
           createCardElement={
             this.stripe && this.stripe.createCardElement.bind(this.stripe)}
@@ -1392,6 +1389,20 @@ YUI.add('juju-gui', function(Y) {
           modelCommitted={this.env.get('connected')}
           sendAnalytics={this.sendAnalytics} />,
         document.getElementById('deployment-bar-container'));
+    },
+
+    /**
+      Report whether the controller API connection is ready, connected and
+      authenticated.
+
+      @return {Boolean} Whether the controller is ready.
+    */
+    _controllerIsReady: function() {
+      return !!(
+        this.controllerAPI &&
+        this.controllerAPI.get('connected') &&
+        this.controllerAPI.userIsAuthenticated
+      );
     },
 
     /**

@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('AccountCredentials', () => {
-  let acl, getCloudCredentialNames, getCloudProviderDetails, listClouds;
+  let acl, controllerIsReady, getCloudCredentialNames, getCloudProviderDetails,
+      listClouds;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +31,7 @@ describe('AccountCredentials', () => {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    controllerIsReady = sinon.stub().withArgs().returns(true);
     getCloudProviderDetails = sinon.stub();
     getCloudProviderDetails.withArgs('aws').returns({title: 'Amazon'});
     getCloudProviderDetails.withArgs('gce').returns({title: 'Google'});
@@ -53,6 +55,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -92,6 +95,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -177,6 +181,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -220,6 +225,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -245,6 +251,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -268,6 +275,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -292,6 +300,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -318,6 +327,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -389,6 +399,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -408,6 +419,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -441,6 +453,7 @@ describe('AccountCredentials', () => {
                <juju.components.DeploymentCloud
                  acl={acl}
                  cloud={null}
+                 controllerIsReady={controllerIsReady}
                  listClouds={listClouds}
                  getCloudProviderDetails={getCloudProviderDetails}
                  setCloud={instance._setCloud} />
@@ -465,6 +478,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -498,6 +512,7 @@ describe('AccountCredentials', () => {
             <juju.components.DeploymentCloud
               acl={acl}
               cloud="aws"
+              controllerIsReady={controllerIsReady}
               listClouds={listClouds}
               getCloudProviderDetails={getCloudProviderDetails}
               setCloud={instance._setCloud} />
@@ -531,6 +546,7 @@ describe('AccountCredentials', () => {
       <juju.components.AccountCredentials
         acl={acl}
         addNotification={addNotification}
+        controllerIsReady={controllerIsReady}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
