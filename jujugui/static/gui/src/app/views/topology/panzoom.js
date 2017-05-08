@@ -230,7 +230,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
       const point = evt.point,
           topo = this.get('component'),
           scale = topo.get('scale'),
-          size = [window.innerWidth, window.innerHeight];
+          size = [window.innerWidth, window.innerHeight],
+          translate = topo.get('translate');
       const offset = topo.zoom.translate();
       const screenWidth = size[0];
       const screenHeight = size[1];
@@ -238,15 +239,44 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // screen area.
       const pointX = (point[0] * scale) + offset[0];
       const pointY = (point[1] * scale) + offset[1];
-      // Find out if the points we have are within the screen rectangle.
-      const withinScreen = pointX > 0 && pointX < screenWidth && pointY > 0 &&
-        pointY < screenHeight;
-      // If the object is not within the screen the move the screen so it is
-      // visible.
-      if (!withinScreen) {
+      // Find out if the points we have are within the screen rectangle
+      // (accounting for the size of the app circle).
+      const circleSize = 200 * scale;
+      // Set an extra space so the circles don't appear at the very edge.
+      let newX = translate[0];
+      let newY = translate[1];
+      if (evt.center) {
+        // If we do actually want to center the screen on the point then figure
+        // out the new points.
+        const newXY = point.map((d, i) => ((0 - d) * scale) + (size[i] / 2));
+        newX = newXY[0];
+        newY = newXY[1];
+      } else {
+        // If the point is outside the screen or the service is overlapping the
+        // edge then move the circle to just within the viewport.
+        const space = 40;
+        if (pointX < 0) {
+          // If the circle is outside the left edge of the screen move it.
+          newX = (translate[0] - pointX) + space;
+        } else if (pointX > screenWidth - circleSize) {
+          // If the circle is outside the right edge of the screen move it.
+          newX = translate[0] +
+            ((screenWidth - (pointX + circleSize)) - space);
+        }
+        if (pointY < 0) {
+          // If the circle is outside the top edge of the screen move it.
+          newY = (translate[1] - pointY) + space;
+        } else if (pointY > screenHeight - circleSize) {
+          // If the circle is outside the bottom edge of the screen move it.
+          newY = translate[1] +
+            ((screenHeight - (pointY + circleSize)) - space);
+        }
+      }
+      // If there are new coordinates then pan to them.
+      if (newX !== translate[0] || newY !== translate[1]) {
         this.rescale({
           scale: scale,
-          translate: point.map((d, i) => ((0 - d) * scale) + (size[i] / 2))
+          translate: [newX, newY]
         });
       }
     }
