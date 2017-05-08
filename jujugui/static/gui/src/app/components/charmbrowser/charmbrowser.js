@@ -36,6 +36,7 @@ YUI.add('charmbrowser-component', function() {
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       getModelName: React.PropTypes.func.isRequired,
+      gisf: React.PropTypes.bool.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
@@ -141,6 +142,7 @@ YUI.add('charmbrowser-component', function() {
           activeChild = (
               <juju.components.Store
                 changeState={changeState}
+                gisf={this.props.gisf}
                 staticURL={this.props.staticURL}
                 charmstoreURL={this.props.charmstoreURL}
                 apiVersion={this.props.apiVersion}

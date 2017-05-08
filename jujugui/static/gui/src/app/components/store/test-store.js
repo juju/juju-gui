@@ -38,10 +38,11 @@ describe('Store', function() {
       <juju.components.Store
         changeState={changeState}
         charmstoreURL={charmstoreURL}
+        gisf={true}
         apiVersion={apiVersion} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.children[0].props.children.length, 3);
-  }),
+  });
 
   it('can render big data feature in the correct place', function() {
     var changeState = sinon.stub();
@@ -49,7 +50,8 @@ describe('Store', function() {
       <juju.components.Store
         apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/" />, true);
+        charmstoreURL="http://1.2.3.4/"
+        gisf={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = 'Container management';
     assert.equal(
@@ -68,7 +70,8 @@ describe('Store', function() {
       <juju.components.Store
         changeState={changeState}
         charmstoreURL={charmstoreURL}
-        apiVersion={apiVersion} />, true);
+        apiVersion={apiVersion}
+        gisf={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (<div className="row row--write-your-own">
             <div className="inner-wrapper clearfix">
@@ -98,7 +101,8 @@ describe('Store', function() {
       <juju.components.Store
         apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/" />);
+        charmstoreURL="http://1.2.3.4/"
+        gisf={true}/>);
     var entityList = output.props.children[2].props.children.props.children[2];
     var entityItem = entityList.props.children[0].props.children;
     entityItem.props.onClick({
@@ -126,7 +130,8 @@ describe('Store', function() {
       <juju.components.Store
         apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/" />);
+        charmstoreURL="http://1.2.3.4/"
+        gisf={true} />);
     var row = output.props.children[1].props.children;
     var tagList = row.props.children[2].props.children;
     var searchItem = tagList.props.children[0].props.children[0];
@@ -143,5 +148,20 @@ describe('Store', function() {
         text: ''
       }
     });
+  });
+
+  it('shows different hero links in gijoe', () => {
+    var changeState = sinon.stub();
+    var charmstoreURL = 'http://1.2.3.4/';
+    var apiVersion = 'v5';
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Store
+        changeState={changeState}
+        charmstoreURL={charmstoreURL}
+        gisf={false}
+        apiVersion={apiVersion} />, true);
+    var output = renderer.getRenderOutput();
+    assert.isDefined(output.props.children[0].props.
+      children[0].props.children[1].props.children[1].props.onClick);
   });
 });
