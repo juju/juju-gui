@@ -18,6 +18,7 @@
   }
 
   &__empty {
+    padding-top: 20px;
     text-align: center;
 
     .clearfix {
@@ -25,17 +26,17 @@
     }
 
     &-image {
-      margin: 0 0 40px;
+      margin: 0 0 30px;
     }
 
     &-title {
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     &-text {
-      max-width: 360px;
-      margin: 0 auto;
-      color: $dark-warm-grey;
+      max-width: 500px;
+      margin: 0 auto 30px auto;
+      font-size: 22px;
     }
   }
 
