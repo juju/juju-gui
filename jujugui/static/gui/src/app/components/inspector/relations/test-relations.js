@@ -130,6 +130,36 @@ describe('InspectorRelations', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can show relation details on click', function() {
+    var changeState = sinon.stub();
+    var relations = [{
+      id: 'mysql',
+      near: {
+        name: 'mysql',
+        role: 'primary'
+      },
+      far: {
+        name: 'django',
+        serviceName: 'django'
+      },
+      interface: 'postgresql',
+      scope: 'global'
+    }];
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorRelations
+          acl={acl}
+          changeState={changeState}
+          destroyRelations={sinon.stub()}
+          service={service}
+          serviceRelations={relations} />, true);
+    var output = renderer.getRenderOutput();
+    output.props.children[1].props.children[1].props.action();
+    assert.deepEqual(changeState.args[0][0].gui.inspector, {
+      activeComponent: 'relation',
+      relation: '0'
+    });
+  });
+
   it('can disable the controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var changeState = sinon.stub();
