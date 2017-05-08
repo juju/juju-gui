@@ -1793,6 +1793,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.ModalShortcuts
           closeModal={this._clearShortcutsModal.bind(this)}
+          guiVersion={window.GUI_VERSION.version}
           keybindings={this.keybindings} />,
         document.getElementById('modal-shortcuts'));
     },

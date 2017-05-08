@@ -95,6 +95,7 @@ describe('application hotkeys', function() {
   };
 
   it('should listen for "?" events', function() {
+    window.GUI_VERSION = {version: '1.2.3', commit: '123abc]'};
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
     keyboard.dispatchEventsForKeystroke(keystroke, container);
 

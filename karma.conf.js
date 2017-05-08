@@ -19,6 +19,7 @@ module.exports = function(config) {
     // files.
     files: [
       'node_modules/keysim/dist/keysim.js',
+      'jujugui/static/gui/build/app/assets/javascripts/version.js',
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',

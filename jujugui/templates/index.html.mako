@@ -49,6 +49,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          below.
     -->
     <script src="${config_url}"></script>
+    <script type="text/javascript">
+        window.GUI_VERSION = {'version': '', 'commit': ''};
+    </script>
+    <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <link rel="shortcut icon" href="${static_url}/static/gui/build/app/favicon.ico">
     <link rel="stylesheet" href="${convoy_url}?app/assets/stylesheets/normalize.css&app/assets/juju-gui.css">
 

@@ -25,6 +25,7 @@ YUI.add('modal-shortcuts', function() {
 
     propTypes: {
       closeModal: React.PropTypes.func.isRequired,
+      guiVersion: React.PropTypes.string.isRequired,
       keybindings: React.PropTypes.object.isRequired
     },
 
@@ -84,6 +85,11 @@ YUI.add('modal-shortcuts', function() {
           <div className="twelve-col">
             <div className="content">
               {this._generateList()}
+            </div>
+          </div>
+          <div className="twelve-col">
+            <div className="content">
+              Juju GUI version {this.props.guiVersion}
             </div>
           </div>
         </div>
