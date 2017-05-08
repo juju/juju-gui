@@ -205,7 +205,9 @@ YUI.add('juju-controller-api', function(Y) {
         this.get('user').controller = null;
         this.failedAuthentication = true;
       }
-      this.fire('login', {err: data.error || null});
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: data.error || null}
+      }));
     },
 
     /**
@@ -245,7 +247,9 @@ YUI.add('juju-controller-api', function(Y) {
     login: function() {
       // If the user is already authenticated there is nothing to do.
       if (this.userIsAuthenticated) {
-        this.fire('login', {err: null});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: null}
+        }));
         return;
       }
       if (this.pendingLoginResponse) {
@@ -253,7 +257,9 @@ YUI.add('juju-controller-api', function(Y) {
       }
       var credentials = this.get('user').controller;
       if (!credentials.user || !credentials.password) {
-        this.fire('login', {err: 'invalid username or password'});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: 'invalid username or password'}
+        }));
         return;
       }
       this._send_rpc({

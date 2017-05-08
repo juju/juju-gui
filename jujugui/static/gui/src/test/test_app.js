@@ -735,7 +735,7 @@ describe('App', function() {
         sinon.stub(app.state, 'changeState');
         sinon.stub(app, '_sendGISFPostBack');
         sinon.stub(app, '_ensureLoggedIntoCharmstore');
-        app.controllerAPI.fire('login');
+        document.dispatchEvent(new Event('login'));
         assert.equal(app._sendGISFPostBack.callCount, 1);
         assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
       });
@@ -2284,25 +2284,33 @@ describe('App', function() {
       // Set a model UUID so that the login subscriber execution stops as soon
       // as possible.
       app.env.set('modelUUID', 'uuid');
-      app.controllerAPI.after('login', evt => {
+      const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(
           app._renderUserMenu.called, true, '_renderUserMenu');
         done();
-      });
-      app.controllerAPI.fire('login', {err: null});
+      };
+      document.addEventListener('login', listener);
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: null}
+      }));
+      document.removeEventListener('login', listener);
     });
 
     it('is disabled after failed login', done => {
       app.anonymousMode = true;
       app.state = {current: {root: null}};
       app._renderLogin = sinon.stub();
-      app.controllerAPI.after('login', evt => {
+      const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
         done();
-      });
-      app.controllerAPI.fire('login', {err: 'bad wolf'});
+      };
+      document.addEventListener('login', listener);
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: 'bad wolf'}
+      }));
+      document.removeEventListener('login', listener);
     });
   });
 

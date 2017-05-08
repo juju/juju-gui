@@ -558,7 +558,9 @@ YUI.add('juju-env-api', function(Y) {
       // Only fire login if this is not a redirect error as we will come back
       // here once the redirection is made.
       if (!utils.isRedirectError(data.error)) {
-        this.fire('login', {err: data.error || null});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: data.error || null}
+        }));
       }
     },
 
@@ -599,7 +601,9 @@ YUI.add('juju-env-api', function(Y) {
     login: function() {
       // If the user is already authenticated there is nothing to do.
       if (this.userIsAuthenticated) {
-        this.fire('login', {err: null});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: null}
+        }));
         return;
       }
       if (this.pendingLoginResponse) {
@@ -607,7 +611,9 @@ YUI.add('juju-env-api', function(Y) {
       }
       const credentials = this.get('user').model;
       if (!credentials.user || !credentials.password) {
-        this.fire('login', {err: 'invalid username or password'});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: 'invalid username or password'}
+        }));
         return;
       }
       this._send_rpc({
@@ -937,7 +943,9 @@ YUI.add('juju-env-api', function(Y) {
     uploadLocalCharm: function(file, series, progress, callback) {
       // Ensure that they are logged in and authenticated before uploading.
       if (!this.userIsAuthenticated) {
-        this.fire('login', {err: 'cannot upload files anonymously'});
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: 'cannot upload files anonymously'}
+        }));
         return;
       }
       var credentials = this.get('user').model;
