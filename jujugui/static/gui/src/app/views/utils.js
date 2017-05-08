@@ -1350,7 +1350,7 @@ YUI.add('juju-view-utils', function(Y) {
     var buttons = [{
       title: 'Cancel',
       action: utils._hidePopup.bind(this),
-      type: 'base'
+      type: 'inline-neutral'
     }, {
       title: 'Continue',
       action: action,

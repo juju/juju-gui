@@ -134,4 +134,50 @@ describe('Notification', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('renders with a blocking div', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Notification
+        content={<span></span>}
+        isBlocking={true}
+        />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="p-notification__blocker">
+        <div className="p-notification">
+          <p className="p-notification__response">
+            <span />
+          </p>
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('renders with a blocking div and is clickable', () => {
+    const dismiss = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Notification
+        content={<span></span>}
+        dismiss={dismiss}
+        isBlocking={true}
+        />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="p-notification__blocker"
+        onClick={dismiss}>
+        <div className="p-notification">
+          <p className="p-notification__response">
+            <span />
+            <button className="p-notification__action" onClick={dismiss}>
+              <window.juju.components.SvgIcon
+                name="close_16"
+                size="16" />
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
 });

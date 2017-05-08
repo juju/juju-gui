@@ -32,6 +32,7 @@ YUI.add('notification', function() {
       content: React.PropTypes.object.isRequired,
       dismiss: React.PropTypes.func,
       extraClasses: React.PropTypes.string,
+      isBlocking: React.PropTypes.bool,
       // Types: positive, caution, negative
       type: React.PropTypes.string
     },
@@ -60,27 +61,39 @@ YUI.add('notification', function() {
       @return {object} React Button node.
     */
     _generateDismiss: function() {
-      if (this.props.dismiss) {
-        return (
-          <button
-            className="p-notification__action"
-            onClick={this.props.dismiss}>
-              <window.juju.components.SvgIcon
-              name="close_16" size="16" />
-          </button>);
+      if (!this.props.dismiss) {
+        return;
       }
-      return;
+      return (
+        <button
+          className="p-notification__action"
+          onClick={this.props.dismiss}>
+            <window.juju.components.SvgIcon
+            name="close_16" size="16" />
+        </button>);
     },
 
     render: function() {
-      return (
-        <div className={this._generateClasses()}>
+      const content = (<div className={this._generateClasses()}>
           <p className="p-notification__response">
             {this.props.content}
             {this._generateDismiss()}
           </p>
-        </div>
-      );
+        </div>);
+      if (this.props.isBlocking && this.props.dismiss) {
+        return (
+          <div className="p-notification__blocker" onClick={this.props.dismiss}>
+            {content}
+          </div>
+        );
+      } else if (this.props.isBlocking) {
+        return (
+          <div className="p-notification__blocker">
+            {content}
+          </div>
+        );
+      }
+      return content;
     }
   });
 

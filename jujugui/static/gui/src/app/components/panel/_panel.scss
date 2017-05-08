@@ -69,7 +69,7 @@
   &.isv-profile,
   &.user-profile {
     @extend %scroll-children;
-    z-index: index($z-indexed-elements, top-page);
+    z-index: index($z-indexed-elements, header-banner-search);
     top: $navbar-height;
     bottom: 0;
     right: 0;

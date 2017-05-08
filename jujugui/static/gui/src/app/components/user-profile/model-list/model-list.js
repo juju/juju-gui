@@ -160,7 +160,7 @@ YUI.add('user-profile-model-list', function() {
       const buttons = [{
         title: 'Cancel',
         action: this._displayConfirmation.bind(this, null),
-        type: 'base'
+        type: 'inline-neutral'
       }, {
         title: 'Destroy',
         action: this._destroyModel,
