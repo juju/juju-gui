@@ -79,22 +79,6 @@ YUI.add('user-menu', function() {
         return '';
       }
       const logoutLink = this.props.LogoutLink;
-      let accountEntry = null;
-      // For the time being, weakly protect the account page via a flag.
-      // The account page can still be accessed directly by people knowing its
-      // "/account" path. Otherwise, the user menu voice can be activated, for
-      // instance, by running the following guiproxy command:
-      //   guiproxy -config 'gisf: true, jujuEnvUUID: "", accountFlag: true'
-      if (window.juju_config && window.juju_config.accountFlag) {
-        accountEntry = (
-          <li className="header-menu__menu-list-item
-            header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            <a className="header-menu__menu-list-item-link"
-              role="button" onClick={this._handleAccountClick}>Account</a>
-          </li>
-        );
-      }
       return (
         <juju.components.Panel instanceName="header-menu__menu" visible={true}>
           <ul className="header-menu__menu-list" role="menubar">
@@ -104,7 +88,12 @@ YUI.add('user-menu', function() {
               <a className="header-menu__menu-list-item-link"
                 role="button" onClick={this._handleProfileClick}>Profile</a>
             </li>
-            {accountEntry}
+            <li className="header-menu__menu-list-item
+              header-menu__menu-list-item-with-link"
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
+                role="button" onClick={this._handleAccountClick}>Account</a>
+            </li>
             <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
               role="menuitem" tabIndex="0">
