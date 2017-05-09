@@ -489,11 +489,8 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
-        var mouse = d3.mouse(self.get('dragplane'));
-        var box = self.get('addRelationStart_service');
-        d3.event.x = mouse[0];
-        d3.event.y = mouse[1];
-        self.addRelationDrag.call(self, {box: box});
+        self.addRelationDrag.call(self, {
+          box: self.get('addRelationStart_service')});
       }
     },
 
