@@ -86,10 +86,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.get('user').controller, {user: '', password: '', macaroons: null});
     });
 
-    it('login requests are sent in response to a connection', function() {
-      env.fire('log', {op: 'login', data: {}});
-    });
-
     it('if already authenticated, login() is a no-op', function() {
       env.userIsAuthenticated = true;
       env.login();
