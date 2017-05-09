@@ -415,7 +415,9 @@ YUI.add('juju-env-base', function(Y) {
       });
       console.warn(title + ': ' + message + '. Attempted operation: ', op);
       if (!silent) {
-        this.fire('permissionDenied', {title: title, message: message, op: op});
+        document.dispatchEvent(new CustomEvent('permissionDenied', {
+          detail: {title: title, message: message, op: op}
+        }));
       }
     }
   });
