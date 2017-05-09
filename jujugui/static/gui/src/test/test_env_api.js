@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
-        conn: conn, user: userClass, ecs: ecs
+        conn: conn, user: userClass, ecs: ecs, modelUUID: 'uuid'
       });
       env.connect();
       env.set('facades', {
@@ -386,7 +386,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         let err;
         const listener = evt => {
           fired = true;
-          err = evt.err;;
+          err = evt.detail.err;
         };
         document.addEventListener('login', listener);
         env.login();
@@ -424,7 +424,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         let err;
         const listener = evt => {
           fired = true;
-          err = evt.err;;
+          err = evt.detail.err;
         };
         document.addEventListener('login', listener);
         env.login();
@@ -1102,7 +1102,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
         const listener = evt => {
-          assert.deepEqual(evt.err, 'cannot upload files anonymously');
+          assert.deepEqual(evt.detail.err, 'cannot upload files anonymously');
           done();
         };
         document.addEventListener('login', listener);

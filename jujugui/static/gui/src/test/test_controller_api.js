@@ -235,7 +235,7 @@ describe('Controller API', function() {
       let err;
       const listener = evt => {
         fired = true;
-        err = evt.err;
+        err = evt.detail.err;
       };
       document.addEventListener('login', listener);
       controllerAPI.login();
@@ -273,7 +273,7 @@ describe('Controller API', function() {
       let err;
       const listener = evt => {
         fired = true;
-        err = evt.err;
+        err = evt.detail.err;
       };
       document.addEventListener('login', listener);
       controllerAPI.login();
