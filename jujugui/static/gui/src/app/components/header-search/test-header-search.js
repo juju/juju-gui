@@ -144,7 +144,6 @@ describe('HeaderSearch', function() {
     assert.deepEqual(appState.changeState.args[0][0], {
       root: 'store',
       user: null,
-      profile: null,
       gui: {
         machines: null,
         inspector: null
