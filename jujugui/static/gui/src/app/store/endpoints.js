@@ -231,7 +231,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
 
             @event endpointMapAdded
           */
-          this.fire('endpointMapAdded');
+          document.dispatchEvent(new Event('endpointMapAdded'));
         }
       }, {
         /**
