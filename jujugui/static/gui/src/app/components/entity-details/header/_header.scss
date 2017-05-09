@@ -1,8 +1,10 @@
 .entity-header {
-  $social-icon-size: 44px;
+  $social-icon-size: 36px;
   $sticky-height: 100px;
+  $icon-size: 96px;
+
   margin-bottom: 0;
-  padding: 50px 0;
+  padding: 32px 0;
   background-color: $white;
   color: $cool-grey;
   overflow: hidden;
@@ -47,18 +49,18 @@
     }
 
     .entity-header {
-      $icon-size: 26px;
+      $sticky-icon-size: 26px;
 
       &__icon {
-        width: $icon-size;
-        height: $icon-size;
+        width: $sticky-icon-size;
+        height: $sticky-icon-size;
         margin: 15px 10px 0 0;
         border-radius: 50%;
       }
 
       &__title {
         font-size: 20px;
-        line-height: $icon-size;
+        line-height: $sticky-icon-size;
       }
 
       &__properties {
@@ -110,6 +112,7 @@
         content: '\2022';
         vertical-align: middle;
         margin: 0 5px;
+        text-decoration: none;
       }
 
       &:last-child:after {
@@ -121,8 +124,8 @@
   &__icon {
     float: left;
     border-radius: 50%;
-    height: 96px;
-    width: 96px;
+    height: $icon-size;
+    width: $icon-size;
     vertical-align: top;
     margin: 0 30px 0 0;
   }
@@ -133,6 +136,7 @@
     color: $cool-grey;
     font-size: 2.8125em;
     text-transform: capitalize;
+    min-height: $icon-size - 15px;
   }
 
   &__version {
@@ -152,13 +156,13 @@
   }
 
   &__social-list {
-    margin: 30px 0 0;
+    margin: 24px 10px 0 0;
     height: $social-icon-size;
     float: left;
 
     li {
       list-style: none;
-      margin: 0 20px 0 0;
+      margin: 0 10px 0 0;
       display: inline-block;
     }
   }
@@ -166,14 +170,14 @@
   &__actions-list {
     display: none;
     height: 45px;
-    margin: 30px 0 0;
+    margin: 24px 0 0;
 
     @media only screen and (min-width: 768px) {
       display: inline-block;
     }
 
     .actions-list__item {
-      line-height: 45px;
+      line-height: 37px;
       display: inline-block;
       float: left;
       list-style: none;
@@ -201,10 +205,10 @@
   }
 
   #item-twitter .svg-icon {
-    fill: $mid-grey;
+    fill: $warm-grey;
   }
   #item-googleplus {
-    background: $mid-grey;
+    background: $warm-grey;
     fill: $white;
   }
 

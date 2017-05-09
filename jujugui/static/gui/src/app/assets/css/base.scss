@@ -2,10 +2,14 @@
 // Processed with SCSS from app/assets/css/base.scss
 $font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
+// Vanilla overrides
+$error: #c7162b;
+$warning: #f99b11;
+$success: #0e8420;
+
 // Shades of grey
 $light-grey: #f7f7f7;
 $light-mid-grey: #d4d4d4;
-$mid-grey: #aea79f;
 $dark-grey: #9fa7aa;
 $dark-warm-grey: #666;
 

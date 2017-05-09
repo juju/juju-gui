@@ -282,9 +282,10 @@ YUI.add('entity-header', function() {
       }
       const url = props.urllib.fromLegacyString(lastRevision);
       return (
-        <li key={lastRevision} className="entity-header__series link"
-            onClick={this._onLastRevisionClick}>
-          Latest revision ({url.revision})
+        <li key={lastRevision} className="entity-header__series">
+            <span className="link" onClick={this._onLastRevisionClick}>
+              Latest revision ({url.revision})
+            </span>
         </li>
       );
     },
@@ -421,7 +422,7 @@ YUI.add('entity-header', function() {
                       href={twitterUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-twitter"
-                        size="44"/>
+                        size="36"/>
                     </a>
                   </li>
                   <li>
@@ -430,7 +431,7 @@ YUI.add('entity-header', function() {
                        href={googlePlusUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-google"
-                        size="44"/>
+                        size="36"/>
                     </a>
                   </li>
                 </ul>
