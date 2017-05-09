@@ -1,3 +1,36 @@
+- 2.6.0:
+
+   - Store search results now provide a toggle to include the community results.
+   - GUI version is now visible in the GUI help menu.
+   - Private charms and bundles can now be deployed like any public charm or bundle.
+   - List charm terms on the charm details pages.
+   ->
+     Charms with terms can now be deployed in the GUI. When deploying a charm
+     that requires a term agreement the terms will be presented in the
+     deployment flow prior to being allowed to deploy.
+   ->
+     Added beta support for Direct Deploy. By visiting a url with a `dd` query
+     parameter the supplied entity id will be added to a new model and a
+     simplified deployment flow will be displayed for a faster deployment
+     experience.
+   ->
+     Added account page which shows the credentials you've added across clouds
+     and provides a central location to add and remove cloud credentials. The
+     account page is accessible from the user icon in the top right of the GUI.
+   - Started push on removing YUI.
+   - Page titles now update when viewing the store.
+   - Styling updates.
+   ->
+     When selecting an application in the inspector the icon is now moved just
+     into frame.
+   - (Fix) Inspector navigation to relation details pre-deploy is now functional.
+   - (Fix) Config option fields no longer escape values multiple times.
+   - (Fix) Exporting uncommitted models now correctly exports machine data.
+   - (Fix) Do not try and move relation when ambiguous relation selector is open.
+   - (Fix) Help link in the user menu is now clickable.
+   - (Fix) Correctly display the series list for multi-series charms.
+   - (Fix) Zoom in/out keyboard shortcuts now work.
+
 - 2.5.2:
 
    - Unit workload status now shown in unit list view.
