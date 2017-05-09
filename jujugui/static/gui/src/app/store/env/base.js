@@ -369,16 +369,14 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Fire a "msg" event when a message is received from the WebSocket.
+     * Dispatch when a message is received from the WebSocket.
      *
      * @method on_message
      * @param {Object} evt The event triggered by the WebSocket.
      * @return {undefined} Fire an event only.
      */
     on_message: function(evt) {
-      document.dispatchEvent(new CustomEvent('msg', {
-        detail: JSON.parse(evt.data)
-      }));
+      this.dispatch_result(JSON.parse(evt.data));
     },
 
     /**
