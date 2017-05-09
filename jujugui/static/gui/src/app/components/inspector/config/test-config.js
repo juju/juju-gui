@@ -58,7 +58,7 @@ describe('Configuration', function() {
         return { option1: option1key, option2: option2key };
       }};
     var setConfig = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
         acl={acl}
         addNotification={sinon.stub()}
@@ -71,29 +71,32 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-
-    assert.deepEqual(output.props.children[0].props.children[4], [
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    expect(output.props.children[0].props.children[4][0]).toEqualJSX(
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
+        onChange={instance._handleOnChange}
         option={{
           description: 'description 1',
           key: 'option1',
           type: 'string'
         }}
-        config={option1key} />,
+        config={option1key} />);
+    expect(output.props.children[0].props.children[4][1]).toEqualJSX(
       <juju.components.BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
+        onChange={instance._handleOnChange}
         option={{
           description: 'description 2',
           key: 'option2',
           type: 'boolean'
         }}
-        config={option2key} />
-    ]);
+        config={option2key} />);
   });
 
   it('renders message when no config available', function() {
@@ -124,7 +127,7 @@ describe('Configuration', function() {
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[4],
+    expect(output.props.children[0].props.children[4]).toEqualJSX(
       <div className="inspector-config--no-config">
         No configuration options.
       </div>);
@@ -166,7 +169,7 @@ describe('Configuration', function() {
 
     var domNode = ReactDOM.findDOMNode(component);
 
-    var string = domNode.querySelector('.string-config--value');
+    var string = domNode.querySelector('.string-config-input');
     var bool = domNode.querySelector('.boolean-config--input');
 
     string.innerText = 'new value';
@@ -229,7 +232,7 @@ describe('Configuration', function() {
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
     var domNode = ReactDOM.findDOMNode(component);
-    var name = domNode.querySelector('.string-config--value');
+    var name = domNode.querySelector('.string-config-input');
 
     name.innerText = 'newservicename';
     testUtils.Simulate.input(name);
@@ -308,7 +311,7 @@ describe('Configuration', function() {
           changed once the application is deployed.
         </span>
       </div>);
-    assert.deepEqual(output.props.children[0].props.children[1], expected);
+    expect(output.props.children[0].props.children[1]).toEqualJSX(expected);
   });
 
   it('disables the series select if there are existing relations', function() {
@@ -373,7 +376,7 @@ describe('Configuration', function() {
           changed once the application is deployed.
         </span>
       </div>);
-    assert.deepEqual(output.props.children[0].props.children[1], expected);
+    expect(output.props.children[0].props.children[1]).toEqualJSX(expected);
   });
 
   it('does not allow you to change series if app is deployed', function() {
@@ -417,7 +420,7 @@ describe('Configuration', function() {
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[1], undefined);
+    assert.strictEqual(output.props.children[0].props.children[1], undefined);
   });
 
   it('can handle changing of series', function() {
@@ -466,6 +469,9 @@ describe('Configuration', function() {
         unplaceServiceUnits={unplaceServiceUnits}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
+    instance.refs = {
+      ServiceName: {getValue: sinon.stub()}
+    };
     instance._handleSeriesChange({
       currentTarget: {
         value: 'xenial'
@@ -519,7 +525,7 @@ describe('Configuration', function() {
         updateServiceUnitsDisplayname={updateUnit}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
-    var name = domNode.querySelector('.string-config--value');
+    var name = domNode.querySelector('.string-config-input');
 
     name.innerText = 'newservicename';
     testUtils.Simulate.input(name);
@@ -578,7 +584,7 @@ describe('Configuration', function() {
       get: sinon.stub().returns('mysql')
     };
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
         acl={acl}
         addNotification={sinon.stub()}
@@ -591,8 +597,9 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()}/>);
-    output.props.children[1].props.buttons[0].action();
+        updateServiceUnitsDisplayname={sinon.stub()}/>, true);
+    const output = renderer.getRenderOutput();
+    output.props.children[1].props.children.props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -662,7 +669,8 @@ describe('Configuration', function() {
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},
-      'file-form': {reset: formReset}
+      'file-form': {reset: formReset},
+      ServiceName: {getValue: sinon.stub()}
     };
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.children[2].props.children.props.onChange();
@@ -680,6 +688,8 @@ describe('Configuration', function() {
     linkify.onCall(1).returns('description 2');
     linkify.onCall(2).returns('description 1');
     linkify.onCall(3).returns('description 2');
+    linkify.onCall(4).returns('description 1');
+    linkify.onCall(5).returns('description 2');
     var option1key = 'string body value';
     var option2key = true;
     var charmGet = sinon.stub();
@@ -713,32 +723,43 @@ describe('Configuration', function() {
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},
-      'file-form': {reset: sinon.stub()}
+      'file-form': {reset: sinon.stub()},
+      ServiceName: {getValue: sinon.stub()},
+      'Config-option1': {
+        getKey: sinon.stub().returns('option1'),
+        getValue: sinon.stub().returns('')
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns('option2'),
+        getValue: sinon.stub().returns('')
+      }
     };
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.children[2].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children[4], [
+    expect(output.props.children[0].props.children[4][0]).toEqualJSX(
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
+        onChange={instance._handleOnChange}
         option={{
           description: 'description 1',
           key: 'option1',
           type: 'string'
         }}
-        config="my apache2" />,
+        config="my apache2" />);
+    expect(output.props.children[0].props.children[4][1]).toEqualJSX(
       <juju.components.BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
+        onChange={instance._handleOnChange}
         option={{
           description: 'description 2',
           key: 'option2',
           type: 'boolean'
         }}
-        config={false} />
-    ]);
+        config={false} />);
   });
 
   it('does not try to apply the config for the wrong charm', function() {
@@ -777,7 +798,16 @@ describe('Configuration', function() {
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},
-      'file-form': {reset: sinon.stub()}
+      'file-form': {reset: sinon.stub()},
+      ServiceName: {getValue: sinon.stub()},
+      'Config-option1': {
+        getKey: sinon.stub().returns('option1'),
+        getValue: sinon.stub().returns('')
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns('option2'),
+        getValue: sinon.stub().returns('')
+      }
     };
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
@@ -853,6 +883,7 @@ describe('Configuration', function() {
         <juju.components.StringConfig
           disabled={true}
           ref="ServiceName"
+          onChange={instance._handleOnChange}
           option={{
             key: 'Application name',
             description: 'Specify a custom application name. The application' +
@@ -876,6 +907,7 @@ describe('Configuration', function() {
               disabled={true}
               key="Config-option1"
               ref="Config-option1"
+              onChange={instance._handleOnChange}
               option={{
                 description: 'description 1',
                 key: 'option1',
@@ -886,6 +918,7 @@ describe('Configuration', function() {
               disabled={true}
               key="Config-option2"
               ref="Config-option2"
+              onChange={instance._handleOnChange}
               option={{
                 description: 'description 2',
                 key: 'option2',
@@ -895,8 +928,11 @@ describe('Configuration', function() {
               config={option2key} />
           ]}
         </div>
-        <juju.components.ButtonRow buttons={actionButtons} />
+        <div className={
+          'inspector-config__buttons inspector-config__buttons--hidden'}>
+          <juju.components.ButtonRow buttons={actionButtons} />
+        </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

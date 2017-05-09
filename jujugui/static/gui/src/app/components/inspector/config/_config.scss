@@ -9,6 +9,10 @@
   &__select {
     margin: 10px 0 14px;
     text-transform: capitalize;
+
+    &--changed {
+      border-color: $uncommitted;
+    }
   }
 
   &__series-select {
@@ -31,5 +35,16 @@
 
   &__config-file {
     margin: 0 10px;
+  }
+
+  &__buttons {
+    flex: 0 0 auto;
+    height: 60px;
+    transition: height .2s ease;
+    overflow: hidden;
+
+    &--hidden {
+      height: 0;
+    }
   }
 }

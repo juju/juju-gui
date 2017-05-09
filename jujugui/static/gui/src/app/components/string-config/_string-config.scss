@@ -2,12 +2,16 @@
   @extend %stagger-fade-in;
   margin: 10px 20px 14px;
 
-  &--value,
-  &--disabled {
+  &--value {
     @extend %input;
     min-height: $base;
     margin: 10px 0;
     box-sizing: content-box;
+  }
+
+  &--changed {
+    border-color: $uncommitted;
+    background: #fff url('static/gui/build/app/assets/svgs/uncommitted.svg') no-repeat 215px center;
   }
 
   &--disabled {

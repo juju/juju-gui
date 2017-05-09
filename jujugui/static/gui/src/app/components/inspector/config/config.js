@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
+    displayName: 'Configuration',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -43,24 +45,13 @@ YUI.add('inspector-config', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
+      this.originalSeries = this.props.service.get('series');
       return {
         // Have to clone the config so we don't update it via reference.
         serviceConfig: this._clone(this.props.service.get('config')),
         series: this.props.service.get('series'),
-        forceUpdate: false
+        changed: false
       };
-    },
-
-    shouldComponentUpdate: function(nextProps, nextState) {
-      // If the service has changed then the component should update with the
-      // new props.
-      var forceUpdate = this.state.forceUpdate;
-      if (forceUpdate) {
-        // Reset the force update flag so it only happens once.
-        this.setState({forceUpdate: false});
-      }
-      return forceUpdate ||
-        nextProps.service.get('id') !== this.props.service.get('id');
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -82,6 +73,25 @@ YUI.add('inspector-config', function() {
     },
 
     /**
+      Handle field value changes.
+
+      @method _handleOnChange
+    */
+    _handleOnChange: function() {
+      let changed = false;
+      const serviceName = this.refs.ServiceName;
+      if (serviceName && this.props.service.get('name') !==
+        serviceName.getValue()) {
+        changed = true;
+      } else if (this.state.series !== this.originalSeries) {
+        changed = true;
+      } else if (Object.keys(this._getChangedConfig()).length > 0) {
+        changed = true;
+      }
+      this.setState({changed: changed});
+    },
+
+    /**
       Handle applying the uploaded config.
 
       @method _applyConfig
@@ -100,7 +110,6 @@ YUI.add('inspector-config', function() {
           serviceConfig[key] = newConfig[key];
         }
       });
-      this.setState({forceUpdate: true});
       this.setState({serviceConfig: serviceConfig});
     },
 
@@ -113,6 +122,7 @@ YUI.add('inspector-config', function() {
       this.props.getYAMLConfig(this.refs.file.files[0], this._applyConfig);
       // Reset the form so the file can be uploaded again
       this.refs['file-form'].reset();
+      this._handleOnChange();
     },
 
     /**
@@ -144,22 +154,12 @@ YUI.add('inspector-config', function() {
       @method _saveConfig
     */
     _saveConfig: function() {
-      var refs = this.refs;
-      var configValues = {};
-      Object.keys(refs).forEach((ref) => {
-        var activeRef = refs[ref];
-        // Just in case we ever have any sub components which have refs
-        // and aren't a configuration component.
-        if (ref.split('-')[0] === 'Config') {
-          configValues[activeRef.props.option.key] = activeRef.state.value;
-        }
-      });
       // The service name component is only shown if it's a ghost service.
       var serviceName = this.refs.ServiceName;
       var props = this.props;
       if (serviceName) {
         var service = props.service;
-        var nameValue = serviceName.state.value;
+        var nameValue = serviceName.getValue();
         var serviceExists = props.getServiceByName(nameValue);
         // We want to allow them to set it to itself.
         if (service.get('name') !== nameValue && serviceExists !== null) {
@@ -175,7 +175,7 @@ YUI.add('inspector-config', function() {
         service.set('name', nameValue);
         props.updateServiceUnitsDisplayname(service.get('id'));
       }
-      var changedConfig = this._getChangedValues(configValues);
+      const changedConfig = this._getChangedConfig();
       // If there are no changed values then don't set the config.
       if (Object.keys(changedConfig).length > 0) {
         props.setConfig(props.service.get('id'),
@@ -184,6 +184,26 @@ YUI.add('inspector-config', function() {
         );
       }
       this._showInspectorIndex();
+    },
+
+    /**
+      Get the config values that have changed from the model.
+
+      @method _getChangedConfig
+      @returns {Object} The configuration values with new data.
+    */
+    _getChangedConfig: function() {
+      var refs = this.refs;
+      var configValues = {};
+      Object.keys(refs).forEach(ref => {
+        var activeRef = refs[ref];
+        // Just in case we ever have any sub components which have refs
+        // and aren't a configuration component.
+        if (ref.split('-')[0] === 'Config') {
+          configValues[activeRef.getKey()] = activeRef.getValue();
+        }
+      });
+      return this._getChangedValues(configValues);
     },
 
     /**
@@ -199,7 +219,7 @@ YUI.add('inspector-config', function() {
       var serviceConfig = this.props.service.get('config');
       var changedValues = {};
       Object.keys(serviceConfig).forEach((key) => {
-        if (serviceConfig[key] !== configValues[key]) {
+        if (serviceConfig[key].toString() !== configValues[key].toString()) {
           changedValues[key] = configValues[key];
         }
       });
@@ -250,6 +270,7 @@ YUI.add('inspector-config', function() {
                 key={ref}
                 ref={ref}
                 option={option}
+                onChange={this._handleOnChange}
                 label={label}
                 config={serviceConfig[key]} />);
         } else {
@@ -259,6 +280,7 @@ YUI.add('inspector-config', function() {
                 key={ref}
                 ref={ref}
                 option={option}
+                onChange={this._handleOnChange}
                 config={serviceConfig[key]} />);
         }
       });
@@ -280,6 +302,7 @@ YUI.add('inspector-config', function() {
         return (<juju.components.StringConfig
           disabled={this.props.acl.isReadOnly()}
           ref="ServiceName"
+          onChange={this._handleOnChange}
           option={{
             key: 'Application name',
             description: 'Specify a custom application name. The application' +
@@ -305,8 +328,8 @@ YUI.add('inspector-config', function() {
       const service = props.service;
       const unplacedUnits = props.unplaceServiceUnits(service.get('id'));
       service.set('series', value);
-      this.setState({forceUpdate: true}, () => {
-        this.setState({series: value});
+      this.setState({series: value}, () => {
+        this._handleOnChange();
       });
       // If units were unplaced then we want to show a notification and
       // open up the machine view for the user.
@@ -340,11 +363,18 @@ YUI.add('inspector-config', function() {
         // charm then nothing needs to happen here.
         return;
       }
+
+      const classes = classNames(
+        'inspector-config__select',
+        {
+          'inspector-config__select--changed':
+            this.state.series !== this.originalSeries
+        });
       return (
         <div className="inspector-config__series-select">
           <span>Choose Series</span>
           <select
-            className="inspector-config__select"
+            className={classes}
             disabled={hasRelations}
             onChange={this._handleSeriesChange}
             title={
@@ -361,14 +391,14 @@ YUI.add('inspector-config', function() {
         </div>);
     },
 
-    render: function() {
-      var disabled = this.props.acl.isReadOnly();
-      var importButton = [{
-        disabled: disabled,
-        title: 'Import config file',
-        action: this._openFileDialog
-      }];
-      var actionButtons = [{
+    /**
+      Display the save buttons if there are changes.
+
+      @method _generateButtons
+    */
+    _generateButtons: function() {
+      const disabled = this.props.acl.isReadOnly();
+      const actionButtons = [{
         disabled: disabled,
         title: 'Cancel',
         type: 'base',
@@ -379,7 +409,22 @@ YUI.add('inspector-config', function() {
         type: 'neutral',
         action: this._saveConfig
       }];
+      const classes = classNames(
+        'inspector-config__buttons',
+        {'inspector-config__buttons--hidden': !this.state.changed});
+      return (
+        <div className={classes}>
+          <juju.components.ButtonRow buttons={actionButtons} />
+        </div>);
+    },
 
+    render: function() {
+      var disabled = this.props.acl.isReadOnly();
+      var importButton = [{
+        disabled: disabled,
+        title: 'Import config file',
+        action: this._openFileDialog
+      }];
       return (
         <div className="inspector-config">
           <div className="inspector-config__fields">
@@ -398,7 +443,7 @@ YUI.add('inspector-config', function() {
             </div>
             {this._generateConfigElements()}
           </div>
-          <juju.components.ButtonRow buttons={actionButtons} />
+          {this._generateButtons()}
         </div>
       );
     }

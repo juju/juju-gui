@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('boolean-config', function() {
 
   juju.components.BooleanConfig = React.createClass({
+    displayName: 'BooleanConfig',
+
     propTypes: {
       config: React.PropTypes.any.isRequired,
       disabled: React.PropTypes.bool,
@@ -39,8 +41,22 @@ YUI.add('boolean-config', function() {
       return { value: this._cleanConfig(this.props.config) };
     },
 
-    componentWillReceiveProps: function(nextProps) {
-      this.setState({ value: this._cleanConfig(nextProps.config) });
+    /**
+      Get the option key.
+
+      @returns {String} the option key.
+    */
+    getKey: function() {
+      return this.props.option.key;
+    },
+
+    /**
+      Get the value of the field.
+
+     @returns {String} the value.
+    */
+    getValue: function() {
+      return this.state.value;
     },
 
     /**
@@ -71,10 +87,11 @@ YUI.add('boolean-config', function() {
       // Due to a bug in React we must use target here because we aren't able
       // to simulate changes on currentTarget.
       // https://github.com/facebook/react/issues/4950
-      this.setState({ value: e.target.checked });
-      if (onChange) {
-        onChange();
-      }
+      this.setState({ value: e.target.checked }, () => {
+        if (onChange) {
+          onChange();
+        }
+      });
     },
 
     /**
@@ -88,6 +105,12 @@ YUI.add('boolean-config', function() {
     },
 
     render: function() {
+      const classes = classNames(
+        'boolean-config--label',
+        {
+          'boolean-config--label-changed':
+            this.state.value !== this.props.config
+        });
       return (
         <div className="boolean-config">
           <div className="boolean-config--toggle-container">
@@ -99,11 +122,11 @@ YUI.add('boolean-config', function() {
                 id={this.props.option.key}
                 onClick={this._stopBubble}
                 onChange={this._handleChange}
-                checked={this.state.value}
+                defaultChecked={this.state.value}
                 className="boolean-config--input" />
               <label
                 htmlFor={this.props.option.key}
-                className="boolean-config--label">
+                className={classes}>
                 <div className="boolean-config--handle"></div>
               </label>
             </div>
