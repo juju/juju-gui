@@ -1903,7 +1903,7 @@ YUI.add('juju-view-utils', function(Y) {
           }]
         }
       },
-      lxd: {
+      localhost: {
         id: 'local',
         showLogo: false,
         title: 'Local'

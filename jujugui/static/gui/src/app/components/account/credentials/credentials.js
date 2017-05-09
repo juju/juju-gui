@@ -20,6 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('account-credentials', function() {
 
+  // Define the name of the lxd cloud.
+  const LOCAL_CLOUD = 'localhost';
+
+  // List, add and remove cloud credentials in the account page.
   juju.components.AccountCredentials = React.createClass({
     displayName: 'AccountCredentials',
 
@@ -42,6 +46,7 @@ YUI.add('account-credentials', function() {
       this.xhrs = [];
       return {
         cloud: null,
+        clouds: [],
         credentials: [],
         loading: false,
         showAdd: false
@@ -116,8 +121,9 @@ YUI.add('account-credentials', function() {
             });
           });
           this.setState({
+            clouds: clouds,
             credentials: credentials,
-            loading: false,
+            loading: false
           });
         });
       this.xhrs.push(xhr);
@@ -165,6 +171,7 @@ YUI.add('account-credentials', function() {
       }
       const credentialsList = credentials.map(credential => {
         const cloud = this.props.getCloudProviderDetails(credential.cloud);
+        const title = cloud ? cloud.title : credential.cloud;
         return (
           <li className="user-profile__list-row twelve-col"
             key={credential.id}>
@@ -172,12 +179,13 @@ YUI.add('account-credentials', function() {
                 {credential.name}
               </div>
               <div className="four-col no-margin-bottom">
-                {cloud.title}
+                {title}
               </div>
               <div className="two-col last-col no-margin-bottom">
                 <juju.components.GenericButton
                   action={
                     this._handleDeleteCredential.bind(this, credential.id)}
+                  disabled={credential.cloud === LOCAL_CLOUD}
                   type="neutral"
                   title="Remove" />
               </div>
@@ -296,14 +304,22 @@ YUI.add('account-credentials', function() {
     },
 
     render: function() {
+      const clouds = this.state.clouds;
+      let addButton = (
+        <juju.components.GenericButton
+          action={this._toggleAdd}
+          type="inline-base"
+          title="Add"
+        />
+      );
+      if (clouds && clouds[LOCAL_CLOUD]) {
+        addButton = null;
+      }
       return (
         <div className="account__section account__credentials">
           <h2 className="account__title twelve-col">
             Cloud credentials
-            <juju.components.GenericButton
-              action={this._toggleAdd}
-              type="inline-base"
-              title="Add" />
+            {addButton}
           </h2>
           {this._generateAddCredentials()}
           {this._generateCredentials()}

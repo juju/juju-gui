@@ -1591,7 +1591,11 @@ YUI.add('juju-gui', function(Y) {
     _renderInspector: function(state, next) {
       const relationUtils = this.relationUtils;
       const utils = views.utils;
-      const topo = this.views.environment.instance.topo;
+      const instance = this.views.environment.instance;
+      if (!instance) {
+        return;
+      }
+      const topo = instance.topo;
       const charmstore = this.get('charmstore');
       let inspector = {};
       const inspectorState = state.gui.inspector;
