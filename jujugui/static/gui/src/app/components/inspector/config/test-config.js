@@ -688,6 +688,8 @@ describe('Configuration', function() {
     linkify.onCall(1).returns('description 2');
     linkify.onCall(2).returns('description 1');
     linkify.onCall(3).returns('description 2');
+    linkify.onCall(4).returns('description 1');
+    linkify.onCall(5).returns('description 2');
     var option1key = 'string body value';
     var option2key = true;
     var charmGet = sinon.stub();
@@ -724,11 +726,11 @@ describe('Configuration', function() {
       'file-form': {reset: sinon.stub()},
       ServiceName: {getValue: sinon.stub()},
       'Config-option1': {
-        getKey: sinon.stub().returns(option1.key),
+        getKey: sinon.stub().returns('option1'),
         getValue: sinon.stub().returns('')
       },
       'Config-option2': {
-        getKey: sinon.stub().returns(option2.key),
+        getKey: sinon.stub().returns('option2'),
         getValue: sinon.stub().returns('')
       }
     };
@@ -799,11 +801,11 @@ describe('Configuration', function() {
       'file-form': {reset: sinon.stub()},
       ServiceName: {getValue: sinon.stub()},
       'Config-option1': {
-        getKey: sinon.stub().returns(option1.key),
+        getKey: sinon.stub().returns('option1'),
         getValue: sinon.stub().returns('')
       },
       'Config-option2': {
-        getKey: sinon.stub().returns(option2.key),
+        getKey: sinon.stub().returns('option2'),
         getValue: sinon.stub().returns('')
       }
     };
