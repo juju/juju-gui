@@ -259,11 +259,6 @@ YUI.add('juju-env-base', function(Y) {
   Y.extend(BaseEnvironment, Y.Base, {
 
     initializer: function() {
-      // Define custom events.
-      this.publish('msg', {
-        emitFacade: true,
-        defaultFn: this.dispatch_result
-      });
       // Set up the attribute resetter.
       const resetter = attrResetter(this);
       this.setConnectedAttr = resetter.set.bind(resetter);
@@ -381,7 +376,9 @@ YUI.add('juju-env-base', function(Y) {
      * @return {undefined} Fire an event only.
      */
     on_message: function(evt) {
-      this.fire('msg', JSON.parse(evt.data));
+      document.dispatchEvent(new CustomEvent('msg', {
+        detail: JSON.parse(evt.data)
+      }));
     },
 
     /**
