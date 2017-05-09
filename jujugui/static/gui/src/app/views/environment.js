@@ -35,7 +35,7 @@ YUI.add('juju-view-environment', function(Y) {
    * @class EnvironmentView
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [
-    views.JujuBaseView, Y.Event.EventTracker
+    views.JujuBaseView
   ], {
 
     events: {
@@ -244,7 +244,6 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'event-tracker',
     'environment',
     'juju-topology',
     'node',

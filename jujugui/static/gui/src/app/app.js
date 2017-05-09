@@ -49,8 +49,7 @@ YUI.add('juju-gui', function(Y) {
     widgets.AutodeployExtension,
     Y.juju.Cookies,
     Y.juju.AppRenderer,
-    Y.juju.GhostDeployer,
-    Y.Event.EventTracker
+    Y.juju.GhostDeployer
   ];
   var JujuGUI = Y.Base.create('juju-gui', Y.App, extensions, {
     /**
@@ -3214,7 +3213,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'bundle-importer',
     'bundle-import-notifications',
-    'event-tracker',
     'node',
     'model',
     'app-cookies-extension',
