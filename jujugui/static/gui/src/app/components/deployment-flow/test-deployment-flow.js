@@ -186,30 +186,6 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentSection
           completed={false}
           disabled={true}
-          instance="deployment-credential"
-          showCheck={false}>
-          <juju.components.DeploymentCredential
-            acl={props.acl}
-            addNotification={props.addNotification}
-            credential={undefined}
-            cloud={null}
-            controllerIsReady={props.controllerIsReady}
-            getCloudProviderDetails={props.getCloudProviderDetails}
-            editable={true}
-            generateCloudCredentialName={props.generateCloudCredentialName}
-            getCloudCredentials={props.getCloudCredentials}
-            getCloudCredentialNames={props.getCloudCredentialNames}
-            region={undefined}
-            sendAnalytics={props.sendAnalytics}
-            setCredential={instance._setCredential}
-            setRegion={instance._setRegion}
-            updateCloudCredential={props.updateCloudCredential}
-            user="dalek"
-            validateForm={validateForm} />
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={true}
           instance="deployment-ssh-key"
           showCheck={false}>
           <juju.components.DeploymentSSHKey

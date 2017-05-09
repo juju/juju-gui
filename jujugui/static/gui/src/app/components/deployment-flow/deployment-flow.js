@@ -163,7 +163,7 @@ YUI.add('deployment-flow', function() {
         case 'credential':
           completed = false;
           disabled = !hasCloud;
-          visible = willCreateModel;
+          visible = willCreateModel && hasCloud;
           break;
         case 'ssh-key':
           completed = false;

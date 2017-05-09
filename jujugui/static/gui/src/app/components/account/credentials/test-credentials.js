@@ -45,8 +45,7 @@ describe('AccountCredentials', () => {
     }, {
       names: ['gce_spinach@external_test2'],
       displayNames: ['test2']
-    }
-    ]);
+    }]);
   });
 
   it('can display a spinner when loading credentials', () => {
@@ -88,6 +87,76 @@ describe('AccountCredentials', () => {
         <juju.components.Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('does not allow for adding/removing credentials on local cloud', () => {
+    listClouds = sinon.stub().callsArgWith(0, null, {localhost: {}});
+    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [{
+      names: ['localhost_admin'],
+      displayNames: ['localcred']
+    }]);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={sinon.stub()}
+        sendAnalytics={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const output = component.getRenderOutput();
+    const credentials = output.props.children[2].props.children[1];
+    const expectedOutput = (
+      <div className="account__section account__credentials">
+        <h2 className="account__title twelve-col">
+          Cloud credentials
+        </h2>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <div></div>
+          <div className="twelve-col">
+            {null}
+          </div>
+        </juju.components.ExpandingRow>
+        <ul className="user-profile__list twelve-col">
+          <li className="user-profile__list-header twelve-col">
+            <div className="six-col no-margin-bottom">
+              Name
+            </div>
+            <div className="six-col last-col no-margin-bottom">
+              Provider
+            </div>
+          </li>
+          {[
+            <li className="user-profile__list-row twelve-col"
+              key="aws_spinach@external_test1">
+              <div className="six-col no-margin-bottom">
+                localcred
+              </div>
+              <div className="four-col no-margin-bottom">
+                localhost
+              </div>
+              <div className="two-col last-col no-margin-bottom">
+                <juju.components.GenericButton
+                  action={
+                    credentials[0].props.children[2].props.children
+                      .props.action}
+                  disabled={true}
+                  type="neutral"
+                  title="Remove" />
+              </div>
+            </li>
+          ]}
+        </ul>
+      </div>);
+    expect(output).toEqualJSX(expectedOutput);
   });
 
   it('can render', () => {
@@ -149,6 +218,7 @@ describe('AccountCredentials', () => {
                   action={
                     credentials[0].props.children[2].props.children
                       .props.action}
+                  disabled={false}
                   type="neutral"
                   title="Remove" />
               </div>
@@ -166,6 +236,7 @@ describe('AccountCredentials', () => {
                     action={
                       credentials[1].props.children[2].props.children
                         .props.action}
+                    disabled={false}
                     type="neutral"
                     title="Remove" />
                 </div>
@@ -383,6 +454,7 @@ describe('AccountCredentials', () => {
                   action={
                     credentials[0].props.children[2].props.children
                       .props.action}
+                  disabled={false}
                   type="neutral"
                   title="Remove" />
               </div>
