@@ -71,6 +71,7 @@ describe('Environment Change Set', function() {
     ecs.destroy();
     dbObj.reset();
     dbObj.destroy();
+    envObj.destroy();
   });
 
   describe('ECS methods', function() {

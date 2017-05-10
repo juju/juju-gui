@@ -1011,6 +1011,8 @@ describe('App', function() {
           }
         }
       };
+      // Clean up the old env before assigning a new one.
+      app.env.destroy();
       app.env = fake_env;
       app.db = fake_db;
       app._renderBreadcrumb = sinon.stub();
@@ -1573,6 +1575,8 @@ describe('App', function() {
       const credentials = {user: 'user-who@local', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = makeAPIConnection(true);
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithCredentials(app.controllerAPI, true, credentials);
@@ -1593,6 +1597,8 @@ describe('App', function() {
       const credentials = {user: 'user-who@local', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(false);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = null;
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
@@ -1620,6 +1626,8 @@ describe('App', function() {
       const credentials = {user: 'user-who', password: 'passwd'};
       const useMacaroons = true;
       app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = makeAPIConnection(true);
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithMacaroons(app.controllerAPI, true);
