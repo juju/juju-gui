@@ -74,6 +74,7 @@ describe('UserProfile', () => {
     const emptyComponent = (
       <juju.components.EmptyUserProfile
         changeState={changeState}
+        isCurrentUser={true}
         staticURL={staticURL}
         switchModel={switchModel} />
     );
@@ -128,7 +129,7 @@ describe('UserProfile', () => {
           </juju.components.SectionLoadWatcher>
         </div>
       </div>);
-    assert.deepEqual(content, expected);
+    expect(content).toEqualJSX(expected);
   });
 
   it('can log in to charmstore fetch macaroons from the bakery', () => {
@@ -144,17 +145,21 @@ describe('UserProfile', () => {
     };
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        switchModel={sinon.stub()}
-        listBudgets={sinon.stub()}
-        listModelsWithInfo={sinon.stub()}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        destroyModels={sinon.stub()}
+        facadesExist={true}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
+        getKpiMetrics={sinon.stub()}
         interactiveLogin={true}
+        listBudgets={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
         pluralize={sinon.stub()}
         setPageTitle={sinon.stub()}
         storeUser={storeUser}
+        switchModel={sinon.stub()}
         userInfo={userInfo}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -174,17 +179,21 @@ describe('UserProfile', () => {
     const getAgreements = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        addNotification={sinon.stub()}
+        changeState={changeState}
         charmstore={{}}
+        destroyModels={sinon.stub()}
+        facadesExist={true}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
+        getKpiMetrics={sinon.stub()}
+        interactiveLogin={true}
         listBudgets={listBudgets}
         listModelsWithInfo={listModelsWithInfo}
-        switchModel={switchModel}
-        interactiveLogin={true}
-        changeState={changeState}
         pluralize={sinon.stub()}
         setPageTitle={sinon.stub()}
         storeUser={sinon.stub()}
+        switchModel={switchModel}
         userInfo={userInfo}
       />, true);
     const instance = component.getMountedInstance();
