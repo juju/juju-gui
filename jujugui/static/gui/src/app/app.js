@@ -2646,8 +2646,8 @@ YUI.add('juju-gui', function(Y) {
     */
     onLogin: function(evt) {
       if (this.boundOnLogin) {
-        // We want this event only fire once, so if it exists then remove it so
-        // it can't get fired again.
+        // We want this event to only fire once, so if it exists then remove it
+        // so it can't get fired again.
         document.removeEventListener('login', this.boundOnLogin);
       }
       if (evt.detail && evt.detail.err) {

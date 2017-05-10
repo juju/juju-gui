@@ -639,8 +639,9 @@ describe('App', function() {
       conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.equal(1, conn.messages.length);
       assertIsLogin(conn.last_message());
-      assert.equal(loginStub.callCount >= 1, true);
-      assert.deepEqual(loginStub.lastCall.args, ['bad wolf']);
+      assert.equal(loginStub.callCount, 2);
+      assert.equal(loginStub.args[0][0], 'bad wolf');
+      assert.equal(loginStub.args[1][0], 'bad wolf');
     });
 
     it('login method handler is called after successful login',
@@ -2138,7 +2139,8 @@ describe('App', function() {
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet(),
-          user: userClass
+          user: userClass,
+          modelUUID: 'uuid'
         }),
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api',
@@ -2284,20 +2286,17 @@ describe('App', function() {
     it('is disabled after successful login', done => {
       app.anonymousMode = true;
       app.state = {current: {root: null}};
-      // Set a model UUID so that the login subscriber execution stops as soon
-      // as possible.
-      app.env.set('modelUUID', 'uuid');
       const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(
           app._renderUserMenu.called, true, '_renderUserMenu');
+        document.removeEventListener('login', listener);
         done();
       };
       document.addEventListener('login', listener);
       document.dispatchEvent(new CustomEvent('login', {
         detail: {err: null}
       }));
-      document.removeEventListener('login', listener);
     });
 
     it('is disabled after failed login', done => {
@@ -2306,13 +2305,13 @@ describe('App', function() {
       const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
+        document.removeEventListener('login', listener);
         done();
       };
       document.addEventListener('login', listener);
       document.dispatchEvent(new CustomEvent('login', {
         detail: {err: 'bad wolf'}
       }));
-      document.removeEventListener('login', listener);
     });
   });
 

@@ -381,12 +381,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(env.failedAuthentication);
       });
 
-      it('fires a login event on successful login', function() {
-        let fired = false;
-        let err;
+      it('fires a login event on successful login', function(done) {
         const listener = evt => {
-          fired = true;
-          err = evt.detail.err;
+          assert.strictEqual(evt.detail.err, null);
+          done();
         };
         document.addEventListener('login', listener);
         env.login();
@@ -399,8 +397,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
-        assert.strictEqual(fired, true);
-        assert.strictEqual(err, null);
         document.removeEventListener('login', listener);
       });
 
@@ -419,19 +415,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isFalse(env.failedAuthentication);
       });
 
-      it('fires a login event on failed login', function() {
-        let fired = false;
-        let err;
+      it('fires a login event on failed login', function(done) {
         const listener = evt => {
-          fired = true;
-          err = evt.detail.err;
+          assert.strictEqual(evt.detail.err, 'Invalid user or password');
+          done();
         };
         document.addEventListener('login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
-        assert.strictEqual(fired, true);
-        assert.strictEqual(err, 'Invalid user or password');
         document.removeEventListener('login', listener);
       });
 
