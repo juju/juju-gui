@@ -690,7 +690,10 @@ YUI.add('juju-gui', function(Y) {
           // If there was a previous root before the login then redirect to that
           // otherwise go to the profile.
           let newState = {
-            profile: previousRoot ? null : current.profile,
+            // We don't want to redirect to the previous root if it was the
+            // login page.
+            profile: previousRoot && previousRoot !== 'login' ?
+              null : current.profile,
             root: isLogin ? previousRoot : current.root
           };
           // If the current root is 'login' after logging into the controller,
