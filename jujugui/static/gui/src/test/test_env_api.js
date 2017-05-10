@@ -3035,10 +3035,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fires "_rpc_response" message after an RPC response', function(done) {
       // We don't want the real response, we just want to be sure the event is
       // fired.
-      env.detach('_rpc_response');
-      env.on('_rpc_response', function(data) {
+      document.removeEventListener(
+        '_rpc_response', env._handleRpcResponseBound);
+      const handler = evt => {
+        document.removeEventListener('_rpc_response', handler);
         done();
-      });
+      };
+      document.addEventListener('_rpc_response', handler);
       // Calling this sets up the callback.
       env._next();
       env._txn_callbacks[env._counter].call(env, {});
@@ -3051,7 +3054,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.on('delta', function(evt) {
         done();
       });
-      env._handleRpcResponse(callbackData);
+      env._handleRpcResponse({detail: callbackData});
     });
 
     it('translates the type of each change in the delta', function(done) {
@@ -3062,7 +3065,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(['applicationInfo', 'deploy', {}], change);
         done();
       });
-      env._handleRpcResponse(callbackData);
+      env._handleRpcResponse({detail: callbackData});
     });
 
     it('sorts deltas', function(done) {
@@ -3095,15 +3098,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ], change);
         done();
       });
-      env._handleRpcResponse(callbackData);
-    });
-
-    it('the _rpc_response subscription can not have args', function() {
-      var subscribers = env.getEvent('_rpc_response')._subscribers;
-      // This test assumes that there is only one subscriber.  If we ever have
-      // any more we will need to update this test.
-      assert.equal(subscribers.length, 1);
-      assert.equal(subscribers[0].args, null);
+      env._handleRpcResponse({detail: callbackData});
     });
 
     it('can resolve a problem with a unit', function() {

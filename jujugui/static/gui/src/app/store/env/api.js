@@ -222,7 +222,8 @@ YUI.add('juju-env-api', function(Y) {
       this._pinger = null;
       // pendingLoginResponse is set to true when the login process is running.
       this.pendingLoginResponse = false;
-      this.on('_rpc_response', this._handleRpcResponse);
+      this._handleRpcResponseBound = this._handleRpcResponse.bind(this);
+      document.addEventListener('_rpc_response', this._handleRpcResponseBound);
       this._allWatcherBeingStopped = false;
       // When using GISF and switching between models or going from the
       // unconnected state to a model the env properties are reset, but only
@@ -241,6 +242,11 @@ YUI.add('juju-env-api', function(Y) {
       // scope than either of those. Parts of the UI hide/display based on this
       // flag; for example, we don't show the sharing button while it's false.
       this.loading = false;
+    },
+
+    destructor: function() {
+      document.removeEventListener(
+        '_rpc_response', this._handleRpcResponseBound);
     },
 
     /**
@@ -333,10 +339,11 @@ YUI.add('juju-env-api', function(Y) {
       Process an incoming response to an RPC request.
 
       @method _handleRpcResponse
-      @param {Object} data The data returned by the server.
+      @param {Object} evt The event from the RPC listener.
       @return {undefined} Nothing.
      */
-    _handleRpcResponse: function(data) {
+    _handleRpcResponse: function(evt) {
+      const data = evt.detail;
       // We do this early to get a response back fast.  Might be a bad
       // idea. :-)
       this._next();
@@ -391,7 +398,9 @@ YUI.add('juju-env-api', function(Y) {
         id: this._allWatcherId
       }, function(data) {
         if (!data.error) {
-          this.fire('_rpc_response', data);
+          document.dispatchEvent(new CustomEvent('_rpc_response', {
+            detail: data
+          }));
           return;
         }
         if (this._allWatcherBeingStopped && data.error === ERR_STOP_WATCHER) {
