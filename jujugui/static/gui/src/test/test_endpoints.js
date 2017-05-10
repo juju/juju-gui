@@ -488,13 +488,15 @@ describe('Endpoints map handlers', function() {
        destroyMe.push(charm);
        charm.loaded = true;
 
-       controller.on('endpointMapAdded', function() {
+       const handler = () => {
          controller.endpointsMap.should.eql({wordpress: {
            requires: [],
            provides: []}});
          // This will hang forever if the endpoint map doesn't update.
+         document.removeEventListener('endpointMapAdded', handler);
          done();
-       });
+       };
+       document.addEventListener('endpointMapAdded', handler);
        app.db.services.add({
          id: applicationName,
          pending: true,
@@ -513,13 +515,15 @@ describe('Endpoints map handlers', function() {
        destroyMe.push(charm);
        charm.loaded = true;
 
-       controller.on('endpointMapAdded', function() {
+       const handler = () => {
          controller.endpointsMap.should.eql({wordpress: {
            requires: [],
            provides: []}});
          // This will hang forever if the endpoint map doesn't update.
+         document.removeEventListener('endpointMapAdded', handler);
          done();
-       });
+       };
+       document.addEventListener('endpointMapAdded', handler);
        app.db.services.add({
          id: applicationName,
          pending: false,
@@ -538,62 +542,21 @@ describe('Endpoints map handlers', function() {
         destroyMe.push(charm);
         charm.loaded = true;
 
-        controller.on('endpointMapAdded', function() {
+        const handler = () => {
           var svc = app.db.services.getById(applicationName);
           assert.isTrue(svc.get('subordinate'));
           destroyMe.push(svc);
+          document.removeEventListener('endpointMapAdded', handler);
           done();
-        });
-
+        };
+        document.addEventListener('endpointMapAdded', handler);
         app.db.services.add({
           id: applicationName,
           pending: false,
           loaded: true,
           charm: charmUrl
         });
-
       });
-
-  it('should update endpoints map when a service\'s charm changes', function() {
-    var applicationName = 'wordpress';
-    var charmUrl = 'cs:precise/wordpress-2';
-    app.db.charms.add({id: charmUrl});
-    var charm = app.db.charms.getById(charmUrl);
-    destroyMe.push(charm);
-    charm.loaded = true;
-    app.db.services.add({
-      id: applicationName,
-      pending: true,
-      loaded: true,
-      charm: charmUrl});
-    var svc = app.db.services.getById(applicationName);
-    svc.set('pending', false);
-    controller.on('endpointMapAdded', function() {
-      controller.endpointsMap.should.eql({wordpress: {
-        requires: [],
-        provides: []}});
-
-      charmUrl = 'cs:precise/wordpress-3';
-      app.db.charms.add({id: charmUrl});
-      var charm2 = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm2);
-      charm2.set('provides', {
-        url: {
-          'interface': 'http'
-        }
-      });
-
-      charm2.loaded = true;
-      svc.set('charm', charmUrl);
-      controller.endpointsMap.should.eql({wordpress: {
-        requires: [],
-        provides: [
-          {
-            name: 'url',
-            'interface': 'http'
-          }]}});
-    });
-  });
 
   it('should remove service from endpoints map when it is deleted', function() {
     var applicationName = 'wordpress';

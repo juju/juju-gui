@@ -259,11 +259,6 @@ YUI.add('juju-env-base', function(Y) {
   Y.extend(BaseEnvironment, Y.Base, {
 
     initializer: function() {
-      // Define custom events.
-      this.publish('msg', {
-        emitFacade: true,
-        defaultFn: this.dispatch_result
-      });
       // Set up the attribute resetter.
       const resetter = attrResetter(this);
       this.setConnectedAttr = resetter.set.bind(resetter);
@@ -374,14 +369,14 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Fire a "msg" event when a message is received from the WebSocket.
+     * Dispatch when a message is received from the WebSocket.
      *
      * @method on_message
      * @param {Object} evt The event triggered by the WebSocket.
      * @return {undefined} Fire an event only.
      */
     on_message: function(evt) {
-      this.fire('msg', JSON.parse(evt.data));
+      this.dispatch_result(JSON.parse(evt.data));
     },
 
     /**
@@ -418,7 +413,9 @@ YUI.add('juju-env-base', function(Y) {
       });
       console.warn(title + ': ' + message + '. Attempted operation: ', op);
       if (!silent) {
-        this.fire('permissionDenied', {title: title, message: message, op: op});
+        document.dispatchEvent(new CustomEvent('permissionDenied', {
+          detail: {title: title, message: message, op: op}
+        }));
       }
     }
   });
