@@ -26,29 +26,30 @@ describe('EmptyUserProfile', () => {
     YUI().use('empty-user-profile', () => { done(); });
   });
 
-  it('renders the empty state', () => {
-    var staticURL = 'test-url';
+  it('renders the empty state for the current user', () => {
+    const staticURL = 'test-url';
     const changeState = sinon.stub();
-    var component = jsTestUtils.shallowRender(
+    const component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
        changeState={changeState}
+       isCurrentUser={true}
        switchModel={sinon.stub()}
        staticURL={staticURL} />, true);
-    var src = staticURL + '/static/gui/build/app'
+    const src = staticURL + '/static/gui/build/app'
               + '/assets/images/non-sprites/empty_profile.png';
-    var output = component.getRenderOutput();
-    var instance = component.getMountedInstance();
-    var expected = (
+    const output = component.getRenderOutput();
+    const instance = component.getMountedInstance();
+    const expected = (
       <div className="user-profile__empty twelve-col no-margin-bottom">
         <img alt="Empty profile"
           className="user-profile__empty-image"
           src={src} />
         <h2 className="user-profile__empty-title">
-          Your profile is currently empty
+          {'Your'} profile is currently empty
         </h2>
         <p className="user-profile__empty-text">
-          Your models, bundles, and charms will appear here when you create
-          them.
+          {'Your'} models, bundles, and charms will appear here
+          when {'you'} create them.
         </p>
         <juju.components.CreateModelButton
           changeState={changeState}
@@ -57,12 +58,43 @@ describe('EmptyUserProfile', () => {
           type="inline-positive" />
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('renders the empty state for another user', () => {
+    const staticURL = 'test-url';
+    const changeState = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.EmptyUserProfile
+       changeState={changeState}
+       isCurrentUser={false}
+       switchModel={sinon.stub()}
+       staticURL={staticURL} />, true);
+    const src = staticURL + '/static/gui/build/app'
+              + '/assets/images/non-sprites/empty_profile.png';
+    const output = component.getRenderOutput();
+    const expected = (
+      <div className="user-profile__empty twelve-col no-margin-bottom">
+        <img alt="Empty profile"
+          className="user-profile__empty-image"
+          src={src} />
+        <h2 className="user-profile__empty-title">
+          {'This user\'s'} profile is currently empty
+        </h2>
+        <p className="user-profile__empty-text">
+          {'This user\'s'} models, bundles, and charms will appear here
+          when {'they'} create them.
+        </p>
+        {null}
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays the empty_profile asset with a staticURL provided', () => {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
+        changeState={sinon.stub()}
         switchModel={sinon.stub()}
         staticURL='test' />);
     assert.equal(
