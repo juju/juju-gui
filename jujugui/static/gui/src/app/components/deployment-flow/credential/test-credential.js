@@ -117,6 +117,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            hideCancel={true}
             sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
@@ -238,6 +239,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            hideCancel={true}
             sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
@@ -516,6 +518,7 @@ describe('DeploymentCredential', function() {
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
+            hideCancel={false}
             sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}

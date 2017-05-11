@@ -237,12 +237,42 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
         </form>
-        <div className="prepend-six six-col last-col">
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('can render without a cancel button', function() {
+    var cloud = getCloudProviderDetails('gce');
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          addNotification={sinon.stub()}
+          updateCloudCredential={sinon.stub()}
+          close={sinon.stub()}
+          cloud={null}
+          credentials={[]}
+          getCloudProviderDetails={getCloudProviderDetails}
+          generateCloudCredentialName={sinon.stub()}
+          getCredentials={sinon.stub()}
+          hideCancel={true}
+          sendAnalytics={sendAnalytics}
+          setCredential={sinon.stub()}
+          user="user-admin"
+          validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
+    assert.deepEqual(buttons, [{
+      action: instance._handleAddCredentials,
+      submit: true,
+      title: 'Add cloud credential',
+      type: 'inline-positive'
+    }]);
   });
 
   it('can update to a new cloud', function() {
@@ -359,7 +389,8 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
         </form>
-        <div className="prepend-six six-col last-col">
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>
@@ -512,7 +543,8 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
         </form>
-        <div className="prepend-six six-col last-col">
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>
@@ -613,7 +645,8 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
         </form>
-        <div className="prepend-six six-col last-col">
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>
@@ -764,7 +797,8 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
         </form>
-        <div className="prepend-six six-col last-col">
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>
