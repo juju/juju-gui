@@ -32,6 +32,7 @@ YUI.add('deployment-credential-add', function() {
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      hideCancel: React.PropTypes.bool,
       sendAnalytics: React.PropTypes.func.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
@@ -249,16 +250,19 @@ YUI.add('deployment-credential-add', function() {
     },
 
     render: function() {
-      var buttons = [{
-        action: () => { this.props.close(true); },
-        title: 'Cancel',
-        type: 'neutral'
-      }, {
+      let buttons = [{
         action: this._handleAddCredentials,
         submit: true,
         title: 'Add cloud credential',
-        type: 'positive'
+        type: 'inline-positive'
       }];
+      if (!this.props.hideCancel) {
+        buttons.unshift({
+          action: () => { this.props.close(true); },
+          title: 'Cancel',
+          type: 'inline-neutral'
+        });
+      }
       // If no cloud has been selected we set a default so that the disabled
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
@@ -311,7 +315,8 @@ YUI.add('deployment-credential-add', function() {
             </h3>
             {this._generateCredentialsFields()}
           </form>
-          <div className="prepend-six six-col last-col">
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col'}>
             <juju.components.ButtonRow
               buttons={buttons} />
           </div>
