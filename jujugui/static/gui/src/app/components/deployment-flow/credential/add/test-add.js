@@ -247,7 +247,6 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render without a cancel button', function() {
-    var cloud = getCloudProviderDetails('gce');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
