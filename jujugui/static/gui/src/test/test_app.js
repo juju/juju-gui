@@ -122,8 +122,10 @@ describe('App', function() {
     function constructAppInstance(config, context) {
       config = config || {};
       config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
-      config.user = config.user || new window.jujugui.User({
-        sessionStorage: getMockStorage()});
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      config.user = config.user || userClass;
       config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
         user: config.user,
         conn: new testUtils.SocketStub()

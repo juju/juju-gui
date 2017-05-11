@@ -481,7 +481,8 @@ YUI.add('juju-gui', function(Y) {
       }
 
       // Feed environment changes directly into the database.
-      this.env.on('delta', this.db.onDelta, this.db);
+      this.onDeltaBound = this.db.onDelta.bind(this.db);
+      document.addEventListener('delta', this.onDeltaBound);
 
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
@@ -2500,6 +2501,7 @@ YUI.add('juju-gui', function(Y) {
         document.removeEventListener('login', this.boundOnLogin);
       }
       document.removeEventListener('login', this.controllerLoginHandler);
+      document.removeEventListener('delta', this.onDeltaBound);
     },
 
     /**

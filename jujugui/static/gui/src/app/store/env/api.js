@@ -381,7 +381,9 @@ YUI.add('juju-env-api', function(Y) {
         if (b[1] === 'remove') { scoreB = -scoreB; }
         return scoreA - scoreB;
       });
-      this.fire('delta', {data: {result: deltas}});
+      document.dispatchEvent(new CustomEvent('delta', {
+        detail: {data: {result: deltas}}
+      }));
     },
 
     /**

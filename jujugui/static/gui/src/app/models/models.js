@@ -2251,7 +2251,7 @@ YUI.add('juju-models', function(Y) {
     */
     onDelta: function(deltaEvent) {
       var self = this,
-          changes = deltaEvent.data.result,
+          changes = deltaEvent.detail.data.result,
           defaultHandler = handlers.defaultHandler;
 
       // Process delta changes invoking handlers for each change in changeset.

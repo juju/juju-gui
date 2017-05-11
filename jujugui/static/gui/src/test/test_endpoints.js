@@ -107,7 +107,7 @@ describe('Relation endpoints logic', function() {
     } else {
       delta = sample_env;
     }
-    db.onDelta({data: {result: delta}});
+    db.onDelta({detail: {data: {result: delta}}});
   }
 
   it('should be able to find relatable services', function() {

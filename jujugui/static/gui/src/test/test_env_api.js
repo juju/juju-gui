@@ -3049,27 +3049,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('fires "delta" when handling an RPC response', function(done) {
-      env.detach('delta');
       var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
-      env.on('delta', function(evt) {
+      const handler = () => {
+        document.removeEventListener('delta', handler);
         done();
-      });
+      };
+      document.addEventListener('delta', handler);
       env._handleRpcResponse({detail: callbackData});
     });
 
     it('translates the type of each change in the delta', function(done) {
-      env.detach('delta');
       var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
-      env.on('delta', function(evt) {
-        var change = evt.data.result[0];
+      const handler = evt => {
+        document.removeEventListener('delta', handler);
+        const change = evt.detail.data.result[0];
         assert.deepEqual(['applicationInfo', 'deploy', {}], change);
         done();
-      });
+      };
+      document.addEventListener('delta', handler);
       env._handleRpcResponse({detail: callbackData});
     });
 
     it('sorts deltas', function(done) {
-      env.detach('delta');
       var callbackData = {
         response: {
           deltas: [
@@ -3083,8 +3084,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ]
         }
       };
-      env.on('delta', function(evt) {
-        var change = evt.data.result.map(function(delta) {
+      const handler = evt => {
+        document.removeEventListener('delta', handler);
+        const change = evt.detail.data.result.map(function(delta) {
           return delta[0];
         });
         assert.deepEqual([
@@ -3097,7 +3099,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'foobarInfo'
         ], change);
         done();
-      });
+      };
+      document.addEventListener('delta', handler);
       env._handleRpcResponse({detail: callbackData});
     });
 

@@ -265,7 +265,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
-      db.onDelta({data: Y.clone(environment_delta)});
+      db.onDelta({detail: {data: Y.clone(environment_delta)}});
       db.fireEvent = sinon.stub();
       var charmData = testUtils.loadFixture('data/mysql-api-response.json',
                                             true);
@@ -624,14 +624,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.onDelta({ data: addSubordinate });
+      db.onDelta({detail: { data: addSubordinate }});
       view.update();
 
       container.querySelectorAll('.subordinate.service').forEach(service => {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.onDelta({ data: addRelation });
+      db.onDelta({detail: { data: addRelation }});
       view.update();
 
       validateRelationCount(container.querySelector('.subordinate.service'),
@@ -668,7 +668,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       view.render();
 
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.render();
 
       container.querySelectorAll('.service').forEach(serviceNode => {
@@ -718,7 +718,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             chartSizedProperly(service).should.equal(true);
           });
 
-          db.onDelta({ data: tmp_data });
+          db.onDelta({detail: { data: tmp_data }});
 
           container.querySelectorAll('.service').forEach(service => {
             chartSizedProperly(service).should.equal(true);
@@ -795,7 +795,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
 
           // Resize the wordpress service.
-          db.onDelta({ data: tmp_data });
+          db.onDelta({detail: { data: tmp_data }});
 
           // Ensure that endpoints still match for all services, now that
           // one service has been resized.  This is the real test here.
@@ -851,7 +851,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .should.equal(true);
       });
 
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.render();
 
       container.querySelectorAll('.service').forEach(serviceNode => {
@@ -885,10 +885,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.modules.ServiceModule.set('useTransitions', false);
       view.render();
 
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.update();
       tmp_data.result[0][2].name = 'wordpressb';
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.update();
 
       assert.notDeepEqual(
@@ -925,7 +925,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       match[1].should.eql('100');
       match[2].should.eql('200');
 
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.update();
 
       // On annotation change  position should be updated.
@@ -951,7 +951,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ]
         ]
       };
-      db.onDelta({ data: tmp_data });
+      db.onDelta({detail: { data: tmp_data }});
       view.update();
     });
 
@@ -1164,7 +1164,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
 
     it('builds a menu of relations in a collection', function() {
-      db.onDelta({data: additionalRelations});
+      db.onDelta({detail: {data: additionalRelations}});
       view = new views.environment({
         container: container,
         db: db,
@@ -1287,7 +1287,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('allows clicking on a relation to inspect it', function() {
-      db.onDelta({data: additionalRelations});
+      db.onDelta({detail: {data: additionalRelations}});
       const state = {
         changeState: sinon.stub()
       };
@@ -1410,7 +1410,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('stores relations in collections', function() {
-      db.onDelta({data: additionalRelations});
+      db.onDelta({detail: {data: additionalRelations}});
       var view = new views.environment({
         container: container,
         db: db,

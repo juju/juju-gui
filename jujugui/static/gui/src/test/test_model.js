@@ -552,17 +552,17 @@ describe('test_model.js', function() {
         db.services.add([mysql]);
         assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
                      true);
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['unitInfo', 'add', {name: 'mysql/0'}],
           ['unitInfo', 'add', {name: 'mysql/1'}]
-        ]}});
+        ]}}});
         assert.equal(mysql.get('units').size(), 2);
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['unitInfo', 'remove', {
             name: 'mysql/0',
             applicastion: 'mysql'
           }]
-        ]}});
+        ]}}});
         assert.equal(mysql.get('units').size(), 1);
       });
 
@@ -576,9 +576,9 @@ describe('test_model.js', function() {
             id = '0';
         assert.equal(db.machines.size(), 0,
                      'the machine list is not be empty');
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['machineInfo', 'change', {id: id}]
-        ]}});
+        ]}}});
         assert.equal(db.machines.size(), 1,
                      'the machines list did not have the expected size');
         var machine = db.machines.getById(id);
@@ -594,9 +594,9 @@ describe('test_model.js', function() {
           {id: 'mysql', hide: true, fade: true, highlight: true}
         ]);
         var service = db.services.item(0);
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['unitInfo', 'change', {name: id, application: service.get('id')}]
-        ]}});
+        ]}}});
         var unit = db.units.getById(id);
         assert.notEqual(unit, null, 'Unit was not created');
         assert.equal(unit.hide, service.get('hide'),
@@ -613,9 +613,9 @@ describe('test_model.js', function() {
             unitsStub = sinon.stub(db.units, 'process_delta');
         this._cleanups.push(machinesStub.restore);
         this._cleanups.push(unitsStub.restore);
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['unitInfo', 'remove', {'machine-id': '0'}]
-        ]}});
+        ]}}});
         var args = machinesStub.lastCall.args;
         assert.equal(args[0], 'change',
                      'the expected action was not applied to machines');
@@ -630,12 +630,12 @@ describe('test_model.js', function() {
            var my0 = {id: 'mysql/0', agent_state: 'pending'};
            var my1 = {id: 'mysql/1', agent_state: 'pending'};
            db.addUnits([my0, my1]);
-           db.onDelta({data: {result: [
+           db.onDelta({detail: {data: {result: [
              ['unitInfo', 'remove', {
                name: 'mysql/1',
                application: 'mysql'
              }]
-           ]}});
+           ]}}});
            var names = mysql.get('units').get('id');
            names.length.should.equal(1);
            names[0].should.equal('mysql/0');
@@ -646,13 +646,13 @@ describe('test_model.js', function() {
            var db = new models.Database();
            var my0 = new models.Service({id: 'mysql', exposed: true});
            db.services.add([my0]);
-           db.onDelta({data: {result: [
+           db.onDelta({detail: {data: {result: [
              ['applicationInfo', 'add', {
                name: 'mysql',
                'charm-url': 'cs:precise/mysql',
                exposed: false
              }]
-           ]}});
+           ]}}});
            my0.get('exposed').should.equal(false);
          });
 
@@ -663,12 +663,12 @@ describe('test_model.js', function() {
            db.services.add({id: 'mysql'});
            var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
            db.addUnits([my0]);
-           db.onDelta({data: {result: [
+           db.onDelta({detail: {data: {result: [
              ['unitInfo', 'add', {
                name: 'mysql/0',
                'public-address': '5.6.7.8'
              }]
-           ]}});
+           ]}}});
            my0.public_address.should.equal('5.6.7.8');
          });
 
@@ -676,9 +676,9 @@ describe('test_model.js', function() {
         var handler = sinon.stub(
             Y.juju.models.handlers, 'defaultHandler');
         var db = new models.Database();
-        db.onDelta({data: {result: [
+        db.onDelta({detail: {data: {result: [
           ['fakeDelta', 'add', {}]
-        ]}});
+        ]}}});
         assert.equal(handler.callCount, 1);
       });
 
@@ -693,9 +693,9 @@ describe('test_model.js', function() {
             };
             db.addUnits([my0]);
             // Note that relation_errors is not set.
-            db.onDelta({data: {result: [
+            db.onDelta({detail: {data: {result: [
               ['unit', 'change', {id: 'mysql/0'}]
-            ]}});
+            ]}}});
             my0.relation_errors.should.eql({});
           });
     });
