@@ -286,9 +286,9 @@ YUI.add('bundle-importer', function(Y) {
         this._dryRunIndex = -1;
         var collectedServices = this._collectedServices;
         this._collectedServices = [];
-        this.db.fire('bundleImportComplete', {
-          services: collectedServices
-        });
+        document.dispatchEvent(new CustomEvent('topo.bundleImportComplete', {
+          detail: {services: collectedServices}
+        }));
         return;
       }
       this._dryRunIndex += 1;

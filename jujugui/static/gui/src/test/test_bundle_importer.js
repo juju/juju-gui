@@ -311,7 +311,8 @@ describe('Bundle Importer', function() {
       };
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
-      bundleImporter.db.after('bundleImportComplete', function() {
+      const handler = () => {
+        document.removeEventListener('topo.bundleImportComplete', handler);
         // Cleans up internals.
         // Note - although we strive to test public methods only, we do need
         // to check on some aspects of the bundle importer's state to ensure
@@ -364,7 +365,8 @@ describe('Bundle Importer', function() {
         assert.equal(db.services.item(3).get('exposed'), false);
         assert.equal(getCanonicalIdCount, 3);
         done();
-      });
+      };
+      document.addEventListener('topo.bundleImportComplete', handler);
       bundleImporter.importBundleDryRun(data);
     });
 
@@ -375,11 +377,13 @@ describe('Bundle Importer', function() {
       }));
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
-      bundleImporter.db.after('bundleImportComplete', function() {
+      const handler = () => {
+        document.removeEventListener('topo.bundleImportComplete', handler);
         assert.equal(db.services.item(0).get('name'), 'haproxy');
         assert.equal(db.services.item(1).get('name'), 'haproxy-a');
         done();
-      });
+      };
+      document.addEventListener('topo.bundleImportComplete', handler);
       bundleImporter.importBundleDryRun(data);
     });
 
