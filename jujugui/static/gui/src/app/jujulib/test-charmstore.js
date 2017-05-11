@@ -303,13 +303,10 @@ describe('jujulib charmstore', function() {
             'limit=30&' +
             'autocomplete=1&' +
             'include=charm-metadata&' +
-            'include=charm-config&' +
             'include=supported-series&' +
             'include=bundle-metadata&' +
             'include=extra-info&' +
-            'include=tags&' +
-            'include=owner&' +
-            'include=stats']);
+            'include=owner']);
     });
 
     it('accepts a custom limit when generating an api path', function() {
@@ -321,13 +318,10 @@ describe('jujulib charmstore', function() {
             'limit=99&' +
             'autocomplete=1&' +
             'include=charm-metadata&' +
-            'include=charm-config&' +
             'include=supported-series&' +
             'include=bundle-metadata&' +
             'include=extra-info&' +
-            'include=tags&' +
-            'include=owner&' +
-            'include=stats']);
+            'include=owner']);
     });
 
     it('calls to make a valid charmstore search request', function() {

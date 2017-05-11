@@ -142,7 +142,7 @@ YUI.add('search-results', function(Y) {
       // Parse the raw results.
       if (error) {
         this._changeActiveComponent('error');
-        console.error('Search request failed.');
+        console.error('Search request failed.', error);
         return;
       }
       var results = rawResults.map(function(result) {
