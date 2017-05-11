@@ -381,13 +381,10 @@ var module = module;
         'limit=' + (limit || 30),
         'autocomplete=1',
         'include=charm-metadata',
-        'include=charm-config',
         'include=supported-series',
         'include=bundle-metadata',
         'include=extra-info',
-        'include=tags',
-        'include=owner',
-        'include=stats'
+        'include=owner'
       ];
       const url = this._generatePath('search', includes.join('&'));
       const headers = null;
