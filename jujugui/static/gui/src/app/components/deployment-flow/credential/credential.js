@@ -293,6 +293,7 @@ YUI.add('deployment-credential', function() {
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
+          hideCancel={!this.state.credentials.length}
           sendAnalytics={this.props.sendAnalytics}
           setCredential={this.props.setCredential}
           updateCloudCredential={this.props.updateCloudCredential}
