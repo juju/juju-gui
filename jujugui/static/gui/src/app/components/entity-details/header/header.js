@@ -251,14 +251,15 @@ YUI.add('entity-header', function() {
       var serviceCount = entity.serviceCount;
       var unitCount = entity.unitCount;
       var machineCount = entity.machineCount;
-      return (
-        <li>
-          {serviceCount} {this.props.pluralize('application', serviceCount)},
-          &nbsp;
-          {machineCount} {this.props.pluralize('machine', machineCount)},
-          &nbsp;
-          {unitCount} {this.props.pluralize('unit', unitCount)}
-        </li>);
+      return (<ul className="bullets inline entity-header__properties">
+          <li className="entity-header__counts">
+            {serviceCount} {this.props.pluralize('application', serviceCount)},
+            &nbsp;
+            {machineCount} {this.props.pluralize('machine', machineCount)},
+            &nbsp;
+            {unitCount} {this.props.pluralize('unit', unitCount)}
+          </li>
+        </ul>);
     },
 
     /**
@@ -283,9 +284,10 @@ YUI.add('entity-header', function() {
       }
       const url = props.urllib.fromLegacyString(lastRevision);
       return (
-        <li key={lastRevision} className="entity-header__series link"
-            onClick={this._onLastRevisionClick}>
-          Latest revision ({url.revision})
+        <li key={lastRevision} className="entity-header__series">
+            <span className="link" onClick={this._onLastRevisionClick}>
+              Latest revision ({url.revision})
+            </span>
         </li>
       );
     },
@@ -373,6 +375,7 @@ YUI.add('entity-header', function() {
     },
 
     render: function() {
+      let icon;
       const entityModel = this.props.entityModel;
       const entity = entityModel.toEntity();
       const twitterUrl = [
@@ -385,6 +388,11 @@ YUI.add('entity-header', function() {
         'https://plus.google.com/share?url=',
         this._getStoreURL(entity)
       ].join('');
+
+      if (entity.type !== 'bundle') {
+        icon = (<img src={entity.iconPath} alt={entity.displayName}
+             width="96" className="entity-header__icon"/>);
+      }
       return (
         <div className="row-hero"
           ref="headerWrapper"
@@ -392,8 +400,7 @@ YUI.add('entity-header', function() {
           <header className={this._generateClasses()}>
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">
-                <img src={entity.iconPath} alt={entity.displayName}
-                     width="96" className="entity-header__icon"/>
+                {icon}
                 <h1
                   className="entity-header__title"
                   itemProp="name"
@@ -412,9 +419,9 @@ YUI.add('entity-header', function() {
                   </li>
                   {this._generateLatestRevision()}
                   {this._generateSeriesList()}
-                  {this._generateCounts()}
                   {this._generateChannelList()}
                 </ul>
+                {this._generateCounts()}
                 <ul className="entity-header__social-list">
                   <li>
                     <a id="item-twitter"
@@ -422,7 +429,7 @@ YUI.add('entity-header', function() {
                       href={twitterUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-twitter"
-                        size="44"/>
+                        size="36"/>
                     </a>
                   </li>
                   <li>
@@ -431,7 +438,7 @@ YUI.add('entity-header', function() {
                        href={googlePlusUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-google"
-                        size="44"/>
+                        size="36"/>
                     </a>
                   </li>
                 </ul>

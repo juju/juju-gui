@@ -88,9 +88,11 @@ describe('EntityHeader', function() {
                     test-owner
                   </span>
                 </li>
-                <li className="entity-header__series link"
+                <li className="entity-header__series">
+                  <span className="link"
                     onClick={instance._onLastRevisionClick}>
-                  Latest revision (42)
+                    Latest revision (42)
+                  </span>
                 </li>
                 {[<li key="trusty" className="entity-header__series">
                   trusty
@@ -110,7 +112,7 @@ describe('EntityHeader', function() {
                       '.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-twitter"
-                      size="44"/>
+                      size="36"/>
                   </a>
                 </li>
                 <li>
@@ -120,7 +122,7 @@ describe('EntityHeader', function() {
                       'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-google"
-                      size="44"/>
+                      size="36"/>
                   </a>
                 </li>
               </ul>
@@ -277,18 +279,18 @@ describe('EntityHeader', function() {
         />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
-      <li>
-        {3} {'applications'},
-        &nbsp;
-        {2} {'machines'},
-        &nbsp;
-        {5} {'units'}
-      </li>);
-    assert.deepEqual(
-      output.props.children.props.children.props.children[0].props.children[2]
-      .props.children[3],
-      expectedOutput
-    );
+      <ul className="bullets inline entity-header__properties">
+        <li className="entity-header__counts">
+          {3} {'applications'},
+          &nbsp;
+          {2} {'machines'},
+          &nbsp;
+          {5} {'units'}
+        </li>
+      </ul>);
+    expect(
+      output.props.children.props.children.props.children[0].
+      props.children[3]).toEqualJSX(expectedOutput);
   });
 
   it('displays an add to model button', function() {
