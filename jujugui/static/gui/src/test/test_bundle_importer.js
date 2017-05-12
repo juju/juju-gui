@@ -351,12 +351,17 @@ describe('Bundle Importer', function() {
         assert.equal(db.machines.item(3).id, 'new0/lxd/new3');
         assert.equal(db.machines.item(4).id, 'new1/lxd/new2');
         // Relations
+        const id = [
+          db.services.item(0).get('id'),
+          db.services.item(1).get('id'),
+          db.services.item(2).get('id')
+        ];
         assert.equal(
             db.relations.item(0).get('id'),
-            'pending-$deploy-1:reverseproxy$deploy-4:website');
+            `pending-$deploy-1:reverseproxy${id[0]}$deploy-4:website${id[1]}`);
         assert.equal(
             db.relations.item(1).get('id'),
-            'pending-$deploy-4:db$deploy-7:db');
+            `pending-$deploy-4:db${id[1]}$deploy-7:db${id[2]}`);
         // Expose
         assert.equal(db.services.item(0).get('exposed'), false);
         assert.equal(db.services.item(1).get('exposed'), false);
