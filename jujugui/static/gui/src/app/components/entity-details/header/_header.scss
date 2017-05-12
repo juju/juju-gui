@@ -150,6 +150,15 @@
     text-transform: capitalize;
   }
 
+  &__subordinate {
+    font-weight: 400;
+
+    .svg-icon {
+      margin-left: 5px;
+      vertical-align: text-bottom;
+    }
+  }
+
   &__series {
     text-transform: capitalize;
   }

@@ -263,6 +263,31 @@ YUI.add('entity-header', function() {
     },
 
     /**
+      Mark the charm as a subordinate if it is one.
+
+      @return {Object} The JSX markup.
+    */
+    _generateSubordinate: function() {
+      const isSubordinate = this.props.entityModel.get('is_subordinate');
+      if (!isSubordinate) {
+        return null;
+      }
+      return (
+        <li className="entity-header__subordinate">
+          Subordinate
+          <a href={
+            'https://jujucharms.com/docs/stable/' +
+            'authors-subordinate-applications'}
+            target="_blank">
+            <juju.components.SvgIcon
+              name="help_16"
+              size="16"/>
+          </a>
+        </li>
+      );
+    },
+
+    /**
       Generate a link to the latest revision of this entity in the case we are
       not already in the most recent one.
 
@@ -417,6 +442,7 @@ YUI.add('entity-header', function() {
                       {entity.owner}
                     </span>
                   </li>
+                  {this._generateSubordinate()}
                   {this._generateLatestRevision()}
                   {this._generateSeriesList()}
                   {this._generateChannelList()}
