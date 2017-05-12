@@ -681,7 +681,7 @@ YUI.add('bundle-importer', function(Y) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
 
-      const relationId = 'pending-' + record.args[0] + record.args[1];
+      const relationId = 'pending-' + endpoints[0][0] + endpoints[1][0];
       const pendingRelation = this.db.relations.add({
         relation_id: relationId,
         'interface': endpoints[0][1].name,
