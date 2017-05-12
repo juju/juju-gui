@@ -121,31 +121,21 @@ describe('App', function() {
 
     function constructAppInstance(config, context) {
       config = config || {};
-      config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
-      userClass.controller = {user: 'user', password: 'password'};
-      config.user = config.user || userClass;
+      config.user = config.user || new window.jujugui.User({
+        sessionStorage: getMockStorage()});
+      config.user.controller = {user: 'user', password: 'password'};
       config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
         user: config.user,
         conn: new testUtils.SocketStub()
       });
+      config.baseUrl = 'http://example.com';
       config.container = container;
       config.viewContainer = container;
-      app = new Y.juju.App(Y.mix(config, {
-        baseUrl: 'http://0.0.0.0:6543/',
-        consoleEnabled: true,
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
-      }));
-      if (config.env && config.env.connect) {
-        config.env.connect();
-        config.env.ecs = new juju.EnvironmentChangeSet();
-        env = config.env;
-      }
-      app.navigate = function() {};
-      app.showView(new Y.View());
-      injectData(app);
+      config.jujuCoreVersion = '2.0.0';
+      config.consoleEnabled = true;
+      config.controllerSocketTemplate = '/api';
+      app = new Y.juju.App(config);
+      app.env.connect();
       return app;
     }
 
