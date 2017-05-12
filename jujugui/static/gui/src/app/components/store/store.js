@@ -258,29 +258,23 @@ YUI.add('store', function() {
 
       return (<div className="row equal-height">
           <div className="box box--kubernetes align-center four-col">
-              <img src="https://assets.ubuntu.com/v1/2847e80a-k8-image.png"
-                alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>Kubernetes</h2>
                   {kubernetesButton}
               </div>
           </div>
           <div className="box box--openstack align-center four-col">
-              <img src={this._generateLocalImagePath('openstack-promo.png')}
-                alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>OpenStack</h2>
                   {openstackButton}
               </div>
           </div>
-          <div
-            className="box box--hadoop align-center four-col last-col">
-              <img
-                src="https://assets.ubuntu.com/v1/883e4977-hadoop-elephant.png"
-                alt="" className="box__image" />
-              <div className="align-bottom">
-                  <h2>Big Data</h2>
-                  {bigdataButton}
+          <div className="box box--hadoop align-center four-col last-col">
+            <div className="box--hadoop-container">
+                <div className="align-bottom">
+                    <h2>Big Data</h2>
+                    {bigdataButton}
+                </div>
               </div>
           </div>
       </div>);

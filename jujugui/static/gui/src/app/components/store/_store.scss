@@ -92,41 +92,38 @@
   }
 
   .box {
+    min-height: 310px;
     margin-bottom: 20px;
+    padding-bottom: 125px;
 
     &--kubernetes {
       overflow: hidden;
-      padding-bottom: 125px;
-      background-color: #3371e3;
+      background: #3371e3 url(https://assets.ubuntu.com/v1/2847e80a-k8-image.png) no-repeat center -50px;
+      background-size: 350px;
       color: $white;
-      min-height: 310px;
-
-      .box__image {
-        margin: -20% auto -20% -1%;
-      }
     }
 
     &--openstack {
       $openstack-brand: #df2e29;
-      padding-bottom: 125px;
       border-color: $openstack-brand;
-      background-color: $openstack-brand;
+      background: $openstack-brand url(/static/gui/build/app/assets/images/store/openstack-promo.png) no-repeat center 40px;
       color: $white;
-
-      .box__image {
-        margin-top: $gutter-width;
-      }
     }
 
     &--hadoop {
+      position: relative;
       background: linear-gradient(to bottom, $hadoop-brand-start 0%, $hadoop-brand-end 100%);
-      padding-bottom: 125px;
       border: 0;
       color: $white;
 
-      .box__image {
-        width: 50%;
-        margin-top: 1.5rem;
+      &-container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: url(https://assets.ubuntu.com/v1/883e4977-hadoop-elephant.png) no-repeat center 40px;
+        background-size: 200px;
       }
     }
 
