@@ -495,7 +495,7 @@ describe('EntityContent', function() {
     const getFile = sinon.spy();
     const changeState = sinon.spy();
     const pluralize = sinon.spy();
-    const mockEntity = jsTestUtils.makeEntity(true, null, false);
+    const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
     const output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
@@ -655,7 +655,7 @@ describe('EntityContent', function() {
   });
 
   it('can display a bundle with actions', function() {
-    mockEntity = jsTestUtils.makeEntity(true, null, false);
+    mockEntity = jsTestUtils.makeEntity(true);
     mockEntity.set('bugUrl', 'http://example.com/bugs');
     mockEntity.set('homepage', 'http://example.com/');
     const renderer = jsTestUtils.shallowRender(

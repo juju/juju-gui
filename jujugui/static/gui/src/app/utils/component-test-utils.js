@@ -146,11 +146,11 @@ var jsTestUtils = {
     @method makeEntity
     @param {Object} isBundle A boolean flag to control whether the entity
       produced is a charm or a bundle. Optional.
-    @param {Boolean} files An list of files included in the entity. Optional.
+    @param {Object} attrs Any attribute values to set.
    */
-  makeEntity: function(isBundle=false, files=[], juju1=false) {
-    var pojo;
-    var revisions = [{
+  makeEntity: function(isBundle=false, attrs={}) {
+    let presets;
+    const revisions = [{
       authors: [{
         email: 'charles.butler@canonical.com',
         name: 'Charles Butler'
@@ -176,7 +176,7 @@ var jsTestUtils = {
       revno: 38
     }];
     if (isBundle) {
-      pojo = {
+      presets = {
         name: 'django-cluster',
         full_name: 'django-cluster',
         description: 'HA Django cluster.',
@@ -197,29 +197,24 @@ var jsTestUtils = {
         options: {},
         revisions: revisions,
         series: 'trusty',
-        files: files,
+        files: [],
         serviceCount: 3,
-        unitCount: 5
-      };
-      const applications = {
-        gunicorn: {
-          charm: 'gunicorn',
-          options: {
-            name: 'title',
-            active: true
+        unitCount: 5,
+        applications: {
+          gunicorn: {
+            charm: 'gunicorn',
+            options: {
+              name: 'title',
+              active: true
+            }
+          },
+          django: {
+            charm: 'django'
           }
-        },
-        django: {
-          charm: 'django'
         }
       };
-      if (juju1) {
-        pojo.services = applications;
-      } else {
-        pojo.applications = applications;
-      }
     } else {
-      pojo = {
+      presets = {
         name: 'django',
         full_name: 'trusty/django',
         description: 'Django framework.',
@@ -244,7 +239,7 @@ var jsTestUtils = {
         tags: ['database'],
         series: 'trusty',
         storeId: 'trusty/django-123',
-        files: files,
+        files: [],
         options: {
           username: {
             description: 'Your username',
@@ -274,7 +269,9 @@ var jsTestUtils = {
         revisions: revisions
       };
     }
-    var mockEntity = {};
+    // Overwrite any preset values with those provided.
+    const pojo = Object.assign(presets, attrs);
+    let mockEntity = {};
     mockEntity.toEntity = sinon.stub().returns(pojo);
     mockEntity.get = function(key) {
       return pojo[key];
