@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('store', function() {
 
   juju.components.Store = React.createClass({
+    displayName: 'Store',
+
     propTypes: {
       apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
