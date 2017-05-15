@@ -293,6 +293,41 @@ describe('EntityHeader', function() {
       props.children[3]).toEqualJSX(expectedOutput);
   });
 
+  it('can mark charms as subordinates', function() {
+    const entity = jsTestUtils.makeEntity(false, {is_subordinate: true});
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          acl={acl}
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={entity}
+          getBundleYAML={sinon.stub()}
+          getModelName={sinon.stub()}
+          hasPlans={false}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0}
+          urllib={urllib}
+        />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <li className="entity-header__subordinate">
+        Subordinate
+        <a href={
+          'https://jujucharms.com/docs/stable/' +
+          'authors-subordinate-applications'}
+          target="_blank">
+          <juju.components.SvgIcon
+            name="help_16"
+            size="16"/>
+        </a>
+      </li>);
+    expect(
+      output.props.children.props.children.props.children[0].
+      props.children[2].props.children[1]).toEqualJSX(expected);
+  });
+
   it('displays an add to model button', function() {
     const output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader

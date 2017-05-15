@@ -32,7 +32,8 @@ describe('EntityFiles', function() {
   });
 
   beforeEach(function() {
-    mockEntity = jsTestUtils.makeEntity(false, ['foo.zip', 'bar/foo.txt']);
+    mockEntity = jsTestUtils.makeEntity(
+      false, {files: ['foo.zip', 'bar/foo.txt']});
   });
 
   afterEach(function() {
