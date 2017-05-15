@@ -31,6 +31,9 @@
     border-bottom: 1px solid $light-mid-grey;
     border-top-left-radius: $border-radius;
     animation: slideIn .5s;
+    // This ensures that scrolling works when the mouse is hovering over the
+    // sticky header. The styles below target interactive elements within
+    // the header.
     pointer-events: none;
 
     a,
