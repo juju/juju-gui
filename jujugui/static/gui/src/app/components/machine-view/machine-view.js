@@ -160,12 +160,16 @@ YUI.add('machine-view', function() {
         var icon;
         var content;
         if (props.services.size() === 0) {
-          icon = 'add_16';
           content = (
-            <span className="link"
-              onClick={this._openStore}>
-              Add applications to get started
-            </span>
+            <div>
+              <p>
+                Drag and drop unplaced units to customise your deployment.
+              </p>
+              <span className="link"
+                onClick={this._openStore}>
+                Add applications to get started
+              </span>
+            </div>
         );
         } else {
           icon = 'task-done_16';
@@ -173,8 +177,9 @@ YUI.add('machine-view', function() {
         }
         return (
           <div className="machine-view__column-onboarding">
-            <juju.components.SvgIcon name={icon}
-              size="16" />
+            {icon ? (
+              <juju.components.SvgIcon name={icon}
+                size="16" />) : null}
             {content}
           </div>);
       }
@@ -213,7 +218,10 @@ YUI.add('machine-view', function() {
               disabled={props.acl.isReadOnly()}
               type="inline-neutral"
               title="Auto place" />
-            or manually place
+            <p>
+              You can also drag and drop unplaced units to customise your
+              deployment.
+            </p>
           </div>
           <ul className="machine-view__list">
             {components}
