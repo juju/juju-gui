@@ -100,12 +100,15 @@ describe('MachineView', function() {
             }}>
             {undefined}
             <div className="machine-view__column-onboarding">
-              <juju.components.SvgIcon name="add_16"
-                size="16" />
-              <span className="link"
-                onClick={instance._openStore}>
-                Add applications to get started
-              </span>
+              <div>
+                <p>
+                  Drag and drop unplaced units to customise your deployment.
+                </p>
+                <span className="link"
+                  onClick={instance._openStore}>
+                  Add applications to get started
+                </span>
+              </div>
             </div>
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
@@ -231,12 +234,15 @@ describe('MachineView', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="machine-view__column-onboarding">
-        <juju.components.SvgIcon name="add_16"
-          size="16" />
-        <span className="link"
-          onClick={instance._openStore}>
-          Add applications to get started
-        </span>
+        <div>
+          <p>
+            Drag and drop unplaced units to customise your deployment.
+          </p>
+          <span className="link"
+            onClick={instance._openStore}>
+            Add applications to get started
+          </span>
+        </div>
       </div>);
     expect(
       output.props.children.props.children[0].props.children[1]).toEqualJSX(
@@ -273,7 +279,7 @@ describe('MachineView', function() {
         updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[1]
-      .props.onClick();
+      .props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {store: ''});
   });
@@ -1572,7 +1578,7 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
-    assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
+    assert.equal(placeUnit.args[0][0], 'wordpress/8');
     assert.equal(placeUnit.args[0][1], 'new0');
   });
 
