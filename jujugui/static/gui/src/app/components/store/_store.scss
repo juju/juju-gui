@@ -98,7 +98,7 @@
 
     &--kubernetes {
       overflow: hidden;
-      background: #3371e3 url(https://assets.ubuntu.com/v1/2847e80a-k8-image.png) no-repeat center -50px;
+      background: #3371e3 url(/static/gui/build/app/assets/images/store/k8-image.png) no-repeat center -50px;
       background-size: 350px;
       color: $white;
     }
@@ -122,7 +122,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: url(https://assets.ubuntu.com/v1/883e4977-hadoop-elephant.png) no-repeat center 40px;
+        background: url(/static/gui/build/app/assets/images/store/hadoop-elephant.png) no-repeat center 40px;
         background-size: 200px;
       }
     }
