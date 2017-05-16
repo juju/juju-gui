@@ -91,27 +91,70 @@ YUI.add('machine-view-machine', function() {
       if (this.props.type === 'container' || !this.props.showConstraints) {
         return;
       }
-      var machine = this.props.machine;
-      var hardware = machine.hardware;
-      var hardwareDetails;
+      let machine = this.props.machine;
+      let constraints = machine.constraints;
+      let hardware = machine.hardware;
+      let hardwareDetails;
+      let cpu;
+      let disk;
+      let mem;
+      let cpuCores;
       if (hardware) {
-        var cpu = hardware.cpuPower;
-        var disk = hardware.disk;
-        var mem = hardware.mem;
-        var cpuCores = hardware.cpuCores;
-        if (cpuCores && cpu && disk && mem) {
-          cpu = cpu / 100;
-          disk = disk / 1024;
-          mem = mem / 1024;
-          hardwareDetails = `${cpuCores}x${cpu}GHz, ${mem.toFixed(2)}GB, ` +
-          `${disk.toFixed(2)}GB`;
+        cpu = hardware.cpuPower;
+        disk = hardware.disk;
+        mem = hardware.mem;
+        cpuCores = hardware.cpuCores;
+      } else if (constraints) {
+        // The constraints are in the format:
+        // cpu-power=1 cores=1 mem=1 root-disk=1
+        const parts = constraints.split(' ');
+        parts.forEach(part => {
+          const keyVal = part.split('=');
+          switch (keyVal[0]) {
+            case 'cpu-power':
+              cpu = keyVal[1];
+              break;
+            case 'cores':
+              cpuCores = keyVal[1];
+              break;
+            case 'mem':
+              mem = keyVal[1];
+              break;
+            case 'root-disk':
+              disk = keyVal[1];
+              break;
+          }
+        });
+      }
+      if (cpuCores || cpu || disk || mem) {
+        let details = [];
+        if (cpuCores) {
+          details.push(`cores: ${cpuCores}`);
         }
+        if (cpu) {
+          cpu = cpu / 100;
+          details.push(`CPU: ${cpu}GHz`);
+        }
+        if (mem) {
+          mem = mem / 1024;
+          details.push(`mem: ${mem.toFixed(2)}GB`);
+        }
+        if (disk) {
+          disk = disk / 1024;
+          details.push(`disk: ${disk.toFixed(2)}GB`);
+        }
+        const constraintsMessage = constraints ? 'requested constraints: ' : '';
+        hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
       }
       if (!hardwareDetails) {
-        hardwareDetails = 'hardware details not available';
+        if (machine.commitStatus === 'uncommitted') {
+          hardwareDetails = 'no constraints set';
+        } else {
+          hardwareDetails = 'hardware details not available';
+        }
       }
-      var plural = unitCount === 1 ? '' : 's';
-      var series = machine.series ? `${machine.series}, ` : undefined;
+      const plural = unitCount === 1 ? '' : 's';
+      const series = machine.series ? `${machine.series}, ` : undefined;
       return (
         <div className="machine-view__machine-hardware">
           {unitCount} unit{plural}, {series} {hardwareDetails}
