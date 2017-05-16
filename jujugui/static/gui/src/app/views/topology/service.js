@@ -477,7 +477,13 @@ YUI.add('juju-topology-service', function(Y) {
 
           @event panToCenter
         */
-        panToCenter: 'panToCenter'
+        panToCenter: 'panToCenter',
+        /**
+          Pans the environment view to the bundle.
+
+          @event panToCenter
+        */
+        bundleImportComplete: 'panToBundle'
       }
     },
 
@@ -547,17 +553,6 @@ YUI.add('juju-topology-service', function(Y) {
       this._delegate('drop', this.canvasDropHandler.bind(this), EC);
       this._delegate('dragenter', this._ignore.bind(this), EC);
       this._delegate('dragover', this._ignore.bind(this), EC);
-    },
-
-    /**
-      Attach additional event handlers that rely on events handling outside of
-      the topology, such as the database.
-
-      @method _attachAdditionalEvents
-    */
-    _attachAdditionalEvents: function() {
-      var db = this.get('component').get('db');
-      db.after('bundleImportComplete', this.panToBundle.bind(this));
     },
 
     /**
@@ -1346,7 +1341,6 @@ YUI.add('juju-topology-service', function(Y) {
       // times this module is rendered.
       if (!this.rendered) {
         this._attachDragEvents();
-        this._attachAdditionalEvents();
         this.rendered = true;
       }
 

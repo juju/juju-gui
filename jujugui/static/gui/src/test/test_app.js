@@ -18,38 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function injectData(app, data) {
-  var d = data || {
-    'result': [
-      ['service', 'add',
-        {'charm': 'cs:precise/wordpress-6',
-          'id': 'wordpress', 'exposed': false}],
-      ['service', 'add', {'charm': 'cs:precise/mysql-6', 'id': 'mysql'}],
-      ['relation', 'add',
-        {'interface': 'reversenginx', 'scope': 'global',
-          'endpoints': [
-            ['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
-          'id': 'relation-0000000002'}],
-      ['relation', 'add',
-        {'interface': 'mysql',
-          'scope': 'global', 'endpoints':
-          [['mysql', {'role': 'server', 'name': 'db'}],
-           ['wordpress', {'role': 'client', 'name': 'db'}]],
-          'id': 'relation-0000000001'}],
-      ['machine', 'add',
-        {'agent-state': 'running', 'instance-state': 'running',
-          'id': 0, 'instance-id': 'local', 'dns-name': 'localhost'}],
-      ['unit', 'add',
-        {'machine': 0, 'agent-state': 'started',
-          'public-address': '192.168.122.113', 'id': 'wordpress/0'}],
-      ['unit', 'add',
-        {'machine': 0, 'agent-state': 'started',
-          'public-address': '192.168.122.222', 'id': 'mysql/0'}]],
-    'op': 'delta'};
-  app.env.dispatch_result(d);
-  return app;
-}
-
 describe('App', function() {
   let container, getMockStorage, jujuConfig, testUtils;
 
@@ -121,29 +89,21 @@ describe('App', function() {
 
     function constructAppInstance(config, context) {
       config = config || {};
-      config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
       config.user = config.user || new window.jujugui.User({
         sessionStorage: getMockStorage()});
+      config.user.controller = {user: 'user', password: 'password'};
       config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
         user: config.user,
         conn: new testUtils.SocketStub()
       });
+      config.baseUrl = 'http://example.com';
       config.container = container;
       config.viewContainer = container;
-      app = new Y.juju.App(Y.mix(config, {
-        baseUrl: 'http://0.0.0.0:6543/',
-        consoleEnabled: true,
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
-      }));
-      if (config.env && config.env.connect) {
-        config.env.connect();
-        config.env.ecs = new juju.EnvironmentChangeSet();
-        env = config.env;
-      }
-      app.navigate = function() {};
-      app.showView(new Y.View());
-      injectData(app);
+      config.jujuCoreVersion = '2.0.0';
+      config.consoleEnabled = true;
+      config.controllerSocketTemplate = '/api';
+      app = new Y.juju.App(config);
+      app.env.connect();
       return app;
     }
 
@@ -306,6 +266,7 @@ describe('App', function() {
 
     afterEach(function(done) {
       env.close(() => {
+        env.destroy();
         app.destroy();
         done();
       });
@@ -350,18 +311,22 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[4][0], 'dragenter');
+        assert.equal(args[6][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[5][0], 'dragover');
+        assert.equal(args[7][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[6][0], 'dragleave');
+        assert.equal(args[8][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
       it('removes the drag handlers', function() {
-        var stub = sinon.stub(document, 'removeEventListener');
+        // This test causes cascading failures as the event listeners are not
+        // removed as the method is stubbed out, so stub out addEventListener
+        // as well so we don't need to clean them up.
+        const addStub = sinon.stub(document, 'addEventListener');
+        const stub = sinon.stub(document, 'removeEventListener');
+        this._cleanups.push(addStub.restore);
         this._cleanups.push(stub.restore);
-
         const userClass = new window.jujugui.User(
           {sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
@@ -376,11 +341,11 @@ describe('App', function() {
         app.destructor();
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[0][0], 'dragenter');
+        assert.equal(args[1][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[1][0], 'dragover');
+        assert.equal(args[2][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[2][0], 'dragleave');
+        assert.equal(args[3][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
     });
@@ -1008,6 +973,8 @@ describe('App', function() {
           }
         }
       };
+      // Clean up the old env before assigning a new one.
+      app.env.destroy();
       app.env = fake_env;
       app.db = fake_db;
       app._renderBreadcrumb = sinon.stub();
@@ -1570,6 +1537,8 @@ describe('App', function() {
       const credentials = {user: 'user-who@local', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = makeAPIConnection(true);
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithCredentials(app.controllerAPI, true, credentials);
@@ -1590,6 +1559,8 @@ describe('App', function() {
       const credentials = {user: 'user-who@local', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(false);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = null;
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
@@ -1617,6 +1588,8 @@ describe('App', function() {
       const credentials = {user: 'user-who', password: 'passwd'};
       const useMacaroons = true;
       app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.env.destroy();
       app.env = makeAPIConnection(true);
       app.loginToAPIs(credentials, useMacaroons);
       checkLoggedInWithMacaroons(app.controllerAPI, true);
