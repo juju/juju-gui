@@ -107,7 +107,8 @@ describe('MachineViewMachine', function() {
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          {2} unit{'s'}, {'wily, '} {'2x2GHz, 4.00GB, 2.00GB'}
+          {2} unit{'s'}, {'wily, '}
+          {'cores: 2, CPU: 2GHz, mem: 4.00GB, disk: 2.00GB'}
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
@@ -137,7 +138,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a machine in drop mode', function() {
@@ -189,7 +190,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a machine as uncommitted', function() {
@@ -226,7 +227,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a deleted machine as uncommitted', function() {
@@ -263,7 +264,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can hide units', function() {
@@ -363,7 +364,7 @@ describe('MachineViewMachine', function() {
               'service': 'wordpress'}} />
         ]}
       </ul>);
-    assert.deepEqual(output.props.children[3], expected);
+    expect(output.props.children[3]).toEqualJSX(expected);
   });
 
   it('can hide the constraints', function() {
@@ -451,7 +452,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a machine with no hardware', function() {
@@ -490,7 +491,68 @@ describe('MachineViewMachine', function() {
       <div className="machine-view__machine-hardware">
         {2} unit{'s'}, {undefined} {'hardware details not available'}
       </div>);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
+  });
+
+  it('can display constraints on an uncommitted machine', () => {
+    const machine = {
+      displayName: 'new0',
+      constraints: 'cpu-power=100 cores=2 mem=1024 root-disk=2048',
+      commitStatus: 'uncommitted'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        isOver={false}
+        machine={machine}
+        selected={false}
+        selectMachine={sinon.stub()}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="machine-view__machine-hardware">
+        {0} unit{'s'}, {undefined}
+        {'requested constraints: cores: 2, CPU: 1GHz, mem: 1.00GB, ' +
+        'disk: 2.00GB'}
+      </div>);
+    expect(output.props.children[2]).toEqualJSX(expected);
+  });
+
+  it('can display empty constraints on an uncommitted machine', () => {
+    const machine = {
+      displayName: 'new0',
+      constraints: '',
+      commitStatus: 'uncommitted'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        isOver={false}
+        machine={machine}
+        selected={false}
+        selectMachine={sinon.stub()}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="machine-view__machine-hardware">
+        {0} unit{'s'}, {undefined}
+        {'no constraints set'}
+      </div>);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can render a container', function() {
@@ -569,7 +631,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can destroy a machine', function() {
@@ -695,6 +757,6 @@ describe('MachineViewMachine', function() {
           label: 'Destroy',
           action: false
         }]} />);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
   });
 });

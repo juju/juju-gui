@@ -63,6 +63,8 @@ YUI.add('machine-view-machine', function() {
   }
 
   var MachineViewMachine = React.createClass({
+    displayName: 'MachineViewMachine',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       canDrop: React.PropTypes.bool.isRequired,
@@ -106,7 +108,7 @@ YUI.add('machine-view-machine', function() {
         cpuCores = hardware.cpuCores;
       } else if (constraints) {
         // The constraints are in the format:
-        // cpu-power=1 cores=1 mem=1 root-disk=1
+        // cpu-power=w cores=x mem=y root-disk=z
         const parts = constraints.split(' ');
         parts.forEach(part => {
           const keyVal = part.split('=');
