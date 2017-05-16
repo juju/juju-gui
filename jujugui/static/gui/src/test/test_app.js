@@ -350,11 +350,11 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[2][0], 'dragenter');
+        assert.equal(args[4][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[3][0], 'dragover');
+        assert.equal(args[5][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[4][0], 'dragleave');
+        assert.equal(args[6][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
@@ -573,6 +573,7 @@ describe('App', function() {
         user: user,
         conn: conn,
         ecs: ecs,
+        modelUUID: 'uuid'
       });
       controller = new juju.ControllerAPI({
         conn: conn2,
@@ -638,8 +639,9 @@ describe('App', function() {
       conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.equal(1, conn.messages.length);
       assertIsLogin(conn.last_message());
-      assert.equal(loginStub.callCount, 1);
-      assert.deepEqual(loginStub.lastCall.args, ['bad wolf']);
+      assert.equal(loginStub.callCount, 2);
+      assert.equal(loginStub.args[0][0], 'bad wolf');
+      assert.equal(loginStub.args[1][0], 'bad wolf');
     });
 
     it('login method handler is called after successful login',
@@ -649,7 +651,7 @@ describe('App', function() {
       Y.juju.App.prototype.onLogin = evt => {
         assert.equal(conn.messages.length, 1);
         assertIsLogin(conn.last_message());
-        assert.strictEqual(evt.err, null);
+        assert.strictEqual(evt.detail.err, null);
         localApp.on('destroy', () => done());
         localApp.destroy();
       };
@@ -735,7 +737,7 @@ describe('App', function() {
         sinon.stub(app.state, 'changeState');
         sinon.stub(app, '_sendGISFPostBack');
         sinon.stub(app, '_ensureLoggedIntoCharmstore');
-        app.controllerAPI.fire('login');
+        document.dispatchEvent(new Event('login'));
         assert.equal(app._sendGISFPostBack.callCount, 1);
         assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
       });
@@ -2074,7 +2076,8 @@ describe('App', function() {
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet(),
-          user: userClass
+          user: userClass,
+          modelUUID: 'uuid'
         }),
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api',
@@ -2136,7 +2139,8 @@ describe('App', function() {
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet(),
-          user: userClass
+          user: userClass,
+          modelUUID: 'uuid'
         }),
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api',
@@ -2145,11 +2149,13 @@ describe('App', function() {
         user: userClass
       });
       app.controllerAPI.set('connected', false);
-      app.setUpControllerAPI(app.controllerAPI);
       app._displayLogin = sinon.stub();
+      app._renderLogin = sinon.stub();
+      app._renderUserMenu = sinon.stub();
       app.createSocketURL = sinon.stub();
       app.loginToAPIs = sinon.stub();
       app.maskVisibility = sinon.stub();
+      app.setUpControllerAPI(app.controllerAPI);
     });
 
     afterEach(function() {
@@ -2280,29 +2286,32 @@ describe('App', function() {
     it('is disabled after successful login', done => {
       app.anonymousMode = true;
       app.state = {current: {root: null}};
-      app._renderUserMenu = sinon.stub();
-      // Set a model UUID so that the login subscriber execution stops as soon
-      // as possible.
-      app.env.set('modelUUID', 'uuid');
-      app.controllerAPI.after('login', evt => {
+      const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(
           app._renderUserMenu.called, true, '_renderUserMenu');
+        document.removeEventListener('login', listener);
         done();
-      });
-      app.controllerAPI.fire('login', {err: null});
+      };
+      document.addEventListener('login', listener);
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: null}
+      }));
     });
 
     it('is disabled after failed login', done => {
       app.anonymousMode = true;
       app.state = {current: {root: null}};
-      app._renderLogin = sinon.stub();
-      app.controllerAPI.after('login', evt => {
+      const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
+        document.removeEventListener('login', listener);
         done();
-      });
-      app.controllerAPI.fire('login', {err: 'bad wolf'});
+      };
+      document.addEventListener('login', listener);
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: 'bad wolf'}
+      }));
     });
   });
 

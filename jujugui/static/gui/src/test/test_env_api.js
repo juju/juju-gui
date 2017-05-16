@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
-        conn: conn, user: userClass, ecs: ecs
+        conn: conn, user: userClass, ecs: ecs, modelUUID: 'uuid'
       });
       env.connect();
       env.set('facades', {
@@ -381,13 +381,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(env.failedAuthentication);
       });
 
-      it('fires a login event on successful login', function() {
-        let fired = false;
-        let err;
-        env.on('login', evt => {
-          fired = true;
-          err = evt.err;;
-        });
+      it('fires a login event on successful login', function(done) {
+        const listener = evt => {
+          assert.strictEqual(evt.detail.err, null);
+          done();
+        };
+        document.addEventListener('login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({
@@ -398,8 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
-        assert.strictEqual(fired, true);
-        assert.strictEqual(err, null);
+        document.removeEventListener('login', listener);
       });
 
       it('resets failed markers on successful login', function() {
@@ -417,18 +415,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isFalse(env.failedAuthentication);
       });
 
-      it('fires a login event on failed login', function() {
-        let fired = false;
-        let err;
-        env.on('login', evt => {
-          fired = true;
-          err = evt.err;;
-        });
+      it('fires a login event on failed login', function(done) {
+        const listener = evt => {
+          assert.strictEqual(evt.detail.err, 'Invalid user or password');
+          done();
+        };
+        document.addEventListener('login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
-        assert.strictEqual(fired, true);
-        assert.strictEqual(err, 'Invalid user or password');
+        document.removeEventListener('login', listener);
       });
 
       it('avoids sending login requests without credentials', function() {
@@ -1097,12 +1093,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
-        const handler = env.on('login', evt => {
-          assert.deepEqual(evt.err, 'cannot upload files anonymously');
-          handler.detach();
+        const listener = evt => {
+          assert.deepEqual(evt.detail.err, 'cannot upload files anonymously');
           done();
-        });
+        };
+        document.addEventListener('login', listener);
         env.uploadLocalCharm();
+        document.removeEventListener('login', listener);
       });
 
       it('uses the stored webHandler to perform requests', function() {
