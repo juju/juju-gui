@@ -133,7 +133,6 @@ YUI.add('account-credentials', function() {
     /**
       Handle deleting a credential.
 
-      @method _handleDeleteCredential
       @param credential {String} A credential id.
     */
     _handleDeleteCredential: function(credential=null) {
@@ -143,7 +142,6 @@ YUI.add('account-credentials', function() {
     /**
       Handle deleting a credential.
 
-      @method _handleDeleteCredential
       @param credential {String} A credential id.
     */
     _generateDeleteCredential: function(credential) {
@@ -162,7 +160,7 @@ YUI.add('account-credentials', function() {
       return (
         <window.juju.components.Popup
           buttons={buttons}
-          title="Uncommitted changes">
+          title="Remove credentials">
           <p>
             Are you sure you want to remove these credentials?
           </p>

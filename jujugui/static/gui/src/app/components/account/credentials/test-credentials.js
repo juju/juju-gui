@@ -372,7 +372,7 @@ describe('AccountCredentials', () => {
           action: instance._deleteCredential,
           type: 'destructive'
         }]}
-        title="Uncommitted changes">
+        title="Remove credentials">
         <p>
           Are you sure you want to remove these credentials?
         </p>
