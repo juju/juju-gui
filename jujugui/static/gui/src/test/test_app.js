@@ -311,11 +311,11 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[4][0], 'dragenter');
+        assert.equal(args[6][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[5][0], 'dragover');
+        assert.equal(args[7][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[6][0], 'dragleave');
+        assert.equal(args[8][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
