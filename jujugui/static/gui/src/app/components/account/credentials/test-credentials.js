@@ -340,6 +340,46 @@ describe('AccountCredentials', () => {
     });
   });
 
+  it('can display a remove credentials confirmation', () => {
+    const revokeCloudCredential = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.AccountCredentials
+        acl={acl}
+        addNotification={sinon.stub()}
+        controllerIsReady={controllerIsReady}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={listClouds}
+        revokeCloudCredential={revokeCloudCredential}
+        sendAnalytics={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        username="spinach@external"
+        validateForm={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
+    let output = component.getRenderOutput();
+    output.props.children[2].props.children[1][0].props
+      .children[2].props.children.props.action();
+    output = component.getRenderOutput();
+    const expected = (
+      <window.juju.components.Popup
+        buttons={[{
+          title: 'Cancel',
+          action: instance._handleDeleteCredential,
+          type: 'inline-neutral'
+        }, {
+          title: 'Continue',
+          action: instance._deleteCredential,
+          type: 'destructive'
+        }]}
+        title="Uncommitted changes">
+        <p>
+          Are you sure you want to remove these credentials?
+        </p>
+      </window.juju.components.Popup>);
+    expect(output.props.children[3]).toEqualJSX(expected);
+  });
+
   it('can remove credentials', () => {
     const revokeCloudCredential = sinon.stub();
     const component = jsTestUtils.shallowRender(
@@ -356,9 +396,11 @@ describe('AccountCredentials', () => {
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
+    let output = component.getRenderOutput();
     output.props.children[2].props.children[1][0].props
       .children[2].props.children.props.action();
+    output = component.getRenderOutput();
+    output.props.children[3].props.buttons[1].action();
     assert.equal(revokeCloudCredential.callCount, 1);
     assert.equal(
       revokeCloudCredential.args[0][0], 'aws_spinach@external_test1');
@@ -381,9 +423,11 @@ describe('AccountCredentials', () => {
         updateCloudCredential={sinon.stub()}
         username="spinach@external"
         validateForm={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
+    let output = component.getRenderOutput();
     output.props.children[2].props.children[1][0].props
       .children[2].props.children.props.action();
+    output = component.getRenderOutput();
+    output.props.children[3].props.buttons[1].action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to revoke the cloud credential',
@@ -412,6 +456,8 @@ describe('AccountCredentials', () => {
     let output = component.getRenderOutput();
     let credentials = output.props.children[2].props.children[1];
     credentials[0].props.children[2].props.children.props.action();
+    output = component.getRenderOutput();
+    output.props.children[3].props.buttons[1].action();
     output = component.getRenderOutput();
     credentials = output.props.children[2].props.children[1];
     const expected = (
@@ -563,7 +609,7 @@ describe('AccountCredentials', () => {
     const instance = component.getMountedInstance();
     let output = component.getRenderOutput();
     output.props.children[0].props.children[1].props.action();
-    instance._setCloud('aws');
+    instance._setCloud({title: 'aws'});
     output = component.getRenderOutput();
     const expected = (
       <juju.components.ExpandingRow
@@ -583,7 +629,7 @@ describe('AccountCredentials', () => {
             </div>
             <juju.components.DeploymentCloud
               acl={acl}
-              cloud="aws"
+              cloud={{title: 'aws'}}
               controllerIsReady={controllerIsReady}
               listClouds={listClouds}
               getCloudProviderDetails={getCloudProviderDetails}
@@ -592,7 +638,7 @@ describe('AccountCredentials', () => {
               acl={acl}
               addNotification={addNotification}
               close={instance._toggleAdd}
-              cloud="aws"
+              cloud={{title: 'aws'}}
               credentials={['test1', 'test2']}
               getCloudProviderDetails={getCloudProviderDetails}
               generateCloudCredentialName={generateCloudCredentialName}
@@ -632,7 +678,7 @@ describe('AccountCredentials', () => {
     let output = component.getRenderOutput();
     // Open the form.
     output.props.children[0].props.children[1].props.action();
-    instance._setCloud('aws');
+    instance._setCloud({title: 'aws'});
     // Close the form.
     output = component.getRenderOutput();
     output.props.children[1].props.children[1].props.children
