@@ -39,7 +39,8 @@ describe('Store', function() {
         changeState={changeState}
         charmstoreURL={charmstoreURL}
         gisf={true}
-        apiVersion={apiVersion} />, true);
+        apiVersion={apiVersion}
+        setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.children[0].props.children.length, 3);
   });
@@ -51,7 +52,8 @@ describe('Store', function() {
         apiVersion="v5"
         changeState={changeState}
         charmstoreURL="http://1.2.3.4/"
-        gisf={true} />, true);
+        gisf={true}
+        setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = 'Container management';
     assert.equal(
@@ -71,7 +73,8 @@ describe('Store', function() {
         changeState={changeState}
         charmstoreURL={charmstoreURL}
         apiVersion={apiVersion}
-        gisf={true} />, true);
+        gisf={true}
+        setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (<div className="row row--write-your-own">
             <div className="inner-wrapper clearfix">
@@ -102,7 +105,8 @@ describe('Store', function() {
         apiVersion="v5"
         changeState={changeState}
         charmstoreURL="http://1.2.3.4/"
-        gisf={true}/>);
+        gisf={true}
+        setPageTitle={sinon.stub()} />);
     var entityList = output.props.children[2].props.children.props.children[2];
     var entityItem = entityList.props.children[0].props.children;
     entityItem.props.onClick({
@@ -131,7 +135,8 @@ describe('Store', function() {
         apiVersion="v5"
         changeState={changeState}
         charmstoreURL="http://1.2.3.4/"
-        gisf={true} />);
+        gisf={true}
+        setPageTitle={sinon.stub()} />);
     var row = output.props.children[1].props.children;
     var tagList = row.props.children[2].props.children;
     var searchItem = tagList.props.children[0].props.children[0];
@@ -159,9 +164,10 @@ describe('Store', function() {
         changeState={changeState}
         charmstoreURL={charmstoreURL}
         gisf={false}
-        apiVersion={apiVersion} />, true);
+        apiVersion={apiVersion}
+        setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.isDefined(output.props.children[0].props.
-      children[0].props.children[1].props.children[1].props.onClick);
+      children[0].props.children.props.children[1].props.onClick);
   });
 });
