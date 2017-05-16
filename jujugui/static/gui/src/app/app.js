@@ -2740,7 +2740,7 @@ YUI.add('juju-gui', function(Y) {
       };
       const credentials = this.user.model;
       const onLogin = callback => {
-        this.boundOnLoginFired = true
+        this.boundOnLoginFired = true;
         this.env.loading = false;
         if (callback) {
           callback(this.env);
