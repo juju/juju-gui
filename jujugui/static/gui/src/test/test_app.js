@@ -319,11 +319,13 @@ describe('App', function() {
         assert.isFunction(args[2][1]);
       });
 
-      // This test appears to create cascading failures due to stubbing out
-      // document.removeEventListener. It can be restored when a better solution
-      // is found.
-      it.skip('removes the drag handlers', function() {
+      it('removes the drag handlers', function() {
+        // This test causes cascading failures as the event listeners are not
+        // removed as the method is stubbed out, so stub out addEventListener
+        // as well so we don't need to clean them up.
+        const addStub = sinon.stub(document, 'addEventListener');
         const stub = sinon.stub(document, 'removeEventListener');
+        this._cleanups.push(addStub.restore);
         this._cleanups.push(stub.restore);
         const userClass = new window.jujugui.User(
           {sessionStorage: getMockStorage()});
