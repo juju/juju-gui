@@ -49,6 +49,7 @@ YUI.add('account-credentials', function() {
         clouds: [],
         credentials: [],
         loading: false,
+        removeCredential: null,
         showAdd: false
       };
     },
@@ -135,7 +136,46 @@ YUI.add('account-credentials', function() {
       @method _handleDeleteCredential
       @param credential {String} A credential id.
     */
-    _handleDeleteCredential: function(credential) {
+    _handleDeleteCredential: function(credential=null) {
+      this.setState({'removeCredential': credential});
+    },
+
+    /**
+      Handle deleting a credential.
+
+      @method _handleDeleteCredential
+      @param credential {String} A credential id.
+    */
+    _generateDeleteCredential: function(credential) {
+      if (!this.state.removeCredential) {
+        return null;
+      }
+      const buttons = [{
+        title: 'Cancel',
+        action: this._handleDeleteCredential,
+        type: 'inline-neutral'
+      }, {
+        title: 'Continue',
+        action: this._deleteCredential,
+        type: 'destructive'
+      }];
+      return (
+        <window.juju.components.Popup
+          buttons={buttons}
+          title="Uncommitted changes">
+          <p>
+            Are you sure you want to remove these credentials?
+          </p>
+        </window.juju.components.Popup>);
+    },
+
+    /**
+      Handle deleting a credential.
+
+      @method _deleteCredential
+    */
+    _deleteCredential: function() {
+      const credential = this.state.removeCredential;
       const xhr = this.props.revokeCloudCredential(credential, (error) => {
         if (error) {
           const message = 'Unable to revoke the cloud credential';
@@ -153,7 +193,9 @@ YUI.add('account-credentials', function() {
             return true;
           }
         });
-        this.setState({credentials: credentials});
+        this.setState({
+          credentials: credentials,
+          removeCredential: null});
       });
       this.xhrs.push(xhr);
     },
@@ -323,6 +365,7 @@ YUI.add('account-credentials', function() {
           </h2>
           {this._generateAddCredentials()}
           {this._generateCredentials()}
+          {this._generateDeleteCredential()}
         </div>
       );
     }
@@ -335,6 +378,7 @@ YUI.add('account-credentials', function() {
     'deployment-credential-add',
     'expanding-row',
     'generic-button',
-    'loading-spinner'
+    'loading-spinner',
+    'popup'
   ]
 });
