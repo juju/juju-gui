@@ -129,8 +129,6 @@ YUI.add('inspector-relations', function() {
           key={relation.id}
           ref={ref}
           label={this._generateRelationLabel(relation)}
-          relation={relation}
-          changeState={this.props.changeState}
           whenChanged={this._updateActiveCount} />);
       }, this);
       return components;

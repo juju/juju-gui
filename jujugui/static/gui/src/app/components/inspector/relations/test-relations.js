@@ -111,8 +111,6 @@ describe('InspectorRelations', function() {
           label={'django:django'}
           key={relations[0].id}
           ref='CheckListItem-mysql'
-          relation={relations[0]}
-          changeState={changeState}
           whenChanged={instance._updateActiveCount} />
         <juju.components.CheckListItem
           action={output.props.children[1].props.children[2].props.action}
@@ -120,14 +118,12 @@ describe('InspectorRelations', function() {
           label={'django:django'}
           key={relations[1].id}
           ref='CheckListItem-postgresql'
-          relation={relations[1]}
-          changeState={changeState}
           whenChanged={instance._updateActiveCount} />
       </ul>
       <juju.components.ButtonRow
         buttons={buttons} />
     </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can show relation details on click', function() {
@@ -227,8 +223,6 @@ describe('InspectorRelations', function() {
             label={'django:django'}
             key={relations[0].id}
             ref='CheckListItem-mysql'
-            relation={relations[0]}
-            changeState={changeState}
             whenChanged={instance._updateActiveCount} />
           <juju.components.CheckListItem
             action={output.props.children[1].props.children[2].props.action}
@@ -236,14 +230,12 @@ describe('InspectorRelations', function() {
             label={'django:django'}
             key={relations[1].id}
             ref='CheckListItem-postgresql'
-            relation={relations[1]}
-            changeState={changeState}
             whenChanged={instance._updateActiveCount} />
         </ul>
         <juju.components.ButtonRow
           buttons={buttons} />
     </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders if there are no relations', () => {

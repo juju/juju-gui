@@ -51,12 +51,9 @@ describe('InspectorRelateToEndpoint', () => {
       <div className="inspector-relate-to-endpoint">
         <ul className="inspector-relate-to-endpoint__list">
           {[<juju.components.CheckListItem
-            index={0}
             key={0}
             ref="InspectorRelateToEndpoint-0"
             label="db → db"
-            relation={endpoints[0]}
-            changeState={changeState}
             whenChanged={output.props.children[0].props.children[0]
               .props.whenChanged} />]}
         </ul>
@@ -68,7 +65,7 @@ describe('InspectorRelateToEndpoint', () => {
             disabled: true
           }]} />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render when there are no relatable endpoints', () => {

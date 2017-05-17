@@ -398,7 +398,6 @@ YUI.add('user-profile-entity', function() {
     _showMetrics: function() {
       return (
         <juju.components.UserProfileEntityKPI
-          charmId={this.props.entity.id}
           d3={this.props.d3}
           metrics={this.state.metrics}
           metricTypes={this.state.metricTypes} />);

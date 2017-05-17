@@ -283,13 +283,11 @@ YUI.add('sharing', function() {
                 placeholder="Username"
                 ref="username"
                 onKeyUp={this._handleUsernameInputChange}
-                errors={!!this.state.inviteError}
                 required={true} />
             </div>
             <div className="sharing__invite--access">
               <juju.components.InsetSelect
                 label="Access"
-                defaultValue="read"
                 ref="access"
                 options={accessOptions} />
             </div>

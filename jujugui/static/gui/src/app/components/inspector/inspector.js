@@ -425,7 +425,6 @@ YUI.add('inspector-component', function() {
             backCallback={this._backCallback}
             activeComponent={this.state.activeComponent}
             type={this.state.activeChild.headerType}
-            count={this.state.activeChild.count}
             title={this.state.activeChild.title}
             icon={this.state.activeChild.icon} />
           <div className="inspector-content">

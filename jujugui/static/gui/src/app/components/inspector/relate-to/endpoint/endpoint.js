@@ -70,12 +70,9 @@ YUI.add('inspector-relate-to-endpoint', function() {
       }
       return relations.map((relation, index) => {
         return (<juju.components.CheckListItem
-          index={index}
           key={index}
           ref={`InspectorRelateToEndpoint-${index}`}
           label={`${relation[0].name} → ${relation[1].name}`}
-          relation={relation}
-          changeState={this.props.changeState}
           whenChanged={this._updateActiveCount} />);
       });
     },
