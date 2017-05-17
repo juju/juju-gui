@@ -1990,6 +1990,23 @@ YUI.add('juju-view-utils', function(Y) {
     });
   };
 
+  /**
+    Format the constraints to: cpu-power=w cores=x mem=y root-disk=z
+
+    @method formatConstraints
+    @param constraints {Object} A collection of constraints.
+    @returns {String} A formatted constraints string.
+  */
+  utils.formatConstraints = constraints => {
+    return Object.keys(constraints || {}).reduce((collected, key) => {
+      const value = constraints[key];
+      if (value) {
+        collected.push(key + '=' + value);
+      }
+      return collected;
+    }, []).join(' ');
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

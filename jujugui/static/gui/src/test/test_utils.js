@@ -1519,4 +1519,27 @@ describe('utilities', function() {
         [[1, 3, 4], [2, 5], [6]]);
     });
   });
+
+  describe('formatConstraints', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can format constraints', function() {
+      assert.equal(
+        utils.formatConstraints({
+          arch: 'amd64',
+          cpuCores: 2,
+          cpuPower: 10,
+          disk: 2048,
+          mem: 1024
+        }),
+        'arch=amd64 cpuCores=2 cpuPower=10 disk=2048 mem=1024');
+    });
+  });
 })();
