@@ -73,13 +73,145 @@ YUI.add('machine-view-machine', function() {
       dropUnit: React.PropTypes.func.isRequired,
       isOver: React.PropTypes.bool.isRequired,
       machine: React.PropTypes.object.isRequired,
+      machineModel: React.PropTypes.object,
+      providerType: React.PropTypes.string,
       removeUnit: React.PropTypes.func,
       selectMachine: React.PropTypes.func,
       selected: React.PropTypes.bool,
+      series: React.PropTypes.array,
       services: React.PropTypes.object.isRequired,
       showConstraints: React.PropTypes.bool,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        constraints: null,
+        showForm: false
+      };
+    },
+
+    /**
+      Toggle the display of the constraints form.
+    */
+    _toggleForm: function() {
+      this.setState({showForm: !this.state.showForm});
+    },
+
+    /**
+      Update the state with the new constraints.
+
+      @param constraints {Object} The new constraints.
+    */
+    _updateConstraints: function(constraints) {
+      this.setState({constraints: constraints});
+    },
+
+    /**
+      Set the new constraints on the machine.
+    */
+    _setConstraints: function() {
+      const constraints = this.state.constraints;
+      const series = constraints.series || null;
+      delete constraints.series;
+      const constraintsLine = Object.keys(constraints || {}).reduce(
+        (collected, key) => {
+          const value = constraints[key];
+          if (value) {
+            collected.push(key + '=' + value);
+          }
+          return collected;
+        }, []).join(' ');
+      this.props.machineModel.set('constraints', constraintsLine);
+      this.props.machineModel.set('series', series);
+      this._toggleForm();
+    },
+
+    /**
+      Generate the constraints form.
+
+      @returns {Object} the form JSX.
+    */
+    _generateConstraintsForm: function() {
+      if (!this.state.showForm) {
+        return null;
+      }
+      const machine = this.props.machine;
+      const disabled = this.props.acl.isReadOnly();
+      const units = this.props.units.filterByMachine(
+        machine.id, this.props.type === 'machine');
+      const buttons = [{
+        title: 'Cancel',
+        action: this._toggleForm,
+        type: 'base'
+      }, {
+        title: 'Update',
+        action: this._setConstraints,
+        type: 'neutral',
+        disabled: disabled
+      }];
+      return (
+        <div className="add-machine__constraints" key='constraints'>
+          <h4 className="add-machine__title">
+            Update constraints
+          </h4>
+          <juju.components.Constraints
+            constraints={this._getConstraints()}
+            currentSeries={machine.series}
+            disabled={disabled}
+            hasUnit={!!units.length}
+            providerType={this.props.providerType}
+            series={this.props.series}
+            valuesChanged={this._updateConstraints} />
+          <juju.components.ButtonRow
+            buttons={buttons}
+            key="buttons" />
+        </div>);
+    },
+
+    /**
+      Get the constraints for the machine.
+
+      @returns {Object} the machine constraints.
+    */
+    _getConstraints: function(unitCount) {
+      const constraints = this.props.machine.constraints || '';
+      let cpu;
+      let disk;
+      let mem;
+      let cpuCores;
+      let arch;
+      // The constraints are in the format:
+      // cpu-power=w cores=x mem=y root-disk=z
+      const parts = constraints.split(' ');
+      parts.forEach(part => {
+        const keyVal = part.split('=');
+        switch (keyVal[0]) {
+          case 'cpu-power':
+            cpu = keyVal[1];
+            break;
+          case 'cores':
+            cpuCores = keyVal[1];
+            break;
+          case 'mem':
+            mem = keyVal[1];
+            break;
+          case 'root-disk':
+            disk = keyVal[1];
+            break;
+          case 'arch':
+            arch = keyVal[1];
+            break;
+        }
+      });
+      return {
+        arch: arch || null,
+        cpuCores: cpuCores || null,
+        cpuPower: cpu || null,
+        disk: disk || null,
+        mem: mem || null
+      };
     },
 
     /**
@@ -90,44 +222,17 @@ YUI.add('machine-view-machine', function() {
       @returns {Object} the machine hardware elements.
     */
     _generateHardware: function(unitCount) {
-      if (this.props.type === 'container' || !this.props.showConstraints) {
+      if (this.props.type === 'container' || !this.props.showConstraints ||
+          this.state.showForm) {
         return;
       }
-      let machine = this.props.machine;
-      let constraints = machine.constraints;
-      let hardware = machine.hardware;
+      const machine = this.props.machine;
+      const hardware = machine.hardware || this._getConstraints() || {};
       let hardwareDetails;
-      let cpu;
-      let disk;
-      let mem;
-      let cpuCores;
-      if (hardware) {
-        cpu = hardware.cpuPower;
-        disk = hardware.disk;
-        mem = hardware.mem;
-        cpuCores = hardware.cpuCores;
-      } else if (constraints) {
-        // The constraints are in the format:
-        // cpu-power=w cores=x mem=y root-disk=z
-        const parts = constraints.split(' ');
-        parts.forEach(part => {
-          const keyVal = part.split('=');
-          switch (keyVal[0]) {
-            case 'cpu-power':
-              cpu = keyVal[1];
-              break;
-            case 'cores':
-              cpuCores = keyVal[1];
-              break;
-            case 'mem':
-              mem = keyVal[1];
-              break;
-            case 'root-disk':
-              disk = keyVal[1];
-              break;
-          }
-        });
-      }
+      let cpu = hardware.cpuPower;
+      let disk = hardware.disk;
+      let mem = hardware.mem;
+      let cpuCores = hardware.cpuCores;
       if (cpuCores || cpu || disk || mem) {
         let details = [];
         if (cpuCores) {
@@ -145,7 +250,8 @@ YUI.add('machine-view-machine', function() {
           disk = disk / 1024;
           details.push(`disk: ${disk.toFixed(2)}GB`);
         }
-        const constraintsMessage = constraints ? 'requested constraints: ' : '';
+        const constraintsMessage = machine.constraints ?
+          'requested constraints: ' : '';
         hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
       }
       if (!hardwareDetails) {
@@ -156,7 +262,7 @@ YUI.add('machine-view-machine', function() {
         }
       }
       const plural = unitCount === 1 ? '' : 's';
-      const series = machine.series ? `${machine.series}, ` : undefined;
+      const series = machine.series ? `${machine.series},` : undefined;
       return (
         <div className="machine-view__machine-hardware">
           {unitCount} unit{plural}, {series} {hardwareDetails}
@@ -170,6 +276,9 @@ YUI.add('machine-view-machine', function() {
       @returns {Object} the unit elements.
     */
     _generateUnits: function() {
+      if (this.state.showForm) {
+        return null;
+      }
       var includeChildren = this.props.type === 'machine';
       var units = this.props.units.filterByMachine(
         this.props.machine.id, includeChildren);
@@ -248,6 +357,13 @@ YUI.add('machine-view-machine', function() {
         label: 'Destroy',
         action: !this.props.acl.isReadOnly() && this._destroyMachine
       }];
+      if (this.props.type === 'machine' &&
+          machine.commitStatus === 'uncommitted') {
+        menuItems.push({
+          label: 'Update constraints',
+          action: !this.props.acl.isReadOnly() && this._toggleForm
+        });
+      }
       // Wrap the returned components in the drop target method.
       return this.props.connectDropTarget(
         <div className={this._generateClasses()}
@@ -261,6 +377,7 @@ YUI.add('machine-view-machine', function() {
           </div>
           {this._generateHardware(units.length)}
           {this._generateUnits()}
+          {this._generateConstraintsForm()}
           <div className="machine-view__machine-drop-target">
             <div className="machine-view__machine-drop-message">
               Add to {this.props.machine.displayName}

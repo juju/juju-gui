@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('machine-view', function() {
 
   var MachineView = React.createClass({
+    displayName: 'MachineView',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
@@ -293,8 +295,11 @@ YUI.add('machine-view', function() {
             dropUnit={this._dropUnit}
             key={machine.id}
             machine={machine}
+            machineModel={this.props.machines.revive(machine)}
+            providerType={this.props.providerType}
             selected={selectedMachine === machine.id}
             selectMachine={this.selectMachine}
+            series={this.props.series}
             services={this.props.services}
             showConstraints={
               this.state.showConstraints || machine.id === selectedMachine}
