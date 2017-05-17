@@ -48,7 +48,9 @@ describe('Constraints', function() {
   const render = args => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Constraints
+        constraints={args.constraints}
         containerType={args.containerType || ''}
+        currentSeries={args.currentSeries}
         disabled={args.disabled || false}
         hasUnit={args.hasUnit || false}
         providerType={args.providerType || ''}
@@ -68,6 +70,7 @@ describe('Constraints', function() {
         <select
           className="constraints__select"
           ref="seriesConstraintSelect"
+          defaultValue={undefined}
           disabled={false}
           key="seriesConstraintSelect"
           id="series-constraint"
@@ -80,6 +83,7 @@ describe('Constraints', function() {
           <select
             className="constraints__select"
             ref="archConstraintSelect"
+            defaultValue={undefined}
             disabled={false}
             key="archConstraintSelect"
             id="arch-constraint"
@@ -97,6 +101,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="cpu-constraint"
               name="cpu-constraint"
@@ -110,6 +115,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
               name="cores-constraint"
@@ -123,6 +129,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
               name="mem-constraint"
@@ -136,6 +143,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="disk-constraint"
               name="disk-constraint"
@@ -145,7 +153,109 @@ describe('Constraints', function() {
           </div>
         ]}
       </div>);
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
+  });
+
+  it('can render with existing values', function() {
+    const comp = render({
+      constraints: {
+        arch: 'amd64',
+        cpuCores: 2,
+        cpuPower: 1000,
+        disk: 2048,
+        mem: 1024
+      },
+      currentSeries: 'zesty'
+    });
+    const expectedOutput = (
+      <div className="constraints">
+        <select
+          className="constraints__select"
+          ref="seriesConstraintSelect"
+          defaultValue="zesty"
+          disabled={false}
+          key="seriesConstraintSelect"
+          id="series-constraint"
+          name="series-constraint"
+          onChange={comp.instance._handleValueChanged}>
+          <option key="default" value="">Optionally choose a series</option>
+          {seriesOptions}
+        </select>
+        {[
+          <select
+            className="constraints__select"
+            ref="archConstraintSelect"
+            defaultValue="amd64"
+            disabled={false}
+            key="archConstraintSelect"
+            id="arch-constraint"
+            name="arch-constraint"
+            onChange={comp.instance._handleValueChanged}>
+            <option key="default" value="">
+              Optionally choose an architecture
+            </option>
+            <option key="amd64" value="amd64">amd64</option>
+            <option key="i386" value="i386">i386</option>
+          </select>,
+          <div key="cpu-constraint-div">
+            <label htmlFor="cpu-constraint" className="constraints__label">
+              CPU (GHZ)
+            </label>
+            <input type="text"
+              className="constraints__input"
+              defaultValue={1000}
+              disabled={false}
+              id="cpu-constraint"
+              name="cpu-constraint"
+              onChange={comp.instance._handleValueChanged}
+              ref="cpuConstraintInput"
+            />
+          </div>,
+          <div key="cores-constraint-div">
+            <label htmlFor="cores-constraint" className="constraints__label">
+              Cores
+            </label>
+            <input type="text"
+              className="constraints__input"
+              defaultValue={2}
+              disabled={false}
+              id="cores-constraint"
+              name="cores-constraint"
+              onChange={comp.instance._handleValueChanged}
+              ref="coresConstraintInput"
+            />
+          </div>,
+          <div key="mem-constraint-div">
+            <label htmlFor="mem-constraint" className="constraints__label">
+              Ram (MB)
+            </label>
+            <input type="text"
+              className="constraints__input"
+              defaultValue={1024}
+              disabled={false}
+              id="mem-constraint"
+              name="mem-constraint"
+              onChange={comp.instance._handleValueChanged}
+              ref="memConstraintInput"
+            />
+          </div>,
+          <div key="disk-constraint-div">
+            <label htmlFor="disk-constraint" className="constraints__label">
+              Disk (MB)
+            </label>
+            <input type="text"
+              className="constraints__input"
+              defaultValue={2048}
+              disabled={false}
+              id="disk-constraint"
+              name="disk-constraint"
+              onChange={comp.instance._handleValueChanged}
+              ref="diskConstraintInput"
+            />
+          </div>
+        ]}
+      </div>);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('can render with a unit on azure', function() {
@@ -160,6 +270,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
               name="cores-constraint"
@@ -173,6 +284,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
               name="mem-constraint"
@@ -186,6 +298,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={false}
               id="disk-constraint"
               name="disk-constraint"
@@ -195,7 +308,7 @@ describe('Constraints', function() {
           </div>
         ]}
       </div>);
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('can render on lxd', function() {
@@ -205,6 +318,7 @@ describe('Constraints', function() {
         <select
           className="constraints__select"
           ref="seriesConstraintSelect"
+          defaultValue={undefined}
           disabled={false}
           key="seriesConstraintSelect"
           id="series-constraint"
@@ -215,7 +329,7 @@ describe('Constraints', function() {
         </select>
         {[]}
       </div>);
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('can render with a unit on ec2 for a container', function() {
@@ -229,7 +343,7 @@ describe('Constraints', function() {
         {undefined}
         {[]}
       </div>);
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('can render with inputs disabled', function() {
@@ -239,6 +353,7 @@ describe('Constraints', function() {
         <select
           className="constraints__select"
           ref="seriesConstraintSelect"
+          defaultValue={undefined}
           disabled={true}
           key="seriesConstraintSelect"
           id="series-constraint"
@@ -251,6 +366,7 @@ describe('Constraints', function() {
           <select
             className="constraints__select"
             ref="archConstraintSelect"
+            defaultValue={undefined}
             disabled={true}
             key="archConstraintSelect"
             id="arch-constraint"
@@ -268,6 +384,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={true}
               id="cpu-constraint"
               name="cpu-constraint"
@@ -281,6 +398,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={true}
               id="cores-constraint"
               name="cores-constraint"
@@ -294,6 +412,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={true}
               id="mem-constraint"
               name="mem-constraint"
@@ -307,6 +426,7 @@ describe('Constraints', function() {
             </label>
             <input type="text"
               className="constraints__input"
+              defaultValue={undefined}
               disabled={true}
               id="disk-constraint"
               name="disk-constraint"
@@ -316,7 +436,7 @@ describe('Constraints', function() {
           </div>
         ]}
       </div>);
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('calls the provided method when the component is mounted', function() {

@@ -21,8 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('constraints', function() {
 
   juju.components.Constraints = React.createClass({
+    displayName: 'Constraints',
+
     propTypes: {
+      constraints: React.PropTypes.object,
       containerType: React.PropTypes.string,
+      currentSeries: React.PropTypes.string,
       disabled: React.PropTypes.bool,
       hasUnit: React.PropTypes.bool,
       providerType: React.PropTypes.string,
@@ -74,6 +78,7 @@ YUI.add('constraints', function() {
     render: function() {
       const props = this.props;
       const disabled = props.disabled;
+      const constraints = props.constraints || {};
       let series;
       // Only allow selecting a series if there is no unit already assigned.
       // If there is a unit, the machine must have the same series as the unit.
@@ -86,6 +91,7 @@ YUI.add('constraints', function() {
           <select
             className="constraints__select"
             ref="seriesConstraintSelect"
+            defaultValue={props.currentSeries}
             disabled={disabled}
             key="seriesConstraintSelect"
             id="series-constraint"
@@ -103,6 +109,7 @@ YUI.add('constraints', function() {
           className="constraints__select"
           ref="archConstraintSelect"
           disabled={disabled}
+          defaultValue={constraints.arch}
           key="archConstraintSelect"
           id="arch-constraint"
           name="arch-constraint"
@@ -121,6 +128,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            defaultValue={constraints.cpuPower}
             disabled={disabled}
             id="cpu-constraint"
             name="cpu-constraint"
@@ -136,6 +144,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            defaultValue={constraints.cpuCores}
             disabled={disabled}
             id="cores-constraint"
             name="cores-constraint"
@@ -151,6 +160,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            defaultValue={constraints.mem}
             disabled={disabled}
             id="mem-constraint"
             name="mem-constraint"
@@ -166,6 +176,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            defaultValue={constraints.disk}
             disabled={disabled}
             id="disk-constraint"
             name="disk-constraint"
