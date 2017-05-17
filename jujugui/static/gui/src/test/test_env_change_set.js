@@ -1812,6 +1812,42 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('updateMachineSeries', function() {
+      let mockSet;
+
+      beforeEach(function() {
+        mockSet = sinon.stub();
+        ecs.set('db', {
+          machines: {
+            free: sinon.stub(),
+            getById: sinon.stub(),
+            revive: sinon.stub().returns({
+              set: mockSet
+            })
+          }
+        });
+        ecs.changeSet = {
+          a: {
+            command: {
+              args: [[{series: 'trusty'}]],
+              method: '_addMachines',
+              options: {modelId: '0'}
+            },
+            parents: []
+          }
+        };
+      });
+
+      it('updates the series', function() {
+        assert.equal(ecs.changeSet.a.command.args[0][0].series, 'trusty');
+        ecs.updateMachineSeries('0', 'zesty');
+        assert.equal(ecs.changeSet.a.command.args[0][0].series, 'zesty');
+        assert.equal(mockSet.callCount, 1);
+        assert.equal(mockSet.args[0][0], 'series');
+        assert.equal(mockSet.args[0][1], 'zesty');
+      });
+    });
+
     describe('placeUnit', function() {
       var machineId, mockSet, mockValidateUnitPlacement, unit;
 

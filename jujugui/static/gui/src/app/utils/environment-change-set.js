@@ -1254,6 +1254,32 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Update a machine's series.
+
+      @param {String} machineId The id of the destination machine.
+      @param {String} series The new series.
+    */
+    updateMachineSeries: function(machineId, series) {
+      const db = this.get('db');
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
+        const command = value.command;
+        if (command.method === '_addMachines' &&
+            command.options.modelId === machineId) {
+          value.command.args[0][0].series = series;
+        }
+      });
+      // Because each 'model' in a lazy model list is actually just an object
+      // it doesn't fire change events. We need to revive it to a real object,
+      // make the change then the change events will fire.
+      const machine = db.machines.getById(machineId);
+      const machineModel = db.machines.revive(machine);
+      machineModel.set('series', series);
+      db.machines.free(machineModel);
+      return null;
+    },
+
+    /**
       Creates a new entry in the queue for adding service units.
 
       Receives all the parameters received by the environment's "add_unit"
