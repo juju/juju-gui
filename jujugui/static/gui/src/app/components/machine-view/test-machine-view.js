@@ -41,13 +41,15 @@ describe('MachineView', function() {
         displayName: 'new2',
         id: 'new2'
       }]),
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
   });
 
   it('can render', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -291,8 +293,9 @@ describe('MachineView', function() {
           size="16" />
         You have placed all of your units
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    expect(
+      output.props.children.props.children[0].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display a service scale up form', function() {
@@ -328,8 +331,9 @@ describe('MachineView', function() {
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={instance._toggleScaleUp} />);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[0], expected);
+    expect(
+      output.props.children.props.children[0].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('can display a list of unplaced units', function() {
@@ -403,9 +407,9 @@ describe('MachineView', function() {
           series={['trusty', 'xenial']}
           unit={unitList[1]} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('does not display unplaced subordinate units', function() {
@@ -468,9 +472,9 @@ describe('MachineView', function() {
           series={['trusty', 'xenial']}
           unit={unitList[0]} />]}
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('displays onboarding if there are only subordinate units', function() {
@@ -515,8 +519,9 @@ describe('MachineView', function() {
           size="16" />
         You have placed all of your units
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    expect(
+      output.props.children.props.children[0].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can auto place units', function() {
@@ -602,14 +607,15 @@ describe('MachineView', function() {
         disabled={true}
         type="inline-neutral"
         title="Auto place" />);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1].props
-        .children[0].props.children[0], expected);
+        .children[0].props.children[0]).toEqualJSX(expected);
   });
 
   it('can display onboarding if there are no machines', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -653,8 +659,9 @@ describe('MachineView', function() {
           Add machine
         </span>
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+    expect(
+      output.props.children.props.children[1].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display onboarding if there is one machine', function() {
@@ -667,7 +674,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -698,9 +706,9 @@ describe('MachineView', function() {
         Drag and drop unplaced units onto your machines and containers to
         customise your deployment.
       </div>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[0], expected);
+      .props.children[0]).toEqualJSX(expected);
   });
 
   it('can display a list of machines', function() {
@@ -716,7 +724,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -738,7 +747,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
         units={units} />, true);
     const instance = renderer.getMountedInstance();
@@ -751,8 +762,11 @@ describe('MachineView', function() {
           dropUnit={instance._dropUnit}
           key="new0"
           machine={machineList[0]}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
@@ -763,16 +777,19 @@ describe('MachineView', function() {
           dropUnit={instance._dropUnit}
           key="new1"
           machine={machineList[1]}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
           units={units} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can order a list of machines', function() {
@@ -788,7 +805,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -808,7 +826,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
         units={units} />, true);
     const instance = renderer.getMountedInstance();
@@ -824,8 +844,11 @@ describe('MachineView', function() {
             displayName: 'new0',
             id: 'new0'
           }}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
@@ -839,16 +862,19 @@ describe('MachineView', function() {
             displayName: 'new5',
             id: 'new5'
           }}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
           units={units} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can toggle constraints on machines', function() {
@@ -864,7 +890,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -886,7 +913,9 @@ describe('MachineView', function() {
         environmentName="My Env"
         machines={machines}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
         units={units} />, true);
     const instance = renderer.getMountedInstance();
@@ -900,9 +929,12 @@ describe('MachineView', function() {
           dropUnit={instance._dropUnit}
           key="new0"
           machine={machineList[0]}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
           services={services}
+          series={['wily']}
           showConstraints={true}
           type="machine"
           units={units} />
@@ -912,21 +944,25 @@ describe('MachineView', function() {
           dropUnit={instance._dropUnit}
           key="new1"
           machine={machineList[1]}
+          machineModel={{get: sinon.stub()}}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={false}
           type="machine"
           units={units} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can display a form for adding a machine', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -967,8 +1003,9 @@ describe('MachineView', function() {
         selectMachine={instance.selectMachine}
         series={['trusty', 'xenial']}
         unit={null} />);
-    assert.deepEqual(
-      output.props.children.props.children[1].props.children[0], expected);
+    expect(
+      output.props.children.props.children[1].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('can select a machine', function() {
@@ -981,7 +1018,8 @@ describe('MachineView', function() {
     }];
     const machines = {
       filterByParent: sinon.stub().returns(machineList),
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1029,7 +1067,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1086,8 +1125,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can order a list of containers', function() {
@@ -1112,7 +1152,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1183,8 +1224,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display a form for adding a container', function() {
@@ -1198,7 +1240,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1241,8 +1284,9 @@ describe('MachineView', function() {
         providerType={'gce'}
         series={['trusty', 'xenial']}
         unit={null} />);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[0], expected);
+    expect(
+      output.props.children.props.children[2].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('does not show an add container form for deleted machines', function() {
@@ -1257,7 +1301,8 @@ describe('MachineView', function() {
         id: 'new0',
         deleted: true,
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1316,8 +1361,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can remove a unit', function() {
@@ -1328,7 +1374,8 @@ describe('MachineView', function() {
         }
         return [{id: 'new0'}];
       },
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1369,7 +1416,8 @@ describe('MachineView', function() {
         }
         return [{id: 'new0'}];
       },
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1401,13 +1449,14 @@ describe('MachineView', function() {
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
     assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
-    assert.deepEqual(placeUnit.args[0][1], 'new0');
+    assert.equal(placeUnit.args[0][1], 'new0');
   });
 
   it('can disable menu actions when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])

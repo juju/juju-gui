@@ -712,6 +712,7 @@ describe('MachineViewMachine', function() {
     var removeUnit = sinon.stub();
     var selectMachine = sinon.stub();
     var machine = {
+      commitStatus: 'uncommitted',
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -755,6 +756,9 @@ describe('MachineViewMachine', function() {
       <juju.components.MoreMenu
         items={[{
           label: 'Destroy',
+          action: false
+        }, {
+          label: 'Update constraints',
           action: false
         }]} />);
     expect(output.props.children[0]).toEqualJSX(expected);
