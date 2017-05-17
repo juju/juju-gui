@@ -120,7 +120,7 @@ describe('DeploymentMachines', function() {
             <li className="deployment-flow__row twelve-col"
               key="xenial (constraints not set)">
               <div className="eight-col">
-                xenial (constraints not set)
+                xenial, (constraints not set)
               </div>
               <div className="three-col">
                 My cloud
@@ -132,7 +132,7 @@ describe('DeploymentMachines', function() {
             <li className="deployment-flow__row twelve-col"
               key="2x0.03GHz, 1024, 4096">
               <div className="eight-col">
-                2x0.03GHz, 1024, 4096
+                cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
               </div>
               <div className="three-col">
                 My cloud
@@ -144,7 +144,7 @@ describe('DeploymentMachines', function() {
             <li className="deployment-flow__row twelve-col"
               key="trusty, 2x0.03GHz, 1024, 4096">
               <div className="eight-col">
-                trusty, 2x0.03GHz, 1024, 4096
+                trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
               </div>
               <div className="three-col">
                 My cloud
@@ -168,7 +168,7 @@ describe('DeploymentMachines', function() {
           ]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render for a local cloud', function() {
@@ -183,7 +183,7 @@ describe('DeploymentMachines', function() {
         These machines will be provisioned on {'localhost'}.&nbsp;
         {''}
       </p>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
   });
 
   it('can render with unknown cloud', function() {
@@ -197,6 +197,6 @@ describe('DeploymentMachines', function() {
         These machines will be provisioned on {'the cloud'}.&nbsp;
         {'You will incur a charge from your cloud provider.'}
       </p>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
   });
 });
