@@ -303,7 +303,7 @@ lint-css: $(NODE_MODULES)
 .PHONY: lint-components
 lint-components:
 	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short || \
-	 	echo "^^^ Ping frankban if those are not actual errors.\n"
+	 	echo "^^^ Open an issue or ping frankban if those are not actual errors.\n"
 
 .PHONY: test
 test: test-python test-js test-js-old

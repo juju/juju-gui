@@ -15,7 +15,7 @@ import sys
 # Define global regular expressions.
 _definition_exp = re.compile(r"""
     ([\w\._]+)\s*  # Component name.
-    =\s*  # Assignation.
+    =\s*  # Assignment.
     React\.createClass  # The create class statement.
     [\s\S]*?  # Any character.
     (?=  # Until the following happens.
@@ -30,7 +30,7 @@ _definition_exp = re.compile(r"""
 """, re.VERBOSE | re.MULTILINE)
 _fields_exp = re.compile(r"""
     ([\w_]+)\s*  # Field name.
-    =\s*  # Assignation.
+    =\s*  # Assignment.
     [^>=]  # Not an arrow function or equality operator..
 """, re.VERBOSE)
 # Define the number of workers.
