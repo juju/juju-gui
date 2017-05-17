@@ -1838,6 +1838,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderMachineView: function(state, next) {
       const db = this.db;
+      const ecs = this.env.get('ecs');
       ReactDOM.render(
         <window.juju.components.MachineView
           acl={this.acl}
@@ -1854,7 +1855,9 @@ YUI.add('juju-gui', function(Y) {
           removeUnits={this.env.remove_units.bind(this.env)}
           services={db.services}
           series={window.jujulib.CHARM_SERIES}
-          units={db.units} />,
+          units={db.units}
+          updateMachineConstraints={ecs.updateMachineConstraints.bind(ecs)}
+          updateMachineSeries={ecs.updateMachineSeries.bind(ecs)} />,
         document.getElementById('machine-view'));
       next();
     },

@@ -82,7 +82,9 @@ YUI.add('machine-view-machine', function() {
       services: React.PropTypes.object.isRequired,
       showConstraints: React.PropTypes.bool,
       type: React.PropTypes.string.isRequired,
-      units: React.PropTypes.object.isRequired
+      units: React.PropTypes.object.isRequired,
+      updateMachineConstraints: React.PropTypes.func,
+      updateMachineSeries: React.PropTypes.func
     },
 
     getInitialState: function() {
@@ -115,16 +117,9 @@ YUI.add('machine-view-machine', function() {
       const constraints = this.state.constraints;
       const series = constraints.series || null;
       delete constraints.series;
-      const constraintsLine = Object.keys(constraints || {}).reduce(
-        (collected, key) => {
-          const value = constraints[key];
-          if (value) {
-            collected.push(key + '=' + value);
-          }
-          return collected;
-        }, []).join(' ');
-      this.props.machineModel.set('constraints', constraintsLine);
-      this.props.machineModel.set('series', series);
+      const id = this.props.machine.id;
+      this.props.updateMachineConstraints(id, constraints);
+      this.props.updateMachineSeries(id, series);
       this._toggleForm();
     },
 
@@ -152,7 +147,7 @@ YUI.add('machine-view-machine', function() {
         disabled: disabled
       }];
       return (
-        <div className="add-machine__constraints" key='constraints'>
+        <div className="add-machine__constraints">
           <h4 className="add-machine__title">
             Update constraints
           </h4>
@@ -175,7 +170,7 @@ YUI.add('machine-view-machine', function() {
 
       @returns {Object} the machine constraints.
     */
-    _getConstraints: function(unitCount) {
+    _getConstraints: function() {
       const constraints = this.props.machine.constraints || '';
       let cpu;
       let disk;

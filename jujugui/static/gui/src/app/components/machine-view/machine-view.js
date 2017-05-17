@@ -37,7 +37,9 @@ YUI.add('machine-view', function() {
       removeUnits: React.PropTypes.func.isRequired,
       series: React.PropTypes.array,
       services: React.PropTypes.object.isRequired,
-      units: React.PropTypes.object.isRequired
+      units: React.PropTypes.object.isRequired,
+      updateMachineConstraints: React.PropTypes.func.isRequired,
+      updateMachineSeries: React.PropTypes.func.isRequired
     },
 
     /**
@@ -304,7 +306,9 @@ YUI.add('machine-view', function() {
             showConstraints={
               this.state.showConstraints || machine.id === selectedMachine}
             type="machine"
-            units={this.props.units} />);
+            units={this.props.units}
+            updateMachineConstraints={this.props.updateMachineConstraints}
+            updateMachineSeries={this.props.updateMachineSeries} />);
       });
       return (
         <div>
