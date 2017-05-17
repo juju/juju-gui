@@ -229,14 +229,12 @@ describe('Sharing', () => {
               label="Username"
               placeholder="Username"
               onKeyUp={instance._handleUsernameInputChange}
-              errors={false}
               ref="username"
               required={true} />
           </div>
           <div className="sharing__invite--access">
             <juju.components.InsetSelect
               label="Access"
-              defaultValue="read"
               ref="access"
               options={expectedOptions} />
           </div>
@@ -254,7 +252,7 @@ describe('Sharing', () => {
       </div>
     );
     const actualMarkup = output.props.children[0];
-    assert.deepEqual(actualMarkup, expectedMarkup);
+    expect(actualMarkup).toEqualJSX(expectedMarkup);
   });
 
   it('can grant user access', () => {

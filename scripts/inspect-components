@@ -12,6 +12,17 @@ import re
 import sys
 
 
+# Define React internally defined properties.
+_REACT_PROPS = ('key', 'ref')
+# Define per-component properties that are usually injected and therefore must
+# be excluded from validation when required but apparently not provided.
+_WHITELISTED_PROPS = {
+    'MachineViewHeader': ('canDrop', 'connectDropTarget', 'isOver'),
+    'MachineViewMachine': ('canDrop', 'connectDropTarget', 'isOver'),
+    'MachineViewMachineUnit': ('canDrag', 'connectDragSource', 'isDragging'),
+    'MachineViewUnplacedUnit': ('connectDragSource', 'isDragging'),
+}
+
 # Define global regular expressions.
 _definition_exp = re.compile(r"""
     ([\w\._]+)\s*  # Component name.
@@ -33,10 +44,9 @@ _fields_exp = re.compile(r"""
     =\s*  # Assignment.
     [^>=]  # Not an arrow function or equality operator..
 """, re.VERBOSE)
+
 # Define the number of workers.
 _MAX_WORKERS = 10
-# Define React internally defined properties.
-_REACT_PROPS = ('key', 'ref')
 
 
 class Definition(namedtuple('Definition', 'name path line props')):
@@ -113,9 +123,10 @@ class Instantiation(namedtuple('Instantiation', 'definition path line props')):
         errors = []
         definition = self.definition
         defined = dict((prop.name, prop.required) for prop in definition.props)
-        provided = self.props
+        provided = tuple(self.props)
+        all_provided = provided + _WHITELISTED_PROPS.get(definition.name, ())
         for name, required in defined.items():
-            if required and name not in provided:
+            if required and name not in all_provided:
                 errors.append('{} required but not provided'.format(name))
         errors.extend(
             '{} provided but not declared'.format(name)
@@ -346,7 +357,7 @@ def _execute_validate(options):
         if not options.short:
             output(instantiation, errors)
     if not error_summary:
-        print(green('validation succeeded'))
+        print(green('component validation succeeded'))
         return
     if not options.short:
         print(red('{big}\n{short} VALIDATION ERRORS {short}\n{big}\n'.format(
@@ -357,7 +368,8 @@ def _execute_validate(options):
         output(instantiation, errors)
     label = 'error' if error_count == 1 else 'errors'
     raise ValidationError(
-        red('validation failed: {} {} found'.format(error_count, label)))
+        red('component validation failed: {} {} found'.format(
+            error_count, label)))
 
 
 def _execute_tree(options):

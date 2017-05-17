@@ -440,7 +440,6 @@ describe('UserProfileEntity', () => {
           action={function noRefCheck() {}}
           title="Show KPI Metrics" />
         <juju.components.UserProfileEntityKPI
-          charmId="cs:django"
           d3={{}}
           metricTypes={['bad-wolf']}
           metrics={[{count: 10, metric: 'bad-wolf', sum: 10, time: {}}]} />

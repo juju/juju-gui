@@ -112,12 +112,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent={undefined}
         type={undefined}
-        count={undefined}
         title={title}
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
     var expectedOverview = (
         <juju.components.ServiceOverview
@@ -132,8 +130,7 @@ describe('Inspector', function() {
           service={service}
           serviceRelations={serviceRelations}
           showActivePlan={showActivePlan} />);
-    assert.deepEqual(overview, expectedOverview,
-                     'Overview is not rendered as expected');
+    expect(overview).toEqualJSX(expectedOverview);
   });
 
   it('displays the unit list when the app state calls for it', function() {
@@ -199,13 +196,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent='units'
         type={unitStatus}
-        count={0}
         title='Units'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
-
+    expect(header).toEqualJSX(expectedHeader);
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -282,12 +276,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="config"
         type={undefined}
-        count={undefined}
         title='Configure'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -373,12 +365,11 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent='unit'
         type={headerType}
-        count={undefined}
         title={title}
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
+
     var children = output.props.children[1].props.children;
     var expectedChildren = (
       <juju.components.UnitDetails
@@ -762,13 +753,11 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="scale"
         type={undefined}
-        count={undefined}
         title='Scale'
         icon={icon}
       />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.ScaleService
@@ -842,12 +831,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="expose"
         type={undefined}
-        count={undefined}
         title='Expose'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorExpose
@@ -918,12 +905,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="relations"
         type={undefined}
-        count={undefined}
         title='Relations'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorRelations
@@ -990,12 +975,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="relate-to"
         type={undefined}
-        count={undefined}
         title='Relate to'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorRelateTo
@@ -1066,12 +1049,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="relate-to"
         type={undefined}
-        count={undefined}
         title='spouse-name'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorRelateToEndpoint
@@ -1146,12 +1127,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent='plan'
         type={undefined}
-        count={undefined}
         title='Plan'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorPlan
@@ -1220,12 +1199,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent="change-version"
         type={undefined}
-        count={undefined}
         title='Change version'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     expect(children).toEqualJSX(
       <juju.components.InspectorChangeVersion
@@ -1302,12 +1279,10 @@ describe('Inspector', function() {
         backCallback={instance._backCallback}
         activeComponent='resources'
         type={undefined}
-        count={undefined}
         title='Resources'
         icon={icon} />
     );
-    assert.deepEqual(header, expectedHeader,
-                     'Header is not rendered as expected');
+    expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorResourcesList

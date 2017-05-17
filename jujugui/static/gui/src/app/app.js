@@ -1018,7 +1018,6 @@ YUI.add('juju-gui', function(Y) {
             this.controllerAPI.destroyModels.bind(this.controllerAPI)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
           setPageTitle={this.setPageTitle}
@@ -1188,7 +1187,6 @@ YUI.add('juju-gui', function(Y) {
     _renderHeaderSearch: function() {
       ReactDOM.render(
         <window.juju.components.HeaderSearch
-          changeState={this.state.changeState.bind(this.state)}
           appState={this.state} />,
         document.getElementById('header-search-container'));
     },
