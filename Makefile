@@ -286,7 +286,7 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: lint-python lint-js lint-css
+lint: lint-python lint-components lint-js lint-css
 
 .PHONY: lint-python
 lint-python: $(FLAKE8)
@@ -299,6 +299,11 @@ lint-js: $(NODE_MODULES)
 .PHONY: lint-css
 lint-css: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/sass-lint -q -v
+
+.PHONY: lint-components
+lint-components:
+	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short || \
+	 	echo "^^^ Open an issue or ping frankban if those are not actual errors.\n"
 
 .PHONY: test
 test: test-python test-js test-js-old
