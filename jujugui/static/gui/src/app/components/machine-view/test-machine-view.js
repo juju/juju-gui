@@ -73,7 +73,9 @@ describe('MachineView', function() {
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
@@ -216,7 +218,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />, true);
+        services={services}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -256,7 +260,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />, true);
+        services={services}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[1]
       .props.onClick();
@@ -286,7 +292,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />);
+        services={services}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
@@ -321,7 +329,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />, true);
+        services={services}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     const output = renderer.getRenderOutput();
@@ -377,7 +387,9 @@ describe('MachineView', function() {
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -454,7 +466,9 @@ describe('MachineView', function() {
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -512,7 +526,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         units={units}
-        services={services} />);
+        services={services}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
@@ -558,7 +574,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const node = queryComponentSelector(component,
       '.machine-view__auto-place .button--inline-neutral');
     testUtils.Simulate.click(node);
@@ -600,7 +618,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <juju.components.GenericButton
         action={autoPlaceUnits}
@@ -638,7 +658,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -699,7 +721,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="machine-view__column-onboarding">
@@ -734,6 +758,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -751,7 +777,9 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -770,7 +798,9 @@ describe('MachineView', function() {
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
@@ -785,7 +815,9 @@ describe('MachineView', function() {
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -815,6 +847,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
         acl={acl}
@@ -830,7 +864,9 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -852,7 +888,9 @@ describe('MachineView', function() {
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
@@ -870,7 +908,9 @@ describe('MachineView', function() {
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -900,6 +940,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -917,7 +959,9 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
@@ -937,7 +981,9 @@ describe('MachineView', function() {
           series={['wily']}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
@@ -952,7 +998,9 @@ describe('MachineView', function() {
           services={services}
           showConstraints={false}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -989,7 +1037,9 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
@@ -1042,7 +1092,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     assert.equal(instance.state.selectedMachine, 'new0');
     instance.selectMachine('new1');
@@ -1093,7 +1145,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -1176,7 +1230,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -1270,7 +1326,9 @@ describe('MachineView', function() {
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1328,7 +1386,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        machines={machines}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1401,7 +1461,9 @@ describe('MachineView', function() {
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
@@ -1444,7 +1506,9 @@ describe('MachineView', function() {
         placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
@@ -1480,7 +1544,9 @@ describe('MachineView', function() {
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
       .props.menuItems;

@@ -763,4 +763,115 @@ describe('MachineViewMachine', function() {
         }]} />);
     expect(output.props.children[0]).toEqualJSX(expected);
   });
+
+  it('can display a form to update constraints', function() {
+    const machine = {
+      commitStatus: 'uncommitted',
+      constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      id: 'new0',
+      series: 'wily'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        isOver={false}
+        machine={machine}
+        providerType="aws"
+        removeUnit={sinon.stub()}
+        selected={false}
+        selectMachine={sinon.stub()}
+        series={['wily']}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.items[1].action();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="add-machine__constraints">
+        <h4 className="add-machine__title">
+          Update constraints
+        </h4>
+        <juju.components.Constraints
+          constraints={{
+            arch: null,
+            cpuCores: '2',
+            cpuPower: '10',
+            disk: '2048',
+            mem: '1024'}}
+          currentSeries={machine.series}
+          disabled={false}
+          hasUnit={false}
+          providerType="aws"
+          series={['wily']}
+          valuesChanged={instance._updateConstraints} />
+        <juju.components.ButtonRow
+          buttons={[{
+            title: 'Cancel',
+            action: instance._toggleForm,
+            type: 'base'
+          }, {
+            title: 'Update',
+            action: instance._setConstraints,
+            type: 'neutral',
+            disabled: false
+          }]}
+          key="buttons" />
+      </div>);
+    expect(output.props.children[4]).toEqualJSX(expected);
+  });
+
+  it('can update constraints', function() {
+    const machine = {
+      commitStatus: 'uncommitted',
+      constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      id: 'new0',
+      series: 'wily'
+    };
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        isOver={false}
+        machine={machine}
+        providerType="aws"
+        removeUnit={sinon.stub()}
+        selected={false}
+        selectMachine={sinon.stub()}
+        series={['wily']}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.items[1].action();
+    output = renderer.getRenderOutput();
+    instance._updateConstraints({
+      arch: 'i386',
+      series: 'zesty'
+    });
+    output.props.children[4].props.children[2].props.buttons[1].action();
+    assert.equal(updateMachineConstraints.callCount, 1);
+    assert.equal(updateMachineConstraints.args[0][0], 'new0');
+    assert.deepEqual(updateMachineConstraints.args[0][1], {
+      arch: 'i386'
+    });
+    assert.equal(updateMachineSeries.callCount, 1);
+    assert.equal(updateMachineSeries.args[0][0], 'new0');
+    assert.equal(updateMachineSeries.args[0][1], 'zesty');
+  });
 });
