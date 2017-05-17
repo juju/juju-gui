@@ -85,8 +85,8 @@ describe('user auth class', () => {
       user.controller = {
         user: 'doctor@tardis',
         password: 'bad wolf',
-        external: 'foo'
       };
+      user.externalAuth = 'foo';
       const creds = user.controller;
       assert.equal(creds.areExternal, true);
     });
@@ -133,8 +133,8 @@ describe('user auth class', () => {
       user.model = {
         user: 'doctor@tardis',
         password: 'bad wolf',
-        external: 'foo'
       };
+      user.externalAuth = 'foo';
       const creds = user.model;
       assert.equal(creds.areExternal, true);
     });

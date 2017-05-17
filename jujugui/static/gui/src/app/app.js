@@ -16,6 +16,8 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// TODO sort out get('auth') and get('users')
+
 'use strict';
 
 /**
@@ -318,7 +320,8 @@ YUI.add('juju-gui', function(Y) {
       // Set up a client side database to store state.
       this.db = new models.Database();
       // Create a user store to track authentication details.
-      this.user = this.get('user') || new window.jujugui.User();
+      this.user = this.get('user') || new window.jujugui.User(
+        {externalAuth: this.get('auth')});
 
       // Instantiate a macaroon bakery, which is used to handle the macaroon
       // acquisition over HTTP.
@@ -614,7 +617,6 @@ YUI.add('juju-gui', function(Y) {
     */
     setUpControllerAPI: function(
       controllerAPI, user, password, macaroons, entityPromise) {
-      const external = this._getExternalAuth();
       this.user.controller = { user, password, macaroons, external };
 
       this.controllerLoginHandler = evt => {
@@ -708,6 +710,7 @@ YUI.add('juju-gui', function(Y) {
             (isLogin || !current.root) &&
             this.get('gisf')
           ) {
+            //TODO replace with user.username
             newState.profile = this._getAuth().rootUserName;
           }
           state.changeState(newState);
@@ -924,6 +927,7 @@ YUI.add('juju-gui', function(Y) {
       />);
 
       const navigateUserProfile = () => {
+        //TODO replace with user.username; if no username then return
         const auth = this._getAuth();
         if (!auth) {
           return;
@@ -934,6 +938,7 @@ YUI.add('juju-gui', function(Y) {
           auth.rootUserName);
       };
       const navigateUserAccount = () => {
+        //TODO same as above ^
         const auth = this._getAuth();
         if (!auth) {
           return;
@@ -1034,6 +1039,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} state - The application state.
     */
     _getUserInfo: function(state) {
+      // TODO replace auth with user.username
       const auth = this._getAuth();
       const username = state.profile || (auth && auth.rootUserName) || '';
       const userInfo = {
@@ -1191,6 +1197,7 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
+    //TODO replace user with a logged in bool; set it with any sort of user thing i guess?
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
@@ -1291,6 +1298,7 @@ YUI.add('juju-gui', function(Y) {
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const charmstore = this.get('charmstore');
+      // Replace getAuth use for logged in with a better check -- controller logged in maybe?
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -2012,6 +2020,7 @@ YUI.add('juju-gui', function(Y) {
           // TODO frankban: here we should put a notification, but we can't as
           // this seems to be dispatched twice.
           console.log(msg);
+          // replace get auth with user.username
           this.state.changeState({
             root: null,
             store: null,
@@ -3039,11 +3048,12 @@ YUI.add('juju-gui', function(Y) {
       A single point for accessing auth information that properly handles
       situations where auth is set outside the GUI (i.e., embedded).
 
+     // TODO remove this
       @method _getAuth
      */
     _getAuth: function() {
       // Try to retrieve the user from the external auth system (HJC).
-      const external = this._getExternalAuth();
+      const external = this.user.externalAuth;
       if (external) {
         return external;
       }
@@ -3087,24 +3097,6 @@ YUI.add('juju-gui', function(Y) {
       }
       return null;
     },
-
-    /**
-      Fetches the external auth and if it exists modify the values as necessary.
-
-      @method _getExternalAuth
-      @return {Object|Undefined} The external auth.
-    */
-    _getExternalAuth: function() {
-      const externalAuth = this.get('auth');
-      if (externalAuth && externalAuth.user) {
-        // When HJC supplies an external auth it's possible that the name is
-        // stored in a nested user object.
-        externalAuth.usernameDisplay = externalAuth.user.name;
-        externalAuth.rootUserName = externalAuth.user.name;
-      }
-      return externalAuth;
-    }
-
   }, {
     ATTRS: {
       html5: true,

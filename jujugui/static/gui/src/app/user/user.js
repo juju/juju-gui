@@ -29,9 +29,25 @@ const User = class User {
     // We pass in these values to make test setup easier.
     this.sessionStorage = cfg.sessionStorage || sessionStorage;
     this.localStorage = cfg.localStorage || localStorage;
+    this._external = cfg.externalAuth || null;
   }
 
   // TODO get username
+
+  set externalAuth(val) {
+    this._external = val;
+  }
+
+  get externalAuth() {
+    const externalAuth = this._external;
+    if (externalAuth && externalAuth.user) {
+      // When HJC supplies an external auth it's possible that the name is
+      // stored in a nested user object.
+      externalAuth.usernameDisplay = externalAuth.user.name;
+      externalAuth.rootUserName = externalAuth.user.name;
+    }
+    return externalAuth;
+  }
 
   /**
    Gets credentials out of sessionStorage.
@@ -61,7 +77,13 @@ const User = class User {
     if (!credentials.macaroons) {
       credentials.macaroons = null;
     }
+    const external = this.externalAuth;
     Object.defineProperties(credentials, {
+      areExternal: {
+        get: function() {
+          return !!external;
+        }
+      },
       areAvailable: {
         /**
           * Reports whether or not credentials are populated.
@@ -75,11 +97,6 @@ const User = class User {
           // In typical deploys this is sufficient however in HJC or when
           // external auth values are provided we have to be more resilient.
           return creds || this.areExternal;
-        }
-      },
-      areExternal: {
-        get: function() {
-          return !!(this.external);
         }
       }
     });

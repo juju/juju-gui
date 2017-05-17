@@ -609,8 +609,7 @@ describe('App', function() {
       assert.equal(loginStub.args[1][0], 'bad wolf');
     });
 
-    it('login method handler is called after successful login',
-    function(done) {
+    it('login method handler is called after successful login', function(done) {
       let localApp = {};
       const oldOnLogin = Y.juju.App.prototype.onLogin;
       Y.juju.App.prototype.onLogin = evt => {
@@ -1300,13 +1299,14 @@ describe('App', function() {
     });
 
     it('uses external auth if present', function() {
-      app.set('auth', {user: {name: 'bark'}});
+      app.user.externalAuth = {user: {name: 'bark'}};
       app.set('users', {foo: 'bar'});
-      assert.deepEqual(app._getAuth(), {
+      const expected = {
         usernameDisplay: 'bark',
         user: {name: 'bark'},
         rootUserName: 'bark'
-      });
+      };
+      assert.deepEqual(app._getAuth(), expected);
     });
 
     it('uses controller credentials if present', function() {
@@ -1447,10 +1447,11 @@ describe('App', function() {
   });
 
   describe('loginToAPIs', function() {
-    var app;
+    let app, user;
 
     beforeEach(function(done) {
       YUI(GlobalConfig).use(['juju-gui'], Y => {
+        user = new window.jujugui.User({sessionStorage: getMockStorage()});
         app = new Y.juju.App({
           baseUrl: 'http://example.com/',
           apiAddress: 'wss://1.2.3.4:1234',
@@ -1460,7 +1461,7 @@ describe('App', function() {
           charmstoreURL: 'http://1.2.3.4/',
           socketTemplate: '/model/$uuid/api',
           controllerSocketTemplate: '/api',
-          user: new window.jujugui.User({sessionStorage: getMockStorage()})
+          user: user
         });
         done();
       });
@@ -1494,9 +1495,13 @@ describe('App', function() {
         assert.deepEqual(app.get('user').controller, credentials);
       } else {
         // No credentials have been set.
-        assert.deepEqual(app.user.controller, {
-          user: '', password: '', macaroons: null
-        });
+        const expected = {
+          user: '',
+          password: '',
+          macaroons: null,
+          external: {}
+        }
+        assert.deepEqual(app.user.controller, expected);
       }
       if (loggedIn) {
         // The API has been authenticated with credentials.
@@ -1566,7 +1571,7 @@ describe('App', function() {
       checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
     });
 
-    it('does not set credentials if they are not provided', () => {
+    it.only('does not set credentials if they are not provided', () => {
       const credentials = null;
       const useMacaroons = false;
       const controller = makeAPIConnection(true);
