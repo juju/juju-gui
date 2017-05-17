@@ -1,0 +1,488 @@
+#!/usr/bin/env python3
+
+"""Inspect and analyze React components."""
+
+import argparse
+from collections import namedtuple
+from concurrent import futures
+import logging
+import operator
+import os
+import re
+import sys
+
+
+# Define global regular expressions.
+_definition_exp = re.compile(r"""
+    ([\w\._]+)\s*  # Component name.
+    =\s*  # Assignation.
+    React\.createClass  # The create class statement.
+    [\s\S]*?  # Any character.
+    (?=  # Until the following happens.
+        propTypes\s*  # Properties are found.
+        :\s*  # Property definitions.
+        \{  # Brace opening.
+        ([\s\S]*?)  # Any character.
+        (?=  # Until the following happens.
+            \}  # A close brace is encountered.
+        )  # End of condition.
+    )  # End of condition.
+""", re.VERBOSE | re.MULTILINE)
+_fields_exp = re.compile(r"""
+    ([\w_]+)\s*  # Field name.
+    =\s*  # Assignation.
+    [^>=]  # Not an arrow function or equality operator..
+""", re.VERBOSE)
+# Define the number of workers.
+_MAX_WORKERS = 10
+# Define React internally defined properties.
+_REACT_PROPS = ('key', 'ref')
+
+
+class Definition(namedtuple('Definition', 'name path line props')):
+    """A react component definition."""
+
+    __slots__ = ()
+
+    def __str__(self):
+        """Return the string representation of a definition."""
+        ctx = {
+            'name': blue(self.name),
+            'path_label': yellow('path:'),
+            'path': self.path,
+            'line': self.line,
+            'props_label': yellow('declared properties:'),
+            'props': '\n'.join('    {}'.format(prop) for prop in self.props),
+        }
+        return (
+            '{name}:\n'
+            '  {path_label} {path}:{line}\n'
+            '  {props_label}\n'
+            '{props}'
+            ''.format(**ctx)
+        )
+
+
+class Property(namedtuple('Property', 'name type_ required')):
+    """A react component property."""
+
+    __slots__ = ()
+
+    def __str__(self):
+        """Return the string representation of a property."""
+        required = green(' required') if self.required else ''
+        return '{}: {}{}'.format(self.name, green(self.type_), required)
+
+
+class Instantiation(namedtuple('Instantiation', 'definition path line props')):
+    """A react component instantiation."""
+
+    __slots__ = ()
+
+    def __str__(self):
+        """Return the string representation of an instantiation."""
+        ctx = {
+            'props_label': yellow('provided properties:'),
+            'props': '\n'.join('    {}'.format(prop) for prop in self.props),
+        }
+        return self.summary() + '  {props_label}\n{props}\n'.format(**ctx)
+
+    def summary(self):
+        """Return a short string summary of this instantiation."""
+        ctx = {
+            'def_name': blue(self.definition.name),
+            'path_label': yellow('instantiated at:'),
+            'path': self.path,
+            'line': self.line,
+            'def_path_label': yellow('defined at:'),
+            'def_path': self.definition.path,
+            'def_line': self.definition.line,
+        }
+        return (
+            '{def_name}:\n'
+            '  {path_label} {path}:{line}\n'
+            '  {def_path_label} {def_path}:{def_line}\n'
+            ''.format(**ctx)
+        )
+
+    def validate(self):
+        """Validate the properties of this instantiation.
+
+        Return a list of error messages, or an empty list if everything is ok.
+        """
+        errors = []
+        definition = self.definition
+        defined = dict((prop.name, prop.required) for prop in definition.props)
+        provided = self.props
+        for name, required in defined.items():
+            if required and name not in provided:
+                errors.append('{} required but not provided'.format(name))
+        errors.extend(
+            '{} provided but not declared'.format(name)
+            for name in provided
+            if name not in defined and name not in _REACT_PROPS
+        )
+        return errors
+
+
+class _Node():
+    """A node that can be used for generating a tree."""
+
+    def __init__(self, name):
+        """The provided name identifies this node."""
+        self.name = name
+        self._parent = None
+        self._children = []
+
+    @property
+    def parent(self):
+        """Return the node parent, or None if this is a top level node."""
+        return self._parent
+
+    @parent.setter
+    def parent(self, node):
+        """Set a parent for this node. The parent must be another node."""
+        self._parent = node
+        node._children.append(self)
+
+    @property
+    def children(self):
+        """Return all children of this node, or an empty tuple."""
+        return tuple(self._children)
+
+
+class ValidationError(Exception):
+    """An error while validating React component instantiations."""
+
+
+def find_definitions(path, regexp=None, include_tests=False):
+    """Find React components definitions in all files under the given path.
+
+    If regexp is not None, only return components whose name matches the given
+    regular expression.
+
+    Return definitions as a generator of Definition objects.
+    """
+    def find(filepath):
+        with open(filepath) as fileobj:
+            content = fileobj.read()
+        definitions = []
+        for match in _definition_exp.finditer(content):
+            name, props = match.groups()
+            if regexp and not re.search(regexp, name):
+                continue
+            definitions.append(Definition(
+                name=name,
+                path=filepath,
+                line=content[:match.start(1)].count('\n') + 1,
+                props=tuple(_parse_prop_definitions(props)),
+            ))
+        return definitions
+
+    fs = []
+    with futures.ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+        for filepath in _iterfiles(path, include_tests):
+            fs.append(executor.submit(find, filepath))
+        for future in futures.as_completed(fs):
+            for definition in future.result():
+                yield definition
+
+
+def find_instantiations(path, definitions, include_tests=False):
+    """Find React components instantiations in all files under the given path.
+
+    The instantiations are found for components defined in the provided
+    definitions.
+
+    Return instantiations as a generator of Instantiation objects.
+    """
+    defnames = dict(
+        (definition.name.split('.')[-1], definition)
+        for definition in definitions
+    )
+    exp = _instantiation_exp(defnames.keys())
+
+    def find(filepath):
+        with open(filepath) as fileobj:
+            content = fileobj.read()
+        instantiations = []
+        for match in exp.finditer(content):
+            name, props = match.groups()
+            instantiations.append(Instantiation(
+                definition=defnames[name],
+                path=filepath,
+                line=content[:match.start(1)].count('\n') + 1,
+                props=_parse_prop_fields(props, name),
+            ))
+        return instantiations
+
+    fs = []
+    with futures.ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+        for filepath in _iterfiles(path, include_tests):
+            fs.append(executor.submit(find, filepath))
+        for future in futures.as_completed(fs):
+            for instantiation in future.result():
+                yield instantiation
+
+
+def _instantiation_exp(names):
+    """Return a compiled regexp for retrieving component instantiations.
+
+    The given names are the names of the corresponding components.
+    """
+    return re.compile(r"""
+        <  # Tag opening.
+        [\w\._]+?  # Any non-newline character.
+        (?=  # Until the following happens.
+            ({})[\n\ ]  # Component name.
+            ([\s\S]*?)  # Any character.
+            (?=  # Until the following happens.
+                />  # The component tag is closed.
+            )  # End of condition.
+        )  # End of condition.
+    """.format('|'.join(names)), re.VERBOSE | re.MULTILINE)
+
+
+def _parse_prop_definitions(content):
+    """Generate Property named tuples based on the given string content."""
+    prefix = 'React.PropTypes.'
+    prefix_len = len(prefix)
+
+    def createProperty(name, type_):
+        """Create a new property based on the given name and raw type."""
+        parts = type_.split('.')
+        required = False
+        if parts[-1] == 'isRequired':
+            required = True
+            type_ = '.'.join(parts[:-1])
+        if type_.startswith(prefix):
+            type_ = type_[prefix_len:]
+        return Property(name=name, type_=type_, required=required)
+
+    # Remove JavaScript comments.
+    content = ''.join(
+        line for line in content.splitlines()
+        if not line.strip().startswith('//'))
+    collected = []
+    last_comma = 0
+    name = ''
+    for char in content:
+        if char == ' ':
+            continue
+        if char == ':':
+            if name:
+                yield createProperty(name, ''.join(collected[:last_comma-1]))
+            name = ''.join(collected[last_comma:])
+            collected = []
+            last_comma = 0
+            continue
+        if char == ',':
+            last_comma = len(collected) + 1
+        collected.append(char)
+    yield createProperty(name, ''.join(collected).rstrip(','))
+
+
+def _parse_prop_fields(content, name):
+    """Parse the property values included in a component instantiation.
+
+    Return properties as a list of property names.
+    """
+    lines = []
+    end_found = False
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith('//'):
+            continue
+        if end_found:
+            break
+        if line.startswith('</') and name in line:
+            break
+        end_found = line.endswith('>') and not line[:-1].strip().endswith('=')
+        lines.append(line)
+    content = ' '.join(lines)
+    return tuple(sorted(
+        match.groups()[0] for match in _fields_exp.finditer(content)
+    ))
+
+
+def _iterfiles(path, include_tests):
+    """Generate full paths for the JavaScript files under the given path."""
+    path = os.path.abspath(os.path.expanduser(path))
+    for dirpath, dirnames, files in os.walk(path):
+        for filename in files:
+            if not filename.endswith('.js'):
+                continue
+            if not include_tests and 'test' in filename:
+                continue
+            yield os.path.join(dirpath, filename)
+
+
+def _execute_define(options):
+    """Print out all component definitions."""
+    logging.debug('executing define: {}'.format(options.path))
+    for definition in find_definitions(
+            options.path, regexp=options.regexp, include_tests=options.test):
+        print('{}\n'.format(definition))
+
+
+def _execute_validate(options):
+    """Print out all component instantiations and validate them."""
+    def output(instantiation, errors):
+        print('{}{}'.format(
+            instantiation.summary() if options.short else instantiation,
+            ''.join('  {}\n'.format(red(error)) for error in errors),
+        ))
+
+    logging.debug('executing validate: {}'.format(options.path))
+    error_summary = []
+    error_count = 0
+    definitions = find_definitions(options.path, options.regexp)
+    for instantiation in find_instantiations(
+            options.path, definitions, include_tests=options.test):
+        errors = instantiation.validate()
+        if errors:
+            error_summary.append((instantiation, errors))
+            error_count += len(errors)
+        if not options.short:
+            output(instantiation, errors)
+    if not error_summary:
+        print(green('validation succeeded'))
+        return
+    if not options.short:
+        print(red('{big}\n{short} VALIDATION ERRORS {short}\n{big}\n'.format(
+            big='#' * 79,
+            short='#' * 30,
+        )))
+    for instantiation, errors in error_summary:
+        output(instantiation, errors)
+    label = 'error' if error_count == 1 else 'errors'
+    raise ValidationError(
+        red('validation failed: {} {} found'.format(error_count, label)))
+
+
+def _execute_tree(options):
+    """Print out all component definitions."""
+    logging.debug('executing tree: {}'.format(options.path))
+    definitions = tuple(find_definitions(options.path, None))
+    nodes = dict((defn.path, _Node(defn.name)) for defn in definitions)
+    num_instantiations = 0
+    for instantiation in find_instantiations(
+            options.path, definitions, include_tests=options.test):
+        num_instantiations += 1
+        definition = instantiation.definition
+        parent = nodes.get(instantiation.path)
+        if parent is None or parent.name == definition.name:
+            continue
+        node = nodes[definition.path]
+        node.parent = parent
+    topnodes = sorted([
+        node for node in nodes.values() if node.parent is None
+    ], key=operator.attrgetter('name'))
+    for node in topnodes:
+        walk_node(node)
+    print(green('\n{} components instantiated {} times'.format(
+        len(definitions), num_instantiations)))
+
+
+def walk_node(node, prefix=''):
+    pipe = '│'
+    leaf = '├─'
+    last = '└─'
+    juju = 'juju.components.'
+    name = node.name
+    if name.startswith(juju):
+        name = name[len(juju):]
+    print('{}{}'.format(blue(prefix) if prefix else '\n', name))
+    if prefix.endswith(leaf):
+        prefix = prefix[:-len(leaf)] + pipe + '  '
+    elif prefix.endswith(last):
+        prefix = prefix[:-len(last)] + '    '
+    else:
+        prefix = '  '
+    num_children = len(node.children)
+    for num, node in enumerate(node.children):
+        symbol = last if num + 1 == num_children else leaf
+        walk_node(node, prefix + symbol)
+
+
+def _mkcolor(num):
+    """Create and return a color function."""
+    return lambda text: '\033[01;{}m{}\033[00m'.format(num, text)
+
+
+red = _mkcolor(31)
+green = _mkcolor(32)
+yellow = _mkcolor(33)
+blue = _mkcolor(34)
+
+
+def _configure_logging(level):
+    """Set up the application logging."""
+    root = logging.getLogger()
+    # Remove any previous handler on the root logger.
+    for handler in root.handlers[:]:
+        root.removeHandler(handler)
+    logging.basicConfig(
+        level=level,
+        format='%(asctime)s %(levelname)s %(message)s',
+        datefmt='%H:%M:%S')
+
+
+def _setup():
+    """Set up the argument parser."""
+    def add_regexp_argument(parser):
+        parser.add_argument(
+            'regexp', nargs='?',
+            help='find components whose name matches the given regexp')
+
+    def add_path_argument(parser):
+        parser.add_argument(
+            '--path', default=os.getcwd(),
+            help='base directory to use (default: current dir)')
+
+    def add_test_argument(parser):
+        parser.add_argument(
+            '--test', action='store_true', help='include test files')
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        '--debug', action='store_true', help='turn debug mode on')
+    subparsers = parser.add_subparsers(dest='command')
+    subparsers.required = True
+
+    parser_define = subparsers.add_parser(
+        'define', help='find all components definitions')
+    add_regexp_argument(parser_define)
+    add_path_argument(parser_define)
+    add_test_argument(parser_define)
+
+    parser_validate = subparsers.add_parser(
+        'validate', help='find and validate all components instantiations')
+    add_regexp_argument(parser_validate)
+    add_path_argument(parser_validate)
+    add_test_argument(parser_validate)
+    parser_validate.add_argument(
+        '--short', action='store_true', help='only show validation summary')
+
+    parser_tree = subparsers.add_parser('tree', help='print the component tree')
+    add_path_argument(parser_tree)
+    add_test_argument(parser_tree)
+
+    return parser.parse_args()
+
+
+def main():
+    """Launch the command."""
+    options = _setup()
+    _configure_logging(logging.DEBUG if options.debug else logging.INFO)
+    command = getattr(sys.modules[__name__], '_execute_' + options.command)
+    command(options)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('quitting')
+    except ValidationError as err:
+        sys.exit(err)
