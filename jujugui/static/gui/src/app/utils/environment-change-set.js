@@ -1256,7 +1256,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Update a machine's series.
 
-      @param {String} machineId The id of the destination machine.
+      @param {String} machineId The id of the machine.
       @param {String} series The new series.
     */
     updateMachineSeries: function(machineId, series) {
@@ -1275,6 +1275,34 @@ YUI.add('environment-change-set', function(Y) {
       const machine = db.machines.getById(machineId);
       const machineModel = db.machines.revive(machine);
       machineModel.set('series', series);
+      db.machines.free(machineModel);
+      return null;
+    },
+
+    /**
+      Update a machine's constraints.
+
+      @param {String} machineId The id of the machine.
+      @param {Object} constraints The new constraints.
+    */
+    updateMachineConstraints: function(machineId, constraints) {
+      const db = this.get('db');
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
+        const command = value.command;
+        if (command.method === '_addMachines' &&
+            command.options.modelId === machineId) {
+          value.command.args[0][0].constraints = constraints;
+        }
+      });
+      // Because each 'model' in a lazy model list is actually just an object
+      // it doesn't fire change events. We need to revive it to a real object,
+      // make the change then the change events will fire.
+      const machine = db.machines.getById(machineId);
+      const machineModel = db.machines.revive(machine);
+      // The model requires the constraints to be in the format:
+      // cpu-power=w cores=x mem=y root-disk=z
+      machineModel.set('constraints', utils.formatConstraints(constraints));
       db.machines.free(machineModel);
       return null;
     },
