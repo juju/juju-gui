@@ -172,40 +172,25 @@ YUI.add('machine-view-machine', function() {
     */
     _getConstraints: function() {
       const constraints = this.props.machine.constraints || '';
-      let cpu;
-      let disk;
-      let mem;
-      let cpuCores;
-      let arch;
+      let types = {
+        'cpu-power': null,
+        cores: null,
+        mem: null,
+        'root-disk': null,
+        arch: null
+      };
       // The constraints are in the format:
       // cpu-power=w cores=x mem=y root-disk=z
-      const parts = constraints.split(' ');
-      parts.forEach(part => {
+      constraints.split(' ').forEach(part => {
         const keyVal = part.split('=');
-        switch (keyVal[0]) {
-          case 'cpu-power':
-            cpu = keyVal[1];
-            break;
-          case 'cores':
-            cpuCores = keyVal[1];
-            break;
-          case 'mem':
-            mem = keyVal[1];
-            break;
-          case 'root-disk':
-            disk = keyVal[1];
-            break;
-          case 'arch':
-            arch = keyVal[1];
-            break;
-        }
+        types[keyVal[0]] = keyVal[1];
       });
       return {
-        arch: arch || null,
-        cpuCores: cpuCores || null,
-        cpuPower: cpu || null,
-        disk: disk || null,
-        mem: mem || null
+        arch: types.arch,
+        cpuCores: types.cores,
+        cpuPower: types['cpu-power'],
+        disk: types['root-disk'],
+        mem: types.mem
       };
     },
 
