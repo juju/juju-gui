@@ -102,7 +102,8 @@ describe('MachineView', function() {
             <div className="machine-view__column-onboarding">
               <div>
                 <p>
-                  Drag and drop unplaced units to customise your deployment.
+                  Unplaced units will appear here. Drag and drop them to
+                  customise your deployment.
                 </p>
                 <span className="link"
                   onClick={instance._openStore}>
@@ -236,7 +237,8 @@ describe('MachineView', function() {
       <div className="machine-view__column-onboarding">
         <div>
           <p>
-            Drag and drop unplaced units to customise your deployment.
+            Unplaced units will appear here. Drag and drop them to
+            customise your deployment.
           </p>
           <span className="link"
             onClick={instance._openStore}>
