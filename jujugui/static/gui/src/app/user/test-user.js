@@ -164,4 +164,28 @@ describe('user auth class', () => {
       assert.deepEqual(storage.getItem('test'), null);
     });
   });
+
+  describe('usernames', () =>{
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+      user.controller = {user: 'dalek'};
+    });
+
+    it('uses the controller username', () => {
+      assert.equal(user.username, 'dalek@local');
+    });
+
+    it('can provide just the displayname', () => {
+      assert.equal(user.displayName, 'dalek');
+    });
+
+    it('defaults to externalAuth if available', () => {
+      user.externalAuth = {user: {name: 'foo'}};
+      assert.equal(user.username, 'foo');
+      assert.equal(user.displayName, 'foo');
+    });
+  });
 });

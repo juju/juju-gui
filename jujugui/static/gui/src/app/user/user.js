@@ -34,14 +34,14 @@ const User = class User {
 
   get displayName() {
     if (this.externalAuth) {
-      return this.externalAuth;
+      return this.externalAuth.displayName;
     }
     return this.controller.user.split('@')[0];
   }
 
   get username() {
     if (this.externalAuth) {
-      return this.externalAuth;
+      return this.externalAuth.username;
     }
     return this.controller.user;
   }
