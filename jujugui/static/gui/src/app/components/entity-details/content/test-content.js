@@ -115,6 +115,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
+                changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"
@@ -432,6 +433,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
+                changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"
@@ -522,6 +524,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
+                changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"

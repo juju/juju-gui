@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('EntityContentReadme', function() {
-  var mockEntity;
+  let mockEntity, renderMarkdown;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +30,8 @@ describe('EntityContentReadme', function() {
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
+    renderMarkdown = sinon.stub().returns('<p>Readme</p>');
+    renderMarkdown.Renderer = sinon.stub();
   });
 
   afterEach(function() {
@@ -37,11 +39,12 @@ describe('EntityContentReadme', function() {
   });
 
   it('can display a readme', function() {
-    var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={changeState}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         entityModel={mockEntity} />, true);
@@ -54,7 +57,12 @@ describe('EntityContentReadme', function() {
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
     expect(output).toEqualJSX(
       <div className="entity-content__readme">
-        <h2 className="entity-content__header" id="readme">Readme</h2>
+        <h2 className="entity-content__header" id="readme">
+          Readme
+          <juju.components.HashLink
+            changeState={changeState}
+            hash="readme" />
+        </h2>
         <div className="entity-content__readme-content"
           ref="content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}} />
@@ -63,11 +71,11 @@ describe('EntityContentReadme', function() {
 
   it('will cancel the readme request when unmounting', function() {
     var abort = sinon.stub();
-    var renderMarkdown = sinon.stub();
     var getFile = sinon.stub().returns({abort: abort});
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         getFile={getFile}
         entityModel={mockEntity}
         renderMarkdown={renderMarkdown}/>, true);
@@ -80,6 +88,7 @@ describe('EntityContentReadme', function() {
   it('can display a message if there is no readme file', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={sinon.spy()}
         getFile={sinon.spy()}
         entityModel={mockEntity} />
@@ -88,11 +97,11 @@ describe('EntityContentReadme', function() {
   });
 
   it('displays a message if there is an error getting the file', function() {
-    var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArgWith(2, 'No file');
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         entityModel={mockEntity} />
@@ -105,11 +114,11 @@ describe('EntityContentReadme', function() {
   });
 
   it('can scroll to an element after loading the readme', () => {
-    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         hash="readme"
@@ -122,11 +131,11 @@ describe('EntityContentReadme', function() {
   });
 
   it('does not scroll to an element if there is no hash', () => {
-    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         entityModel={mockEntity} />, true);
@@ -138,11 +147,11 @@ describe('EntityContentReadme', function() {
   });
 
   it('can scroll to an element if the hash changes', () => {
-    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         hash="readme"
@@ -155,11 +164,11 @@ describe('EntityContentReadme', function() {
   });
 
   it('does not scroll to an element if the hash does not change', () => {
-    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
         hash="readme"
