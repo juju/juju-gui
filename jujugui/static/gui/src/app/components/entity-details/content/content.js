@@ -30,6 +30,7 @@ YUI.add('entity-content', function() {
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
+      hash: React.PropTypes.string,
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
@@ -603,8 +604,9 @@ YUI.add('entity-content', function() {
               <div className="seven-col append-one">
                 <juju.components.EntityContentReadme
                   entityModel={entityModel}
-                  renderMarkdown={this.props.renderMarkdown}
-                  getFile={this.props.getFile} />
+                  getFile={this.props.getFile}
+                  hash={this.props.hash}
+                  renderMarkdown={this.props.renderMarkdown} />
               </div>
               <div className="four-col">
                 {this._generateActions()}

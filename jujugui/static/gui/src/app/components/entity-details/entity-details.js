@@ -36,6 +36,7 @@ YUI.add('entity-details', function() {
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       getModelName: React.PropTypes.func.isRequired,
+      hash: React.PropTypes.string,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -102,6 +103,7 @@ YUI.add('entity-details', function() {
                   apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
+                  hash={this.props.hash}
                   hasPlans={this.state.hasPlans}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}

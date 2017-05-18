@@ -21,12 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-content-readme', function() {
 
   juju.components.EntityContentReadme = React.createClass({
+    displayName: 'EntityContentReadme',
     readmeXhr: null,
 
     /* Define and validate the properites available on this component. */
     propTypes: {
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      hash: React.PropTypes.string,
       renderMarkdown: React.PropTypes.func.isRequired
     },
 
@@ -40,9 +42,30 @@ YUI.add('entity-content-readme', function() {
       this._getReadme();
     },
 
+    componentDidUpdate: function(prevProps, prevState) {
+      const hash = this.props.hash;
+      if (hash && hash !== prevProps.hash) {
+        this._scrollToContent();
+      }
+    },
+
     componentWillUnmount: function() {
       if (this.readmeXhr) {
         this.readmeXhr.abort();
+      }
+    },
+
+    /**
+      Scroll to an id.
+    */
+    _scrollToContent: function() {
+      const target = document.querySelector(`#${this.props.hash}`);
+      // The charmbrowser element does the scrolling.
+      const charmbrowser = document.querySelector('.charmbrowser');
+      if (target && charmbrowser) {
+        // Set the scroll position to the element's top position taking into
+        // account the sticky header size.
+        charmbrowser.scrollTop += target.getBoundingClientRect().top - 200;
       }
     },
 
@@ -93,11 +116,15 @@ YUI.add('entity-content-readme', function() {
     */
     _getReadmeCallback: function(error, data) {
       if (error) {
-        console.error(error); 
+        console.error(error);
         this.setState({readme: 'No readme.'});
       } else {
         var readme = data;
-        this.setState({readme: this.props.renderMarkdown(readme)});
+        this.setState({readme: this.props.renderMarkdown(readme)}, () => {
+          if (this.props.hash) {
+            this._scrollToContent();
+          }
+        });
       }
     },
 

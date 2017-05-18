@@ -185,6 +185,7 @@ YUI.add('charmbrowser-component', function() {
                 getModelName={this.props.getModelName}
                 deployService={this.props.deployService}
                 getFile={this.props.getFile}
+                hash={currentState.hash}
                 scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
                 id={id}
