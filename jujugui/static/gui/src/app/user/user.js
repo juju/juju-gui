@@ -32,7 +32,19 @@ const User = class User {
     this._external = cfg.externalAuth || null;
   }
 
-  // TODO get username
+  get displayName() {
+    if (this.externalAuth) {
+      return this.externalAuth;
+    }
+    return this.controller.user.split('@')[0];
+  }
+
+  get username() {
+    if (this.externalAuth) {
+      return this.externalAuth;
+    }
+    return this.controller.user;
+  }
 
   set externalAuth(val) {
     this._external = val;

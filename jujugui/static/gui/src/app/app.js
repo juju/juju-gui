@@ -710,8 +710,7 @@ YUI.add('juju-gui', function(Y) {
             (isLogin || !current.root) &&
             this.get('gisf')
           ) {
-            //TODO replace with user.username
-            newState.profile = this._getAuth().rootUserName;
+            newState.profile = this.user.displayName;
           }
           state.changeState(newState);
         }
@@ -927,20 +926,18 @@ YUI.add('juju-gui', function(Y) {
       />);
 
       const navigateUserProfile = () => {
-        //TODO replace with user.username; if no username then return
-        const auth = this._getAuth();
-        if (!auth) {
+        const username = this.user.displayName;
+        if (!username) {
           return;
         }
         views.utils.showProfile(
           this.env && this.env.get('ecs'),
           this.state.changeState.bind(this.state),
-          auth.rootUserName);
+          username);
       };
       const navigateUserAccount = () => {
-        //TODO same as above ^
-        const auth = this._getAuth();
-        if (!auth) {
+        const username = this.user.displayName;
+        if (!username) {
           return;
         }
         views.utils.showAccount(
@@ -1039,15 +1036,13 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} state - The application state.
     */
     _getUserInfo: function(state) {
-      // TODO replace auth with user.username
-      const auth = this._getAuth();
-      const username = state.profile || (auth && auth.rootUserName) || '';
+      const username = state.profile || this.user.displayName || '';
       const userInfo = {
         external: username,
         isCurrent: false,
         profile: username
       };
-      if (auth && userInfo.profile === auth.rootUserName) {
+      if (userInfo.profile === this.user.displayName) {
         userInfo.isCurrent = true;
         // This is the current user, and might be a local one. Use the
         // authenticated charm store user as the external (USSO) name.
@@ -1197,19 +1192,18 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
-    //TODO replace user with a logged in bool; set it with any sort of user thing i guess?
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
           appState={this.state}
           gisf={this.get('gisf')}
           displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-          user={this._getAuth()} />,
+          user={this.user.displayName} />,
         document.getElementById('header-help'));
     },
 
     _renderHeaderLogo: function() {
-      const userName = this.user.controller.user.split('@')[0];
+      const userName = this.user.displayName;
       const gisf = this.get('gisf');
       const homePath = gisf ? '/' :
         this.state.generatePath({profile: userName});
@@ -1292,13 +1286,14 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = this.user.controller;
-        return credentials ? credentials.user : undefined;
+        return this.user.username;
       };
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const charmstore = this.get('charmstore');
-      // Replace getAuth use for logged in with a better check -- controller logged in maybe?
+      const isLoggedIn = () => {
+        return this.controllerAPI.userIsAuthenticated;
+      }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1332,7 +1327,7 @@ YUI.add('juju-gui', function(Y) {
               utils, env.genericConstraints, db.units)}
           getAgreementsByTerms={
               this.terms.getAgreementsByTerms.bind(this.terms)}
-          getAuth={this._getAuth.bind(this)}
+          isLoggedIn={isLoggedIn}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
           getCloudCredentialNames={
@@ -2026,7 +2021,7 @@ YUI.add('juju-gui', function(Y) {
             store: null,
             model: null,
             user: null,
-            profile: this._getAuth().rootUserName
+            profile: this.user.displayName,
           });
         }
       });
@@ -3042,61 +3037,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         console.error('Unrecognized service', service);
       }
-    },
-
-    /**
-      A single point for accessing auth information that properly handles
-      situations where auth is set outside the GUI (i.e., embedded).
-
-     // TODO remove this
-      @method _getAuth
-     */
-    _getAuth: function() {
-      // Try to retrieve the user from the external auth system (HJC).
-      const external = this.user.externalAuth;
-      if (external) {
-        return external;
-      }
-      const users = this.get('users');
-      if (!users) {
-        return null;
-      }
-      const mkUser = (user, canBeLocal) => {
-        const parts = user.split('@');
-        let usernameDisplay = user;
-        if (parts.length === 1 && canBeLocal) {
-          usernameDisplay += '@local';
-        } else if (parts.length > 1 && parts[1] === 'external') {
-          usernameDisplay = parts[0];
-        }
-        return {
-          user: user,
-          usernameDisplay: usernameDisplay,
-          rootUserName: parts[0]
-        };
-      };
-      let credentials;
-      // Try to retrieve the user from the model connection.
-      if (this.env) {
-        credentials = this.user.model;
-        if (credentials.user) {
-          return mkUser(credentials.user, true);
-        }
-      }
-      // Try to retrieve the user from the controller connection.
-      if (this.controllerAPI) {
-        credentials = this.user.controller;
-        if (credentials.user) {
-          return mkUser(credentials.user, true);
-        }
-      }
-      // Last chance: the charm store.
-      const charmstore = users.charmstore;
-      if (charmstore && charmstore.user) {
-        return mkUser(charmstore.user, false);
-      }
-      return null;
-    },
+    }
   }, {
     ATTRS: {
       html5: true,
