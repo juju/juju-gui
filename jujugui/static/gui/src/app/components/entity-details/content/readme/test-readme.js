@@ -52,7 +52,7 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 1);
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
-    assert.deepEqual(output,
+    expect(output).toEqualJSX(
       <div className="entity-content__readme">
         <h2 className="entity-content__header" id="readme">Readme</h2>
         <div className="entity-content__readme-content"
@@ -102,5 +102,72 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 0);
     assert.equal(component.refs['content'].textContent, 'No readme.');
+  });
+
+  it('can scroll to an element after loading the readme', () => {
+    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
+    const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
+    const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContentReadme
+        renderMarkdown={renderMarkdown}
+        getFile={getFile}
+        hash="readme"
+        entityModel={mockEntity} />, true);
+    const instance = renderer.getMountedInstance();
+    const scrollToContent = sinon.stub(instance, '_scrollToContent');
+    instance.componentDidMount();
+    assert.equal(scrollToContent.callCount, 1);
+    scrollToContent.restore();
+  });
+
+  it('does not scroll to an element if there is no hash', () => {
+    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
+    const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
+    const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContentReadme
+        renderMarkdown={renderMarkdown}
+        getFile={getFile}
+        entityModel={mockEntity} />, true);
+    const instance = renderer.getMountedInstance();
+    const scrollToContent = sinon.stub(instance, '_scrollToContent');
+    instance.componentDidMount();
+    assert.equal(scrollToContent.callCount, 0);
+    scrollToContent.restore();
+  });
+
+  it('can scroll to an element if the hash changes', () => {
+    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
+    const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
+    const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContentReadme
+        renderMarkdown={renderMarkdown}
+        getFile={getFile}
+        hash="readme"
+        entityModel={mockEntity} />, true);
+    const instance = renderer.getMountedInstance();
+    const scrollToContent = sinon.stub(instance, '_scrollToContent');
+    instance.componentDidUpdate({hash: 'another'});
+    assert.equal(scrollToContent.callCount, 1);
+    scrollToContent.restore();
+  });
+
+  it('does not scroll to an element if the hash does not change', () => {
+    const renderMarkdown = sinon.stub().returns('<p>Readme</p>');
+    const getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
+    const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContentReadme
+        renderMarkdown={renderMarkdown}
+        getFile={getFile}
+        hash="readme"
+        entityModel={mockEntity} />, true);
+    const instance = renderer.getMountedInstance();
+    const scrollToContent = sinon.stub(instance, '_scrollToContent');
+    instance.componentDidUpdate({hash: 'readme'});
+    assert.equal(scrollToContent.callCount, 0);
+    scrollToContent.restore();
   });
 });

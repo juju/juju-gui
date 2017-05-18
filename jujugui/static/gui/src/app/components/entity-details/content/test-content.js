@@ -75,6 +75,7 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
+          hash="readme"
           pluralize={pluralize}
           renderMarkdown={renderMarkdown}
           showTerms={sinon.stub()}
@@ -115,8 +116,9 @@ describe('EntityContent', function() {
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
                 entityModel={mockEntity}
-                renderMarkdown={renderMarkdown}
-                getFile={getFile} />
+                getFile={getFile}
+                hash="readme"
+                renderMarkdown={renderMarkdown} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -402,6 +404,7 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getFile={getFile}
         hasPlans={false}
+        hash="readme"
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         showTerms={sinon.stub()}
@@ -430,8 +433,9 @@ describe('EntityContent', function() {
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
                 entityModel={mockEntity}
-                renderMarkdown={renderMarkdown}
-                getFile={getFile} />
+                getFile={getFile}
+                hash="readme"
+                renderMarkdown={renderMarkdown} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -505,6 +509,7 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
+          hash="readme"
           pluralize={pluralize}
           renderMarkdown={renderMarkdown}
           showTerms={sinon.stub()}
@@ -518,8 +523,9 @@ describe('EntityContent', function() {
             <div className="seven-col append-one">
               <juju.components.EntityContentReadme
                 entityModel={mockEntity}
-                renderMarkdown={renderMarkdown}
-                getFile={getFile} />
+                getFile={getFile}
+                hash="readme"
+                renderMarkdown={renderMarkdown} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -884,14 +890,14 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getFile={getFile}
         hasPlans={true}
+        hash="readme"
         plans={[]}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const expected = (undefined);
-    assert.deepEqual(output.props.children[1], expected);
+    assert.strictEqual(output.props.children[1], undefined);
   });
 
   it('can render markdown in the description', function() {

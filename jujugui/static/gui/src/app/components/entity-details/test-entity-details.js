@@ -34,7 +34,7 @@ describe('EntityDetails', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
-    urllib = {fromLegacyString: sinon.stub()};
+    urllib = sinon.stub();
   });
 
   afterEach(function() {
@@ -69,6 +69,7 @@ describe('EntityDetails', function() {
           getEntity={getEntity}
           getFile={getFile}
           getModelName={getModelName}
+          hash="readme"
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -117,6 +118,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            hash="readme"
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -150,6 +152,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={sinon.stub()}
           listPlansForCharm={sinon.spy()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -212,6 +215,7 @@ describe('EntityDetails', function() {
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
+          hash="readme"
           listPlansForCharm={sinon.stub()}
           id={id}
           pluralize={pluralize}
@@ -261,6 +265,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            hash="readme"
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -294,6 +299,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={sinon.stub()}
           listPlansForCharm={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -326,6 +332,7 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
+        getModelName={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -373,6 +380,7 @@ describe('EntityDetails', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        hash="readme"
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -421,6 +429,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            hash="readme"
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -462,6 +471,7 @@ describe('EntityDetails', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        hash="readme"
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -510,6 +520,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            hash="readme"
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
