@@ -101,7 +101,7 @@ YUI.add('account-payment-details', function() {
               <juju.components.GenericButton
                 action={this._toggleAddressEdit}
                 disabled={disabled}
-                type="inline-base"
+                type="inline-neutral"
                 title="Edit" />)}
           </h4>
           {this._generateAddresses(user.addresses)}
@@ -111,7 +111,7 @@ YUI.add('account-payment-details', function() {
               <juju.components.GenericButton
                 action={this._toggleBillingAddressEdit}
                 disabled={disabled}
-                type="inline-base"
+                type="inline-neutral"
                 title="Edit" />)}
           </h4>
           {this._generateAddresses(user.billingAddresses, true)}

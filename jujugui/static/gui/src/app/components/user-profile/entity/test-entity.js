@@ -82,7 +82,7 @@ describe('UserProfileEntity', () => {
               'six-col last-col no-margin-bottom'}>
               <juju.components.GenericButton
                 action={displayConfirmation}
-                type="inline-base"
+                type="inline-neutral"
                 title="Destroy model" />
               <juju.components.GenericButton
                 action={button.props.action}

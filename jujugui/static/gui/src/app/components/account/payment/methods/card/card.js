@@ -106,11 +106,11 @@ YUI.add('account-payment-method-card', function() {
         <div className="four-col last-col account__payment-card-actions">
           <juju.components.GenericButton
             action={this._removePaymentMethod}
-            type="inline-base"
+            type="inline-neutral"
             title="Remove payment details" />
           <juju.components.GenericButton
             action={this.props.updatePaymentMethod}
-            type="inline-base"
+            type="inline-neutral"
             title="Update payment details" />
         </div>);
     },

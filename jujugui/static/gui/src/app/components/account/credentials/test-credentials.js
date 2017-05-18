@@ -67,14 +67,18 @@ describe('AccountCredentials', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Add" />
+          </div>
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -112,10 +116,13 @@ describe('AccountCredentials', () => {
     const output = component.getRenderOutput();
     const credentials = output.props.children[2].props.children[1];
     const expectedOutput = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right" />
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -127,23 +134,24 @@ describe('AccountCredentials', () => {
         </juju.components.ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <div className="six-col no-margin-bottom">
+            <span className="six-col user-profile__list-col">
               Name
-            </div>
-            <div className="six-col last-col no-margin-bottom">
+            </span>
+            <span className="six-col last-col user-profile__list-col">
               Provider
-            </div>
+            </span>
           </li>
           {[
             <li className="user-profile__list-row twelve-col"
               key="aws_spinach@external_test1">
-              <div className="six-col no-margin-bottom">
+              <span className="six-col user-profile__list-col">
                 localcred
-              </div>
-              <div className="four-col no-margin-bottom">
+              </span>
+              <span className="four-col user-profile__list-col">
                 localhost
-              </div>
-              <div className="two-col last-col no-margin-bottom">
+              </span>
+              <span className="two-col last-col user-profile__list-col
+                no-margin-bottom">
                 <juju.components.GenericButton
                   action={
                     credentials[0].props.children[2].props.children
@@ -151,7 +159,7 @@ describe('AccountCredentials', () => {
                   disabled={true}
                   type="neutral"
                   title="Remove" />
-              </div>
+              </span>
             </li>
           ]}
         </ul>
@@ -178,14 +186,18 @@ describe('AccountCredentials', () => {
     const output = component.getRenderOutput();
     const credentials = output.props.children[2].props.children[1];
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Add" />
+          </div>
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -197,23 +209,24 @@ describe('AccountCredentials', () => {
         </juju.components.ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <div className="six-col no-margin-bottom">
+            <span className="six-col user-profile__list-col">
               Name
-            </div>
-            <div className="six-col last-col no-margin-bottom">
+            </span>
+            <span className="six-col last-col user-profile__list-col">
               Provider
-            </div>
+            </span>
           </li>
           {[
             <li className="user-profile__list-row twelve-col"
               key="aws_spinach@external_test1">
-              <div className="six-col no-margin-bottom">
+              <span className="six-col user-profile__list-col">
                 test1
-              </div>
-              <div className="four-col no-margin-bottom">
+              </span>
+              <span className="four-col user-profile__list-col">
                 Amazon
-              </div>
-              <div className="two-col last-col no-margin-bottom">
+              </span>
+              <span className="two-col last-col user-profile__list-col
+                no-margin-bottom">
                 <juju.components.GenericButton
                   action={
                     credentials[0].props.children[2].props.children
@@ -221,17 +234,18 @@ describe('AccountCredentials', () => {
                   disabled={false}
                   type="neutral"
                   title="Remove" />
-              </div>
+              </span>
             </li>,
             <li className="user-profile__list-row twelve-col"
               key="gce_spinach@external_test2">
-                <div className="six-col no-margin-bottom">
+                <span className="six-col user-profile__list-col">
                   test2
-                </div>
-                <div className="four-col no-margin-bottom">
+                </span>
+                <span className="four-col user-profile__list-col">
                   Google
-                </div>
-                <div className="two-col last-col no-margin-bottom">
+                </span>
+                <span className="two-col last-col user-profile__list-col
+                  no-margin-bottom">
                   <juju.components.GenericButton
                     action={
                       credentials[1].props.children[2].props.children
@@ -239,7 +253,7 @@ describe('AccountCredentials', () => {
                     disabled={false}
                     type="neutral"
                     title="Remove" />
-                </div>
+                </span>
             </li>]}
         </ul>
       </div>);
@@ -265,14 +279,18 @@ describe('AccountCredentials', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Add" />
+          </div>
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -461,14 +479,18 @@ describe('AccountCredentials', () => {
     output = component.getRenderOutput();
     credentials = output.props.children[2].props.children[1];
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Add" />
+          </div>
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -480,22 +502,23 @@ describe('AccountCredentials', () => {
         </juju.components.ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <div className="six-col no-margin-bottom">
+            <span className="six-col user-profile__list-col">
               Name
-            </div>
-            <div className="six-col last-col no-margin-bottom">
+            </span>
+            <span className="six-col last-col  user-profile__list-col">
               Provider
-            </div>
+            </span>
           </li>
           {[<li className="user-profile__list-row twelve-col"
             key="gce_spinach@external_test2">
-              <div className="six-col no-margin-bottom">
+              <span className="six-col  user-profile__list-col">
                 test2
-              </div>
-              <div className="four-col no-margin-bottom">
+              </span>
+              <span className="four-col  user-profile__list-col">
                 Google
-              </div>
-              <div className="two-col last-col no-margin-bottom">
+              </span>
+              <span className="two-col last-col  user-profile__list-col
+                no-margin-bottom">
                 <juju.components.GenericButton
                   action={
                     credentials[0].props.children[2].props.children
@@ -503,7 +526,7 @@ describe('AccountCredentials', () => {
                   disabled={false}
                   type="neutral"
                   title="Remove" />
-              </div>
+              </span>
           </li>]}
         </ul>
       </div>);
@@ -549,17 +572,21 @@ describe('AccountCredentials', () => {
         validateForm={sinon.stub()} />, true);
     const instance = component.getMountedInstance();
     let output = component.getRenderOutput();
-    output.props.children[0].props.children[1].props.action();
+    output.props.children[0].props.children[1].props.children.props.action();
     output = component.getRenderOutput();
     const expected = (
-      <div className="account__section account__credentials">
-        <h2 className="account__title twelve-col">
-          Cloud credentials
-          <juju.components.GenericButton
-            action={instance._toggleAdd}
-            type="inline-base"
-            title="Add" />
-        </h2>
+      <div className="account__section account__credentials twelve-col">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          <div className="left">
+            Cloud credentials
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={instance._toggleAdd}
+              type="inline-neutral"
+              title="Cancel" />
+          </div>
+        </div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -608,7 +635,7 @@ describe('AccountCredentials', () => {
         validateForm={validateForm} />, true);
     const instance = component.getMountedInstance();
     let output = component.getRenderOutput();
-    output.props.children[0].props.children[1].props.action();
+    output.props.children[0].props.children[1].props.children.props.action();
     instance._setCloud({title: 'aws'});
     output = component.getRenderOutput();
     const expected = (
@@ -677,7 +704,7 @@ describe('AccountCredentials', () => {
     const instance = component.getMountedInstance();
     let output = component.getRenderOutput();
     // Open the form.
-    output.props.children[0].props.children[1].props.action();
+    output.props.children[0].props.children[1].props.children.props.action();
     instance._setCloud({title: 'aws'});
     // Close the form.
     output = component.getRenderOutput();

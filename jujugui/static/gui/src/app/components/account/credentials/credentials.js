@@ -215,32 +215,33 @@ YUI.add('account-credentials', function() {
         return (
           <li className="user-profile__list-row twelve-col"
             key={credential.id}>
-              <div className="six-col no-margin-bottom">
+              <span className="six-col user-profile__list-col">
                 {credential.name}
-              </div>
-              <div className="four-col no-margin-bottom">
+              </span>
+              <span className="four-col user-profile__list-col">
                 {title}
-              </div>
-              <div className="two-col last-col no-margin-bottom">
+              </span>
+              <span className="two-col last-col user-profile__list-col
+                no-margin-bottom">
                 <juju.components.GenericButton
                   action={
                     this._handleDeleteCredential.bind(this, credential.id)}
                   disabled={credential.cloud === LOCAL_CLOUD}
                   type="neutral"
                   title="Remove" />
-              </div>
+              </span>
           </li>);
       });
       if (credentialsList.length > 0) {
         return (
           <ul className="user-profile__list twelve-col">
             <li className="user-profile__list-header twelve-col">
-              <div className="six-col no-margin-bottom">
+              <span className="six-col user-profile__list-col">
                 Name
-              </div>
-              <div className="six-col last-col no-margin-bottom">
+              </span>
+              <span className="six-col last-col user-profile__list-col">
                 Provider
-              </div>
+              </span>
             </li>
             {credentialsList}
           </ul>);
@@ -348,19 +349,23 @@ YUI.add('account-credentials', function() {
       let addButton = (
         <juju.components.GenericButton
           action={this._toggleAdd}
-          type="inline-base"
-          title="Add"
+          type="inline-neutral"
+          title={this.state.showAdd ? 'Cancel' : 'Add'}
         />
       );
       if (clouds && clouds[LOCAL_CLOUD]) {
         addButton = null;
       }
       return (
-        <div className="account__section account__credentials">
-          <h2 className="account__title twelve-col">
-            Cloud credentials
-            {addButton}
-          </h2>
+        <div className="account__section account__credentials twelve-col">
+          <div className="user-profile__header twelve-col no-margin-bottom">
+            <div className="left">
+              Cloud credentials
+            </div>
+            <div className="right">
+              {addButton}
+            </div>
+          </div>
           {this._generateAddCredentials()}
           {this._generateCredentials()}
           {this._generateDeleteCredential()}

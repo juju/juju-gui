@@ -128,7 +128,7 @@ describe('AccountPaymentCharges', function() {
                         .props.children[1][0].props.children[0]
                         .props.children[5].props.children.props.action}
                     disabled={false}
-                    type="inline-base"
+                    type="inline-neutral"
                     title="Show receipt" />
                 </div>
               </div>
@@ -275,7 +275,7 @@ describe('AccountPaymentCharges', function() {
                         .props.children[1][0].props.children[0]
                         .props.children[5].props.children.props.action}
                     disabled={false}
-                    type="inline-base"
+                    type="inline-neutral"
                     title="Show receipt" />
                 </div>
               </div>

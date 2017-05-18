@@ -4,11 +4,30 @@
   }
 
   &__title {
-    font-size: 24px;
+    font-size: 1.375rem;
+    margin-top: 10px;
+  }
 
-    .button--inline-base {
-      margin-left: 20px;
-      font-size: $base;
+  .user-profile-header {
+    &__username,
+    &__link {
+      margin-bottom: 0;
+    }
+  }
+
+  .user-profile__header {
+    .button--inline-neutral {
+      font-size: 1rem;
+    }
+  }
+
+  .user-profile__list {
+    margin-top: -30px;
+  }
+
+  .expanding-row--expanded {
+    & + .user-profile__list {
+      margin-top: 0;
     }
   }
 }

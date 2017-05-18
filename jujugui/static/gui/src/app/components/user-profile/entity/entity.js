@@ -327,7 +327,7 @@ YUI.add('user-profile-entity', function() {
       return (
         <juju.components.GenericButton
           action={props.displayConfirmation}
-          type="inline-base"
+          type="inline-neutral"
           title="Destroy model"
         />
       );

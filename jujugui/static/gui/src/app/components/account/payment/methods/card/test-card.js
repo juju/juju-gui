@@ -111,11 +111,11 @@ describe('AccountPaymentMethodCard', () => {
       <div className="four-col last-col account__payment-card-actions">
         <juju.components.GenericButton
           action={instance._removePaymentMethod}
-          type="inline-base"
+          type="inline-neutral"
           title="Remove payment details" />
         <juju.components.GenericButton
           action={updatePaymentMethod}
-          type="inline-base"
+          type="inline-neutral"
           title="Update payment details" />
       </div>);
     expect(output.props.children[1]).toEqualJSX(expected);
