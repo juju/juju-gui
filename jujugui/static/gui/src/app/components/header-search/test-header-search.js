@@ -71,6 +71,7 @@ describe('HeaderSearch', function() {
     output.props.children[2].props.onClick();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       store: null,
       search: null
@@ -202,6 +203,7 @@ describe('HeaderSearch', function() {
     });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       search: {
         owner: null,
@@ -233,6 +235,7 @@ describe('HeaderSearch', function() {
     });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       search: {
         owner: null,
@@ -264,6 +267,7 @@ describe('HeaderSearch', function() {
     });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       search: {
         owner: null,

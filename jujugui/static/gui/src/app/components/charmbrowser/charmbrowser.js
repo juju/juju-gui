@@ -91,6 +91,7 @@ YUI.add('charmbrowser-component', function() {
     */
     _close: function() {
       this.props.appState.changeState({
+        hash: null,
         root: null,
         search: null,
         store: null

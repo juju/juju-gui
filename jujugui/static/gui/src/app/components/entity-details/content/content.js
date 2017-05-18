@@ -278,6 +278,7 @@ YUI.add('entity-content', function() {
     _handleTagClick: function(e) {
       e.stopPropagation();
       this.props.changeState({
+        hash: null,
         search: {
           tags: e.target.getAttribute('data-id'),
           text: ''

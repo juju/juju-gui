@@ -369,6 +369,7 @@ describe('Charmbrowser', function() {
     output.props.clickAction();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       search: null,
       store: null

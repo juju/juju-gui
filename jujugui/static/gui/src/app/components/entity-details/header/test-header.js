@@ -613,7 +613,11 @@ describe('EntityHeader', function() {
     assert.strictEqual(changeState.callCount, 1, 'changeState');
     const args = changeState.args[0];
     assert.strictEqual(args.length, 1, 'changeState args');
-    assert.deepEqual(args[0], {store: null, profile: 'test-owner'});
+    assert.deepEqual(args[0], {
+      hash: null,
+      store: null,
+      profile: 'test-owner'
+    });
   });
 
   it('goes to the last revision when present', function() {
