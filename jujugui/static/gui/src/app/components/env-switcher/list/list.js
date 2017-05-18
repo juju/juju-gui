@@ -24,13 +24,13 @@ YUI.add('env-list', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      user: React.PropTypes.object,
       changeState: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string,
       envs: React.PropTypes.array.isRequired,
       handleModelClick: React.PropTypes.func.isRequired,
       humanizeTimestamp: React.PropTypes.func.isRequired,
-      switchModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {
@@ -53,7 +53,7 @@ YUI.add('env-list', function() {
       if (!models.length) {
         return false;
       }
-      const currentUser = this.props.user.username;
+      const currentUser = this.props.user ? this.props.user.username : null;
       // Remove the 'controller' model from the dropdown list, then sort by
       // last connected (latest at the top).
       // People shouldn't be editing the 'controller' model.
@@ -162,9 +162,9 @@ YUI.add('env-list', function() {
       // mentions of gisf here.
       const gisf = window.juju_config && window.juju_config.gisf;
       const canAddModels = !!gisf || this.props.acl.canAddModels();
-      const username = this.props.user.displayName;
+      const user = this.props.user;
       let createNew;
-      if (username) {
+      if (user) {
         createNew = <juju.components.CreateModelButton
           type="neutral"
           title="Start a new model"

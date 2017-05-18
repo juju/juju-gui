@@ -55,8 +55,8 @@ const User = class User {
     if (externalAuth && externalAuth.user) {
       // When HJC supplies an external auth it's possible that the name is
       // stored in a nested user object.
-      externalAuth.usernameDisplay = externalAuth.user.name;
-      externalAuth.rootUserName = externalAuth.user.name;
+      externalAuth.displayName = externalAuth.user.name;
+      externalAuth.username = externalAuth.user.name;
     }
     return externalAuth;
   }

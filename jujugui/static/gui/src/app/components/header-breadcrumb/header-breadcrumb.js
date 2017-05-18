@@ -30,7 +30,6 @@ YUI.add('header-breadcrumb', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       appState: React.PropTypes.object.isRequired,
-      user: React.PropTypes.object,
       changeState: React.PropTypes.func.isRequired,
       humanizeTimestamp: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func,
@@ -39,7 +38,8 @@ YUI.add('header-breadcrumb', function() {
       modelOwner: React.PropTypes.string,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,
-      switchModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object
     },
 
     getDefaultProps: function() {
@@ -138,9 +138,9 @@ YUI.add('header-breadcrumb', function() {
       @method _generateUserLink
     */
     _generateUserLink: function() {
-      const username = this.props.user.displayName;
-      if (username) {
-        return this._buildProfile(username);
+      const user = this.props.user;
+      if (user) {
+        return this._buildProfile(user.displayName);
       }
       return null;
     },
@@ -172,13 +172,13 @@ YUI.add('header-breadcrumb', function() {
     render: function() {
       const props = this.props;
       const userItem = this._generateOwnerLink();
-      const username = this.props.user.displayName;
+      const user = props.user;
       return (
         <div className={this._generateClasses()}>
           <div className="header-breadcrumb__loading">Loading model</div>
           <ul className="header-breadcrumb__list"
               // This attribute is required by uitests.
-              data-username={username}>
+              data-username={user && user.displayName}>
             {userItem}
             {this._renderEnvSwitcher()}
           </ul>

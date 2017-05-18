@@ -23,12 +23,12 @@ YUI.add('env-switcher', function() {
   var EnvSwitcher = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      user: React.PropTypes.object,
       changeState: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string,
       humanizeTimestamp: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func,
-      switchModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {

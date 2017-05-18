@@ -74,15 +74,15 @@ describe('EnvSwitcher', function() {
     const changeState = sinon.stub();
     const humanizeTimestamp = sinon.stub();
     const switchModel = sinon.stub();
-    const authDetails = {user: 'who@external', rootUserName: 'who'};
+    const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={acl}
-        authDetails={authDetails}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
-        switchModel={switchModel} />, true);
+        switchModel={switchModel}
+        user={user} />, true);
     let output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -92,25 +92,25 @@ describe('EnvSwitcher', function() {
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={acl}
-        authDetails={authDetails}
         changeState={changeState}
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
-        switchModel={switchModel} />);
+        switchModel={switchModel}
+        user={user} />);
 
     const instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
 
     const expected = <juju.components.EnvList
       acl={acl}
-      authDetails={authDetails}
       changeState={changeState}
       environmentName=""
       envs={[]}
       handleModelClick={instance.handleModelClick}
       humanizeTimestamp={humanizeTimestamp}
       switchModel={switchModel}
+      user={user}
     />;
 
     assert.deepEqual(output.props.children[1], expected);

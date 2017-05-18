@@ -1293,7 +1293,7 @@ YUI.add('juju-gui', function(Y) {
       const charmstore = this.get('charmstore');
       const isLoggedIn = () => {
         return this.controllerAPI.userIsAuthenticated;
-      }
+      };
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
