@@ -2081,7 +2081,6 @@ YUI.add('juju-gui', function(Y) {
         seriesList: window.jujulib.SERIES,
         sendAnalytics: this.sendAnalytics
       });
-
       state.register([
         ['*', this.authorizeCookieUse.bind(this)],
         ['*', this.checkUserCredentials.bind(this)],
@@ -2119,7 +2118,9 @@ YUI.add('juju-gui', function(Y) {
         ],
         ['gui.deploy',
           this._renderDeployment.bind(this),
-          this._clearDeployment.bind(this)]
+          this._clearDeployment.bind(this)],
+        // Nothing needs to be done at the top level when the hash changes.
+        ['hash']
       ]);
 
       return state;
