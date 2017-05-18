@@ -1753,7 +1753,7 @@ YUI.add('juju-gui', function(Y) {
           getModelName={getModelName}
           gisf={this.get('gisf')}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-          renderMarkdown={marked.bind(this)}
+          renderMarkdown={marked}
           deployService={this.deployService.bind(this)}
           appState={this.state}
           utils={utils}

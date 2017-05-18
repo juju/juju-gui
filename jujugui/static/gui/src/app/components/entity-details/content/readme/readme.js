@@ -26,6 +26,7 @@ YUI.add('entity-content-readme', function() {
 
     /* Define and validate the properites available on this component. */
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       hash: React.PropTypes.string,
@@ -53,6 +54,10 @@ YUI.add('entity-content-readme', function() {
       if (this.readmeXhr) {
         this.readmeXhr.abort();
       }
+      // Remove the readme link components.
+      document.querySelectorAll('.readme-link').forEach(link => {
+        ReactDOM.unmountComponentAtNode(link);
+      });
     },
 
     /**
@@ -120,18 +125,44 @@ YUI.add('entity-content-readme', function() {
         this.setState({readme: 'No readme.'});
       } else {
         var readme = data;
-        this.setState({readme: this.props.renderMarkdown(readme)}, () => {
-          if (this.props.hash) {
-            this._scrollToContent();
-          }
-        });
+        const renderMarkdown = this.props.renderMarkdown;
+        let renderer = new renderMarkdown.Renderer();
+        renderer.heading = (text, level) => {
+          const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+          return `<h${level} id="${escapedText}">
+              ${text}
+              <span class="readme-link" data-id="${escapedText}">link</span>
+            </h${level}>`;
+        };
+        this.setState(
+          {readme: renderMarkdown(readme, {renderer: renderer})}, () => {
+            if (this.props.hash) {
+              this._scrollToContent();
+            }
+            // Set up the components to link to the readme headings.
+            document.querySelectorAll('.readme-link').forEach(link => {
+              const id = link.getAttribute('data-id');
+              // The components have to be rendered to the elements due to the
+              // headings having been created by the markdown lib.
+              ReactDOM.render(
+                <juju.components.HashLink
+                  changeState={this.props.changeState}
+                  hash={id} />,
+                link);
+            });
+          });
       }
     },
 
     render: function() {
       return (
         <div className="entity-content__readme">
-          <h2 className="entity-content__header" id="readme">Readme</h2>
+          <h2 className="entity-content__header" id="readme">
+            Readme
+            <juju.components.HashLink
+              changeState={this.props.changeState}
+              hash="readme" />
+          </h2>
           <div ref="content" className="entity-content__readme-content"
             dangerouslySetInnerHTML={{__html: this.state.readme}} />
         </div>
@@ -140,5 +171,7 @@ YUI.add('entity-content-readme', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'hash-link'
+  ]
 });

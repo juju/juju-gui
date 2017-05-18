@@ -603,6 +603,7 @@ YUI.add('entity-content', function() {
             <div className="inner-wrapper">
               <div className="seven-col append-one">
                 <juju.components.EntityContentReadme
+                  changeState={this.props.changeState}
                   entityModel={entityModel}
                   getFile={this.props.getFile}
                   hash={this.props.hash}
