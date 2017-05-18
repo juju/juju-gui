@@ -163,7 +163,8 @@ YUI.add('machine-view', function() {
           content = (
             <div>
               <p>
-                Drag and drop unplaced units to customise your deployment.
+                Unplaced units will appear here. Drag and drop them to
+                customise your deployment.
               </p>
               <span className="link"
                 onClick={this._openStore}>
