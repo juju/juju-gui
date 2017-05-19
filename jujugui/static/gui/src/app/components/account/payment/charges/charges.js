@@ -185,7 +185,7 @@ YUI.add('account-payment-charges', function() {
               <juju.components.GenericButton
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                type="inline-base"
+                type="inline-neutral"
                 title="Show receipt" />
               </div>
             </div>

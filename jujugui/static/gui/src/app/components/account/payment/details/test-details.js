@@ -114,7 +114,7 @@ describe('AccountPaymentDetails', () => {
             <juju.components.GenericButton
               action={instance._toggleAddressEdit}
               disabled={false}
-              type="inline-base"
+              type="inline-neutral"
               title="Edit" />
           </h4>
           <ul className="account__payment-details-addresses">
@@ -147,7 +147,7 @@ describe('AccountPaymentDetails', () => {
             <juju.components.GenericButton
               action={instance._toggleBillingAddressEdit}
               disabled={false}
-              type="inline-base"
+              type="inline-neutral"
               title="Edit" />
           </h4>
           <ul className="account__payment-details-addresses">

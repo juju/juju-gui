@@ -415,12 +415,12 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
-      type: 'base',
+      type: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }, {
       title: 'Retry',
-      type: 'base',
+      type: 'neutral',
       action: buttonItems[1].action,
       disabled: true
     }, {
@@ -565,7 +565,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[0];
+        output, 'button--neutral')[0];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
@@ -606,7 +606,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[1];
+        output, 'button--neutral')[1];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
