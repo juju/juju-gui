@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-section', function() {
 
   juju.components.DeploymentSection = React.createClass({
+    displayName: 'DeploymentSection',
 
     propTypes: {
       buttons: React.PropTypes.array,

@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineView', function() {
-  let acl, machines;
+  let acl, machines, parseConstraints, generateMachineDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +30,8 @@ describe('MachineView', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    parseConstraints = sinon.stub();
+    generateMachineDetails = sinon.stub();
     machines = {
       filterByParent: sinon.stub().returns([{
         displayName: 'new0',
@@ -41,13 +43,15 @@ describe('MachineView', function() {
         displayName: 'new2',
         id: 'new2'
       }]),
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
   });
 
   it('can render', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -67,11 +71,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
@@ -210,11 +218,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
+        services={services}
         units={units}
-        services={services} />, true);
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -250,11 +262,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
+        services={services}
         units={units}
-        services={services} />, true);
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[1]
       .props.onClick();
@@ -280,19 +296,24 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
+        services={services}
         units={units}
-        services={services} />);
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    expect(
+      output.props.children.props.children[0].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display a service scale up form', function() {
@@ -314,11 +335,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
+        services={services}
         units={units}
-        services={services} />, true);
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     const output = renderer.getRenderOutput();
@@ -328,8 +353,9 @@ describe('MachineView', function() {
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={instance._toggleScaleUp} />);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[0], expected);
+    expect(
+      output.props.children.props.children[0].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('can display a list of unplaced units', function() {
@@ -367,13 +393,17 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         providerType={'azure'}
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -403,9 +433,9 @@ describe('MachineView', function() {
           series={['trusty', 'xenial']}
           unit={unitList[1]} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('does not display unplaced subordinate units', function() {
@@ -444,13 +474,17 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         providerType={'azure'}
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -468,9 +502,9 @@ describe('MachineView', function() {
           series={['trusty', 'xenial']}
           unit={unitList[0]} />]}
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('displays onboarding if there are only subordinate units', function() {
@@ -504,19 +538,24 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
+        services={services}
         units={units}
-        services={services} />);
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    expect(
+      output.props.children.props.children[0].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can auto place units', function() {
@@ -549,11 +588,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const node = queryComponentSelector(component,
       '.machine-view__auto-place .button--inline-neutral');
     testUtils.Simulate.click(node);
@@ -591,25 +634,30 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />);
     const expected = (
       <juju.components.GenericButton
         action={autoPlaceUnits}
         disabled={true}
         type="inline-neutral"
         title="Auto place" />);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[0].props.children[1].props
-        .children[0].props.children[0], expected);
+        .children[0].props.children[0]).toEqualJSX(expected);
   });
 
   it('can display onboarding if there are no machines', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -628,11 +676,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -653,8 +705,9 @@ describe('MachineView', function() {
           Add machine
         </span>
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+    expect(
+      output.props.children.props.children[1].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display onboarding if there is one machine', function() {
@@ -667,7 +720,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -687,20 +741,24 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="machine-view__column-onboarding">
         Drag and drop unplaced units onto your machines and containers to
         customise your deployment.
       </div>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[0], expected);
+      .props.children[0]).toEqualJSX(expected);
   });
 
   it('can display a list of machines', function() {
@@ -716,7 +774,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -725,6 +784,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -736,11 +797,17 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -749,30 +816,44 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new0"
           machine={machineList[0]}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new1"
           machine={machineList[1]}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can order a list of machines', function() {
@@ -788,7 +869,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -797,6 +879,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
         acl={acl}
@@ -806,11 +890,17 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -819,36 +909,50 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new0"
           machine={{
             displayName: 'new0',
             id: 'new0'
           }}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new5"
           machine={{
             displayName: 'new5',
             id: 'new5'
           }}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can toggle constraints on machines', function() {
@@ -864,7 +968,8 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([]);
     const machines = {
       filterByParent: filterByParent,
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub().returns({get: sinon.stub()})
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -873,6 +978,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     const destroyMachines = sinon.stub();
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -884,11 +991,17 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
+        providerType="aws"
         removeUnits={sinon.stub()}
+        series={['wily']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
@@ -898,35 +1011,50 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new0"
           machine={machineList[0]}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={true}
           selectMachine={instance.selectMachine}
           services={services}
+          series={['wily']}
           showConstraints={true}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
         <juju.components.MachineViewMachine
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          generateMachineDetails={generateMachineDetails}
           key="new1"
           machine={machineList[1]}
+          machineModel={{get: sinon.stub()}}
+          parseConstraints={parseConstraints}
+          providerType="aws"
           selected={false}
           selectMachine={instance.selectMachine}
+          series={['wily']}
           services={services}
           showConstraints={false}
           type="machine"
-          units={units} />
+          units={units}
+          updateMachineConstraints={updateMachineConstraints}
+          updateMachineSeries={updateMachineSeries} />
       </ul>);
-    assert.deepEqual(
+    expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1], expected);
+      .props.children[1]).toEqualJSX(expected);
   });
 
   it('can display a form for adding a machine', function() {
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -947,13 +1075,17 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         providerType={'azure'}
         removeUnits={sinon.stub()}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
@@ -967,8 +1099,9 @@ describe('MachineView', function() {
         selectMachine={instance.selectMachine}
         series={['trusty', 'xenial']}
         unit={null} />);
-    assert.deepEqual(
-      output.props.children.props.children[1].props.children[0], expected);
+    expect(
+      output.props.children.props.children[1].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('can select a machine', function() {
@@ -981,7 +1114,8 @@ describe('MachineView', function() {
     }];
     const machines = {
       filterByParent: sinon.stub().returns(machineList),
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1000,11 +1134,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     assert.equal(instance.state.selectedMachine, 'new0');
     instance.selectMachine('new1');
@@ -1029,7 +1167,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1050,11 +1189,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -1086,8 +1229,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can order a list of containers', function() {
@@ -1112,7 +1256,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1131,11 +1276,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -1183,8 +1332,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can display a form for adding a container', function() {
@@ -1198,7 +1348,8 @@ describe('MachineView', function() {
       getById: sinon.stub().returns({
         id: 'new0',
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1221,13 +1372,17 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         providerType={'gce'}
         removeUnits={removeUnits}
         series={['trusty', 'xenial']}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1241,8 +1396,9 @@ describe('MachineView', function() {
         providerType={'gce'}
         series={['trusty', 'xenial']}
         unit={null} />);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[0], expected);
+    expect(
+      output.props.children.props.children[2].props.children[0]).toEqualJSX(
+        expected);
   });
 
   it('does not show an add container form for deleted machines', function() {
@@ -1257,7 +1413,8 @@ describe('MachineView', function() {
         id: 'new0',
         deleted: true,
         commitStatus: 'committed'
-      })
+      }),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1279,11 +1436,15 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         units={units}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        machines={machines}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1316,8 +1477,9 @@ describe('MachineView', function() {
           type="container"
           units={units} />
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+    expect(
+      output.props.children.props.children[2].props.children[1]).toEqualJSX(
+        expected);
   });
 
   it('can remove a unit', function() {
@@ -1328,7 +1490,8 @@ describe('MachineView', function() {
         }
         return [{id: 'new0'}];
       },
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1350,11 +1513,15 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
@@ -1369,7 +1536,8 @@ describe('MachineView', function() {
         }
         return [{id: 'new0'}];
       },
-      getById: sinon.stub()
+      getById: sinon.stub(),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1392,22 +1560,27 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
     assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
-    assert.deepEqual(placeUnit.args[0][1], 'new0');
+    assert.equal(placeUnit.args[0][1], 'new0');
   });
 
   it('can disable menu actions when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const machines = {
-      filterByParent: sinon.stub().returns([])
+      filterByParent: sinon.stub().returns([]),
+      revive: sinon.stub()
     };
     const units = {
       filterByMachine: sinon.stub().returns([])
@@ -1427,11 +1600,15 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        generateMachineDetails={generateMachineDetails}
         machines={machines}
+        parseConstraints={parseConstraints}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
         services={services}
-        units={units} />, true);
+        units={units}
+        updateMachineConstraints={sinon.stub()}
+        updateMachineSeries={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
       .props.menuItems;

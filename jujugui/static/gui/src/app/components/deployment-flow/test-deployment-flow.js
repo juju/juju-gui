@@ -73,8 +73,10 @@ const createDeploymentFlow = (props = {}) => {
     createUser: sinon.stub(),
     ddData: {},
     deploy: sinon.stub().callsArg(0),
+    formatConstraints: sinon.stub(),
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
+    generateMachineDetails: sinon.stub(),
     getAgreementsByTerms: getAgreementsByTerms,
     getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
@@ -129,8 +131,12 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    const formatConstraints = sinon.stub();
+    const generateMachineDetails = sinon.stub();
     const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
+      formatConstraints: formatConstraints,
+      generateMachineDetails: generateMachineDetails,
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
       modelCommitted: false,
       validateForm: validateForm,
@@ -203,6 +209,8 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentMachines
             acl={props.acl}
             cloud={null}
+            formatConstraints={formatConstraints}
+            generateMachineDetails={generateMachineDetails}
             machines={props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection

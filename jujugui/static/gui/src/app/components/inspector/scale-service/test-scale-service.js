@@ -124,7 +124,7 @@ describe('ScaleService', function() {
     assert.deepEqual(createMachineStub.args[0][1], {
       arch: '',
       'cpu-power': 'c p u',
-      cores: 'c o r e s',
+      'cpu-cores': 'c o r e s',
       mem: 'r a m',
       'root-disk': 'd i s k'
     });

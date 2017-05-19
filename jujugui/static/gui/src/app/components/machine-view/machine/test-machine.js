@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
-  var acl, services;
+  let acl, generateMachineDetails, genericConstraints, parseConstraints,
+      services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +31,10 @@ describe('MachineViewMachine', function() {
 
   beforeEach(function () {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
+    parseConstraints = sinon.stub().returns({mem: '2048'});
+    genericConstraints = [
+      'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
     services = {
       getById: sinon.stub().returns({
         get: function(val) {
@@ -82,8 +87,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         removeUnit={removeUnit}
         selected={false}
         selectMachine={selectMachine}
@@ -107,7 +114,7 @@ describe('MachineViewMachine', function() {
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          {2} unit{'s'}, {'wily, '} {'2x2GHz, 4.00GB, 2.00GB'}
+          2 units, zesty, mem: 2GB
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
@@ -137,7 +144,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a machine in drop mode', function() {
@@ -171,8 +178,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={true}
         machine={machine}
+        parseConstraints={parseConstraints}
         selected={false}
         selectMachine={selectMachine}
         services={services}
@@ -189,7 +198,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a machine as uncommitted', function() {
@@ -226,7 +235,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a deleted machine as uncommitted', function() {
@@ -263,7 +272,7 @@ describe('MachineViewMachine', function() {
         tabIndex="0">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can hide units', function() {
@@ -363,7 +372,7 @@ describe('MachineViewMachine', function() {
               'service': 'wordpress'}} />
         ]}
       </ul>);
-    assert.deepEqual(output.props.children[3], expected);
+    expect(output.props.children[3]).toEqualJSX(expected);
   });
 
   it('can hide the constraints', function() {
@@ -451,46 +460,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can render a machine with no hardware', function() {
-    var selectMachine = sinon.stub();
-    var machine = {
-      displayName: 'new0',
-      hardware: {}
-    };
-    var units = {
-      filterByMachine: sinon.stub().returns([{
-        displayName: 'wordpress/0',
-        id: 'wordpress/0'
-      }, {
-        displayName: 'wordpress/1',
-        id: 'wordpress/1'
-      }])
-    };
-    var output = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
-        acl={acl}
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
-        dropUnit={sinon.stub()}
-        isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
-        showConstraints={true}
-        type="machine"
-        units={units}/>);
-    var expected = (
-      <div className="machine-view__machine-hardware">
-        {2} unit{'s'}, {undefined} {'hardware details not available'}
-      </div>);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a container', function() {
@@ -569,7 +539,7 @@ describe('MachineViewMachine', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can destroy a machine', function() {
@@ -597,8 +567,11 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         selected={false}
         selectMachine={selectMachine}
         services={services}
@@ -650,6 +623,7 @@ describe('MachineViewMachine', function() {
     var removeUnit = sinon.stub();
     var selectMachine = sinon.stub();
     var machine = {
+      commitStatus: 'uncommitted',
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -679,8 +653,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         removeUnit={removeUnit}
         selected={false}
         selectMachine={selectMachine}
@@ -694,7 +670,122 @@ describe('MachineViewMachine', function() {
         items={[{
           label: 'Destroy',
           action: false
+        }, {
+          label: 'Update constraints',
+          action: false
         }]} />);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
+  });
+
+  it('can display a form to update constraints', function() {
+    const machine = {
+      commitStatus: 'uncommitted',
+      constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      id: 'new0',
+      series: 'wily'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
+        genericConstraints={genericConstraints}
+        isOver={false}
+        machine={machine}
+        parseConstraints={parseConstraints}
+        providerType="aws"
+        removeUnit={sinon.stub()}
+        selected={false}
+        selectMachine={sinon.stub()}
+        series={['wily']}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.items[1].action();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="add-machine__constraints">
+        <h4 className="add-machine__title">
+          Update constraints
+        </h4>
+        <juju.components.Constraints
+          constraints={{mem: '2048'}}
+          currentSeries={machine.series}
+          disabled={false}
+          hasUnit={false}
+          providerType="aws"
+          series={['wily']}
+          valuesChanged={instance._updateConstraints} />
+        <juju.components.ButtonRow
+          buttons={[{
+            title: 'Cancel',
+            action: instance._toggleForm,
+            type: 'base'
+          }, {
+            title: 'Update',
+            action: instance._setConstraints,
+            type: 'neutral',
+            disabled: false
+          }]}
+          key="buttons" />
+      </div>);
+    expect(output.props.children[4]).toEqualJSX(expected);
+  });
+
+  it('can update constraints', function() {
+    const machine = {
+      commitStatus: 'uncommitted',
+      constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      id: 'new0',
+      series: 'wily'
+    };
+    const updateMachineConstraints = sinon.stub();
+    const updateMachineSeries = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
+        genericConstraints={genericConstraints}
+        isOver={false}
+        machine={machine}
+        parseConstraints={parseConstraints}
+        providerType="aws"
+        removeUnit={sinon.stub()}
+        selected={false}
+        selectMachine={sinon.stub()}
+        series={['wily']}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={{filterByMachine: sinon.stub().returns([])}}
+        updateMachineConstraints={updateMachineConstraints}
+        updateMachineSeries={updateMachineSeries} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.items[1].action();
+    output = renderer.getRenderOutput();
+    instance._updateConstraints({
+      arch: 'i386',
+      series: 'zesty'
+    });
+    output.props.children[4].props.children[2].props.buttons[1].action();
+    assert.equal(updateMachineConstraints.callCount, 1);
+    assert.equal(updateMachineConstraints.args[0][0], 'new0');
+    assert.deepEqual(updateMachineConstraints.args[0][1], {
+      arch: 'i386'
+    });
+    assert.equal(updateMachineSeries.callCount, 1);
+    assert.equal(updateMachineSeries.args[0][0], 'new0');
+    assert.equal(updateMachineSeries.args[0][1], 'zesty');
   });
 });

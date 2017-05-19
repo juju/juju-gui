@@ -904,7 +904,8 @@ YUI.add('juju-view-utils', function(Y) {
     let containerType =null;
     for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
       machine = db.machines.addGhost(
-        parentId, containerType, {constraints: constraints});
+        parentId, containerType,
+        {constraints: utils.formatConstraints(constraints)});
       env.addMachines([{
         constraints: constraints
       }], function(machine) {
@@ -1988,6 +1989,88 @@ YUI.add('juju-view-utils', function(Y) {
       // out those that don't have a value for that position.
       return arrays.filter(array => array[i]).map(array => array[i]);
     });
+  };
+
+  /**
+    Format the constraints to: cpu-power=w cores=x mem=y root-disk=z
+
+    @method formatConstraints
+    @param constraints {Object} A collection of constraints.
+    @returns {String} A formatted constraints string.
+  */
+  utils.formatConstraints = constraints => {
+    return Object.keys(constraints || {}).reduce((collected, key) => {
+      const value = constraints[key];
+      if (value) {
+        collected.push(key + '=' + value);
+      }
+      return collected;
+    }, []).join(' ');
+  };
+
+  /**
+    Parse a constraints string into an object.
+
+    @param genericConstraints {Array} The constraints types.
+    @param constraints {String} A constraints string.
+    @returns {Object} The constraints object.
+  */
+  utils.parseConstraints = (genericConstraints, constraints='') => {
+    let types = {};
+    // Map the list of constraint types to an object.
+    genericConstraints.forEach(constraint => {
+      types[constraint] = null;
+    });
+    // The machine constraints are always a string in the format:
+    // cpu-power=w cores=x mem=y root-disk=z
+    constraints.split(' ').forEach(part => {
+      const keyVal = part.split('=');
+      // Add the value if it has a matching key.
+      if (types[keyVal[0]] !== undefined) {
+        types[keyVal[0]] = keyVal[1];
+      }
+    });
+    return types;
+  };
+
+  /**
+    Generate the series/hardward/constraints details for a machine
+
+    @param genericConstraints {Array} The constraints types.
+    @param machine {Object} A machine.
+    @returns {String} The machine details.
+  */
+  utils.generateMachineDetails = (genericConstraints, units, machine) => {
+    const hardware = machine.hardware ||
+      utils.parseConstraints(genericConstraints, machine.constraints) || {};
+    const unitCount = units.filterByMachine(machine.id, true).length;
+    let hardwareDetails;
+    let details = [];
+    Object.keys(hardware).forEach(name => {
+      let value = hardware[name];
+      // Some details will not be set, so don't display them.
+      if (value) {
+        if (name === 'cpu-power') {
+          value = `${(value / 100)}GHz`;
+        } else if (name === 'mem' || name === 'root-disk') {
+          value = `${(value / 1024).toFixed(2)}GB`;
+        }
+        details.push(`${name.replace('-', ' ')}: ${value}`);
+      }
+    });
+    const constraintsMessage = machine.constraints ?
+      'requested constraints: ' : '';
+    hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
+    if (!hardwareDetails) {
+      if (machine.commitStatus === 'uncommitted') {
+        hardwareDetails = 'no constraints set';
+      } else {
+        hardwareDetails = 'hardware details not available';
+      }
+    }
+    const plural = unitCount === 1 ? '' : 's';
+    const series = machine.series ? `${machine.series}, ` : '';
+    return `${unitCount} unit${plural}, ${series}${hardwareDetails}`;
   };
 
 }, '0.1.0', {
