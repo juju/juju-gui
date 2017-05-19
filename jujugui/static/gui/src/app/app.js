@@ -1495,7 +1495,8 @@ YUI.add('juju-gui', function(Y) {
       const classes = classNames(
         'provider-logo',
         {
-          'provider-logo--disabled': isDisabled
+          'provider-logo--disabled': isDisabled,
+          [`provider-logo--${cloudProvider}`]: cloudProvider
         }
       );
       const scale = 0.65;

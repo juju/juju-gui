@@ -14,17 +14,24 @@
   }
 
   .env-size-display {
-    top: 100px;
+    top: 110px;
   }
 
   // Update to show deployment buttons at the bottom
   .inspector-view {
-    top: 150px;
+    top: 160px;
     max-height: calc(100% - 230px);
   }
 
   .overview-action__link:not(.hidden) {
     display: none;
+  }
+
+  .header-banner__provider {
+    position: absolute;
+    top: 78px;
+    right: 20px;
+    margin-left: 0;
   }
 
   // Only show search form when open
@@ -60,6 +67,7 @@
   .header-breadcrumb__list-item {
     float: none;
     padding-left: 8px;
+    margin-top: 10px;
   }
 
   .header-breadcrumb--link:before,
@@ -287,7 +295,7 @@
 
   // Header search
   .header-search__submit {
-    top: 0;
+    top: -2px;
   }
 
   .header-search__search--mobile {
@@ -299,13 +307,14 @@
   #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
     // scss-lint:enable IdSelector
     bottom: 20px;
-    left: 10px;
+    left: 20px;
     position: fixed;
   }
 
   .header-search--active {
     .header-search__input {
-      width: 74%;
+      width: 64%;
+      padding-right: 40px;
     }
   }
 

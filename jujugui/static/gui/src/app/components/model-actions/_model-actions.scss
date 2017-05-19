@@ -2,12 +2,10 @@
 #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
   @media only screen and (min-width: 600px) {
     position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+    margin: 10px 0 10px 20px;
   }
 
   float: left;
-  margin-left: 10px;
 }
 // scss-lint:enable IdSelector
 
@@ -20,7 +18,7 @@
   &__export,
   &__import,
   &__share {
-    padding: 10px 11px;
+    padding: 11px 11px;
     border: 1px solid $light-mid-grey;
     transition: background-color .2s;
     background-color: $canvas-background;
@@ -34,6 +32,10 @@
       color: $dark-warm-grey !important;
       // scss-lint:disable ImportantRule
     }
+  }
+
+  &__icon {
+    display: block;
   }
 
   &__file {
