@@ -478,11 +478,11 @@ describe('UnitList', () => {
     assert.equal(envResolved.callCount, 2);
   });
 
-  it('won\'t remove pending units', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var envResolved = sinon.stub();
-    var units = [{
+  it('does not make an RPC call for pending units', function() {
+    const destroyUnits = sinon.stub();
+    const changeState = sinon.stub();
+    const envResolved = sinon.stub();
+    const units = [{
       displayName: 'mysql/0',
       id: 'mysql/0'
     }, {
@@ -503,13 +503,13 @@ describe('UnitList', () => {
           service={service}
           units={units}
           whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
     testUtils.Simulate.change(checkboxes[1]);
     checkboxes[3].checked = true;
     testUtils.Simulate.change(checkboxes[3]);
-    var button = testUtils.findRenderedDOMComponentWithClass(
+    const button = testUtils.findRenderedDOMComponentWithClass(
         output, 'button--neutral');
     testUtils.Simulate.click(button);
     // Remove is still called to remove from ECS.
@@ -621,10 +621,10 @@ describe('UnitList', () => {
     assert.deepEqual(envResolved.args[1][2], false);
   });
 
-  it('won\'t resolve pending units', function() {
-    var changeState = sinon.stub();
-    var envResolved = sinon.stub();
-    var units = [{
+  it('will not resolve pending units', function() {
+    const changeState = sinon.stub();
+    const envResolved = sinon.stub();
+    const units = [{
       displayName: 'mysql/0',
       id: 'mysql/0'
     }, {
@@ -636,7 +636,7 @@ describe('UnitList', () => {
     }];
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
-    var output = testUtils.renderIntoDocument(
+    const output = testUtils.renderIntoDocument(
         <juju.components.UnitList
           acl={acl}
           destroyUnits={sinon.stub()}
@@ -646,13 +646,13 @@ describe('UnitList', () => {
           service={service}
           units={units}
           whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
     testUtils.Simulate.change(checkboxes[1]);
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
-    var button = testUtils.scryRenderedDOMComponentsWithClass(
+    const button = testUtils.scryRenderedDOMComponentsWithClass(
         output, 'button--base')[0];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 0);

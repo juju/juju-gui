@@ -134,14 +134,15 @@ YUI.add('unit-list', function() {
         if (isInstance && refs[ref].state.checked) {
           let unitName = ref.slice(ref.indexOf('-') + 1);
           unitNames.push(unitName);
-          const unit = units.filter((u) => {
-            return u.id == unitName;
-          })[0];
+          const unit = units.find((u) => u.id === unitName);
+          // If the unit does not have an agent_status, it is not committed,
+          // bail early to prevent superfluous RPC/ECS 
           if (!unit.agent_status) {
             return;
           }
           // On resolve and remove we want to mark the unit as resolved else
-          // Juju won't remove units that are in error.
+          // Juju won't remove units that are in error. This applies only to
+          // committed units.
           if (action === 'resolve' || action === 'remove') {
             envResolved(unitName, null, false);
           } else if (action === 'retry') {
