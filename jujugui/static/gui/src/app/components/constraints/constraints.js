@@ -65,7 +65,7 @@ YUI.add('constraints', function() {
       this.props.valuesChanged({
         'arch': arch.value,
         'cpu-power': cpu.value,
-        cores: cores.value,
+        'cpu-cores': cores.value,
         mem: mem.value,
         'root-disk': disk.value,
         // Even if series are not technically a constraint in Juju, we include
@@ -128,7 +128,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
-            defaultValue={constraints.cpuPower}
+            defaultValue={constraints['cpu-power']}
             disabled={disabled}
             id="cpu-constraint"
             name="cpu-constraint"
@@ -144,7 +144,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
-            defaultValue={constraints.cpuCores}
+            defaultValue={constraints['cpu-cores']}
             disabled={disabled}
             id="cores-constraint"
             name="cores-constraint"
@@ -176,7 +176,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
-            defaultValue={constraints.disk}
+            defaultValue={constraints['root-disk']}
             disabled={disabled}
             id="disk-constraint"
             name="disk-constraint"

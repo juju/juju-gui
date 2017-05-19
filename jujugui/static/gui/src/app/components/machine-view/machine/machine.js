@@ -71,10 +71,11 @@ YUI.add('machine-view-machine', function() {
       connectDropTarget: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       dropUnit: React.PropTypes.func.isRequired,
-      genericConstraints: React.PropTypes.array,
+      generateMachineDetails: React.PropTypes.func,
       isOver: React.PropTypes.bool.isRequired,
       machine: React.PropTypes.object.isRequired,
       machineModel: React.PropTypes.object,
+      parseConstraints: React.PropTypes.func,
       providerType: React.PropTypes.string,
       removeUnit: React.PropTypes.func,
       selectMachine: React.PropTypes.func,
@@ -155,7 +156,7 @@ YUI.add('machine-view-machine', function() {
             Update constraints
           </h4>
           <juju.components.Constraints
-            constraints={this._getConstraints()}
+            constraints={this.props.parseConstraints(machine.constraints)}
             currentSeries={machine.series}
             disabled={disabled}
             hasUnit={!!units.length}
@@ -169,84 +170,19 @@ YUI.add('machine-view-machine', function() {
     },
 
     /**
-      Get the constraints for the machine.
-
-      @returns {Object} the machine constraints.
-    */
-    _getConstraints: function() {
-      const constraints = this.props.machine.constraints || '';
-      let types = {};
-      // Map the list of constraint types to an object.
-      this.props.genericConstraints.forEach(constraint => {
-        types[constraint] = null;
-      });
-      // The machine constraints are always a string in the format:
-      // cpu-power=w cores=x mem=y root-disk=z
-      constraints.split(' ').forEach(part => {
-        const keyVal = part.split('=');
-        types[keyVal[0]] = keyVal[1];
-      });
-      return {
-        arch: types.arch,
-        cpuCores: types.cores,
-        cpuPower: types['cpu-power'],
-        disk: types['root-disk'],
-        mem: types.mem
-      };
-    },
-
-    /**
       Generate the hardware for a machine.
 
       @method _generateHardware
-      @param {Integer} unitCount The number of units on the machine.
       @returns {Object} the machine hardware elements.
     */
-    _generateHardware: function(unitCount) {
+    _generateHardware: function() {
       if (this.props.type === 'container' || !this.props.showConstraints ||
           this.state.showForm) {
         return;
       }
-      const machine = this.props.machine;
-      const hardware = machine.hardware || this._getConstraints() || {};
-      let hardwareDetails;
-      let cpu = hardware.cpuPower;
-      let disk = hardware.disk;
-      let mem = hardware.mem;
-      let cpuCores = hardware.cpuCores;
-      if (cpuCores || cpu || disk || mem) {
-        let details = [];
-        if (cpuCores) {
-          details.push(`cores: ${cpuCores}`);
-        }
-        if (cpu) {
-          cpu = cpu / 100;
-          details.push(`CPU: ${cpu}GHz`);
-        }
-        if (mem) {
-          mem = mem / 1024;
-          details.push(`mem: ${mem.toFixed(2)}GB`);
-        }
-        if (disk) {
-          disk = disk / 1024;
-          details.push(`disk: ${disk.toFixed(2)}GB`);
-        }
-        const constraintsMessage = machine.constraints ?
-          'requested constraints: ' : '';
-        hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
-      }
-      if (!hardwareDetails) {
-        if (machine.commitStatus === 'uncommitted') {
-          hardwareDetails = 'no constraints set';
-        } else {
-          hardwareDetails = 'hardware details not available';
-        }
-      }
-      const plural = unitCount === 1 ? '' : 's';
-      const series = machine.series ? `${machine.series},` : undefined;
       return (
         <div className="machine-view__machine-hardware">
-          {unitCount} unit{plural}, {series} {hardwareDetails}
+          {this.props.generateMachineDetails(this.props.machine)}
         </div>);
     },
 
@@ -333,7 +269,6 @@ YUI.add('machine-view-machine', function() {
 
     render: function() {
       var machine = this.props.machine;
-      var units = this.props.units.filterByMachine(machine.id, true);
       var menuItems = [{
         label: 'Destroy',
         action: !this.props.acl.isReadOnly() && this._destroyMachine
@@ -356,7 +291,7 @@ YUI.add('machine-view-machine', function() {
           <div className="machine-view__machine-name">
             {this.props.machine.displayName}
           </div>
-          {this._generateHardware(units.length)}
+          {this._generateHardware()}
           {this._generateUnits()}
           {this._generateConstraintsForm()}
           <div className="machine-view__machine-drop-target">

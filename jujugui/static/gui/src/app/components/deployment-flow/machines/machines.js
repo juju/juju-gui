@@ -36,7 +36,6 @@ YUI.add('deployment-machines', function() {
       @returns {Object} The list of machines.
     */
     _generateMachines: function() {
-
       const machines = this.props.machines;
       if (!machines || Object.keys(machines).length === 0) {
         return;

@@ -1839,18 +1839,24 @@ YUI.add('juju-gui', function(Y) {
     _renderMachineView: function(state, next) {
       const db = this.db;
       const ecs = this.env.get('ecs');
+      const utils = views.utils;
+      const genericConstraints = this.env.genericConstraints;
       ReactDOM.render(
         <window.juju.components.MachineView
           acl={this.acl}
-          addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
+          addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
               this, this.db, this.env)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeState={this.state.changeState.bind(this.state)}
           createMachine={this._createMachine.bind(this)}
           destroyMachines={this.env.destroyMachines.bind(this.env)}
           environmentName={db.environment.get('name') || ''}
-          genericConstraints={this.env.genericConstraints}
+          generateMachineDetails={
+            utils.generateMachineDetails.bind(
+              utils, genericConstraints, db.units)}
           machines={db.machines}
+          parseConstraints={
+            utils.parseConstraints.bind(utils, genericConstraints)}
           placeUnit={this.env.placeUnit.bind(this.env)}
           providerType={this.env.get('providerType') || ''}
           removeUnits={this.env.remove_units.bind(this.env)}

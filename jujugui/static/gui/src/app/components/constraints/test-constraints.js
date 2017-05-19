@@ -160,9 +160,9 @@ describe('Constraints', function() {
     const comp = render({
       constraints: {
         arch: 'amd64',
-        cpuCores: 2,
-        cpuPower: 1000,
-        disk: 2048,
+        'cpu-cores': 2,
+        'cpu-power': 1000,
+        'root-disk': 2048,
         mem: 1024
       },
       currentSeries: 'zesty'

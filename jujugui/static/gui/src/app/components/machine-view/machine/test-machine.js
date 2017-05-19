@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
-  var acl, genericConstraints, services;
+  let acl, generateMachineDetails, genericConstraints, parseConstraints,
+      services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +31,8 @@ describe('MachineViewMachine', function() {
 
   beforeEach(function () {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
+    parseConstraints = sinon.stub().returns({mem: '2048'});
     genericConstraints = [
       'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
     services = {
@@ -84,8 +87,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         removeUnit={removeUnit}
         selected={false}
         selectMachine={selectMachine}
@@ -109,8 +114,7 @@ describe('MachineViewMachine', function() {
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          {2} unit{'s'}, {'wily, '}
-          {'cores: 2, CPU: 2GHz, mem: 4.00GB, disk: 2.00GB'}
+          2 units, zesty, mem: 2GB
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
@@ -174,8 +178,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={true}
         machine={machine}
+        parseConstraints={parseConstraints}
         selected={false}
         selectMachine={selectMachine}
         services={services}
@@ -457,108 +463,6 @@ describe('MachineViewMachine', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can render a machine with no hardware', function() {
-    var selectMachine = sinon.stub();
-    var machine = {
-      displayName: 'new0',
-      hardware: {}
-    };
-    var units = {
-      filterByMachine: sinon.stub().returns([{
-        displayName: 'wordpress/0',
-        id: 'wordpress/0'
-      }, {
-        displayName: 'wordpress/1',
-        id: 'wordpress/1'
-      }])
-    };
-    var output = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
-        acl={acl}
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
-        dropUnit={sinon.stub()}
-        isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
-        showConstraints={true}
-        type="machine"
-        units={units}/>);
-    var expected = (
-      <div className="machine-view__machine-hardware">
-        {2} unit{'s'}, {undefined} {'hardware details not available'}
-      </div>);
-    expect(output.props.children[2]).toEqualJSX(expected);
-  });
-
-  it('can display constraints on an uncommitted machine', () => {
-    const machine = {
-      displayName: 'new0',
-      constraints: 'cpu-power=100 cores=2 mem=1024 root-disk=2048',
-      commitStatus: 'uncommitted'
-    };
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine.DecoratedComponent
-        acl={acl}
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
-        dropUnit={sinon.stub()}
-        genericConstraints={genericConstraints}
-        isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={sinon.stub()}
-        services={services}
-        showConstraints={true}
-        type="machine"
-        units={{filterByMachine: sinon.stub().returns([])}} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="machine-view__machine-hardware">
-        {0} unit{'s'}, {undefined}
-        {'requested constraints: cores: 2, CPU: 1GHz, mem: 1.00GB, ' +
-        'disk: 2.00GB'}
-      </div>);
-    expect(output.props.children[2]).toEqualJSX(expected);
-  });
-
-  it('can display empty constraints on an uncommitted machine', () => {
-    const machine = {
-      displayName: 'new0',
-      constraints: '',
-      commitStatus: 'uncommitted'
-    };
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine.DecoratedComponent
-        acl={acl}
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
-        dropUnit={sinon.stub()}
-        genericConstraints={genericConstraints}
-        isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={sinon.stub()}
-        services={services}
-        showConstraints={true}
-        type="machine"
-        units={{filterByMachine: sinon.stub().returns([])}} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="machine-view__machine-hardware">
-        {0} unit{'s'}, {undefined}
-        {'no constraints set'}
-      </div>);
-    expect(output.props.children[2]).toEqualJSX(expected);
-  });
-
   it('can render a container', function() {
     var machine = {
       displayName: 'new0/lxc/0',
@@ -663,9 +567,11 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         selected={false}
         selectMachine={selectMachine}
         services={services}
@@ -747,8 +653,10 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         removeUnit={removeUnit}
         selected={false}
         selectMachine={selectMachine}
@@ -783,9 +691,11 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         providerType="aws"
         removeUnit={sinon.stub()}
         selected={false}
@@ -805,12 +715,7 @@ describe('MachineViewMachine', function() {
           Update constraints
         </h4>
         <juju.components.Constraints
-          constraints={{
-            arch: null,
-            cpuCores: '2',
-            cpuPower: '10',
-            disk: '2048',
-            mem: '1024'}}
+          constraints={{mem: '2048'}}
           currentSeries={machine.series}
           disabled={false}
           hasUnit={false}
@@ -849,9 +754,11 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
+        parseConstraints={parseConstraints}
         providerType="aws"
         removeUnit={sinon.stub()}
         selected={false}

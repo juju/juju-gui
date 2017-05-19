@@ -1572,7 +1572,7 @@ describe('utilities', function() {
     });
   });
 
-  describe.only('generateMachineDetails', () => {
+  describe('generateMachineDetails', () => {
     let genericConstraints, units, utils;
 
     before(done => {
@@ -1606,7 +1606,7 @@ describe('utilities', function() {
         'root disk: 2.00GB');
     });
 
-    it('can generate no hardware details', () => {
+    it('can generate details with no hardware', () => {
       const machine = {
         series: 'wily'
       };
@@ -1626,7 +1626,7 @@ describe('utilities', function() {
         ', mem: 1.00GB, root disk: 2.00GB');
     });
 
-    it('can generate no constraints', () => {
+    it('can generate details with no constraints', () => {
       const machine = {
         commitStatus: 'uncommitted',
         series: 'wily'
@@ -1634,6 +1634,13 @@ describe('utilities', function() {
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
         '3 units, wily, no constraints set');
+    });
+
+    it('can generate details with no series', () => {
+      const machine = {};
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, hardware details not available');
     });
   });
 })();

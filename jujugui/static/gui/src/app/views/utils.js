@@ -2068,7 +2068,7 @@ YUI.add('juju-view-utils', function(Y) {
       }
     }
     const plural = unitCount === 1 ? '' : 's';
-    const series = machine.series ? `${machine.series}, ` : undefined;
+    const series = machine.series ? `${machine.series}, ` : '';
     return `${unitCount} unit${plural}, ${series}${hardwareDetails}`;
   };
 
