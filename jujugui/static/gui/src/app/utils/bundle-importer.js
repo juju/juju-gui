@@ -681,8 +681,10 @@ YUI.add('bundle-importer', function(Y) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
 
-      // Use the updated app names here to avoid conflicts if apps with the
-      // same name already exist.
+      // Create the pending relation id with a combination of the interfaces
+      // and unique app names to avoid conflicts. The app names will have
+      // already been updated where there are multiple services with the same
+      // name (e.g. mysql will become mysql-a).
       const relationId = 'pending-' + record.args[0] + endpoints[0][0] +
         record.args[1] + endpoints[1][0];
       const pendingRelation = this.db.relations.add({
