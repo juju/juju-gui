@@ -16,8 +16,6 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO sort out get('auth') and get('users')
-
 'use strict';
 
 /**
@@ -1198,7 +1196,7 @@ YUI.add('juju-gui', function(Y) {
           appState={this.state}
           gisf={this.get('gisf')}
           displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-          user={this.user.displayName} />,
+          user={this.user} />,
         document.getElementById('header-help'));
     },
 
@@ -1291,9 +1289,7 @@ YUI.add('juju-gui', function(Y) {
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const charmstore = this.get('charmstore');
-      const isLoggedIn = () => {
-        return this.controllerAPI.userIsAuthenticated;
-      };
+      const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}

@@ -32,6 +32,14 @@ const User = class User {
     this._external = cfg.externalAuth || null;
   }
 
+  /**
+   Get's the user's display name from the username in controller credentials.
+
+   The user's display name is the first half of the full username. That is, in
+   "doctor@who", the display name is "doctor".
+
+   If external auth -- e.g. from HJC -- exists, that is used for name data.
+   */
   get displayName() {
     if (this.externalAuth) {
       return this.externalAuth.displayName;
@@ -39,6 +47,13 @@ const User = class User {
     return this.controller.user.split('@')[0];
   }
 
+  /**
+   Get's the user's username from the username in controller credentials.
+
+   The full username includes location, e.g. @external.
+
+   If external auth -- e.g. from HJC -- exists, that is used for name data.
+   */
   get username() {
     if (this.externalAuth) {
       return this.externalAuth.username;
@@ -46,10 +61,22 @@ const User = class User {
     return this.controller.user;
   }
 
+  /**
+   Setter for external auth information, i.e. from HJC.
+
+   External auth information is used for determining username display and
+   controller credential status.
+   */
   set externalAuth(val) {
     this._external = val;
   }
 
+  /**
+   Getter for external auth information, i.e. from HJC.
+
+   Since external auth from HJC can be a nested object, this moves name data to
+   the top level of the object.
+   */
   get externalAuth() {
     const externalAuth = this._external;
     if (externalAuth && externalAuth.user) {

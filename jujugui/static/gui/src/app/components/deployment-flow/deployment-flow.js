@@ -89,7 +89,7 @@ YUI.add('deployment-flow', function() {
         deploying: false,
         credential: this.props.credential,
         loadingTerms: false,
-        loggedIn: !!this.props.isLoggedIn(),
+        loggedIn: this.props.isLoggedIn(),
         modelName: this.props.modelName,
         newTerms: [],
         paymentUser: null,
