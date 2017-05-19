@@ -318,7 +318,8 @@ YUI.add('juju-gui', function(Y) {
       // Set up a client side database to store state.
       this.db = new models.Database();
       // Create a user store to track authentication details.
-      this.user = this.get('user') || new window.jujugui.User();
+      this.user = this.get('user') || new window.jujugui.User(
+        {externalAuth: this.get('auth')});
 
       // Instantiate a macaroon bakery, which is used to handle the macaroon
       // acquisition over HTTP.
@@ -614,7 +615,6 @@ YUI.add('juju-gui', function(Y) {
     */
     setUpControllerAPI: function(
       controllerAPI, user, password, macaroons, entityPromise) {
-      const external = this._getExternalAuth();
       this.user.controller = { user, password, macaroons, external };
 
       this.controllerLoginHandler = evt => {
@@ -708,7 +708,7 @@ YUI.add('juju-gui', function(Y) {
             (isLogin || !current.root) &&
             this.get('gisf')
           ) {
-            newState.profile = this._getAuth().rootUserName;
+            newState.profile = this.user.displayName;
           }
           state.changeState(newState);
         }
@@ -924,18 +924,18 @@ YUI.add('juju-gui', function(Y) {
       />);
 
       const navigateUserProfile = () => {
-        const auth = this._getAuth();
-        if (!auth) {
+        const username = this.user.displayName;
+        if (!username) {
           return;
         }
         views.utils.showProfile(
           this.env && this.env.get('ecs'),
           this.state.changeState.bind(this.state),
-          auth.rootUserName);
+          username);
       };
       const navigateUserAccount = () => {
-        const auth = this._getAuth();
-        if (!auth) {
+        const username = this.user.displayName;
+        if (!username) {
           return;
         }
         views.utils.showAccount(
@@ -1034,14 +1034,13 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} state - The application state.
     */
     _getUserInfo: function(state) {
-      const auth = this._getAuth();
-      const username = state.profile || (auth && auth.rootUserName) || '';
+      const username = state.profile || this.user.displayName || '';
       const userInfo = {
         external: username,
         isCurrent: false,
         profile: username
       };
-      if (auth && userInfo.profile === auth.rootUserName) {
+      if (userInfo.profile === this.user.displayName) {
         userInfo.isCurrent = true;
         // This is the current user, and might be a local one. Use the
         // authenticated charm store user as the external (USSO) name.
@@ -1197,12 +1196,12 @@ YUI.add('juju-gui', function(Y) {
           appState={this.state}
           gisf={this.get('gisf')}
           displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-          user={this._getAuth()} />,
+          user={this.user} />,
         document.getElementById('header-help'));
     },
 
     _renderHeaderLogo: function() {
-      const userName = this.user.controller.user.split('@')[0];
+      const userName = this.user.displayName;
       const gisf = this.get('gisf');
       const homePath = gisf ? '/' :
         this.state.generatePath({profile: userName});
@@ -1285,12 +1284,12 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = this.user.controller;
-        return credentials ? credentials.user : undefined;
+        return this.user.username;
       };
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakery);
       const charmstore = this.get('charmstore');
+      const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1324,7 +1323,7 @@ YUI.add('juju-gui', function(Y) {
               utils, env.genericConstraints, db.units)}
           getAgreementsByTerms={
               this.terms.getAgreementsByTerms.bind(this.terms)}
-          getAuth={this._getAuth.bind(this)}
+          isLoggedIn={isLoggedIn}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
           getCloudCredentialNames={
@@ -2012,12 +2011,13 @@ YUI.add('juju-gui', function(Y) {
           // TODO frankban: here we should put a notification, but we can't as
           // this seems to be dispatched twice.
           console.log(msg);
+          // replace get auth with user.username
           this.state.changeState({
             root: null,
             store: null,
             model: null,
             user: null,
-            profile: this._getAuth().rootUserName
+            profile: this.user.displayName,
           });
         }
       });
@@ -3033,78 +3033,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         console.error('Unrecognized service', service);
       }
-    },
-
-    /**
-      A single point for accessing auth information that properly handles
-      situations where auth is set outside the GUI (i.e., embedded).
-
-      @method _getAuth
-     */
-    _getAuth: function() {
-      // Try to retrieve the user from the external auth system (HJC).
-      const external = this._getExternalAuth();
-      if (external) {
-        return external;
-      }
-      const users = this.get('users');
-      if (!users) {
-        return null;
-      }
-      const mkUser = (user, canBeLocal) => {
-        const parts = user.split('@');
-        let usernameDisplay = user;
-        if (parts.length === 1 && canBeLocal) {
-          usernameDisplay += '@local';
-        } else if (parts.length > 1 && parts[1] === 'external') {
-          usernameDisplay = parts[0];
-        }
-        return {
-          user: user,
-          usernameDisplay: usernameDisplay,
-          rootUserName: parts[0]
-        };
-      };
-      let credentials;
-      // Try to retrieve the user from the model connection.
-      if (this.env) {
-        credentials = this.user.model;
-        if (credentials.user) {
-          return mkUser(credentials.user, true);
-        }
-      }
-      // Try to retrieve the user from the controller connection.
-      if (this.controllerAPI) {
-        credentials = this.user.controller;
-        if (credentials.user) {
-          return mkUser(credentials.user, true);
-        }
-      }
-      // Last chance: the charm store.
-      const charmstore = users.charmstore;
-      if (charmstore && charmstore.user) {
-        return mkUser(charmstore.user, false);
-      }
-      return null;
-    },
-
-    /**
-      Fetches the external auth and if it exists modify the values as necessary.
-
-      @method _getExternalAuth
-      @return {Object|Undefined} The external auth.
-    */
-    _getExternalAuth: function() {
-      const externalAuth = this.get('auth');
-      if (externalAuth && externalAuth.user) {
-        // When HJC supplies an external auth it's possible that the name is
-        // stored in a nested user object.
-        externalAuth.usernameDisplay = externalAuth.user.name;
-        externalAuth.rootUserName = externalAuth.user.name;
-      }
-      return externalAuth;
     }
-
   }, {
     ATTRS: {
       html5: true,

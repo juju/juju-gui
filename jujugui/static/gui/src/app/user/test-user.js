@@ -85,8 +85,8 @@ describe('user auth class', () => {
       user.controller = {
         user: 'doctor@tardis',
         password: 'bad wolf',
-        external: 'foo'
       };
+      user.externalAuth = 'foo';
       const creds = user.controller;
       assert.equal(creds.areExternal, true);
     });
@@ -133,8 +133,8 @@ describe('user auth class', () => {
       user.model = {
         user: 'doctor@tardis',
         password: 'bad wolf',
-        external: 'foo'
       };
+      user.externalAuth = 'foo';
       const creds = user.model;
       assert.equal(creds.areExternal, true);
     });
@@ -162,6 +162,30 @@ describe('user auth class', () => {
       user.setMacaroon('test', 'foo-bar');
       user.clearMacaroon('test');
       assert.deepEqual(storage.getItem('test'), null);
+    });
+  });
+
+  describe('usernames', () =>{
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+      user.controller = {user: 'dalek'};
+    });
+
+    it('uses the controller username', () => {
+      assert.equal(user.username, 'dalek@local');
+    });
+
+    it('can provide just the displayname', () => {
+      assert.equal(user.displayName, 'dalek');
+    });
+
+    it('defaults to externalAuth if available', () => {
+      user.externalAuth = {user: {name: 'foo'}};
+      assert.equal(user.username, 'foo');
+      assert.equal(user.displayName, 'foo');
     });
   });
 });

@@ -78,7 +78,6 @@ const createDeploymentFlow = (props = {}) => {
     generateCloudCredentialName: sinon.stub(),
     generateMachineDetails: sinon.stub(),
     getAgreementsByTerms: getAgreementsByTerms,
-    getAuth: sinon.stub().returns({}),
     getCloudProviderDetails: sinon.stub(),
     getCountries: sinon.stub(),
     getCurrentChangeSet: sinon.stub(),
@@ -86,6 +85,7 @@ const createDeploymentFlow = (props = {}) => {
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
     groupedChanges: groupedChanges,
+    isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
     listPlansForCharm: sinon.stub(),
     loginToController: sinon.stub(),
@@ -563,7 +563,7 @@ describe('DeploymentFlow', function() {
 
   it('renders the login when necessary', function() {
     const renderer = createDeploymentFlow({
-      getAuth: sinon.stub().returns(null),
+      isLoggedIn: sinon.stub().returns(false),
       loginToController: sinon.stub(),
       modelCommitted: true,
     });
@@ -632,7 +632,7 @@ describe('DeploymentFlow', function() {
   // the component. Return the component instance.
   const login = function(err) {
     const renderer = createDeploymentFlow({
-      getAuth: sinon.stub().returns(null),
+      isLoggedIn: sinon.stub().returns(false),
       loginToController: sinon.stub(),
       modelCommitted: true,
     });
