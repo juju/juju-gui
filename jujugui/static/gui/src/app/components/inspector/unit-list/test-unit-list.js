@@ -653,7 +653,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     const button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[0];
+        output, 'button--neutral')[0];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 0);
   });
@@ -735,7 +735,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[1];
+        output, 'button--neutral')[1];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 0);
   });
