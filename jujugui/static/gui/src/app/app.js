@@ -1316,10 +1316,14 @@ YUI.add('juju-gui', function(Y) {
           deploy={utils.deploy.bind(utils, this)}
           sendAnalytics={this.sendAnalytics}
           setModelName={env.set.bind(env, 'environmentName')}
+          formatConstraints={utils.formatConstraints.bind(utils)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
+          generateMachineDetails={
+            utils.generateMachineDetails.bind(
+              utils, env.genericConstraints, db.units)}
           getAgreementsByTerms={
               this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}

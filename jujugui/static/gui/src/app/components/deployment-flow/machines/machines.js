@@ -26,6 +26,8 @@ YUI.add('deployment-machines', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      formatConstraints: React.PropTypes.func.isRequired,
+      generateMachineDetails: React.PropTypes.func.isRequired,
       machines: React.PropTypes.object
     },
 
@@ -43,37 +45,13 @@ YUI.add('deployment-machines', function() {
       let machineDetails = {};
       Object.keys(machines).forEach(key => {
         const machine = machines[key];
-        let constraintsDetails;
         const args = machine.command.args[0][0];
-        const series = args.series;
-        const constraints = args.constraints || {};
-        let cpu = constraints['cpu-power'];
-        let disk = constraints['root-disk'];
-        let mem = constraints.mem;
-        const cores = constraints.cores;
-        const parts = [];
-        let details = [];
-        if (cores) {
-          details.push(`cores: ${cores}`);
-        }
-        if (cpu) {
-          cpu = cpu / 100;
-          details.push(`CPU: ${cpu}GHz`);
-        }
-        if (mem) {
-          mem = mem / 1024;
-          details.push(`mem: ${mem.toFixed(2)}GB`);
-        }
-        if (disk) {
-          disk = disk / 1024;
-          details.push(`disk: ${disk.toFixed(2)}GB`);
-        }
-        constraintsDetails = details.join(', ');
-        if (series) {
-          parts.push(series);
-        }
-        parts.push(constraintsDetails || '(constraints not set)');
-        const info = parts.join(', ');
+        const info = this.props.generateMachineDetails({
+          commitStatus: 'uncommitted',
+          constraints: this.props.formatConstraints(args.constraints),
+          id: machine.command.options.modelId,
+          series: args.series
+        });
         const current = machineDetails[info] || 0;
         machineDetails[info] = current + 1;
       });

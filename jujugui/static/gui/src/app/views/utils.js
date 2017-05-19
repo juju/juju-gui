@@ -904,7 +904,8 @@ YUI.add('juju-view-utils', function(Y) {
     let containerType =null;
     for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
       machine = db.machines.addGhost(
-        parentId, containerType, {constraints: constraints});
+        parentId, containerType,
+        {constraints: utils.formatConstraints(constraints)});
       env.addMachines([{
         constraints: constraints
       }], function(machine) {

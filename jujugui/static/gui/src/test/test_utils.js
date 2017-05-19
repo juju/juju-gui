@@ -1544,7 +1544,7 @@ describe('utilities', function() {
   });
 
   describe('parseConstraints', () => {
-    let utils;
+    let genericConstraints, utils;
 
     before(done => {
       YUI(GlobalConfig).use('juju-view-utils', Y => {
@@ -1553,9 +1553,12 @@ describe('utilities', function() {
       });
     });
 
-    it('can parse constraints', () => {
-      const genericConstraints = [
+    beforeEach(() => {
+      genericConstraints = [
         'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+    });
+
+    it('can parse constraints', () => {
       assert.deepEqual(
         utils.parseConstraints(
           genericConstraints,

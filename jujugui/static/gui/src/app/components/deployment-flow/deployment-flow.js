@@ -44,8 +44,10 @@ YUI.add('deployment-flow', function() {
       credential: React.PropTypes.string,
       ddData: React.PropTypes.object,
       deploy: React.PropTypes.func.isRequired,
+      formatConstraints: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      generateMachineDetails: React.PropTypes.func.isRequired,
       getAgreementsByTerms: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
@@ -798,6 +800,8 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentMachines
             acl={this.props.acl}
             cloud={cloud}
+            formatConstraints={this.props.formatConstraints}
+            generateMachineDetails={this.props.generateMachineDetails}
             machines={this.props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>);
     },

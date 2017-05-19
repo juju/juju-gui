@@ -454,7 +454,7 @@ describe('Constraints', function() {
     assert.deepEqual(args[0], {
       arch: '',
       'cpu-power': '',
-      cores: '',
+      'cpu-cores': '',
       mem: '',
       'root-disk': '',
       series: ''
@@ -484,7 +484,7 @@ describe('Constraints', function() {
     assert.deepEqual(args[0], {
       arch: 'i386',
       'cpu-power': '1024',
-      cores: '2',
+      'cpu-cores': '2',
       mem: '2048',
       'root-disk': '4096',
       series: 'xenial'
