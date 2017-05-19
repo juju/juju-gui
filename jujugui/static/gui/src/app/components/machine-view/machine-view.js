@@ -31,6 +31,7 @@ YUI.add('machine-view', function() {
       createMachine: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
+      genericConstraints: React.PropTypes.array.isRequired,
       machines: React.PropTypes.object.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
       providerType: React.PropTypes.string,
@@ -295,6 +296,7 @@ YUI.add('machine-view', function() {
             acl={this.props.acl}
             destroyMachines={this.props.destroyMachines}
             dropUnit={this._dropUnit}
+            genericConstraints={this.props.genericConstraints}
             key={machine.id}
             machine={machine}
             machineModel={this.props.machines.revive(machine)}

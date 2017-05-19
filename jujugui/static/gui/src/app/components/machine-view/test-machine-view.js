@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineView', function() {
-  let acl, machines;
+  let acl, machines, genericConstraints;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +30,7 @@ describe('MachineView', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    genericConstraints = ['arch', 'mem'];
     machines = {
       filterByParent: sinon.stub().returns([{
         displayName: 'new0',
@@ -69,6 +70,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}
@@ -214,6 +216,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -256,6 +259,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -288,6 +292,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -325,6 +330,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -381,6 +387,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -460,6 +467,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -522,6 +530,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -570,6 +579,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -614,6 +624,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -654,6 +665,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -717,6 +729,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -771,6 +784,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         providerType="aws"
@@ -788,6 +802,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new0"
           machine={machineList[0]}
           machineModel={{get: sinon.stub()}}
@@ -805,6 +820,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new1"
           machine={machineList[1]}
           machineModel={{get: sinon.stub()}}
@@ -858,6 +874,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         providerType="aws"
@@ -875,6 +892,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new0"
           machine={{
             displayName: 'new0',
@@ -895,6 +913,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new5"
           machine={{
             displayName: 'new5',
@@ -953,6 +972,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         providerType="aws"
@@ -971,6 +991,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new0"
           machine={machineList[0]}
           machineModel={{get: sinon.stub()}}
@@ -988,6 +1009,7 @@ describe('MachineView', function() {
           acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
+          genericConstraints={genericConstraints}
           key="new1"
           machine={machineList[1]}
           machineModel={{get: sinon.stub()}}
@@ -1031,6 +1053,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         providerType={'azure'}
@@ -1088,6 +1111,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={sinon.stub()}
@@ -1141,6 +1165,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1226,6 +1251,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1320,6 +1346,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         providerType={'gce'}
@@ -1382,6 +1409,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         units={units}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1457,6 +1485,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={sinon.stub()}
         removeUnits={removeUnits}
@@ -1502,6 +1531,7 @@ describe('MachineView', function() {
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={removeUnits}
@@ -1540,6 +1570,7 @@ describe('MachineView', function() {
         createMachine={sinon.stub()}
         destroyMachines={sinon.stub()}
         environmentName="My Env"
+        genericConstraints={genericConstraints}
         machines={machines}
         placeUnit={placeUnit}
         removeUnits={sinon.stub()}

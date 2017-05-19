@@ -71,6 +71,7 @@ YUI.add('machine-view-machine', function() {
       connectDropTarget: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       dropUnit: React.PropTypes.func.isRequired,
+      genericConstraints: React.PropTypes.array,
       isOver: React.PropTypes.bool.isRequired,
       machine: React.PropTypes.object.isRequired,
       machineModel: React.PropTypes.object,
@@ -116,6 +117,8 @@ YUI.add('machine-view-machine', function() {
     _setConstraints: function() {
       const constraints = this.state.constraints;
       const series = constraints.series || null;
+      // The series is updated separately from the constraints, so remove it
+      // from the object that is passed to the update constraints method.
       delete constraints.series;
       const id = this.props.machine.id;
       this.props.updateMachineConstraints(id, constraints);
@@ -172,14 +175,12 @@ YUI.add('machine-view-machine', function() {
     */
     _getConstraints: function() {
       const constraints = this.props.machine.constraints || '';
-      let types = {
-        'cpu-power': null,
-        cores: null,
-        mem: null,
-        'root-disk': null,
-        arch: null
-      };
-      // The constraints are in the format:
+      let types = {};
+      // Map the list of constraint types to an object.
+      this.props.genericConstraints.forEach(constraint => {
+        types[constraint] = null;
+      });
+      // The machine constraints are always a string in the format:
       // cpu-power=w cores=x mem=y root-disk=z
       constraints.split(' ').forEach(part => {
         const keyVal = part.split('=');

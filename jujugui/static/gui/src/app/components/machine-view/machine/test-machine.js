@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
-  var acl, services;
+  var acl, genericConstraints, services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +30,8 @@ describe('MachineViewMachine', function() {
 
   beforeEach(function () {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    genericConstraints = [
+      'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
     services = {
       getById: sinon.stub().returns({
         get: function(val) {
@@ -507,6 +509,7 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
         selected={false}
@@ -538,6 +541,7 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
         selected={false}
@@ -659,6 +663,7 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         dropUnit={sinon.stub()}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
         selected={false}
@@ -778,6 +783,7 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
         providerType="aws"
@@ -843,6 +849,7 @@ describe('MachineViewMachine', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        genericConstraints={genericConstraints}
         isOver={false}
         machine={machine}
         providerType="aws"
