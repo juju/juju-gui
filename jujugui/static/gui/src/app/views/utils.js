@@ -2007,6 +2007,71 @@ YUI.add('juju-view-utils', function(Y) {
     }, []).join(' ');
   };
 
+  /**
+    Parse a constraints string into an object.
+
+    @param genericConstraints {Array} The constraints types.
+    @param constraints {String} A constraints string.
+    @returns {Object} The constraints object.
+  */
+  utils.parseConstraints = (genericConstraints, constraints='') => {
+    let types = {};
+    // Map the list of constraint types to an object.
+    genericConstraints.forEach(constraint => {
+      types[constraint] = null;
+    });
+    // The machine constraints are always a string in the format:
+    // cpu-power=w cores=x mem=y root-disk=z
+    constraints.split(' ').forEach(part => {
+      const keyVal = part.split('=');
+      // Add the value if it has a matching key.
+      if (types[keyVal[0]] !== undefined) {
+        types[keyVal[0]] = keyVal[1];
+      }
+    });
+    return types;
+  };
+
+  /**
+    Generate the series/hardward/constraints details for a machine
+
+    @param genericConstraints {Array} The constraints types.
+    @param machine {Object} A machine.
+    @returns {String} The machine details.
+  */
+  utils.generateMachineDetails = (genericConstraints, units, machine) => {
+    const hardware = machine.hardware ||
+      utils.parseConstraints(genericConstraints, machine.constraints) || {};
+    const unitCount = units.filterByMachine(machine.id, true).length;
+    let hardwareDetails;
+    let details = [];
+    Object.keys(hardware).forEach(name => {
+      let value = hardware[name];
+      // Some details will not be set, so don't display them.
+      if (value) {
+        if (name === 'cpu-power') {
+          value = `${(value / 100)}GHz`;
+        } else if (name === 'mem' || name === 'root-disk') {
+          value = `${(value / 1024).toFixed(2)}GB`;
+        }
+        details.push(`${name.replace('-', ' ')}: ${value}`);
+      }
+    });
+    const constraintsMessage = machine.constraints ?
+      'requested constraints: ' : '';
+    hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
+    if (!hardwareDetails) {
+      if (machine.commitStatus === 'uncommitted') {
+        hardwareDetails = 'no constraints set';
+      } else {
+        hardwareDetails = 'hardware details not available';
+      }
+    }
+    const plural = unitCount === 1 ? '' : 's';
+    const series = machine.series ? `${machine.series}, ` : undefined;
+    return `${unitCount} unit${plural}, ${series}${hardwareDetails}`;
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

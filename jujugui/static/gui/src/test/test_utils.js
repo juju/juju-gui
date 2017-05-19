@@ -1542,4 +1542,98 @@ describe('utilities', function() {
         'arch=amd64 cpuCores=2 cpuPower=10 disk=2048 mem=1024');
     });
   });
+
+  describe('parseConstraints', () => {
+    let utils;
+
+    before(done => {
+      YUI(GlobalConfig).use('juju-view-utils', Y => {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can parse constraints', () => {
+      const genericConstraints = [
+        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+      assert.deepEqual(
+        utils.parseConstraints(
+          genericConstraints,
+          'arch=amd64 cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024'),
+        {
+          arch: 'amd64',
+          cores: null,
+          'cpu-cores': '2',
+          'cpu-power': '10',
+          mem: '1024',
+          'root-disk': '2048',
+          tags: null
+        });
+    });
+  });
+
+  describe.only('generateMachineDetails', () => {
+    let genericConstraints, units, utils;
+
+    before(done => {
+      YUI(GlobalConfig).use('juju-view-utils', Y => {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    beforeEach(() => {
+      genericConstraints = [
+        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+      units = {
+        filterByMachine: sinon.stub().returns([1, 2, 3])
+      };
+    });
+
+    it('can generate hardware details', () => {
+      const machine = {
+        hardware: {
+          'cpu-cores': '2',
+          'cpu-power': '10',
+          mem: '1024',
+          'root-disk': '2048'
+        },
+        series: 'wily'
+      };
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, wily, cpu cores: 2, cpu power: 0.1GHz, mem: 1.00GB, '+
+        'root disk: 2.00GB');
+    });
+
+    it('can generate no hardware details', () => {
+      const machine = {
+        series: 'wily'
+      };
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, wily, hardware details not available');
+    });
+
+    it('can generate constraints', () => {
+      const machine = {
+        constraints: 'cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024',
+        series: 'wily'
+      };
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, wily, requested constraints: cpu power: 0.1GHz, cpu cores: 2'+
+        ', mem: 1.00GB, root disk: 2.00GB');
+    });
+
+    it('can generate no constraints', () => {
+      const machine = {
+        commitStatus: 'uncommitted',
+        series: 'wily'
+      };
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, wily, no constraints set');
+    });
+  });
 })();
