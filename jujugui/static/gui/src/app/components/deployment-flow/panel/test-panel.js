@@ -72,6 +72,7 @@ describe('DeploymentPanel', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
         changeState={changeState}
+        sendAnalytics={sinon.stub()}
         title="Lamington">
         <span>content</span>
       </juju.components.DeploymentPanel>);

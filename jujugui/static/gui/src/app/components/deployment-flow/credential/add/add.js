@@ -99,7 +99,6 @@ YUI.add('deployment-credential-add', function() {
       }
       const credentialName = this.refs.credentialName.getValue();
       this.props.sendAnalytics(
-        'Deployment Flow',
         'Button click',
         'Add credentials'
       );
