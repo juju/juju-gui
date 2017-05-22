@@ -239,6 +239,7 @@ describe('Charmbrowser', function() {
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize}
+              scrollCharmbrowser={instance._scrollCharmbrowser}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
               urllib={urllib}
@@ -326,6 +327,7 @@ describe('Charmbrowser', function() {
               id='~spinch/koala'
               addNotification={addNotification}
               pluralize={utils.pluralize}
+              scrollCharmbrowser={instance._scrollCharmbrowser}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
               urllib={urllib}

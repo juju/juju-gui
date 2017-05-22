@@ -35,7 +35,7 @@ describe('HashLink', () => {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="hash-link"
-        onClick={instance._handlClick}>
+        onClick={instance._handleClick}>
         <juju.components.SvgIcon
           name="get-link-url_16"
           size="16" />

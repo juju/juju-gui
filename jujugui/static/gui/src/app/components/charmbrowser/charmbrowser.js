@@ -73,6 +73,26 @@ YUI.add('charmbrowser-component', function() {
     },
 
     /**
+      Scroll the charmbrowser to an element with an id that matches the
+      hash state.
+
+      @param container {Object} a DOM node that contains the element with the
+        id to scroll to.
+    */
+    _scrollCharmbrowser: function(container) {
+      const hash = this.props.appState.current.hash;
+      const target = container.querySelector(`#${hash}`);
+      // The charmbrowser element does the scrolling.
+      const charmbrowser = ReactDOM.findDOMNode(this).querySelector(
+        '.charmbrowser');
+      if (target && charmbrowser) {
+        // Set the scroll position to the element's top position taking into
+        // account the sticky header size.
+        charmbrowser.scrollTop += target.getBoundingClientRect().top - 200;
+      }
+    },
+
+    /**
       Set the scroll position state.
 
       @method _onScroll
@@ -197,6 +217,7 @@ YUI.add('charmbrowser-component', function() {
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel}
+                scrollCharmbrowser={this._scrollCharmbrowser}
                 setPageTitle={this.props.setPageTitle}
                 showTerms={this.props.showTerms}
                 urllib={this.props.urllib}

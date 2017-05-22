@@ -34,6 +34,7 @@ YUI.add('entity-content', function() {
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
     },
 
@@ -608,7 +609,8 @@ YUI.add('entity-content', function() {
                   entityModel={entityModel}
                   getFile={this.props.getFile}
                   hash={this.props.hash}
-                  renderMarkdown={this.props.renderMarkdown} />
+                  renderMarkdown={this.props.renderMarkdown}
+                  scrollCharmbrowser={this.props.scrollCharmbrowser} />
               </div>
               <div className="four-col">
                 {this._generateActions()}

@@ -43,6 +43,7 @@ YUI.add('entity-details', function() {
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
@@ -109,6 +110,7 @@ YUI.add('entity-details', function() {
                   entityModel={entityModel}
                   plans={this.state.plans}
                   pluralize={this.props.pluralize}
+                  scrollCharmbrowser={this.props.scrollCharmbrowser}
                   showTerms={this.props.showTerms}
                 />
               </div>

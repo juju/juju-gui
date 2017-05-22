@@ -57,6 +57,7 @@ describe('EntityDetails', function() {
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -77,6 +78,7 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
+          scrollCharmbrowser={scrollCharmbrowser}
           setPageTitle={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com"
@@ -122,6 +124,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -158,6 +161,7 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
+          scrollCharmbrowser={sinon.stub()}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
@@ -201,6 +205,7 @@ describe('EntityDetails', function() {
     const getDiagramURL = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -221,6 +226,7 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
+          scrollCharmbrowser={scrollCharmbrowser}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
           staticURL="http://example.com"
@@ -269,6 +275,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -305,6 +312,7 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
+          scrollCharmbrowser={sinon.stub()}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
@@ -338,6 +346,7 @@ describe('EntityDetails', function() {
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -368,6 +377,7 @@ describe('EntityDetails', function() {
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -387,6 +397,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -433,6 +444,7 @@ describe('EntityDetails', function() {
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -459,6 +471,7 @@ describe('EntityDetails', function() {
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -478,6 +491,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -524,6 +538,7 @@ describe('EntityDetails', function() {
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>

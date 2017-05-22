@@ -30,7 +30,8 @@ YUI.add('entity-content-readme', function() {
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       hash: React.PropTypes.string,
-      renderMarkdown: React.PropTypes.func.isRequired
+      renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -46,7 +47,7 @@ YUI.add('entity-content-readme', function() {
     componentDidUpdate: function(prevProps, prevState) {
       const hash = this.props.hash;
       if (hash && hash !== prevProps.hash) {
-        this._scrollToContent();
+        this.props.scrollCharmbrowser(this._getContainer());
       }
     },
 
@@ -55,23 +56,20 @@ YUI.add('entity-content-readme', function() {
         this.readmeXhr.abort();
       }
       // Remove the readme link components.
-      document.querySelectorAll('.readme-link').forEach(link => {
-        ReactDOM.unmountComponentAtNode(link);
-      });
+      this._getContainer().querySelectorAll('.readme-link').forEach(
+        link => {
+          ReactDOM.unmountComponentAtNode(link);
+        });
     },
 
     /**
-      Scroll to an id.
+      Get the container node for the component. There is a bug with using
+      findDOMNode in the tests so use this method to stub it out.
+
+      @return {Object} The comonent's container node.
     */
-    _scrollToContent: function() {
-      const target = document.querySelector(`#${this.props.hash}`);
-      // The charmbrowser element does the scrolling.
-      const charmbrowser = document.querySelector('.charmbrowser');
-      if (target && charmbrowser) {
-        // Set the scroll position to the element's top position taking into
-        // account the sticky header size.
-        charmbrowser.scrollTop += target.getBoundingClientRect().top - 200;
-      }
+    _getContainer: function() {
+      return ReactDOM.findDOMNode(this);
     },
 
     /**
@@ -123,24 +121,26 @@ YUI.add('entity-content-readme', function() {
       if (error) {
         console.error(error);
         this.setState({readme: 'No readme.'});
-      } else {
-        var readme = data;
-        const renderMarkdown = this.props.renderMarkdown;
-        let renderer = new renderMarkdown.Renderer();
-        renderer.heading = (text, level) => {
-          const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-          return `<h${level} id="${escapedText}">
-              ${text}
-              <span class="readme-link" data-id="${escapedText}">link</span>
-            </h${level}>`;
-        };
-        this.setState(
-          {readme: renderMarkdown(readme, {renderer: renderer})}, () => {
-            if (this.props.hash) {
-              this._scrollToContent();
-            }
-            // Set up the components to link to the readme headings.
-            document.querySelectorAll('.readme-link').forEach(link => {
+        return;
+      }
+      const readme = data;
+      const renderMarkdown = this.props.renderMarkdown;
+      let renderer = new renderMarkdown.Renderer();
+      renderer.heading = (text, level) => {
+        const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+        return `<h${level} id="${escapedText}">
+            ${text}
+            <span class="readme-link" data-id="${escapedText}">link</span>
+          </h${level}>`;
+      };
+      this.setState(
+        {readme: renderMarkdown(readme, {renderer: renderer})}, () => {
+          if (this.props.hash) {
+            this.props.scrollCharmbrowser(this._getContainer());
+          }
+          // Set up the components to link to the readme headings.
+          this._getContainer().querySelectorAll('.readme-link').forEach(
+            link => {
               const id = link.getAttribute('data-id');
               // The components have to be rendered to the elements due to the
               // headings having been created by the markdown lib.
@@ -150,8 +150,7 @@ YUI.add('entity-content-readme', function() {
                   hash={id} />,
                 link);
             });
-          });
-      }
+        });
     },
 
     render: function() {

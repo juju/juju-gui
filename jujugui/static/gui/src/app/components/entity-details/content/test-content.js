@@ -66,6 +66,7 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const pluralize = sinon.spy();
     const script = generateScript();
+    const scrollCharmbrowser = sinon.stub();
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
@@ -78,6 +79,7 @@ describe('EntityContent', function() {
           hash="readme"
           pluralize={pluralize}
           renderMarkdown={renderMarkdown}
+          scrollCharmbrowser={scrollCharmbrowser}
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const option1 = {
@@ -119,7 +121,8 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"
-                renderMarkdown={renderMarkdown} />
+                renderMarkdown={renderMarkdown}
+                scrollCharmbrowser={scrollCharmbrowser} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -213,6 +216,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -258,6 +262,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
@@ -289,6 +294,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -315,6 +321,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     renderer.getRenderOutput();
@@ -340,6 +347,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     renderer.unmount();
@@ -359,6 +367,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -397,6 +406,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const changeState = sinon.spy();
     const script = generateScript();
+    const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         addNotification={sinon.stub()}
@@ -408,6 +418,7 @@ describe('EntityContent', function() {
         hash="readme"
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={scrollCharmbrowser}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
@@ -437,7 +448,8 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"
-                renderMarkdown={renderMarkdown} />
+                renderMarkdown={renderMarkdown}
+                scrollCharmbrowser={scrollCharmbrowser} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -503,6 +515,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
+    const scrollCharmbrowser = sinon.stub();
     const output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           addNotification={sinon.stub()}
@@ -514,6 +527,7 @@ describe('EntityContent', function() {
           hash="readme"
           pluralize={pluralize}
           renderMarkdown={renderMarkdown}
+          scrollCharmbrowser={scrollCharmbrowser}
           showTerms={sinon.stub()}
           staticURL="http://example.com" />);
     const expected = (
@@ -528,7 +542,8 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={getFile}
                 hash="readme"
-                renderMarkdown={renderMarkdown} />
+                renderMarkdown={renderMarkdown}
+                scrollCharmbrowser={scrollCharmbrowser} />
             </div>
             <div className="four-col">
               <div className="section">
@@ -677,6 +692,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={sinon.stub()}
           renderMarkdown={sinon.stub()}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -723,6 +739,7 @@ describe('EntityContent', function() {
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown}
+          scrollCharmbrowser={sinon.stub()}
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -762,6 +779,7 @@ describe('EntityContent', function() {
         plans={plans}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -870,6 +888,7 @@ describe('EntityContent', function() {
         plans={null}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -897,6 +916,7 @@ describe('EntityContent', function() {
         plans={[]}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -917,6 +937,7 @@ describe('EntityContent', function() {
         hasPlans={false}
         pluralize={sinon.stub()}
         renderMarkdown={marked}
+        scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
     const description = output.props.children[0].props.children.props
