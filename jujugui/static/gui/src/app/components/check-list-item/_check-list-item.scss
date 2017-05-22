@@ -14,12 +14,17 @@
   }
 
   [type=checkbox] {
-    margin-right: 15px;
     cursor: pointer;
   }
 
   label {
     padding: 11px 20px;
+  }
+
+  &__hit-area {
+    display: inline-block;
+    margin: -11px 0 -11px -20px;
+    padding: 11px 15px 11px 20px;
   }
 
   &--nav:hover {
