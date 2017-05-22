@@ -1738,7 +1738,8 @@ YUI.add('juju-gui', function(Y) {
           callback(err, {});
           return;
         }
-        charmstore.getEntity(url.legacyPath(), callback);
+        // Get the entity and return the XHR.
+        return charmstore.getEntity(url.legacyPath(), callback);
       };
       const getModelName = () => this.env.get('environmentName');
       ReactDOM.render(

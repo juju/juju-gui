@@ -22,7 +22,6 @@ YUI.add('entity-details', function() {
 
   juju.components.EntityDetails = React.createClass({
     displayName: 'EntityDetails',
-    detailsXhr: null,
 
     /* Define and validate the properites available on this component. */
     propTypes: {
@@ -179,8 +178,9 @@ YUI.add('entity-details', function() {
       if (entityModel.get('entityType') === 'charm') {
         if (entityModel.hasMetrics()) {
           this.setState({hasPlans: true}, () => {
-            this.props.listPlansForCharm(
+            const xhr = this.props.listPlansForCharm(
               entityModel.get('id'), this._getPlansCallback);
+            this.xhrs.push(xhr);
           });
         }
       }
@@ -203,6 +203,7 @@ YUI.add('entity-details', function() {
     },
 
     getInitialState: function() {
+      this.xhrs = [];
       var state = this.generateState(this.props);
       state.entityModel = null;
       state.hasPlans = false;
@@ -216,13 +217,14 @@ YUI.add('entity-details', function() {
       this.refs.content.focus();
       // Be sure to convert the id to the legacy id as the URL will be in the
       // new id format.
-      this.detailsXhr = this.props.getEntity(this.props.id, this.fetchCallback);
+      const xhr = this.props.getEntity(this.props.id, this.fetchCallback);
+      this.xhrs.push(xhr);
     },
 
     componentWillUnmount: function() {
-      if (this.detailsXhr) {
-        this.detailsXhr.abort();
-      }
+      this.xhrs.forEach(xhr => {
+        xhr && xhr.abort && xhr.abort();
+      });
       this.props.setPageTitle();
     },
 
