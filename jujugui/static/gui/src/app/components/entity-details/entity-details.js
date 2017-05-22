@@ -223,7 +223,7 @@ YUI.add('entity-details', function() {
 
     componentWillUnmount: function() {
       this.xhrs.forEach(xhr => {
-        xhr && xhr.abort && xhr.abort();
+        xhr.abort();
       });
       this.props.setPageTitle();
     },
