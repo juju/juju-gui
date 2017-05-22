@@ -70,6 +70,10 @@
   .svg-icon {
     fill: $dark-warm-grey;
     transition: fill $transition-duration;
+
+    &:hover {
+      fill: $black;
+    }
   }
 
   &__close {
