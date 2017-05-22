@@ -65,6 +65,24 @@ describe('StringConfig', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can handle a string config without a config value', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config={undefined}
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="string-config--value">
+        <juju.components.StringConfigInput
+          config={undefined}
+          disabled={false}
+          ref="editableInput"
+          setValue={instance._setValue} />
+      </div>);
+    expect(output.props.children[1]).toEqualJSX(expected);
+  });
+
   it('does not show a type if none is provided', function() {
     var option = {
       key: 'testconfig',

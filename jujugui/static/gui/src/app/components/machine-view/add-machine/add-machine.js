@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('machine-view-add-machine', function() {
 
   juju.components.MachineViewAddMachine = React.createClass({
+    displayName: 'MachineViewAddMachine',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,

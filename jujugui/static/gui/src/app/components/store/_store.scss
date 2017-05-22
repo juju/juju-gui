@@ -92,9 +92,22 @@
   }
 
   .box {
-    min-height: 310px;
-    margin-bottom: 20px;
-    padding-bottom: 125px;
+    &--kubernetes,
+    &--openstack,
+    &--hadoop {
+      min-height: 310px;
+      margin-bottom: 20px;
+      padding-bottom: 125px;
+
+      .button--inline-neutral {
+        background-color: $white;
+        border: 0 none;
+
+        &:hover {
+          background-color: $light-grey;
+        }
+      }
+    }
 
     &--kubernetes {
       overflow: hidden;
@@ -127,15 +140,6 @@
       }
     }
 
-    .button--inline-neutral {
-      background-color: $white;
-      border: 0 none;
-
-      &:hover {
-        background-color: $light-grey;
-      }
-    }
-
     &--mysql {
       $mysql-brand: #2089b5;
       border-color: $mysql-brand;
@@ -151,7 +155,7 @@
       }
 
       .button--inline-neutral {
-        color: $cool-grey;
+        color: $white;
       }
     }
 

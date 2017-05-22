@@ -609,8 +609,7 @@ describe('App', function() {
       assert.equal(loginStub.args[1][0], 'bad wolf');
     });
 
-    it('login method handler is called after successful login',
-    function(done) {
+    it('login method handler is called after successful login', function(done) {
       let localApp = {};
       const oldOnLogin = Y.juju.App.prototype.onLogin;
       Y.juju.App.prototype.onLogin = evt => {
@@ -1230,159 +1229,6 @@ describe('App', function() {
     });
   });
 
-  describe('_getAuth', function() {
-    var Y, app, juju;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      container = testUtils.makeContainer(this);
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
-      userClass.controller = {user: 'user', password: 'password'};
-      app = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: new juju.ControllerAPI({
-          conn: new testUtils.SocketStub(),
-          user: userClass
-        }),
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet(),
-          user: userClass
-        }),
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        consoleEnabled: true,
-        jujuCoreVersion: '2.0.0',
-        user: userClass
-      });
-    });
-
-    afterEach(function() {
-      app.destroy({remove: true});
-    });
-
-    it('uses charm store credentials if present', function() {
-      app.get('user').controller = {};
-      app.set('users', {charmstore: {user: 'admin'}});
-      assert.deepEqual(app._getAuth(), {
-        user: 'admin',
-        usernameDisplay: 'admin',
-        rootUserName: 'admin'
-      });
-    });
-
-    it('uses charm store credentials if present (external)', function() {
-      app.get('user').controller = {};
-      app.set('users', {charmstore: {user: 'who@external'}});
-      assert.deepEqual(app._getAuth(), {
-        user: 'who@external',
-        usernameDisplay: 'who',
-        rootUserName: 'who'
-      });
-    });
-
-    it('uses charm store credentials if present (customized)', function() {
-      app.get('user').controller = {};
-      app.set('users', {charmstore: {user: 'dalek@skaro'}});
-      assert.deepEqual(app._getAuth(), {
-        user: 'dalek@skaro',
-        usernameDisplay: 'dalek@skaro',
-        rootUserName: 'dalek'
-      });
-    });
-
-    it('uses external auth if present', function() {
-      app.set('auth', {user: {name: 'bark'}});
-      app.set('users', {foo: 'bar'});
-      assert.deepEqual(app._getAuth(), {
-        usernameDisplay: 'bark',
-        user: {name: 'bark'},
-        rootUserName: 'bark'
-      });
-    });
-
-    it('uses controller credentials if present', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'dalek@external'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'dalek@external',
-        usernameDisplay: 'dalek',
-        rootUserName: 'dalek'
-      });
-    });
-
-    it('uses controller credentials if present (local)', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'dalek'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'dalek@local',
-        usernameDisplay: 'dalek@local',
-        rootUserName: 'dalek'
-      });
-    });
-
-    it('uses controller credentials if present (customized)', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'dalek@skaro'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'dalek@skaro',
-        usernameDisplay: 'dalek@skaro',
-        rootUserName: 'dalek'
-      });
-    });
-
-    it('uses model credentials if present', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'who@external'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'who@external',
-        usernameDisplay: 'who',
-        rootUserName: 'who'
-      });
-    });
-
-    it('uses model credentials if present (local)', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'who'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'who@local',
-        usernameDisplay: 'who@local',
-        rootUserName: 'who'
-      });
-    });
-
-    it('uses model credentials if present (customized)', function() {
-      app.set('users', {});
-      app.get('user').controller = {user: 'who@local'};
-      assert.deepEqual(app._getAuth(), {
-        user: 'who@local',
-        usernameDisplay: 'who@local',
-        rootUserName: 'who'
-      });
-    });
-
-    it('does not break when auth is not set', function() {
-      app.set('users', {});
-      app.get('user').controller = {};
-      assert.strictEqual(app._getAuth(), null);
-    });
-
-    it('populates the display name', function() {
-      app.set('users', {charmstore: {user: 'admin'}});
-      app.get('user').controller = {};
-      const auth = app._getAuth();
-      assert.equal(auth.usernameDisplay, 'admin');
-    });
-  });
-
   describe('configuration parsing', function() {
     var app, Y;
 
@@ -1447,10 +1293,11 @@ describe('App', function() {
   });
 
   describe('loginToAPIs', function() {
-    var app;
+    let app, user;
 
     beforeEach(function(done) {
       YUI(GlobalConfig).use(['juju-gui'], Y => {
+        user = new window.jujugui.User({sessionStorage: getMockStorage()});
         app = new Y.juju.App({
           baseUrl: 'http://example.com/',
           apiAddress: 'wss://1.2.3.4:1234',
@@ -1460,7 +1307,7 @@ describe('App', function() {
           charmstoreURL: 'http://1.2.3.4/',
           socketTemplate: '/model/$uuid/api',
           controllerSocketTemplate: '/api',
-          user: new window.jujugui.User({sessionStorage: getMockStorage()})
+          user: user
         });
         done();
       });
@@ -1494,9 +1341,13 @@ describe('App', function() {
         assert.deepEqual(app.get('user').controller, credentials);
       } else {
         // No credentials have been set.
-        assert.deepEqual(app.user.controller, {
-          user: '', password: '', macaroons: null
-        });
+        const expected = {
+          user: '',
+          password: '',
+          macaroons: null,
+          external: {}
+        };
+        assert.deepEqual(app.user.controller, expected);
       }
       if (loggedIn) {
         // The API has been authenticated with credentials.
@@ -1835,7 +1686,7 @@ describe('App', function() {
     beforeEach(function() {
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
-      userClass.controller = {user: 'user', password: 'password'};
+      userClass.controller = {user: 'pug', password: 'password'};
       app = new Y.juju.App({
         baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
@@ -1880,7 +1731,6 @@ describe('App', function() {
       }];
       app.maskVisibility = sinon.stub();
       app.state.changeState = sinon.stub();
-      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
       app.controllerAPI.listModelsWithInfo = function(callback) {
         callback.call(app, null, modelList);
       };

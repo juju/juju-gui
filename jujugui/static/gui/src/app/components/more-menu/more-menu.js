@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('more-menu', function() {
 
   var MoreMenu = React.createClass({
+    displayName: 'MoreMenu',
+
     propTypes: {
       activeItem: React.PropTypes.string,
       items: React.PropTypes.array.isRequired

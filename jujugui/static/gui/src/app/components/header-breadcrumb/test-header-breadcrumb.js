@@ -53,7 +53,7 @@ describe('HeaderBreadcrumb', () => {
       <juju.components.HeaderBreadcrumb
         acl={acl}
         appState={appState}
-        authDetails={attrs.authDetails}
+        user={attrs.user}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
         loadingModel={attrs.loadingModel}
@@ -79,7 +79,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('renders properly with the current user', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: true,
@@ -98,7 +98,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
               acl={acl}
-              authDetails={{user: 'who@external', rootUserName: 'who'}}
+              user={{username: 'who@external', displayName: 'who'}}
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
@@ -113,7 +113,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('renders properly with the model owner', () => {
     const comp = render({
-      authDetails: {user: 'dalek@external', rootUserName: 'dalek'},
+      user: {username: 'dalek@external', displayName: 'dalek'},
       modelName: 'mymodel',
       modelOwner: 'rose',
       showEnvSwitcher: true
@@ -132,7 +132,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
               acl={acl}
-              authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
+              user={{username: 'dalek@external', displayName: 'dalek'}}
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
@@ -148,7 +148,7 @@ describe('HeaderBreadcrumb', () => {
   it('renders properly with a profile', () => {
     appState.current.profile = 'cyberman';
     const comp = render({
-      authDetails: {user: 'dalek@external', rootUserName: 'dalek'},
+      user: {username: 'dalek@external', displayName: 'dalek'},
       modelName: 'mymodel',
       modelOwner: 'rose',
       showEnvSwitcher: true
@@ -183,7 +183,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('does not render the model switcher if told not to', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: false
@@ -195,7 +195,7 @@ describe('HeaderBreadcrumb', () => {
   it('does not render the model switcher when profile is visible', () => {
     appState.current.profile = 'who';
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       // Even though showEnvSwitcher is true, because the profile is visibile
@@ -210,7 +210,7 @@ describe('HeaderBreadcrumb', () => {
   it('does not render the model switcher when in the account page', () => {
     appState.current.root = 'account';
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: true
@@ -221,7 +221,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('does not make the username linkable if we hide model switcher', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: false
@@ -238,7 +238,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('calls the profile view when the current user link is clicked', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: true
@@ -248,7 +248,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('calls the profile view when the model owner link is clicked', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: 'dalek',
       showEnvSwitcher: true
@@ -271,7 +271,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('applies the correct class when loading a model', () => {
     const comp = render({
-      authDetails: {user: 'who@external', rootUserName: 'who'},
+      user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: 'dalek',
       showEnvSwitcher: true,

@@ -79,11 +79,13 @@ YUI.add('string-config', function() {
       var disabled = this.props.disabled;
       var type = this.props.option.type;
       var typeString = type ? ` (${type})` : '';
+      const value = this.state.value;
+      const config = this.props.config;
       var classes = classNames(
         'string-config--value',
         {
           'string-config--changed':
-            this.state.value.toString() !== this.props.config.toString(),
+            (value && value.toString()) !== (config && config.toString()),
           'string-config--disabled': disabled,
         });
       return (

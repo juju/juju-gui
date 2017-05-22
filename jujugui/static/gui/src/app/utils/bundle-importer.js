@@ -681,7 +681,12 @@ YUI.add('bundle-importer', function(Y) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
 
-      const relationId = 'pending-' + record.args[0] + record.args[1];
+      // Create the pending relation id with a combination of the interfaces
+      // and unique app names to avoid conflicts. The app names will have
+      // already been updated where there are multiple services with the same
+      // name (e.g. mysql will become mysql-a).
+      const relationId = 'pending-' + record.args[0] + endpoints[0][0] +
+        record.args[1] + endpoints[1][0];
       const pendingRelation = this.db.relations.add({
         relation_id: relationId,
         'interface': endpoints[0][1].name,
@@ -719,7 +724,26 @@ YUI.add('bundle-importer', function(Y) {
         // We currently only support the setting of app annotations.
         var entityName = record[record.args[0].replace(/^\$/, '')].get('id');
         var application = this.db.services.getById(entityName);
-        application.set('annotations', record.args[2]);
+        const annotations = record.args[2];
+        // If this bundle has been deployed before the new apps will appear
+        // exactly on top of the exist ones, so shift them. This won't prevent
+        // all overlaps, but will prevent apps being hidden behind others.
+        let match = true;
+        while (match) {
+          match = this.db.services.some(app => {
+            const appAnnotations = app.get('annotations');
+            if (annotations['gui-x'] === appAnnotations['gui-x'] &&
+            annotations['gui-y'] === appAnnotations['gui-y']) {
+              return true;
+            }
+          });
+          if (match) {
+            const space = 150;
+            annotations['gui-x'] = parseInt(annotations['gui-x']) + space;
+            annotations['gui-y'] = parseInt(annotations['gui-y']) + space;
+          }
+        }
+        application.set('annotations', annotations);
       }
       next();
     }

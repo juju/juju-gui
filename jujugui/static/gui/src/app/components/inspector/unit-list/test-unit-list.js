@@ -415,12 +415,12 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
-      type: 'base',
+      type: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }, {
       title: 'Retry',
-      type: 'base',
+      type: 'neutral',
       action: buttonItems[1].action,
       disabled: true
     }, {
@@ -441,13 +441,16 @@ describe('UnitList', () => {
     var envResolved = sinon.stub();
     var units = [{
       displayName: 'mysql/0',
-      id: 'mysql/0'
+      id: 'mysql/0',
+      agent_status: 'running'
     }, {
       displayName: 'mysql/1',
-      id: 'mysql/1'
+      id: 'mysql/1',
+      agent_status: 'running'
     }, {
       displayName: 'mysql/2',
-      id: 'mysql/2'
+      id: 'mysql/2',
+      agent_status: 'running'
     }];
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
@@ -473,6 +476,47 @@ describe('UnitList', () => {
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
     // Make sure we mark the unit as resolved so that we can remove it.
     assert.equal(envResolved.callCount, 2);
+  });
+
+  it('does not make an RPC call for pending units', function() {
+    const destroyUnits = sinon.stub();
+    const changeState = sinon.stub();
+    const envResolved = sinon.stub();
+    const units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      id: 'mysql/2'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          acl={acl}
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          envResolved={envResolved}
+          service={service}
+          units={units}
+          whenChanged={sinon.stub()} />);
+    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[3].checked = true;
+    testUtils.Simulate.change(checkboxes[3]);
+    const button = testUtils.findRenderedDOMComponentWithClass(
+        output, 'button--neutral');
+    testUtils.Simulate.click(button);
+    // Remove is still called to remove from ECS.
+    assert.equal(destroyUnits.callCount, 1);
+    assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
+    // Make sure we mark the unit as resolved so that we can remove it.
+    assert.equal(envResolved.callCount, 0);
   });
 
   it('deselects all units after removal', function() {
@@ -538,12 +582,15 @@ describe('UnitList', () => {
     var envResolved = sinon.stub();
     var units = [{
       displayName: 'mysql/0',
+      agent_status: 'running',
       id: 'mysql/0'
     }, {
       displayName: 'mysql/1',
+      agent_status: 'running',
       id: 'mysql/1'
     }, {
       displayName: 'mysql/2',
+      agent_status: 'running',
       id: 'mysql/2'
     }];
     // Have to use renderIntoDocument here as shallowRenderer does not support
@@ -565,7 +612,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[0];
+        output, 'button--neutral')[0];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
@@ -574,10 +621,10 @@ describe('UnitList', () => {
     assert.deepEqual(envResolved.args[1][2], false);
   });
 
-  it('can retry the selected units', function() {
-    var changeState = sinon.stub();
-    var envResolved = sinon.stub();
-    var units = [{
+  it('will not resolve pending units', function() {
+    const changeState = sinon.stub();
+    const envResolved = sinon.stub();
+    const units = [{
       displayName: 'mysql/0',
       id: 'mysql/0'
     }, {
@@ -589,6 +636,46 @@ describe('UnitList', () => {
     }];
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
+    const output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          acl={acl}
+          destroyUnits={sinon.stub()}
+          unitStatus='error'
+          envResolved={envResolved}
+          changeState={changeState}
+          service={service}
+          units={units}
+          whenChanged={sinon.stub()} />);
+    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[2].checked = true;
+    testUtils.Simulate.change(checkboxes[2]);
+    const button = testUtils.scryRenderedDOMComponentsWithClass(
+        output, 'button--neutral')[0];
+    testUtils.Simulate.click(button);
+    assert.equal(envResolved.callCount, 0);
+  });
+
+  it('can retry the selected units', function() {
+    var changeState = sinon.stub();
+    var envResolved = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      agent_status: 'running',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      agent_status: 'running',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      agent_status: 'running',
+      id: 'mysql/2'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
           acl={acl}
@@ -606,13 +693,51 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'button--base')[1];
+        output, 'button--neutral')[1];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
     assert.deepEqual(envResolved.args[0][2], true);
     assert.deepEqual(envResolved.args[1][0], units[1].id);
     assert.deepEqual(envResolved.args[1][2], true);
+  });
+
+  it('won\'t retry pending units', function() {
+    var changeState = sinon.stub();
+    var envResolved = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      agent_status: 'running',
+      id: 'mysql/2'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          acl={acl}
+          destroyUnits={sinon.stub()}
+          unitStatus='error'
+          envResolved={envResolved}
+          changeState={changeState}
+          service={service}
+          units={units}
+          whenChanged={sinon.stub()} />);
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[2].checked = true;
+    testUtils.Simulate.change(checkboxes[2]);
+    var button = testUtils.scryRenderedDOMComponentsWithClass(
+        output, 'button--neutral')[1];
+    testUtils.Simulate.click(button);
+    assert.equal(envResolved.callCount, 0);
   });
 
   it('can disable controls when read only', () => {

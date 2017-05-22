@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('machine-view', function() {
 
   var MachineView = React.createClass({
+    displayName: 'MachineView',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
@@ -29,13 +31,17 @@ YUI.add('machine-view', function() {
       createMachine: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
+      generateMachineDetails: React.PropTypes.func.isRequired,
       machines: React.PropTypes.object.isRequired,
+      parseConstraints: React.PropTypes.func.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
       providerType: React.PropTypes.string,
       removeUnits: React.PropTypes.func.isRequired,
       series: React.PropTypes.array,
       services: React.PropTypes.object.isRequired,
-      units: React.PropTypes.object.isRequired
+      units: React.PropTypes.object.isRequired,
+      updateMachineConstraints: React.PropTypes.func.isRequired,
+      updateMachineSeries: React.PropTypes.func.isRequired
     },
 
     /**
@@ -291,15 +297,22 @@ YUI.add('machine-view', function() {
             acl={this.props.acl}
             destroyMachines={this.props.destroyMachines}
             dropUnit={this._dropUnit}
+            generateMachineDetails={this.props.generateMachineDetails}
             key={machine.id}
             machine={machine}
+            machineModel={this.props.machines.revive(machine)}
+            parseConstraints={this.props.parseConstraints}
+            providerType={this.props.providerType}
             selected={selectedMachine === machine.id}
             selectMachine={this.selectMachine}
+            series={this.props.series}
             services={this.props.services}
             showConstraints={
               this.state.showConstraints || machine.id === selectedMachine}
             type="machine"
-            units={this.props.units} />);
+            units={this.props.units}
+            updateMachineConstraints={this.props.updateMachineConstraints}
+            updateMachineSeries={this.props.updateMachineSeries} />);
       });
       return (
         <div>

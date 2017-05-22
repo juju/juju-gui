@@ -21,9 +21,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-machines', function() {
 
   juju.components.DeploymentMachines = React.createClass({
+    displayName: 'DeploymentMachines',
+
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      formatConstraints: React.PropTypes.func.isRequired,
+      generateMachineDetails: React.PropTypes.func.isRequired,
       machines: React.PropTypes.object
     },
 
@@ -34,7 +38,6 @@ YUI.add('deployment-machines', function() {
       @returns {Object} The list of machines.
     */
     _generateMachines: function() {
-
       const machines = this.props.machines;
       if (!machines || Object.keys(machines).length === 0) {
         return;
@@ -42,27 +45,13 @@ YUI.add('deployment-machines', function() {
       let machineDetails = {};
       Object.keys(machines).forEach(key => {
         const machine = machines[key];
-        let constraintsDetails;
         const args = machine.command.args[0][0];
-        const series = args.series;
-        const constraints = args.constraints || {};
-        let cpu = constraints['cpu-power'];
-        let disk = constraints['root-disk'];
-        let mem = constraints.mem;
-        const cores = constraints.cores;
-        const parts = [];
-        if (cores && cpu && disk && mem) {
-          // Until we have a better way of handling the various units, just
-          // display the constraint without manipulation. See 7e7fd27 for the
-          // massaged, prettier output.
-          cpu = cpu / 100;
-          constraintsDetails = `${cores}x${cpu}GHz, ${mem}, ${disk}`;
-        }
-        if (series) {
-          parts.push(`${series}${constraintsDetails ? ',' : ''}`);
-        }
-        parts.push(constraintsDetails || '(constraints not set)');
-        const info = parts.join(' ');
+        const info = this.props.generateMachineDetails({
+          commitStatus: 'uncommitted',
+          constraints: this.props.formatConstraints(args.constraints),
+          id: machine.command.options.modelId,
+          series: args.series
+        });
         const current = machineDetails[info] || 0;
         machineDetails[info] = current + 1;
       });

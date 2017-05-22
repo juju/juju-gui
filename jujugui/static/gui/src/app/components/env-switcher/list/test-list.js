@@ -52,13 +52,13 @@ describe('EnvList', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
+        user={{username: 'who@external', displayName: 'who'}}
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -109,13 +109,13 @@ describe('EnvList', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
+        user={{username: 'who@external', displayName: 'who'}}
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -181,13 +181,13 @@ describe('EnvList', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@local', rootUserName: 'who'}}
         changeState={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
+        user={{username: 'who@local', displayName: 'who'}}
       />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -212,10 +212,10 @@ describe('EnvList', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
         humanizeTimestamp={humanizeTimestamp}
-        handleModelClick={sinon.stub()} />);
+        handleModelClick={sinon.stub()}
+        user={{username: 'who@local', displayName: 'who'}} />);
     assert.deepEqual(output.props.children[0].props.children, false);
   });
 
@@ -229,10 +229,10 @@ describe('EnvList', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
-        handleModelClick={handleModelClick} />);
+        handleModelClick={handleModelClick}
+        user={{username: 'who@local', displayName: 'who'}} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
@@ -247,12 +247,12 @@ describe('EnvList', function() {
     const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         acl={acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
-        switchModel={switchModel} />);
+        switchModel={switchModel}
+        user={{username: 'who@local', displayName: 'who'}} />);
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));
@@ -266,12 +266,12 @@ describe('EnvList', function() {
     const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         acl={_acl}
-        authDetails={{user: 'who@external', rootUserName: 'who'}}
         changeState={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
-        switchModel={switchModel} />);
+        switchModel={switchModel}
+        user={{username: 'who@local', displayName: 'who'}} />);
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));

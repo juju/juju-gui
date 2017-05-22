@@ -27,6 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('autodeploy-extension', function(Y) {
 
   var widgets = Y.namespace('juju.widgets');
+  const utils = Y.namespace('juju.views.utils');
 
   /**
     Enables widgets to automatically place new units on new machines.
@@ -68,13 +69,7 @@ YUI.add('autodeploy-extension', function(Y) {
     _createMachine: function(containerType, parentId, series, constraints) {
       const db = this.get('db') || this.db;
       const env = this.get('env') || this.env;
-      const cons = Object.keys(constraints || {}).reduce((collected, key) => {
-        const value = constraints[key];
-        if (value) {
-          collected.push(key + '=' + value);
-        }
-        return collected;
-      }, []).join(' ');
+      const cons = utils.formatConstraints(constraints);
       const machine = db.machines.addGhost(
         parentId, containerType, {series: series, constraints: cons});
       // XXX A callback param MUST be provided even if it's just an
@@ -170,5 +165,7 @@ YUI.add('autodeploy-extension', function(Y) {
   widgets.AutodeployExtension = AutodeployExtension;
 
 }, '', {
-  requires: []
+  requires: [
+    'juju-view-utils'
+  ]
 });
