@@ -133,6 +133,14 @@ YUI.add('deployment-credential', function() {
         showAdd: this.props.editable &&
           (!credentials || credentialList.length === 0)
       });
+      this.props.sendAnalytics(
+        'Select cloud',
+        this.props.cloud.name,
+        ((!credentials || credentialList.length === 0) ?
+          'doesn\'t have' :
+          'has') +
+        ' credentials'
+      );
       if (credentials && credentialList.length > 0) {
         let select = credentialList[0].id;
         // If the supplied credential to select is actually in the list then
@@ -168,7 +176,6 @@ YUI.add('deployment-credential', function() {
         this.props.setCredential(null);
       } else if (cancel) {
         this.props.sendAnalytics(
-          'Deployment Flow',
           'Button click',
           'Cancel add credential'
         );

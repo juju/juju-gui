@@ -29,6 +29,7 @@ YUI.add('deployment-panel', function() {
         React.PropTypes.object,
         React.PropTypes.array
       ]),
+      sendAnalytics: React.PropTypes.func,
       title: React.PropTypes.string,
     },
 
@@ -38,6 +39,10 @@ YUI.add('deployment-panel', function() {
       @method _handleClose
     */
     _handleClose: function() {
+      this.props.sendAnalytics(
+        'Button click',
+        'Cancel deployment'
+      );
       this.props.changeState({
         gui: {deploy: null},
         profile: null

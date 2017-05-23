@@ -850,9 +850,8 @@ describe('DeploymentCredentialAdd', function() {
     };
     instance._handleAddCredentials();
     assert.equal(sendAnalytics.callCount, 1);
-    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(sendAnalytics.args[0][1], 'Button click');
-    assert.equal(sendAnalytics.args[0][2], 'Add credentials');
+    assert.deepEqual(sendAnalytics.args[0],
+      ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1);
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'new@test');

@@ -109,6 +109,7 @@ YUI.add('deployment-flow', function() {
       if (this.state.loggedIn) {
         this._getAgreements();
       }
+      this.sendAnalytics('Deployment started');
     },
 
     componentDidMount: function() {
@@ -226,13 +227,6 @@ YUI.add('deployment-flow', function() {
       @param {String} cloud The selected cloud.
     */
     _setCloud: function(cloud) {
-      if (cloud) {
-        this.props.sendAnalytics(
-          'Deployment Flow',
-          'Select cloud',
-          cloud.name
-        );
-      }
       this.setState({cloud: cloud, vpcId: INITIAL_VPC_ID});
     },
 
@@ -325,11 +319,6 @@ YUI.add('deployment-flow', function() {
         // Here we need to just prevent the deployment flow to close.
         return;
       }
-      this.props.sendAnalytics(
-        'Deployment Flow',
-        'Button click',
-        'Close - Exit deployment'
-      );
       this.props.changeState({
         gui: {
           deploy: null
@@ -361,6 +350,10 @@ YUI.add('deployment-flow', function() {
         return;
       }
       this.setState({deploying: true});
+      this.sendAnalytics(
+        'Button click',
+        'Deploy model'
+      );
       const args = {
         config: {},
         cloud: this.state.cloud && this.state.cloud.name || undefined,
@@ -642,6 +635,37 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Wrapper that generates a string based on various state to send to GA.
+
+      @method sendAnalytics
+      @param {string} action The action being performed.
+      @param {arguments} args All arguments passed will be used.
+    */
+    sendAnalytics: function(action, ...args) {
+      if (this.props.ddData) {
+        args.push('is DD');
+      } else {
+        args.push('is from canvas');
+      }
+      if (!this.props.modelCommitted) {
+        args.push('is new model');
+      } else {
+        args.push('is model update');
+      }
+      if (this.props.gisf) {
+        args.push('has USSO');
+      } else {
+        args.push('doesn\'t have USSO');
+      }
+
+      this.props.sendAnalytics(
+        'Deployment Flow',
+        action,
+        args.join(' - ')
+      );
+    },
+
+    /**
       Generate the login link
 
       @method _generateLogin
@@ -769,7 +793,7 @@ YUI.add('deployment-flow', function() {
             getCloudCredentials={this.props.getCloudCredentials}
             getCloudCredentialNames={this.props.getCloudCredentialNames}
             region={this.state.region}
-            sendAnalytics={this.props.sendAnalytics}
+            sendAnalytics={this.sendAnalytics}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
             updateCloudCredential={this.props.updateCloudCredential}
@@ -1053,6 +1077,7 @@ YUI.add('deployment-flow', function() {
         return (
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
+            sendAnalytics={this.sendAnalytics}
             title={this.props.modelName}>
             {this._generateDirectDeploy()}
             {this._generateModelNameSection()}
@@ -1083,6 +1108,7 @@ YUI.add('deployment-flow', function() {
         return (
           <juju.components.DeploymentPanel
             changeState={this.props.changeState}
+            sendAnalytics={this.sendAnalytics}
             title={this.props.modelName}>
             {this._generateDirectDeploy()}
             {this._generateLogin()}

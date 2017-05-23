@@ -148,7 +148,8 @@ describe('DeploymentFlow', function() {
     const expected = (
       <juju.components.DeploymentPanel
         changeState={props.changeState}
-        title="Pavlova">
+        title="Pavlova"
+        sendAnalytics={sinon.stub()}>
         {undefined}
         <juju.components.DeploymentSection
           instance="deployment-model-name"
@@ -376,9 +377,10 @@ describe('DeploymentFlow', function() {
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
     assert.equal(instance.props.sendAnalytics.callCount, 1);
-    assert.equal(instance.props.sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(instance.props.sendAnalytics.args[0][1], 'Select cloud');
-    assert.equal(instance.props.sendAnalytics.args[0][2], 'cloud-2');
+    assert.deepEqual(instance.props.sendAnalytics.args[0],
+      ['Deployment Flow',
+        'Deployment started',
+        'is DD - is new model - doesn\'t have USSO']);
   });
 
   it('can enable the credential section', function() {
@@ -700,10 +702,16 @@ describe('DeploymentFlow', function() {
     assert.equal(props.changeState.callCount, 1);
     assert.equal(props.setModelName.callCount, 1);
     assert.equal(props.setModelName.args[0][0], 'Lamington');
-    assert.equal(props.sendAnalytics.callCount, 1);
-    assert.equal(props.sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(props.sendAnalytics.args[0][1], 'Button click');
-    assert.equal(props.sendAnalytics.args[0][2], 'Close - Exit deployment');
+    assert.equal(props.sendAnalytics.callCount, 2);
+    assert.deepEqual(props.sendAnalytics.args[0],
+      ['Deployment Flow',
+        'Deployment started',
+        'is DD - is model update - doesn\'t have USSO']);
+    assert.deepEqual(props.sendAnalytics.args[1],
+      ['Deployment Flow',
+        'Button click',
+        'Deploy model - is DD' +
+        ' - is model update - doesn\'t have USSO']);
   });
 
   it('can agree to terms during deploy', function() {

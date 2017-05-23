@@ -206,7 +206,7 @@ describe('DeploymentCredential', function() {
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
-        cloud={null}
+        cloud={{name: 'test'}}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
@@ -234,7 +234,7 @@ describe('DeploymentCredential', function() {
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
             close={instance._toggleAdd}
-            cloud={null}
+            cloud={{name: 'test'}}
             credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
@@ -591,9 +591,12 @@ describe('DeploymentCredential', function() {
     instance._toggleAdd(true);
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], credential);
-    assert.equal(sendAnalytics.callCount, 1);
-    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(sendAnalytics.args[0][1], 'Button click');
-    assert.equal(sendAnalytics.args[0][2], 'Cancel add credential');
+    assert.equal(sendAnalytics.callCount, 2);
+    assert.deepEqual(sendAnalytics.args[0], [
+      'Select cloud',
+      undefined,
+      'has credentials']);
+    assert.deepEqual(sendAnalytics.args[1],
+      ['Button click', 'Cancel add credential']);
   });
 });
