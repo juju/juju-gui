@@ -3,6 +3,14 @@
 
   &__header {
     margin: 0 0 1.6em;
+
+    .hash-link {
+      display: none;
+    }
+
+    &:hover .hash-link {
+      display: inline-block;
+    }
   }
 
   &__description {
@@ -115,6 +123,21 @@
     h5,
     h6 {
       font-size: 1em;
+    }
+
+    .readme-link {
+      display: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      &:hover .readme-link {
+        display: inline-block;
+      }
     }
 
     ul {

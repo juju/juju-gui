@@ -21,13 +21,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-content-readme', function() {
 
   juju.components.EntityContentReadme = React.createClass({
+    displayName: 'EntityContentReadme',
     readmeXhr: null,
 
     /* Define and validate the properites available on this component. */
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
-      renderMarkdown: React.PropTypes.func.isRequired
+      hash: React.PropTypes.string,
+      renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -40,10 +44,32 @@ YUI.add('entity-content-readme', function() {
       this._getReadme();
     },
 
+    componentDidUpdate: function(prevProps, prevState) {
+      const hash = this.props.hash;
+      if (hash && hash !== prevProps.hash) {
+        this.props.scrollCharmbrowser(this._getContainer());
+      }
+    },
+
     componentWillUnmount: function() {
       if (this.readmeXhr) {
         this.readmeXhr.abort();
       }
+      // Remove the readme link components.
+      this._getContainer().querySelectorAll('.readme-link').forEach(
+        link => {
+          ReactDOM.unmountComponentAtNode(link);
+        });
+    },
+
+    /**
+      Get the container node for the component. There is a bug with using
+      findDOMNode in the tests so use this method to stub it out.
+
+      @return {Object} The comonent's container node.
+    */
+    _getContainer: function() {
+      return ReactDOM.findDOMNode(this);
     },
 
     /**
@@ -93,18 +119,49 @@ YUI.add('entity-content-readme', function() {
     */
     _getReadmeCallback: function(error, data) {
       if (error) {
-        console.error(error); 
+        console.error(error);
         this.setState({readme: 'No readme.'});
-      } else {
-        var readme = data;
-        this.setState({readme: this.props.renderMarkdown(readme)});
+        return;
       }
+      const readme = data;
+      const renderMarkdown = this.props.renderMarkdown;
+      let renderer = new renderMarkdown.Renderer();
+      renderer.heading = (text, level) => {
+        const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+        return `<h${level} id="${escapedText}">
+            ${text}
+            <span class="readme-link" data-id="${escapedText}">link</span>
+          </h${level}>`;
+      };
+      this.setState(
+        {readme: renderMarkdown(readme, {renderer: renderer})}, () => {
+          if (this.props.hash) {
+            this.props.scrollCharmbrowser(this._getContainer());
+          }
+          // Set up the components to link to the readme headings.
+          this._getContainer().querySelectorAll('.readme-link').forEach(
+            link => {
+              const id = link.getAttribute('data-id');
+              // The components have to be rendered to the elements due to the
+              // headings having been created by the markdown lib.
+              ReactDOM.render(
+                <juju.components.HashLink
+                  changeState={this.props.changeState}
+                  hash={id} />,
+                link);
+            });
+        });
     },
 
     render: function() {
       return (
         <div className="entity-content__readme">
-          <h2 className="entity-content__header" id="readme">Readme</h2>
+          <h2 className="entity-content__header" id="readme">
+            Readme
+            <juju.components.HashLink
+              changeState={this.props.changeState}
+              hash="readme" />
+          </h2>
           <div ref="content" className="entity-content__readme-content"
             dangerouslySetInnerHTML={{__html: this.state.readme}} />
         </div>
@@ -113,5 +170,7 @@ YUI.add('entity-content-readme', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'hash-link'
+  ]
 });

@@ -105,6 +105,7 @@ describe('service module annotations', function() {
     document.dispatchEvent(new Event('topo.clearState'));
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
+      hash: null,
       root: null,
       user: null,
       gui: {

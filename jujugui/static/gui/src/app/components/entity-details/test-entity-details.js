@@ -34,7 +34,7 @@ describe('EntityDetails', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
-    urllib = {fromLegacyString: sinon.stub()};
+    urllib = sinon.stub();
   });
 
   afterEach(function() {
@@ -57,6 +57,7 @@ describe('EntityDetails', function() {
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -69,6 +70,7 @@ describe('EntityDetails', function() {
           getEntity={getEntity}
           getFile={getFile}
           getModelName={getModelName}
+          hash="readme"
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -76,6 +78,7 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
+          scrollCharmbrowser={scrollCharmbrowser}
           setPageTitle={sinon.stub()}
           showTerms={showTerms}
           staticURL="http://example.com"
@@ -117,9 +120,11 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            hash="readme"
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -150,11 +155,13 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={sinon.stub()}
           listPlansForCharm={sinon.spy()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
+          scrollCharmbrowser={sinon.stub()}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
@@ -198,6 +205,7 @@ describe('EntityDetails', function() {
     const getDiagramURL = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -212,11 +220,13 @@ describe('EntityDetails', function() {
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
+          hash="readme"
           listPlansForCharm={sinon.stub()}
           id={id}
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel}
+          scrollCharmbrowser={scrollCharmbrowser}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
           staticURL="http://example.com"
@@ -261,9 +271,11 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            hash="readme"
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -294,11 +306,13 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={sinon.stub()}
           listPlansForCharm={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
+          scrollCharmbrowser={sinon.stub()}
           scrollPosition={0}
           setPageTitle={sinon.stub()}
           showTerms={sinon.stub()}
@@ -326,11 +340,13 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
+        getModelName={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -361,6 +377,7 @@ describe('EntityDetails', function() {
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -373,12 +390,14 @@ describe('EntityDetails', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        hash="readme"
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -421,9 +440,11 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            hash="readme"
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>
@@ -450,6 +471,7 @@ describe('EntityDetails', function() {
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
     const showTerms = sinon.stub();
+    const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -462,12 +484,14 @@ describe('EntityDetails', function() {
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
+        hash="readme"
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
+        scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -510,9 +534,11 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            hash="readme"
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
+            scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
           </div>

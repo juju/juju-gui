@@ -35,12 +35,14 @@ YUI.add('entity-details', function() {
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       getModelName: React.PropTypes.func.isRequired,
+      hash: React.PropTypes.string,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
       setPageTitle: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
@@ -101,11 +103,13 @@ YUI.add('entity-details', function() {
                   apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
+                  hash={this.props.hash}
                   hasPlans={this.state.hasPlans}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}
                   plans={this.state.plans}
                   pluralize={this.props.pluralize}
+                  scrollCharmbrowser={this.props.scrollCharmbrowser}
                   showTerms={this.props.showTerms}
                 />
               </div>

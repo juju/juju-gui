@@ -169,6 +169,7 @@ YUI.add('header-search', function() {
       }
       const query = this.state.query.replace(/ /g, '');
       this.props.appState.changeState({
+        hash: null,
         root: null,
         search: {
           owner: null,
@@ -191,6 +192,7 @@ YUI.add('header-search', function() {
     _handleClose: function() {
       this._closeSearch();
       this.props.appState.changeState({
+        hash: null,
         root: null,
         store: null,
         search: null

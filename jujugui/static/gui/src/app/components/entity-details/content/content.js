@@ -30,9 +30,11 @@ YUI.add('entity-content', function() {
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
+      hash: React.PropTypes.string,
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
+      scrollCharmbrowser: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
     },
 
@@ -277,6 +279,7 @@ YUI.add('entity-content', function() {
     _handleTagClick: function(e) {
       e.stopPropagation();
       this.props.changeState({
+        hash: null,
         search: {
           tags: e.target.getAttribute('data-id'),
           text: ''
@@ -602,9 +605,12 @@ YUI.add('entity-content', function() {
             <div className="inner-wrapper">
               <div className="seven-col append-one">
                 <juju.components.EntityContentReadme
+                  changeState={this.props.changeState}
                   entityModel={entityModel}
+                  getFile={this.props.getFile}
+                  hash={this.props.hash}
                   renderMarkdown={this.props.renderMarkdown}
-                  getFile={this.props.getFile} />
+                  scrollCharmbrowser={this.props.scrollCharmbrowser} />
               </div>
               <div className="four-col">
                 {this._generateActions()}

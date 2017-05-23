@@ -93,6 +93,7 @@ YUI.add('entity-header', function() {
     */
     _closeEntityDetails: function() {
       this.props.changeState({
+        hash: null,
         profile: null,
         store: null
       });
@@ -341,7 +342,11 @@ YUI.add('entity-header', function() {
       evt.stopPropagation();
       const props = this.props;
       const entity = props.entityModel;
-      props.changeState({store: null, profile: entity.get('owner')});
+      props.changeState({
+        hash: null,
+        store: null,
+        profile: entity.get('owner')
+      });
     },
 
     /**

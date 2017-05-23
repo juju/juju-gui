@@ -102,7 +102,7 @@ describe('Charmbrowser', function() {
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays the store when the app state calls for it', function() {
@@ -157,13 +157,14 @@ describe('Charmbrowser', function() {
               setPageTitle={setPageTitle} />
           </div>
         </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays entity details when the app state calls for it', function() {
     const id = 'foobar';
     const apiUrl = 'http://example.com';
     appState.current.store = id;
+    appState.current.hash = 'readme';
     const getEntity = sinon.spy();
     const makeEntityModel = sinon.spy();
     const deployService = sinon.spy();
@@ -227,6 +228,7 @@ describe('Charmbrowser', function() {
                 output.props.children.props.children.props.changeState}
               getEntity={getEntity}
               getModelName={getModelName}
+              hash="readme"
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}
@@ -237,6 +239,7 @@ describe('Charmbrowser', function() {
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize}
+              scrollCharmbrowser={instance._scrollCharmbrowser}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
               urllib={urllib}
@@ -249,6 +252,7 @@ describe('Charmbrowser', function() {
   it('displays entity details when the state has a user path', function() {
     const apiUrl = 'http://example.com';
     appState.current.user = 'spinch/koala';
+    appState.current.hash = 'readme';
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub();
     const deployService = sinon.stub();
@@ -317,11 +321,13 @@ describe('Charmbrowser', function() {
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}
+              hash="readme"
               renderMarkdown={renderMarkdown}
               deployService={deployService}
               id='~spinch/koala'
               addNotification={addNotification}
               pluralize={utils.pluralize}
+              scrollCharmbrowser={instance._scrollCharmbrowser}
               setPageTitle={setPageTitle}
               showTerms={showTerms}
               urllib={urllib}
@@ -365,6 +371,7 @@ describe('Charmbrowser', function() {
     output.props.clickAction();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
+      hash: null,
       root: null,
       search: null,
       store: null

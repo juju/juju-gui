@@ -1132,6 +1132,7 @@ YUI.add('juju-topology-service', function(Y) {
           machines: null,
           inspector: null
         },
+        hash: null,
         search: null,
         store: null
       });
