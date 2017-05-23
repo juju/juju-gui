@@ -1,6 +1,6 @@
 .env-switcher {
   &__toggle {
-    border: 1px solid $light-mid-grey;
+    border: 1px solid $color-mid-light;
     border-radius: 2px;
     color: $cool-grey;
     cursor: pointer;
@@ -16,7 +16,7 @@
   }
 
   &__name {
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
 
     &:before {

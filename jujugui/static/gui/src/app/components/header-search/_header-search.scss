@@ -2,7 +2,7 @@
   $transition-duration: .3s;
   background-color: transparent;
   color: $dark-warm-grey;
-  padding: 12px;
+  padding: 10px 12px;
   transition: background-color $transition-duration;
 
   &--active {
@@ -49,7 +49,7 @@
     left: 15px;
     padding: 0;
     position: absolute;
-    top: 10px;
+    top: 7px;
 
     &:focus,
     &:active,
@@ -60,26 +60,29 @@
 
   &__input {
     font-weight: 300;
-    padding: 10px 10px 10px 40px;
+    padding: 8px 40px;
     border: 1px solid #cdcdcd;
     border-radius: $border-radius;
-    width: 236px;
+    width: 206px;
     height: 22px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12);
   }
 
   .svg-icon {
     fill: $dark-warm-grey;
     transition: fill $transition-duration;
+
+    &:hover {
+      fill: $black;
+    }
   }
 
   &__close {
     cursor: pointer;
     position: absolute;
     right: 12px;
-    top: 12px;
+    top: 11px;
     border-left: 1px solid #cdcdcd;
-    padding: 14px;
+    padding:  11px;
     line-height: 15px;
 
     &:focus,

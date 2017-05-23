@@ -14,6 +14,7 @@
   &--left {
     z-index: index($z-indexed-elements, header-banner-breadcrumbs);
     left: 0;
+    width: 100%;
   }
 
   &__link {
@@ -39,11 +40,13 @@
   .header-banner__list--right {
     @extend %list-style;
     float: right;
+    margin-right: 10px;
   }
 
   .header-banner__list-item {
     float: left;
     padding: 21px 8px;
+    margin-bottom: 0;
 
     &--no-padding {
       padding: 0;
@@ -87,11 +90,11 @@
     display: inline-block;
     border-radius: 2px;
     border-right-width: 0;
-    border: 1px solid $light-mid-grey;
+    border: 1px solid $color-mid-light;
     transition: background-color .2s;
     background-color: $canvas-background;
-    padding: 13px 11px;
-    margin: 12px 0 11px 12px;
+    padding: 11px;
+    margin: 10px 0 10px 10px;
     // scss-lint:disable ImportantRule
     color: $warm-grey !important;
     // scss-lint:enable ImportantRule
