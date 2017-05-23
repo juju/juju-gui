@@ -29,7 +29,7 @@ describe('CheckListItem', () => {
   });
 
   it('renders ui based on props', () => {
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -38,20 +38,24 @@ describe('CheckListItem', () => {
           id="apache/2"
           className="select-all"
           aside="3"
-          whenChanged={sinon.stub()}
-        />);
-    assert.deepEqual(output,
+          whenChanged={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    expect(output).toEqualJSX(
         <li className="check-list-item check-list-item--select-all"
           data-id="apache/2"
           onClick={undefined} tabIndex="0" role="button">
           <label htmlFor="a-label-item">
-            <input
-              disabled={false}
-              type="checkbox"
-              id="a-label-item"
-              onClick={output.props.children.props.children[0].props.onClick}
-              onChange={output.props.children.props.children[0].props.onChange}
-              checked={false} />
+            <div className="check-list-item__hit-area"
+              onClick={instance._hitAreaClick}>
+              <input
+                disabled={false}
+                type="checkbox"
+                id="a-label-item"
+                onClick={instance._stopBubble}
+                onChange={instance._handleChange}
+                checked={false} />
+            </div>
             <span className="check-list-item__label">
               a-label
             </span>
@@ -64,7 +68,7 @@ describe('CheckListItem', () => {
   });
 
   it('displays extraInfo when provided', () => {
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -73,20 +77,24 @@ describe('CheckListItem', () => {
           id="apache/2"
           aside="3"
           extraInfo="Current workload status"
-          whenChanged={sinon.stub()}
-        />);
-    assert.deepEqual(output,
+          whenChanged={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    expect(output).toEqualJSX(
         <li className="check-list-item check-list-item--extra-info"
           data-id="apache/2"
           onClick={undefined} tabIndex="0" role="button">
           <label htmlFor="a-label-item">
-            <input
-              disabled={false}
-              type="checkbox"
-              id="a-label-item"
-              onClick={output.props.children.props.children[0].props.onClick}
-              onChange={output.props.children.props.children[0].props.onChange}
-              checked={false} />
+            <div className="check-list-item__hit-area"
+              onClick={instance._hitAreaClick}>
+              <input
+                disabled={false}
+                type="checkbox"
+                id="a-label-item"
+                onClick={instance._stopBubble}
+                onChange={instance._handleChange}
+                checked={false} />
+            </div>
             <span className="check-list-item__label">
               a-label
             </span>
@@ -102,7 +110,7 @@ describe('CheckListItem', () => {
   });
 
   it('does not set a "for" id on the label if it is a nav element', () => {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -116,7 +124,7 @@ describe('CheckListItem', () => {
   });
 
   it('has a nav class if it is a nav element', () => {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -131,8 +139,8 @@ describe('CheckListItem', () => {
   });
 
   it('calls the supplied whenChanged if supplied', () => {
-    var whenChanged = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const whenChanged = sinon.stub();
+    const output = jsTestUtils.shallowRender(
       <juju.components.CheckListItem
         key="unique"
         checked={false}
@@ -140,7 +148,10 @@ describe('CheckListItem', () => {
         whenChanged={whenChanged}
         label="a-label"
       />);
-    output.props.children.props.children[0].props.onChange({
+    const label = output.props.children;
+    const hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    input.props.onChange({
       currentTarget: {
         checked: true
       }
@@ -150,10 +161,10 @@ describe('CheckListItem', () => {
   });
 
   it('does not bubble the click event when clicking a checkbox', () => {
-    var actionStub = sinon.stub();
+    const actionStub = sinon.stub();
     // Need to render the full component here as shallowRenderer does not yet
     // support simulating click events.
-    var output = testUtils.renderIntoDocument(
+    const output = testUtils.renderIntoDocument(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -163,13 +174,13 @@ describe('CheckListItem', () => {
           action={actionStub}
           whenChanged={sinon.stub()}
         />);
-    var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
+    const checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
     testUtils.Simulate.click(checkbox);
     assert.equal(actionStub.callCount, 0);
   });
 
   it('can have a disabled checkbox', () => {
-    var output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
           key="unique"
           checked={false}
@@ -178,16 +189,50 @@ describe('CheckListItem', () => {
           id="apache/2"
           className="select-all"
           aside="3"
-          whenChanged={sinon.stub()}
-        />);
-    var expected = (
+          whenChanged={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <input
         disabled={true}
         type="checkbox"
         id="a-label-item"
-        onClick={output.props.children.props.children[0].props.onClick}
-        onChange={output.props.children.props.children[0].props.onChange}
+        onClick={instance._stopBubble}
+        onChange={instance._handleChange}
         checked={false} />);
-    assert.deepEqual(output.props.children.props.children[0], expected);
+    const label = output.props.children;
+    const hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    expect(input).toEqualJSX(expected);
+  });
+
+  it('can toggle the checkbox from the hit area', () => {
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.CheckListItem
+          action={sinon.stub()}
+          checked={false}
+          disabled={false}
+          label="a-label"
+          whenChanged={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    // Simulate clicking on the hit area.
+    let label = output.props.children;
+    let hitArea = label.props.children[0];
+    hitArea.props.onClick(
+      {stopPropagation: sinon.stub()});
+    output = renderer.getRenderOutput();
+    const expected = (
+      <input
+        disabled={false}
+        type="checkbox"
+        id="a-label-item"
+        onClick={instance._stopBubble}
+        onChange={instance._handleChange}
+        checked={true} />);
+    label = output.props.children;
+    hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    expect(input).toEqualJSX(expected);
   });
 });

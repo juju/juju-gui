@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('check-list-item', function() {
 
   juju.components.CheckListItem = React.createClass({
+    displayName: 'CheckListItem',
 
     propTypes: {
       action: React.PropTypes.func,
@@ -94,6 +95,22 @@ YUI.add('check-list-item', function() {
     },
 
     /**
+      Toggle the checkbox when the hit area is clicked.
+
+      @param evt {Object} The click event from the hit area.
+    */
+    _hitAreaClick: function(evt) {
+      // If there is no action to be triggered by clicking on the list item then
+      // we don't need to capture and pass the event to the checkbox.
+      if (!this.props.action) {
+        return;
+      }
+      this._stopBubble(evt);
+      // Simulate the click on the checkbox.
+      this._handleChange({currentTarget: {checked: !this.state.checked}});
+    },
+
+    /**
       Don't bubble the click event to the parent.
 
       @method _stopBubble
@@ -136,13 +153,16 @@ YUI.add('check-list-item', function() {
           data-id={this.props.id}
           onClick={this.props.action} tabIndex="0" role="button">
           <label htmlFor={this._generateId(id)}>
-            <input
-              disabled={this.props.disabled}
-              type="checkbox"
-              id={id}
-              onClick={this._stopBubble}
-              onChange={this._handleChange}
-              checked={this.state.checked} />
+            <div className="check-list-item__hit-area"
+              onClick={this._hitAreaClick}>
+              <input
+                disabled={this.props.disabled}
+                type="checkbox"
+                id={id}
+                onClick={this._stopBubble}
+                onChange={this._handleChange}
+                checked={this.state.checked} />
+            </div>
             <span className="check-list-item__label">
               {this.props.label}
             </span>
