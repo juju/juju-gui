@@ -379,7 +379,8 @@ describe('DeploymentFlow', function() {
     assert.equal(instance.props.sendAnalytics.callCount, 1);
     assert.deepEqual(instance.props.sendAnalytics.args[0],
       ['Deployment Flow',
-        'Deployment started - is DD - is new model - doesn\'t have USSO']);
+        'Deployment started',
+        'is DD - is new model - doesn\'t have USSO']);
   });
 
   it('can enable the credential section', function() {
@@ -704,10 +705,12 @@ describe('DeploymentFlow', function() {
     assert.equal(props.sendAnalytics.callCount, 2);
     assert.deepEqual(props.sendAnalytics.args[0],
       ['Deployment Flow',
-        'Deployment started - is DD - is model update - doesn\'t have USSO']);
+        'Deployment started',
+        'is DD - is model update - doesn\'t have USSO']);
     assert.deepEqual(props.sendAnalytics.args[1],
       ['Deployment Flow',
-        'Button click - Deploy model - is DD' +
+        'Button click',
+        'Deploy model - is DD' +
         ' - is model update - doesn\'t have USSO']);
   });
 

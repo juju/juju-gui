@@ -638,10 +638,10 @@ YUI.add('deployment-flow', function() {
       Wrapper that generates a string based on various state to send to GA.
 
       @method sendAnalytics
-      @param {arguments} arguments All arguments passed will be used.
+      @param {string} action The action being performed.
+      @param {arguments} args All arguments passed will be used.
     */
-    sendAnalytics: function() {
-      let args = Array.apply(null, arguments);
+    sendAnalytics: function(action, ...args) {
       if (this.props.ddData) {
         args.push('is DD');
       } else {
@@ -660,6 +660,7 @@ YUI.add('deployment-flow', function() {
 
       this.props.sendAnalytics(
         'Deployment Flow',
+        action,
         args.join(' - ')
       );
     },
