@@ -100,8 +100,14 @@ YUI.add('check-list-item', function() {
       @param evt {Object} The click event from the hit area.
     */
     _hitAreaClick: function(evt) {
+      // If there is no action to be triggered by clicking on the list item then
+      // we don't need to capture and pass the event to the checkbox.
+      if (!this.props.action) {
+        return;
+      }
       this._stopBubble(evt);
-      this.setState({checked: !this.state.checked});
+      // Simulate the click on the checkbox.
+      this._handleChange({currentTarget: {checked: !this.state.checked}});
     },
 
     /**

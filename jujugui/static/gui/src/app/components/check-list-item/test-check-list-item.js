@@ -148,7 +148,10 @@ describe('CheckListItem', () => {
         whenChanged={whenChanged}
         label="a-label"
       />);
-    output.props.children.props.children[0].props.children.props.onChange({
+    const label = output.props.children;
+    const hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    input.props.onChange({
       currentTarget: {
         checked: true
       }
@@ -197,13 +200,16 @@ describe('CheckListItem', () => {
         onClick={instance._stopBubble}
         onChange={instance._handleChange}
         checked={false} />);
-    expect(output.props.children.props.children[0].props.children).toEqualJSX(
-      expected);
+    const label = output.props.children;
+    const hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    expect(input).toEqualJSX(expected);
   });
 
   it('can toggle the checkbox from the hit area', () => {
     const renderer = jsTestUtils.shallowRender(
         <juju.components.CheckListItem
+          action={sinon.stub()}
           checked={false}
           disabled={false}
           label="a-label"
@@ -211,7 +217,9 @@ describe('CheckListItem', () => {
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     // Simulate clicking on the hit area.
-    output.props.children.props.children[0].props.onClick(
+    let label = output.props.children;
+    let hitArea = label.props.children[0];
+    hitArea.props.onClick(
       {stopPropagation: sinon.stub()});
     output = renderer.getRenderOutput();
     const expected = (
@@ -222,7 +230,9 @@ describe('CheckListItem', () => {
         onClick={instance._stopBubble}
         onChange={instance._handleChange}
         checked={true} />);
-    expect(output.props.children.props.children[0].props.children).toEqualJSX(
-      expected);
+    label = output.props.children;
+    hitArea = label.props.children[0];
+    const input = hitArea.props.children;
+    expect(input).toEqualJSX(expected);
   });
 });
