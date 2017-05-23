@@ -1728,8 +1728,12 @@ YUI.add('juju-gui', function(Y) {
           }
         }
       });
-      // Retrieve from the charm store information on the charm or bundle with
-      // the given new style id.
+      /*
+       Retrieve from the charm store information on the charm or bundle with
+       the given new style id.
+
+       @returns {Object} The XHR reference for the getEntity call.
+      */
       const getEntity = (id, callback) => {
         let url;
         try {
@@ -1738,7 +1742,8 @@ YUI.add('juju-gui', function(Y) {
           callback(err, {});
           return;
         }
-        charmstore.getEntity(url.legacyPath(), callback);
+        // Get the entity and return the XHR.
+        return charmstore.getEntity(url.legacyPath(), callback);
       };
       const getModelName = () => this.env.get('environmentName');
       ReactDOM.render(
