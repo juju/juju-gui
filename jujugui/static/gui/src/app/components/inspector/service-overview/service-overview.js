@@ -63,9 +63,16 @@ YUI.add('service-overview', function() {
         return;
       }
 
+      if (!props.showPlans) {
+        // If the showPlans is false then return here. This is set by the
+        // plansFlag config option.
+        return;
+      }
+
       const plans = props.charm.get('plans');
       const service = props.service;
       const activePlan = service.get('activePlan');
+      const modelUUID = props.modelUUID;
 
       if (plans || activePlan) {
         // If we already have plans then set them so that the UI can render
@@ -73,12 +80,14 @@ YUI.add('service-overview', function() {
         this.setState({plans, activePlan});
       }
 
-      if (plans === undefined || activePlan === undefined) {
+      if (modelUUID && (plans === undefined || activePlan === undefined)) {
+        // Do not make a request if we're in a uncommitted model. modelUUID
+        // will be undefined in this case.
         // If we don't have the plans or the activePlan then make a request
         // to fetch them. This is a fallback as the UI should handle
         // insufficient data transparently.
         props.showActivePlan(
-          props.modelUUID,
+          modelUUID,
           service.get('name'),
           (err, activePlan, plans) => {
             if (err) {

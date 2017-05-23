@@ -53,6 +53,7 @@ YUI.add('inspector-component', function() {
       setCharm: React.PropTypes.func.isRequired,
       setConfig: React.PropTypes.func.isRequired,
       showActivePlan: React.PropTypes.func.isRequired,
+      showPlans: React.PropTypes.bool.isRequired,
       unexposeService: React.PropTypes.func.isRequired,
       unplaceServiceUnits: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
@@ -142,7 +143,8 @@ YUI.add('inspector-component', function() {
               modelUUID={this.props.modelUUID}
               service={service}
               serviceRelations={this.props.serviceRelations}
-              showActivePlan={this.props.showActivePlan} />,
+              showActivePlan={this.props.showActivePlan}
+              showPlans={this.props.showPlans} />,
             backState: backState
           };
           break;

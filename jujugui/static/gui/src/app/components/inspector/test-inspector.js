@@ -101,6 +101,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={showActivePlan}
+          showPlans={true}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -129,7 +130,8 @@ describe('Inspector', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={serviceRelations}
-          showActivePlan={showActivePlan} />);
+          showActivePlan={showActivePlan}
+          showPlans={true} />);
     expect(overview).toEqualJSX(expectedOverview);
   });
 
