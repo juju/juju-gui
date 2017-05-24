@@ -144,7 +144,8 @@ YUI.add('inspector-component', function() {
               service={service}
               serviceRelations={this.props.serviceRelations}
               showActivePlan={this.props.showActivePlan}
-              showPlans={this.props.showPlans} />,
+              showPlans={this.props.showPlans}
+            />,
             backState: backState
           };
           break;

@@ -50,32 +50,32 @@ describe('test_model.js', function() {
     });
 
     it('must not set "owner" for promulgated charms', function() {
-      var charm = new models.Charm({
+      const charm = new models.Charm({
         id: 'cs:precise/openstack-dashboard-0'
       });
-      assert.isUndefined(charm.get('owner'));
+      assert.strictEqual(charm.get('owner'), '');
     });
 
     it('must accept charm ids without versions.', function() {
-      var charm = new models.Charm(
+      const charm = new models.Charm(
           {id: 'cs:~alt-bac/precise/openstack-dashboard'});
-      assert.isUndefined(charm.get('revision'));
+      assert.strictEqual(charm.get('revision'), null);
     });
 
     it('must accept charm ids with periods.', function() {
-      var charm = new models.Charm(
+      const charm = new models.Charm(
           {id: 'cs:~alt.bac/precise/openstack-dashboard-0'});
       assert.equal(charm.get('owner'), 'alt.bac');
     });
 
     it('must accept charm ids without series.', function() {
-      var charm = new models.Charm(
+      const charm = new models.Charm(
           {id: 'cs:~alt-bac/openstack-dashboard'});
       assert.isUndefined(charm.get('series'));
     });
 
     it('generates a proper full_name for multi-series charms', () => {
-      var charm = new models.Charm({
+      const charm = new models.Charm({
         id: 'cs:~alt-bac/openstack-dashboard',
         series: ['precise', 'trusty', 'xenial']
       });
@@ -85,29 +85,21 @@ describe('test_model.js', function() {
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
-      var charm = new models.Charm(
+      const charm = new models.Charm(
           {id: 'cs:~marco-ceppi/precise/wordpress-17'});
       charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
     });
 
     it('must reject bad charm ids.', function() {
-      try {
+      assert.throws(() => {
         new models.Charm({id: ''});
-        assert.fail('Should have thrown an error');
-      } catch (e) {
-        e.should.equal(
-            'Developers must initialize charms with a well-formed id.');
-      }
+      }, 'invalid URL: ""');
     });
 
     it('must reject missing charm ids at initialization.', function() {
-      try {
+      assert.throws(() => {
         new models.Charm();
-        assert.fail('Should have thrown an error');
-      } catch (e) {
-        e.should.equal(
-            'Developers must initialize charms with a well-formed id.');
-      }
+      }, 'invalid URL: "null"');
     });
   });
 
