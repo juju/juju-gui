@@ -386,7 +386,7 @@ describe('SearchResults', function() {
       expect(output).toEqualJSX(expected);
     });
 
-    it('aborts exist requests before making new ones', function() {
+    it('aborts existing requests before making new ones', function() {
       const abort = sinon.stub();
       const charmstoreSearch = sinon.stub().returns({abort: abort});
       const renderer = jsTestUtils.shallowRender(
