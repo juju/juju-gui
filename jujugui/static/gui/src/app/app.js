@@ -1792,6 +1792,14 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _clearCharmbrowser: function(state, next) {
+      if (state.search || state.store) {
+        // State calls the cleanup methods on every dispatch even if the state
+        // object exists between calls. Maybe this should be updated in state
+        // but for now if we know that the new state still contains the
+        // charmbrowser then just let the subsequent render method update
+        // the rendered component.
+        return;
+      }
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
       next();
@@ -2007,6 +2015,10 @@ YUI.add('juju-gui', function(Y) {
           model = noErrorModels.find(model => model.uuid === modelUUID);
         }
         this.maskVisibility(false);
+        // If we're already connected to the model then don't do anything.
+        if (model && this.env.get('modelUUID') === model.uuid) {
+          return;
+        }
         if (model) {
           this.state.changeState({
             model: {
