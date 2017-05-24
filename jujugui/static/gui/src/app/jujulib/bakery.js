@@ -28,7 +28,10 @@ var module = module;
     @return {string} The resulting serialized string.
   */
   const serialize = macaroons => {
-    return btoa(JSON.stringify(macaroons));
+    if (Array.isArray(macaroons)) {
+      return btoa(JSON.stringify(macaroons.map(m => m.exportAsObject())));
+    }
+    return btoa(JSON.stringify(macaroons.exportAsObject()));
   };
 
   /**
@@ -38,7 +41,11 @@ var module = module;
     @return {Array} The resulting macaroon slice.
   */
   const deserialize = serialized => {
-    return JSON.parse(atob(serialized));
+    const obj = JSON.parse(atob(serialized));
+    if (Array.isArray(obj)) {
+      return obj.map(m => macaroonlib.generateMacaroons(m));
+    }
+    return macaroonlib.generateMacaroons(obj);
   };
 
   /**
@@ -277,8 +284,9 @@ var module = module;
                 macaroonlib.generateMacaroons(jsonResponse.Macaroon);
               this.storage.set(url, serialize(macaroons), () => {
                 if (jsonResponse.DischargeToken) {
-                  const token = serialize(jsonResponse.DischargeToken);
-                  this.storage.set('identity', token, () => {
+                  const token =
+                    macaroonlib.generateMacaroons(jsonResponse.DischargeToken);
+                  this.storage.set('identity', serialize(token), () => {
                     exitSuccessfully(resp);
                   });
                   return;
@@ -300,6 +308,7 @@ var module = module;
               // and then retry the original requests again. This time the
               // resulting macaroons will be properly included in the request
               // header.
+              macaroons = macaroons.map(m => macaroonlib.generateMacaroons(m));
               this.storage.set(url, serialize(macaroons), () => {
                 this.sendRequest(url, method, headers, body, callback);
               });
