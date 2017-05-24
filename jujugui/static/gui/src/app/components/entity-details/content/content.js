@@ -351,31 +351,37 @@ YUI.add('entity-content', function() {
     },
 
     /**
-      Generate the description if it is a charm.
+      Generate the description.
 
       @method _generateDescription
       @param {Object} entityModel The entity model.
       @return {Object} The description markup.
     */
     _generateDescription: function(entityModel) {
-      if (entityModel.get('entityType') === 'charm') {
-        const description = entityModel.get('description')
-          || 'No description provided.';
-        const htmlDescription = this.props.renderMarkdown(description);
-        return (
-          <div className="row row--grey entity-content__description">
+      return (<juju.components.EntityContentDescription
+        entityModel={entityModel}
+        renderMarkdown={this.props.renderMarkdown} />);
+    },
+
+    /**
+      Generate tags and terms.
+
+      @method _generateTagsAndTerms
+      @param {Object} entityModel The entity model.
+      @return {Object} The tags and terms markup.
+    */
+    _generateTagsAndTerms: function(entityModel) {
+      if (this.props.entityModel.get('entityType') === 'charm') {
+        return(
+          <div className="row row--grey entity-content__terms">
             <div className="inner-wrapper">
-              <div className="twelve-col">
-                <div className="intro"
-                  dangerouslySetInnerHTML={{__html: htmlDescription}}>
-                </div>
-              </div>
               {this._generateTags()}
               {this._generateTerms()}
             </div>
           </div>
         );
       }
+      return false;
     },
 
     /**
@@ -600,6 +606,7 @@ YUI.add('entity-content', function() {
       return (
         <div className="entity-content">
           {this._generateDescription(entityModel)}
+          {this._generateTagsAndTerms(entityModel)}
           {this._generatePlans()}
           <div className="row">
             <div className="inner-wrapper">
@@ -636,6 +643,7 @@ YUI.add('entity-content', function() {
 }, '0.1.0', {
   requires: [
     'entity-content-config-option',
+    'entity-content-description',
     'entity-content-readme',
     'entity-content-relations',
     'entity-content-revisions',

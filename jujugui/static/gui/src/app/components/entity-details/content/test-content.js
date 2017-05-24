@@ -98,12 +98,11 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <div className="row row--grey entity-content__description">
+        <juju.components.EntityContentDescription
+          entityModel={mockEntity}
+          renderMarkdown={renderMarkdown} />
+        <div className="row row--grey entity-content__terms">
           <div className="inner-wrapper">
-            <div className="twelve-col">
-              <div className="intro"
-                dangerouslySetInnerHTML={{__html: description}}/>
-            </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
               <ul>
@@ -220,7 +219,7 @@ describe('EntityContent', function() {
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const terms = output.props.children[0].props.children.props.children[2];
+    const terms = output.props.children[1].props.children.props.children[1];
     const links = terms.props.children[1].props.children;
     const expected = (
       <div className="four-col entity-content__metadata">
@@ -267,7 +266,7 @@ describe('EntityContent', function() {
           staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
-    output.props.children[0].props.children.props.children[2].props.children[1]
+    output.props.children[1].props.children.props.children[1].props.children[1]
       .props.children[1].props.onClick();
     output = renderer.getRenderOutput();
     const expected = (
@@ -277,7 +276,7 @@ describe('EntityContent', function() {
           name: 'terms2',
           revision: 10
         }]} />);
-    expect(output.props.children[4]).toEqualJSX(expected);
+    expect(output.props.children[5]).toEqualJSX(expected);
   });
 
   it('can display a spinner when loading terms', function() {
@@ -303,7 +302,7 @@ describe('EntityContent', function() {
         <h4>Terms</h4>
         <juju.components.Spinner />
       </div>);
-    const terms = output.props.children[0].props.children.props.children[2];
+    const terms = output.props.children[1].props.children.props.children[1];
     expect(terms).toEqualJSX(expected);
   });
 
@@ -393,7 +392,7 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[2].props.children.props.children[1];
+    const parent = output.props.children[3].props.children.props.children[1];
     expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
@@ -425,12 +424,11 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <div className="row row--grey entity-content__description">
+        <juju.components.EntityContentDescription
+          entityModel={mockEntity}
+          renderMarkdown={renderMarkdown} />
+        <div className="row row--grey entity-content__terms">
           <div className="inner-wrapper">
-            <div className="twelve-col">
-              <div className="intro"
-                dangerouslySetInnerHTML={{__html: description}}/>
-            </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
               <ul>
@@ -532,7 +530,9 @@ describe('EntityContent', function() {
           staticURL="http://example.com" />);
     const expected = (
       <div className="entity-content">
-        {undefined}
+        <juju.components.EntityContentDescription
+          entityModel={mockEntity}
+          renderMarkdown={renderMarkdown} />
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
@@ -718,7 +718,7 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[2].props.children.props.children[1];
+    const parent = output.props.children[3].props.children.props.children[1];
     expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
@@ -743,7 +743,7 @@ describe('EntityContent', function() {
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const parent = output.props.children[2].props.children.props.children[1];
+    const parent = output.props.children[3].props.children.props.children[1];
     const relationsComponent = parent.props.children[2];
     assert.equal(relationsComponent, undefined);
   });
@@ -867,7 +867,7 @@ describe('EntityContent', function() {
           </div>
         </div>
       </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can display loading plans', function() {
@@ -894,7 +894,7 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.Spinner />);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can remove plans when none exist', function() {
@@ -920,30 +920,6 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[1], undefined);
-  });
-
-  it('can render markdown in the description', function() {
-    // Note that this functional test is just a sanity check, not a
-    // comprehensive test of the markdown syntax.
-    mockEntity.set('description', 'A simple [link](http://google.com/).');
-    const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
-        addNotification={sinon.stub()}
-        apiUrl='http://example.com'
-        changeState={sinon.stub()}
-        entityModel={mockEntity}
-        getFile={sinon.stub()}
-        hasPlans={false}
-        pluralize={sinon.stub()}
-        renderMarkdown={marked}
-        scrollCharmbrowser={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com" />);
-    const description = output.props.children[0].props.children.props
-      .children[0].props.children;
-    const markupObject = description.props.dangerouslySetInnerHTML;
-    assert.equal(markupObject.__html,
-      '<p>A simple <a href="http://google.com/">link</a>.</p>\n');
+    assert.strictEqual(output.props.children[2], undefined);
   });
 });

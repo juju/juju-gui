@@ -13,6 +13,14 @@
     }
   }
 
+  &__terms.row {
+    padding-top: 0;
+
+    @media screen and (min-width: 1030px) {
+      padding-top: 0;
+    }
+  }
+
   &__description {
     .twelve-col {
       margin: 0;
@@ -30,6 +38,13 @@
         font-size: 1.25em;
         line-height: 1.3em;
       }
+    }
+  }
+
+  &__diagram + .entity-content {
+    .entity-content__description {
+      margin-top: 10px;
+      background: $white;
     }
   }
 

@@ -55,6 +55,7 @@ YUI.add('deployment-flow', function() {
       getCountries: React.PropTypes.func,
       getCurrentChangeSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func,
+      getEntity: React.PropTypes.func,
       getUser: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
@@ -64,10 +65,12 @@ YUI.add('deployment-flow', function() {
       listClouds: React.PropTypes.func,
       listPlansForCharm: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
+      makeEntityModel: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       profileUsername: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
+      renderMarkdown: React.PropTypes.func.isRequired,
       sendAnalytics: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
       setModelName: React.PropTypes.func.isRequired,
@@ -997,27 +1000,14 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The React elements.
     */
     _generateDirectDeploy: function() {
-      const props = this.props;
-      const ddEntityId = props.ddData && props.ddData.id;
-      if (!ddEntityId) {
-        return;
-      };
-      let diagram = null;
-      if (ddEntityId.indexOf('bundle') !== -1) {
-        diagram = <juju.components.EntityContentDiagram
-          getDiagramURL={this.props.getDiagramURL}
-          id={ddEntityId} />;
-      }
       return (
-        <juju.components.DeploymentSection
-          instance="deployment-one-click"
-          showCheck={false}
-          title="Direct Deploy">
-          <p>
-            The following steps will guide you through deploying {ddEntityId}
-          </p>
-          {diagram}
-        </juju.components.DeploymentSection>);
+        <juju.components.DeploymentDirectDeploy
+          ddData={this.props.ddData}
+          getDiagramURL={this.props.getDiagramURL}
+          getEntity={this.props.getEntity}
+          makeEntityModel={this.props.makeEntityModel}
+          renderMarkdown={this.props.renderMarkdown} />
+      );
     },
 
     /**
@@ -1125,6 +1115,7 @@ YUI.add('deployment-flow', function() {
     'deployment-changes',
     'deployment-cloud',
     'deployment-credential',
+    'deployment-direct-deploy',
     'deployment-machines',
     'deployment-panel',
     'deployment-payment',
