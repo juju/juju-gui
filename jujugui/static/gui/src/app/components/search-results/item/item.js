@@ -21,9 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results-item', function(Y) {
 
   juju.components.SearchResultsItem = React.createClass({
+    displayName: 'SearchResultsItem',
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      deployService: React.PropTypes.func.isRequired,
+      getBundleYAML: React.PropTypes.func.isRequired,
+      importBundleYAML: React.PropTypes.func.isRequired,
       item: React.PropTypes.object.isRequired
     },
 
@@ -195,6 +201,57 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
+      Closes the search results.
+
+      @method _close
+    */
+    _close: function() {
+      this.props.changeState({
+        search: null,
+        profile: null
+      });
+    },
+
+    /**
+      Deploy the entity.
+
+      @param entity {Object} The entity to deploy.
+      @param evt {Object} The click event.
+    */
+    _handleDeploy: function(entity, evt) {
+      if (entity.type === 'charm') {
+        // The second param needs to be set as undefined not null as this is the
+        // format the method expects.
+        this.props.deployService(entity.model, undefined, null, null);
+      } else {
+        const id = entity.id.replace('cs:', '');
+        this.props.getBundleYAML(id, this._getBundleYAMLCallback);
+      }
+      this._close();
+    },
+
+    /**
+      Callback for getting the bundle YAML.
+
+      @method _getBundleYAMLSuccess
+      @param {String} error The error, if any. Null if no error.
+      @param {String} yaml The yaml for the bundle
+    */
+    _getBundleYAMLCallback: function(error, yaml) {
+      if (error) {
+        const message = 'Bundle failed to deploy';
+        this.props.addNotification({
+          title: message,
+          message: `${message}: ${error}`,
+          level: 'error'
+        });
+        console.error(message, error);
+        return;
+      }
+      this.props.importBundleYAML(yaml);
+    },
+
+    /**
       Generate the series list item class based on entity type
 
       @method _generateSeriesClass
@@ -257,8 +314,7 @@ YUI.add('search-results-item', function(Y) {
               {this._generateIconList()}
             </ul>
           </div>
-          <div className={
-            'prepend-one two-col owner__column list-block__column last-col'}>
+          <div className="two-col owner__column list-block__column">
             <p className="cell">
               {'By '}
               <span className="link"
@@ -269,9 +325,23 @@ YUI.add('search-results-item', function(Y) {
               </span>
             </p>
           </div>
+          <div className="one-col last-col list-block__list--item-deploy">
+            <juju.components.GenericButton
+              extraClasses="list-block__list--item-deploy-link"
+              action={this._handleDeploy.bind(this, item)}
+              disabled={this.props.acl.isReadOnly()}
+              type="inline-neutral">
+              <juju.components.SvgIcon
+                name="add-icon"
+                size="16" />
+            </juju.components.GenericButton>
+          </div>
         </li>
       );
     }
   });
 
-}, '0.1.0', {requires: []});
+}, '0.1.0', {requires: [
+  'generic-button',
+  'svg-icon'
+]});
