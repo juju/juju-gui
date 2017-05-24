@@ -94,7 +94,6 @@ YUI.add('entity-header', function() {
     _closeEntityDetails: function() {
       this.props.changeState({
         hash: null,
-        profile: null,
         store: null
       });
     },
