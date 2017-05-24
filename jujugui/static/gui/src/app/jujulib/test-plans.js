@@ -188,6 +188,16 @@ describe('jujulib plans service', function() {
     });
   });
 
+  it('does not request active plans if no modelUUID is provided', function() {
+    const bakery = {
+      get: function(url, headers, callback) {
+        assert.fail('request should not have been made');
+      }
+    };
+    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.showActivePlan(undefined, 'app-name', () => {});
+  });
+
   it('handles errors retrieving the currently active plan', function(done) {
     const bakery = {
       get: function(url, headers, callback) {

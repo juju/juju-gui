@@ -1670,6 +1670,7 @@ YUI.add('juju-gui', function(Y) {
             setCharm={model.setCharm.bind(model)}
             setConfig={model.set_config.bind(model)}
             showActivePlan={this.plans.showActivePlan.bind(this.plans)}
+            showPlans={window.juju_config.plansFlag || false}
             unexposeService={model.unexpose.bind(model)}
             unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
             updateServiceUnitsDisplayname={

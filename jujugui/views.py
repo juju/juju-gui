@@ -128,9 +128,10 @@ def config(request):
         'gisf': settings['jujugui.gisf'],
         'staticURL': settings['jujugui.static_url'],
         'gisfLogout': gisfLogout,
+        'stripeKey': settings['jujugui.stripe_key'],
         'shareFlag': False,
         'payFlag': False,
-        'stripeKey': settings['jujugui.stripe_key'],
+        'plansFlag': False
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

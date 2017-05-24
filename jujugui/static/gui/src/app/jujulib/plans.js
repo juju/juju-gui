@@ -13,7 +13,7 @@ var module = module;
     Provides access to the Romulus plans API.
   */
 
-  var plansAPIVersion = 'v2';
+  var plansAPIVersion = 'v3';
 
   /**
     Initializer.
@@ -116,6 +116,10 @@ var module = module;
             (not really useful in this context).
     */
     showActivePlan: function(modelUUID, applicationName, callback) {
+      if (!modelUUID) {
+        console.error('no modelUUID provided, cannot fetch active plan');
+        return;
+      }
       const handler = function(error, response) {
         if (error !== null) {
           callback(error, null, []);

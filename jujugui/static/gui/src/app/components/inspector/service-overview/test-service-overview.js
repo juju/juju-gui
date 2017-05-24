@@ -135,7 +135,8 @@ describe('ServiceOverview', function() {
         modelUUID={modelUUID}
         service={service}
         serviceRelations={[1]}
-        showActivePlan={showActivePlan} />, true);
+        showActivePlan={showActivePlan}
+        showPlans={true} />, true);
     const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 1, 'showActivePlan not called');
     assert.equal(showActivePlan.args[0][0], modelUUID);
@@ -184,7 +185,8 @@ describe('ServiceOverview', function() {
         modelUUID={'abc123'}
         service={service}
         serviceRelations={[1]}
-        showActivePlan={showActivePlan} />, true);
+        showActivePlan={showActivePlan}
+        showPlans={true} />, true);
     const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, planList);
