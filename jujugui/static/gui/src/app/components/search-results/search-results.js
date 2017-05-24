@@ -228,7 +228,11 @@ YUI.add('search-results', function(Y) {
       }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
-
+      // If there is an exist search request then abort it before starting the
+      // new search.
+      if (this.searchXhr) {
+        this.searchXhr.abort();
+      }
       this.searchXhr = this.props.charmstoreSearch(
         filters,
         this.searchCallback,
