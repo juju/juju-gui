@@ -24,15 +24,16 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResultsItem', function() {
+  let acl, item;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('search-results-item', function() { done(); });
   });
 
-  it('can render an item', function() {
-    var changeState = sinon.stub();
-    var item = {
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+    item = {
       name: 'mysql',
       displayName: 'mysql',
       special: true,
@@ -46,15 +47,25 @@ describe('SearchResultsItem', function() {
       tags: ['tag1', 'tag2'],
       series: [{name: 'vivid'}, {name: 'wily'}]
     };
+  });
+
+  it('can render an item', function() {
+    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     var tags = output.props.children[0].props.children[1].props.children;
     var series = output.props.children[1].props.children.props.children;
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
+    const deploy = output.props.children[4].props.children;
     var expected = (
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
@@ -111,8 +122,7 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className={
-          'prepend-one two-col owner__column list-block__column last-col'}>
+        <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
             <span className="link"
@@ -123,9 +133,20 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
+        <div className="one-col last-col list-block__list--item-deploy">
+          <juju.components.GenericButton
+            extraClasses="list-block__list--item-deploy-link"
+            action={deploy.props.action}
+            disabled={false}
+            type="inline-neutral">
+            <juju.components.SvgIcon
+              name="add-icon"
+              size="16" />
+          </juju.components.GenericButton>
+        </div>
       </li>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render an item with defaults for missing props', function() {
@@ -145,11 +166,17 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
+    const deploy = output.props.children[4].props.children;
     var expected = (
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
@@ -186,8 +213,7 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className={
-          'prepend-one two-col owner__column list-block__column last-col'}>
+        <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
             <span className="link"
@@ -198,9 +224,20 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
+        <div className="one-col last-col list-block__list--item-deploy">
+          <juju.components.GenericButton
+            extraClasses="list-block__list--item-deploy-link"
+            action={deploy.props.action}
+            disabled={false}
+            type="inline-neutral">
+            <juju.components.SvgIcon
+              name="add-icon"
+              size="16" />
+          </juju.components.GenericButton>
+        </div>
       </li>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render icons for a bundle', function() {
@@ -229,11 +266,17 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
+    const deploy = output.props.children[4].props.children;
     var expected = (
       <li className="list-block__list--item bundle"
           tabIndex="0" role="button"
@@ -282,8 +325,7 @@ describe('SearchResultsItem', function() {
             </li>
           </ul>
         </div>
-        <div className={
-          'prepend-one two-col owner__column list-block__column last-col'}>
+        <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
             <span className="link"
@@ -294,9 +336,20 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
+        <div className="one-col last-col list-block__list--item-deploy">
+          <juju.components.GenericButton
+            extraClasses="list-block__list--item-deploy-link"
+            action={deploy.props.action}
+            disabled={false}
+            type="inline-neutral">
+            <juju.components.SvgIcon
+              name="add-icon"
+              size="16" />
+          </juju.components.GenericButton>
+        </div>
       </li>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can handle clicking on an item', function() {
@@ -318,9 +371,14 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     output.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
@@ -352,9 +410,14 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     var series = output.props.children[1].props.children.props.children;
     series[0].props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -391,9 +454,14 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     output.props.children[0].props.children[1].props.children[0]
         .props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -430,9 +498,14 @@ describe('SearchResultsItem', function() {
     };
     const output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={changeState}
-          key={item.storeId}
-          item={item} />);
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
     output.props.children[3].props.children.props.children[1]
         .props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -460,7 +533,12 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={sinon.stub()}
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;
@@ -495,7 +573,12 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
           changeState={sinon.stub()}
+          deployService={sinon.stub()}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;
@@ -503,5 +586,71 @@ describe('SearchResultsItem', function() {
     assert.equal(seriesClass, 'series__column two-col');
     assert.equal(iconsClass,
       'charm-logos__column list-block__column three-col');
+  });
+
+  it('deploy a charm', function() {
+    const changeState = sinon.stub();
+    const deployService = sinon.stub();
+    item.model = {this: 'model'};
+    const output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
+          changeState={changeState}
+          deployService={deployService}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
+    output.props.children[4].props.children.props.action();
+    assert.equal(changeState.callCount, 1);
+    assert.equal(deployService.callCount, 1);
+    assert.deepEqual(deployService.args[0][0], {this: 'model'});
+  });
+
+  it('deploy a bundle', function() {
+    const changeState = sinon.stub();
+    const getBundleYAML = sinon.stub().callsArgWith(1, null, 'yaml');
+    const importBundleYAML = sinon.stub();
+    item.type = 'bundle';
+    const output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={sinon.stub()}
+          changeState={changeState}
+          deployService={sinon.stub()}
+          getBundleYAML={getBundleYAML}
+          importBundleYAML={importBundleYAML}
+          item={item}
+          key={item.storeId} />);
+    output.props.children[4].props.children.props.action();
+    assert.equal(changeState.callCount, 1);
+    assert.equal(getBundleYAML.callCount, 1);
+    assert.deepEqual(getBundleYAML.args[0][0], 'mysql');
+    assert.equal(importBundleYAML.callCount, 1);
+    assert.deepEqual(importBundleYAML.args[0][0], 'yaml');
+  });
+
+  it('can handle errors getting bundle yaml', function() {
+    const addNotification = sinon.stub();
+    const getBundleYAML = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    item.type = 'bundle';
+    const output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          acl={acl}
+          addNotification={addNotification}
+          changeState={sinon.stub()}
+          deployService={sinon.stub()}
+          getBundleYAML={getBundleYAML}
+          importBundleYAML={sinon.stub()}
+          item={item}
+          key={item.storeId} />);
+    output.props.children[4].props.children.props.action();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Bundle failed to deploy',
+      message: 'Bundle failed to deploy: Uh oh!',
+      level: 'error'
+    });
   });
 });
