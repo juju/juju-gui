@@ -274,7 +274,7 @@ var module = module;
               // will be reused and included in all requests to the same URL.
               const jsonResponse = JSON.parse(resp.target.responseText);
               const macaroons = serialize(jsonResponse.Macaroon);
-              this.storage.set(url, serialize(macaroons), () => {
+              this.storage.set(url, macaroons, () => {
                 if (jsonResponse.DischargeToken) {
                   const token = serialize(jsonResponse.DischargeToken);
                   this.storage.set('identity', token, () => {

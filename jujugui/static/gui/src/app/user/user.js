@@ -22,6 +22,17 @@ if (typeof this.jujugui === 'undefined') {
   this.jujugui = {};
 }
 
+// XXX j.c.sackett 2016-05-26 Session expiration should be set via config, but
+// as that also requires an update from blues browser we'll do that in a follow
+// up. For now it's set to the same timeout as in blues browser.
+const EXPIRATION_TIME = 24; // Time for a session, in hours
+
+function getExpirationDate() {
+  let expirationDate = new Date();
+  expirationDate.setHours(expirationDate.getHours() + EXPIRATION_TIME);
+  return expirationDate;
+}
+
 /** Class representing a user's authorizations in the GUI **/
 const User = class User {
 
@@ -30,6 +41,23 @@ const User = class User {
     this.sessionStorage = cfg.sessionStorage || sessionStorage;
     this.localStorage = cfg.localStorage || localStorage;
     this._external = cfg.externalAuth || null;
+    this.expiration = cfg.expiration || getExpirationDate();
+  }
+
+  get expiration() {
+    return new Date(this.sessionStorage.getItem('expiration'));
+  }
+
+  set expiration(val) {
+    this.sessionStorage.setItem('expiration', val);
+  }
+
+  _checkExpiration() {
+    const now = new Date();
+    if (now > this.expiration) {
+      this.localStorage.clear();
+      this.sessionStorage.clear();
+    }
   }
 
   /**
@@ -41,6 +69,7 @@ const User = class User {
    If external auth -- e.g. from HJC -- exists, that is used for name data.
    */
   get displayName() {
+    this._checkExpiration();
     if (this.externalAuth) {
       return this.externalAuth.displayName;
     }
@@ -55,6 +84,7 @@ const User = class User {
    If external auth -- e.g. from HJC -- exists, that is used for name data.
    */
   get username() {
+    this._checkExpiration();
     if (this.externalAuth) {
       return this.externalAuth.username;
     }
@@ -78,6 +108,7 @@ const User = class User {
    the top level of the object.
    */
   get externalAuth() {
+    this._checkExpiration();
     const externalAuth = this._external;
     if (externalAuth && externalAuth.user) {
       // When HJC supplies an external auth it's possible that the name is
@@ -97,6 +128,7 @@ const User = class User {
    convenience attributes for handling login flow.
   */
   _getCredentials(type) {
+    this._checkExpiration();
     let credentials = JSON.parse(
       this.sessionStorage.getItem(type + 'Credentials'));
     if (!credentials) {
@@ -155,6 +187,7 @@ const User = class User {
   }
 
   get controller() {
+    this._checkExpiration();
     return this._getCredentials('controller');
   }
 
@@ -163,6 +196,7 @@ const User = class User {
   }
 
   get model() {
+    this._checkExpiration();
     // There are situations where we have no model creds but can fall back to
     // the controller credentials. So we only return empty credentials if both
     // the model creds and the controller creds are empty.
@@ -182,6 +216,7 @@ const User = class User {
   }
 
   getMacaroon(service) {
+    this._checkExpiration();
     return this.localStorage.getItem(service);
   }
 
@@ -192,7 +227,6 @@ const User = class User {
   clearMacaroons() {
     this.localStorage.clear();
   }
-
 };
 
 this.jujugui.User = User;
