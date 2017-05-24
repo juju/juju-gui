@@ -385,6 +385,34 @@ describe('SearchResults', function() {
         seriesItems, results, true);
       expect(output).toEqualJSX(expected);
     });
+
+    it('aborts exist requests before making new ones', function() {
+      const abort = sinon.stub();
+      const charmstoreSearch = sinon.stub().returns({abort: abort});
+      const renderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            changeState={sinon.stub()}
+            query="apache2"
+            seriesList={series}
+            charmstoreSearch={charmstoreSearch}
+            getName={sinon.stub()}
+            makeEntityModel={makeEntityModel}
+            setPageTitle={sinon.stub()} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.componentDidMount();
+      assert.equal(abort.callCount, 0);
+      renderer.render(
+        <juju.components.SearchResults
+          changeState={sinon.stub()}
+          query="apache2"
+          seriesList={series}
+          charmstoreSearch={charmstoreSearch}
+          getName={sinon.stub()}
+          makeEntityModel={makeEntityModel}
+          setPageTitle={sinon.stub()} />);
+      renderer.getRenderOutput();
+      assert.equal(abort.callCount, 1);
+    });
   });
 
   describe('unit tests', function() {
