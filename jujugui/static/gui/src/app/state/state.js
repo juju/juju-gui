@@ -100,7 +100,11 @@ const State = class State {
 
     this.sendAnalytics = cfg.sendAnalytics || function() {};
 
-    window.onpopstate = this.dispatch.bind(this, [], true, true);
+    window.onpopstate = () => {
+      // We don't really care what the onpopstate event is, so just calling the
+      // dispatch to fetch the state from the url.
+      this.dispatch([], true, true, true);
+    };
   }
 
   /**
