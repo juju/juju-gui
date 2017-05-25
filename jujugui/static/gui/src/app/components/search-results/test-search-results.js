@@ -413,7 +413,9 @@ describe('SearchResults', function() {
       const charmstoreSearch = sinon.stub().returns({abort: abort});
       const renderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
-            changeState={sinon.stub()}
+          changeState={sinon.stub()}
+          deployTarget={sinon.stub()}
+            acl={acl}
             query="apache2"
             seriesList={series}
             charmstoreSearch={charmstoreSearch}
@@ -425,7 +427,9 @@ describe('SearchResults', function() {
       assert.equal(abort.callCount, 0);
       renderer.render(
         <juju.components.SearchResults
+          acl={acl}
           changeState={sinon.stub()}
+          deployTarget={sinon.stub()}
           query="apache2"
           seriesList={series}
           charmstoreSearch={charmstoreSearch}
