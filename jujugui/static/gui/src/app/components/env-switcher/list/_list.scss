@@ -3,6 +3,7 @@
   box-sizing: border-box;
   width: $width;
   margin-left: -20px;
+  z-index: 1;
 
   &:before {
     @include diamond($white);

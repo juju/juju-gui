@@ -149,5 +149,8 @@ $asset-path: 'static/gui/build/app/assets/';
 
 @import 'beta';
 
+// Tablet styles
+@import 'tablet';
+
 // Mobile styles
 @import 'mobile';

@@ -1,0 +1,65 @@
+@media only screen and (min-width: 601px) and (max-width: 769px) {
+  #header-help {
+    display: none;
+  }
+
+  #model-actions-container {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+  }
+
+  .machine-view {
+    &__content {
+      display: block;
+      top: 116px;
+      overflow-y: scroll;
+    }
+
+    &__column{
+      display: block;
+      width: 100%;
+      display: block;
+      border-left: 0;
+    }
+  }
+
+  .panel-component.deployment-bar-panel {
+    bottom: 20px;
+  }
+
+  .u-is-beta:before {
+    right: 20px;
+    text-align: center;
+  }
+
+  .header-banner__provider {
+    position: fixed;
+    left: 310px;
+    top: 90px;
+  }
+
+  .env-switcher__name {
+    max-width: 100px;
+  }
+
+  .header-breadcrumb--link {
+    max-width: 80px;
+  }
+
+  // store
+  .store .row--containers .wrapper.bigdata .inner-wrapper.bigdata {
+    .text {
+      padding-top: 20px;
+    }
+
+    & + div {
+      float: right;
+      width: 45%;
+
+      img {
+        height: auto;
+      }
+    }
+  }
+}

@@ -6,6 +6,11 @@
     display: none;
   }
 
+  .u-is-beta:before {
+    right: auto;
+    left: 140px;
+  }
+
   // Inspector full width
   .env-size-display,
   .inspector-view {
@@ -59,15 +64,25 @@
     overflow: hidden;
   }
 
+  #header-breadcrumb {
+    margin: 0;
+  }
+
   .header-breadcrumb {
-    top: 15px;
     position: relative;
+  }
+
+  .header-breadcrumb__list {
+    margin-top: 10px;
   }
 
   .header-breadcrumb__list-item {
     float: none;
-    padding-left: 8px;
-    margin-top: 10px;
+    padding-left: 10px;
+
+    &:before {
+      display: none;
+    }
   }
 
   .header-breadcrumb--link:before,

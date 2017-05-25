@@ -91,6 +91,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
                onClick={comp.clickUser}
+               title="who"
                href="/u/who">
               who
             </a>
@@ -108,7 +109,7 @@ describe('HeaderBreadcrumb', () => {
         </ul>
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('renders properly with the model owner', () => {
@@ -125,6 +126,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
                onClick={comp.clickUser}
+               title="rose"
                href="/u/rose">
               rose
             </a>
@@ -142,7 +144,7 @@ describe('HeaderBreadcrumb', () => {
         </ul>
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('renders properly with a profile', () => {
@@ -160,6 +162,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
                onClick={comp.clickUser}
+               title="cyberman"
                href="/u/cyberman">
               cyberman
             </a>
@@ -168,7 +171,7 @@ describe('HeaderBreadcrumb', () => {
         </ul>
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('removes user name from breadcrumbs if none is provided', () => {
