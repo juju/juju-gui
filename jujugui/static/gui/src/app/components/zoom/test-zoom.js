@@ -36,6 +36,7 @@ describe('Zoom', function() {
   it('can render the zoom component', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Zoom
+        topo={{}}
         zoomInCanvas={sinon.stub()}
         zoomOutCanvas={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
