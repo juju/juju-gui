@@ -1,3 +1,26 @@
+- 2.7.0:
+
+   - Subordinates are now shown as such in the charm details pages.
+   - Reduced search query time by over 85%.
+   - Added confirmation when removing credentials from account page.
+   - The same bundle can now be deployed multiple times into the same model.
+   - You can now add to the canvas directly from the search results.
+   ->
+     Machine view now shows constraints and allows them to be modified on
+     machines which have not yet been provisioned.
+   ->
+     Bundles with a description in their yaml are now shown in their details
+     pages and in Direct Deploy.
+   - (Fix) Visiting a user profile page directly no longer intermittently redirects to your own.
+   - (Fix) Usernames with + sign are now handled properly.
+   - (Fix) No longer remove spaces from search queries.
+   - (Fix) Checkbox hit area increased in inspector unit lists.
+   - (Fix) When not in JAAS some charms will no longer request USSO login.
+   - (Fix) Username is now clickable in charm/bundle details pages.
+   - (Fix) Do not show the credentials section if there are none.
+   - (Fix) Sticky header in charm/bundle details longer improperly hides information.
+   - (Fix) Correctly center store hero images.
+
 - 2.6.0:
 
    - Store search results now provide a toggle to include the community results.
