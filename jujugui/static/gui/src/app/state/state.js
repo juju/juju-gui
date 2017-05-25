@@ -602,7 +602,7 @@ const State = class State {
       path.push(PATH_DELIMETERS.get('search'));
       // Append the text if it is truthy, i.e. not a blank string etc.
       if (search.text) {
-        path.push(search.text);
+        path.push(search.text.replace(/ /g, '/'));
       }
       const querystrings = [];
       const keys = Object.keys(search);
