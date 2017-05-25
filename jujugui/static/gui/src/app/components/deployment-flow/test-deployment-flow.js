@@ -150,7 +150,6 @@ describe('DeploymentFlow', function() {
         changeState={props.changeState}
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
-        {undefined}
         <juju.components.DeploymentSection
           instance="deployment-model-name"
           showCheck={false}
@@ -281,49 +280,22 @@ describe('DeploymentFlow', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('renders the Direct Deploy for a charm', () => {
-    const id = 'cs:apache-21';
+  it('renders direct deploy when ddData is set', () => {
     const renderer = createDeploymentFlow({
-      ddData: {id},
+      ddData: {id: 'cs:bundles/kubernetes-core-8'},
       modelCommitted: false
     });
-    const dd = renderer.getRenderOutput().props.children[0];
-    const expected = (
-      <juju.components.DeploymentSection
-        instance="deployment-one-click"
-        showCheck={false}
-        title="Direct Deploy">
-        <p>
-          The following steps will guide you through deploying {id}
-        </p>
-        {undefined}
-      </juju.components.DeploymentSection>
-    );
-    expect(dd).toEqualJSX(expected);
-  });
-
-  it('renders the Direct Deploy for a bundle', () => {
-    const id = 'cs:bundles/kubernetes-core-8';
-    const renderer = createDeploymentFlow({
-      ddData: {id},
-      modelCommitted: false
-    });
+    const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const dd = renderer.getRenderOutput().props.children[0];
-    const expected = (
-      <juju.components.DeploymentSection
-        instance="deployment-one-click"
-        showCheck={false}
-        title="Direct Deploy">
-        <p>
-          The following steps will guide you through deploying {id}
-        </p>
-        <juju.components.EntityContentDiagram
-          getDiagramURL={instance.props.getDiagramURL}
-          id={id} />
-      </juju.components.DeploymentSection>
+    expect(output.props.children[0]).toEqualJSX(
+      <juju.components.DeploymentDirectDeploy
+        ddData={{id: 'cs:bundles/kubernetes-core-8'}}
+        getDiagramURL={instance.props.getDiagramURL}
+        getEntity={undefined}
+        makeEntityModel={undefined}
+        renderMarkdown={undefined}
+      />
     );
-    expect(dd).toEqualJSX(expected);
   });
 
   it('can display the cloud section as complete', function() {
@@ -352,7 +324,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    assert.isUndefined(output.props.children[0]);
+    assert.isUndefined(output.props.children[1]);
   });
 
   it('correctly sets the cloud title if no cloud is chosen', function() {

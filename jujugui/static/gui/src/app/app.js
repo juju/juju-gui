@@ -1334,6 +1334,7 @@ YUI.add('juju-gui', function(Y) {
               this.payment && this.payment.getCountries.bind(this.payment)
               || null}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          getEntity={charmstore.getEntity.bind(charmstore)}
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
           gisf={this.get('gisf')}
@@ -1342,11 +1343,13 @@ YUI.add('juju-gui', function(Y) {
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           loginToController={loginToController}
+          makeEntityModel={Y.juju.makeEntityModel}
           modelCommitted={connected}
           modelName={modelName}
           ddData={ddData}
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
+          renderMarkdown={marked}
           servicesGetById={services.getById.bind(services)}
           showPay={window.juju_config.payFlag || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
