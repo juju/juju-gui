@@ -54,6 +54,7 @@ describe('DeploymentCredential', function() {
         controllerIsReady={sinon.stub().returns(true)}
         cloud={cloud}
         editable={true}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}

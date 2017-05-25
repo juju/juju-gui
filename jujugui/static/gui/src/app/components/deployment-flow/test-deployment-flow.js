@@ -68,6 +68,7 @@ const createDeploymentFlow = (props = {}) => {
     changes: {},
     changesFilterByParent: sinon.stub(),
     charmsGetById: charmsGetById,
+    charmstore: {},
     controllerIsReady: sinon.stub(),
     createToken: sinon.stub(),
     createUser: sinon.stub(),
@@ -78,6 +79,8 @@ const createDeploymentFlow = (props = {}) => {
     generateCloudCredentialName: sinon.stub(),
     generateMachineDetails: sinon.stub(),
     getAgreementsByTerms: getAgreementsByTerms,
+    getCloudCredentialNames: sinon.stub(),
+    getCloudCredentials: sinon.stub(),
     getCloudProviderDetails: sinon.stub(),
     getCountries: sinon.stub(),
     getCurrentChangeSet: sinon.stub(),
@@ -87,6 +90,7 @@ const createDeploymentFlow = (props = {}) => {
     groupedChanges: groupedChanges,
     isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
+    listClouds: sinon.stub(),
     listPlansForCharm: sinon.stub(),
     loginToController: sinon.stub(),
     modelName: 'Pavlova',
@@ -96,6 +100,7 @@ const createDeploymentFlow = (props = {}) => {
     setModelName: sinon.stub(),
     showPay: false,
     showTerms: sinon.stub(),
+    updateCloudCredential: sinon.stub(),
     validateForm: sinon.stub(),
     withPlans: true
   };
