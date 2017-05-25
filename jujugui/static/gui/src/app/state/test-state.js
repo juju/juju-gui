@@ -129,7 +129,7 @@ describe('State', () => {
     path: 'http://abc.com:123/q/k8s/core',
     state: {
       search: {
-        text: 'k8s core'
+        text: 'k8s/core'
       }
     },
     error: null
