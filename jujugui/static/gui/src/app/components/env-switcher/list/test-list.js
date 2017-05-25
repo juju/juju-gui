@@ -212,9 +212,11 @@ describe('EnvList', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
+        changeState={sinon.stub()}
         envs={[]}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
+        switchModel={sinon.stub()}
         user={{username: 'who@local', displayName: 'who'}} />);
     assert.deepEqual(output.props.children[0].props.children, false);
   });
@@ -229,9 +231,11 @@ describe('EnvList', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         acl={acl}
+        changeState={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={handleModelClick}
+        switchModel={sinon.stub()}
         user={{username: 'who@local', displayName: 'who'}} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
