@@ -1000,14 +1000,18 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The React elements.
     */
     _generateDirectDeploy: function() {
-      return (
-        <juju.components.DeploymentDirectDeploy
-          ddData={this.props.ddData}
-          getDiagramURL={this.props.getDiagramURL}
-          getEntity={this.props.getEntity}
-          makeEntityModel={this.props.makeEntityModel}
-          renderMarkdown={this.props.renderMarkdown} />
-      );
+      const props = this.props;
+      if (props.ddData && props.ddData.id) {
+        return (
+          <juju.components.DeploymentDirectDeploy
+            ddData={props.ddData}
+            getDiagramURL={props.getDiagramURL}
+            getEntity={props.getEntity}
+            makeEntityModel={props.makeEntityModel}
+            renderMarkdown={props.renderMarkdown} />
+        );
+      }
+      return false;
     },
 
     /**

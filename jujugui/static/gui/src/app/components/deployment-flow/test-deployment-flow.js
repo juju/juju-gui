@@ -150,12 +150,6 @@ describe('DeploymentFlow', function() {
         changeState={props.changeState}
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
-        <juju.components.DeploymentDirectDeploy
-          ddData={{}}
-          getDiagramURL={sinon.stub()}
-          getEntity={undefined}
-          makeEntityModel={undefined}
-          renderMarkdown={undefined} />
         <juju.components.DeploymentSection
           instance="deployment-model-name"
           showCheck={false}
@@ -284,6 +278,24 @@ describe('DeploymentFlow', function() {
         </div>
       </juju.components.DeploymentPanel>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('renders direct deploy when ddData is set', () => {
+    const renderer = createDeploymentFlow({
+      ddData: {id: 'cs:bundles/kubernetes-core-8'},
+      modelCommitted: false
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    expect(output.props.children[0]).toEqualJSX(
+      <juju.components.DeploymentDirectDeploy
+        ddData={{id: 'cs:bundles/kubernetes-core-8'}}
+        getDiagramURL={instance.props.getDiagramURL}
+        getEntity={undefined}
+        makeEntityModel={undefined}
+        renderMarkdown={undefined}
+      />
+    );
   });
 
   it('can display the cloud section as complete', function() {
