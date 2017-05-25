@@ -29,43 +29,6 @@ YUI.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
   var utils = Y.namespace('juju.views.utils');
-  var charmIdRe = /^(?:(\w+):)?(?:~([\w-\.]+)\/)?(?:(\w+)\/)?([\w-\.]+?)(?:-(\d+|HEAD))?$/;  // eslint-disable-line max-len
-  var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
-  var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
-  var simpleIdElements = ['scheme', 'package_name'];
-
-  var parseCharmId = models.parseCharmId = function(charmId, defaultSeries) {
-    if (typeof charmId === 'string') {
-      var parts = charmIdRe.exec(charmId);
-      var pairs;
-      if (parts) {
-        parts.shift(); // Get rid of the first, full string.
-        pairs = utils.arrayZip(idElements, parts);
-      } else if (defaultSeries) {
-        parts = simpleCharmIdRe.exec(charmId);
-        if (parts) {
-          parts.shift(); // Get rid of the first, full string.
-          pairs = utils.arrayZip(simpleIdElements, parts);
-          pairs.push(['series', defaultSeries]);
-        }
-      }
-      if (parts) {
-        var result = {},
-            storeId = [];
-        pairs.forEach(pair => result[pair[0]] = pair[1]);
-        if (result.series) {
-          storeId.push(result.series);
-        }
-        storeId.push(
-          result.package_name + (result.revision ? '-' + result.revision : ''));
-        if (result.owner) {
-          storeId.unshift('~' + result.owner);
-        }
-        result.storeId = storeId.join('/');
-        return result;
-      }
-    }
-  };
 
   /**
    * Helper to use a setter so that we can set null when the api returns an
@@ -82,9 +45,6 @@ YUI.add('juju-charm-models', function(Y) {
       return val;
     }
   };
-
-
-  models.charmIdRe = charmIdRe;
 
   /**
    * Model to represent the Charms from the Charmworld API.
@@ -158,23 +118,23 @@ YUI.add('juju-charm-models', function(Y) {
           this.set('id', cfg.url);
         }
       }
-      var id = this.get('id'),
-          parts = parseCharmId(id);
-      if (!parts) {
-        throw 'Developers must initialize charms with a well-formed id.';
-      }
+      const url = window.jujulib.URL.fromLegacyString(this.get('id'));
       this.loaded = false;
-      this.on('load', function() { this.loaded = true; });
-      Object.keys(parts).forEach(key => {
-        var value = parts[key];
-        if (value) {
-          // With multi-series charms it is possible that the parsed values
-          // from the ID are undefined, especially the series which has
-          // already been set as an array. It would in that case overwrite
-          // the series list with undefined.
-          this.set(key, value);
-        }
+      this.on('load', function() {
+        this.loaded = true;
       });
+      this.set('scheme', url.schema);
+      this.set('owner', url.user);
+      // With multi-series charms it is possible that the parsed values
+      // from the ID are undefined, especially the series which has
+      // already been set as an array. It would in that case overwrite
+      // the series list with undefined.
+      if (url.series) {
+        this.set('series', url.series);
+      }
+      this.set('package_name', url.name);
+      this.set('revision', url.revision);
+      this.set('storeId', url.legacyPath());
     },
 
     sync: function(action, options, callback) {
@@ -381,7 +341,7 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {
       id: {
         validator: function(val) {
-          return typeof val === 'string' && !!charmIdRe.exec(val);
+          return typeof val === 'string';
         }
       },
       /**
@@ -393,7 +353,7 @@ YUI.add('juju-charm-models', function(Y) {
        */
       storeId: {
         validator: function(val) {
-          return typeof val === 'string' && !!charmIdRe.exec(val);
+          return typeof val === 'string';
         }
       },
       bzr_branch: {},

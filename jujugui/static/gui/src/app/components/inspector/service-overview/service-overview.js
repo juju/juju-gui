@@ -33,7 +33,8 @@ YUI.add('service-overview', function() {
       modelUUID: React.PropTypes.string.isRequired,
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
-      showActivePlan: React.PropTypes.func.isRequired
+      showActivePlan: React.PropTypes.func.isRequired,
+      showPlans: React.PropTypes.bool.isRequired
     },
 
     /**
