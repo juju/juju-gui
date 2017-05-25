@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
-  var series;
+  let series, acl, deployTarget;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -32,6 +32,8 @@ describe('SearchResults', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+    deployTarget = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'}
@@ -43,8 +45,10 @@ describe('SearchResults', function() {
       var query = 'spinach';
       var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            acl={acl}
             changeState={sinon.stub()}
             charmstoreSearch={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}
@@ -62,11 +66,13 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            acl={acl}
             changeState={sinon.stub()}
-            query="nothing here"
             charmstoreSearch={charmstoreSearch}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
+            query="nothing here"
             seriesList={{}}
             setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
@@ -95,11 +101,13 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            acl={acl}
             changeState={sinon.stub()}
-            query="nothing here"
             charmstoreSearch={charmstoreSearch}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
+            query="nothing here"
             seriesList={{}}
             setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
@@ -147,12 +155,14 @@ describe('SearchResults', function() {
 
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            acl={acl}
             changeState={sinon.stub()}
-            query={query}
-            seriesList={series}
             charmstoreSearch={charmstoreSearch}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
             makeEntityModel={makeEntityModel}
+            query={query}
+            seriesList={series}
             setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
@@ -303,13 +313,17 @@ describe('SearchResults', function() {
                   </h4>
                   <ul className="list-block__list">
                     <juju.components.SearchResultsItem
+                      acl={acl}
                       changeState={changeState}
-                      key="~test-owner/mysql-one"
-                      item={results[0]} />
+                      deployTarget={deployTarget}
+                      item={results[0]}
+                      key="~test-owner/mysql-one" />
                     <juju.components.SearchResultsItem
+                      acl={acl}
                       changeState={changeState}
-                      key="~test-owner/mysql-two"
-                      item={results[1]} />
+                      deployTarget={deployTarget}
+                      item={results[1]}
+                      key="~test-owner/mysql-two" />
                   </ul>
                 </div>
                 <div className="clearfix community-results">
@@ -326,13 +340,17 @@ describe('SearchResults', function() {
                     <h4>Community{' '}<span className="count">({2})</span></h4>
                     <ul className="list-block__list">
                       <juju.components.SearchResultsItem
+                        acl={acl}
                         changeState={changeState}
-                        key="~test-owner/mysql-three"
-                        item={results[2]} />
+                        deployTarget={deployTarget}
+                        item={results[2]}
+                        key="~test-owner/mysql-three" />
                       <juju.components.SearchResultsItem
+                        acl={acl}
                         changeState={changeState}
-                        key="~test-owner/mysql-four"
-                        item={results[3]} />
+                        deployTarget={deployTarget}
+                        item={results[3]}
+                        key="~test-owner/mysql-four" />
                     </ul>
                   </div>
                 </div>
@@ -346,16 +364,18 @@ describe('SearchResults', function() {
     it('can render the promulgated search results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
-            query="mysql"
-            type="charm"
-            sort="-name"
-            series="wily"
-            seriesList={series}
+            acl={acl}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
+            deployTarget={deployTarget}
             getName={getName}
             makeEntityModel={makeEntityModel}
-            setPageTitle={sinon.stub()} />, true);
+            query="mysql"
+            series="wily"
+            seriesList={series}
+            setPageTitle={sinon.stub()}
+            sort="-name"
+            type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       const output = shallowRenderer.getRenderOutput();
@@ -367,16 +387,18 @@ describe('SearchResults', function() {
     it('will show community results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
-            query="mysql"
-            type="charm"
-            sort="-name"
-            series="wily"
-            seriesList={series}
+            acl={acl}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
+            deployTarget={deployTarget}
             getName={getName}
             makeEntityModel={makeEntityModel}
-            setPageTitle={sinon.stub()} />, true);
+            query="mysql"
+            series="wily"
+            seriesList={series}
+            setPageTitle={sinon.stub()}
+            sort="-name"
+            type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       instance._toggleCommunityResults();
@@ -686,11 +708,13 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().returns({abort: abort});
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            acl={acl}
             changeState={changeState}
-            query={query}
             charmstoreSearch={charmstoreSearch}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
+            query={query}
             seriesList={{}}
             setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();

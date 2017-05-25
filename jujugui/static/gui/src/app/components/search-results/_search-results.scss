@@ -166,6 +166,21 @@
       &:active,
       &:hover {
         background-color: $hover-background;
+
+        .list-block__list--item-deploy-link {
+          display: inline-block;
+        }
+      }
+
+      &-deploy {
+        margin-bottom: 0;
+        text-align: right;
+
+        &-link {
+          display: none;
+          padding-left: 13px;
+          padding-right: 13px;
+        }
       }
     }
 

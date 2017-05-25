@@ -31,6 +31,7 @@ YUI.add('charmbrowser-component', function() {
       charmstoreSearch: React.PropTypes.func.isRequired,
       charmstoreURL: React.PropTypes.string.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      deployTarget: React.PropTypes.func.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
@@ -174,20 +175,22 @@ YUI.add('charmbrowser-component', function() {
           const search = currentState.search;
           activeChild = (
               <juju.components.SearchResults
+                acl={this.props.acl}
                 changeState={changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
+                deployTarget={this.props.deployTarget}
                 getName={utils.getName}
                 makeEntityModel={this.props.makeEntityModel}
-                query={search.text}
-                seriesList={this.props.series}
-                type={search.type}
-                sort={search.sort}
-                series={search.series}
-                provides={search.provides}
-                requires={search.requires}
                 owner={search.owner}
+                provides={search.provides}
+                query={search.text}
+                requires={search.requires}
+                series={search.series}
+                seriesList={this.props.series}
                 setPageTitle={this.props.setPageTitle}
-                tags={search.tags} />
+                sort={search.sort}
+                tags={search.tags}
+                type={search.type} />
           );
           break;
         case 'entity-details':
@@ -202,9 +205,9 @@ YUI.add('charmbrowser-component', function() {
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
+                deployService={this.props.deployService}
                 getDiagramURL={this.props.getDiagramURL}
                 getModelName={this.props.getModelName}
-                deployService={this.props.deployService}
                 getFile={this.props.getFile}
                 hash={currentState.hash}
                 scrollPosition={this.state.scrollPosition}

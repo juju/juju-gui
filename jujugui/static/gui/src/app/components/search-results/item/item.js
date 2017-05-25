@@ -21,9 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results-item', function(Y) {
 
   juju.components.SearchResultsItem = React.createClass({
+    displayName: 'SearchResultsItem',
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      deployTarget: React.PropTypes.func.isRequired,
       item: React.PropTypes.object.isRequired
     },
 
@@ -195,6 +198,21 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
+      Deploy the entity.
+
+      @param id {String} The id of the entity to deploy.
+    */
+    _handleDeploy: function(id) {
+      this.props.deployTarget(id);
+      // Close the search results so that the deployed entity is visible on the
+      // canvas.
+      this.props.changeState({
+        search: null,
+        profile: null
+      });
+    },
+
+    /**
       Generate the series list item class based on entity type
 
       @method _generateSeriesClass
@@ -257,8 +275,7 @@ YUI.add('search-results-item', function(Y) {
               {this._generateIconList()}
             </ul>
           </div>
-          <div className={
-            'prepend-one two-col owner__column list-block__column last-col'}>
+          <div className="two-col owner__column list-block__column">
             <p className="cell">
               {'By '}
               <span className="link"
@@ -269,9 +286,23 @@ YUI.add('search-results-item', function(Y) {
               </span>
             </p>
           </div>
+          <div className="one-col last-col list-block__list--item-deploy">
+            <juju.components.GenericButton
+              extraClasses="list-block__list--item-deploy-link"
+              action={this._handleDeploy.bind(this, item.id)}
+              disabled={this.props.acl.isReadOnly()}
+              type="inline-neutral">
+              <juju.components.SvgIcon
+                name="add-icon"
+                size="16" />
+            </juju.components.GenericButton>
+          </div>
         </li>
       );
     }
   });
 
-}, '0.1.0', {requires: []});
+}, '0.1.0', {requires: [
+  'generic-button',
+  'svg-icon'
+]});

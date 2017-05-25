@@ -45,6 +45,11 @@ describe('Charmbrowser', function() {
     var query = 'django';
     appState.current.search = {text: query};
     var series = {};
+    const addNotification = sinon.stub();
+    const deployService = sinon.stub();
+    const deployTarget = sinon.stub();
+    const getBundleYAML = sinon.stub();
+    const importBundleYAML = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var setPageTitle = sinon.stub();
     var makeEntityModel = sinon.spy();
@@ -52,20 +57,21 @@ describe('Charmbrowser', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl="http://example.com/"
         apiVersion="v5"
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
-        deployService={sinon.stub()}
-        getBundleYAML={sinon.stub()}
+        deployService={deployService}
+        deployTarget={deployTarget}
+        getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         getModelName={sinon.stub()}
         gisf={true}
-        importBundleYAML={sinon.stub()}
+        importBundleYAML={importBundleYAML}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         renderMarkdown={sinon.stub()}
@@ -85,21 +91,23 @@ describe('Charmbrowser', function() {
           <div className="charmbrowser"
             ref="charmbrowser">
             <juju.components.SearchResults
+              acl={acl}
               changeState={
                 output.props.children.props.children.props.changeState}
+              charmstoreSearch={charmstoreSearch}
+              deployTarget={deployTarget}
               getName={utils.getName}
-              seriesList={series}
               makeEntityModel={makeEntityModel}
-              query={query}
-              tags={undefined}
-              sort={undefined}
-              type={undefined}
-              series={undefined}
-              provides={undefined}
-              requires={undefined}
               owner={undefined}
+              provides={undefined}
+              query={query}
+              requires={undefined}
+              series={undefined}
+              seriesList={series}
               setPageTitle={setPageTitle}
-              charmstoreSearch={charmstoreSearch} />
+              sort={undefined}
+              tags={undefined}
+              type={undefined} />
             </div>
         </juju.components.Panel>);
     expect(output).toEqualJSX(expected);
@@ -121,6 +129,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
+        deployTarget={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -192,6 +201,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
+        deployTarget={sinon.stub()}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -280,6 +290,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
+        deployTarget={sinon.stub()}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -352,6 +363,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
+        deployTarget={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}

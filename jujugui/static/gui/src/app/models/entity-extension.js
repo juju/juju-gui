@@ -68,6 +68,8 @@ YUI.add('entity-extension', function(Y) {
         downloads: attrs.downloads,
         id: attrs.id,
         storeId: attrs.storeId,
+        // Store a reference to the model e.g. for deploying a charm.
+        model: this,
         name: attrs.name,
         owner: attrs.owner || this.ownerFromId(),
         promulgated: attrs.is_approved,
