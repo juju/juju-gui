@@ -55,6 +55,7 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/d3-min.js',
 
       'jujugui/static/gui/src/app/components/**/*.js',
+      'jujugui/static/gui/src/test/required-props.js',
 
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
