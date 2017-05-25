@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-confirm', function() {
 
   juju.components.InspectorConfirm = React.createClass({
+    displayName: 'InspectorConfirm',
 
     propTypes: {
       buttons: React.PropTypes.array.isRequired,
