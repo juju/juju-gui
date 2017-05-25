@@ -73,7 +73,8 @@
       }
 
       &__social-list,
-      &__actions-list {
+      &__actions-list,
+      &__properties + .entity-header__properties {
         display: none;
       }
 
@@ -111,7 +112,7 @@
     font-size: 18px;
     overflow: hidden;
 
-    & + .entity-header__properties {
+    & + & {
       margin-top: 10px;
     }
 
