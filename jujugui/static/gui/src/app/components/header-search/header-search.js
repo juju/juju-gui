@@ -158,17 +158,17 @@ YUI.add('header-search', function() {
       Make search when the search form is submitted.
 
       @method _handleSubmit
-      @param {Object} e The submit event
+      @param {Object} evt The submit event
     */
-    _handleSubmit: function(e) {
-      e.preventDefault();
+    _handleSubmit: function(evt) {
+      evt.preventDefault();
       // If the search box is not open then instead of submitting the form the
       // search box should be opened.
       if (!this.state.active) {
         this._openSearch(true);
         return;
       }
-      const query = this.state.query.replace(/ /g, '');
+      const query = this.state.query.trim();
       this.props.appState.changeState({
         hash: null,
         root: null,

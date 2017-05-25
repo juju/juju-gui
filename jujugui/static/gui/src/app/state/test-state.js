@@ -118,10 +118,18 @@ describe('State', () => {
     },
     error: null
   }, {
+    path: 'http://abc.com:123/q/realtime/syslog/analytics',
+    state: {
+      search: {
+        text: 'realtime syslog analytics'
+      }
+    },
+    error: null
+  }, {
     path: 'http://abc.com:123/q/k8s/core',
     state: {
       search: {
-        text: 'k8s/core'
+        text: 'k8s core'
       }
     },
     error: null
@@ -867,6 +875,12 @@ describe('State', () => {
         });
         sinon.stub(state, '_pushState');
         test.test.forEach(test => {
+          const stateSearch = test.state.search || {};
+          if (stateSearch.text && stateSearch.text.indexOf(' ') !== -1) {
+            // Do not test the cases in which the conversion is not
+            // symmetrical.
+            return;
+          }
           assert.deepEqual(
             state.generateState(test.path),
             {error: test.error, state: test.state},
