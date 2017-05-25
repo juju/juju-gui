@@ -111,7 +111,7 @@
 
     &--kubernetes {
       overflow: hidden;
-      background: #3371e3 url(/static/gui/build/app/assets/images/store/k8-image.png) no-repeat center -50px;
+      background: #3371e3 url(static/gui/build/app/assets/images/store/k8-image.png) no-repeat center -50px;
       background-size: 350px;
       color: $white;
     }
@@ -119,7 +119,7 @@
     &--openstack {
       $openstack-brand: #df2e29;
       border-color: $openstack-brand;
-      background: $openstack-brand url(/static/gui/build/app/assets/images/store/openstack-promo.png) no-repeat center 40px;
+      background: $openstack-brand url(static/gui/build/app/assets/images/store/openstack-promo.png) no-repeat center 40px;
       color: $white;
     }
 
@@ -135,7 +135,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: url(/static/gui/build/app/assets/images/store/hadoop-elephant.png) no-repeat center 40px;
+        background: url(static/gui/build/app/assets/images/store/hadoop-elephant.png) no-repeat center 40px;
         background-size: 200px;
       }
     }
