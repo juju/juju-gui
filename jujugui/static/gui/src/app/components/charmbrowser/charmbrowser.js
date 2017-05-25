@@ -31,6 +31,7 @@ YUI.add('charmbrowser-component', function() {
       charmstoreSearch: React.PropTypes.func.isRequired,
       charmstoreURL: React.PropTypes.string.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      deployTarget: React.PropTypes.func.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
@@ -175,13 +176,10 @@ YUI.add('charmbrowser-component', function() {
           activeChild = (
               <juju.components.SearchResults
                 acl={this.props.acl}
-                addNotification={this.props.addNotification}
                 changeState={changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
-                deployService={this.props.deployService}
-                getBundleYAML={this.props.getBundleYAML}
+                deployTarget={this.props.deployTarget}
                 getName={utils.getName}
-                importBundleYAML={this.props.importBundleYAML}
                 makeEntityModel={this.props.makeEntityModel}
                 owner={search.owner}
                 provides={search.provides}

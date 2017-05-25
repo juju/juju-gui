@@ -47,6 +47,7 @@ describe('Charmbrowser', function() {
     var series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
+    const deployTarget = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
     var charmstoreSearch = sinon.stub();
@@ -63,6 +64,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
+        deployTarget={deployTarget}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -90,14 +92,11 @@ describe('Charmbrowser', function() {
             ref="charmbrowser">
             <juju.components.SearchResults
               acl={acl}
-              addNotification={addNotification}
               changeState={
                 output.props.children.props.children.props.changeState}
               charmstoreSearch={charmstoreSearch}
-              deployService={deployService}
-              getBundleYAML={getBundleYAML}
+              deployTarget={deployTarget}
               getName={utils.getName}
-              importBundleYAML={importBundleYAML}
               makeEntityModel={makeEntityModel}
               owner={undefined}
               provides={undefined}
@@ -130,6 +129,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
+        deployTarget={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -201,6 +201,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
+        deployTarget={sinon.stub()}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -289,6 +290,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
+        deployTarget={sinon.stub()}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -361,6 +363,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
+        deployTarget={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}

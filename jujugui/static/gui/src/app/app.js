@@ -1751,6 +1751,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          deployTarget={this.deployTarget.bind(this, charmstore)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
@@ -2219,16 +2220,16 @@ YUI.add('juju-gui', function(Y) {
           deployTarget: null
         }
       });
-      this.deployTarget(state.special['deployTarget'], this.get('charmstore'));
+      this.deployTarget(this.get('charmstore'), state.special['deployTarget']);
       next();
     },
 
     /**
       Deploys the supplied entity Id from the supplied charmstore instance.
-      @param {String} entityId The entity id to deploy.
       @param {Object} charmstore The charmstore instance to fetch the entity.
+      @param {String} entityId The entity id to deploy.
     */
-    deployTarget: function(entityId, charmstore) {
+    deployTarget: function(charmstore, entityId) {
       /**
         Handles parsing and displaying the failure notification returned from
         the charmstore api.
@@ -2293,7 +2294,7 @@ YUI.add('juju-gui', function(Y) {
         // infinitely updating state.
         return;
       }
-      this.deployTarget(ddData.id, this.get('charmstore'));
+      this.deployTarget(this.get('charmstore'), ddData.id);
       this.state.changeState({
         gui: {
           deploy: JSON.stringify(ddData)

@@ -25,11 +25,8 @@ YUI.add('search-results-item', function(Y) {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      deployService: React.PropTypes.func.isRequired,
-      getBundleYAML: React.PropTypes.func.isRequired,
-      importBundleYAML: React.PropTypes.func.isRequired,
+      deployTarget: React.PropTypes.func.isRequired,
       item: React.PropTypes.object.isRequired
     },
 
@@ -201,54 +198,18 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
-      Closes the search results.
+      Deploy the entity.
 
-      @method _close
+      @param id {String} The id of the entity to deploy.
     */
-    _close: function() {
+    _handleDeploy: function(id) {
+      this.props.deployTarget(id);
+      // Close the search results so that the deployed entity is visible on the
+      // canvas.
       this.props.changeState({
         search: null,
         profile: null
       });
-    },
-
-    /**
-      Deploy the entity.
-
-      @param entity {Object} The entity to deploy.
-      @param evt {Object} The click event.
-    */
-    _handleDeploy: function(entity, evt) {
-      if (entity.type === 'charm') {
-        // The second param needs to be set as undefined not null as this is the
-        // format the method expects.
-        this.props.deployService(entity.model, undefined, null, null);
-      } else {
-        const id = entity.id.replace('cs:', '');
-        this.props.getBundleYAML(id, this._getBundleYAMLCallback);
-      }
-      this._close();
-    },
-
-    /**
-      Callback for getting the bundle YAML.
-
-      @method _getBundleYAMLSuccess
-      @param {String} error The error, if any. Null if no error.
-      @param {String} yaml The yaml for the bundle
-    */
-    _getBundleYAMLCallback: function(error, yaml) {
-      if (error) {
-        const message = 'Bundle failed to deploy';
-        this.props.addNotification({
-          title: message,
-          message: `${message}: ${error}`,
-          level: 'error'
-        });
-        console.error(message, error);
-        return;
-      }
-      this.props.importBundleYAML(yaml);
     },
 
     /**
@@ -328,7 +289,7 @@ YUI.add('search-results-item', function(Y) {
           <div className="one-col last-col list-block__list--item-deploy">
             <juju.components.GenericButton
               extraClasses="list-block__list--item-deploy-link"
-              action={this._handleDeploy.bind(this, item)}
+              action={this._handleDeploy.bind(this, item.id)}
               disabled={this.props.acl.isReadOnly()}
               type="inline-neutral">
               <juju.components.SvgIcon

@@ -25,13 +25,10 @@ YUI.add('search-results', function(Y) {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
-      deployService: React.PropTypes.func.isRequired,
-      getBundleYAML: React.PropTypes.func.isRequired,
+      deployTarget: React.PropTypes.func.isRequired,
       getName: React.PropTypes.func.isRequired,
-      importBundleYAML: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       owner: React.PropTypes.string,
       provides: React.PropTypes.string,
@@ -493,11 +490,8 @@ YUI.add('search-results', function(Y) {
           {promulgated.map(item =>
             <juju.components.SearchResultsItem
               acl={this.props.acl}
-              addNotification={this.props.addNotification}
               changeState={this.props.changeState}
-              deployService={this.props.deployService}
-              getBundleYAML={this.props.getBundleYAML}
-              importBundleYAML={this.props.importBundleYAML}
+              deployTarget={this.props.deployTarget}
               item={item}
               key={item.storeId} />)}
         </ul>
@@ -546,11 +540,8 @@ YUI.add('search-results', function(Y) {
             {community.map(item =>
               <juju.components.SearchResultsItem
                 acl={this.props.acl}
-                addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
-                deployService={this.props.deployService}
-                getBundleYAML={this.props.getBundleYAML}
-                importBundleYAML={this.props.importBundleYAML}
+                deployTarget={this.props.deployTarget}
                 item={item}
                 key={item.storeId} />)}
           </ul>

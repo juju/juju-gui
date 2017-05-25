@@ -24,8 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
-  let series, acl, addNotification, deployService, getBundleYAML,
-      importBundleYAML;
+  let series, acl, deployTarget;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -34,10 +33,7 @@ describe('SearchResults', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    addNotification = sinon.stub();
-    deployService = sinon.stub();
-    getBundleYAML = sinon.stub();
-    importBundleYAML = sinon.stub();
+    deployTarget = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'}
@@ -50,13 +46,10 @@ describe('SearchResults', function() {
       var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={sinon.stub()}
             changeState={sinon.stub()}
             charmstoreSearch={sinon.stub()}
-            deployService={sinon.stub()}
-            getBundleYAML={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
-            importBundleYAML={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}
             seriesList={{}}
@@ -74,13 +67,10 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={sinon.stub()}
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
-            deployService={sinon.stub()}
-            getBundleYAML={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
-            importBundleYAML={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query="nothing here"
             seriesList={{}}
@@ -112,13 +102,10 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={sinon.stub()}
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
-            deployService={sinon.stub()}
-            getBundleYAML={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
-            importBundleYAML={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query="nothing here"
             seriesList={{}}
@@ -169,13 +156,10 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={sinon.stub()}
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
-            deployService={sinon.stub()}
-            getBundleYAML={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
-            importBundleYAML={sinon.stub()}
             makeEntityModel={makeEntityModel}
             query={query}
             seriesList={series}
@@ -330,20 +314,14 @@ describe('SearchResults', function() {
                   <ul className="list-block__list">
                     <juju.components.SearchResultsItem
                       acl={acl}
-                      addNotification={addNotification}
                       changeState={changeState}
-                      deployService={deployService}
-                      getBundleYAML={getBundleYAML}
-                      importBundleYAML={importBundleYAML}
+                      deployTarget={deployTarget}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
                     <juju.components.SearchResultsItem
                       acl={acl}
-                      addNotification={addNotification}
                       changeState={changeState}
-                      deployService={deployService}
-                      getBundleYAML={getBundleYAML}
-                      importBundleYAML={importBundleYAML}
+                      deployTarget={deployTarget}
                       item={results[1]}
                       key="~test-owner/mysql-two" />
                   </ul>
@@ -363,20 +341,14 @@ describe('SearchResults', function() {
                     <ul className="list-block__list">
                       <juju.components.SearchResultsItem
                         acl={acl}
-                        addNotification={addNotification}
                         changeState={changeState}
-                        deployService={deployService}
-                        getBundleYAML={getBundleYAML}
-                        importBundleYAML={importBundleYAML}
+                        deployTarget={deployTarget}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
                       <juju.components.SearchResultsItem
                         acl={acl}
-                        addNotification={addNotification}
                         changeState={changeState}
-                        deployService={deployService}
-                        getBundleYAML={getBundleYAML}
-                        importBundleYAML={importBundleYAML}
+                        deployTarget={deployTarget}
                         item={results[3]}
                         key="~test-owner/mysql-four" />
                     </ul>
@@ -393,13 +365,10 @@ describe('SearchResults', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={addNotification}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
-            deployService={deployService}
-            getBundleYAML={getBundleYAML}
+            deployTarget={deployTarget}
             getName={getName}
-            importBundleYAML={importBundleYAML}
             makeEntityModel={makeEntityModel}
             query="mysql"
             series="wily"
@@ -419,13 +388,10 @@ describe('SearchResults', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={addNotification}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
-            deployService={deployService}
-            getBundleYAML={getBundleYAML}
+            deployTarget={deployTarget}
             getName={getName}
-            importBundleYAML={importBundleYAML}
             makeEntityModel={makeEntityModel}
             query="mysql"
             series="wily"
@@ -715,13 +681,10 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             acl={acl}
-            addNotification={sinon.stub()}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
-            deployService={sinon.stub()}
-            getBundleYAML={sinon.stub()}
+            deployTarget={sinon.stub()}
             getName={sinon.stub()}
-            importBundleYAML={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}
             seriesList={{}}

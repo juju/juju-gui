@@ -54,13 +54,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     var tags = output.props.children[0].props.children[1].props.children;
     var series = output.props.children[1].props.children.props.children;
     var icons = output.props.children[2].props.children.props.children;
@@ -167,13 +163,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
     const deploy = output.props.children[4].props.children;
@@ -267,13 +259,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
     const deploy = output.props.children[4].props.children;
@@ -372,13 +360,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     output.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
@@ -411,13 +395,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     var series = output.props.children[1].props.children.props.children;
     series[0].props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -455,13 +435,9 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     output.props.children[0].props.children[1].props.children[0]
         .props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -499,13 +475,9 @@ describe('SearchResultsItem', function() {
     const output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={sinon.stub()}
+          item={item} />);
     output.props.children[3].props.children.props.children[1]
         .props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
@@ -534,11 +506,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={sinon.stub()}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
+          deployTarget={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;
@@ -574,11 +543,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={sinon.stub()}
-          deployService={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
+          deployTarget={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;
@@ -588,69 +554,18 @@ describe('SearchResultsItem', function() {
       'charm-logos__column list-block__column three-col');
   });
 
-  it('deploy a charm', function() {
+  it('deploy an entity', function() {
     const changeState = sinon.stub();
-    const deployService = sinon.stub();
-    item.model = {this: 'model'};
+    const deployTarget = sinon.stub();
     const output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
           acl={acl}
-          addNotification={sinon.stub()}
           changeState={changeState}
-          deployService={deployService}
-          getBundleYAML={sinon.stub()}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
+          deployTarget={deployTarget}
+          item={item} />);
     output.props.children[4].props.children.props.action();
     assert.equal(changeState.callCount, 1);
-    assert.equal(deployService.callCount, 1);
-    assert.deepEqual(deployService.args[0][0], {this: 'model'});
-  });
-
-  it('deploy a bundle', function() {
-    const changeState = sinon.stub();
-    const getBundleYAML = sinon.stub().callsArgWith(1, null, 'yaml');
-    const importBundleYAML = sinon.stub();
-    item.type = 'bundle';
-    const output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          deployService={sinon.stub()}
-          getBundleYAML={getBundleYAML}
-          importBundleYAML={importBundleYAML}
-          item={item}
-          key={item.storeId} />);
-    output.props.children[4].props.children.props.action();
-    assert.equal(changeState.callCount, 1);
-    assert.equal(getBundleYAML.callCount, 1);
-    assert.deepEqual(getBundleYAML.args[0][0], 'mysql');
-    assert.equal(importBundleYAML.callCount, 1);
-    assert.deepEqual(importBundleYAML.args[0][0], 'yaml');
-  });
-
-  it('can handle errors getting bundle yaml', function() {
-    const addNotification = sinon.stub();
-    const getBundleYAML = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    item.type = 'bundle';
-    const output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          addNotification={addNotification}
-          changeState={sinon.stub()}
-          deployService={sinon.stub()}
-          getBundleYAML={getBundleYAML}
-          importBundleYAML={sinon.stub()}
-          item={item}
-          key={item.storeId} />);
-    output.props.children[4].props.children.props.action();
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Bundle failed to deploy',
-      message: 'Bundle failed to deploy: Uh oh!',
-      level: 'error'
-    });
+    assert.equal(deployTarget.callCount, 1);
+    assert.deepEqual(deployTarget.args[0][0], 'mysql');
   });
 });
