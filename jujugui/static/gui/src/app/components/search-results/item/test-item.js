@@ -554,7 +554,7 @@ describe('SearchResultsItem', function() {
       'charm-logos__column list-block__column three-col');
   });
 
-  it('deploy an entity', function() {
+  it('can deploy an entity', function() {
     const changeState = sinon.stub();
     const deployTarget = sinon.stub();
     const output = jsTestUtils.shallowRender(
