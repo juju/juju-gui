@@ -273,8 +273,7 @@ var module = module;
               // and then exit successfully. From now on, the stored macaroons
               // will be reused and included in all requests to the same URL.
               const jsonResponse = JSON.parse(resp.target.responseText);
-              const macaroons =
-                macaroonlib.generateMacaroons(jsonResponse.Macaroon);
+              const macaroons = serialize(jsonResponse.Macaroon);
               this.storage.set(url, serialize(macaroons), () => {
                 if (jsonResponse.DischargeToken) {
                   const token = serialize(jsonResponse.DischargeToken);
