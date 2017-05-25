@@ -22,10 +22,10 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('ModalSortcuts', function() {
 
-  const keybindings = [
-    {label: 'test', help: 'a test item'},
-    {label: 'test2', help: 'a second test item'}
-  ];
+  const keybindings = {
+    test: {label: 'test', help: 'a test item'},
+    test2: {label: 'test2', help: 'a second test item'}
+  };
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
