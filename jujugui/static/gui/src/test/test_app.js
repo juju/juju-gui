@@ -1344,8 +1344,7 @@ describe('App', function() {
         const expected = {
           user: '',
           password: '',
-          macaroons: null,
-          external: {}
+          macaroons: null
         };
         assert.deepEqual(app.user.controller, expected);
       }

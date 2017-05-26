@@ -615,7 +615,7 @@ YUI.add('juju-gui', function(Y) {
     */
     setUpControllerAPI: function(
       controllerAPI, user, password, macaroons, entityPromise) {
-      this.user.controller = { user, password, macaroons, external };
+      this.user.controller = { user, password, macaroons };
 
       this.controllerLoginHandler = evt => {
         const state = this.state;
