@@ -358,7 +358,7 @@ YUI.add('juju-env-api', function(Y) {
             unitInfo: 3,
             machineInfo: 4,
             annotationInfo: 5,
-            remoteapplicationInfo: 100,
+            remoteapplicationInfo: 100
           };
       data.response.deltas.forEach(function(delta) {
         var kind = delta[0],
@@ -1272,7 +1272,7 @@ YUI.add('juju-env-api', function(Y) {
           url: args.charmURL,
           channel: args.channel || 'stable',
           resources: resources
-        },
+        }
       }, handler);
     },
 
@@ -2974,7 +2974,7 @@ YUI.add('juju-env-api', function(Y) {
             domain: domain,
             lastConnection: lastConnection,
             access: result.access,
-            err: err,
+            err: err
           };
         });
         callback(null, users);
@@ -2991,7 +2991,7 @@ YUI.add('juju-env-api', function(Y) {
   }, {
     ATTRS: {
       maasServer: {
-        value: null,
+        value: null
       }
     }
   });

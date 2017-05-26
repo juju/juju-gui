@@ -920,7 +920,7 @@ YUI.add('juju-topology-service', function(Y) {
         gui: {
           inspector: {
             id: null,
-            localType: 'new',
+            localType: 'new'
           }}
       });
     },

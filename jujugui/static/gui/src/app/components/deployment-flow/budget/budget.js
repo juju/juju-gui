@@ -25,7 +25,7 @@ YUI.add('deployment-budget', function() {
       acl: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
       setBudget: React.PropTypes.func.isRequired,
-      user: React.PropTypes.string,
+      user: React.PropTypes.string
     },
 
     getInitialState: function() {
@@ -34,7 +34,7 @@ YUI.add('deployment-budget', function() {
       return {
         budgets: null,
         increaseExpanded: false,
-        loadingBudgets: false,
+        loadingBudgets: false
       };
     },
 

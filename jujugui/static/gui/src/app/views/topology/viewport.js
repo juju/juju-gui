@@ -46,7 +46,7 @@ YUI.add('juju-topology-viewport', function(Y) {
 
     events: {
       window: {
-        resize: 'resized',
+        resize: 'resized'
       },
       topo: {
         rendered: 'resized'
@@ -146,6 +146,6 @@ YUI.add('juju-topology-viewport', function(Y) {
   requires: [
     'd3-components',
     'node',
-    'event',
+    'event'
   ]
 });

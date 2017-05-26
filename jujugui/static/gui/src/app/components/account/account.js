@@ -92,7 +92,7 @@ YUI.add('account', function() {
 
     render: function() {
       const links = [{
-        label: 'Primary account',
+        label: 'Primary account'
       }];
       return (
         <juju.components.Panel

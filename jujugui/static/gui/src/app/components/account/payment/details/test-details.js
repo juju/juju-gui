@@ -67,7 +67,7 @@ describe('AccountPaymentDetails', () => {
         postcode: '9000',
         countryCode: 'AU',
         phones: ['00001111']
-      }],
+      }]
     };
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountPaymentDetails

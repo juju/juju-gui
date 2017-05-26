@@ -29,7 +29,7 @@ YUI.add('inset-select', function() {
       onChange: React.PropTypes.func,
       options: React.PropTypes.array.isRequired,
       required: React.PropTypes.bool,
-      value: React.PropTypes.string,
+      value: React.PropTypes.string
     },
 
     /**

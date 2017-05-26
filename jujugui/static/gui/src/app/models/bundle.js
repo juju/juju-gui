@@ -169,7 +169,7 @@ YUI.add('juju-bundle-models', function(Y) {
       this.set('stateId', stateId);
       // We want to set this attribute to it's actual ID;
       return id;
-    },
+    }
   }, {
     /**
       Static to indicate the type of entity so that other code

@@ -86,7 +86,7 @@ YUI.add('string-config', function() {
         {
           'string-config--changed':
             (value && value.toString()) !== (config && config.toString()),
-          'string-config--disabled': disabled,
+          'string-config--disabled': disabled
         });
       return (
         <div className="string-config">

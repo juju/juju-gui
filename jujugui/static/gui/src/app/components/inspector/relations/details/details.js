@@ -22,7 +22,7 @@ YUI.add('inspector-relation-details', function() {
 
   juju.components.InspectorRelationDetails = React.createClass({
     propTypes: {
-      relation: React.PropTypes.object.isRequired,
+      relation: React.PropTypes.object.isRequired
     },
 
     render: function() {

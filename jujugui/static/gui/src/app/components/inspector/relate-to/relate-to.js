@@ -25,7 +25,7 @@ YUI.add('inspector-relate-to', function() {
     propTypes: {
       application: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      relatableApplications: React.PropTypes.array.isRequired,
+      relatableApplications: React.PropTypes.array.isRequired
     },
 
     /**

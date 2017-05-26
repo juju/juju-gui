@@ -101,7 +101,7 @@ describe('CardForm', function() {
     renderer.getRenderOutput();
     assert.deepEqual(instance.getValue(), {
       card: instance.card,
-      name: 'Mr Geoffrey Spinach',
+      name: 'Mr Geoffrey Spinach'
     });
   });
 });

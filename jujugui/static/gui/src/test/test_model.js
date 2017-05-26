@@ -1153,7 +1153,7 @@ describe('test_model.js', function() {
           {id: 'postgres/1'},
           {id: 'rails/2', agent_state: 'pending'},
           {id: 'postgres/2'},
-          {id: 'mysql/47', agent_state: 'started'},
+          {id: 'mysql/47', agent_state: 'started'}
         ]);
       });
 

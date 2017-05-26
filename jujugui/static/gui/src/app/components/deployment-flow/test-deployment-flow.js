@@ -539,7 +539,7 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow({
       isLoggedIn: sinon.stub().returns(false),
       loginToController: sinon.stub(),
-      modelCommitted: true,
+      modelCommitted: true
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -608,7 +608,7 @@ describe('DeploymentFlow', function() {
     const renderer = createDeploymentFlow({
       isLoggedIn: sinon.stub().returns(false),
       loginToController: sinon.stub(),
-      modelCommitted: true,
+      modelCommitted: true
     });
     const instance = renderer.getMountedInstance();
     assert.strictEqual(instance.state.loggedIn, false);

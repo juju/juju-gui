@@ -24,7 +24,7 @@ YUI.add('inspector-plan', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      currentPlan: React.PropTypes.object,
+      currentPlan: React.PropTypes.object
     },
 
     /**
