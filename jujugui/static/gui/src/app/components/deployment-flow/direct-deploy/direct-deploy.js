@@ -39,20 +39,18 @@ YUI.add('deployment-direct-deploy', function() {
     },
 
     componentDidMount: function() {
-      if (this.state.isBundle) {
-        this.props.getEntity(this.props.ddData.id, (error, data) => {
-          if (error) {
-            console.error('cannot fetch the entity:' + error);
-            return;
-          }
-          if (data.length > 0) {
-            data = data[0];
-            this.setState({
-              entityModel: this.props.makeEntityModel(data)
-            });
-          }
-        });
-      }
+      this.props.getEntity(this.props.ddData.id, (error, data) => {
+        if (error) {
+          console.error('cannot fetch the entity:' + error);
+          return;
+        }
+        if (data.length > 0) {
+          data = data[0];
+          this.setState({
+            entityModel: this.props.makeEntityModel(data)
+          });
+        }
+      });
     },
 
     render: function() {
@@ -63,13 +61,12 @@ YUI.add('deployment-direct-deploy', function() {
         diagram = <juju.components.EntityContentDiagram
           getDiagramURL={this.props.getDiagramURL}
           id={ddEntityId} />;
-
-        if (this.state.entityModel) {
-          description = <juju.components.EntityContentDescription
-            entityModel={this.state.entityModel}
-            renderMarkdown={this.props.renderMarkdown}
-            />;
-        }
+      }
+      if (this.state.entityModel) {
+        description = <juju.components.EntityContentDescription
+          entityModel={this.state.entityModel}
+          renderMarkdown={this.props.renderMarkdown}
+          />;
       }
       return (
         <juju.components.DeploymentSection
@@ -88,6 +85,8 @@ YUI.add('deployment-direct-deploy', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-section'
+    'deployment-section',
+    'entity-content-diagram',
+    'entity-content-description'
   ]
 });

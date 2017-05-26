@@ -1011,7 +1011,7 @@ YUI.add('deployment-flow', function() {
             renderMarkdown={props.renderMarkdown} />
         );
       }
-      return false;
+      return null;
     },
 
     /**
