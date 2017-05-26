@@ -1,3 +1,7 @@
+- 2.7.1:
+
+   - (Fix) Will now correctly boot in Safari.
+
 - 2.7.0:
 
    - Subordinates are now shown as such in the charm details pages.
