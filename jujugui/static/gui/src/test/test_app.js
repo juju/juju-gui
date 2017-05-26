@@ -1345,7 +1345,6 @@ describe('App', function() {
           user: '',
           password: '',
           macaroons: null,
-          external: {}
         };
         assert.deepEqual(app.user.controller, expected);
       }
