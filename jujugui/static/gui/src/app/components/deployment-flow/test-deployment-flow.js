@@ -93,8 +93,10 @@ const createDeploymentFlow = (props = {}) => {
     listClouds: sinon.stub(),
     listPlansForCharm: sinon.stub(),
     loginToController: sinon.stub(),
+    makeEntityModel: sinon.stub(),
     modelName: 'Pavlova',
     profileUsername: 'Spinach',
+    renderMarkdown: sinon.stub(),
     sendAnalytics: sinon.stub(),
     servicesGetById: sinon.stub(),
     setModelName: sinon.stub(),
@@ -286,9 +288,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders direct deploy when ddData is set', () => {
+    const getEntity = sinon.stub();
+    const makeEntityModel = sinon.stub();
+    const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
       ddData: {id: 'cs:bundles/kubernetes-core-8'},
-      modelCommitted: false
+      getEntity: getEntity,
+      makeEntityModel: makeEntityModel,
+      modelCommitted: false,
+      renderMarkdown: renderMarkdown
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -296,9 +304,9 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentDirectDeploy
         ddData={{id: 'cs:bundles/kubernetes-core-8'}}
         getDiagramURL={instance.props.getDiagramURL}
-        getEntity={undefined}
-        makeEntityModel={undefined}
-        renderMarkdown={undefined}
+        getEntity={getEntity}
+        makeEntityModel={makeEntityModel}
+        renderMarkdown={renderMarkdown}
       />
     );
   });

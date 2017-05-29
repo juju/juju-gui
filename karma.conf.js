@@ -55,6 +55,9 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/d3-min.js',
 
       'jujugui/static/gui/src/app/components/**/*.js',
+      // This file needs to go before any tests as it adds a beforEach and
+      // afterEach for every test so that we can ensure there are no prop type
+      // errors.
       'jujugui/static/gui/src/test/required-props.js',
 
       'jujugui/static/gui/build/app/user/user.js',

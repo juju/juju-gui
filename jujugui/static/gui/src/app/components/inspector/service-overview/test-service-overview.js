@@ -95,7 +95,8 @@ describe('ServiceOverview', function() {
         modelUUID={'abc123'}
         service={service}
         serviceRelations={[1]}
-        showActivePlan={showActivePlan} />, true);
+        showActivePlan={showActivePlan}
+        showPlans={false} />, true);
     const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, null);
@@ -207,7 +208,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[1]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -233,7 +235,8 @@ describe('ServiceOverview', function() {
             modelUUID="abc123"
             service={fakeService}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -269,7 +272,8 @@ describe('ServiceOverview', function() {
             changeState={changeState}
             service={service}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     output.props.children[1].props.children[0].props.action({
@@ -307,7 +311,8 @@ describe('ServiceOverview', function() {
             modelUUID="abc123"
             service={fakeService}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
@@ -336,7 +341,8 @@ describe('ServiceOverview', function() {
             modelUUID="abc123"
             service={fakeService}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
@@ -365,7 +371,8 @@ describe('ServiceOverview', function() {
             modelUUID="abc123"
             service={fakeService}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
@@ -391,7 +398,8 @@ describe('ServiceOverview', function() {
             modelUUID="abc123"
             service={fakeService}
             serviceRelations={[1]}
-            showActivePlan={sinon.stub()} />);
+            showActivePlan={sinon.stub()}
+            showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Configure"
@@ -426,7 +434,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1, 2, 3]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[2],
       <juju.components.OverviewAction
         key="Relations"
@@ -463,7 +472,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[3],
       <juju.components.OverviewAction
         key="Expose"
@@ -501,7 +511,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[4],
       <juju.components.OverviewAction
         key="Resources"
@@ -544,7 +555,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.equal(output.props.children[1].props.children.length, 5);
   });
 
@@ -572,7 +584,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[5],
       <juju.components.OverviewAction
         key="Change version"
@@ -611,7 +624,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     output.props.children[1].props.children[5].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -642,7 +656,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[1, 2, 3]}
-          showActivePlan={sinon.stub()} />);
+          showActivePlan={sinon.stub()}
+          showPlans={false} />);
     assert.equal(output.props.children[1].props.children.length, 5);
   });
 
@@ -680,7 +695,8 @@ describe('ServiceOverview', function() {
           modelUUID="abc123"
           service={service}
           serviceRelations={[]}
-          showActivePlan={showActivePlan} />);
+          showActivePlan={showActivePlan}
+          showPlans={false} />);
     assert.equal(
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
@@ -701,7 +717,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     const buttons = [{
       disabled: false,
       title: 'Destroy',
@@ -726,7 +743,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     const buttons = [{
       disabled: true,
       title: 'Destroy',
@@ -751,7 +769,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.equal(output.props.children[2], undefined);
   });
 
@@ -769,7 +788,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
@@ -792,7 +812,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
@@ -818,7 +839,8 @@ describe('ServiceOverview', function() {
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     // Simulate the confirm click.
     output.props.children[2].props.children.props.buttons[0].action();
     assert.equal(destroyService.callCount, 1);
