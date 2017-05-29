@@ -178,6 +178,9 @@ describe('LoginComponent', function() {
   it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
+        controllerIsConnected={sinon.stub()}
+        gisf={false}
+        loginToController={sinon.stub()}
         errorMessage='bad wolf'
         loginToAPIs={sinon.stub()}/>);
     var expected = <div className="login__failure-message">bad wolf</div>;
@@ -188,6 +191,9 @@ describe('LoginComponent', function() {
     var loginToAPIs = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
+        controllerIsConnected={sinon.stub()}
+        gisf={false}
+        loginToController={sinon.stub()}
         loginToAPIs={loginToAPIs}/>);
     component.refs.username.value = 'foo';
     component.refs.password.value = 'bar';
@@ -231,6 +237,9 @@ describe('LoginComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        controllerIsConnected={sinon.stub()}
+        gisf={false}
+        loginToController={sinon.stub()}
         loginToAPIs={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};

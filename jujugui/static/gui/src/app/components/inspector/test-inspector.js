@@ -186,6 +186,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
@@ -266,6 +267,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={setConfig}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={unplaceServiceUnits}
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname} />,
@@ -355,6 +357,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
@@ -433,6 +436,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -481,6 +485,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -549,6 +554,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
@@ -612,6 +618,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
@@ -683,6 +690,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
@@ -744,6 +752,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -822,6 +831,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={unexposeService}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -896,6 +906,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -966,6 +977,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -1040,6 +1052,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -1118,6 +1131,7 @@ describe('Inspector', function() {
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -1190,6 +1204,7 @@ describe('Inspector', function() {
         setCharm={setCharm}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -1244,7 +1259,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        charm={{get: sinon.stub().returns({resource: 'one'})}}
+        charm={{get: sinon.stub().returns([{resource: 'one'}])}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1270,6 +1285,7 @@ describe('Inspector', function() {
         setCharm={setCharm}
         setConfig={sinon.stub()}
         showActivePlan={sinon.stub()}
+        showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -1289,7 +1305,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
       <juju.components.InspectorResourcesList
         acl={acl}
-        resources={{resource: 'one'}} />);
+        resources={[{resource: 'one'}]} />);
   });
 
   it('passes changeState callable to header component', function() {
@@ -1338,6 +1354,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1401,6 +1418,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1456,6 +1474,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1508,6 +1527,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1563,6 +1583,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1622,6 +1643,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -1667,6 +1689,7 @@ describe('Inspector', function() {
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
           showActivePlan={sinon.stub()}
+          showPlans={false}
           unexposeService={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);

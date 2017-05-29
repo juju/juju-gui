@@ -26,7 +26,7 @@ chai.config.truncateThreshold = 0;
 describe('HeaderBreadcrumb', () => {
   let appState, changeState, humanizeTimestamp,
       listModelsWithInfo, showProfile, switchModel;
-  const acl = sinon.stub();
+  const acl = {};
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.

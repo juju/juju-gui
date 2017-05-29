@@ -70,6 +70,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         changeState={changeState}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
+        facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
         userInfo={userInfo}
@@ -110,6 +112,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         changeState={changeState}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
+        facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
         userInfo={userInfo}
@@ -139,7 +143,9 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
@@ -399,7 +405,9 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
@@ -434,6 +442,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -467,6 +476,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -499,6 +509,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -529,6 +540,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -555,6 +567,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -585,6 +598,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -611,6 +625,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
+        changeState={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -640,8 +655,10 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
@@ -655,8 +672,10 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         switchModel={sinon.stub()}
@@ -670,8 +689,10 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -685,8 +706,10 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
         switchModel={sinon.stub()}

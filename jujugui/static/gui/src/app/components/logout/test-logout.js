@@ -39,9 +39,11 @@ describe('Logout', () => {
         visible={true}
         clearCookie={sinon.stub()}
         gisf={false}
+        gisfLogout="http://gisflogout"
         charmstoreLogoutUrl={logoutUrl}
         getUser={sinon.stub()}
-        clearUser={sinon.stub()}/>);
+        clearUser={sinon.stub()}
+        locationAssign={sinon.stub()} />);
     var expected = (
       <a className="logout-link"
         href={logoutUrl}
@@ -64,7 +66,8 @@ describe('Logout', () => {
         gisfLogout={gisfLogoutUrl}
         charmstoreLogoutUrl={logoutUrl}
         getUser={sinon.stub()}
-        clearUser={sinon.stub()}/>);
+        clearUser={sinon.stub()}
+        locationAssign={sinon.stub()} />);
     const expected = (
       <a className="logout-link"
         href={gisfLogoutUrl}
@@ -84,7 +87,10 @@ describe('Logout', () => {
         clearCookie={sinon.stub()}
         charmstoreLogoutUrl={logoutUrl}
         getUser={sinon.stub()}
-        clearUser={sinon.stub()} />);
+        gisf={false}
+        gisfLogout="http://gisflogout"
+        clearUser={sinon.stub()}
+        locationAssign={sinon.stub()} />);
     var expected = (
       <a className="logout-link logout-link--hidden"
         href={logoutUrl}
@@ -107,7 +113,10 @@ describe('Logout', () => {
         clearCookie={clearCookie}
         charmstoreLogoutUrl={logoutUrl}
         getUser={sinon.stub().returns(undefined)}
-        clearUser={clearUser} />);
+        gisf={false}
+        gisfLogout="http://gisflogout"
+        clearUser={clearUser}
+        locationAssign={sinon.stub()} />);
     assert.equal(logout.callCount, 0);
     output.props.onClick({ preventDefault: prevent });
     // It should clear the user and the cookie.
@@ -166,7 +175,10 @@ describe('Logout', () => {
         clearCookie={clearCookie}
         charmstoreLogoutUrl={logoutUrl}
         getUser={getUser}
-        clearUser={clearUser} />);
+        gisf={false}
+        gisfLogout="http://gisflogout"
+        clearUser={clearUser}
+        locationAssign={sinon.stub()} />);
     assert.equal(logout.callCount, 0);
     output.props.onClick({ preventDefault: prevent });
     // It should clear the user and the cookie.

@@ -35,10 +35,11 @@ describe('EntityHeader', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
-    urllib = {fromLegacyString: sinon.stub().returns({
+    urllib = sinon.stub();
+    urllib.fromLegacyString = sinon.stub().returns({
       revision: 42,
       path: sinon.stub().returns('u/who/django/42')
-    })};
+    });
   });
 
   afterEach(function() {

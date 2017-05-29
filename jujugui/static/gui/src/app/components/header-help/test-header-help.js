@@ -42,8 +42,8 @@ describe('HeaderHelp', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderHelp.prototype.wrappedComponent
         appState={appState}
-        gisf={false}
-        user={null} />, true);
+        displayShortcutsModal={sinon.stub()}
+        gisf={false} />, true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
 
@@ -80,8 +80,8 @@ describe('HeaderHelp', function() {
       const renderer = jsTestUtils.shallowRender(
         <juju.components.HeaderHelp.prototype.wrappedComponent
           appState={appState}
-          gisf={false}
-          user={null} />, true);
+          displayShortcutsModal={sinon.stub()}
+          gisf={false} />, true);
       const instance = renderer.getMountedInstance();
       instance.toggleHelpMenu();
       const output = renderer.getRenderOutput();
@@ -120,8 +120,8 @@ describe('HeaderHelp', function() {
       const renderer = jsTestUtils.shallowRender(
         <juju.components.HeaderHelp.prototype.wrappedComponent
           appState={appState}
-          gisf={true}
-          user={false} />, true);
+          displayShortcutsModal={sinon.stub()}
+          gisf={true} />, true);
       const instance = renderer.getMountedInstance();
       instance.toggleHelpMenu();
       const output = renderer.getRenderOutput();
@@ -169,6 +169,7 @@ describe('HeaderHelp', function() {
         const renderer = jsTestUtils.shallowRender(
           <juju.components.HeaderHelp.prototype.wrappedComponent
             appState={appState}
+            displayShortcutsModal={sinon.stub()}
             gisf={true}
             user={{}} />, true);
         const instance = renderer.getMountedInstance();

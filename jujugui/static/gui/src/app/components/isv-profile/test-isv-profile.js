@@ -29,7 +29,8 @@ describe('ISVProfile', () => {
 
   it('renders the navigation', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.ISVProfile />, true);
+      <juju.components.ISVProfile
+        d3={{}} />, true);
     var output = component.getRenderOutput();
     var content = output.props.children.props.children.props.children[0];
     var expected = (<nav className="three-col isv-profile__navigation">
@@ -53,7 +54,8 @@ describe('ISVProfile', () => {
 
   it('renders the live data section', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.ISVProfile />, true);
+      <juju.components.ISVProfile
+        d3={{}} />, true);
     var output = component.getRenderOutput();
     var wrapper = output.props.children.props.children;
     var content = wrapper.props.children[1].props.children[0];

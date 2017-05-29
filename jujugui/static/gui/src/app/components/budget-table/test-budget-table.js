@@ -37,6 +37,7 @@ describe('BudgetTable', function() {
 
   it('can render', function() {
     var listPlansForCharm = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
@@ -44,6 +45,7 @@ describe('BudgetTable', function() {
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
         services={[{}, {}]}
+        showTerms={showTerms}
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -81,7 +83,7 @@ describe('BudgetTable', function() {
             plansEditable={false}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
@@ -94,7 +96,7 @@ describe('BudgetTable', function() {
             plansEditable={false}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
@@ -102,6 +104,7 @@ describe('BudgetTable', function() {
 
   it('can render without plans', function() {
     var listPlansForCharm = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
@@ -109,6 +112,7 @@ describe('BudgetTable', function() {
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
         services={[{}, {}]}
+        showTerms={showTerms}
         withPlans={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -133,7 +137,7 @@ describe('BudgetTable', function() {
             plansEditable={false}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={false} />,
           <juju.components.BudgetTableRow
             acl={acl}
@@ -146,7 +150,7 @@ describe('BudgetTable', function() {
             plansEditable={false}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={false} />]}
       </div>);
     assert.deepEqual(output, expected);
@@ -154,6 +158,7 @@ describe('BudgetTable', function() {
 
   it('can display editable plans', function() {
     var listPlansForCharm = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
@@ -161,6 +166,7 @@ describe('BudgetTable', function() {
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
         services={[{}, {}]}
+        showTerms={showTerms}
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -198,7 +204,7 @@ describe('BudgetTable', function() {
             plansEditable={true}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
@@ -211,7 +217,7 @@ describe('BudgetTable', function() {
             plansEditable={true}
             service={{}}
             showExtra={undefined}
-            showTerms={undefined}
+            showTerms={showTerms}
             withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
