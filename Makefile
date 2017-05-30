@@ -294,7 +294,7 @@ lint-python: $(FLAKE8)
 
 .PHONY: lint-js
 lint-js: $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
+	$(NODE_MODULES)/.bin/eslint --cache --rulesdir eslint-rules/ $(GUISRC)
 
 .PHONY: lint-css
 lint-css: $(NODE_MODULES)
