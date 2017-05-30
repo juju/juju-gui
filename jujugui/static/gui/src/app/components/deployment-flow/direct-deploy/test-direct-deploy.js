@@ -42,7 +42,7 @@ describe('DirectDeploy', function() {
         ddData={{id: id}}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
-        makeEntityModel={entityModel}
+        makeEntityModel={sinon.stub().returns(entityModel)}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     instance.setState({entityModel: entityModel});
@@ -74,7 +74,7 @@ describe('DirectDeploy', function() {
         ddData={{id: id}}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
-        makeEntityModel={entityModel}
+        makeEntityModel={sinon.stub().returns(entityModel)}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     instance.setState({entityModel: entityModel});
