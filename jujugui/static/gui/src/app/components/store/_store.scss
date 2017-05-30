@@ -95,7 +95,6 @@
     &--kubernetes,
     &--openstack,
     &--hadoop {
-      min-height: 310px;
       margin-bottom: 20px;
       padding-bottom: 125px;
 
@@ -127,7 +126,7 @@
       color: $white;
 
       .box__image {
-        margin-top: 15px;
+        padding: 15px 70px 0;
       }
     }
 
