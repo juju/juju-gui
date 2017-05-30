@@ -46,54 +46,53 @@ describe('Store', function() {
   });
 
   it('can render big data feature in the correct place', function() {
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.Store
         apiVersion="v5"
-        changeState={changeState}
+        changeState={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         gisf={true}
-        setPageTitle={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = 'Container management';
+        setPageTitle={sinon.stub()} />);
     assert.equal(
-      output.props.children[3].props.
-      children.props.children.props.children[0].props.children,
-      expected
-    );
+      output.props.children[3].props.children.props.children[0]
+      .props.children.props.children[0].props.children,
+      'Container management');
   }),
 
   it('can render write-your-own correctly', function() {
-    var changeState = sinon.stub();
-    var charmstoreURL = 'http://1.2.3.4/';
-    var apiVersion = 'v5';
-    var doc = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
-    var renderer = jsTestUtils.shallowRender(
+    const href = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
+    const output = jsTestUtils.shallowRender(
       <juju.components.Store
-        changeState={changeState}
-        charmstoreURL={charmstoreURL}
-        apiVersion={apiVersion}
+        changeState={sinon.stub()}
+        charmstoreURL={'http://1.2.3.4/'}
+        apiVersion={'v5'}
         gisf={true}
-        setPageTitle={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (<div className="row row--write-your-own">
-            <div className="inner-wrapper clearfix">
-                <div className="six-col">
-                    <h2>Write a charm and join the ecosystem</h2>
-                    <p>Creating new charms it easy. Charms can be written
-                    in your choice of language and adapting existing
-                    scripts is straightforward. You can keep new charms
-                    private, or share them back with the community.</p>
-                    <p>
-                    <a target="_blank"
-                      className="link"
-                      href={doc}>
-                      Learn more about writing charms&nbsp;&rsaquo;
-                    </a></p>
-                </div>
-            </div>
-        </div>);
-    assert.deepEqual(output.props.children[7], expected);
+        setPageTitle={sinon.stub()} />);
+    const expected = (<div className="row row--write-your-own">
+      <div className="wrapper">
+        <div className="inner-wrapper">
+          <div className="text six-col">
+            <h2>Write a charm and join the ecosystem</h2>
+            <p>Creating new charms it easy. Charms can be written
+            in your choice of language and adapting existing
+            scripts is straightforward. You can keep new charms
+            private, or share them back with the community.</p>
+            <p>
+            <a target="_blank"
+              className="link"
+              href={href}>
+              Learn more about writing charms&nbsp;&rsaquo;
+            </a></p>
+          </div>
+        </div>
+        <div>
+          <img
+            src="/static/gui/build/app/assets/images/store/write-your-own.png"
+          />
+        </div>
+      </div>
+    </div>);
+    expect(output.props.children[7]).toEqualJSX(expected);
   }),
 
   it('can handle clicking on an entity', function() {
@@ -156,18 +155,15 @@ describe('Store', function() {
   });
 
   it('shows different hero links in gijoe', () => {
-    var changeState = sinon.stub();
-    var charmstoreURL = 'http://1.2.3.4/';
-    var apiVersion = 'v5';
-    var renderer = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.Store
-        changeState={changeState}
-        charmstoreURL={charmstoreURL}
+        changeState={sinon.stub()}
+        charmstoreURL={'http://1.2.3.4/'}
         gisf={false}
-        apiVersion={apiVersion}
-        setPageTitle={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    assert.isDefined(output.props.children[0].props.
-      children[0].props.children.props.children[1].props.onClick);
+        apiVersion={'v5'}
+        setPageTitle={sinon.stub()} />);
+    assert.isDefined(
+      output.props.children[0].props.children[0].props.children[1]
+      .props.children[1].props.onClick);
   });
 });
