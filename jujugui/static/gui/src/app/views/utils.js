@@ -2080,8 +2080,6 @@ YUI.add('juju-view-utils', function(Y) {
     'node',
     'view',
     'panel',
-    'popup',
-    'json-stringify',
-    'datatype-date-format'
+    'popup'
   ]
 });
