@@ -35,6 +35,11 @@
     &.profile-disabled {
       cursor: default;
       border-bottom: 0;
+
+      &:before {
+        // Hide the / after the logo when there is no username.
+        display: none;
+      }
     }
   }
 
@@ -56,7 +61,6 @@
     line-height: $breadcrumb-line-height;
     margin-left: 20px;
     position: absolute;
-    width: 100vw;
 
     @keyframes ellipsis {
       to {
