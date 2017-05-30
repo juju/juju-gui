@@ -26,6 +26,7 @@ YUI.add('entity-content-description', function() {
     /* Define and validate the properites available on this component. */
     propTypes: {
       entityModel: React.PropTypes.object,
+      includeHeading: React.PropTypes.bool,
       renderMarkdown: React.PropTypes.func.isRequired
     },
 
@@ -35,14 +36,22 @@ YUI.add('entity-content-description', function() {
         return false;
       }
       const htmlDescription = this.props.renderMarkdown(description);
+      let heading = null;
+      if (this.props.includeHeading) {
+        heading = (
+          <h2 className="entity-content__header" id="description">
+            Description
+            <juju.components.HashLink
+              changeState={this.props.changeState}
+              hash="description" />
+          </h2>
+        );
+      }
       return (
-        <div className="row row--grey entity-content__description">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <div className="intro"
-                dangerouslySetInnerHTML={{__html: htmlDescription}}>
-              </div>
-            </div>
+        <div className="entity-content__description">
+          {heading}
+          <div className="entity-content__description-content"
+            dangerouslySetInnerHTML={{__html: htmlDescription}}>
           </div>
         </div>
       );
@@ -50,5 +59,5 @@ YUI.add('entity-content-description', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: ['hash-link']
 });

@@ -360,6 +360,7 @@ YUI.add('entity-content', function() {
     _generateDescription: function(entityModel) {
       return (<juju.components.EntityContentDescription
         entityModel={entityModel}
+        includeHeading={true}
         renderMarkdown={this.props.renderMarkdown} />);
     },
 
@@ -605,12 +606,12 @@ YUI.add('entity-content', function() {
       const entityModel = this.props.entityModel;
       return (
         <div className="entity-content">
-          {this._generateDescription(entityModel)}
           {this._generateTagsAndTerms(entityModel)}
           {this._generatePlans()}
           <div className="row">
             <div className="inner-wrapper">
               <div className="seven-col append-one">
+                {this._generateDescription(entityModel)}
                 <juju.components.EntityContentReadme
                   changeState={this.props.changeState}
                   entityModel={entityModel}

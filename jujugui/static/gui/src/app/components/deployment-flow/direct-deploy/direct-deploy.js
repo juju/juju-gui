@@ -58,6 +58,7 @@ YUI.add('deployment-direct-deploy', function() {
     render: function() {
       let diagram = null;
       let description = null;
+      let title = null;
       const ddEntityId = this.props.ddData.id;
       if (this.state.isBundle) {
         diagram = <juju.components.EntityContentDiagram
@@ -69,17 +70,16 @@ YUI.add('deployment-direct-deploy', function() {
             entityModel={this.state.entityModel}
             renderMarkdown={this.props.renderMarkdown}
             />;
+          title = (<h3>{this.state.entityModel.toEntity().displayName}</h3>);
         }
       }
       return (
         <juju.components.DeploymentSection
           instance="deployment-one-click"
           showCheck={false}
-          title="Direct Deploy">
-          <p>
-            The following steps will guide you through deploying {ddEntityId}
-          </p>
+          title="You are deploying:">
           {diagram}
+          {title}
           {description}
         </juju.components.DeploymentSection>);
     }
