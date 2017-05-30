@@ -260,24 +260,30 @@ YUI.add('store', function() {
 
       return (<div className="row equal-height">
           <div className="box box--kubernetes align-center four-col">
-              <div className="align-bottom">
-                  <h2>Kubernetes</h2>
-                  {kubernetesButton}
-              </div>
+            <img src={this._generateLocalImagePath('k8-image.png')}
+              alt="Kubernetes" className="box__image" />
+            <div className="align-bottom">
+              <h2>Kubernetes</h2>
+              {kubernetesButton}
+            </div>
           </div>
           <div className="box box--openstack align-center four-col">
-              <div className="align-bottom">
-                  <h2>OpenStack</h2>
-                  {openstackButton}
-              </div>
+            <img src={this._generateLocalImagePath('openstack-promo.png')}
+              alt="Openstack" className="box__image" />
+            <div className="align-bottom">
+              <h2>OpenStack</h2>
+              {openstackButton}
+            </div>
           </div>
           <div className="box box--hadoop align-center four-col last-col">
             <div className="box--hadoop-container">
-                <div className="align-bottom">
-                    <h2>Big Data</h2>
-                    {bigdataButton}
-                </div>
+              <img src={this._generateLocalImagePath('hadoop-elephant.png')}
+                alt="Hadoop" className="box__image" />
+              <div className="align-bottom">
+                <h2>Big Data</h2>
+                {bigdataButton}
               </div>
+            </div>
           </div>
       </div>);
     },
