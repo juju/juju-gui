@@ -149,21 +149,26 @@ YUI.add('store', function() {
       const href =
         'https://www.jujucharms.com/docs/stable/authors-charm-writing';
       return (<div className="row row--write-your-own">
-          <div className="inner-wrapper clearfix">
-              <div className="six-col">
-                  <h2>Write a charm and join the ecosystem</h2>
-                  <p>Creating new charms it easy. Charms can be written
-                  in your choice of language and adapting existing
-                  scripts is straightforward. You can keep new charms
-                  private, or share them back with the community.</p>
-                  <p>
-                  <a target="_blank"
-                    className="link"
-                    href={href}>
-                    Learn more about writing charms&nbsp;&rsaquo;
-                  </a></p>
-              </div>
+        <div className="wrapper">
+          <div className="inner-wrapper">
+            <div className="text six-col">
+              <h2>Write a charm and join the ecosystem</h2>
+              <p>Creating new charms it easy. Charms can be written
+              in your choice of language and adapting existing
+              scripts is straightforward. You can keep new charms
+              private, or share them back with the community.</p>
+              <p>
+              <a target="_blank"
+                className="link"
+                href={href}>
+                Learn more about writing charms&nbsp;&rsaquo;
+              </a></p>
+            </div>
           </div>
+          <div>
+            <img src={this._generateLocalImagePath('write-your-own.png')} />
+          </div>
+        </div>
       </div>);
     },
 

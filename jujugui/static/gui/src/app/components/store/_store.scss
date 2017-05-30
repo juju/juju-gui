@@ -232,10 +232,31 @@
     }
   }
 
-  .row--write-your-own .inner-wrapper {
+  .row--write-your-own {
+    .wrapper {
+      margin: 0 auto;
+      max-width: 1040px;
+    }
+
+    .inner-wrapper {
+      /* Reset the default inner-wrapper values */
+      padding: 0;
+      margin: 0;
+
+      .text {
+        padding-top: 50px;
+      }
+    }
+
+    img {
+      display: none;
+      height: 277px;
+    }
+
     @media only screen and (min-width: $breakpoint-medium) {
-      background-image: url('static/gui/build/app/assets/images/store/write-your-own.png');
-      background-size: 50%;
+      img {
+        display: block;
+      }
     }
   }
 
