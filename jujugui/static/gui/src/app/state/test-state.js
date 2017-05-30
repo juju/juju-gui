@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-fdescribe('State', () => {
+describe('State', () => {
 
   const specialStateTests = [{
     path: 'http://abc.com:123/?deploy-target=cs:ghost-4',
