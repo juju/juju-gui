@@ -216,7 +216,7 @@ describe('user auth class', () => {
 
     it('does nothing prior to expiration time', () => {
       storage.setItem('foo', 'bar');
-      user._checkExpiration();
+      user._purgeIfExpired();
       assert.equal(storage.getItem('foo'), 'bar');
     });
 
@@ -229,7 +229,7 @@ describe('user auth class', () => {
       };
       user = new window.jujugui.User(cfg);
       storage.setItem('foo', 'bar');
-      user._checkExpiration();
+      user._purgeIfExpired();
       assert.isNull(storage.getItem('foo'));
     });
   });
