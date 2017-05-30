@@ -146,7 +146,8 @@ YUI.add('store', function() {
       @return {Object} The contents of the section
     */
     _writeOurOwnSection: function() {
-      var doc = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
+      const href =
+        'https://www.jujucharms.com/docs/stable/authors-charm-writing';
       return (<div className="row row--write-your-own">
           <div className="inner-wrapper clearfix">
               <div className="six-col">
@@ -158,7 +159,7 @@ YUI.add('store', function() {
                   <p>
                   <a target="_blank"
                     className="link"
-                    href={doc}>
+                    href={href}>
                     Learn more about writing charms&nbsp;&rsaquo;
                   </a></p>
               </div>
@@ -594,17 +595,22 @@ YUI.add('store', function() {
     */
     _bigDataSection: function() {
       return (<div className="row row--containers">
-        <div className="inner-wrapper clearfix">
-          <div className="six-col">
-            <h2>Container management</h2>
-            <p>Juju makes it easy to deploy container management solutions
-            by provisioning, installing and configuring all the systems in
-            the cluster.</p>
-            <p><span onClick={this._handleSearchClick}
-              data-query="containers"
-              className="button--inline-neutral">
-              View bundles
-            </span></p>
+        <div className="wrapper bigdata">
+          <div className="inner-wrapper bigdata">
+            <div className="text six-col">
+              <h2>Container management</h2>
+              <p>Juju makes it easy to deploy container management solutions
+              by provisioning, installing and configuring all the systems in
+              the cluster.</p>
+              <p><span onClick={this._handleSearchClick}
+                data-query="containers"
+                className="button--inline-neutral">
+                View bundles
+              </span></p>
+            </div>
+          </div>
+          <div>
+            <img src={this._generateLocalImagePath('kubernetes-promo.png')} />
           </div>
         </div>
       </div>);
