@@ -38,7 +38,7 @@ YUI.add('generic-input', function() {
       required: React.PropTypes.bool,
       type: React.PropTypes.string,
       validate: React.PropTypes.array,
-      value: React.PropTypes.string,
+      value: React.PropTypes.string
     },
 
     getDefaultProps: () => {

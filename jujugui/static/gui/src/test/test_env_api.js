@@ -758,7 +758,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'cloud-credential-tag': 'cloudcred-aws_admin@local_aws',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local',
+          'owner-tag': 'user-admin@local'
         }
       });
       assert.equal(env.get('defaultSeries'), 'xenial');
@@ -784,7 +784,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'cloud-region': 'us-east-1',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local',
+          'owner-tag': 'user-admin@local'
         }
       });
       assert.strictEqual(env.get('credential'), '');
@@ -2695,12 +2695,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         debug: {
           'default': options.debug.default,
           description: options.debug.description,
-          type: options.debug.type,
+          type: options.debug.type
         },
         engine: {
           'default': options.engine.default,
           description: options.engine.description,
-          type: options.engine.type,
+          type: options.engine.type
         }
       };
       // Define expected peers.
@@ -2808,7 +2808,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             application: 'django',
             'charm-url': args.url,
             'force-charm-url': false,
-            'force-series': false,
+            'force-series': false
           },
           'request-id': 1
         });
@@ -2831,7 +2831,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             application: 'django',
             'charm-url': args.url,
             'force-charm-url': true,
-            'force-series': false,
+            'force-series': false
           },
           'request-id': 1
         });

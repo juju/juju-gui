@@ -26,7 +26,7 @@ YUI.add('user-profile-budget-list', function() {
     propTypes: {
       broadcastStatus: React.PropTypes.func,
       listBudgets: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {
@@ -34,7 +34,7 @@ YUI.add('user-profile-budget-list', function() {
 
       return {
         budgetList: [],
-        loadingBudgets: false,
+        loadingBudgets: false
       };
     },
 

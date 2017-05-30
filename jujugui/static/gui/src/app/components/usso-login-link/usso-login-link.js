@@ -27,7 +27,7 @@ YUI.add('usso-login-link', function() {
       children: React.PropTypes.node,
       displayType: React.PropTypes.string.isRequired,
       gisf: React.PropTypes.bool,
-      loginToController: React.PropTypes.func.isRequired,
+      loginToController: React.PropTypes.func.isRequired
     },
 
     /**

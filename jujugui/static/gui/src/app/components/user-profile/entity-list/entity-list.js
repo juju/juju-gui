@@ -31,7 +31,7 @@ YUI.add('user-profile-entity-list', function() {
       getDiagramURL: React.PropTypes.func.isRequired,
       getKpiMetrics: React.PropTypes.func,
       type: React.PropTypes.string.isRequired,
-      user: React.PropTypes.string,
+      user: React.PropTypes.string
     },
 
     getInitialState: function() {
@@ -39,7 +39,7 @@ YUI.add('user-profile-entity-list', function() {
 
       return {
         entityList: [],
-        loadingEntities: false,
+        loadingEntities: false
       };
     },
 

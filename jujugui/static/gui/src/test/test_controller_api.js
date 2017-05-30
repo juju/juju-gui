@@ -732,7 +732,7 @@ describe('Controller API', function() {
           displayName: 'doctor who',
           domain: 'Ubuntu SSO',
           lastConnection: new Date('2000-01-01T00:00:00Z'),
-          access: 'admin',
+          access: 'admin'
         });
         assert.deepEqual(result.users[1], {err: 'bad wolf'});
         assert.deepEqual(result.users[2], {
@@ -740,14 +740,14 @@ describe('Controller API', function() {
           displayName: 'Admin',
           domain: 'local',
           lastConnection: null,
-          access: 'read',
+          access: 'read'
         });
         assert.deepEqual(result.users[3], {
           name: 'dalek@skaro',
           displayName: 'dalek',
           domain: 'skaro',
           lastConnection: null,
-          access: 'write',
+          access: 'write'
         });
         assert.strictEqual(result.life, 'alive');
         assert.strictEqual(result.owner, 'admin@local');
@@ -783,16 +783,16 @@ describe('Controller API', function() {
                 user: 'who@external',
                 'display-name': 'doctor who',
                 'last-connection': '2000-01-01T00:00:00Z',
-                access: 'admin',
+                access: 'admin'
               }, {
                 error: {message: 'bad wolf'}
               }, {
                 user: 'admin',
                 'display-name': 'Admin',
-                access: 'read',
+                access: 'read'
               }, {
                 user: 'dalek@skaro',
-                access: 'write',
+                access: 'write'
               }],
               life: 'alive',
               'owner-tag': 'user-admin@local'
@@ -993,7 +993,7 @@ describe('Controller API', function() {
           displayName: 'doctor who',
           domain: 'Ubuntu SSO',
           lastConnection: new Date('2000-01-01T00:00:00Z'),
-          access: 'admin',
+          access: 'admin'
         });
         assert.deepEqual(result.users[1], {err: 'bad wolf'});
         assert.deepEqual(result.users[2], {
@@ -1001,14 +1001,14 @@ describe('Controller API', function() {
           displayName: 'Admin',
           domain: 'local',
           lastConnection: null,
-          access: 'read',
+          access: 'read'
         });
         assert.deepEqual(result.users[3], {
           name: 'dalek@skaro',
           displayName: 'dalek',
           domain: 'skaro',
           lastConnection: null,
-          access: 'write',
+          access: 'write'
         });
         assert.strictEqual(result.life, 'alive');
         assert.strictEqual(result.owner, 'admin@local');
@@ -1068,16 +1068,16 @@ describe('Controller API', function() {
                 user: 'who@external',
                 'display-name': 'doctor who',
                 'last-connection': '2000-01-01T00:00:00Z',
-                access: 'admin',
+                access: 'admin'
               }, {
                 error: {message: 'bad wolf'}
               }, {
                 user: 'admin',
                 'display-name': 'Admin',
-                access: 'read',
+                access: 'read'
               }, {
                 user: 'dalek@skaro',
-                access: 'write',
+                access: 'write'
               }],
               life: 'alive',
               'owner-tag': 'user-admin@local'
@@ -1182,19 +1182,19 @@ describe('Controller API', function() {
               name: 'default',
               'owner-tag': 'user-dalek',
               uuid: '5bea955d-1'
-            },
+            }
           }, {
             model: {
               name: 'admin',
               'owner-tag': 'user-who',
               uuid: '5bea955d-c'
-            },
+            }
           }, {
             model: {
               name: 'mymodel',
               'owner-tag': 'user-cyberman',
               uuid: '5bea955d-3'
-            },
+            }
           }]
         }
       });
@@ -1638,7 +1638,7 @@ describe('Controller API', function() {
                 endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
                 'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
                 'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }],
+              }]
             },
             'cloud-guimaas': {
               'type':'maas',
@@ -1812,7 +1812,7 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({
         'request-id': 1,
-        response: {result: 'cloud-lxd'},
+        response: {result: 'cloud-lxd'}
       });
     });
 
@@ -1884,11 +1884,11 @@ describe('Controller API', function() {
             result: [
               'cloudcred-ldx_spinach@local_name1',
               'cloudcred-ldx_spinach@local_name2'
-            ],
+            ]
           }, {
-            error: {message: 'bad wolf'},
+            error: {message: 'bad wolf'}
           }, {
-            result: ['cloudcred-google_spinach@local_name3'],
+            result: ['cloudcred-google_spinach@local_name3']
           }]
         }
       });
@@ -1985,7 +1985,7 @@ describe('Controller API', function() {
             }
           }, {
             result: {
-              'auth-type': 'oauth2',
+              'auth-type': 'oauth2'
             }
           }, {
             error: {message: 'no such credentials'}
@@ -2107,7 +2107,7 @@ describe('Controller API', function() {
           request: 'RevokeCredentials',
           version: 1,
           params: {entities: [{
-            tag: 'cloudcred-banna',
+            tag: 'cloudcred-banna'
           }]}
         });
         done();

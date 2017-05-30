@@ -45,7 +45,7 @@ describe('Sharing', () => {
         displayName: 'Rose',
         domain: 'local',
         lastConnection: null,
-        access: 'write',
+        access: 'write'
       }, {
         name: 'dalek',
         displayName: 'Dalek',
@@ -270,7 +270,7 @@ describe('Sharing', () => {
     // Verify that the action of granting access makes the expected API call.
     instance.refs = {
       username: {getValue: sinon.stub().returns('chekov')},
-      access: {getValue: sinon.stub().returns('read')},
+      access: {getValue: sinon.stub().returns('read')}
     };
     const inviteForm = output.props.children[0].props.children[1];
     inviteForm.props.onSubmit();

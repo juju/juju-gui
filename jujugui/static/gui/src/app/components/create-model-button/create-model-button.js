@@ -62,7 +62,7 @@ YUI.add('create-model-button', function() {
             title={this.props.title} />
         </div>
       );
-    },
+    }
   });
 
 }, '', {

@@ -26,7 +26,7 @@ YUI.add('file-field', function() {
       accept: React.PropTypes.string,
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string.isRequired,
-      required: React.PropTypes.bool,
+      required: React.PropTypes.bool
     },
 
     getDefaultProps: () => {

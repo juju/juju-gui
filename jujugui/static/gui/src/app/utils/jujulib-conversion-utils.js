@@ -45,6 +45,6 @@ YUI.add('jujulib-utils', function(Y) {
 }, '', {
   requires: [
     'juju-charm-models',
-    'juju-bundle-models',
+    'juju-bundle-models'
   ]
 });

@@ -258,14 +258,14 @@ describe('jujulib plans service', function() {
         'allocated': 77,
         'unallocated': 22,
         'available': 22,
-        'consumed': 55,
+        'consumed': 55
       }],
       'total': {
         'limit': 999,
         'allocated': 777,
         'unallocated': 222,
         'consumed': 55,
-        'available': 22,
+        'available': 22
       }};
     const bakery = {
       get: function(url, headers, callback) {
@@ -536,7 +536,7 @@ describe('jujulib plans service', function() {
         'available': 'unconsumed amount',
         'unallocated': 'unallocated amount',
         'usage': 'percentage of budget consumed',
-        'consumed': 'total consumed amount',
+        'consumed': 'total consumed amount'
       },
       'allocations': [{
         'owner': 'user, creator of allocation',
@@ -547,7 +547,7 @@ describe('jujulib plans service', function() {
         'services': {
           'service name': {
             'consumed': 'consumed',
-            'usage': 'consumed/allocation limit',
+            'usage': 'consumed/allocation limit'
           }
         }
       }]
@@ -681,21 +681,21 @@ describe('jujulib plans service', function() {
         sum: 42,
         count: 5,
         min: 'min',
-        max: 'max',
+        max: 'max'
       }, {
         metric: 'bad-wolf',
         time: 't',
         sum: 53,
         count: 8,
         min: 'min',
-        max: 'max',
+        max: 'max'
       }, {
         metric: 'metric',
         time: 't',
         sum: 80,
         count: 10,
         min: 'min',
-        max: 'max',
+        max: 'max'
       }]);
       done();
     });

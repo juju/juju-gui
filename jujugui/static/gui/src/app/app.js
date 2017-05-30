@@ -2028,7 +2028,7 @@ YUI.add('juju-gui', function(Y) {
             store: null,
             model: null,
             user: null,
-            profile: this.user.displayName,
+            profile: this.user.displayName
           });
         }
       });

@@ -751,7 +751,7 @@ describe('Environment Change Set', function() {
       it('creates a new `deploy` record', function(done) {
         const args = {
           charmURL: 'cs:precise/django-42',
-          applicationName: 'django',
+          applicationName: 'django'
         };
         const options = {modelId: 'baz'};
         const key = ecs.lazyDeploy([args, done], options);
@@ -840,7 +840,7 @@ describe('Environment Change Set', function() {
         }, null], {});
         const key = ecs.lazyDeploy([{
           charmURL: 'cs:precise/django-42',
-          applicationName: 'django',
+          applicationName: 'django'
         }, null], {});
         const record = ecs.changeSet[key];
         assert.equal(record.parents.length, 2);

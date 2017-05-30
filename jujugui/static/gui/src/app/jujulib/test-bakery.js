@@ -56,7 +56,7 @@ describe('Bakery', () => {
       },
       sendPatchRequest: function(...args) {
         this._sendRequest('patch', ...args);
-      },
+      }
     };
 
     storage = new jujulib.BakeryStorage(
@@ -302,7 +302,7 @@ describe('Bakery', () => {
         target: {
           status: 200,
           responseText: '',
-          response: '',
+          response: ''
         }
       };
       if (fail) {
@@ -323,7 +323,7 @@ describe('Bakery', () => {
       const windowStub = sinon.stub(window, 'open');
       const error = {
         Info: {
-          VisitURL: 'http://example.com',
+          VisitURL: 'http://example.com'
         }
       };
       bakery._visitPage(error);
@@ -422,7 +422,7 @@ describe('Bakery', () => {
       const cookieSet = sinon.stub();
       const params = {
         services: {
-          charmstore: 'http://example.com/charmstore',
+          charmstore: 'http://example.com/charmstore'
         },
         charmstoreCookieSetter: cookieSet
       };

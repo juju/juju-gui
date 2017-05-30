@@ -33,7 +33,7 @@ describe('BooleanConfig', function() {
   it('renders a checked input based on config prop', function() {
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
@@ -73,7 +73,7 @@ describe('BooleanConfig', function() {
   it('renders an unchecked input based on config prop', function() {
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
@@ -111,7 +111,7 @@ describe('BooleanConfig', function() {
   it('supports string boolean config props (true)', function() {
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
@@ -149,7 +149,7 @@ describe('BooleanConfig', function() {
   it('supports string boolean config props (false)', function() {
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
@@ -188,7 +188,7 @@ describe('BooleanConfig', function() {
     const onChange = sinon.stub();
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
@@ -209,7 +209,7 @@ describe('BooleanConfig', function() {
   it('can be disabled', function() {
     const option = {
       key: 'testcheck',
-      description: 'it is a test config option',
+      description: 'it is a test config option'
     };
     const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig

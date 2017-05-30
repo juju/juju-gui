@@ -81,7 +81,7 @@ YUI.add('app-renderer-extension', function(Y) {
           switchModel={utils.switchModel.bind(this, env)}
           loadingModel={this.env.loading} />,
         document.getElementById('header-breadcrumb'));
-    },
+    }
   };
 
   Y.namespace('juju').AppRenderer = AppRenderer;

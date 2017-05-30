@@ -118,7 +118,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ['machineInfo', 'add', {
           'agent-status': {current: 'running'},
           'id': 0,
-          'instance-id': 'local',
+          'instance-id': 'local'
         }],
         ['unitInfo', 'add', {
           'machine-id': 0,
@@ -285,7 +285,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       click = new MouseEvent('click', {
         view: window,
         bubbles: true,
-        cancelable: true,
+        cancelable: true
       });
     });
 

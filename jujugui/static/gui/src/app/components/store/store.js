@@ -302,7 +302,7 @@ YUI.add('store', function() {
         {name: 'analytics', count: 7},
         {name: 'apache', count: 38},
         {name: 'security', count: 4},
-        {name: 'storage', count: 17},
+        {name: 'storage', count: 17}
       ];
       var list = [];
       topics.forEach(function(topic, index) {

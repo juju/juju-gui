@@ -30,7 +30,7 @@ describe('MoreMenu', function() {
   it('can render as closed', function() {
     var menuItems = [{
       label: 'Add machine',
-      action: sinon.stub(),
+      action: sinon.stub()
     }, {
       label: 'Add container'
     }];
@@ -60,7 +60,7 @@ describe('MoreMenu', function() {
   it('can be opened', function() {
     var menuItems = [{
       label: 'Add machine',
-      action: sinon.stub(),
+      action: sinon.stub()
     }, {
       label: 'Add container'
     }];
@@ -105,7 +105,7 @@ describe('MoreMenu', function() {
     var action = sinon.stub();
     var menuItems = [{
       label: 'Add machine',
-      action: action,
+      action: action
     }, {
       label: 'Add container'
     }];

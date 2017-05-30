@@ -82,7 +82,7 @@ describe('HeaderBreadcrumb', () => {
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
-      showEnvSwitcher: true,
+      showEnvSwitcher: true
     });
     const expectedOutput = (
       <div className="header-breadcrumb">

@@ -26,7 +26,7 @@ YUI.add('user-profile-agreement-list', function() {
     propTypes: {
       broadcastStatus: React.PropTypes.func,
       getAgreements: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {
@@ -34,7 +34,7 @@ YUI.add('user-profile-agreement-list', function() {
 
       return {
         agreementList: [],
-        loadingAgreements: false,
+        loadingAgreements: false
       };
     },
 

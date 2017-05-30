@@ -36,7 +36,7 @@ YUI.add('entity-content-readme', function() {
 
     getInitialState: function() {
       return {
-        readme: null,
+        readme: null
       };
     },
 

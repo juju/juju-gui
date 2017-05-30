@@ -30,7 +30,7 @@ YUI.add('deployment-panel', function() {
         React.PropTypes.array
       ]),
       sendAnalytics: React.PropTypes.func,
-      title: React.PropTypes.string,
+      title: React.PropTypes.string
     },
 
     /**

@@ -84,7 +84,7 @@ describe('user auth class', () => {
     it('determines if creds are external', () => {
       user.controller = {
         user: 'doctor@tardis',
-        password: 'bad wolf',
+        password: 'bad wolf'
       };
       user.externalAuth = 'foo';
       const creds = user.controller;
@@ -132,7 +132,7 @@ describe('user auth class', () => {
     it('determines if creds are external', () => {
       user.model = {
         user: 'doctor@tardis',
-        password: 'bad wolf',
+        password: 'bad wolf'
       };
       user.externalAuth = 'foo';
       const creds = user.model;

@@ -164,7 +164,7 @@ describe('ModelActions', function() {
       />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
-      'file-input': {files: ['apache2.yaml']},
+      'file-input': {files: ['apache2.yaml']}
     };
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.onChange();

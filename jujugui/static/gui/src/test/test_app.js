@@ -542,7 +542,7 @@ describe('App', function() {
       });
       controller = new juju.ControllerAPI({
         conn: conn2,
-        user: user,
+        user: user
       });
       user.controller = {user: 'user', password: 'password'};
       app = new Y.juju.App({
