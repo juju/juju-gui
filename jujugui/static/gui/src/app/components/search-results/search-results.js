@@ -28,6 +28,7 @@ YUI.add('search-results', function(Y) {
       changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
       deployTarget: React.PropTypes.func.isRequired,
+      generatePath: React.PropTypes.func.isRequired,
       getName: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       owner: React.PropTypes.string,
@@ -497,6 +498,7 @@ YUI.add('search-results', function(Y) {
               acl={this.props.acl}
               changeState={this.props.changeState}
               deployTarget={this.props.deployTarget}
+              generatePath={this.props.generatePath}
               item={item}
               key={item.storeId + i} />)}
         </ul>
@@ -547,6 +549,7 @@ YUI.add('search-results', function(Y) {
                 acl={this.props.acl}
                 changeState={this.props.changeState}
                 deployTarget={this.props.deployTarget}
+                generatePath={this.props.generatePath}
                 item={item}
                 key={item.storeId + i} />)}
           </ul>
