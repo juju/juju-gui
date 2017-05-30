@@ -57,7 +57,8 @@ YUI.add('search-results', function(Y) {
     collapseSeries: function(entities, getName) {
       function entityKey(entity, getName) {
         return [
-          getName(entity.id),
+          // Some ids include "cs:", so normalise the ids for comparison.
+          getName(entity.id.replace('cs:', '')),
           entity.owner,
           entity.type,
           entity.promulgated
@@ -491,13 +492,13 @@ YUI.add('search-results', function(Y) {
           ({promulgated.length})
         </span></h4>
         <ul className="list-block__list">
-          {promulgated.map(item =>
+          {promulgated.map((item, i) =>
             <juju.components.SearchResultsItem
               acl={this.props.acl}
               changeState={this.props.changeState}
               deployTarget={this.props.deployTarget}
               item={item}
-              key={item.storeId} />)}
+              key={item.storeId + i} />)}
         </ul>
       </div>);
     },
@@ -541,13 +542,13 @@ YUI.add('search-results', function(Y) {
             ({community.length})
           </span></h4>
           <ul className="list-block__list">
-            {community.map(item =>
+            {community.map((item, i) =>
               <juju.components.SearchResultsItem
                 acl={this.props.acl}
                 changeState={this.props.changeState}
                 deployTarget={this.props.deployTarget}
                 item={item}
-                key={item.storeId} />)}
+                key={item.storeId + i} />)}
           </ul>
         </div>
       </div>);

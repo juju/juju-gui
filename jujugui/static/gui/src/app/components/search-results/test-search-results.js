@@ -485,12 +485,30 @@ describe('SearchResults', function() {
       assert.deepEqual(actual, expected);
     });
 
+    it('can collapse charms when the id contains "cs:"', () => {
+      const getName = (val) => {
+        return val.split('/').pop();
+      };
+      const entities = [
+        {id: 'cs:foo', name: 'foo', owner: 'bar', type: 'charm',
+          series: 'trusty'},
+        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
+          series: 'precise'},
+        {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
+      ];
+      const actual = searchResults.collapseSeries(entities, getName);
+      assert.equal(actual.length, 2);
+    });
+
     it('aggregates downloads when collapsing charms', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 's1', downloads: 1},
-        {name: 'c1', owner: 'o1', type: 'c', series: 's2', downloads: 5},
-        {name: 'c1', owner: 'o2', type: 'c', series: 's3', downloads: 3}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's1',
+          downloads: 1},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's2',
+          downloads: 5},
+        {name: 'c1', id: 'c1', owner: 'o2', type: 'c', series: 's3',
+          downloads: 3}
       ];
       var actual = searchResults.collapseSeries(entities, getName);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
@@ -537,9 +555,9 @@ describe('SearchResults', function() {
     it('sorts the series within collapsed results', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'precise'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
       var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
@@ -553,9 +571,9 @@ describe('SearchResults', function() {
     it('de-dupes the series within collapsed results', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
+        {name: 'c1', id: 'cs', owner: 'o1', type: 'c', series: 'precise'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
       var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
