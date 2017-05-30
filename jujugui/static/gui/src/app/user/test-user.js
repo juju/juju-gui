@@ -202,16 +202,16 @@ describe('user auth class', () => {
       const expiration = new Date();
       const cfg = {
         sessionStorage: storage,
-        expiration: expiration
+        expirationDatetime: expiration
       };
       user = new window.jujugui.User(cfg);
       assert.deepEqual(
-        new Date(user.expiration).getTime(),
+        new Date(user.expirationDatetime).getTime(),
         expiration.getTime());
     });
 
     it('sets an expiration time in the future if one is not provided', () => {
-      assert.isAbove(new Date(user.expiration), new Date());
+      assert.isAbove(new Date(user.expirationDatetime), new Date());
     });
 
     it('does nothing prior to expiration time', () => {
@@ -225,7 +225,7 @@ describe('user auth class', () => {
       expiration.setHours(expiration.getHours() - 1); // expired an hour ago
       const cfg = {
         sessionStorage: storage,
-        expiration: expiration
+        expirationDatetime: expiration
       };
       user = new window.jujugui.User(cfg);
       storage.setItem('foo', 'bar');

@@ -320,7 +320,7 @@ YUI.add('juju-gui', function(Y) {
       // Create a user store to track authentication details.
       const userCfg = {
         externalAuth: this.get('auth'),
-        expiration: window.sessionStorage.getItem('expiration')
+        expiration: window.sessionStorage.getItem('expirationDatetime')
       };
       this.user = this.get('user') || new window.jujugui.User(userCfg);
 

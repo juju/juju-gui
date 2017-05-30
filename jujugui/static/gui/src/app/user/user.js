@@ -45,7 +45,7 @@ const User = class User {
     this.sessionStorage = cfg.sessionStorage || sessionStorage;
     this.localStorage = cfg.localStorage || localStorage;
     this._external = cfg.externalAuth || null;
-    this.expiration = cfg.expiration || getExpirationDate();
+    this.expirationDatetime = cfg.expirationDatetime || getExpirationDate();
   }
 
   /** Gets the expiration date out of session storage for the user.
@@ -53,8 +53,8 @@ const User = class User {
    Since all data dumped into session storage is serialized, so this also
    converts the value back into a Date.
    */
-  get expiration() {
-    return new Date(this.sessionStorage.getItem('expiration'));
+  get expirationDatetime() {
+    return new Date(this.sessionStorage.getItem('expirationDatetime'));
   }
 
   /**
@@ -64,8 +64,8 @@ const User = class User {
 
    @param expirationDate Date The time to expire the session for the user.
    */
-  set expiration(expirationDate) {
-    this.sessionStorage.setItem('expiration', expirationDate);
+  set expirationDatetime(expirationDatetime) {
+    this.sessionStorage.setItem('expirationDatetime', expirationDatetime);
   }
 
   /**
@@ -75,7 +75,7 @@ const User = class User {
    */
   _purgeIfExpired() {
     const now = new Date();
-    if (now > this.expiration) {
+    if (now > this.expirationDatetime) {
       this.localStorage.clear();
       this.sessionStorage.clear();
     }
