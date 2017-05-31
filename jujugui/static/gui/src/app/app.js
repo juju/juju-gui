@@ -318,8 +318,11 @@ YUI.add('juju-gui', function(Y) {
       // Set up a client side database to store state.
       this.db = new models.Database();
       // Create a user store to track authentication details.
-      this.user = this.get('user') || new window.jujugui.User(
-        {externalAuth: this.get('auth')});
+      const userCfg = {
+        externalAuth: this.get('auth'),
+        expiration: window.sessionStorage.getItem('expirationDatetime')
+      };
+      this.user = this.get('user') || new window.jujugui.User(userCfg);
 
       // Instantiate a macaroon bakery, which is used to handle the macaroon
       // acquisition over HTTP.

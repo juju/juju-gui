@@ -22,6 +22,21 @@ if (typeof this.jujugui === 'undefined') {
   this.jujugui = {};
 }
 
+// XXX j.c.sackett 2016-05-26 Session expiration should be set via config, but
+// as that also requires an update from blues browser we'll do that in a follow
+// up. For now it's set to the same timeout as in blues browser.
+const EXPIRATION_HOURS = 24; // Time for a session, in hours.
+
+/** Generates the expiration date for user tokens.
+
+ The expiration date is EXPIRATION_HOURS from now.
+ */
+function getExpirationDate() {
+  let expirationDate = new Date();
+  expirationDate.setHours(expirationDate.getHours() + EXPIRATION_HOURS);
+  return expirationDate;
+}
+
 /** Class representing a user's authorizations in the GUI **/
 const User = class User {
 
@@ -30,6 +45,40 @@ const User = class User {
     this.sessionStorage = cfg.sessionStorage || sessionStorage;
     this.localStorage = cfg.localStorage || localStorage;
     this._external = cfg.externalAuth || null;
+    this.expirationDatetime = cfg.expirationDatetime || getExpirationDate();
+  }
+
+  /** Gets the expiration date out of session storage for the user.
+
+   Since all data dumped into session storage is serialized, so this also
+   converts the value back into a Date.
+   */
+  get expirationDatetime() {
+    return new Date(this.sessionStorage.getItem('expirationDatetime'));
+  }
+
+  /**
+   Sets the expiration date for the user's tokens.
+
+   Since the date is stored in session storage it will be serialized.
+
+   @param expirationDate Date The time to expire the session for the user.
+   */
+  set expirationDatetime(expirationDatetime) {
+    this.sessionStorage.setItem('expirationDatetime', expirationDatetime);
+  }
+
+  /**
+   Checks the expiration date and if reached purges the data. We dump all tokens
+   (controller/models, charmstore, omni, &c) as this is a full session
+   expiration.
+   */
+  _purgeIfExpired() {
+    const now = new Date();
+    if (now > this.expirationDatetime) {
+      this.localStorage.clear();
+      this.sessionStorage.clear();
+    }
   }
 
   /**
@@ -41,6 +90,7 @@ const User = class User {
    If external auth -- e.g. from HJC -- exists, that is used for name data.
    */
   get displayName() {
+    this._purgeIfExpired();
     if (this.externalAuth) {
       return this.externalAuth.displayName;
     }
@@ -55,6 +105,7 @@ const User = class User {
    If external auth -- e.g. from HJC -- exists, that is used for name data.
    */
   get username() {
+    this._purgeIfExpired();
     if (this.externalAuth) {
       return this.externalAuth.username;
     }
@@ -78,6 +129,7 @@ const User = class User {
    the top level of the object.
    */
   get externalAuth() {
+    this._purgeIfExpired();
     const externalAuth = this._external;
     if (externalAuth && externalAuth.user) {
       // When HJC supplies an external auth it's possible that the name is
@@ -97,6 +149,7 @@ const User = class User {
    convenience attributes for handling login flow.
   */
   _getCredentials(type) {
+    this._purgeIfExpired();
     let credentials = JSON.parse(
       this.sessionStorage.getItem(type + 'Credentials'));
     if (!credentials) {
@@ -155,6 +208,7 @@ const User = class User {
   }
 
   get controller() {
+    this._purgeIfExpired();
     return this._getCredentials('controller');
   }
 
@@ -163,6 +217,7 @@ const User = class User {
   }
 
   get model() {
+    this._purgeIfExpired();
     // There are situations where we have no model creds but can fall back to
     // the controller credentials. So we only return empty credentials if both
     // the model creds and the controller creds are empty.
@@ -182,6 +237,7 @@ const User = class User {
   }
 
   getMacaroon(service) {
+    this._purgeIfExpired();
     return this.localStorage.getItem(service);
   }
 
@@ -192,7 +248,6 @@ const User = class User {
   clearMacaroons() {
     this.localStorage.clear();
   }
-
 };
 
 this.jujugui.User = User;
