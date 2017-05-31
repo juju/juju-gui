@@ -85,6 +85,12 @@ YUI.add('header-search', function() {
       }
     },
 
+    componentDidUpdate: function() {
+      if (!this.state.active) {
+        this.refs.searchInput.blur();
+      }
+    },
+
     /**
       Generate the base classes based on the props.
 
