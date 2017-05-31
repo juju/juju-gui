@@ -113,6 +113,7 @@
       background: #3371e3;
       background-size: 350px;
       color: $white;
+      max-height: 300px;
 
       .box__image {
         margin: -20% auto -10% -1%;
@@ -126,7 +127,7 @@
       color: $white;
 
       .box__image {
-        padding: 15px 70px 0;
+        max-width: none;
       }
     }
 
@@ -137,7 +138,6 @@
       color: $white;
 
       &-container {
-        position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
@@ -145,8 +145,7 @@
         background-size: 200px;
 
         .box__image {
-          width: 45%;
-          margin-top: 1.5rem;
+          max-width: 195px
         }
       }
     }
