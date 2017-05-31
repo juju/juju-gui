@@ -146,23 +146,29 @@ YUI.add('store', function() {
       @return {Object} The contents of the section
     */
     _writeOurOwnSection: function() {
-      var doc = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
+      const href =
+        'https://www.jujucharms.com/docs/stable/authors-charm-writing';
       return (<div className="row row--write-your-own">
-          <div className="inner-wrapper clearfix">
-              <div className="six-col">
-                  <h2>Write a charm and join the ecosystem</h2>
-                  <p>Creating new charms it easy. Charms can be written
-                  in your choice of language and adapting existing
-                  scripts is straightforward. You can keep new charms
-                  private, or share them back with the community.</p>
-                  <p>
-                  <a target="_blank"
-                    className="link"
-                    href={doc}>
-                    Learn more about writing charms&nbsp;&rsaquo;
-                  </a></p>
-              </div>
+        <div className="wrapper">
+          <div className="inner-wrapper">
+            <div className="text six-col">
+              <h2>Write a charm and join the ecosystem</h2>
+              <p>Creating new charms it easy. Charms can be written
+              in your choice of language and adapting existing
+              scripts is straightforward. You can keep new charms
+              private, or share them back with the community.</p>
+              <p>
+              <a target="_blank"
+                className="link"
+                href={href}>
+                Learn more about writing charms&nbsp;&rsaquo;
+              </a></p>
+            </div>
           </div>
+          <div>
+            <img src={this._generateLocalImagePath('write-your-own.png')} />
+          </div>
+        </div>
       </div>);
     },
 
@@ -260,24 +266,30 @@ YUI.add('store', function() {
 
       return (<div className="row equal-height">
           <div className="box box--kubernetes align-center four-col">
-              <div className="align-bottom">
-                  <h2>Kubernetes</h2>
-                  {kubernetesButton}
-              </div>
+            <img src={this._generateLocalImagePath('k8-image.png')}
+              alt="Kubernetes" className="box__image" />
+            <div className="align-bottom">
+              <h2>Kubernetes</h2>
+              {kubernetesButton}
+            </div>
           </div>
           <div className="box box--openstack align-center four-col">
-              <div className="align-bottom">
-                  <h2>OpenStack</h2>
-                  {openstackButton}
-              </div>
+            <img src={this._generateLocalImagePath('openstack-promo.png')}
+              alt="Openstack" className="box__image" />
+            <div className="align-bottom">
+              <h2>OpenStack</h2>
+              {openstackButton}
+            </div>
           </div>
           <div className="box box--hadoop align-center four-col last-col">
             <div className="box--hadoop-container">
-                <div className="align-bottom">
-                    <h2>Big Data</h2>
-                    {bigdataButton}
-                </div>
+              <img src={this._generateLocalImagePath('hadoop-elephant.png')}
+                alt="Hadoop" className="box__image" />
+              <div className="align-bottom">
+                <h2>Big Data</h2>
+                {bigdataButton}
               </div>
+            </div>
           </div>
       </div>);
     },
@@ -588,17 +600,22 @@ YUI.add('store', function() {
     */
     _bigDataSection: function() {
       return (<div className="row row--containers">
-        <div className="inner-wrapper clearfix">
-          <div className="six-col">
-            <h2>Container management</h2>
-            <p>Juju makes it easy to deploy container management solutions
-            by provisioning, installing and configuring all the systems in
-            the cluster.</p>
-            <p><span onClick={this._handleSearchClick}
-              data-query="containers"
-              className="button--inline-neutral">
-              View bundles
-            </span></p>
+        <div className="wrapper bigdata">
+          <div className="inner-wrapper bigdata">
+            <div className="text six-col">
+              <h2>Container management</h2>
+              <p>Juju makes it easy to deploy container management solutions
+              by provisioning, installing and configuring all the systems in
+              the cluster.</p>
+              <p><span onClick={this._handleSearchClick}
+                data-query="containers"
+                className="button--inline-neutral">
+                View bundles
+              </span></p>
+            </div>
+          </div>
+          <div>
+            <img src={this._generateLocalImagePath('kubernetes-promo.png')} />
           </div>
         </div>
       </div>);
