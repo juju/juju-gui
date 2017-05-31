@@ -109,14 +109,19 @@
     }
 
     &--kubernetes {
+      position: relative;
       overflow: hidden;
       background: #3371e3;
       background-size: 350px;
       color: $white;
-      max-height: 300px;
+      min-height: 300px;
 
       .box__image {
-        margin: -20% auto -10% -1%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        max-width: none;
+        margin: -228px 0 0 -198px;
       }
     }
 
