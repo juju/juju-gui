@@ -75,6 +75,20 @@ YUI.add('deployment-direct-deploy', function() {
             {entity.displayName}
           </h3>);
 
+        let url;
+        let link;
+        try {
+          url = window.jujulib.URL.fromLegacyString(ddEntityId);
+        } catch(_) {
+          url = window.jujulib.URL.fromString(ddEntityId);
+        }
+        if (url) {
+          link = (<a href={`/${url.path()}`}
+              className="link" target="_blank">
+              Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
+            </a>);
+        }
+
         const wrapperClasses = classNames(
           'deployment-direct-deploy__description',
           {
@@ -87,6 +101,7 @@ YUI.add('deployment-direct-deploy', function() {
           className={wrapperClasses}>
             {title}
             {description}
+            {link}
           </div>);
       }
 
