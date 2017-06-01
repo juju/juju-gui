@@ -175,7 +175,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.SearchResults
                 acl={this.props.acl}
                 changeState={changeState}
-                generatePath={appState.generatePath}
+                generatePath={appState.generatePath.bind(appState)}
                 charmstoreSearch={this.props.charmstoreSearch}
                 deployTarget={this.props.deployTarget}
                 getName={utils.getName}

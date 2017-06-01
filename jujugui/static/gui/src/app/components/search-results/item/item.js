@@ -59,12 +59,18 @@ YUI.add('search-results-item', function(Y) {
         return <span>{' '}</span>;
       }
       tags.forEach(function(tag, i) {
+        const url = this.props.generatePath({
+          search: {
+            tags: tag
+          }
+        });
         components.push(
           <li className="tag-list--item"
-            key={tag + i}
-            role="button" tabIndex="0"
-            onClick={this._handleTagClick.bind(this, tag)}>
-            {tag}
+            key={tag + i}>
+            <a href={url}
+              onClick={this._handleTagClick.bind(this, tag)}>
+              {tag}
+            </a>
           </li>
         );
       }, this);
@@ -85,17 +91,18 @@ YUI.add('search-results-item', function(Y) {
             'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
         components.push(
           <li className="list-icons__item tooltip"
-            key={service.displayName}
-            role="button" tabIndex="0"
-            onClick={this._handleItemClick.bind(this, service.id)}>
-            <img src={src}
-              className="list-icons__image"
-              alt={service.displayName} />
-            <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                {service.displayName}
+            key={service.displayName}>
+            <a href={this.props.generatePath(this._generateStoreState(service.id))}
+              onClick={this._handleItemClick.bind(this, service.id)}>
+              <img src={src}
+                className="list-icons__image"
+                alt={service.displayName} />
+              <span className="tooltip__tooltip">
+                <span className="tooltip__inner tooltip__inner--down">
+                  {service.displayName}
+                </span>
               </span>
-            </span>
+            </a>
           </li>
         );
       }, this);
@@ -120,11 +127,10 @@ YUI.add('search-results-item', function(Y) {
         components.push(
           <li className="list-series__item"
             key={s.name}>
-            <span onClick={this._handleItemClick.bind(this, s.storeId)}
-              role="button"
-              tabIndex="0" >
+            <a href={this.props.generatePath(this._generateStoreState(s.storeId))}
+              onClick={this._handleItemClick.bind(this, s.storeId)}>
               {s.name}
-            </span>
+            </a>
           </li>
         );
       }, this);
@@ -158,6 +164,7 @@ YUI.add('search-results-item', function(Y) {
         url = window.jujulib.URL.fromString(id);
       }
       return {
+        profile: null,
         search: null,
         store: url.path()
       };
@@ -171,7 +178,7 @@ YUI.add('search-results-item', function(Y) {
       @param {Object} evt The click event.
     */
     _handleItemClick: function(id, evt) {
-      evt.stopPropagation();
+      evt.preventDefault();
       this.props.changeState(this._generateStoreState(id));
     },
 
@@ -183,7 +190,7 @@ YUI.add('search-results-item', function(Y) {
       @param {Object} e The click event.
     */
     _handleTagClick: function(tag, e) {
-      e.stopPropagation();
+      e.preventDefault();
       this.props.changeState({
         search: {
           owner: null,
@@ -205,7 +212,7 @@ YUI.add('search-results-item', function(Y) {
       @param {Object} evt The click event.
     */
     _handleOwnerClick: function(owner, evt) {
-      evt.stopPropagation();
+      evt.preventDefault();
       this.props.changeState({search: null, profile: owner});
     },
 
@@ -266,49 +273,48 @@ YUI.add('search-results-item', function(Y) {
       var item = this.props.item;
       return (
         <li className={'list-block__list--item ' + item.type}>
-          <a href={this.props.generatePath(this._generateStoreState(item.id))}>
-            <div className="four-col charm-name__column">
-              <h3 className="list-block__list--item-title">
-                {item.displayName}
-                {this._generateSpecialFlag()}
-              </h3>
-              <ul className="tag-list">
-                {this._generateTagList()}
-              </ul>
-            </div>
-            <div className={this._generateSeriesClass()}>
-              <ul className="list-series">
-                {this._generateSeriesList()}
-              </ul>
-            </div>
-            <div className={this._generateCharmsClass()}>
-              <ul className="list-icons clearfix">
-                {this._generateIconList()}
-              </ul>
-            </div>
-            <div className="two-col owner__column list-block__column">
-              <p className="cell">
-                {'By '}
-                <span className="link"
-                  onClick={this._handleOwnerClick.bind(this, item.owner)}
-                  role="button"
-                  tabIndex="0">
-                  {item.owner}
-                </span>
-              </p>
-            </div>
-            <div className="one-col last-col list-block__list--item-deploy">
-              <juju.components.GenericButton
-                extraClasses="list-block__list--item-deploy-link"
-                action={this._handleDeploy.bind(this, item.id)}
-                disabled={this.props.acl.isReadOnly()}
-                type="inline-neutral">
-                <juju.components.SvgIcon
-                  name="add-icon"
-                  size="16" />
-              </juju.components.GenericButton>
-            </div>
-          </a>
+          <a className="list-block__list--item-link"
+            href={this.props.generatePath(this._generateStoreState(item.id))}
+            onClick={this._handleItemClick.bind(this, item.id)}></a>
+          <div className="four-col charm-name__column">
+            <h3 className="list-block__list--item-title">
+              {item.displayName}
+              {this._generateSpecialFlag()}
+            </h3>
+            <ul className="tag-list">
+              {this._generateTagList()}
+            </ul>
+          </div>
+          <div className={this._generateSeriesClass()}>
+            <ul className="list-series">
+              {this._generateSeriesList()}
+            </ul>
+          </div>
+          <div className={this._generateCharmsClass()}>
+            <ul className="list-icons clearfix">
+              {this._generateIconList()}
+            </ul>
+          </div>
+          <div className="two-col owner__column list-block__column">
+            <p className="cell">
+              {'By '}
+              <a href={this.props.generatePath({search: null, profile: item.owner})}
+                onClick={this._handleOwnerClick.bind(this, item.owner)}>
+                {item.owner}
+              </a>
+            </p>
+          </div>
+          <div className="one-col last-col list-block__list--item-deploy">
+            <juju.components.GenericButton
+              extraClasses="list-block__list--item-deploy-link"
+              action={this._handleDeploy.bind(this, item.id)}
+              disabled={this.props.acl.isReadOnly()}
+              type="inline-neutral">
+              <juju.components.SvgIcon
+                name="add-icon"
+                size="16" />
+            </juju.components.GenericButton>
+          </div>
         </li>
       );
     }
