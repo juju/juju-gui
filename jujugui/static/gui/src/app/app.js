@@ -557,7 +557,6 @@ YUI.add('juju-gui', function(Y) {
           eventName, this._boundAppDragOverHandler);
       });
       // In Juju >= 2 we connect to the controller and then to the model.
-      this.controllerAPI.connect();
       this.state.bootstrap();
     },
 
@@ -2110,6 +2109,21 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    _ensureControllerConnection: function(state, next) {
+      if (
+        state.root === 'logout' ||
+        this.controllerAPI.get('connecting') ||
+        this.controllerAPI.get('connected') ||
+        this.controllerAPI.userIsAuthenticated) {
+        console.log('ignoring controller connection');
+        next();
+        return;
+      }
+      console.log('controller connecting');
+      this.controllerAPI.connect();
+      next();
+    },
+
     /**
       Creates an instance of the State and registers the necessary dispatchers.
       @param {String} baseURL - The path the application is served from.
@@ -2122,6 +2136,7 @@ YUI.add('juju-gui', function(Y) {
         sendAnalytics: this.sendAnalytics
       });
       state.register([
+        ['*', this._ensureControllerConnection.bind(this)],
         ['*', this.authorizeCookieUse.bind(this)],
         ['*', this.checkUserCredentials.bind(this)],
         ['*', this.show_environment.bind(this)],
