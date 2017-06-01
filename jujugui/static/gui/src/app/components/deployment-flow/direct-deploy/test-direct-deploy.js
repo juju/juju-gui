@@ -96,7 +96,6 @@ describe('DirectDeploy', function() {
 
     const finalRenderer = jsTestUtils.shallowRender(expected, true);
     const finalOutput = finalRenderer.getRenderOutput();
-    const finalInstance = finalRenderer.getMountedInstance();
     const finalExpected = (
       <div className="deployment-section
         twelve-col
