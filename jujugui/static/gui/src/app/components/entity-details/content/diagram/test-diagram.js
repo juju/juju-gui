@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('EntityContentDiagram', function() {
+  const getDiagramURL = sinon.stub().returns('example.com/diagram.svg');
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -28,17 +29,26 @@ describe('EntityContentDiagram', function() {
   });
 
   it('can display a diagram', function() {
-    var getDiagramURL = sinon.stub().returns('example.com/diagram.svg');
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.EntityContentDiagram
         getDiagramURL={getDiagramURL}
         id="big-bundle" />);
     assert.equal(getDiagramURL.callCount, 1);
     assert.equal(getDiagramURL.args[0][0], 'big-bundle');
-    assert.deepEqual(output,
-      <div className="entity-content__diagram row row--grey">
+    expect(output).toEqualJSX(
+      <div className="entity-content__diagram">
         <object type="image/svg+xml" data="example.com/diagram.svg"
           className="entity-content__diagram-image" />
       </div>);
+  });
+
+  it('can display a diagram as a row', () => {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.EntityContentDiagram
+        getDiagramURL={getDiagramURL}
+        id="big-bundle"
+        isRow={true} />);
+    assert.equal(output.props.className,
+      'entity-content__diagram row row--grey');
   });
 });

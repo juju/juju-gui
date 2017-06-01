@@ -25,6 +25,7 @@ YUI.add('entity-content-description', function() {
 
     /* Define and validate the properites available on this component. */
     propTypes: {
+      changeState: React.PropTypes.func,
       entityModel: React.PropTypes.object,
       includeHeading: React.PropTypes.bool,
       renderMarkdown: React.PropTypes.func.isRequired

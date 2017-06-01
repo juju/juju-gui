@@ -37,7 +37,7 @@ describe('EntityContentDescription', function() {
       <juju.components.EntityContentDescription
         entityModel={mockEntity}
         renderMarkdown={marked} />);
-    const markupObject = output.props.children.props.children.props.children
+    const markupObject = output.props.children[1]
       .props.dangerouslySetInnerHTML;
     assert.equal(markupObject.__html,
       '<p>A simple <a href="http://google.com/">link</a>.</p>\n');
@@ -70,16 +70,9 @@ describe('EntityContentDescription', function() {
           renderMarkdown={marked} />);
 
       expect(output).toEqualJSX(
-        <div className="row row--grey entity-content__description">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <div className="intro"
-                dangerouslySetInnerHTML={{
-                  __html: '<p>HA Django cluster.</p>\n'
-                }}
-              />
-            </div>
-          </div>
+        <div className="entity-content__description">
+          <div className="entity-content__description-content"
+            dangerouslySetInnerHTML={{__html:'<p>HA Django cluster.</p>\n'}} />
         </div>
       );
     });
@@ -112,14 +105,9 @@ describe('EntityContentDescription', function() {
           renderMarkdown={marked} />);
 
       expect(output).toEqualJSX(
-        <div className="row row--grey entity-content__description">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <div className="intro"
-                dangerouslySetInnerHTML={{__html: '<p>Django framework.</p>\n'}}
-              />
-            </div>
-          </div>
+        <div className="entity-content__description">
+          <div className="entity-content__description-content"
+            dangerouslySetInnerHTML={{__html: '<p>Django framework.</p>\n'}} />
         </div>
       );
     });

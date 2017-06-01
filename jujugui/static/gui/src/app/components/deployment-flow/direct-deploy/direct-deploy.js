@@ -39,48 +39,65 @@ YUI.add('deployment-direct-deploy', function() {
     },
 
     componentDidMount: function() {
-      if (this.state.isBundle) {
-        this.props.getEntity(this.props.ddData.id, (error, data) => {
-          if (error) {
-            console.error('cannot fetch the entity:' + error);
-            return;
-          }
-          if (data.length > 0) {
-            data = data[0];
-            this.setState({
-              entityModel: this.props.makeEntityModel(data)
-            });
-          }
-        });
-      }
+      this.props.getEntity(this.props.ddData.id, (error, data) => {
+        if (error) {
+          console.error('cannot fetch the entity:' + error);
+          return;
+        }
+        if (data.length > 0) {
+          data = data[0];
+          this.setState({
+            entityModel: this.props.makeEntityModel(data)
+          });
+        }
+      });
     },
 
     render: function() {
       let diagram = null;
-      let description = null;
-      let title = null;
+      let titleAndDescription = null;
       const ddEntityId = this.props.ddData.id;
       if (this.state.isBundle) {
-        diagram = <juju.components.EntityContentDiagram
-          getDiagramURL={this.props.getDiagramURL}
-          id={ddEntityId} />;
-
-        if (this.state.entityModel) {
-          description = <juju.components.EntityContentDescription
-            entityModel={this.state.entityModel}
-            renderMarkdown={this.props.renderMarkdown}
-            />;
-          title = (<h3>{this.state.entityModel.toEntity().displayName}</h3>);
-        }
+        diagram = (<div className="six-col deployment-direct-deploy__image">
+            <juju.components.EntityContentDiagram
+              getDiagramURL={this.props.getDiagramURL}
+              id={ddEntityId} />
+          </div>);
       }
+
+      if (this.state.entityModel) {
+        const entity = this.state.entityModel.toEntity();
+        const description = <juju.components.EntityContentDescription
+          entityModel={this.state.entityModel}
+          renderMarkdown={this.props.renderMarkdown} />;
+        const title = (<h3
+          className="deployment-direct-deploy__title">
+            {entity.displayName}
+          </h3>);
+
+        const wrapperClasses = classNames(
+          'deployment-direct-deploy__description',
+          {
+            'six-col last-col': this.state.isBundle,
+            'twelve-col': !this.state.isBundle
+          }
+        );
+
+        titleAndDescription = (<div
+          className={wrapperClasses}>
+            {title}
+            {description}
+          </div>);
+      }
+
       return (
         <juju.components.DeploymentSection
-          instance="deployment-one-click"
-          showCheck={false}
+          completed={true}
+          instance="deployment-direct-deploy"
+          showCheck={true}
           title="You are deploying:">
           {diagram}
-          {title}
-          {description}
+          {titleAndDescription}
         </juju.components.DeploymentSection>);
     }
 

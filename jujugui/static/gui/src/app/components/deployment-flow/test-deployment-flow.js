@@ -158,8 +158,9 @@ describe('DeploymentFlow', function() {
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
         <juju.components.DeploymentSection
+          completed={true}
           instance="deployment-model-name"
-          showCheck={false}
+          showCheck={true}
           title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput

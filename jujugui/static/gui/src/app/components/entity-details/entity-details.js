@@ -245,7 +245,8 @@ YUI.add('entity-details', function() {
       }
       return <juju.components.EntityContentDiagram
         getDiagramURL={this.props.getDiagramURL}
-        id={entityModel.get('id')} />;
+        id={entityModel.get('id')}
+        isRow={true} />;
     },
 
     /**

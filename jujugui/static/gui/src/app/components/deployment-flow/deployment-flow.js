@@ -157,7 +157,11 @@ YUI.add('deployment-flow', function() {
       const groupedChanges = this.props.groupedChanges;
       switch (section) {
         case 'model-name':
-          completed = false;
+          completed = this.props.acl.isReadOnly() ||
+            (
+              (this.state.modelName !== 'mymodel' || hasCloud)
+              && this.state.modelName !== ''
+            );
           disabled = false;
           visible = willCreateModel;
           break;
@@ -598,8 +602,9 @@ YUI.add('deployment-flow', function() {
       }
       return (
         <juju.components.DeploymentSection
+          completed={status.completed}
           instance="deployment-model-name"
-          showCheck={false}
+          showCheck={true}
           title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput

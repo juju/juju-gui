@@ -98,9 +98,6 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <juju.components.EntityContentDescription
-          entityModel={mockEntity}
-          renderMarkdown={renderMarkdown} />
         <div className="row row--grey entity-content__terms">
           <div className="inner-wrapper">
             <div className="four-col entity-content__metadata">
@@ -115,6 +112,10 @@ describe('EntityContent', function() {
         <div className="row">
           <div className="inner-wrapper">
             <div className="seven-col append-one">
+              <juju.components.EntityContentDescription
+                entityModel={mockEntity}
+                includeHeading={true}
+                renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -219,7 +220,7 @@ describe('EntityContent', function() {
           showTerms={showTerms}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const terms = output.props.children[1].props.children.props.children[1];
+    const terms = output.props.children[0].props.children.props.children[1];
     const links = terms.props.children[1].props.children;
     const expected = (
       <div className="four-col entity-content__metadata">
@@ -266,8 +267,8 @@ describe('EntityContent', function() {
           staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children[1].props.children[1]
-      .props.children[1].props.onClick();
+    const terms = output.props.children[0].props.children.props.children[1];
+    terms.props.children[1].props.children[1].props.onClick();
     output = renderer.getRenderOutput();
     const expected = (
       <juju.components.TermsPopup
@@ -276,7 +277,7 @@ describe('EntityContent', function() {
           name: 'terms2',
           revision: 10
         }]} />);
-    expect(output.props.children[5]).toEqualJSX(expected);
+    expect(output.props.children[4]).toEqualJSX(expected);
   });
 
   it('can display a spinner when loading terms', function() {
@@ -302,7 +303,7 @@ describe('EntityContent', function() {
         <h4>Terms</h4>
         <juju.components.Spinner />
       </div>);
-    const terms = output.props.children[1].props.children.props.children[1];
+    const terms = output.props.children[0].props.children.props.children[1];
     expect(terms).toEqualJSX(expected);
   });
 
@@ -392,7 +393,7 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[3].props.children.props.children[1];
+    const parent = output.props.children[2].props.children.props.children[1];
     expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
@@ -424,9 +425,6 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <juju.components.EntityContentDescription
-          entityModel={mockEntity}
-          renderMarkdown={renderMarkdown} />
         <div className="row row--grey entity-content__terms">
           <div className="inner-wrapper">
             <div className="four-col entity-content__metadata">
@@ -441,6 +439,10 @@ describe('EntityContent', function() {
         <div className="row">
           <div className="inner-wrapper">
             <div className="seven-col append-one">
+              <juju.components.EntityContentDescription
+                entityModel={mockEntity}
+                includeHeading={true}
+                renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -530,13 +532,14 @@ describe('EntityContent', function() {
           staticURL="http://example.com" />);
     const expected = (
       <div className="entity-content">
-        <juju.components.EntityContentDescription
-          entityModel={mockEntity}
-          renderMarkdown={renderMarkdown} />
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
             <div className="seven-col append-one">
+              <juju.components.EntityContentDescription
+                entityModel={mockEntity}
+                includeHeading={true}
+                renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -718,7 +721,7 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[3].props.children.props.children[1];
+    const parent = output.props.children[2].props.children.props.children[1];
     expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
@@ -743,7 +746,7 @@ describe('EntityContent', function() {
           showTerms={sinon.stub()}
           staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const parent = output.props.children[3].props.children.props.children[1];
+    const parent = output.props.children[2].props.children.props.children[1];
     const relationsComponent = parent.props.children[2];
     assert.equal(relationsComponent, undefined);
   });
@@ -867,7 +870,7 @@ describe('EntityContent', function() {
           </div>
         </div>
       </div>);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can display loading plans', function() {
@@ -894,7 +897,7 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.Spinner />);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can remove plans when none exist', function() {
@@ -920,6 +923,6 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[2], undefined);
+    assert.strictEqual(output.props.children[1], undefined);
   });
 });

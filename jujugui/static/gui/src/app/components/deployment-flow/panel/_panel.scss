@@ -4,8 +4,8 @@
   &__header {
     // Don't allow the header to collapse:
     flex: 1 0 auto;
-    margin: 0 20px;
-    padding: 10px 0;
+    margin: 0;
+    padding: 10px 20px;
     border-bottom: 1px solid $light-mid-grey;
 
     &-name {
