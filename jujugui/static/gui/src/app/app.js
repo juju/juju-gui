@@ -2199,6 +2199,11 @@ YUI.add('juju-gui', function(Y) {
           this._renderLogin();
           next();
           break;
+        case 'logout':
+          // do logout stuff!
+          this.state.changeState({root: 'login'});
+          return;
+          break;
         case 'store':
           this._renderCharmbrowser(state, next);
           break;
