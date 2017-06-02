@@ -111,12 +111,21 @@
         padding: 8px 20px 4px;
       }
 
-      &-link {
+      &-main-link {
         position: absolute;
+        // Raise the main link above the children (but below the child links)
+        // so that it can be clicked on.
+        z-index: 1;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
+      }
+
+      &-link {
+        position: relative;
+        // Raise all links above the main row link.
+        z-index: 2;
       }
 
       .list-block__list--item-divider {
@@ -184,6 +193,9 @@
         text-align: right;
 
         &-link {
+          position: relative;
+          // Raise the button above the main row link.
+          z-index: 2;
           display: none;
           padding-left: 13px;
           padding-right: 13px;

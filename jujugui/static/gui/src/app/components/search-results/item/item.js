@@ -59,15 +59,11 @@ YUI.add('search-results-item', function(Y) {
         return <span>{' '}</span>;
       }
       tags.forEach(function(tag, i) {
-        const url = this.props.generatePath({
-          search: {
-            tags: tag
-          }
-        });
         components.push(
           <li className="tag-list--item"
             key={tag + i}>
-            <a href={url}
+            <a className="list-block__list--item-link"
+              href={this.props.generatePath({search: {tags: tag}})}
               onClick={this._handleTagClick.bind(this, tag)}>
               {tag}
             </a>
@@ -92,7 +88,8 @@ YUI.add('search-results-item', function(Y) {
         components.push(
           <li className="list-icons__item tooltip"
             key={service.displayName}>
-            <a href={this.props.generatePath(this._generateStoreState(service.id))}
+            <a className="list-block__list--item-link"
+              href={this._generateStoreURL(service.id)}
               onClick={this._handleItemClick.bind(this, service.id)}>
               <img src={src}
                 className="list-icons__image"
@@ -127,7 +124,8 @@ YUI.add('search-results-item', function(Y) {
         components.push(
           <li className="list-series__item"
             key={s.name}>
-            <a href={this.props.generatePath(this._generateStoreState(s.storeId))}
+            <a className="list-block__list--item-link"
+              href={this._generateStoreURL(s.storeId)}
               onClick={this._handleItemClick.bind(this, s.storeId)}>
               {s.name}
             </a>
@@ -168,6 +166,15 @@ YUI.add('search-results-item', function(Y) {
         search: null,
         store: url.path()
       };
+    },
+
+    /**
+      Generate the store URL for an entity.
+
+      @param {String} id The entity id.
+    */
+    _generateStoreURL: function(id) {
+      return this.props.generatePath(this._generateStoreState(id));
     },
 
     /**
@@ -273,8 +280,8 @@ YUI.add('search-results-item', function(Y) {
       var item = this.props.item;
       return (
         <li className={'list-block__list--item ' + item.type}>
-          <a className="list-block__list--item-link"
-            href={this.props.generatePath(this._generateStoreState(item.id))}
+          <a className="list-block__list--item-main-link"
+            href={this._generateStoreURL(item.id)}
             onClick={this._handleItemClick.bind(this, item.id)}></a>
           <div className="four-col charm-name__column">
             <h3 className="list-block__list--item-title">
@@ -298,7 +305,9 @@ YUI.add('search-results-item', function(Y) {
           <div className="two-col owner__column list-block__column">
             <p className="cell">
               {'By '}
-              <a href={this.props.generatePath({search: null, profile: item.owner})}
+              <a className="list-block__list--item-link"
+                href={
+                  this.props.generatePath({search: null, profile: item.owner})}
                 onClick={this._handleOwnerClick.bind(this, item.owner)}>
                 {item.owner}
               </a>
