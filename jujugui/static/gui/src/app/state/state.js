@@ -524,6 +524,7 @@ const State = class State {
       if (parts.length > 1 && parts[0] !== 'store') {
         error = invalidRootPath;
       }
+      return {error, state};
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
@@ -758,7 +759,6 @@ const State = class State {
     ROOT_RESERVED.some(key => {
       if (urlParts && urlParts[0] === key) {
         state.root = key;
-        urlParts.splice(0, 1);
         return true;
       }
     });
