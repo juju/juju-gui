@@ -120,7 +120,9 @@ describe('SearchResultsItem', function() {
                 <a className="list-block__list--item-link"
                   href="/u/spinach/apache2"
                   onClick={icons[0].props.children.props.onClick}>
-                  <img src="static/gui/build/app/assets/images/non-sprites/charm_160.svg"
+                  <img src={
+                    'static/gui/build/app/assets/images/non-sprites/' +
+                    'charm_160.svg'}
                     className="list-icons__image"
                     alt="mysql" />
                   <span className="tooltip__tooltip">
@@ -199,7 +201,9 @@ describe('SearchResultsItem', function() {
                 <a className="list-block__list--item-link"
                   href="/u/spinach/apache2"
                   onClick={icons[0].props.children.props.onClick}>
-                  <img src="static/gui/build/app/assets/images/non-sprites/charm_160.svg"
+                  <img src={
+                    'static/gui/build/app/assets/images/non-sprites/' +
+                    'charm_160.svg'}
                     className="list-icons__image"
                     alt="mysql" />
                   <span className="tooltip__tooltip">
