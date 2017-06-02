@@ -569,7 +569,7 @@ YUI.add('juju-env-api', function(Y) {
       // Only fire login if this is not a redirect error as we will come back
       // here once the redirection is made.
       if (!utils.isRedirectError(data.error)) {
-        document.dispatchEvent(new CustomEvent('login', {
+        document.dispatchEvent(new CustomEvent('model.login', {
           detail: {err: data.error || null}
         }));
       }

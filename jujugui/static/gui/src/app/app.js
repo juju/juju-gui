@@ -2536,9 +2536,6 @@ YUI.add('juju-gui', function(Y) {
       document.removeEventListener(
         'ecs.currentCommitFinished', this.renderDeploymentBarListener);
       document.removeEventListener('login', this.onLoginHandler);
-      if (this.boundOnLogin) {
-        document.removeEventListener('login', this.boundOnLogin);
-      }
       document.removeEventListener('login', this.controllerLoginHandler);
       document.removeEventListener('delta', this.onDeltaBound);
     },
@@ -2686,11 +2683,6 @@ YUI.add('juju-gui', function(Y) {
       @private
     */
     onLogin: function(evt) {
-      if (this.boundOnLoginFired) {
-        // We want this event to only fire once, so if it exists then remove it
-        // so it can't get fired again.
-        document.removeEventListener('login', this.boundOnLogin);
-      }
       if (evt.detail && evt.detail.err) {
         this._renderLogin(evt.detail.err);
         return;
@@ -2781,7 +2773,6 @@ YUI.add('juju-gui', function(Y) {
       };
       const credentials = this.user.model;
       const onLogin = callback => {
-        this.boundOnLoginFired = true;
         this.env.loading = false;
         if (callback) {
           callback(this.env);
@@ -2789,9 +2780,8 @@ YUI.add('juju-gui', function(Y) {
       };
       // Delay the callback until after the env login as everything should be
       // set up by then.
-      this.boundOnLoginFired = false;
-      this.boundOnLogin = onLogin.bind(this, callback);
-      document.addEventListener('login', this.boundOnLogin);
+      document.addEventListener(
+        'model.login', onLogin.bind(this, callback), {once: true});
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
