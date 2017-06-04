@@ -194,10 +194,10 @@ YUI.add('search-results-item', function(Y) {
 
       @method _handleTagClick
       @param {String} tag The tag name.
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleTagClick: function(tag, e) {
-      e.preventDefault();
+    _handleTagClick: function(tag, evt) {
+      evt.preventDefault();
       this.props.changeState({
         search: {
           owner: null,
