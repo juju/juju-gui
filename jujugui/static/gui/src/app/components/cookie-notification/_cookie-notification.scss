@@ -1,0 +1,36 @@
+.cookie-notification {
+  z-index: index($z-indexed-elements, cookie-notification);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
+  background-color: #fae4dc;
+
+  &__wrapper {
+    box-sizing: border-box;
+    background: none;
+    margin: 10px auto;
+    position: relative;
+    text-align: left;
+    width: 984px;
+  }
+
+  &__close {
+    float: right;
+    margin-top: 12px;
+    cursor: pointer;
+
+    .svg-icon {
+      stroke: $ubuntu-orange;
+    }
+  }
+
+  &__message {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-left: 0;
+    margin-bottom: 0;
+    padding: 8px 0;
+    width: 100%;
+  }
+}

@@ -151,17 +151,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="white-box-container"></div>
       <div id="machine-view"></div>
       <div id="login-notification"></div>
-
-      <div class="cookie-policy">
-        <div class="wrapper">
-          <a href="" class="link-cta">Close</a>
-          <p>
-            We use cookies to improve your experience. By your continued use of
-            this application you accept such use. To change your settings please
-            <a href="http://www.ubuntu.com/privacy-policy#cookies">see our policy</a>
-          </p>
-        </div>
-      </div>
+      <div id="cookie-container"></div>
       <div id="viewport">
         <div id="content">
             <div id="modal-shortcuts"></div>
