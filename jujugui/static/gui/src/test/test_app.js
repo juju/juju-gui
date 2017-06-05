@@ -1488,7 +1488,6 @@ describe('App', function() {
       app.controllerAPI.connect = sinon.stub();
       app.controllerAPI.set('connecting', false);
       app.controllerAPI.set('connected', false);
-      app.controllerAPI.userIsAuthenticated = false;
       app._ensureControllerConnection({root: 'store'}, sinon.stub());
       assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
     });
@@ -1498,19 +1497,7 @@ describe('App', function() {
         app.controllerAPI.connect = sinon.stub();
         app.controllerAPI.set('connecting', false);
         app.controllerAPI.set('connected', false);
-        app.controllerAPI.userIsAuthenticated = true;
         app._ensureControllerConnection({root: 'logout'}, sinon.stub());
-        assert.strictEqual(
-          app.controllerAPI.connect.callCount, 0, 'controller');
-      });
-
-    it('does not connect to the controller if the user is authenticated',
-      function() {
-        app.controllerAPI.connect = sinon.stub();
-        app.controllerAPI.set('connecting', false);
-        app.controllerAPI.set('connected', false);
-        app.controllerAPI.userIsAuthenticated = true;
-        app._ensureControllerConnection({root: 'store'}, sinon.stub());
         assert.strictEqual(
           app.controllerAPI.connect.callCount, 0, 'controller');
       });
@@ -1522,7 +1509,6 @@ describe('App', function() {
         // setting connected to true will trigger login, so stub that out.
         app.controllerAPI.login = sinon.stub();
         app.controllerAPI.set('connected', true);
-        app.controllerAPI.userIsAuthenticated = false;
         app._ensureControllerConnection({root: 'store'}, sinon.stub());
         assert.strictEqual(
           app.controllerAPI.connect.callCount, 0, 'controller');
@@ -1533,7 +1519,6 @@ describe('App', function() {
         app.controllerAPI.connect = sinon.stub();
         app.controllerAPI.set('connecting', true);
         app.controllerAPI.set('connected', false);
-        app.controllerAPI.userIsAuthenticated = false;
         app._ensureControllerConnection({root: 'store'}, sinon.stub());
         assert.strictEqual(
           app.controllerAPI.connect.callCount, 0, 'controller');
