@@ -2664,32 +2664,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Hide the login mask and redispatch the router.
-
-      When the environment gets a response from a login attempt,
-      it fires a login event, to which this responds.
-
-      @method onLogin
-      @param {Object} evt An event object that includes an "err" attribute
-        with an error if the authentication failed.
-      @private
-    */
-    onLogin: function(evt) {
-      if (evt.detail && evt.detail.err) {
-        this._renderLogin(evt.detail.err);
-        return;
-      }
-      // The login was a success.
-      console.log('successfully logged into controller');
-      this.maskVisibility(false);
-      this._clearLogin();
-      this.set('loggedIn', true);
-      if (this.state.current.root === 'login') {
-        this.state.changeState({root: null});
-      }
-    },
-
-    /**
       Create the new socket URL based on the socket template and model details.
 
       @method createSocketURL
