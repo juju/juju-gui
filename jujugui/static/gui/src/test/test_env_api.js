@@ -386,7 +386,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(evt.detail.err, null);
           done();
         };
-        document.addEventListener('login', listener);
+        document.addEventListener('model.login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({
@@ -397,7 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
-        document.removeEventListener('login', listener);
+        document.removeEventListener('model.login', listener);
       });
 
       it('resets failed markers on successful login', function() {
@@ -420,11 +420,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(evt.detail.err, 'Invalid user or password');
           done();
         };
-        document.addEventListener('login', listener);
+        document.addEventListener('model.login', listener);
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
-        document.removeEventListener('login', listener);
+        document.removeEventListener('model.login', listener);
       });
 
       it('avoids sending login requests without credentials', function() {
@@ -1097,9 +1097,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.deepEqual(evt.detail.err, 'cannot upload files anonymously');
           done();
         };
-        document.addEventListener('login', listener);
+        document.addEventListener('model.login', listener);
         env.uploadLocalCharm();
-        document.removeEventListener('login', listener);
+        document.removeEventListener('model.login', listener);
       });
 
       it('uses the stored webHandler to perform requests', function() {

@@ -311,11 +311,11 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[6][0], 'dragenter');
+        assert.equal(args[5][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[7][0], 'dragover');
+        assert.equal(args[6][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[8][0], 'dragleave');
+        assert.equal(args[7][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
@@ -594,45 +594,6 @@ describe('App', function() {
       assert.deepEqual(
         app.user.controller, {user: '', password: '', macaroons: null});
       assert.equal(conn.messages.length, 0);
-    });
-
-    it('displays the login view if credentials are not valid', function() {
-      env.connect();
-      var loginStub = sinon.stub(app, '_renderLogin');
-      app.env.login();
-      // Mimic a login failed response assuming login is the first request.
-      conn.msg({'request-id': 1, error: 'bad wolf'});
-      assert.equal(1, conn.messages.length);
-      assertIsLogin(conn.last_message());
-      assert.equal(loginStub.callCount, 2);
-      assert.equal(loginStub.args[0][0], 'bad wolf');
-      assert.equal(loginStub.args[1][0], 'bad wolf');
-    });
-
-    it('login method handler is called after successful login', function(done) {
-      let localApp = {};
-      const oldOnLogin = Y.juju.App.prototype.onLogin;
-      Y.juju.App.prototype.onLogin = evt => {
-        assert.equal(conn.messages.length, 1);
-        assertIsLogin(conn.last_message());
-        assert.strictEqual(evt.detail.err, null);
-        localApp.on('destroy', () => done());
-        localApp.destroy();
-      };
-      this._cleanups.push(() => {
-        Y.juju.App.prototype.onLogin = oldOnLogin;
-      });
-      localApp = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: controller,
-        env: env,
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-      env.connect();
-      localApp.env.userIsAuthenticated = true;
-      localApp.env.login();
     });
 
     it('tries to log in on first connection', function() {
@@ -1512,12 +1473,12 @@ describe('App', function() {
       checkNext({root: 'store'});
     });
 
-    it('displays login if one of the apis is still connecting', () => {
+    it('does not display login if one of the apis is still connecting', () => {
       app.controllerAPI.set('connecting', true);
       const next = sinon.stub();
       const displayStub = sinon.stub(app, '_displayLogin');
       app.checkUserCredentials({}, next);
-      assert.equal(displayStub.callCount, 1);
+      assert.equal(displayStub.callCount, 0);
     });
 
     it('does not login if all apis are not connected', () => {

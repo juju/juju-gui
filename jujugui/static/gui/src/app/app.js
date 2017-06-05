@@ -466,10 +466,6 @@ YUI.add('juju-gui', function(Y) {
           this.onEnvironmentNameChange, this);
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
-      // Once the user logs in, we need to redraw.
-      this.onLoginHandler = this.onLogin.bind(this);
-      document.addEventListener('login', this.onLoginHandler);
-
       // Once we know about MAAS server, update the header accordingly.
       let maasServer = this.env.get('maasServer');
       if (!maasServer && this.controllerAPI) {
@@ -2535,10 +2531,6 @@ YUI.add('juju-gui', function(Y) {
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.removeEventListener(
         'ecs.currentCommitFinished', this.renderDeploymentBarListener);
-      document.removeEventListener('login', this.onLoginHandler);
-      if (this.boundOnLogin) {
-        document.removeEventListener('login', this.boundOnLogin);
-      }
       document.removeEventListener('login', this.controllerLoginHandler);
       document.removeEventListener('delta', this.onDeltaBound);
     },
@@ -2651,18 +2643,15 @@ YUI.add('juju-gui', function(Y) {
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
         // Legacy Juju won't have a controller API.
-        if (!api) {
+        // If we do not have an api instance or if we are not connected with
+        // it then we don't need to concern ourselves with being
+        // authenticated to it.
+        if (!api || !api.get('connected')) {
           return false;
         }
         // If the api is connecting then we can't know if they are properly
         // logged in yet.
         if (api.get('connecting')) {
-          return true;
-        }
-        if (!api || !api.get('connected')) {
-          // If we do not have an api instance or if we are not connected with
-          // it then we don't need to concern ourselves with being
-          // authenticated to it.
           return false;
         }
         return !api.userIsAuthenticated && !this.get('gisf');
@@ -2672,37 +2661,6 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       next();
-    },
-
-    /**
-      Hide the login mask and redispatch the router.
-
-      When the environment gets a response from a login attempt,
-      it fires a login event, to which this responds.
-
-      @method onLogin
-      @param {Object} evt An event object that includes an "err" attribute
-        with an error if the authentication failed.
-      @private
-    */
-    onLogin: function(evt) {
-      if (this.boundOnLoginFired) {
-        // We want this event to only fire once, so if it exists then remove it
-        // so it can't get fired again.
-        document.removeEventListener('login', this.boundOnLogin);
-      }
-      if (evt.detail && evt.detail.err) {
-        this._renderLogin(evt.detail.err);
-        return;
-      }
-      // The login was a success.
-      console.log('successfully logged into model');
-      this.maskVisibility(false);
-      this._clearLogin();
-      this.set('loggedIn', true);
-      if (this.state.current.root === 'login') {
-        this.state.changeState({root: null});
-      }
     },
 
     /**
@@ -2781,7 +2739,6 @@ YUI.add('juju-gui', function(Y) {
       };
       const credentials = this.user.model;
       const onLogin = callback => {
-        this.boundOnLoginFired = true;
         this.env.loading = false;
         if (callback) {
           callback(this.env);
@@ -2789,9 +2746,8 @@ YUI.add('juju-gui', function(Y) {
       };
       // Delay the callback until after the env login as everything should be
       // set up by then.
-      this.boundOnLoginFired = false;
-      this.boundOnLogin = onLogin.bind(this, callback);
-      document.addEventListener('login', this.boundOnLogin);
+      document.addEventListener(
+        'model.login', onLogin.bind(this, callback), {once: true});
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
