@@ -795,16 +795,6 @@ describe('App', function() {
       assert.equal(app.db.reset.callCount, 0);
     });
 
-    it('should connect to controller', function(done) {
-      controllerAPI.connect = sinon.stub();
-      env.connect = sinon.stub();
-      app = constructAppInstance();
-      app.after('ready', () => {
-        assert.strictEqual(controllerAPI.connect.callCount, 1, 'controller');
-        assert.strictEqual(env.connect.callCount, 0, 'model');
-        done();
-      });
-    });
 
     describe('logout', () => {
       it('logs out from API connections and then reconnects', function(done) {
@@ -1457,6 +1447,99 @@ describe('App', function() {
     });
   });
 
+  describe('_ensureControllerConnection', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub(),
+          user: userClass
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: userClass
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0',
+        user: userClass
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('connects to the controller if it needs to', function() {
+      app.controllerAPI.connect = sinon.stub();
+      app.controllerAPI.set('connecting', false);
+      app.controllerAPI.set('connected', false);
+      app.controllerAPI.userIsAuthenticated = false;
+      app._ensureControllerConnection({root: 'store'}, sinon.stub());
+      assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
+    });
+
+    it('does not connect to the controller if the user is logging out',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', false);
+        app.controllerAPI.set('connected', false);
+        app.controllerAPI.userIsAuthenticated = true;
+        app._ensureControllerConnection({root: 'logout'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+
+    it('does not connect to the controller if the user is authenticated',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', false);
+        app.controllerAPI.set('connected', false);
+        app.controllerAPI.userIsAuthenticated = true;
+        app._ensureControllerConnection({root: 'store'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+
+    it('does not connect to the controller if it is already connected',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', false);
+        // setting connected to true will trigger login, so stub that out.
+        app.controllerAPI.login = sinon.stub();
+        app.controllerAPI.set('connected', true);
+        app.controllerAPI.userIsAuthenticated = false;
+        app._ensureControllerConnection({root: 'store'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+
+    it('does not connect to the controller if it is already connecting',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', true);
+        app.controllerAPI.set('connected', false);
+        app.controllerAPI.userIsAuthenticated = false;
+        app._ensureControllerConnection({root: 'store'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+  });
+
   describe('checkUserCredentials', function() {
     let app, juju, Y;
 
@@ -1488,6 +1571,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         user: userClass
       });
+      app.controllerAPI.connect();
     });
 
     afterEach(function() {
@@ -1644,6 +1728,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         user: userClass
       });
+      app.controllerAPI.connect();
     });
 
     afterEach(function() {
