@@ -466,10 +466,6 @@ YUI.add('juju-gui', function(Y) {
           this.onEnvironmentNameChange, this);
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
-      // Once the user logs in, we need to redraw.
-      this.onLoginHandler = this.onLogin.bind(this);
-      document.addEventListener('login', this.onLoginHandler);
-
       // Once we know about MAAS server, update the header accordingly.
       let maasServer = this.env.get('maasServer');
       if (!maasServer && this.controllerAPI) {
@@ -2535,7 +2531,6 @@ YUI.add('juju-gui', function(Y) {
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.removeEventListener(
         'ecs.currentCommitFinished', this.renderDeploymentBarListener);
-      document.removeEventListener('login', this.onLoginHandler);
       document.removeEventListener('login', this.controllerLoginHandler);
       document.removeEventListener('delta', this.onDeltaBound);
     },
@@ -2648,18 +2643,15 @@ YUI.add('juju-gui', function(Y) {
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
         // Legacy Juju won't have a controller API.
-        if (!api) {
+        // If we do not have an api instance or if we are not connected with
+        // it then we don't need to concern ourselves with being
+        // authenticated to it.
+        if (!api || !api.get('connected')) {
           return false;
         }
         // If the api is connecting then we can't know if they are properly
         // logged in yet.
         if (api.get('connecting')) {
-          return true;
-        }
-        if (!api || !api.get('connected')) {
-          // If we do not have an api instance or if we are not connected with
-          // it then we don't need to concern ourselves with being
-          // authenticated to it.
           return false;
         }
         return !api.userIsAuthenticated && !this.get('gisf');
@@ -2688,7 +2680,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       // The login was a success.
-      console.log('successfully logged into model');
+      console.log('successfully logged into controller');
       this.maskVisibility(false);
       this._clearLogin();
       this.set('loggedIn', true);
