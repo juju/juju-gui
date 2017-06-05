@@ -2109,18 +2109,20 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+  /**
+    Ensures the controller is connected on dispatch. Does nothing if the
+   controller is already connecting/connected or if we're trying to disconnect.
+   @param {Object} state - The application state.
+   @param {Function} next - Run the next route handler, if any.
+   */
     _ensureControllerConnection: function(state, next) {
       if (
-        state.root === 'logout' ||
-        this.controllerAPI.get('connecting') ||
-        this.controllerAPI.get('connected') ||
-        this.controllerAPI.userIsAuthenticated) {
-        console.log('ignoring controller connection');
-        next();
-        return;
+        state.root !== 'logout' &&
+        !this.controllerAPI.get('connecting') &&
+        !this.controllerAPI.get('connected')
+        ) {
+        this.controllerAPI.connect();
       }
-      console.log('controller connecting');
-      this.controllerAPI.connect();
       next();
     },
 
