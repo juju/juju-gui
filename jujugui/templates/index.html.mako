@@ -52,7 +52,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script type="text/javascript">
         window.GUI_VERSION = {'version': '', 'commit': ''};
     </script>
-    <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <link rel="shortcut icon" href="${static_url}/static/gui/build/app/favicon.ico">
     <link rel="stylesheet" href="${convoy_url}?app/assets/stylesheets/normalize.css&app/assets/juju-gui.css">
 
@@ -305,6 +304,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'use strict' and d3 doesn't work under strict.
     -->
     % if raw:
+    <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
     <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
@@ -312,8 +312,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon.js"></script>
     <script src="${convoy_url}?app/state/state.js&app/user/user.js&app/jujulib/index.js&app/jujulib/charmstore.js&app/jujulib/bundleservice.js&app/jujulib/plans.js&app/jujulib/payment.js&app/jujulib/stripe.js&app/jujulib/terms.js&app/jujulib/reconnecting-websocket.js&app/jujulib/urls.js&app/jujulib/bakery.js"></script>
     % else:
+    <script src="${convoy_url}?app/assets/javascripts/version-min.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
+    <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside-min.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon-min.js"></script>
