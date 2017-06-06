@@ -16,6 +16,8 @@
   }
 
   .env-list {
+    max-height: 300px;
+    overflow: auto;
     margin-left: 0;
 
     &__input {
