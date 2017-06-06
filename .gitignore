@@ -12,6 +12,7 @@ dist
 docs/_build/doctrees
 docs/_build/html
 downloadcache/
+.eslintcache
 .emacs.desktop
 .emacs.desktop.lock
 .floo*
