@@ -19,6 +19,7 @@
     "cryptojs": ">= 2.5.3",
     "graceful-fs": "^4.1.11",
     "marked": "^0.3.6",
+    "mixwith": "^0.1.1",
     "mkdirp": "^0.5.1",
     "prismjs": "^1.6.0",
     "react": "^15.4.2",

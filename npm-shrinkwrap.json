@@ -3246,6 +3246,11 @@
       "from": "minimist@0.0.8",
       "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz"
     },
+    "mixwith": {
+      "version": "0.1.1",
+      "from": "mixwith@latest",
+      "resolved": "https://registry.npmjs.org/mixwith/-/mixwith-0.1.1.tgz"
+    },
     "mkdirp": {
       "version": "0.5.1",
       "from": "mkdirp@latest",
