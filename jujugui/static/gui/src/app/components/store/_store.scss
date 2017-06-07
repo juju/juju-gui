@@ -97,6 +97,7 @@
     &--hadoop {
       margin-bottom: 20px;
       padding-bottom: 125px;
+      cursor: pointer;
 
       .button--inline-neutral {
         background-color: $white;
@@ -184,20 +185,6 @@
       bottom: 20px;
       left: 0;
       right: 0;
-    }
-
-    &__block-link {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: block;
-    }
-
-    .button--inline-neutral {
-      z-index: 1;
-      position: relative;
     }
   }
 
