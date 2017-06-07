@@ -44,6 +44,7 @@ describe('Charmbrowser', function() {
   it('displays the search results when the app state calls for it', function() {
     var query = 'django';
     appState.current.search = {text: query};
+    appState.generatePath = sinon.stub();
     var series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
@@ -82,6 +83,7 @@ describe('Charmbrowser', function() {
         utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const searchResults = output.props.children.props.children.props;
     var expected = (
         <juju.components.Panel
           instanceName="white-box"
@@ -92,10 +94,10 @@ describe('Charmbrowser', function() {
             ref="charmbrowser">
             <juju.components.SearchResults
               acl={acl}
-              changeState={
-                output.props.children.props.children.props.changeState}
+              changeState={searchResults.changeState}
               charmstoreSearch={charmstoreSearch}
               deployTarget={deployTarget}
+              generatePath={searchResults.generatePath}
               getName={utils.getName}
               makeEntityModel={makeEntityModel}
               owner={undefined}
