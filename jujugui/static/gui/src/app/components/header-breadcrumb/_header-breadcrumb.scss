@@ -42,6 +42,17 @@
 
   &__list {
     @extend %list-style;
+
+    &:not([data-username=""]) {
+      .header-breadcrumb__list-item:before {
+        content: '/';
+        position: absolute;
+        left: 6px;
+        top: 3px;
+        color: $mid-grey;
+        font-size: 23px;
+      }
+    }
   }
 
   &__list-item {
@@ -51,15 +62,6 @@
     margin-bottom: 0;
     padding-left: 20px;
     position: relative;
-
-    &:before {
-      content: '/';
-      position: absolute;
-      left: 6px;
-      top: 3px;
-      color: $mid-grey;
-      font-size: 23px;
-    }
   }
 
   &__loading {

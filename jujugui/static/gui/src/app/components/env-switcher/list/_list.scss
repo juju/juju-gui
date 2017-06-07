@@ -29,7 +29,7 @@
     &__environment {
       position: relative;
       // The items need to be above the diamond.
-      z-index: 1;
+      z-index: index($z-indexed-elements, env-list__environment);
       list-style-type: none;
       padding: 10px 20px;
       margin-bottom: 0;
