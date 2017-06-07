@@ -12,6 +12,11 @@ const yui = window.yui;
 class GUIApp {
   constructor(config) {
     /**
+      The default web page title.
+      @type {String}
+    */
+    this.defaultPageTitle = 'Juju GUI';
+    /**
       The keydown event listener from the hotkey activation.
       @type {Object}
     */
@@ -74,7 +79,26 @@ class GUIApp {
       charmstore: this.charmstore
     });
 
-
+    const modelOptions = {
+      user: this.user,
+      ecs: this.ecs,
+      conn: config.conn,
+      jujuCoreVersion: config.jujuCoreVersion,
+      bundleService: this.bundleService
+    };
+    const controllerOptions = Object.assign({}, modelOptions);
+    const environments = yui.juju.environments;
+    modelOptions.webHandler = new environments.web.WebHandler();
+    /**
+      Application instance of the model API.
+      @type {Object}
+    */
+    this.modelAPI = new environments.GoEnvironment(modelOptions);
+    /**
+      Application instance of the controller API.
+      @type {Object}
+    */
+    this.controllerAPI = new yui.juju.ControllerAPI(controllerOptions);
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
