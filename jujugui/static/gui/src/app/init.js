@@ -43,10 +43,59 @@ class GUIApp {
     /**
       Application instance of the bakery
       @type {Object}
-      @readonly
     */
     this.bakery = yui.juju.bakeryutils.newBakery(
       config, this.user, stateGetter, cookieSetter, webHandler);
+
+    /**
+      The application instance of the charmstore.
+      @type {Object}
+    */
+    this.charmstore = this._setupCharmstore(config, window.jujulib.charmstore);
+
+    /**
+      The application instance of the bundle service.
+      @type {Object}
+    */
+    this.bundleService = this._setupBundleservice(
+      config, window.jujulib.bundleservice);
+  }
+  /**
+    Creates a new instance of the charm store API. This method is idempotent.
+    @param {object} config The app instantiation configuration.
+    @param {Object} Charmstore The Charmstore class.
+    @return {Object} The existing or new instance of charmstore.
+  */
+  _setupCharmstore(config, Charmstore) {
+    if (this.charmstore === undefined) {
+      return new Charmstore(config.charmstoreURL, this.bakery);
+      // Store away the charmstore auth info.
+      if (this.bakery.storage.get(config.charmstoreURL)) {
+        this.users['charmstore'] = {loading: true};
+        this.storeUser('charmstore', false, true);
+      }
+    }
+    return this.charmstore;
+  }
+
+  /**
+    Creates a new instance of the bundleservice API. This method is idempotent.
+    @param {object} config The app instantiation configuration.
+    @param {Object} BundleService The bundleservice API class
+    @return {Object} The existing or new instance of bundleservice.
+  */
+  _setupBundleservice(config, BundleService) {
+    if (this.bundleService === undefined) {
+      const bundleServiceURL = config && config.bundleServiceURL;
+      if (!config || !bundleServiceURL) {
+        console.error('no juju config for bundleserviceURL availble');
+        return;
+      }
+      return new BundleService(
+        bundleServiceURL,
+        new yui.juju.environments.web.WebHandler());
+    }
+    return this.bundleService;
   }
 
   /**
