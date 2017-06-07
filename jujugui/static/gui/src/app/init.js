@@ -20,6 +20,33 @@ class GUIApp {
       @type {Object}
     */
     this.db = new yui.juju.models.Database();
+    /**
+      Application instance of the user class.
+      @type {Object}
+    */
+    this.user = config.user || new window.jujugui.User({
+      externalAuth: config.auth,
+      expiration: window.sessionStorage.getItem('expirationDatetime')
+    });
+
+    /**
+      Stores the user object for the charmstore.
+      @type {Object}
+    */
+    this.users = csUser.create();
+
+    const webHandler = new yui.juju.environments.web.WebHandler();
+    const stateGetter = () => this.state.current;
+    const cookieSetter = (value, callback) => {
+      this.charmstore.setAuthCookie(value, callback);
+    };
+    /**
+      Application instance of the bakery
+      @type {Object}
+      @readonly
+    */
+    this.bakery = yui.juju.bakeryutils.newBakery(
+      config, this.user, stateGetter, cookieSetter, webHandler);
   }
 
   /**
