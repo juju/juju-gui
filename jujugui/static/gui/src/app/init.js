@@ -7,7 +7,8 @@ const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 
-const ComponentRenderersMixin = require('./init/component-renderers');
+const ComponentRenderersMixin = require('./init/component-renderers-mixin');
+const DeployerMixin = require('./init/deployer-mixin');
 
 const yui = window.yui;
 
@@ -19,6 +20,13 @@ class GUIApp {
       @type {Object}
     */
     this.applicationConfig = config;
+    /**
+      Holds the modelUUID the application should connect to. It's possible that
+      this value and the value in the modelAPI instance will differ as another
+      portion of the application has set this value prior to switching models.
+      @type {String}
+    */
+    this.modelUUID = config.jujuEnvUUID;
     /**
       The default web page title.
       @type {String}
@@ -240,13 +248,13 @@ class GUIApp {
     // When someone wants a charm to be deployed they fire an event and we
     // show the charm panel to configure/deploy the service.
     this._domEventHandlers['onInitiateDeploy'] = evt => {
-      this.deployService(evt.detail.charm, evt.detail.ghostAttributes); // XXX MISSING
+      this.deployService(evt.detail.charm, evt.detail.ghostAttributes);
     };
     document.addEventListener(
       'initiateDeploy', this._domEventHandlers['onInitiateDeploy']);
 
     this._domEventHandlers['boundAppDragOverHandler'] =
-      this._appDragOverHandler.bind(this); // XXX MISSING
+      this._appDragOverHandler.bind(this);
     // These are manually detached in the destructor.
     ['dragenter', 'dragover', 'dragleave'].forEach(eventName => {
       document.addEventListener(
@@ -512,7 +520,7 @@ class GUIApp {
     // If the GUI is embedded in storefront, we need to share login
     // data with the storefront backend and ensure we're already
     // logged into the charmstore.
-    if (this.get('gisf')) {
+    if (this.applicationConfig.gisf) {
       this._sendGISFPostBack();
       this._ensureLoggedIntoCharmstore();
     }
@@ -552,10 +560,10 @@ class GUIApp {
 
     // If the user is connected to a model then the modelList will be
     // fetched by the modelswitcher component.
-    if (this.modelAPI.get('modelUUID')) { // XXX MISSING
+    if (this.modelAPI.get('modelUUID')) {
       return;
     }
-    const modelUUID = this._getModelUUID(); // XXX MISSING
+    const modelUUID = this.modelUUID;
     if (modelUUID && !current.profile && current.root !== 'store') {
       // A model uuid was defined in the config so attempt to connect to it.
       this._listAndSwitchModel(null, modelUUID);
@@ -587,7 +595,7 @@ class GUIApp {
         !newState.profile &&
         newState.root !== 'account' &&
         (isLogin || !current.root) &&
-        this.get('gisf')
+        this.gisf
       ) {
         newState.profile = this.user.displayName;
       }
@@ -878,7 +886,7 @@ class GUIApp {
       // creating a model with change set (last param false).
       this.switchEnv(utils.createSocketURL(
         this.applicationConfig.socketTemplate,
-        this.get('modelUUID'), // XXX MISSING
+        this.modelUUID,
         publicHost.value, publicHost.port), null,
         null, null, true, false);
     });
@@ -923,7 +931,7 @@ class GUIApp {
     };
     // Delay the callback until after the env login as everything should be
     // set up by then.
-    document.addEventListener( // XXX MISSING
+    document.addEventListener(
       'model.login', onLogin.bind(this, callback), {once: true});
     if (clearDB) {
       // Clear uncommitted state.
@@ -1209,7 +1217,7 @@ class GUIApp {
         if (error) {
           failureNotification(error);
         } else {
-          this.bundleImporter.importBundleYAML(bundleYAML); // XXX MISSING
+          this.bundleImporter.importBundleYAML(bundleYAML);
         }
       });
     } else {
@@ -1226,7 +1234,7 @@ class GUIApp {
           });
           // We call the env deploy method directly because we don't want
           // the ghost inspector to open.
-          this.deployService(new yui.juju.models.Charm(charm)); // XXX MISSING
+          this.deployService(new yui.juju.models.Charm(charm));
         }
       });
     }
@@ -1264,7 +1272,8 @@ class GUIApp {
 class JujuGUI extends mixwith.mix(GUIApp)
                              .with(
                                csUser.CharmstoreUserMixin,
-                               ComponentRenderersMixin) {}
+                               ComponentRenderersMixin,
+                               DeployerMixin) {}
 
 module.exports = JujuGUI;
 //
