@@ -27,6 +27,7 @@ YUI.add('notification', function() {
     'content' in the desired style.
   */
   juju.components.Notification = React.createClass({
+    displayName: 'Notification',
 
     propTypes: {
       content: React.PropTypes.object.isRequired,

@@ -55,6 +55,16 @@ $sp-large: 2rem;
     background: none;
     border: 0;
   }
+
+  &--center-bottom {
+    position: absolute;
+    z-index: index($z-indexed-elements, notification);
+    bottom: 0;
+    left: 50%;
+    max-width: 1000px;
+    margin-bottom: 20px;
+    transform: translate(-50%, 0);
+  }
 }
 
 // Positive notification styling

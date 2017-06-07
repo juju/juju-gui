@@ -83,9 +83,20 @@ YUI.add('app-cookies-extension', function(Y) {
       Render the notification.
     */
     _renderNotification: function() {
+      const content = (
+        <span>
+          We use cookies to improve your experience. By your continued use
+          of this application you accept such use. To change your settings
+          please&nbsp;
+          <a href="http://www.ubuntu.com/privacy-policy#cookies">
+            see our policy
+          </a>
+        </span>);
       ReactDOM.render(
-        <window.juju.components.CookieNotification
-          close={this.close.bind(this)} />,
+        <window.juju.components.Notification
+          content={content}
+          dismiss={this.close.bind(this)}
+          extraClasses="p-notification--center-bottom" />,
           document.getElementById('cookie-container'));
     },
 
