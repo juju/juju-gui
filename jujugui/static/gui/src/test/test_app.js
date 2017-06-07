@@ -1453,16 +1453,6 @@ describe('App', function() {
       assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
     });
 
-    it('does not connect to the controller if the user is logging out',
-      function() {
-        app.controllerAPI.connect = sinon.stub();
-        app.controllerAPI.set('connecting', false);
-        app.controllerAPI.set('connected', false);
-        app._ensureControllerConnection({root: 'logout'}, sinon.stub());
-        assert.strictEqual(
-          app.controllerAPI.connect.callCount, 0, 'controller');
-      });
-
     it('does not connect to the controller if it is already connected',
       function() {
         app.controllerAPI.connect = sinon.stub();
@@ -1674,7 +1664,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         user: userClass
       });
-      app.controllerAPI.connect();
+      app.controllerAPI.connect;
     });
 
     afterEach(function() {

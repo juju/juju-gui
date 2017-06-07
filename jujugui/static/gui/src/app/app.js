@@ -2113,7 +2113,6 @@ YUI.add('juju-gui', function(Y) {
    */
     _ensureControllerConnection: function(state, next) {
       if (
-        state.root !== 'logout' &&
         !this.controllerAPI.get('connecting') &&
         !this.controllerAPI.get('connected')
         ) {
@@ -2200,7 +2199,7 @@ YUI.add('juju-gui', function(Y) {
           next();
           break;
         case 'logout':
-          // do logout stuff!
+          this._handleLogout();
           this.state.changeState({root: 'login'});
           return;
           break;
@@ -2602,6 +2601,45 @@ YUI.add('juju-gui', function(Y) {
         this.state.changeState({
           root: 'login'
         });
+      }
+    },
+
+    _handleLogout: function() {
+      const config = window.juju_config;
+
+      this.clearUser();
+      this.bakery.storage.clear();
+
+      var environmentInstance = this.views.environment.instance;
+      if (environmentInstance) {
+        environmentInstance.topo.update();
+      }
+      this.set('modelUUID', '');
+      this.set('loggedIn', false);
+      const controllerAPI = this.controllerAPI;
+      const closeController = controllerAPI.close.bind(controllerAPI);
+      this.env.close(() => {
+        closeController(() => {
+          controllerAPI.connect();
+          this.maskVisibility(true);
+          this.env.get('ecs').clear();
+          this.db.reset();
+          this.db.fireEvent('update');
+          this.state.changeState({
+            model: null,
+            profile: null,
+            root: null,
+            store: null
+          });
+        });
+      });
+
+      if (!config.gisf && this.getUser()) {
+        const charmstoreLogoutUrl = this.get('charmstore').getLogoutUrl();
+        window.open(charmstoreLogoutUrl);
+      } else if (config.gisf) {
+        const gisfLogoutUrl = config.gisfLogout || '';
+        window.location.assign(window.location.origin + gisfLogoutUrl);
       }
     },
 
