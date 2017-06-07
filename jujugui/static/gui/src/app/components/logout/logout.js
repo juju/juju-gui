@@ -24,35 +24,9 @@ YUI.add('logout-component', function() {
 
     propTypes: {
       charmstoreLogoutUrl: React.PropTypes.string.isRequired,
-      clearCookie: React.PropTypes.func.isRequired,
-      clearUser: React.PropTypes.func.isRequired,
-      getUser: React.PropTypes.func.isRequired,
-      gisf: React.PropTypes.bool.isRequired,
-      gisfLogout: React.PropTypes.string.isRequired,
-      locationAssign: React.PropTypes.func.isRequired,
-      logout: React.PropTypes.func.isRequired,
+      doCharmstoreLogout: React.PropTypes.func.isRequired,
+      logoutUrl: React.PropTypes.string.isRequired,
       visible: React.PropTypes.bool.isRequired
-    },
-
-    logout: function(e) {
-      var props = this.props;
-
-      if (!props.getUser() || props.gisf) {
-        // If we don't have stored user information for the charmstore then
-        // the user isn't logged in so there is no point to redirect
-        // them to another page to log out.
-
-        // If we are in gisf then we don't need to redirect b/c the storefront
-        // will be handling the remainder of logout.
-        e.preventDefault();
-      }
-      // Clear the user data on log out.
-      props.clearUser();
-      props.clearCookie();
-      props.logout();
-      if (props.gisf) {
-        props.locationAssign(window.location.origin + this.props.gisfLogout);
-      }
     },
 
     /**
@@ -70,16 +44,27 @@ YUI.add('logout-component', function() {
       );
     },
 
-    render: function() {
-      let href = this.props.charmstoreLogoutUrl ;
-      if (this.props.gisf) {
-        href = this.props.gisfLogout;
+    handleClick: function() {
+      const props = this.props;
+      if (props.doCharmstoreLogout()) {
+        window.location.assign(props.logoutUrl);
       }
+    },
+
+    render: function() {
+      const props = this.props;
+      let logoutUrl = props.logoutUrl;
+      let target = '_self';
+      if (props.doCharmstoreLogout()) {
+        logoutUrl = props.charmstoreLogoutUrl;
+        target = '_blank';
+      }
+
       return (
         <a className={this._generateClasses()}
-          href={href}
-          onClick={this.logout}
-          target="_blank">
+          href={logoutUrl}
+          target={target}
+          onClick={this.handleClick}>
           Logout
         </a>
       );

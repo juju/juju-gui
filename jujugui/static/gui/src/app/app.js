@@ -908,17 +908,15 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, bakery)}
       />);
 
+      const doCharmstoreLogout = () => {
+        return this.getUser('charmstore') && !this.get('gisf');
+      };
       const LogoutLink = (<window.juju.components.Logout
-        logout={this.logout.bind(this)}
-        clearCookie={bakery.storage.clear.bind(bakery.storage)}
-        gisfLogout={window.juju_config.gisfLogout || ''}
-        gisf={window.juju_config.gisf || false}
         charmstoreLogoutUrl={charmstore.getLogoutUrl()}
-        getUser={this.getUser.bind(this, 'charmstore')}
-        clearUser={this.clearUser.bind(this, 'charmstore')}
+        doCharmstoreLogout={doCharmstoreLogout}
+        logoutUrl={'/logout'}
         // If the charmbrowser is open then don't show the logout link.
         visible={!this.state.current.store}
-        locationAssign={window.location.assign.bind(window.location)}
       />);
 
       const navigateUserProfile = () => {
@@ -2634,54 +2632,10 @@ YUI.add('juju-gui', function(Y) {
         });
       });
 
-      if (!config.gisf && this.getUser()) {
-        const charmstoreLogoutUrl = this.get('charmstore').getLogoutUrl();
-        window.open(charmstoreLogoutUrl);
-      } else if (config.gisf) {
+      if (config.gisf) {
         const gisfLogoutUrl = config.gisfLogout || '';
         window.location.assign(window.location.origin + gisfLogoutUrl);
       }
-    },
-
-    // Route handlers
-
-    /**
-     * Log the current user out and show the login screen again.
-     *
-     * @method logout
-     * @param {Object} req The request.
-     * @return {undefined} Nothing.
-     */
-    logout: function(req) {
-      // If the environment view is instantiated, clear out the topology local
-      // database on log out, because we clear out the environment database as
-      // well. The order of these is important because we need to tell
-      // the env to log out after it has navigated to make sure that
-      // it always shows the login screen.
-      var environmentInstance = this.views.environment.instance;
-      if (environmentInstance) {
-        environmentInstance.topo.update();
-      }
-      this.set('modelUUID', '');
-      this.set('loggedIn', false);
-      const controllerAPI = this.controllerAPI;
-      const closeController = controllerAPI.close.bind(controllerAPI);
-      this.env.close(() => {
-        closeController(() => {
-          controllerAPI.connect();
-          this.maskVisibility(true);
-          this.env.get('ecs').clear();
-          this.db.reset();
-          this.db.fireEvent('update');
-          this.state.changeState({
-            model: null,
-            profile: null,
-            root: null,
-            store: null
-          });
-          this._renderLogin(null);
-        });
-      });
     },
 
     // Persistent Views
