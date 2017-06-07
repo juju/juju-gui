@@ -1,4 +1,4 @@
-/* Copyright (C) 2017 Canonical Ltd. */
+// /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const mixwith = require('mixwith');
@@ -99,6 +99,25 @@ class GUIApp {
       @type {Object}
     */
     this.controllerAPI = new yui.juju.ControllerAPI(controllerOptions);
+    /**
+      Generated send analytics method. Must be setup before state is set up as
+      it is used by state and relies on the controllerAPI instance.
+    */
+    this.sendAnalytics = yui.juju.sendAnalyticsFactory(
+      this.controllerAPI,
+      window.dataLayer);
+
+    let baseURL = config.baseUrl;
+    if (baseURL.indexOf('://') < 0) {
+      // If there is no protocol in the baseURL then prefix the origin when
+      // creating state.
+      baseURL = `${window.location.origin}${baseURL}`;
+    }
+    /**
+      Application instance of State.
+      @type {Object}
+    */
+    this.state = this._setupState(baseURL);
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
@@ -139,8 +158,9 @@ class GUIApp {
   }
 
   /**
-    Creates a new instance of the environment change set.
-    @return {Object} environment change set instance. This method is idempotent.
+    Creates a new instance of the environment change set. This method is
+    idempotent.
+    @return {Object} environment change set instance.
   */
   _setupEnvironmentChangeSet() {
     if (this.ecs === undefined) {
@@ -152,6 +172,65 @@ class GUIApp {
       return new yui.juju.EnvironmentChangeSet({db: this.db});
     }
     return this.ecs;
+  }
+  /**
+    Creates a new instance of the State and registers the necessary dispatchers.
+    This method is idempotent.
+    @param {String} baseURL The path the application is served from.
+    @return {Object} The state instance.
+  */
+  _setupState(baseURL) {
+    if (this.state) {
+      return this.state;
+    }
+    const state = new window.jujugui.State({
+      baseURL: baseURL,
+      seriesList: window.jujulib.SERIES,
+      sendAnalytics: this.sendAnalytics
+    });
+    state.register([
+      // ['*', this._ensureControllerConnection.bind(this)],
+      // ['*', this.authorizeCookieUse.bind(this)],
+      // ['*', this.checkUserCredentials.bind(this)],
+      // ['*', this.show_environment.bind(this)],
+      // ['root',
+        // this._rootDispatcher.bind(this),
+        // this._clearRoot.bind(this)],
+      ['profile',
+        this._renderUserProfile.bind(this),
+        this._clearUserProfile.bind(this)],
+      // ['user',
+        // this._handleUserEntity.bind(this),
+        // this._clearUserEntity.bind(this)],
+      // ['model',
+        // this._handleModelState.bind(this)],
+      ['store',
+        this._renderCharmbrowser.bind(this),
+        this._clearCharmbrowser.bind(this)],
+      ['search',
+        this._renderCharmbrowser.bind(this),
+        this._clearCharmbrowser.bind(this)],
+      ['account',
+        this._renderAccount.bind(this),
+        this._clearAccount.bind(this)],
+      // ['special.deployTarget', this._deployTarget.bind(this)],
+      ['gui', null, this._clearAllGUIComponents.bind(this)],
+      ['gui.machines',
+        this._renderMachineView.bind(this),
+        this._clearMachineView.bind(this)],
+      ['gui.inspector',
+        this._renderInspector.bind(this)
+        // the this._clearInspector method is not called here because the
+        // added services component is also rendered into the inspector so
+        // calling it here causes React to throw an error.
+      ],
+      ['gui.deploy',
+        this._renderDeployment.bind(this),
+        this._clearDeployment.bind(this)],
+      // Nothing needs to be done at the top level when the hash changes.
+      ['hash']
+    ]);
+    return state;
   }
 
   /**
@@ -171,3 +250,4 @@ class JujuGUI extends mixwith.mix(GUIApp)
                                ComponentRenderersMixin) {}
 
 module.exports = JujuGUI;
+//
