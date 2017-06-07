@@ -16,6 +16,11 @@ class GUIApp {
     */
     this._hotkeyListener = hotkeys.activate(this);
     /**
+      Stores the custom event handlers for the application.
+      @type {Object}
+    */
+    this._domEventHandlers = {};
+    /**
       The application database
       @type {Object}
     */
@@ -46,19 +51,29 @@ class GUIApp {
     */
     this.bakery = yui.juju.bakeryutils.newBakery(
       config, this.user, stateGetter, cookieSetter, webHandler);
-
     /**
       The application instance of the charmstore.
       @type {Object}
     */
     this.charmstore = this._setupCharmstore(config, window.jujulib.charmstore);
-
     /**
       The application instance of the bundle service.
       @type {Object}
     */
     this.bundleService = this._setupBundleservice(
       config, window.jujulib.bundleservice);
+
+    this.ecs = this._setupEnvironmentChangeSet();
+    /**
+      The application instance of the model controller.
+      @type {Object}
+    */
+    this.modelController = new yui.juju.ModelController({
+      db: this.db,
+      charmstore: this.charmstore
+    });
+
+
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
@@ -99,10 +114,29 @@ class GUIApp {
   }
 
   /**
+    Creates a new instance of the environment change set.
+    @return {Object} environment change set instance. This method is idempotent.
+  */
+  _setupEnvironmentChangeSet() {
+    if (this.ecs === undefined) {
+      this._domEventHandlers['renderDeploymentBarListener'] =
+        this._renderDeploymentBar.bind(this);
+      const listener = this._domEventHandlers['renderDeploymentBarListener'];
+      document.addEventListener('ecs.changeSetModified', listener);
+      document.addEventListener('ecs.currentCommitFinished', listener);
+      return new yui.juju.EnvironmentChangeSet({db: this.db});
+    }
+    return this.ecs;
+  }
+
+  /**
     Cleans up the instance of the application.
   */
   destructor() {
     this._hotkeyListener.detach();
+    const ecsListener = this._domEventHandlers['renderDeploymentBarListener'];
+    document.removeEventListener('ecs.changeSetModified', ecsListener);
+    document.removeEventListener('ecs.currentCommitFinished', ecsListener);
   }
 }
 
