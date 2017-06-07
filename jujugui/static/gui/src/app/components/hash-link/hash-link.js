@@ -43,7 +43,7 @@ YUI.add('hash-link', function() {
         <div className="hash-link"
           onClick={this._handleClick}>
           <juju.components.SvgIcon
-            name="get-link-url_16"
+            name="anchor_16"
             size="16" />
         </div>
       );
