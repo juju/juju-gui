@@ -14,9 +14,16 @@
     option.
   @return {String} The resulting fully qualified WebSocket URL.
 */
-const createSocketURL = function(apiAddress, template, uuid, server, port) {
+const createSocketURL = function(data) {
+  let apiAddress = data.apiAddress;
+  let template = data.template;
+  let protocol = data.protocol;
+  let uuid = data.uuid;
+  let server = data.server;
+  let port = data.port;
+
   let baseUrl = '';
-  const schema = 'wss://';
+  const schema = `${protocol}://` || 'wss://';
   if (!apiAddress) {
     // It should not ever be possible to get here unless you're running the
     // gui in dev mode without pointing it to a proxy/server supplying

@@ -318,6 +318,22 @@ class GUIApp {
     return this.ecs;
   }
   /**
+    Ensures the controller is connected on dispatch. Does nothing if the
+    controller is already connecting/connected or if we're trying to disconnect.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+   */
+  _ensureControllerConnection(state, next) {
+    if (
+      state.root !== 'logout' &&
+      !this.controllerAPI.get('connecting') &&
+      !this.controllerAPI.get('connected')
+      ) {
+      this.controllerAPI.connect();
+    }
+    next();
+  }
+  /**
     Creates a new instance of the State and registers the necessary dispatchers.
     This method is idempotent.
     @param {String} baseURL The path the application is served from.
@@ -333,7 +349,7 @@ class GUIApp {
       sendAnalytics: this.sendAnalytics
     });
     state.register([
-      // ['*', this._ensureControllerConnection.bind(this)],
+      ['*', this._ensureControllerConnection.bind(this)],
       // ['*', this.authorizeCookieUse.bind(this)],
       // ['*', this.checkUserCredentials.bind(this)],
       // ['*', this.show_environment.bind(this)],
@@ -490,11 +506,15 @@ class GUIApp {
     document.addEventListener(
       'login', this._domEventHandlers['controllerLoginHandler']);
     this.controllerAPI.after(
-      'connectedChange', this._controllerConnectedChangeHandler);
+      'connectedChange',
+      this._controllerConnectedChangeHandler.bind(this));
     const config = this.applicationConfig;
     this.controllerAPI.set('socket_url',
-      utils.createSocketURL(
-        config.apiAddress, config.controllerSocketTemplate));
+      utils.createSocketURL({
+        apiAddress: config.apiAddress,
+        template: config.controllerSocketTemplate,
+        protocol: config.socket_protocol
+      }));
   }
 
   /**
@@ -884,11 +904,16 @@ class GUIApp {
       // Switch to the redirected model.
       // Make sure we keep the change set by not clearing the db when
       // creating a model with change set (last param false).
-      this.switchEnv(utils.createSocketURL(
-        this.applicationConfig.socketTemplate,
-        this.modelUUID,
-        publicHost.value, publicHost.port), null,
-        null, null, true, false);
+      const config = this.applicationConfig;
+      this.switchEnv(
+        utils.createSocketURL({
+          apiAddress: config.apiAddress,
+          template: config.socketTemplate,
+          protocol: config.socket_protocol,
+          uuid: this.modelUUID,
+          server: publicHost.value,
+          port: publicHost.port
+        }, null, null, null, true, false));
     });
   }
 
