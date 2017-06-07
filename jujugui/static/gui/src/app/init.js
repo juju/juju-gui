@@ -1,22 +1,23 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const mixwith = require('mixwith');
+
 const hotkeys = require('./init/hotkeys');
+const csUser = require('./init/charmstore-user');
 
 const yui = window.yui;
 
-const JujuGUI = class JujuGUI {
+class GUIApp {
   constructor(config) {
     /**
       The keydown event listener from the hotkey activation.
       @type {Object}
-      @readonly
     */
     this._hotkeyListener = hotkeys.activate(this);
     /**
       The application database
       @type {Object}
-      @readonly
     */
     this.db = new yui.juju.models.Database();
   }
@@ -27,7 +28,9 @@ const JujuGUI = class JujuGUI {
   destructor() {
     this._hotkeyListener.detach();
   }
+}
 
-};
+class JujuGUI extends mixwith.mix(GUIApp)
+                             .with(csUser.CharmstoreUserMixin) {}
 
 module.exports = JujuGUI;
