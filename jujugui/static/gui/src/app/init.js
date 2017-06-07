@@ -47,6 +47,11 @@ class GUIApp {
     */
     this._domEventHandlers = {};
     /**
+      Timer for the drag over handler.
+      @type {Integer}
+    */
+    this._dragLeaveTimer = null;
+    /**
       The keydown event listener from the hotkey activation.
       @type {Object}
     */
@@ -56,6 +61,15 @@ class GUIApp {
       @type {Object}
     */
     this.db = new yui.juju.models.Database();
+    /**
+      Timer for debouncing database change events.
+      @type {Integer}
+    */
+    this.dbChangedTimer = null;
+    this._domEventHandlers['boundOnDatabaseChanged'] =
+      this.onDatabaseChanged.bind(this);
+    document.addEventListener(
+      'update', this._domEventHandlers['boundOnDatabaseChanged']);
     /**
       Application instance of the user class.
       @type {Object}
@@ -114,6 +128,24 @@ class GUIApp {
     this.modelAPI.after('environmentNameChange', this.onModelNameChange, this);
     this.modelAPI.after(
       'defaultSeriesChange', this.onDefaultSeriesChange, this);
+    // When the connection resets, reset the db, re-login (a delta will
+    // arrive with successful authentication), and redispatch.
+    this.modelAPI.after('connectedChange', evt => {
+      this._renderProviderLogo();
+      if (!evt.newVal) {
+        // The model is not connected, do nothing waiting for a reconnection.
+        console.log('model disconnected');
+        return;
+      }
+      console.log('model connected');
+      this.modelAPI.userIsAuthenticated = false;
+      // Attempt to log in if we already have credentials available.
+      const credentials = this.user.model;
+      if (credentials.areAvailable) {
+        this.loginToAPIs(null, !!credentials.macaroons, [this.modelAPI]);
+        return;
+      }
+    });
     /**
       The application instance of the model controller.
       @type {Object}
@@ -123,6 +155,15 @@ class GUIApp {
       env: this.modelAPI,
       charmstore: this.charmstore
     });
+    /**
+      Application instance of the endpointsController.
+      @type {Object}
+    */
+    this.endpointsController = new yui.juju.EndpointsController({
+      db: this.db,
+      modelController: this.modelController
+    });
+    this.endpointsController.bind();
     /**
       Application instance of the controller API.
       @type {Object}
@@ -175,6 +216,44 @@ class GUIApp {
     window.onbeforeunload = yui.juju.views.utils.unloadWindow.bind(this);
 
     this._handleMaasServer();
+    // Feed environment changes directly into the database.
+    this._domEventHandlers['onDeltaBound'] = this.db.onDelta.bind(this.db);
+    document.addEventListener('delta', this._domEventHandlers['onDeltaBound']);
+
+    this.db.machines.after(
+        ['add', 'remove', '*:change'],
+        this.onDatabaseChanged, this);
+    this.db.services.after(
+        ['add', 'remove', '*:change'],
+        this.onDatabaseChanged, this);
+    this.db.relations.after(
+        ['add', 'remove', '*:change'],
+        this.onDatabaseChanged, this);
+    this.db.environment.after(
+        ['add', 'remove', '*:change'],
+        this.onDatabaseChanged, this);
+    this.db.units.after(
+        ['add', 'remove', '*:change'],
+        this.onDatabaseChanged, this);
+    this.db.notifications.after('add', this._renderNotifications, this);
+
+    // When someone wants a charm to be deployed they fire an event and we
+    // show the charm panel to configure/deploy the service.
+    this._domEventHandlers['onInitiateDeploy'] = evt => {
+      this.deployService(evt.detail.charm, evt.detail.ghostAttributes); // XXX MISSING
+    };
+    document.addEventListener(
+      'initiateDeploy', this._domEventHandlers['onInitiateDeploy']);
+
+    this._domEventHandlers['boundAppDragOverHandler'] =
+      this._appDragOverHandler.bind(this); // XXX MISSING
+    // These are manually detached in the destructor.
+    ['dragenter', 'dragover', 'dragleave'].forEach(eventName => {
+      document.addEventListener(
+        eventName, this._domEventHandlers['boundAppDragOverHandler']);
+    });
+
+    this.state.bootstrap();
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
@@ -582,6 +661,110 @@ class GUIApp {
   onDefaultSeriesChange(evt) {
     this.db.environment.set('defaultSeries', evt.newVal);
   }
+  /**
+    Debounce database change events then call handler.
+   */
+  onDatabaseChanged() {
+    const changedTimer = this.dbChangedTimer;
+    if (changedTimer) {
+      clearTimeout(changedTimer);
+    }
+    this.dbChangedTimer = setTimeout(this._dbChangedHandler.bind(this), 100);
+    return;
+  }
+
+  /**
+    After the db has changed and the timer has timed out to reduce repeat
+    calls then this is called to handle the db updates.
+  */
+  _dbChangedHandler() {
+    // Regardless of which view we are rendering,
+    // update the env view on db change.
+    if (this.views.environment.instance) { // XXX MISSING
+      this.views.environment.instance.topo.update(); // XXX MISSING
+    }
+    this.state.dispatch();
+    this._renderComponents();
+  }
+
+  /**
+    Event handler for the dragenter, dragover, dragleave events on the
+    document. It calls to determine the file type being dragged and manages
+    the commands to the timerControl method.
+    @param {Object} e The event object from the various events.
+  */
+  _appDragOverHandler(e) {
+    e.preventDefault(); // required to allow items to be dropped
+    // In this case, we want an empty string to be a truthy value.
+    const fileType = this._determineFileType(e.dataTransfer);
+    if (fileType === false) {
+      return; // Ignore if it's not a supported type
+    }
+    if (e.type === 'dragenter') {
+      this._renderDragOverNotification();
+    }
+    // Possible values for type are 'dragover' and 'dragleave'.
+    this._dragleaveTimerControl(e.type === 'dragover' ? 'stop' : 'start');
+  }
+
+  /**
+    Handles the dragleave timer so that the periodic dragleave events which
+    fire as the user is dragging the file around the browser do not stop
+    the drag notification from showing.
+    @param {String} action The action that should be taken on the timer.
+  */
+  _dragleaveTimerControl(action) {
+    if (this._dragLeaveTimer) {
+      window.clearTimeout(this._dragLeaveTimer);
+      this._dragLeaveTimer = null;
+    }
+    if (action === 'start') {
+      this._dragLeaveTimer = setTimeout(() => {
+        this._hideDragOverNotification();
+      }, 100);
+    }
+  }
+
+  /**
+    Takes the information from the dataTransfer object to determine what
+    kind of file the user is dragging over the canvas.
+
+    Unfortunately Safari and IE do not show mime types for files that they
+    are not familiar with. This isn't an issue once the user has dropped the
+    file because we can parse the file name but while it's still hovering the
+    browser only tells us the mime type if it knows it, else it's an empty
+    string. This means that we cannot determine between a yaml file or a
+    folder during hover.
+    Bug: https://code.google.com/p/chromium/issues/detail?id=342554
+    Real mime type for yaml files should be: application/x-yaml
+
+    @method _determineFileType
+    @param {Object} dataTransfer dataTransfer object from the dragover event.
+    @return {String} The file type extension.
+  */
+  _determineFileType(dataTransfer) {
+    const types = dataTransfer.types;
+    // When dragging a single file in Firefox dataTransfer.types is an array
+    // with two elements ["application/x-moz-file", "Files"]
+    if (!Object.keys(types).some(key => types[key] === 'Files')) {
+      // If the dataTransfer type isn't `Files` then something is being
+      // dragged from inside the browser.
+      return false;
+    }
+    // IE10, 11 and Safari do not have this property during hover so we
+    // cannot tell what type of file is being hovered over the canvas.
+    if (dataTransfer.items) {
+      // See method doc for bug information.
+      const file = dataTransfer.items[0];
+      if (file.type === 'application/zip' ||
+          file.type === 'application/x-zip-compressed') {
+        return 'zip';
+      }
+      return 'yaml';
+    }
+    return '';
+  }
+
   /**
     Sets the page title.
     @param {String} title The title to be appended with ' - Juju GUI'
@@ -1053,9 +1236,14 @@ class GUIApp {
     Cleans up the instance of the application.
   */
   destructor() {
+    if (this.dbChangedTimer) {
+      clearTimeout(this.dbChangedTimer);
+    }
     // Destroy YUI classes.
     this.modelAPI.destroy();
     this.controllerAPI.destroy();
+    this.db.destroy();
+    this.endpointsController.destroy();
     // Detach event listeners.
     const remove = document.removeEventListener;
     const handlers = this._domEventHandlers;
@@ -1064,6 +1252,12 @@ class GUIApp {
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);
     remove('login', handlers['controllerLoginHandler']);
+    remove('delta', handlers['onDeltaBound']);
+    remove('update', handlers['boundOnDatabaseChanged']);
+    remove('initiateDeploy', handlers['onInitiateDeploy']);
+    ['dragenter', 'dragover', 'dragleave'].forEach(eventName => {
+      remove(eventName, handlers['boundAppDragOverHandler']);
+    });
   }
 }
 
