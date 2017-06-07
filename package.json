@@ -12,6 +12,7 @@
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-react-jsx": "^6.23.0",
     "babel-preset-babili": "0.0.12",
+    "browserify": "^14.4.0",
     "classnames": "^2.2.5",
     "clipboard": "^1.6.1",
     "cloud-vanilla-theme": "0.0.24",
