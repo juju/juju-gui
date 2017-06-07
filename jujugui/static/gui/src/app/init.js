@@ -5,6 +5,7 @@ const mixwith = require('mixwith');
 
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
+const ComponentRenderersMixin = require('./init/component-renderers');
 
 const yui = window.yui;
 
@@ -141,6 +142,8 @@ class GUIApp {
 }
 
 class JujuGUI extends mixwith.mix(GUIApp)
-                             .with(csUser.CharmstoreUserMixin) {}
+                             .with(
+                               csUser.CharmstoreUserMixin,
+                               ComponentRenderersMixin) {}
 
 module.exports = JujuGUI;
