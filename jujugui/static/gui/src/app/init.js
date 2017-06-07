@@ -28,21 +28,29 @@ class GUIApp {
       The object used for storing a mapping of previously visited user paths
       to the type of entity (model, store). e.g. /u/spinach/ghost would map to
       store.
-
-      @property userPaths
       @type {Map}
     */
     this.userPaths = new Map();
     /**
-      The keydown event listener from the hotkey activation.
+      Reference to the changesUtils utilities.
       @type {Object}
     */
-    this._hotkeyListener = hotkeys.activate(this);
+    this.changesUtils = window.juju.utils.ChangesUtils;
+    /**
+      Reference to the relationUtils utilities.
+      @type {Object}
+    */
+    this.relationUtils = window.juju.utils.RelationUtils;
     /**
       Stores the custom event handlers for the application.
       @type {Object}
     */
     this._domEventHandlers = {};
+    /**
+      The keydown event listener from the hotkey activation.
+      @type {Object}
+    */
+    this._hotkeyListener = hotkeys.activate(this);
     /**
       The application database
       @type {Object}
@@ -56,7 +64,6 @@ class GUIApp {
       externalAuth: config.auth,
       expiration: window.sessionStorage.getItem('expirationDatetime')
     });
-
     /**
       Stores the user object for the charmstore.
       @type {Object}
@@ -87,14 +94,6 @@ class GUIApp {
       config, window.jujulib.bundleservice);
 
     this.ecs = this._setupEnvironmentChangeSet();
-    /**
-      The application instance of the model controller.
-      @type {Object}
-    */
-    this.modelController = new yui.juju.ModelController({
-      db: this.db,
-      charmstore: this.charmstore
-    });
 
     const modelOptions = {
       user: this.user,
@@ -111,6 +110,19 @@ class GUIApp {
       @type {Object}
     */
     this.modelAPI = new environments.GoEnvironment(modelOptions);
+    // When the environment name becomes available, display it.
+    this.modelAPI.after('environmentNameChange', this.onModelNameChange, this);
+    this.modelAPI.after(
+      'defaultSeriesChange', this.onDefaultSeriesChange, this);
+    /**
+      The application instance of the model controller.
+      @type {Object}
+    */
+    this.modelController = new yui.juju.ModelController({
+      db: this.db,
+      env: this.modelAPI,
+      charmstore: this.charmstore
+    });
     /**
       Application instance of the controller API.
       @type {Object}
@@ -137,6 +149,32 @@ class GUIApp {
     this.state = this._setupState(baseURL);
 
     this._setupControllerAPI();
+
+    this._setupRomulusServices(config, window.jujulib);
+
+    /**
+      Application instance of the bundle importer.
+      @type {Object}
+    */
+    this.bundleImporter = new yui.juju.BundleImporter({
+      db: this.db,
+      modelAPI: this.modelAPI,
+      getBundleChanges: this.controllerAPI.getBundleChanges.bind(
+        this.controllerAPI),
+      makeEntityModel: yui.juju.makeEntityModel,
+      charmstore: this.charmstore,
+      hideDragOverNotification: this._hideDragOverNotification.bind(this)
+    });
+
+    /**
+      Application instance of the ACL.
+      @type {Object}
+    */
+    this.acl = new yui.juju.generateAcl(this.controllerAPI, this.modelAPI);
+    // Listen for window unloads and trigger the unloadWindow function.
+    window.onbeforeunload = yui.juju.views.utils.unloadWindow.bind(this);
+
+    this._handleMaasServer();
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
@@ -253,6 +291,63 @@ class GUIApp {
   }
 
   /**
+    Creates new API client instances for Romulus services.
+    Assign them to the "plans" and "terms" app properties.
+    @param {Object} config The GUI application configuration.
+    @param {Object} jujulib The Juju API client library.
+  */
+  _setupRomulusServices(config, jujulib) {
+    if (!config) {
+      // We are probably running tests.
+      return;
+    }
+    if (this.plans || this.terms) {
+      console.error(
+        'romulus services are being redefined:', this.plans, this.terms);
+    }
+    /**
+      Application instance of the plans api.
+      @type {Object}
+    */
+    this.plans = new window.jujulib.plans(config.plansURL, this.bakery);
+    /**
+      Application instance of the terms api.
+      @type {Object}
+    */
+    this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
+    if (config.payFlag) {
+      /**
+        Application instance of the payment api.
+        @type {Object}
+      */
+      this.payment = new window.jujulib.payment(
+        config.paymentURL, this.bakery);
+      /**
+        Application instance of the stripe api.
+        @type {Object}
+      */
+      this.stripe = new window.jujulib.stripe(
+        'https://js.stripe.com/', config.stripeKey);
+    }
+  }
+
+  _handleMaasServer() {
+    // Once we know about MAAS server, update the header accordingly.
+    let maasServer = this.modelAPI.get('maasServer');
+    if (!maasServer && this.controllerAPI) {
+      maasServer = this.controllerAPI.get('maasServer');
+    }
+    if (maasServer) {
+      this._displayMaasLink(maasServer);
+    } else {
+      if (this.controllerAPI) {
+        this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
+      }
+      this.modelAPI.once('maasServerChange', this._onMaasServer, this);
+    }
+  }
+
+  /**
     Determines if the user state is a store path or a model path.
     @param {String} userState The state value for the 'user' key.
     @return {Promise} A promise with the charmstore entity if one exists.
@@ -313,6 +408,15 @@ class GUIApp {
     this.controllerAPI.set('socket_url',
       utils.createSocketURL(
         config.apiAddress, config.controllerSocketTemplate));
+  }
+
+  /**
+    Hide the drag notifications.
+  */
+  _hideDragOverNotification() {
+    this.views.environment.instance.fadeHelpIndicator(false); // XXX MISSING
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('drag-over-notification-container'));
   }
 
   _controllerLoginHandler(entityPromise, evt) {
@@ -454,6 +558,36 @@ class GUIApp {
     if (!gisf) {
       this.loginToAPIs(null, false, [this.controllerAPI]);
     }
+  }
+
+  /**
+    Update the model name across the application on model name change.
+    @param {Object} evt The name change event.
+  */
+  onModelNameChange(evt) {
+    const modelName = evt.newVal || 'untitled-model';
+    // Update the name on the current model. This is what the components use
+    // to display the model name.
+    this.db.environment.set('name', modelName);
+    // Update the breadcrumb with the new model name.
+    this._renderBreadcrumb();
+    // Update the page title.
+    this.defaultPageTitle = `${modelName} - Juju GUI`;
+    this.setPageTitle();
+  }
+  /**
+    Update the model instance when the default series changes
+    @param {Object} evt The series change event.
+   */
+  onDefaultSeriesChange(evt) {
+    this.db.environment.set('defaultSeries', evt.newVal);
+  }
+  /**
+    Sets the page title.
+    @param {String} title The title to be appended with ' - Juju GUI'
+  */
+  setPageTitle(title) {
+    document.title = title ? `${title} - Juju GUI` : this.defaultPageTitle;
   }
 
   /**
@@ -783,6 +917,34 @@ class GUIApp {
         console.log('logged into charmstore');
       });
     }
+  }
+
+  /**
+    If we are in a MAAS environment, react to the MAAS server address
+    retrieval adding a link to the header pointing to the MAAS server.
+    @param {Object} evt An event object (with a "newVal" attribute).
+  */
+  _onMaasServer(evt) {
+    if (evt.newVal === evt.prevVal) {
+      // This can happen if the attr is set blithely. Ignore if so.
+      return;
+    }
+    this._displayMaasLink(evt.newVal);
+  }
+
+  /**
+    If the given maasServer is not null, create a link to the MAAS server
+    in the GUI header.
+    @param {String} maasServer The MAAS server URL (or null if not in MAAS).
+  */
+  _displayMaasLink(maasServer) {
+    if (maasServer === null) {
+      // The current environment is not MAAS.
+      return;
+    }
+    const maasContainer = document.querySelector('#maas-server');
+    maasContainer.querySelector('a').setAttribute('href', maasServer);
+    maasContainer.classList.remove('hidden');
   }
 
   maskVisibility(visibility = true) {
