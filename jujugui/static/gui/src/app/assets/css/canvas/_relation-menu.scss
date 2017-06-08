@@ -39,6 +39,8 @@
     border-width: 17.3px 10px 0;
     bottom: -16px;
     top: auto;
+    left: 50%;
+    margin-left: -5px;
   }
 
   .menu-title {
@@ -108,14 +110,13 @@
 
   .relation-container {
     cursor: inherit;
-    padding: 0 0 0 (($gutter * 2) + $icon-size);
+    margin: 0;
+    padding: 5px 10px;
     line-height: $height;
-    background-repeat: no-repeat;
-    background-position: $gutter (($height - $icon-size) / 2);
-    background-image: url('static/gui/build/app/assets/images/unit_running_16.png');
 
-    &.error {
-      background-image: url('static/gui/build/app/assets/images/error_16.png');
+    .svg-icon {
+      margin-right: 10px;
+      vertical-align: text-bottom;
     }
 
     .endpoint.error {

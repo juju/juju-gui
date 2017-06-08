@@ -79,7 +79,6 @@ YUI.add('environment', function() {
           </div>
           <div className="environment-menu top" id="relation-menu"></div>
         </div>
-        <div id="rmrelation-modal-panel"></div>
     </div>
     );
   };

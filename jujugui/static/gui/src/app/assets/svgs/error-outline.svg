@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.2 (29753) - http://www.bohemiancoding.com/sketch -->
+    <title>error</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="error" transform="translate(-1.000000, -1.000000)">
+            <g id="layer1" transform="translate(0.061510, 0.279920)">
+                <g id="g6413" transform="translate(0.938490, 0.357910)">
+                    <rect id="rect6415" x="0" y="0.36218" width="16" height="16"></rect>
+                    <circle id="circle6417" stroke="#DF382C" stroke-width="1.5" cx="8" cy="8.36218" r="7.2500086"></circle>
+                    <path d="M5.00001,5.36218 L11.00001,11.36218" id="path6479-8" stroke="#DF382C" stroke-width="1.5"></path>
+                    <path d="M11.00001,5.36218 L5.00001,11.36218" id="path6481-8" stroke="#DF382C" stroke-width="1.5"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
