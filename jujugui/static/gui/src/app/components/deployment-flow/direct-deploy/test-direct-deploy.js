@@ -27,18 +27,25 @@ describe('DirectDeploy', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-direct-deploy', function() { done(); });
+    YUI().use(['deployment-direct-deploy','entity-content-description'],
+      function() { done(); });
   });
 
-  it('renders the Direct Deploy for a charm', () => {
-    const id = 'cs:apache-21';
+  it('renders the Direct Deploy for a charm with description', () => {
+    const entityModel = jsTestUtils.makeEntity();
+    entityModel.set('description', 'Hello');
+    const id = entityModel.get('id');
+    const renderMarkdown = sinon.stub().returns('Hello');
+    const getEntity = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: id}}
         getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub()}
-        makeEntityModel={sinon.stub()}
-        renderMarkdown={sinon.stub()} />, true);
+        getEntity={getEntity}
+        makeEntityModel={sinon.stub().returns(entityModel)}
+        renderMarkdown={renderMarkdown} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({entityModel: entityModel});
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentSection
@@ -48,7 +55,42 @@ describe('DirectDeploy', function() {
         <p>
           The following steps will guide you through deploying {id}
         </p>
-        {undefined}
+        <juju.components.EntityContentDescription
+          entityModel={entityModel}
+          renderMarkdown={renderMarkdown}
+          />
+      </juju.components.DeploymentSection>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('renders the Direct Deploy for a charm without description', () => {
+    const entityModel = jsTestUtils.makeEntity();
+    const id = entityModel.get('id');
+    const renderMarkdown = sinon.stub();
+    const getEntity = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentDirectDeploy
+        ddData={{id: id}}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        makeEntityModel={sinon.stub().returns(entityModel)}
+        renderMarkdown={renderMarkdown} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({entityModel: entityModel});
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.DeploymentSection
+        instance="deployment-one-click"
+        showCheck={false}
+        title="Direct Deploy">
+        <p>
+          The following steps will guide you through deploying {id}
+        </p>
+        <juju.components.EntityContentDescription
+          entityModel={entityModel}
+          renderMarkdown={renderMarkdown}
+          />
       </juju.components.DeploymentSection>
     );
     expect(output).toEqualJSX(expected);
