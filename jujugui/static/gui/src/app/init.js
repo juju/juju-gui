@@ -523,8 +523,11 @@ class GUIApp {
     if (uuid) {
       console.log('switching to model: ', uuid);
       this.modelUUID = uuid;
+      const config = this.applicationConfig;
       socketURL = utils.createSocketURL({
-        template: this.applicationConfig.socketTemplate,
+        protocol: config.socket_protocol,
+        apiAddress: config.apiAddress,
+        template: config.socketTemplate,
         uuid});
     } else {
       console.log('switching to disconnected mode');
@@ -979,7 +982,6 @@ class GUIApp {
     Make the necessary state changes to display the login UI.
   */
   _displayLogin() {
-    this.set('loggedIn', false);
     const root = this.state.current.root;
     if (root !== 'login') {
       this.state.changeState({
