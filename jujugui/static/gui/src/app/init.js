@@ -40,6 +40,13 @@ class GUIApp {
     */
     this.userPaths = new Map();
     /**
+      Track anonymous mode. This value will be set to true when anonymous
+      navigation is allowed, in essence when a GISF anonymous user is being
+      modeling on a new canvas.
+      @type {Boolean}
+    */
+    this.anonymousMode = false;
+    /**
       Reference to the changesUtils utilities.
       @type {Object}
     */
@@ -454,13 +461,6 @@ class GUIApp {
       ['hash']
     ]);
     return state;
-  }
-
-  _clearAllGUIComponents(state, next) {
-    const noop = () => {};
-    this._clearMachineView(state, noop);
-    this._clearDeployment(state, noop);
-    this._clearInspector(state, noop);
   }
 
   /**
