@@ -456,6 +456,13 @@ class GUIApp {
     return state;
   }
 
+  _clearAllGUIComponents(state, next) {
+    const noop = () => {};
+    this._clearMachineView(state, noop);
+    this._clearDeployment(state, noop);
+    this._clearInspector(state, noop);
+  }
+
   /**
     The dispatcher for the root state path.
     @param {Object} state - The application state.
@@ -1291,6 +1298,27 @@ class GUIApp {
   }
 
   /**
+    Generate a user info object.
+    @param {Object} state - The application state.
+  */
+  _getUserInfo(state) {
+    const username = state.profile || this.user.displayName || '';
+    const userInfo = {
+      external: username,
+      isCurrent: false,
+      profile: username
+    };
+    if (userInfo.profile === this.user.displayName) {
+      userInfo.isCurrent = true;
+      // This is the current user, and might be a local one. Use the
+      // authenticated charm store user as the external (USSO) name.
+      const users = this.users || {};
+      userInfo.external = users.charmstore ? users.charmstore.user : null;
+    }
+    return userInfo;
+  }
+
+  /**
     Auto log the user into the charm store as part of the login process
     when the GUI operates in a GISF context.
   */
@@ -1456,6 +1484,43 @@ class GUIApp {
     });
     topology.render();
     return topology;
+  }
+
+  /**
+    Log the current user out and show the login screen again.
+    @param {Object} req The request.
+    @return {undefined} Nothing.
+  */
+  logout(req) {
+    // If the environment view is instantiated, clear out the topology local
+    // database on log out, because we clear out the environment database as
+    // well. The order of these is important because we need to tell
+    // the env to log out after it has navigated to make sure that
+    // it always shows the login screen.
+    var topology = this.topology;
+    if (topology) {
+      topology.topo.update();
+    }
+    this.modelUUID = '';
+    this.loggedIn = false;
+    const controllerAPI = this.controllerAPI;
+    const closeController = controllerAPI.close.bind(controllerAPI);
+    this.modelAPI.close(() => {
+      closeController(() => {
+        controllerAPI.connect();
+        this.maskVisibility(true);
+        this.modelAPI.get('ecs').clear();
+        this.db.reset();
+        this.db.fireEvent('update');
+        this.state.changeState({
+          model: null,
+          profile: null,
+          root: null,
+          store: null
+        });
+        this._renderLogin(null);
+      });
+    });
   }
 
   /**

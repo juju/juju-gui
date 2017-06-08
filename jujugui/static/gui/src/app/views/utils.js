@@ -1314,7 +1314,7 @@ YUI.add('juju-view-utils', function(Y) {
     Switch model, displaying a confirmation if there are uncommitted changes.
 
     @method switchModel
-    @param {Object} env Reference to the app env.
+    @param {Object} modelAPI Reference to the app modelAPI.
     @param {Object} model The model to switch to, with these attributes:
       - name: the model name;
       - id: the model unique identifier;
@@ -1322,15 +1322,15 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
-  utils.switchModel = function(env, model, confirmUncommitted=true) {
-    if (model && model.id === this.get('modelUUID')) {
+  utils.switchModel = function(modelAPI, model, confirmUncommitted=true) {
+    if (model && model.id === this.modelUUID) {
       // There is nothing to be done as we are already connected to this model.
       // Note that this check is always false when switching models from the
       // profile view, as the "modelUUID" is set to null in that case.
       return;
     }
-    const switchModel = utils._switchModel.bind(this, env, model);
-    const currentChangeSet = env.get('ecs').getCurrentChangeSet();
+    const switchModel = utils._switchModel.bind(this, modelAPI, model);
+    const currentChangeSet = modelAPI.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
       utils._showUncommittedConfirm(switchModel);
@@ -1411,7 +1411,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
     this.state.changeState(newState);
     env.set('environmentName', name);
-    this.set('modelUUID', uuid);
+    this.modelUUID = uuid;
   };
 
   /**
