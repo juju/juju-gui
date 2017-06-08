@@ -270,7 +270,11 @@ class GUIApp {
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
 
-    this._renderTopology();
+    /**
+      Reference to the rendered topology.
+      @type {Object}
+    */
+    this.topology = this._renderTopology();
 
     this.state.bootstrap();
   }
@@ -412,17 +416,17 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
-      // ['root',
-        // this._rootDispatcher.bind(this),
-        // this._clearRoot.bind(this)],
+      ['root',
+        this._rootDispatcher.bind(this),
+        this._clearRoot.bind(this)],
       ['profile',
         this._renderUserProfile.bind(this),
         this._clearUserProfile.bind(this)],
-      // ['user',
-        // this._handleUserEntity.bind(this),
-        // this._clearUserEntity.bind(this)],
-      // ['model',
-        // this._handleModelState.bind(this)],
+      ['user',
+        this._handleUserEntity.bind(this),
+        this._clearUserEntity.bind(this)],
+      ['model',
+        this._handleModelState.bind(this)],
       ['store',
         this._renderCharmbrowser.bind(this),
         this._clearCharmbrowser.bind(this)],
@@ -450,6 +454,121 @@ class GUIApp {
       ['hash']
     ]);
     return state;
+  }
+
+  /**
+    The dispatcher for the root state path.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _rootDispatcher(state, next) {
+    switch (state.root) {
+      case 'login':
+        // _renderLogin is called from various places with a different call
+        // signature so we have to call next manually after.
+        this._renderLogin();
+        next();
+        break;
+      case 'store':
+        this._renderCharmbrowser(state, next);
+        break;
+      case 'account':
+        this._renderAccount(state, next);
+        break;
+      case 'new':
+        // When going to disconnected mode we need to be disconnected from
+        // models.
+        if (this.modelAPI.get('connected')) {
+          this._switchModelToUUID();
+        }
+        // When dispatching, we only want to remove the mask if we're in
+        // anonymousMode or the user is logged in; otherwise we need to
+        // properly redirect to login.
+        const userLoggedIn = this.controllerAPI.userIsAuthenticated;
+        if (this.anonymousMode || userLoggedIn) {
+          this.maskVisibility(false);
+        }
+        const specialState = state.special;
+        if (specialState && specialState.dd) {
+          this._directDeploy(specialState.dd);
+        }
+        break;
+      default:
+        next();
+        break;
+    }
+  }
+
+  /**
+    Handles the state changes for the model key.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _handleModelState(state, next) {
+    const modelAPI = this.modelAPI;
+    if (this.modelUUID !== state.model.uuid ||
+        (!modelAPI.get('connected') && !modelAPI.get('connecting'))) {
+      this._switchModelToUUID(state.model.uuid);
+    }
+    next();
+  }
+
+  /**
+    Switches to the specified UUID, or if none is provided then
+    switches to the unconnected mode.
+    @param {String} uuid The uuid of the model to switch to, or none.
+  */
+  _switchModelToUUID(uuid) {
+    let socketURL = undefined;
+    if (uuid) {
+      console.log('switching to model: ', uuid);
+      this.modelUUID = uuid;
+      socketURL = utils.createSocketURL({
+        template: this.applicationConfig.socketTemplate,
+        uuid});
+    } else {
+      console.log('switching to disconnected mode');
+      this.modelUUID = null;
+    }
+    this.switchEnv(socketURL);
+  }
+
+  /**
+    The cleanup dispatcher for the root state path.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _clearRoot(state, next) {
+    this._clearCharmbrowser(state, next);
+    this._clearLogin(state, next);
+    next();
+  }
+
+  /**
+    Handle the request to display the user entity state.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _handleUserEntity(state, next) {
+    this._disambiguateUserState(
+      this._fetchEntityFromUserState(state.user));
+  }
+
+  /**
+    The cleanup dispatcher for the user entity state path. The store will be
+    mounted if the path was for a bundle or charm. If the entity was a model
+    we don't need to do anything.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _clearUserEntity(state, next) {
+    const container = document.getElementById('charmbrowser-container');
+    // The charmbrowser will only be mounted if the entity is a charm or
+    // bundle.
+    if (container.childNodes.length > 0) {
+      ReactDOM.unmountComponentAtNode(container);
+    }
+    next();
   }
 
   /**
@@ -580,7 +699,7 @@ class GUIApp {
     Hide the drag notifications.
   */
   _hideDragOverNotification() {
-    this.views.environment.instance.fadeHelpIndicator(false); // XXX MISSING
+    this.topology.fadeHelpIndicator(false);
     ReactDOM.unmountComponentAtNode(
       document.getElementById('drag-over-notification-container'));
   }
@@ -765,11 +884,7 @@ class GUIApp {
     calls then this is called to handle the db updates.
   */
   _dbChangedHandler() {
-    // Regardless of which view we are rendering,
-    // update the env view on db change.
-    if (this.views.environment.instance) { // XXX MISSING
-      this.views.environment.instance.topo.update(); // XXX MISSING
-    }
+    this.topology.topo.update();
     this.state.dispatch();
     this._renderComponents();
   }
@@ -1052,12 +1167,8 @@ class GUIApp {
       this.db.reset();
       this.db.fireEvent('update');
     }
-    // Reset canvas centering to new env will center on load.
-    const instance = this.views.environment.instance; // XXX MISSING
-    // TODO frankban: investigate in what cases instance is undefined on the
-    // environment object. Is this some kind of race?
-    if (instance) {
-      instance.topo.modules.ServiceModule.centerOnLoad = true;
+    if (this.topology) {
+      this.topology.topo.modules.ServiceModule.centerOnLoad = true;
     }
     // If we're not reconnecting, then mark the switch as done.
     if (this.state.current.root === 'new') {
@@ -1098,7 +1209,7 @@ class GUIApp {
       }
       this.maskVisibility(false);
       // If we're already connected to the model then don't do anything.
-      if (model && this.env.get('modelUUID') === model.uuid) {
+      if (model && this.modelAPI.get('modelUUID') === model.uuid) {
         return;
       }
       if (model) {
@@ -1324,6 +1435,10 @@ class GUIApp {
     }
   }
 
+  /**
+    Renders the topology to the DOM.
+    @return {Object} Reference to the rendered topology.
+  */
   _renderTopology() {
     const topology = new yui.juju.views.environment({
       endpointsController: this.endpointsController,
@@ -1338,6 +1453,7 @@ class GUIApp {
       container: this.applicationConfig.container || '#main'
     });
     topology.render();
+    return topology;
   }
 
   /**

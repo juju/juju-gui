@@ -1169,7 +1169,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} env Reference to the app env.
   */
   utils.unloadWindow = function() {
-    var currentChangeSet = this.env.get('ecs').getCurrentChangeSet();
+    var currentChangeSet = this.ecs.getCurrentChangeSet();
     if (Object.keys(currentChangeSet).length > 0) {
       return 'You have uncommitted changes to your model. You will ' +
         'lose these changes if you continue.';
