@@ -60,6 +60,11 @@ class GUIApp {
     */
     this._dragLeaveTimer = null;
     /**
+      Reference to the juju.Cookies instance.
+      @type {juju.Cookies}
+    */
+    this.cookieHandler = null;
+    /**
       The keydown event listener from the hotkey activation.
       @type {Object}
     */
@@ -215,6 +220,10 @@ class GUIApp {
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });
 
+    if (config.gisf) {
+      document.body.classList.add('u-is-beta');
+    }
+
     /**
       Application instance of the ACL.
       @type {Object}
@@ -260,6 +269,8 @@ class GUIApp {
       document.addEventListener(
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
+
+    this._renderTopology();
 
     this.state.bootstrap();
   }
@@ -334,6 +345,55 @@ class GUIApp {
     next();
   }
   /**
+    Make sure the user agrees to cookie usage.
+    @param {Object} state - The application state.
+    @param {Function} next - The next route handler.
+  */
+  authorizeCookieUse(state, next) {
+    var GTM_enabled = this.GTM_enabled;
+    if (GTM_enabled) {
+      this.cookieHandler = this.cookieHandler || new yui.juju.Cookies();
+      this.cookieHandler.check();
+    }
+    next();
+  }
+  /**
+    Ensure that the current user has authenticated.
+    @param {Object} state The application state.
+    @param {Function} next The next route handler.
+  */
+  checkUserCredentials(state, next) {
+    // If we're in disconnected mode (either "/new" or "/store"), then allow
+    // the canvas to be shown.
+    if (state && (state.root === 'new' || state.root === 'store')) {
+      next();
+      return;
+    }
+    const apis = [this.modelAPI, this.controllerAPI];
+    // Loop through each api connection and see if we are properly
+    // authenticated. If we aren't then display the login screen.
+    const shouldDisplayLogin = apis.some(api => {
+      // Legacy Juju won't have a controller API.
+      // If we do not have an api instance or if we are not connected with
+      // it then we don't need to concern ourselves with being
+      // authenticated to it.
+      if (!api || !api.get('connected')) {
+        return false;
+      }
+      // If the api is connecting then we can't know if they are properly
+      // logged in yet.
+      if (api.get('connecting')) {
+        return false;
+      }
+      return !api.userIsAuthenticated && !this.applicationConfig.gisf;
+    });
+    if (shouldDisplayLogin) {
+      this._displayLogin();
+      return;
+    }
+    next();
+  }
+  /**
     Creates a new instance of the State and registers the necessary dispatchers.
     This method is idempotent.
     @param {String} baseURL The path the application is served from.
@@ -350,9 +410,8 @@ class GUIApp {
     });
     state.register([
       ['*', this._ensureControllerConnection.bind(this)],
-      // ['*', this.authorizeCookieUse.bind(this)],
-      // ['*', this.checkUserCredentials.bind(this)],
-      // ['*', this.show_environment.bind(this)],
+      ['*', this.authorizeCookieUse.bind(this)],
+      ['*', this.checkUserCredentials.bind(this)],
       // ['root',
         // this._rootDispatcher.bind(this),
         // this._clearRoot.bind(this)],
@@ -1265,6 +1324,22 @@ class GUIApp {
     }
   }
 
+  _renderTopology() {
+    const topology = new yui.juju.views.environment({
+      endpointsController: this.endpointsController,
+      db: this.db,
+      env: this.modelAPI,
+      ecs: this.ecs,
+      charmstore: this.charmstore,
+      bundleImporter: this.bundleImporter,
+      state: this.state,
+      staticURL: this.applicationConfig.staticURL,
+      sendAnalytics: this.sendAnalytics,
+      container: this.applicationConfig.container || '#main'
+    });
+    topology.render();
+  }
+
   /**
     Cleans up the instance of the application.
   */
@@ -1301,4 +1376,3 @@ class JujuGUI extends mixwith.mix(GUIApp)
                                DeployerMixin) {}
 
 module.exports = JujuGUI;
-//
