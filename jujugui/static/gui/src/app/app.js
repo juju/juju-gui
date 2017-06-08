@@ -914,6 +914,7 @@ YUI.add('juju-gui', function(Y) {
       const LogoutLink = (<window.juju.components.Logout
         charmstoreLogoutUrl={charmstore.getLogoutUrl()}
         doCharmstoreLogout={doCharmstoreLogout}
+        locationAssign={window.location.assign}
         logoutUrl={'/logout'}
         // If the charmbrowser is open then don't show the logout link.
         visible={!this.state.current.store}

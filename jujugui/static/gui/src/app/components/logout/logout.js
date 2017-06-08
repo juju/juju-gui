@@ -25,6 +25,7 @@ YUI.add('logout-component', function() {
     propTypes: {
       charmstoreLogoutUrl: React.PropTypes.string.isRequired,
       doCharmstoreLogout: React.PropTypes.func.isRequired,
+      locationAssign: React.PropTypes.func.isRequired,
       logoutUrl: React.PropTypes.string.isRequired,
       visible: React.PropTypes.bool.isRequired
     },
@@ -47,7 +48,7 @@ YUI.add('logout-component', function() {
     handleClick: function() {
       const props = this.props;
       if (props.doCharmstoreLogout()) {
-        window.location.assign(props.logoutUrl);
+        props.locationAssign(props.logoutUrl);
       }
     },
 

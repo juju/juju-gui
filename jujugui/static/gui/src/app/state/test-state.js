@@ -107,6 +107,10 @@ describe('State', () => {
     path: 'http://abc.com:123/login/#honey',
     state: {root: 'login', hash: 'honey'},
     error: null
+  }, {
+    path: 'http://abc.com:123/logout',
+    state: { root: 'logout' },
+    error: null
   }];
 
   const searchStateTests = [{
