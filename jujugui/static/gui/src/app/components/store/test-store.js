@@ -120,7 +120,7 @@ describe('Store', function() {
     });
   });
 
-  it('can handle clicking on an search item', function() {
+  it('can handle clicking on a search item', function() {
     var changeState = sinon.stub();
     var stopPropagation = sinon.stub();
     var target = {
@@ -141,7 +141,7 @@ describe('Store', function() {
     var searchItem = tagList.props.children[0].props.children[0];
     searchItem.props.onClick({
       stopPropagation: stopPropagation,
-      target: target
+      currentTarget: target
     });
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);

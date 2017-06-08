@@ -115,8 +115,8 @@ YUI.add('store', function() {
       const search = {
         text: this._getData(evt.currentTarget, 'query')
       };
-      const filterKey = this._getData(evt.target, 'filterkey');
-      const filterValue = this._getData(evt.target, 'filtervalue');
+      const filterKey = this._getData(evt.currentTarget, 'filterkey');
+      const filterValue = this._getData(evt.currentTarget, 'filtervalue');
       if (filterKey && filterValue) {
         search[filterKey] = filterValue;
       }
