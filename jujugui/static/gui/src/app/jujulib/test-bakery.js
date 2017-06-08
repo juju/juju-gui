@@ -408,6 +408,16 @@ describe('Bakery', () => {
   });
 
   describe('storage', () => {
+    let generateStub;
+
+    beforeEach(() => {
+      generateStub = sinon.stub(macaroonlib, 'generateMacaroons');
+      generateStub.returnsArg(0);
+    });
+
+    afterEach(() => {
+      generateStub.restore();
+    });
     it('sets items', () => {
       storage.set('http://example.com/charmstore', 'foo', () => {});
       assert.equal(fakeLocalStorage.store['charmstore'], 'foo');
