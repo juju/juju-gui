@@ -35,9 +35,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer(this, 'container');
-      container.innerHTML = '<div class="cookie-policy">' +
-          '<a class="link-cta"></a></div>';
-      node = container.querySelector('.cookie-policy');
+      node = document.createElement('div');
+      node.setAttribute('id', 'cookie-container');
+      container.appendChild(node);
       cookieHandler = new Y.juju.Cookies(node);
     });
 
@@ -50,28 +50,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calling check makes the node visible', function() {
-      assert.isFalse(node.classList.contains('display-cookie-notice'));
+      assert.equal(node.children.length, 0);
       cookieHandler.check();
-      assert.isTrue(node.classList.contains('display-cookie-notice'));
+      assert.equal(node.children.length > 0, true);
     });
 
     it('closing the banner sets the cookie', function() {
       assert.isNull(cookieHandler._getCookie('_cookies_accepted'));
-      cookieHandler.check();
-      node.querySelector('.link-cta').click();
+      cookieHandler.close();
       assert.equal(cookieHandler._getCookie('_cookies_accepted'), 'true');
     });
 
     it('the cookie prevents the node from getting visible', function() {
       cookieHandler._setCookie('_cookies_accepted', 'true');
       cookieHandler.check();
-      assert.isFalse(node.classList.contains('display-cookie-notice'));
+      assert.equal(node.children.length, 0);
     });
 
     it('the custom setting also does', function() {
       localStorage.setItem('disable-cookie', 'true');
       cookieHandler.check();
-      assert.isFalse(node.classList.contains('display-cookie-notice'));
+      assert.equal(node.children.length, 0);
     });
 
     it('can get a cookie', function() {
