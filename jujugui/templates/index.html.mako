@@ -185,7 +185,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Querying the charm store...',
             'Rendering the GUI...'
           ];
-          this.interval = 1000;
+          this.interval = 3000;
           this.index = 0;
           this.maxIndex = this.messages.length - 1;
         }
