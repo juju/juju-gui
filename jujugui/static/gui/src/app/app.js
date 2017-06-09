@@ -2198,6 +2198,7 @@ YUI.add('juju-gui', function(Y) {
           next();
           break;
         case 'logout':
+          // If we're in gisf _handleLogout will navigate away from the GUI
           this._handleLogout();
           this.state.changeState({root: 'login'});
           return;
@@ -2603,6 +2604,15 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     Logs the user out of the gui.
+
+     This closes the model/controller connections and clears cookies and other
+     authentication artifacts. If in gisf mode this will then redirect the user
+     to the store front logout mechanism to complete logout.
+
+     @method _handleLogout
+    */
     _handleLogout: function() {
       const config = window.juju_config;
 
