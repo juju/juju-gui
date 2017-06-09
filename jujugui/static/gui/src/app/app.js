@@ -908,14 +908,19 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, bakery)}
       />);
 
+      let logoutUrl = '/logout';
+      if (window.juju_config.baseUrl) {
+        logoutUrl = window.juju_config.baseUrl + logoutUrl;
+      }
+
       const doCharmstoreLogout = () => {
         return this.getUser('charmstore') && !this.get('gisf');
       };
       const LogoutLink = (<window.juju.components.Logout
         charmstoreLogoutUrl={charmstore.getLogoutUrl()}
         doCharmstoreLogout={doCharmstoreLogout}
-        locationAssign={window.location.assign}
-        logoutUrl={'/logout'}
+        locationAssign={window.location.assign.bind(window.location)}
+        logoutUrl={logoutUrl}
         // If the charmbrowser is open then don't show the logout link.
         visible={!this.state.current.store}
       />);
