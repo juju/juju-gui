@@ -30,164 +30,96 @@ describe('Logout', () => {
     YUI().use('logout-component', () => { done(); });
   });
 
-  it('renders properly', () => {
-    var logout = sinon.stub();
-    var logoutUrl = 'http://logout';
-    var output = jsTestUtils.shallowRender(
+  it('renders properly for regular logout', () => {
+    const doCharmstoreLogout = sinon.stub().returns(false);
+    const logoutUrl = 'http://logout';
+    const charmstoreLogoutUrl = 'http://charmstorelogout';
+    const output = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout}
-        visible={true}
-        clearCookie={sinon.stub()}
-        gisf={false}
-        gisfLogout="http://gisflogout"
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={sinon.stub()}
-        clearUser={sinon.stub()}
-        locationAssign={sinon.stub()} />);
-    var expected = (
+        charmstoreLogoutUrl={charmstoreLogoutUrl}
+        doCharmstoreLogout={doCharmstoreLogout} 
+        locationAssign={sinon.stub()}
+        logoutUrl={logoutUrl}
+        visible={true} />);
+    const expected = (
       <a className="logout-link"
         href={logoutUrl}
         onClick={output.props.onClick}
-        target="_blank">Logout</a>
+        target="_self">Logout</a>
       );
     assert.deepEqual(output, expected);
   });
 
-  it('renders properly in gisf', () => {
-    const logout = sinon.stub();
+  it('renders properly for charmstore logout', () => {
+    const doCharmstoreLogout = sinon.stub().returns(true);
     const logoutUrl = 'http://logout';
-    const gisfLogoutUrl = 'http://gisflogout';
+    const charmstoreLogoutUrl = 'http://charmstorelogout';
     const output = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout}
-        visible={true}
-        clearCookie={sinon.stub()}
-        gisf={true}
-        gisfLogout={gisfLogoutUrl}
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={sinon.stub()}
-        clearUser={sinon.stub()}
-        locationAssign={sinon.stub()} />);
+        charmstoreLogoutUrl={charmstoreLogoutUrl}
+        doCharmstoreLogout={doCharmstoreLogout} 
+        locationAssign={sinon.stub()}
+        logoutUrl={logoutUrl}
+        visible={true} />);
     const expected = (
       <a className="logout-link"
-        href={gisfLogoutUrl}
+        href={charmstoreLogoutUrl}
         onClick={output.props.onClick}
-        target="_blank">Logout</a>
-      );
+        target="_blank">Logout</a>);
     assert.deepEqual(output, expected);
   });
 
   it('can be hidden', () => {
-    var logout = sinon.stub();
-    var logoutUrl = 'http://logout';
-    var output = jsTestUtils.shallowRender(
+    const doCharmstoreLogout = sinon.stub().returns(false);
+    const logoutUrl = 'http://logout';
+    const charmstoreLogoutUrl = 'http://charmstorelogout';
+    const output = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout}
-        visible={false}
-        clearCookie={sinon.stub()}
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={sinon.stub()}
-        gisf={false}
-        gisfLogout="http://gisflogout"
-        clearUser={sinon.stub()}
-        locationAssign={sinon.stub()} />);
-    var expected = (
+        charmstoreLogoutUrl={charmstoreLogoutUrl}
+        doCharmstoreLogout={doCharmstoreLogout} 
+        locationAssign={sinon.stub()}
+        logoutUrl={logoutUrl}
+        visible={false} />);
+    const expected = (
       <a className="logout-link logout-link--hidden"
         href={logoutUrl}
         onClick={output.props.onClick}
-        target="_blank">Logout</a>
-      );
+        target="_self">Logout</a>);
     assert.deepEqual(output, expected);
   });
 
-  it('calls the logout prop on click', () => {
-    var logout = sinon.stub();
-    var logoutUrl = 'http://logout';
-    var prevent = sinon.stub();
-    var clearUser = sinon.stub();
-    var clearCookie = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+  it('does not redirect to logout onClick for regular logout', () => {
+    const doCharmstoreLogout = sinon.stub().returns(false);
+    const logoutUrl = 'http://logout';
+    const charmstoreLogoutUrl = 'http://charmstorelogout';
+    const locationAssign = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout}
-        visible={true}
-        clearCookie={clearCookie}
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={sinon.stub().returns(undefined)}
-        gisf={false}
-        gisfLogout="http://gisflogout"
-        clearUser={clearUser}
-        locationAssign={sinon.stub()} />);
-    assert.equal(logout.callCount, 0);
-    output.props.onClick({ preventDefault: prevent });
-    // It should clear the user and the cookie.
-    assert.equal(clearUser.callCount, 1);
-    assert.equal(clearCookie.callCount, 1);
-
-    assert.equal(logout.callCount, 1);
-    // preventDefault should be called if no user is defined. There is no
-    // need to redirect the user if they do not need to log out.
-    // The next test checks to make sure that it does in that case.
-    assert.equal(prevent.callCount, 1);
-  });
-
-  it('allows storefront to handle logout if in gisf', () => {
-    var logout = sinon.stub();
-    var logoutUrl = 'http://logout';
-    var prevent = sinon.stub();
-    var clearUser = sinon.stub();
-    var getUser = sinon.stub().returns(true);
-    var clearCookie = sinon.stub();
-    var locationAssign = sinon.stub();
-    var gisfLogoutUrl = '/logout';
-    var output = jsTestUtils.shallowRender(
-      <juju.components.Logout
-        logout={logout}
-        visible={true}
-        clearCookie={clearCookie}
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={getUser}
-        gisf={true}
-        gisfLogout={gisfLogoutUrl}
-        clearUser={clearUser}
+        charmstoreLogoutUrl={charmstoreLogoutUrl}
+        doCharmstoreLogout={doCharmstoreLogout} 
         locationAssign={locationAssign}
-        />);
-    assert.equal(logout.callCount, 0);
-    output.props.onClick({ preventDefault: prevent });
-    // It should clear the user and the cookie.
-    assert.equal(clearUser.callCount, 1);
-    assert.equal(clearCookie.callCount, 1);
-    assert.equal(logout.callCount, 1);
-    assert.equal(prevent.callCount, 1);
-    assert.equal(locationAssign.callCount, 1);
+        logoutUrl={logoutUrl}
+        visible={false} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.handleClick();
+    assert.equal(locationAssign.callCount, 0);
   });
 
-  it('lets the user navigate if a user exists', () => {
-    var logout = sinon.stub();
-    var logoutUrl = 'http://logout';
-    var prevent = sinon.stub();
-    var clearUser = sinon.stub();
-    var getUser = sinon.stub().returns(true);
-    var clearCookie = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+  it('redirects to logout onClick for charmstore logout', () => {
+    const doCharmstoreLogout = sinon.stub().returns(true);
+    const logoutUrl = 'http://logout';
+    const charmstoreLogoutUrl = 'http://charmstorelogout';
+    const locationAssign = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout}
-        visible={true}
-        clearCookie={clearCookie}
-        charmstoreLogoutUrl={logoutUrl}
-        getUser={getUser}
-        gisf={false}
-        gisfLogout="http://gisflogout"
-        clearUser={clearUser}
-        locationAssign={sinon.stub()} />);
-    assert.equal(logout.callCount, 0);
-    output.props.onClick({ preventDefault: prevent });
-    // It should clear the user and the cookie.
-    assert.equal(clearUser.callCount, 1);
-    assert.equal(clearCookie.callCount, 1);
-
-    assert.equal(logout.callCount, 1);
-    // Unless getUser returns a user it shouldn't call preventDefault.
-    assert.equal(prevent.callCount, 0);
+        charmstoreLogoutUrl={charmstoreLogoutUrl}
+        doCharmstoreLogout={doCharmstoreLogout} 
+        locationAssign={locationAssign}
+        logoutUrl={logoutUrl}
+        visible={false} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.handleClick();
+    assert.equal(locationAssign.callCount, 1);
+    assert.equal(locationAssign.args[0][0], logoutUrl);
   });
-
 });

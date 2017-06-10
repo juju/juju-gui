@@ -802,10 +802,8 @@ describe('App', function() {
             app.controllerAPI = controllerAPI;
             app.env = env;
           });
-          // Mock the app method used to render the login mask.
-          app._renderLogin = sinon.stub();
           // Log out from the app.
-          app.logout();
+          app._handleLogout();
           // The API connections have been properly closed.
           assert.strictEqual(controllerClosed, true, 'controller close');
           assert.strictEqual(modelClosed, true, 'model closed');
@@ -816,8 +814,6 @@ describe('App', function() {
           assert.strictEqual(app.db.fireEvent.calledOnce, true, 'db.fireEvent');
           assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
           assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
-          // The login mask has been displayed.
-          assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           assert.equal(app.state.changeState.callCount, 1);
           assert.deepEqual(app.state.changeState.args[0], [{
             model: null,
@@ -1452,16 +1448,6 @@ describe('App', function() {
       app._ensureControllerConnection({root: 'store'}, sinon.stub());
       assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
     });
-
-    it('does not connect to the controller if the user is logging out',
-      function() {
-        app.controllerAPI.connect = sinon.stub();
-        app.controllerAPI.set('connecting', false);
-        app.controllerAPI.set('connected', false);
-        app._ensureControllerConnection({root: 'logout'}, sinon.stub());
-        assert.strictEqual(
-          app.controllerAPI.connect.callCount, 0, 'controller');
-      });
 
     it('does not connect to the controller if it is already connected',
       function() {
