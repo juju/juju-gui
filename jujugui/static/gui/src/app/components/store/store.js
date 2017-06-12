@@ -108,15 +108,15 @@ YUI.add('store', function() {
 
       @method _handleSearchClick
       @param {String} query The search string.
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleSearchClick: function(e) {
-      e.stopPropagation();
+    _handleSearchClick: function(evt) {
+      evt.stopPropagation();
       const search = {
-        text: this._getData(e.target, 'query')
+        text: this._getData(evt.currentTarget, 'query')
       };
-      const filterKey = this._getData(e.target, 'filterkey');
-      const filterValue = this._getData(e.target, 'filtervalue');
+      const filterKey = this._getData(evt.currentTarget, 'filterkey');
+      const filterValue = this._getData(evt.currentTarget, 'filtervalue');
       if (filterKey && filterValue) {
         search[filterKey] = filterValue;
       }
@@ -124,6 +124,16 @@ YUI.add('store', function() {
         root: null,
         search: search
       });
+    },
+
+    /**
+      Stop events bubbling.
+
+      @method _stopPropagation
+      @param {Object} evt The click event.
+    */
+    _stopPropagation: function(evt) {
+      evt.stopPropagation();
     },
 
     /**
@@ -231,16 +241,19 @@ YUI.add('store', function() {
     */
     _featuredSection: function() {
       let kubernetesButton = (<a target="_blank"
+          onClick={this._stopPropagation}
           href="https://jujucharms.com/kubernetes"
           className="button--inline-neutral">
             Find out more
         </a>);
       let openstackButton = (<a target="_blank"
+          onClick={this._stopPropagation}
           href="https://jujucharms.com/openstack"
           className="button--inline-neutral">
             Find out more
         </a>);
       let bigdataButton = (<a target="_blank"
+          onClick={this._stopPropagation}
           href="https://jujucharms.com/big-data"
           className="button--inline-neutral">
             Find out more
@@ -265,7 +278,9 @@ YUI.add('store', function() {
       }
 
       return (<div className="row equal-height">
-          <div className="box box--kubernetes align-center four-col">
+          <div onClick={this._handleSearchClick}
+            data-query="kubernetes"
+            className="box box--kubernetes align-center four-col">
             <img src={this._generateLocalImagePath('k8-image.png')}
               alt="Kubernetes" className="box__image" />
             <div className="align-bottom">
@@ -273,7 +288,9 @@ YUI.add('store', function() {
               {kubernetesButton}
             </div>
           </div>
-          <div className="box box--openstack align-center four-col">
+          <div onClick={this._handleSearchClick}
+            data-query="openstack"
+            className="box box--openstack align-center four-col">
             <img src={this._generateLocalImagePath('openstack-promo.png')}
               alt="Openstack" className="box__image" />
             <div className="align-bottom">
@@ -281,7 +298,9 @@ YUI.add('store', function() {
               {openstackButton}
             </div>
           </div>
-          <div className="box box--hadoop align-center four-col last-col">
+          <div onClick={this._handleSearchClick}
+            data-query="hadoop"
+            className="box box--hadoop align-center four-col last-col">
             <div className="box--hadoop-container">
               <img src={this._generateLocalImagePath('hadoop-elephant.png')}
                 alt="Hadoop" className="box__image" />
