@@ -83,7 +83,7 @@ def config(request):
     else:
         socket_protocol = 'wss'
 
-    gisfLogout = '/logout' if settings['jujugui.gisf'] else None
+    gisfLogout = settings.get('jujugui.gisflogout_url')
 
     options = {
         # Base YUI options.
