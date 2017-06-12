@@ -1483,6 +1483,8 @@ class GUIApp {
       container: this.applicationConfig.container || '#main'
     });
     topology.render();
+    // Trigger the resized method so that the topology fills the viewport.
+    topology.topo.modules.ViewportModule.resized();
     return topology;
   }
 

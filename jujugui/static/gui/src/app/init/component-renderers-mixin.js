@@ -586,7 +586,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
             this, db, model)}
           destroyUnits={utils.destroyUnits.bind(this, model)}
           displayPlans={utils.compareSemver(
-            this.get('jujuCoreVersion'), '2') > -1}
+            this.applicationConfig.jujuCoreVersion, '2') > -1}
           getCharm={model.get_charm.bind(model)}
           getUnitStatusCounts={utils.getUnitStatusCounts}
           getYAMLConfig={utils.getYAMLConfig.bind(this)}
@@ -928,7 +928,54 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
      />, linkContainer);
   }
 
-  _renderBreadcrumb() {}
+  /**
+    Renders the breadcrumb component to the DOM.
+    @param {Object} options
+      showEnvSwitcher: true
+  */
+  _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
+    const modelAPI = this.modelAPI;
+    const controllerAPI = this.controllerAPI;
+    const utils = yui.juju.views.utils;
+    let listModelsWithInfo =
+      controllerAPI &&
+        controllerAPI.listModelsWithInfo.bind(this.controllerAPI);
+    // If controller is undefined then do not render the switcher because
+    // there is no controller to connect to. It will be undefined when the
+    // breadcrumb is initially rendered because it hasn't yet been given
+    // time to connect and login.
+    if (!controllerAPI) {
+      // We do not want to show the model switcher if it isn't supported as
+      // it throws an error in the browser console and confuses the user
+      // as it's visible but not functional.
+      showEnvSwitcher = false;
+    }
+    // It's possible that we have a controller instance and no facade if
+    // we've connected but have not yet successfully logged in. This will
+    // prevent the model switcher from rendering but after the login this
+    // component will be re-rendered.
+    if (controllerAPI &&
+      controllerAPI.findFacadeVersion('ModelManager') === null) {
+      showEnvSwitcher = false;
+    }
+    ReactDOM.render(
+      <juju.components.HeaderBreadcrumb
+        acl={this.acl}
+        appState={this.state}
+        user={this.user}
+        changeState={this.state.changeState.bind(this.state)}
+        humanizeTimestamp={yui.juju.views.humanizeTimestamp}
+        listModelsWithInfo={listModelsWithInfo}
+        modelName={this.db.environment.get('name')}
+        modelOwner={modelAPI.get('modelOwner')}
+        showEnvSwitcher={showEnvSwitcher}
+        showProfile={utils.showProfile.bind(
+          this, modelAPI && modelAPI.get('ecs'),
+          this.state.changeState.bind(this.state))}
+        switchModel={utils.switchModel.bind(this, modelAPI)}
+        loadingModel={this.modelAPI.loading} />,
+      document.getElementById('header-breadcrumb'));
+  }
   /**
     Renders the logo for the current cloud provider.
   */
