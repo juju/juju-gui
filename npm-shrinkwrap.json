@@ -713,6 +713,12 @@
         }
       }
     },
+    "babelify": {
+      "version": "7.3.0",
+      "from": "babelify@latest",
+      "resolved": "https://registry.npmjs.org/babelify/-/babelify-7.3.0.tgz",
+      "dev": true
+    },
     "babylon": {
       "version": "6.16.1",
       "from": "babylon@>=6.11.0 <7.0.0",
