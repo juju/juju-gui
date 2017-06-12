@@ -1325,7 +1325,10 @@ YUI.add('juju-view-utils', function(Y) {
       are uncommitted changes.
   */
   utils.switchModel = function(modelAPI, model, confirmUncommitted=true) {
-    if (model && model.id === this.modelUUID) {
+    // If app.js is gone the this.get('modelUUID') || can be removed.
+    if (model && model.id === this.get('modelUUID') ||
+      // It is the new init.
+      (this.applicationConfig && this.modelUUID)) {
       // There is nothing to be done as we are already connected to this model.
       // Note that this check is always false when switching models from the
       // profile view, as the "modelUUID" is set to null in that case.

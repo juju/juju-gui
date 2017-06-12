@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const yui = window.yui;
+
 const keyBindings = {
   'A-s': {
     target: '#charm-search-field',
@@ -66,7 +68,7 @@ const keyBindings = {
 
   'S-d': {
     callback: function(evt) {
-      views.utils.exportEnvironmentFile(this.db);
+      yui.juju.views.utils.exportEnvironmentFile(this.db);
     },
     help: 'Export the model',
     label: 'Shift + d'
