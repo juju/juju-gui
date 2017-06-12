@@ -885,19 +885,20 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       loginToController={controllerAPI.loginWithMacaroon.bind(
         controllerAPI, bakery)}
     />);
-    const config = this.applicationConfig;
+    let logoutUrl = '/logout';
+    if (window.juju_config.baseUrl) {
+      logoutUrl = window.juju_config.baseUrl + logoutUrl;
+    }
+    const doCharmstoreLogout = () => {
+      return this.getUser('charmstore') && !this.get('gisf');
+    };
     const LogoutLink = (<window.juju.components.Logout
-      logout={this.logout.bind(this)}
-      clearCookie={bakery.storage.clear.bind(bakery.storage)}
-      gisfLogout={config.gisfLogout || ''}
-      gisf={config.gisf || false}
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
-      getUser={this.getUser.bind(this, 'charmstore')}
-      clearUser={this.clearUser.bind(this, 'charmstore')}
-      // If the charmbrowser is open then don't show the logout link.
-      visible={!this.state.current.store}
+      doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
-    />);
+      logoutUrl={logoutUrl}
+      // If the charmbrowser is open then don't show the logout link.
+      visible={!this.state.current.store} />);
 
     const navigateUserProfile = () => {
       const username = this.user.displayName;

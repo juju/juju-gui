@@ -347,7 +347,6 @@ class GUIApp {
    */
   _ensureControllerConnection(state, next) {
     if (
-      state.root !== 'logout' &&
       !this.controllerAPI.get('connecting') &&
       !this.controllerAPI.get('connected')
       ) {
@@ -475,6 +474,12 @@ class GUIApp {
         // signature so we have to call next manually after.
         this._renderLogin();
         next();
+        break;
+      case 'logout':
+        // If we're in gisf _handleLogout will navigate away from the GUI
+        this._handleLogout();
+        this.state.changeState({root: 'login'});
+        return;
         break;
       case 'store':
         this._renderCharmbrowser(state, next);
@@ -1489,17 +1494,19 @@ class GUIApp {
   }
 
   /**
-    Log the current user out and show the login screen again.
-    @param {Object} req The request.
-    @return {undefined} Nothing.
+   Logs the user out of the gui.
+
+    This closes the model/controller connections and clears cookies and other
+    authentication artifacts. If in gisf mode this will then redirect the user
+    to the store front logout mechanism to complete logout.
+
+    @method _handleLogout
   */
-  logout(req) {
-    // If the environment view is instantiated, clear out the topology local
-    // database on log out, because we clear out the environment database as
-    // well. The order of these is important because we need to tell
-    // the env to log out after it has navigated to make sure that
-    // it always shows the login screen.
-    var topology = this.topology;
+  _handleLogout() {
+    const config = this.applicationConfig;
+    this.clearUser();
+    this.bakery.storage.clear();
+    const topology = this.topology;
     if (topology) {
       topology.topo.update();
     }
@@ -1520,9 +1527,12 @@ class GUIApp {
           root: null,
           store: null
         });
-        this._renderLogin(null);
       });
     });
+    if (config.gisf) {
+      const gisfLogoutUrl = config.gisfLogout || '';
+      window.location.assign(window.location.origin + gisfLogoutUrl);
+    }
   }
 
   /**
