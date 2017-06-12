@@ -1165,11 +1165,13 @@ YUI.add('juju-view-utils', function(Y) {
     Displays a confirmation when closing window if there are uncommitted
     changes
 
+    // XXX Moved to init utils. Remove if app.js no longer exists.
+
     @method unloadWindow
     @param {Object} env Reference to the app env.
   */
   utils.unloadWindow = function() {
-    var currentChangeSet = this.ecs.getCurrentChangeSet();
+    var currentChangeSet = this.env.get('ecs').getCurrentChangeSet();
     if (Object.keys(currentChangeSet).length > 0) {
       return 'You have uncommitted changes to your model. You will ' +
         'lose these changes if you continue.';
@@ -1411,7 +1413,13 @@ YUI.add('juju-view-utils', function(Y) {
     }
     this.state.changeState(newState);
     env.set('environmentName', name);
-    this.modelUUID = uuid;
+    if (this.applicationConfig) {
+      // It is the new init.
+      this.modelUUID = uuid;
+    } else {
+      // Delete this conditional if app.js is gone.
+      this.set('modelUUID', uuid);
+    }
   };
 
   /**

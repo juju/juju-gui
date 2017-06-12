@@ -48,4 +48,16 @@ const createSocketURL = function(data) {
   return baseUrl + template;
 };
 
-module.exports = {createSocketURL};
+/**
+  Displays a confirmation when closing window if there are uncommitted
+  changes
+  @param {Object} env Reference to the app env.
+*/
+const unloadWindow = function() {
+  if (Object.keys(this.ecs.getCurrentChangeSet()).length > 0) {
+    return 'You have uncommitted changes to your model. You will ' +
+      'lose these changes if you continue.';
+  }
+};
+
+module.exports = {createSocketURL, unloadWindow};

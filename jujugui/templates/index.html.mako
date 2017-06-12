@@ -296,12 +296,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     % if raw:
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
+    <!-- <script src="${convoy_url}?app/init-pkg.js"></script> -->
     <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon.js"></script>
     <script src="${convoy_url}?app/state/state.js&app/user/user.js&app/jujulib/index.js&app/jujulib/charmstore.js&app/jujulib/bundleservice.js&app/jujulib/plans.js&app/jujulib/payment.js&app/jujulib/stripe.js&app/jujulib/terms.js&app/jujulib/reconnecting-websocket.js&app/jujulib/urls.js&app/jujulib/bakery.js"></script>
     % else:
+    <!-- <script src="${convoy_url}?app/init-pkg-min.js"></script> -->
     <script src="${convoy_url}?app/assets/javascripts/version-min.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
     <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside-min.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
@@ -342,11 +344,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
-          app = new Y.juju.App(juju_config);
+          app = new Y.juju.App(juju_config); // comment out for init.js
+          // const JujuGUI = require('init');
+          // window.JujuGUI = new JujuGUI(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
-          app.activateHotkeys();
-          const model = app.controllerAPI ? app.controllerAPI : app.env;
+          app.activateHotkeys(); // comment out for init.js
           const stopHandler = () => {
             document.removeEventListener('login', stopHandler);
             messageRotator.stop()

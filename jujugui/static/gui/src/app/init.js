@@ -1,6 +1,23 @@
 // /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+/*
+  In an effort to develop this init.js along side with the rest of the
+  app here are the changes you'll have to manually change to continue
+  working on the new system.
+
+  index.html.mako
+    - Uncomment the init-pkg.js script tags lines 309, 318.
+    - Uncomment the initialization code lines 358, 359.
+    - Comment the old init code lines 357, 362.
+  Makefile
+    - Uncomment the hack to generate the init-pkg file Line 212.
+
+  Code to still move over from app.js
+    - Y.juju.Cookies Line 50.
+    - widgets.AutodeployExtension Line 49.
+*/
+
 const mixwith = require('mixwith');
 
 const utils = require('./init/utils');
