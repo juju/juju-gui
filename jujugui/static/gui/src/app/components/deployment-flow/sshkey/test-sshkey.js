@@ -62,7 +62,7 @@ describe('DeploymentSSHKey', function() {
   it('renders with a cloud', function() {
     const comp = render('aws');
     const expectedOutput = (
-      <div>
+      <div className="deployment-ssh-key">
         <p>
           Optionally provide a SSH key (e.g. ~/.ssh/id_rsa.pub) to allow
           accessing machines provisioned on this model via "juju ssh".
@@ -86,7 +86,7 @@ describe('DeploymentSSHKey', function() {
   it('renders with azure', function() {
     const comp = render('azure');
     const expectedOutput = (
-      <div>
+      <div className="deployment-ssh-key">
         <p>
           Provide the SSH key (e.g. ~/.ssh/id_rsa.pub) that will be used to
           provision machines on Azure.

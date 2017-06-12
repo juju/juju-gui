@@ -45,7 +45,8 @@ YUI.add('deployment-panel', function() {
       );
       this.props.changeState({
         gui: {deploy: null},
-        profile: null
+        profile: null,
+        special: {dd: null}
       });
     },
 
