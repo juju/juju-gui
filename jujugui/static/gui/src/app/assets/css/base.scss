@@ -58,6 +58,7 @@ $z-indexed-elements: search-results-list-block__tags,
   deployment-bar-panel,
   top-page,
   header-banner-breadcrumbs,
+  env-list-panel,
   white-box,
   entity-sticky-header,
   header-banner-search,
@@ -147,6 +148,9 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'plugins/prism-overrides';
 
 @import 'beta';
+
+// Tablet styles
+@import 'tablet';
 
 // Mobile styles
 @import 'mobile';

@@ -1,7 +1,7 @@
 // scss-lint:disable IdSelector
 #header-breadcrumb { // sass-lint:disable-line no-ids, id-name-format
-  @extend .vertical-center;
   float: left;
+  margin: 10px 0;
 }
 // scss-lint:enable IdSelector
 
@@ -15,6 +15,11 @@
     font-size: $breadcrumb-font-size;
     text-decoration: none;
     line-height: $breadcrumb-line-height;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+    max-width: 300px;
 
     &:focus,
     &:active,
@@ -22,14 +27,6 @@
       color: $link-blue;
       text-decoration: none;
       border-bottom-color: currentColor;
-    }
-
-    &:before {
-      content: '/';
-      position: absolute;
-      left: -14px;
-      top: -7px;
-      color: $mid-grey;
     }
 
     &.profile-disabled {
@@ -45,14 +42,26 @@
 
   &__list {
     @extend %list-style;
+
+    &:not([data-username=""]) {
+      .header-breadcrumb__list-item:before {
+        content: '/';
+        position: absolute;
+        left: 6px;
+        top: 3px;
+        color: $mid-grey;
+        font-size: 23px;
+      }
+    }
   }
 
   &__list-item {
     // Delay until after the loading message has faded out.
-    @include visible($delay: 0.5s);
+    @include visible($delay: .5s);
     float: left;
     margin-bottom: 0;
     padding-left: 20px;
+    position: relative;
   }
 
   &__loading {

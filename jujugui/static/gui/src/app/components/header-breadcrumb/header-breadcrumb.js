@@ -162,7 +162,8 @@ YUI.add('header-breadcrumb', function() {
         <li className="header-breadcrumb__list-item">
           <a className={linkClasses}
             onClick={onClick}
-            href={profileUrl}>
+            href={profileUrl}
+            title={username}>
             {username}
           </a>
         </li>
