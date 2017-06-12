@@ -27,10 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 YUI.add('deployment-ssh-key', function() {
 
-  // Define the Azure cloud type.
-  const AZURE_CLOUD_TYPE = 'azure';
-
   juju.components.DeploymentSSHKey = React.createClass({
+    displayName: 'DeploymentSSHKey',
     propTypes: {
       cloud: React.PropTypes.object,
       setSSHKey: React.PropTypes.func.isRequired
@@ -57,41 +55,21 @@ YUI.add('deployment-ssh-key', function() {
       if (!cloud) {
         return null;
       }
-      const isAzure = cloud.cloudType === AZURE_CLOUD_TYPE;
-
-      let message = (
-        <p>
-          Optionally provide a SSH key (e.g. ~/.ssh/id_rsa.pub) to allow
-          accessing machines provisioned on this model via "juju ssh".
-          <br/> SSH keys can be added at any time using "juju add-ssh-key" or
-          "juju import-ssh-key".
-        </p>
-      );
-      if (isAzure) {
-        message = (
-          <p>
-            Provide the SSH key (e.g. ~/.ssh/id_rsa.pub) that will be used to
-            provision machines on Azure.
-            <br/> Additional keys can be added at any time using
-            "juju add-ssh-key" or "juju import-ssh-key".
-          </p>
-        );
-      }
-
       return (
         <div>
-          {message}
+          <p>
+            Optionally provide a SSH key (e.g. ~/.ssh/id_rsa.pub) to allow
+            accessing machines provisioned on this model via "juju ssh".
+            <br/> SSH keys can be added at any time using "juju add-ssh-key" or
+            "juju import-ssh-key".
+          </p>
           <juju.components.GenericInput
             label="SSH key"
             key="sshKey"
             ref="sshKey"
             multiLine={true}
             onBlur={this._onSSHKeyInputBlur}
-            required={isAzure}
-            validate={isAzure ? [{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }] : undefined}
+            required={false}
           />
         </div>
       );

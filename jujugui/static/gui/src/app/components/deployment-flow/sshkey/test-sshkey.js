@@ -76,34 +76,6 @@ describe('DeploymentSSHKey', function() {
           multiLine={true}
           onBlur={comp.instance._onSSHKeyInputBlur}
           required={false}
-          validate={undefined}
-        />
-      </div>
-    );
-    assert.deepEqual(comp.output, expectedOutput);
-  });
-
-  it('renders with azure', function() {
-    const comp = render('azure');
-    const expectedOutput = (
-      <div>
-        <p>
-          Provide the SSH key (e.g. ~/.ssh/id_rsa.pub) that will be used to
-          provision machines on Azure.
-          <br/> Additional keys can be added at any time using
-          "juju add-ssh-key" or "juju import-ssh-key".
-        </p>
-        <juju.components.GenericInput
-          label="SSH key"
-          key="sshKey"
-          ref="sshKey"
-          multiLine={true}
-          onBlur={comp.instance._onSSHKeyInputBlur}
-          required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }]}
         />
       </div>
     );
