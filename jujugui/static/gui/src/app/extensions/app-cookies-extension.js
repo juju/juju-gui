@@ -143,6 +143,5 @@ YUI.add('app-cookies-extension', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'cookie-notification'
   ]
 });
