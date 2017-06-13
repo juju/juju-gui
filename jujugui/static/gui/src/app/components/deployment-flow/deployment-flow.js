@@ -48,6 +48,7 @@ YUI.add('deployment-flow', function() {
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       generateMachineDetails: React.PropTypes.func.isRequired,
+      generatePath: React.PropTypes.func.isRequired,
       getAgreementsByTerms: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
@@ -1010,6 +1011,7 @@ YUI.add('deployment-flow', function() {
         return (
           <juju.components.DeploymentDirectDeploy
             ddData={props.ddData}
+            generatePath={props.generatePath}
             getDiagramURL={props.getDiagramURL}
             getEntity={props.getEntity}
             makeEntityModel={props.makeEntityModel}

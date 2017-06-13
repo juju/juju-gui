@@ -35,6 +35,7 @@ describe('DirectDeploy', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: id}}
+        generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         makeEntityModel={sinon.stub()}
@@ -73,6 +74,7 @@ describe('DirectDeploy', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: id}}
+        generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         makeEntityModel={sinon.stub()}

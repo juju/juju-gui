@@ -25,6 +25,7 @@ YUI.add('deployment-direct-deploy', function() {
 
     propTypes: {
       ddData: React.PropTypes.object.isRequired,
+      generatePath: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
@@ -82,8 +83,12 @@ YUI.add('deployment-direct-deploy', function() {
         } catch(_) {
           url = window.jujulib.URL.fromString(ddEntityId);
         }
+        url = this.props.generatePath({
+          store: url.path()
+        });
+        
         if (url) {
-          link = (<a href={`/${url.path()}`}
+          link = (<a href={`${url}`}
               className="link" target="_blank">
               Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
             </a>);
