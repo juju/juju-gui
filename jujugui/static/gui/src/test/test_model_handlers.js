@@ -533,7 +533,7 @@ describe('Juju delta handlers', function() {
         'application-url': url,
         name: 'django',
         'model-uuid': 'uuid',
-        life: 'alive',
+        life: 'alive'
       };
       // Send the mega-watcher change to remove the remote application.
       remoteApplicationInfo(db, 'remove', change);

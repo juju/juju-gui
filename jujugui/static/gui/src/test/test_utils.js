@@ -1066,16 +1066,16 @@ describe('utilities', function() {
           connect: sinon.stub(),
           get: envGet,
           on: sinon.stub(),
-          set: sinon.stub(),
+          set: sinon.stub()
         },
         controllerAPI: {
-          createModel: sinon.stub(),
+          createModel: sinon.stub()
         },
         _autoPlaceUnits: sinon.stub(),
         db: {
           notifications: {
             add: sinon.stub()
-          },
+          }
         },
         set: sinon.stub(),
         createSocketURL: sinon.stub().returns('wss://socket-url'),
@@ -1085,7 +1085,7 @@ describe('utilities', function() {
           current: {},
           changeState: sinon.stub()
         },
-        user: userClass,
+        user: userClass
       };
     });
 
@@ -1403,7 +1403,7 @@ describe('utilities', function() {
     it('can handle duplicate keys', function() {
       assert.deepEqual(
         utils.parseQueryString('http://example.com?one=1&one=2'), {
-          one: ['1', '2'],
+          one: ['1', '2']
         });
     });
   });

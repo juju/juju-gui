@@ -160,7 +160,7 @@ describe('jujulib charmstore', function() {
           },
           published: {Info: [
             {Channel: 'stable', Current: true},
-            {Channel: 'edge', Current: false},
+            {Channel: 'edge', Current: false}
           ]},
           stats: {
             ArchiveDownloadCount: 10

@@ -58,6 +58,7 @@ $z-indexed-elements: search-results-list-block__tags,
   deployment-bar-panel,
   top-page,
   header-banner-breadcrumbs,
+  env-list-panel,
   white-box,
   entity-sticky-header,
   header-banner-search,
@@ -72,7 +73,7 @@ $z-indexed-elements: search-results-list-block__tags,
   popup,
   full-screen-mask,
   centered-column,
-  cookie-policy;
+  notification;
 // sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
@@ -97,7 +98,6 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'loading';
 @import 'modal';
 @import 'tooltip';
-@import 'cookies';
 @import 'components';
 
 // Include required modules from Vanilla
@@ -148,6 +148,9 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'plugins/prism-overrides';
 
 @import 'beta';
+
+// Tablet styles
+@import 'tablet';
 
 // Mobile styles
 @import 'mobile';

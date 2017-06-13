@@ -37,7 +37,7 @@ describe('HashLink', () => {
       <div className="hash-link"
         onClick={instance._handleClick}>
         <juju.components.SvgIcon
-          name="get-link-url_16"
+          name="anchor_16"
           size="16" />
       </div>);
     expect(output).toEqualJSX(expected);

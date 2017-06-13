@@ -311,11 +311,11 @@ describe('App', function() {
 
         assert.equal(stub.callCount >= 3, true);
         var args = stub.args;
-        assert.equal(args[6][0], 'dragenter');
+        assert.equal(args[5][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[7][0], 'dragover');
+        assert.equal(args[6][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[8][0], 'dragleave');
+        assert.equal(args[7][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
@@ -542,7 +542,7 @@ describe('App', function() {
       });
       controller = new juju.ControllerAPI({
         conn: conn2,
-        user: user,
+        user: user
       });
       user.controller = {user: 'user', password: 'password'};
       app = new Y.juju.App({
@@ -594,45 +594,6 @@ describe('App', function() {
       assert.deepEqual(
         app.user.controller, {user: '', password: '', macaroons: null});
       assert.equal(conn.messages.length, 0);
-    });
-
-    it('displays the login view if credentials are not valid', function() {
-      env.connect();
-      var loginStub = sinon.stub(app, '_renderLogin');
-      app.env.login();
-      // Mimic a login failed response assuming login is the first request.
-      conn.msg({'request-id': 1, error: 'bad wolf'});
-      assert.equal(1, conn.messages.length);
-      assertIsLogin(conn.last_message());
-      assert.equal(loginStub.callCount, 2);
-      assert.equal(loginStub.args[0][0], 'bad wolf');
-      assert.equal(loginStub.args[1][0], 'bad wolf');
-    });
-
-    it('login method handler is called after successful login', function(done) {
-      let localApp = {};
-      const oldOnLogin = Y.juju.App.prototype.onLogin;
-      Y.juju.App.prototype.onLogin = evt => {
-        assert.equal(conn.messages.length, 1);
-        assertIsLogin(conn.last_message());
-        assert.strictEqual(evt.detail.err, null);
-        localApp.on('destroy', () => done());
-        localApp.destroy();
-      };
-      this._cleanups.push(() => {
-        Y.juju.App.prototype.onLogin = oldOnLogin;
-      });
-      localApp = new Y.juju.App({
-        baseUrl: 'http://example.com/',
-        controllerAPI: controller,
-        env: env,
-        controllerSocketTemplate: '/api',
-        viewContainer: container,
-        jujuCoreVersion: '2.0.0'
-      });
-      env.connect();
-      localApp.env.userIsAuthenticated = true;
-      localApp.env.login();
     });
 
     it('tries to log in on first connection', function() {
@@ -795,16 +756,6 @@ describe('App', function() {
       assert.equal(app.db.reset.callCount, 0);
     });
 
-    it('should connect to controller', function(done) {
-      controllerAPI.connect = sinon.stub();
-      env.connect = sinon.stub();
-      app = constructAppInstance();
-      app.after('ready', () => {
-        assert.strictEqual(controllerAPI.connect.callCount, 1, 'controller');
-        assert.strictEqual(env.connect.callCount, 0, 'model');
-        done();
-      });
-    });
 
     describe('logout', () => {
       it('logs out from API connections and then reconnects', function(done) {
@@ -851,10 +802,8 @@ describe('App', function() {
             app.controllerAPI = controllerAPI;
             app.env = env;
           });
-          // Mock the app method used to render the login mask.
-          app._renderLogin = sinon.stub();
           // Log out from the app.
-          app.logout();
+          app._handleLogout();
           // The API connections have been properly closed.
           assert.strictEqual(controllerClosed, true, 'controller close');
           assert.strictEqual(modelClosed, true, 'model closed');
@@ -865,8 +814,6 @@ describe('App', function() {
           assert.strictEqual(app.db.fireEvent.calledOnce, true, 'db.fireEvent');
           assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
           assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
-          // The login mask has been displayed.
-          assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           assert.equal(app.state.changeState.callCount, 1);
           assert.deepEqual(app.state.changeState.args[0], [{
             model: null,
@@ -1457,7 +1404,7 @@ describe('App', function() {
     });
   });
 
-  describe('checkUserCredentials', function() {
+  describe('_ensureControllerConnection', function() {
     let app, juju, Y;
 
     before(function(done) {
@@ -1494,6 +1441,75 @@ describe('App', function() {
       app.destroy();
     });
 
+    it('connects to the controller if it needs to', function() {
+      app.controllerAPI.connect = sinon.stub();
+      app.controllerAPI.set('connecting', false);
+      app.controllerAPI.set('connected', false);
+      app._ensureControllerConnection({root: 'store'}, sinon.stub());
+      assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
+    });
+
+    it('does not connect to the controller if it is already connected',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', false);
+        // setting connected to true will trigger login, so stub that out.
+        app.controllerAPI.login = sinon.stub();
+        app.controllerAPI.set('connected', true);
+        app._ensureControllerConnection({root: 'store'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+
+    it('does not connect to the controller if it is already connecting',
+      function() {
+        app.controllerAPI.connect = sinon.stub();
+        app.controllerAPI.set('connecting', true);
+        app.controllerAPI.set('connected', false);
+        app._ensureControllerConnection({root: 'store'}, sinon.stub());
+        assert.strictEqual(
+          app.controllerAPI.connect.callCount, 0, 'controller');
+      });
+  });
+
+  describe('checkUserCredentials', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub(),
+          user: userClass
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: userClass
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0',
+        user: userClass
+      });
+      app.controllerAPI.connect();
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
     // Ensure next is called and the login view is not displayed when
     // dispatching the given state.
     const checkNext = state => {
@@ -1512,12 +1528,12 @@ describe('App', function() {
       checkNext({root: 'store'});
     });
 
-    it('displays login if one of the apis is still connecting', () => {
+    it('does not display login if one of the apis is still connecting', () => {
       app.controllerAPI.set('connecting', true);
       const next = sinon.stub();
       const displayStub = sinon.stub(app, '_displayLogin');
       app.checkUserCredentials({}, next);
-      assert.equal(displayStub.callCount, 1);
+      assert.equal(displayStub.callCount, 0);
     });
 
     it('does not login if all apis are not connected', () => {
@@ -1644,6 +1660,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         user: userClass
       });
+      app.controllerAPI.connect();
     });
 
     afterEach(function() {

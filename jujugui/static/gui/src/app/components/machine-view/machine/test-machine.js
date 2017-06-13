@@ -63,7 +63,7 @@ describe('MachineViewMachine', function() {
         cpuCores: 2,
         cpuPower: 200,
         disk: 2048,
-        mem: 4096,
+        mem: 4096
       },
       series: 'wily'
     };
@@ -155,7 +155,7 @@ describe('MachineViewMachine', function() {
         cpuCores: 2,
         cpuPower: 200,
         disk: 2048,
-        mem: 4096,
+        mem: 4096
       }
     };
     var units = {
@@ -284,7 +284,7 @@ describe('MachineViewMachine', function() {
         cpuCores: 2,
         cpuPower: 200,
         disk: 2048,
-        mem: 4096,
+        mem: 4096
       }
     };
     var units = {
@@ -384,7 +384,7 @@ describe('MachineViewMachine', function() {
         cpuCores: 2,
         cpuPower: 200,
         disk: 2048,
-        mem: 4096,
+        mem: 4096
       }
     };
     var units = {
@@ -465,7 +465,7 @@ describe('MachineViewMachine', function() {
 
   it('can render a container', function() {
     var machine = {
-      displayName: 'new0/lxc/0',
+      displayName: 'new0/lxc/0'
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
@@ -585,7 +585,7 @@ describe('MachineViewMachine', function() {
 
   it('can remove a unit', function() {
     var machine = {
-      displayName: 'new0/lxc/0',
+      displayName: 'new0/lxc/0'
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
@@ -629,7 +629,7 @@ describe('MachineViewMachine', function() {
         cpuCores: 2,
         cpuPower: 200,
         disk: 2048,
-        mem: 4096,
+        mem: 4096
       },
       series: 'wily'
     };

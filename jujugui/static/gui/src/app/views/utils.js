@@ -55,7 +55,7 @@ YUI.add('juju-view-utils', function(Y) {
       win2012hvr2: {name: 'Windows Server 2012 R2 Hyper-V'},
       win2012hv: {name: 'Windows Server 2012 Hyper-V'},
       win2012r2: {name: 'Windows Server 2012 R2'},
-      win2012: {name: 'Windows Server 2012'},
+      win2012: {name: 'Windows Server 2012'}
     };
   };
 
@@ -1073,7 +1073,7 @@ YUI.add('juju-view-utils', function(Y) {
       uncommitted: { priority: 3, size: 0 },
       started: { priority: 2, size: 0 },
       pending: { priority: 1, size: 0 },
-      error: { priority: 0, size: 0 },
+      error: { priority: 0, size: 0 }
     };
     var agentState;
     units.forEach(function(unit) {
@@ -2080,8 +2080,6 @@ YUI.add('juju-view-utils', function(Y) {
     'node',
     'view',
     'panel',
-    'popup',
-    'json-stringify',
-    'datatype-date-format'
+    'popup'
   ]
 });

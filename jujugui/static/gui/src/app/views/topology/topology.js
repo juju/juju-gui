@@ -212,7 +212,7 @@ YUI.add('juju-topology', function(Y) {
 
       var clip = vis.append('clipPath')
         .attr({
-          id: function(d) { return 'clip-mask'; },
+          id: function(d) { return 'clip-mask'; }
         });
 
       clip.append('use')

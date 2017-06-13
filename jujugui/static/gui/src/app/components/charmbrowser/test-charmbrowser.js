@@ -44,6 +44,7 @@ describe('Charmbrowser', function() {
   it('displays the search results when the app state calls for it', function() {
     var query = 'django';
     appState.current.search = {text: query};
+    appState.generatePath = sinon.stub();
     var series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
@@ -82,6 +83,7 @@ describe('Charmbrowser', function() {
         utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const searchResults = output.props.children.props.children.props;
     var expected = (
         <juju.components.Panel
           instanceName="white-box"
@@ -92,10 +94,10 @@ describe('Charmbrowser', function() {
             ref="charmbrowser">
             <juju.components.SearchResults
               acl={acl}
-              changeState={
-                output.props.children.props.children.props.changeState}
+              changeState={searchResults.changeState}
               charmstoreSearch={charmstoreSearch}
               deployTarget={deployTarget}
+              generatePath={searchResults.generatePath}
               getName={utils.getName}
               makeEntityModel={makeEntityModel}
               owner={undefined}
@@ -247,95 +249,6 @@ describe('Charmbrowser', function() {
               renderMarkdown={renderMarkdown}
               deployService={deployService}
               id={id}
-              addNotification={addNotification}
-              pluralize={utils.pluralize}
-              scrollCharmbrowser={instance._scrollCharmbrowser}
-              setPageTitle={setPageTitle}
-              showTerms={showTerms}
-              urllib={urllib}
-            />
-          </div>
-        </juju.components.Panel>);
-    expect(output).toEqualJSX(expectedOutput);
-  });
-
-  it('displays entity details when the state has a user path', function() {
-    const apiUrl = 'http://example.com';
-    appState.current.user = 'spinch/koala';
-    appState.current.hash = 'readme';
-    const getEntity = sinon.stub();
-    const makeEntityModel = sinon.stub();
-    const deployService = sinon.stub();
-    const importBundleYAML = sinon.stub();
-    const getBundleYAML = sinon.stub();
-    const getFile = sinon.stub();
-    const getModelName = sinon.stub();
-    const renderMarkdown = sinon.stub();
-    const getDiagramURL = sinon.stub();
-    const listPlansForCharm = sinon.stub();
-    const addNotification = sinon.stub();
-    const showTerms = sinon.stub();
-    const utils = {
-      pluralize: sinon.stub()
-    };
-    const setPageTitle = sinon.stub();
-    const urllib = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        apiVersion="v5"
-        appState={appState}
-        charmstoreSearch={sinon.stub()}
-        charmstoreURL="http://1.2.3.4/"
-        deployService={deployService}
-        deployTarget={sinon.stub()}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={getDiagramURL}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        gisf={true}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={listPlansForCharm}
-        makeEntityModel={makeEntityModel}
-        utils={utils}
-        renderMarkdown={renderMarkdown}
-        series={{}}
-        setPageTitle={setPageTitle}
-        showTerms={showTerms}
-        staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-        <juju.components.Panel
-          instanceName="white-box"
-          clickAction={instance._close}
-          focus={false}
-          visible={true}>
-          <div className="charmbrowser"
-            ref="charmbrowser">
-            <juju.components.EntityDetails
-              acl={acl}
-              apiUrl={apiUrl}
-              importBundleYAML={importBundleYAML}
-              getBundleYAML={getBundleYAML}
-              changeState={
-                output.props.children.props.children.props.changeState}
-              getEntity={getEntity}
-              getModelName={getModelName}
-              scrollPosition={0}
-              listPlansForCharm={listPlansForCharm}
-              makeEntityModel={makeEntityModel}
-              getDiagramURL={getDiagramURL}
-              getFile={getFile}
-              hash="readme"
-              renderMarkdown={renderMarkdown}
-              deployService={deployService}
-              id='~spinch/koala'
               addNotification={addNotification}
               pluralize={utils.pluralize}
               scrollCharmbrowser={instance._scrollCharmbrowser}

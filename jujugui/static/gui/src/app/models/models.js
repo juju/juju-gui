@@ -557,7 +557,7 @@ YUI.add('juju-models', function(Y) {
         @type {String}
         @default undefined
       */
-      series: {},
+      series: {}
     }
   });
   models.Service = Service;

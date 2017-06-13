@@ -180,7 +180,7 @@ YUI.add('scale-service', function() {
 
     componentDidMount: function() {
       this.refs.numUnitsInput.focus();
-    },
+    }
   });
 
 }, '0.1.0', { requires: [

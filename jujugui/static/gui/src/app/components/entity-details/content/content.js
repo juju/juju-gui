@@ -35,7 +35,7 @@ YUI.add('entity-content', function() {
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       scrollCharmbrowser: React.PropTypes.func.isRequired,
-      showTerms: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {

@@ -1,3 +1,17 @@
+- 2.7.3:
+
+   ->
+     (Fix) Deploying into a new model, then switching models no longer
+     intermittently connects to the incorrect model.
+   ->
+     (Fix) Hitting the browser back button from a search query will now
+     property return to search results.
+
+- 2.7.2:
+
+   - (Fix) Store image assets are shown properly across all platforms.
+   - (Fix) Properly collapse search results with shared series.
+
 - 2.7.1:
 
    - (Fix) Will now correctly boot in Safari.

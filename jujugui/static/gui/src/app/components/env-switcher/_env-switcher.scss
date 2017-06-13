@@ -5,9 +5,11 @@
     color: $cool-grey;
     cursor: pointer;
     margin-left: 3px;
-    padding: 6px 9px 8px;
+    padding: 4px 36px 4px 9px;
     background-color: $canvas-background;
     transition: background-color .2s;
+    position: relative;
+    height: 40px;
 
     &:hover,
     &.is-active {
@@ -18,22 +20,20 @@
   &__name {
     font-size: 1rem;
     position: relative;
-
-    &:before {
-      color: $mid-grey;
-      content: '/';
-      font-size: 23px;
-      left: -25px;
-      position: absolute;
-      top: -8px;
-    }
+    line-height: 30px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
   }
 
   &__chevron {
     fill: currentColor;
     margin-left: 20px;
     position: relative;
-    top: -1px;
-    vertical-align: middle;
+    top: 12px;
+    right: 10px;
+    position: absolute;
   }
 }

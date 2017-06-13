@@ -71,7 +71,7 @@ describe('Entity Extension', function() {
     var attrs = {
       entityType: 'charm',
       series: 'trusty',
-      tags: ['database', 'application'],
+      tags: ['database', 'application']
     };
     var iconPath = 'v5/' + entityModel.get('id') + '/icon.svg';
     utils.getIconPath = sinon.stub().returns(iconPath);
@@ -151,7 +151,7 @@ describe('Entity Extension', function() {
       id: 'foobar',
       owner: 'foobar-charmers',
       entityType: 'bundle',
-      services: [],
+      services: []
     };
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();

@@ -3,6 +3,7 @@
   box-sizing: border-box;
   width: $width;
   margin-left: -20px;
+  z-index: index($z-indexed-elements, env-list-panel);
 
   &:before {
     @include diamond($white);
@@ -16,6 +17,8 @@
   }
 
   .env-list {
+    max-height: 300px;
+    overflow: auto;
     margin-left: 0;
 
     &__input {

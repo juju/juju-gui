@@ -153,6 +153,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.charmstore_url': 'http://1.2.3.4/cs-api',
             'jujugui.discharge_token': 'my_discharge_token',
             'jujugui.gisf': 'true',
+            'jujugui.gisflogout_url': '/logout',
             'jujugui.GTM_enabled': 'true',
             'jujugui.insecure': 'true',
             'jujugui.password': 'secret',

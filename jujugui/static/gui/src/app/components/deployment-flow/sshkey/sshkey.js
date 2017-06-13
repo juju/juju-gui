@@ -79,7 +79,7 @@ YUI.add('deployment-ssh-key', function() {
       }
 
       return (
-        <div>
+        <div className="deployment-ssh-key">
           {message}
           <juju.components.GenericInput
             label="SSH key"

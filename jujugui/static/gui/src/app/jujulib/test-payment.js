@@ -153,7 +153,7 @@ describe('jujulib payment service', function() {
         const xhr = makeXHRRequest({
           'billing-addresses': [{
             id: 'address2',
-            city: 'New Orleans',
+            city: 'New Orleans'
           }],
           'payment-methods': [{
             address: {
@@ -565,7 +565,7 @@ describe('jujulib payment service', function() {
         city: 'Sasquatch',
         county: 'Bunnyhug',
         postcode: '90210',
-        country: 'CA',
+        country: 'CA'
       };
       payment.updatePaymentMethod(
         'spinach', 'paymentmethod1', address, '12/17', sinon.stub());

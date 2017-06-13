@@ -30,7 +30,7 @@ YUI.add('deployment-panel', function() {
         React.PropTypes.array
       ]),
       sendAnalytics: React.PropTypes.func,
-      title: React.PropTypes.string,
+      title: React.PropTypes.string
     },
 
     /**
@@ -45,7 +45,8 @@ YUI.add('deployment-panel', function() {
       );
       this.props.changeState({
         gui: {deploy: null},
-        profile: null
+        profile: null,
+        special: {dd: null}
       });
     },
 

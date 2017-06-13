@@ -465,7 +465,7 @@ describe('DeploymentCredential', function() {
           label="Region"
           onChange={setRegion}
           options={[
-            {label: 'Default', value: ''},
+            {label: 'Default', value: ''}
           ]}
           value={undefined} />
       </div>);

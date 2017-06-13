@@ -130,9 +130,7 @@ YUI.add('charmbrowser-component', function() {
       let state = {};
       let activeComponent = 'store';
       const currentState = nextProps.appState.current;
-      // Because it's invalid to have these values be in state at the same time
-      // we can simply check for their existance.
-      if (currentState.store || currentState.user) {
+      if (currentState.store) {
         activeComponent = 'entity-details';
       } else if (currentState.search) {
         activeComponent = 'search-results';
@@ -156,9 +154,9 @@ YUI.add('charmbrowser-component', function() {
     _generateContent: function() {
       let activeChild;
       const utils = this.props.utils;
-      const currentState = this.props.appState.current;
-      const changeState = this.props.appState.changeState.bind(
-        this.props.appState);
+      const appState = this.props.appState;
+      const currentState = appState.current;
+      const changeState = appState.changeState.bind(appState);
       switch (this.state.activeComponent) {
         case 'store':
           activeChild = (
@@ -177,6 +175,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.SearchResults
                 acl={this.props.acl}
                 changeState={changeState}
+                generatePath={appState.generatePath.bind(appState)}
                 charmstoreSearch={this.props.charmstoreSearch}
                 deployTarget={this.props.deployTarget}
                 getName={utils.getName}

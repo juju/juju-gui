@@ -80,6 +80,36 @@ YUI.add('app-cookies-extension', function(Y) {
     },
 
     /**
+      Render the notification.
+    */
+    _renderNotification: function() {
+      const content = (
+        <span>
+          We use cookies to improve your experience. By your continued use
+          of this application you accept such use. To change your settings
+          please&nbsp;
+          <a href="http://www.ubuntu.com/privacy-policy#cookies"
+            target="_blank">
+            see our policy
+          </a>
+        </span>);
+      ReactDOM.render(
+        <window.juju.components.Notification
+          content={content}
+          dismiss={this.close.bind(this)}
+          extraClasses="p-notification--center-bottom" />,
+          document.getElementById('cookie-container'));
+    },
+
+    /**
+      Unmount the notification.
+    */
+    _removeNotification: function() {
+      ReactDOM.unmountComponentAtNode(
+         document.getElementById('cookie-container'));
+    },
+
+    /**
       Check that the user accepted cookie usage, and if not display a cookie
       usage warning.
 
@@ -89,14 +119,9 @@ YUI.add('app-cookies-extension', function(Y) {
     check: function() {
       if (this._getCookie('_cookies_accepted') !== 'true' &&
           !localStorage.getItem('disable-cookie')) {
-        this.node.classList.add('display-cookie-notice');
-        document.querySelector('.link-cta').addEventListener('click',
-          evt => {
-            evt.preventDefault();
-            this.close();
-          });
+        this._renderNotification();
       } else {
-        this.node.classList.remove('display-cookie-notice');
+        this._removeNotification();
       }
     },
 
@@ -107,7 +132,7 @@ YUI.add('app-cookies-extension', function(Y) {
       @return {undefined} Side-effects only.
     */
     close: function() {
-      this.node.classList.remove('display-cookie-notice');
+      this._removeNotification();
       this._setCookie(
         '_cookies_accepted', 'true', new Date('January 12, 2025'));
     }
@@ -118,5 +143,6 @@ YUI.add('app-cookies-extension', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'cookie-notification'
   ]
 });

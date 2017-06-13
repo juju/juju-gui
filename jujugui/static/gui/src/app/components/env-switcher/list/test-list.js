@@ -103,7 +103,7 @@ describe('EnvList', function() {
       {
         uuid: 'model-uuid-4',
         name: 'model-name-4',
-        owner: 'dalek@external',
+        owner: 'dalek@external'
       }
     ];
     const renderer = jsTestUtils.shallowRender(

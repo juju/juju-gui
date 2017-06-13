@@ -78,7 +78,7 @@ describe('EntityFiles', function() {
             </li>
           ]}
         </ul>
-      </li>,
+      </li>
     ];
     var expected = (
       <div className="entity-files section" id="files">

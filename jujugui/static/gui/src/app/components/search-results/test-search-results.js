@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
-  let series, acl, deployTarget;
+  let series, acl, deployTarget, generatePath;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -34,6 +34,7 @@ describe('SearchResults', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     deployTarget = sinon.stub();
+    generatePath = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'}
@@ -49,6 +50,7 @@ describe('SearchResults', function() {
             changeState={sinon.stub()}
             charmstoreSearch={sinon.stub()}
             deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}
@@ -70,6 +72,7 @@ describe('SearchResults', function() {
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
             deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query="nothing here"
@@ -105,6 +108,7 @@ describe('SearchResults', function() {
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
             deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query="nothing here"
@@ -159,6 +163,7 @@ describe('SearchResults', function() {
             changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
             deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={makeEntityModel}
             query={query}
@@ -316,12 +321,14 @@ describe('SearchResults', function() {
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
+                      generatePath={generatePath}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
                     <juju.components.SearchResultsItem
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
+                      generatePath={generatePath}
                       item={results[1]}
                       key="~test-owner/mysql-two" />
                   </ul>
@@ -343,12 +350,14 @@ describe('SearchResults', function() {
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
+                        generatePath={generatePath}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
                       <juju.components.SearchResultsItem
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
+                        generatePath={generatePath}
                         item={results[3]}
                         key="~test-owner/mysql-four" />
                     </ul>
@@ -368,6 +377,7 @@ describe('SearchResults', function() {
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
             deployTarget={deployTarget}
+            generatePath={generatePath}
             getName={getName}
             makeEntityModel={makeEntityModel}
             query="mysql"
@@ -391,6 +401,7 @@ describe('SearchResults', function() {
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
             deployTarget={deployTarget}
+            generatePath={generatePath}
             getName={getName}
             makeEntityModel={makeEntityModel}
             query="mysql"
@@ -413,14 +424,15 @@ describe('SearchResults', function() {
       const charmstoreSearch = sinon.stub().returns({abort: abort});
       const renderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
-          changeState={sinon.stub()}
-          deployTarget={sinon.stub()}
             acl={acl}
-            query="apache2"
-            seriesList={series}
+            changeState={sinon.stub()}
             charmstoreSearch={charmstoreSearch}
+            deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={makeEntityModel}
+            query="apache2"
+            seriesList={series}
             setPageTitle={sinon.stub()} />, true);
       const instance = renderer.getMountedInstance();
       instance.componentDidMount();
@@ -429,12 +441,13 @@ describe('SearchResults', function() {
         <juju.components.SearchResults
           acl={acl}
           changeState={sinon.stub()}
-          deployTarget={sinon.stub()}
-          query="apache2"
-          seriesList={series}
           charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
+          query="apache2"
+          seriesList={series}
           setPageTitle={sinon.stub()} />);
       renderer.getRenderOutput();
       assert.equal(abort.callCount, 1);
@@ -485,12 +498,30 @@ describe('SearchResults', function() {
       assert.deepEqual(actual, expected);
     });
 
+    it('can collapse charms when the id contains "cs:"', () => {
+      const getName = (val) => {
+        return val.split('/').pop();
+      };
+      const entities = [
+        {id: 'cs:foo', name: 'foo', owner: 'bar', type: 'charm',
+          series: 'trusty'},
+        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
+          series: 'precise'},
+        {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
+      ];
+      const actual = searchResults.collapseSeries(entities, getName);
+      assert.equal(actual.length, 2);
+    });
+
     it('aggregates downloads when collapsing charms', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 's1', downloads: 1},
-        {name: 'c1', owner: 'o1', type: 'c', series: 's2', downloads: 5},
-        {name: 'c1', owner: 'o2', type: 'c', series: 's3', downloads: 3}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's1',
+          downloads: 1},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's2',
+          downloads: 5},
+        {name: 'c1', id: 'c1', owner: 'o2', type: 'c', series: 's3',
+          downloads: 3}
       ];
       var actual = searchResults.collapseSeries(entities, getName);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
@@ -537,9 +568,9 @@ describe('SearchResults', function() {
     it('sorts the series within collapsed results', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'precise'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
       var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
@@ -553,9 +584,9 @@ describe('SearchResults', function() {
     it('de-dupes the series within collapsed results', function() {
       var getName = sinon.stub();
       var entities = [
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
-        {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
+        {name: 'c1', id: 'cs', owner: 'o1', type: 'c', series: 'precise'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
       var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
@@ -716,6 +747,7 @@ describe('SearchResults', function() {
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
             deployTarget={sinon.stub()}
+            generatePath={generatePath}
             getName={sinon.stub()}
             makeEntityModel={sinon.stub()}
             query={query}

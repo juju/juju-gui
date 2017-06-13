@@ -358,7 +358,7 @@ YUI.add('juju-env-api', function(Y) {
             unitInfo: 3,
             machineInfo: 4,
             annotationInfo: 5,
-            remoteapplicationInfo: 100,
+            remoteapplicationInfo: 100
           };
       data.response.deltas.forEach(function(delta) {
         var kind = delta[0],
@@ -569,7 +569,7 @@ YUI.add('juju-env-api', function(Y) {
       // Only fire login if this is not a redirect error as we will come back
       // here once the redirection is made.
       if (!utils.isRedirectError(data.error)) {
-        document.dispatchEvent(new CustomEvent('login', {
+        document.dispatchEvent(new CustomEvent('model.login', {
           detail: {err: data.error || null}
         }));
       }
@@ -612,7 +612,7 @@ YUI.add('juju-env-api', function(Y) {
     login: function() {
       // If the user is already authenticated there is nothing to do.
       if (this.userIsAuthenticated) {
-        document.dispatchEvent(new CustomEvent('login', {
+        document.dispatchEvent(new CustomEvent('model.login', {
           detail: {err: null}
         }));
         return;
@@ -622,7 +622,7 @@ YUI.add('juju-env-api', function(Y) {
       }
       const credentials = this.get('user').model;
       if (!credentials.user || !credentials.password) {
-        document.dispatchEvent(new CustomEvent('login', {
+        document.dispatchEvent(new CustomEvent('model.login', {
           detail: {err: 'invalid username or password'}
         }));
         return;
@@ -954,7 +954,7 @@ YUI.add('juju-env-api', function(Y) {
     uploadLocalCharm: function(file, series, progress, callback) {
       // Ensure that they are logged in and authenticated before uploading.
       if (!this.userIsAuthenticated) {
-        document.dispatchEvent(new CustomEvent('login', {
+        document.dispatchEvent(new CustomEvent('model.login', {
           detail: {err: 'cannot upload files anonymously'}
         }));
         return;
@@ -1272,7 +1272,7 @@ YUI.add('juju-env-api', function(Y) {
           url: args.charmURL,
           channel: args.channel || 'stable',
           resources: resources
-        },
+        }
       }, handler);
     },
 
@@ -2974,7 +2974,7 @@ YUI.add('juju-env-api', function(Y) {
             domain: domain,
             lastConnection: lastConnection,
             access: result.access,
-            err: err,
+            err: err
           };
         });
         callback(null, users);
@@ -2991,7 +2991,7 @@ YUI.add('juju-env-api', function(Y) {
   }, {
     ATTRS: {
       maasServer: {
-        value: null,
+        value: null
       }
     }
   });

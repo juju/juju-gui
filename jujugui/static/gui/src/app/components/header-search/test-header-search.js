@@ -65,10 +65,19 @@ describe('HeaderSearch', function() {
   });
 
   it('changes state when the close button is clicked', function() {
-    const output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        appState={appState} />);
+        appState={appState} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const blurStub = sinon.stub();
+    instance.refs = {
+      searchInput: {
+        blur: blurStub
+      }
+    };
     output.props.children[2].props.onClick();
+    assert.equal(blurStub.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,
@@ -154,10 +163,19 @@ describe('HeaderSearch', function() {
   });
 
   it('navigates to the store when the Store button is clicked', function() {
-    const output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        appState={appState} />);
+        appState={appState} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const blurStub = sinon.stub();
+    instance.refs = {
+      searchInput: {
+        blur: blurStub
+      }
+    };
     output.props.children[1].props.onClick();
+    assert.equal(blurStub.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       root: 'store'

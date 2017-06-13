@@ -95,9 +95,9 @@
     &--kubernetes,
     &--openstack,
     &--hadoop {
-      min-height: 310px;
       margin-bottom: 20px;
       padding-bottom: 125px;
+      cursor: pointer;
 
       .button--inline-neutral {
         background-color: $white;
@@ -110,17 +110,31 @@
     }
 
     &--kubernetes {
+      position: relative;
       overflow: hidden;
-      background: #3371e3 url(static/gui/build/app/assets/images/store/k8-image.png) no-repeat center -50px;
+      background: #3371e3;
       background-size: 350px;
       color: $white;
+      min-height: 300px;
+
+      .box__image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        max-width: none;
+        margin: -228px 0 0 -198px;
+      }
     }
 
     &--openstack {
       $openstack-brand: #df2e29;
       border-color: $openstack-brand;
-      background: $openstack-brand url(static/gui/build/app/assets/images/store/openstack-promo.png) no-repeat center 40px;
+      background: $openstack-brand;
       color: $white;
+
+      .box__image {
+        max-width: none;
+      }
     }
 
     &--hadoop {
@@ -130,13 +144,15 @@
       color: $white;
 
       &-container {
-        position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
-        background: url(static/gui/build/app/assets/images/store/hadoop-elephant.png) no-repeat center 40px;
         background-size: 200px;
+
+        .box__image {
+          max-width: 195px
+        }
       }
     }
 
@@ -186,22 +202,65 @@
   }
 
   .row--containers {
-    background: $light-grey;
+    /*
+      Image asset is slightly off colour so once that is updated this
+      background colour change change can be reverted.
+    */
+    /*background: $light-grey;*/
+    background-color: #f5f5f5;
 
-    .inner-wrapper {
+    .wrapper.bigdata {
+      margin: 0 auto;
+      max-width: 1040px;
+
+      .inner-wrapper.bigdata {
+        /* Reset the default inner-wrapper values */
+        padding: 0;
+        margin: 0;
+
+        .text {
+          padding-top: 50px;
+        }
+      }
+
+      img {
+        display: none;
+        height: 277px;
+      }
+
       @media only screen and (min-width: $breakpoint-medium) {
-        background-image: url('static/gui/build/app/assets/images/store/kubernetes-promo.png');
-        background-repeat: no-repeat;
-        background-size: auto 90%;
-        background-position: right top;
+        img {
+          display: block;
+        }
       }
     }
   }
 
-  .row--write-your-own .inner-wrapper {
+  .row--write-your-own {
+    .wrapper {
+      margin: 0 auto;
+      max-width: 1040px;
+    }
+
+    .inner-wrapper {
+      /* Reset the default inner-wrapper values */
+      padding: 0;
+      margin: 0;
+
+      .text {
+        padding-top: 50px;
+      }
+    }
+
+    img {
+      display: none;
+      height: 277px;
+    }
+
     @media only screen and (min-width: $breakpoint-medium) {
-      background-image: url('static/gui/build/app/assets/images/store/write-your-own.png');
-      background-size: 50%;
+      img {
+        display: block;
+      }
     }
   }
 

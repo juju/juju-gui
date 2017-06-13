@@ -25,7 +25,7 @@ describe('RelationUtils', function() {
   before(function(done) {
     var requirements = [
       'juju-models',
-      'relation-utils',
+      'relation-utils'
     ];
     YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
@@ -207,7 +207,7 @@ describe('RelationUtils', function() {
         'db-admin': {
           'interface': 'mysql',
           scope: 'global'
-        },
+        }
       });
       endpoints[1].charm.set('provides', {
         db: {
@@ -217,7 +217,7 @@ describe('RelationUtils', function() {
         'db-admin': {
           'interface': 'mysql',
           scope: 'global'
-        },
+        }
       });
       var actual = relationUtils.findEndpointMatch(endpoints);
       assert.equal(actual.error, 'Ambiguous relationship is not allowed.');
@@ -235,7 +235,7 @@ describe('RelationUtils', function() {
         'juju-info': {
           'interface': 'juju-info',
           scope: 'container'
-        },
+        }
       });
       endpoints[1].charm.set('provides', {
         db: {
@@ -245,7 +245,7 @@ describe('RelationUtils', function() {
         'juju-info': {
           'interface': 'juju-info',
           scope: 'container'
-        },
+        }
       });
       var actual = relationUtils.findEndpointMatch(endpoints);
       var expected = {

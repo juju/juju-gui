@@ -27,6 +27,7 @@ YUI.add('search-results-item', function(Y) {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployTarget: React.PropTypes.func.isRequired,
+      generatePath: React.PropTypes.func.isRequired,
       item: React.PropTypes.object.isRequired
     },
 
@@ -60,10 +61,12 @@ YUI.add('search-results-item', function(Y) {
       tags.forEach(function(tag, i) {
         components.push(
           <li className="tag-list--item"
-            key={tag + i}
-            role="button" tabIndex="0"
-            onClick={this._handleTagClick.bind(this, tag)}>
-            {tag}
+            key={tag + i}>
+            <a className="list-block__list--item-link"
+              href={this.props.generatePath({search: {tags: tag}})}
+              onClick={this._handleTagClick.bind(this, tag)}>
+              {tag}
+            </a>
           </li>
         );
       }, this);
@@ -84,17 +87,19 @@ YUI.add('search-results-item', function(Y) {
             'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
         components.push(
           <li className="list-icons__item tooltip"
-            key={service.displayName}
-            role="button" tabIndex="0"
-            onClick={this._handleItemClick.bind(this, service.id)}>
-            <img src={src}
-              className="list-icons__image"
-              alt={service.displayName} />
-            <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                {service.displayName}
+            key={service.displayName}>
+            <a className="list-block__list--item-link"
+              href={this._generateStoreURL(service.id)}
+              onClick={this._handleItemClick.bind(this, service.id)}>
+              <img src={src}
+                className="list-icons__image"
+                alt={service.displayName} />
+              <span className="tooltip__tooltip">
+                <span className="tooltip__inner tooltip__inner--down">
+                  {service.displayName}
+                </span>
               </span>
-            </span>
+            </a>
           </li>
         );
       }, this);
@@ -119,7 +124,9 @@ YUI.add('search-results-item', function(Y) {
         components.push(
           <li className="list-series__item"
             key={s.name}>
-            <a onClick={this._handleItemClick.bind(this, s.storeId)}>
+            <a className="list-block__list--item-link"
+              href={this._generateStoreURL(s.storeId)}
+              onClick={this._handleItemClick.bind(this, s.storeId)}>
               {s.name}
             </a>
           </li>
@@ -142,14 +149,11 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
-      Show the entity details when clicked.
+      Generate the store state for the item.
 
-      @method _handleItemClick
       @param {String} id The entity id.
-      @param {Object} evt The click event.
     */
-    _handleItemClick: function(id, evt) {
-      evt.stopPropagation();
+    _generateStoreState: function(id) {
       // TODO frankban: it should be clear whether this id is legacy or not.
       let url;
       try {
@@ -157,10 +161,32 @@ YUI.add('search-results-item', function(Y) {
       } catch(_) {
         url = window.jujulib.URL.fromString(id);
       }
-      this.props.changeState({
+      return {
+        profile: null,
         search: null,
         store: url.path()
-      });
+      };
+    },
+
+    /**
+      Generate the store URL for an entity.
+
+      @param {String} id The entity id.
+    */
+    _generateStoreURL: function(id) {
+      return this.props.generatePath(this._generateStoreState(id));
+    },
+
+    /**
+      Show the entity details when clicked.
+
+      @method _handleItemClick
+      @param {String} id The entity id.
+      @param {Object} evt The click event.
+    */
+    _handleItemClick: function(id, evt) {
+      evt.preventDefault();
+      this.props.changeState(this._generateStoreState(id));
     },
 
     /**
@@ -168,10 +194,10 @@ YUI.add('search-results-item', function(Y) {
 
       @method _handleTagClick
       @param {String} tag The tag name.
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleTagClick: function(tag, e) {
-      e.stopPropagation();
+    _handleTagClick: function(tag, evt) {
+      evt.preventDefault();
       this.props.changeState({
         search: {
           owner: null,
@@ -193,7 +219,7 @@ YUI.add('search-results-item', function(Y) {
       @param {Object} evt The click event.
     */
     _handleOwnerClick: function(owner, evt) {
-      evt.stopPropagation();
+      evt.preventDefault();
       this.props.changeState({search: null, profile: owner});
     },
 
@@ -253,9 +279,10 @@ YUI.add('search-results-item', function(Y) {
     render: function() {
       var item = this.props.item;
       return (
-        <li className={'list-block__list--item ' + item.type}
-            tabIndex="0" role="button"
-            onClick={this._handleItemClick.bind(this, item.id)}>
+        <li className={'list-block__list--item ' + item.type}>
+          <a className="list-block__list--item-main-link"
+            href={this._generateStoreURL(item.id)}
+            onClick={this._handleItemClick.bind(this, item.id)}></a>
           <div className="four-col charm-name__column">
             <h3 className="list-block__list--item-title">
               {item.displayName}
@@ -278,12 +305,12 @@ YUI.add('search-results-item', function(Y) {
           <div className="two-col owner__column list-block__column">
             <p className="cell">
               {'By '}
-              <span className="link"
-                onClick={this._handleOwnerClick.bind(this, item.owner)}
-                role="button"
-                tabIndex="0">
+              <a className="list-block__list--item-link"
+                href={
+                  this.props.generatePath({search: null, profile: item.owner})}
+                onClick={this._handleOwnerClick.bind(this, item.owner)}>
                 {item.owner}
-              </span>
+              </a>
             </p>
           </div>
           <div className="one-col last-col list-block__list--item-deploy">

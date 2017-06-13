@@ -34,7 +34,8 @@ describe('user auth class', () => {
         store: {},
         setItem: function(name, val) { this.store[name] = val; },
         getItem: function(name) { return this.store[name] || null; },
-        removeItem: function(name) { delete this.store[name]; }
+        removeItem: function(name) { delete this.store[name]; },
+        clear: function() { this.store = {}; }
       };
     };
   };
@@ -84,7 +85,7 @@ describe('user auth class', () => {
     it('determines if creds are external', () => {
       user.controller = {
         user: 'doctor@tardis',
-        password: 'bad wolf',
+        password: 'bad wolf'
       };
       user.externalAuth = 'foo';
       const creds = user.controller;
@@ -132,7 +133,7 @@ describe('user auth class', () => {
     it('determines if creds are external', () => {
       user.model = {
         user: 'doctor@tardis',
-        password: 'bad wolf',
+        password: 'bad wolf'
       };
       user.externalAuth = 'foo';
       const creds = user.model;
@@ -186,6 +187,50 @@ describe('user auth class', () => {
       user.externalAuth = {user: {name: 'foo'}};
       assert.equal(user.username, 'foo');
       assert.equal(user.displayName, 'foo');
+    });
+  });
+
+  describe('expiration', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({sessionStorage: storage});
+    });
+
+    it('can set an expiration time', () => {
+      const expiration = new Date();
+      const cfg = {
+        sessionStorage: storage,
+        expirationDatetime: expiration
+      };
+      user = new window.jujugui.User(cfg);
+      assert.deepEqual(
+        new Date(user.expirationDatetime).getTime(),
+        expiration.getTime());
+    });
+
+    it('sets an expiration time in the future if one is not provided', () => {
+      assert.isAbove(new Date(user.expirationDatetime), new Date());
+    });
+
+    it('does nothing prior to expiration time', () => {
+      storage.setItem('foo', 'bar');
+      user._purgeIfExpired();
+      assert.equal(storage.getItem('foo'), 'bar');
+    });
+
+    it('clears the storage when expiration time is reached', () => {
+      let expiration = new Date();
+      expiration.setHours(expiration.getHours() - 1); // expired an hour ago
+      const cfg = {
+        sessionStorage: storage,
+        expirationDatetime: expiration
+      };
+      user = new window.jujugui.User(cfg);
+      storage.setItem('foo', 'bar');
+      user._purgeIfExpired();
+      assert.isNull(storage.getItem('foo'));
     });
   });
 });

@@ -318,8 +318,11 @@ YUI.add('juju-gui', function(Y) {
       // Set up a client side database to store state.
       this.db = new models.Database();
       // Create a user store to track authentication details.
-      this.user = this.get('user') || new window.jujugui.User(
-        {externalAuth: this.get('auth')});
+      const userCfg = {
+        externalAuth: this.get('auth'),
+        expiration: window.sessionStorage.getItem('expirationDatetime')
+      };
+      this.user = this.get('user') || new window.jujugui.User(userCfg);
 
       // Instantiate a macaroon bakery, which is used to handle the macaroon
       // acquisition over HTTP.
@@ -463,10 +466,6 @@ YUI.add('juju-gui', function(Y) {
           this.onEnvironmentNameChange, this);
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
-      // Once the user logs in, we need to redraw.
-      this.onLoginHandler = this.onLogin.bind(this);
-      document.addEventListener('login', this.onLoginHandler);
-
       // Once we know about MAAS server, update the header accordingly.
       let maasServer = this.env.get('maasServer');
       if (!maasServer && this.controllerAPI) {
@@ -554,7 +553,6 @@ YUI.add('juju-gui', function(Y) {
           eventName, this._boundAppDragOverHandler);
       });
       // In Juju >= 2 we connect to the controller and then to the model.
-      this.controllerAPI.connect();
       this.state.bootstrap();
     },
 
@@ -910,17 +908,21 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, bakery)}
       />);
 
+      let logoutUrl = '/logout';
+      if (window.juju_config.baseUrl) {
+        logoutUrl = window.juju_config.baseUrl + logoutUrl;
+      }
+
+      const doCharmstoreLogout = () => {
+        return this.getUser('charmstore') && !this.get('gisf');
+      };
       const LogoutLink = (<window.juju.components.Logout
-        logout={this.logout.bind(this)}
-        clearCookie={bakery.storage.clear.bind(bakery.storage)}
-        gisfLogout={window.juju_config.gisfLogout || ''}
-        gisf={window.juju_config.gisf || false}
         charmstoreLogoutUrl={charmstore.getLogoutUrl()}
-        getUser={this.getUser.bind(this, 'charmstore')}
-        clearUser={this.clearUser.bind(this, 'charmstore')}
+        doCharmstoreLogout={doCharmstoreLogout}
+        locationAssign={window.location.assign.bind(window.location)}
+        logoutUrl={logoutUrl}
         // If the charmbrowser is open then don't show the logout link.
         visible={!this.state.current.store}
-        locationAssign={window.location.assign.bind(window.location)}
       />);
 
       const navigateUserProfile = () => {
@@ -1793,6 +1795,14 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _clearCharmbrowser: function(state, next) {
+      if (state.search || state.store) {
+        // State calls the cleanup methods on every dispatch even if the state
+        // object exists between calls. Maybe this should be updated in state
+        // but for now if we know that the new state still contains the
+        // charmbrowser then just let the subsequent render method update
+        // the rendered component.
+        return;
+      }
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
       next();
@@ -2008,6 +2018,10 @@ YUI.add('juju-gui', function(Y) {
           model = noErrorModels.find(model => model.uuid === modelUUID);
         }
         this.maskVisibility(false);
+        // If we're already connected to the model then don't do anything.
+        if (model && this.env.get('modelUUID') === model.uuid) {
+          return;
+        }
         if (model) {
           this.state.changeState({
             model: {
@@ -2029,7 +2043,7 @@ YUI.add('juju-gui', function(Y) {
             store: null,
             model: null,
             user: null,
-            profile: this.user.displayName,
+            profile: this.user.displayName
           });
         }
       });
@@ -2096,6 +2110,22 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+  /**
+    Ensures the controller is connected on dispatch. Does nothing if the
+   controller is already connecting/connected or if we're trying to disconnect.
+   @param {Object} state - The application state.
+   @param {Function} next - Run the next route handler, if any.
+   */
+    _ensureControllerConnection: function(state, next) {
+      if (
+        !this.controllerAPI.get('connecting') &&
+        !this.controllerAPI.get('connected')
+        ) {
+        this.controllerAPI.connect();
+      }
+      next();
+    },
+
     /**
       Creates an instance of the State and registers the necessary dispatchers.
       @param {String} baseURL - The path the application is served from.
@@ -2108,6 +2138,7 @@ YUI.add('juju-gui', function(Y) {
         sendAnalytics: this.sendAnalytics
       });
       state.register([
+        ['*', this._ensureControllerConnection.bind(this)],
         ['*', this.authorizeCookieUse.bind(this)],
         ['*', this.checkUserCredentials.bind(this)],
         ['*', this.show_environment.bind(this)],
@@ -2146,7 +2177,10 @@ YUI.add('juju-gui', function(Y) {
           this._renderDeployment.bind(this),
           this._clearDeployment.bind(this)],
         // Nothing needs to be done at the top level when the hash changes.
-        ['hash']
+        ['hash'],
+        // special dd is handled by the root dispatcher as it requires /new
+        // for now.
+        ['special.dd']
       ]);
 
       return state;
@@ -2171,6 +2205,12 @@ YUI.add('juju-gui', function(Y) {
           // signature so we have to call next manually after.
           this._renderLogin();
           next();
+          break;
+        case 'logout':
+          // If we're in gisf _handleLogout will navigate away from the GUI
+          this._handleLogout();
+          this.state.changeState({root: 'login'});
+          return;
           break;
         case 'store':
           this._renderCharmbrowser(state, next);
@@ -2521,10 +2561,6 @@ YUI.add('juju-gui', function(Y) {
         'ecs.changeSetModified', this.renderDeploymentBarListener);
       document.removeEventListener(
         'ecs.currentCommitFinished', this.renderDeploymentBarListener);
-      document.removeEventListener('login', this.onLoginHandler);
-      if (this.boundOnLogin) {
-        document.removeEventListener('login', this.boundOnLogin);
-      }
       document.removeEventListener('login', this.controllerLoginHandler);
       document.removeEventListener('delta', this.onDeltaBound);
     },
@@ -2577,21 +2613,21 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
-    // Route handlers
-
     /**
-     * Log the current user out and show the login screen again.
-     *
-     * @method logout
-     * @param {Object} req The request.
-     * @return {undefined} Nothing.
-     */
-    logout: function(req) {
-      // If the environment view is instantiated, clear out the topology local
-      // database on log out, because we clear out the environment database as
-      // well. The order of these is important because we need to tell
-      // the env to log out after it has navigated to make sure that
-      // it always shows the login screen.
+     Logs the user out of the gui.
+
+     This closes the model/controller connections and clears cookies and other
+     authentication artifacts. If in gisf mode this will then redirect the user
+     to the store front logout mechanism to complete logout.
+
+     @method _handleLogout
+    */
+    _handleLogout: function() {
+      const config = window.juju_config;
+
+      this.clearUser();
+      this.bakery.storage.clear();
+
       var environmentInstance = this.views.environment.instance;
       if (environmentInstance) {
         environmentInstance.topo.update();
@@ -2613,9 +2649,13 @@ YUI.add('juju-gui', function(Y) {
             root: null,
             store: null
           });
-          this._renderLogin(null);
         });
       });
+
+      if (config.gisf) {
+        const gisfLogoutUrl = config.gisfLogout || '';
+        window.location.assign(window.location.origin + gisfLogoutUrl);
+      }
     },
 
     // Persistent Views
@@ -2637,18 +2677,15 @@ YUI.add('juju-gui', function(Y) {
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
         // Legacy Juju won't have a controller API.
-        if (!api) {
+        // If we do not have an api instance or if we are not connected with
+        // it then we don't need to concern ourselves with being
+        // authenticated to it.
+        if (!api || !api.get('connected')) {
           return false;
         }
         // If the api is connecting then we can't know if they are properly
         // logged in yet.
         if (api.get('connecting')) {
-          return true;
-        }
-        if (!api || !api.get('connected')) {
-          // If we do not have an api instance or if we are not connected with
-          // it then we don't need to concern ourselves with being
-          // authenticated to it.
           return false;
         }
         return !api.userIsAuthenticated && !this.get('gisf');
@@ -2658,37 +2695,6 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       next();
-    },
-
-    /**
-      Hide the login mask and redispatch the router.
-
-      When the environment gets a response from a login attempt,
-      it fires a login event, to which this responds.
-
-      @method onLogin
-      @param {Object} evt An event object that includes an "err" attribute
-        with an error if the authentication failed.
-      @private
-    */
-    onLogin: function(evt) {
-      if (this.boundOnLoginFired) {
-        // We want this event to only fire once, so if it exists then remove it
-        // so it can't get fired again.
-        document.removeEventListener('login', this.boundOnLogin);
-      }
-      if (evt.detail && evt.detail.err) {
-        this._renderLogin(evt.detail.err);
-        return;
-      }
-      // The login was a success.
-      console.log('successfully logged into model');
-      this.maskVisibility(false);
-      this._clearLogin();
-      this.set('loggedIn', true);
-      if (this.state.current.root === 'login') {
-        this.state.changeState({root: null});
-      }
     },
 
     /**
@@ -2767,7 +2773,6 @@ YUI.add('juju-gui', function(Y) {
       };
       const credentials = this.user.model;
       const onLogin = callback => {
-        this.boundOnLoginFired = true;
         this.env.loading = false;
         if (callback) {
           callback(this.env);
@@ -2775,9 +2780,8 @@ YUI.add('juju-gui', function(Y) {
       };
       // Delay the callback until after the env login as everything should be
       // set up by then.
-      this.boundOnLoginFired = false;
-      this.boundOnLogin = onLogin.bind(this, callback);
-      document.addEventListener('login', this.boundOnLogin);
+      document.addEventListener(
+        'model.login', onLogin.bind(this, callback), {once: true});
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
