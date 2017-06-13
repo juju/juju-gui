@@ -99,6 +99,129 @@ describe('Configuration', function() {
         config={option2key} />);
   });
 
+  it('displays the save button when there are changes', function() {
+    const option1 = { key: 'option1key', type: 'string' };
+    const option2 = { key: 'option2key', type: 'boolean' };
+    const linkify = sinon.stub();
+    linkify.onCall(0).returns('description 1');
+    linkify.onCall(1).returns('description 2');
+    const option1key = 'string body value';
+    const option2key = true;
+    const charm = {
+      get: function() {
+        // Return the charm options.
+        return { option1: option1, option2: option2 };
+      }};
+    const service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        } else if (val === 'name') {
+          return 'mysql';
+        } else if (val === 'series') {
+          return 'zesty';
+        } else if (val === 'config') {
+          return { option1: option1key, option2: option2key };
+        }
+      }};
+    const setConfig = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={linkify}
+        service={service}
+        serviceRelations={[]}
+        setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      ServiceName: {getValue: sinon.stub().returns('mysql')},
+      'Config-option1': {
+        getKey: sinon.stub().returns('option1'),
+        getValue: sinon.stub().returns('new value')
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns('option2'),
+        getValue: sinon.stub().returns('new value2')
+      }
+    };
+    let output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'inspector-config__buttons inspector-config__buttons--hidden');
+    output.props.children[0].props.children[4][0].props.onChange();
+    output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'inspector-config__buttons');
+  });
+
+  it('can handle changes with null values', function() {
+    const option1 = { key: 'option1key', type: 'string' };
+    const option2 = { key: 'option2key', type: 'boolean' };
+    const linkify = sinon.stub();
+    linkify.onCall(0).returns('description 1');
+    linkify.onCall(1).returns('description 2');
+    const option1key = 'string body value';
+    const option2key = true;
+    const charm = {
+      get: function() {
+        // Return the charm options.
+        return { option1: option1, option2: option2 };
+      }};
+    const service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        } else if (val === 'name') {
+          return 'mysql';
+        } else if (val === 'series') {
+          return 'zesty';
+        } else if (val === 'config') {
+          return { option1: option1key, option2: option2key };
+        }
+      }};
+    const setConfig = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={linkify}
+        service={service}
+        serviceRelations={[]}
+        setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      ServiceName: {getValue: sinon.stub().returns('mysql')},
+      'Config-option1': {
+        getKey: sinon.stub().returns('option1'),
+        getValue: sinon.stub().returns(null)
+      },
+      'Config-option2': {
+        getKey: sinon.stub().returns('option2'),
+        getValue: sinon.stub().returns(null)
+      }
+    };
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.children[4][0].props.onChange();
+    output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'inspector-config__buttons');
+  });
+
   it('renders message when no config available', function() {
     var charm = {
       get: function() {

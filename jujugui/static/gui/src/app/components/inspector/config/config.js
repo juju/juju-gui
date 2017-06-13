@@ -219,7 +219,9 @@ YUI.add('inspector-config', function() {
       var serviceConfig = this.props.service.get('config');
       var changedValues = {};
       Object.keys(serviceConfig).forEach((key) => {
-        if (serviceConfig[key].toString() !== configValues[key].toString()) {
+        const existingValue = serviceConfig[key] || '';
+        const configValue = configValues[key] || '';
+        if (existingValue.toString() !== configValue.toString()) {
           changedValues[key] = configValues[key];
         }
       });
