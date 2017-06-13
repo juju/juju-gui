@@ -908,10 +908,12 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, bakery)}
       />);
 
-      let logoutUrl = '/logout';
+      let logoutUrl = 'logout';
+      let baseUrl = '/';
       if (window.juju_config.baseUrl) {
-        logoutUrl = window.juju_config.baseUrl + logoutUrl;
+        baseUrl = window.juju_config.baseURL;
       }
+      logoutUrl = baseUrl + logoutUrl;
 
       const doCharmstoreLogout = () => {
         return this.getUser('charmstore') && !this.get('gisf');
