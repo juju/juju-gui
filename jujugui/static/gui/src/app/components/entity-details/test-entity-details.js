@@ -263,6 +263,7 @@ describe('EntityDetails', function() {
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
             id={id}
+            isRow={true}
           />
           <juju.components.EntityContent
             addNotification={addNotification}

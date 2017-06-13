@@ -1,0 +1,21 @@
+.deployment-flow-panel {
+  .deployment-direct-deploy {
+    &__image {
+      margin-bottom: 0;
+
+      .entity-content__diagram {
+        background: $white;
+        border: 1px solid $color-mid-light;
+
+        &-image {
+          width: 100%;
+          height: auto;
+        }
+      }
+    }
+
+    &__title {
+      text-transform: capitalize;
+    }
+  }
+}

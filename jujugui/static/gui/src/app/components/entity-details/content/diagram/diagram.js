@@ -26,13 +26,18 @@ YUI.add('entity-content-diagram', function() {
     /* Define and validate the properites available on this component. */
     propTypes: {
       getDiagramURL: React.PropTypes.func.isRequired,
-      id: React.PropTypes.string.isRequired
+      id: React.PropTypes.string.isRequired,
+      isRow: React.PropTypes.bool
     },
 
     render: function() {
-      var url = this.props.getDiagramURL(this.props.id);
+      const url = this.props.getDiagramURL(this.props.id);
+      const classes = classNames(
+        'entity-content__diagram',
+        {'row row--grey': this.props.isRow}
+      );
       return (
-        <div className="entity-content__diagram row row--grey">
+        <div className={classes}>
           <object type="image/svg+xml" data={url}
             className="entity-content__diagram-image" />
         </div>

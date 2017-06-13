@@ -1323,6 +1323,7 @@ YUI.add('juju-gui', function(Y) {
           generateMachineDetails={
             utils.generateMachineDetails.bind(
               utils, env.genericConstraints, db.units)}
+          generatePath={this.state.generatePath.bind(this.state)}
           getAgreementsByTerms={
               this.terms.getAgreementsByTerms.bind(this.terms)}
           isLoggedIn={isLoggedIn}

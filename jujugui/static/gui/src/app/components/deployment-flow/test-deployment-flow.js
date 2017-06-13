@@ -78,6 +78,7 @@ const createDeploymentFlow = (props = {}) => {
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
     generateMachineDetails: sinon.stub(),
+    generatePath: sinon.stub(),
     getAgreementsByTerms: getAgreementsByTerms,
     getCloudCredentialNames: sinon.stub(),
     getCloudCredentials: sinon.stub(),
@@ -158,8 +159,9 @@ describe('DeploymentFlow', function() {
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
         <juju.components.DeploymentSection
+          completed={true}
           instance="deployment-model-name"
-          showCheck={false}
+          showCheck={true}
           title="Set your model name">
           <div className="six-col">
             <juju.components.GenericInput
@@ -303,6 +305,7 @@ describe('DeploymentFlow', function() {
     expect(output.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: 'cs:bundles/kubernetes-core-8'}}
+        generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
         getEntity={getEntity}
         makeEntityModel={makeEntityModel}

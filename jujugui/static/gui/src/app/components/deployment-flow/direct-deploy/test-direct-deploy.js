@@ -30,11 +30,12 @@ describe('DirectDeploy', function() {
     YUI().use('deployment-direct-deploy', function() { done(); });
   });
 
-  it('renders the Direct Deploy for a charm', () => {
+  it('renders the Direct deploy for a charm', () => {
     const id = 'cs:apache-21';
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: id}}
+        generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         makeEntityModel={sinon.stub()}
@@ -42,16 +43,30 @@ describe('DirectDeploy', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentSection
-        instance="deployment-one-click"
-        showCheck={false}
-        title="Direct Deploy">
-        <p>
-          The following steps will guide you through deploying {id}
-        </p>
-        {undefined}
-      </juju.components.DeploymentSection>
+        completed={true}
+        instance="deployment-direct-deploy"
+        showCheck={true}
+        title="You are deploying:" />
     );
     expect(output).toEqualJSX(expected);
+
+    const finalRenderer = jsTestUtils.shallowRender(expected, true);
+    const finalOutput = finalRenderer.getRenderOutput();
+    const finalExpected = (
+      <div className="deployment-section
+        twelve-col
+        deployment-section--active
+        deployment-section--completed
+        deployment-direct-deploy">
+        <h3 className="deployment-section__title">
+          <juju.components.SvgIcon
+            className="deployment-section__title-checkmark"
+            name="complete"
+            size="24" />
+          You are deploying:
+        </h3>
+      </div>);
+    expect(finalOutput).toEqualJSX(finalExpected);
   });
 
   it('renders the Direct Deploy for a bundle', () => {
@@ -59,6 +74,7 @@ describe('DirectDeploy', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         ddData={{id: id}}
+        generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         makeEntityModel={sinon.stub()}
@@ -67,17 +83,41 @@ describe('DirectDeploy', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <juju.components.DeploymentSection
-        instance="deployment-one-click"
-        showCheck={false}
-        title="Direct Deploy">
-        <p>
-          The following steps will guide you through deploying {id}
-        </p>
-        <juju.components.EntityContentDiagram
-          getDiagramURL={instance.props.getDiagramURL}
-          id={id} />
+        completed={true}
+        instance="deployment-direct-deploy"
+        showCheck={true}
+        title="You are deploying:">
+        <div className="six-col deployment-direct-deploy__image">
+          <juju.components.EntityContentDiagram
+            getDiagramURL={instance.props.getDiagramURL}
+            id={id} />
+        </div>
       </juju.components.DeploymentSection>
     );
     expect(output).toEqualJSX(expected);
+
+    const finalRenderer = jsTestUtils.shallowRender(expected, true);
+    const finalOutput = finalRenderer.getRenderOutput();
+    const finalExpected = (
+      <div className="deployment-section
+        twelve-col
+        deployment-section--active
+        deployment-section--completed
+        deployment-direct-deploy">
+        <h3 className="deployment-section__title">
+          <juju.components.SvgIcon
+            className="deployment-section__title-checkmark"
+            name="complete"
+            size="24" />
+          You are deploying:
+        </h3>
+        <div className="six-col deployment-direct-deploy__image">
+          <juju.components.EntityContentDiagram
+            getDiagramURL={instance.props.getDiagramURL}
+            id={id} />
+        </div>
+      </div>
+    );
+    expect(finalOutput).toEqualJSX(finalExpected);
   });
 });

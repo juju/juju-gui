@@ -2,7 +2,7 @@
   clear: both;
 
   &__header {
-    margin: 0 0 1.6em;
+    margin: 0 0 1.4rem;
 
     .hash-link {
       display: none;
@@ -22,23 +22,7 @@
   }
 
   &__description {
-    .twelve-col {
-      margin: 0;
-    }
-
-    .intro {
-      // Apply to a variety of block-level elements.
-      blockquote,
-      code,
-      dd,
-      dt,
-      li,
-      p,
-      pre {
-        font-size: 1.25em;
-        line-height: 1.3em;
-      }
-    }
+    margin-bottom: 2rem;
   }
 
   &__diagram + .entity-content {
