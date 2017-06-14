@@ -142,7 +142,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('', config['jujuCoreVersion'])
         self.assertIsNone(config['user'])
         self.assertIsNone(config['password'])
-        self.assertEqual('', config['baseUrl'])
+        self.assertEqual('/', config['baseUrl'])
         self.assertIsNone(config['auth'])
         self.assertEqual('wss', config['socket_protocol'])
         self.assertIsNone(config['gisfLogout'])
@@ -157,16 +157,16 @@ class ConfigTests(ViewTestCase):
             'jujugui.GTM_enabled': 'true',
             'jujugui.insecure': 'true',
             'jujugui.password': 'secret',
-            'jujugui.plans_url': 'http://1.2.3.4/plans-api',
+            'jujugui.plans_url': 'http://1.2.3.4/plans-api/',
             'jujugui.terms_url': 'http://1.2.3.4/terms-api',
             'jujugui.user': 'who',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
-        self.assertEqual('http://1.2.3.4/cs-api', config['charmstoreURL'])
-        self.assertEqual('http://1.2.3.4/plans-api', config['plansURL'])
-        self.assertEqual('http://1.2.3.4/terms-api', config['termsURL'])
+        self.assertEqual('http://1.2.3.4/cs-api/', config['charmstoreURL'])
+        self.assertEqual('http://1.2.3.4/plans-api/', config['plansURL'])
+        self.assertEqual('http://1.2.3.4/terms-api/', config['termsURL'])
         self.assertTrue(config['GTM_enabled'])
         self.assertEqual('blob', config['auth'])
         # User/password values that are explitly set trump defaults.
@@ -180,7 +180,7 @@ class ConfigTests(ViewTestCase):
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
-        self.assertEqual('/ignore/prefix', config['baseUrl'])
+        self.assertEqual('/ignore/prefix/', config['baseUrl'])
 
     def test_credentials(self):
         self.update_settings({

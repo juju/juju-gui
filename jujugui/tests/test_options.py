@@ -11,7 +11,7 @@ class TestUpdate(unittest.TestCase):
 
     default_settings = {
         'jujugui.auth': None,
-        'jujugui.base_url': '',
+        'jujugui.base_url': '/',
         'jujugui.bundleservice_url': options.DEFAULT_BUNDLESERVICE_URL,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
@@ -42,8 +42,8 @@ class TestUpdate(unittest.TestCase):
     def test_customized_values(self):
         expected_settings = {
             'jujugui.auth': 'blob',
-            'jujugui.base_url': '/another/url',
-            'jujugui.bundleservice_url': 'https://1.2.3.4/bundleservice',
+            'jujugui.base_url': '/another/url/',
+            'jujugui.bundleservice_url': 'https://1.2.3.4/bundleservice/',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': True,
             'jujugui.gisf': True,

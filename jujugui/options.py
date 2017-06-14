@@ -21,20 +21,22 @@ def update(settings):
     """
     _update(settings, 'jujugui.apiAddress', default=None)
     _update(settings, 'jujugui.auth', default=None)
-    _update(settings, 'jujugui.base_url', default='')
-    _update(settings, 'jujugui.bundleservice_url',
-            default=DEFAULT_BUNDLESERVICE_URL)
-    _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
     _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
     _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
-    _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
-    _update(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
-    _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')
-    _update(settings, 'jujugui.static_url', default='')
     _update(settings, 'jujugui.stripe_key', default='')
     _update(settings, 'jujugui.user', default=None)
+    _update(settings, 'jujugui.static_url', default='')
+
+    _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
+    _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
+    _update_url(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
+    _update_url(settings, 'jujugui.base_url', default='')
+    _update_url(settings, 'jujugui.bundleservice_url',
+                default=DEFAULT_BUNDLESERVICE_URL)
+    _update_url(settings, 'jujugui.charmstore_url',
+                default=DEFAULT_CHARMSTORE_URL)
 
     _update_bool(settings, 'jujugui.combine', default=True)
     _update_bool(settings, 'jujugui.gisf', default=False)
@@ -59,4 +61,11 @@ def _update(settings, name, default=None, convert=lambda value: value):
     settings[name] = convert(val)
 
 
+def _ensure_trailing_slash(url):
+    if not url.endswith('/'):
+        url += '/'
+    return url
+
+
 _update_bool = functools.partial(_update, convert=asbool)
+_update_url = functools.partial(_update, convert=_ensure_trailing_slash)
