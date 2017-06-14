@@ -910,7 +910,7 @@ YUI.add('juju-gui', function(Y) {
 
       let logoutUrl = '/logout';
       if (window.juju_config.baseUrl) {
-        logoutUrl = window.juju_config.baseUrl + logoutUrl;
+        logoutUrl = window.juju_config.baseUrl.replace(/\/?$/, logoutUrl);
       }
 
       const doCharmstoreLogout = () => {
