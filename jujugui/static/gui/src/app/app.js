@@ -908,9 +908,9 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, bakery)}
       />);
 
-      let logoutUrl = 'logout';
+      let logoutUrl = '/logout';
       if (window.juju_config.baseUrl) {
-        logoutUrl = window.juju_config.baseURL + logoutUrl;
+        logoutUrl = window.juju_config.baseUrl.replace(/\/?$/, logoutUrl);
       }
 
       const doCharmstoreLogout = () => {
