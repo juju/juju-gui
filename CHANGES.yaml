@@ -1,3 +1,19 @@
+- 2.7.4:
+
+   - GUI dist size reduced by 68%.
+   - Direct deploy styling updates.
+   - Store hero images now link to search results.
+   - Styling fixes and updates for tablets.
+   - Search results are now links so they can be middle clicked to open in a new tab.
+   - (Fix) Logout links properly work across platforms.
+   - (Fix) Closing notifications no longer errors.
+   - (Fix) Setting config values on applications no longer errors when descriptions are empty.
+   - (Fix) Direct Deploy "Back to canvas" now works as expected.
+   - (Fix) SSH keys pasted into the deployment flow no longer spill out of container.
+   - (Fix) Model switcher list now properly scrolls when you have many models.
+   - (Fix) Model login no longer loops under rare circumstances.
+   - (Fix) Hitting the browser back button after searching now navigates properly.
+
 - 2.7.3:
 
    ->
