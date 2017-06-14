@@ -55,6 +55,17 @@ YUI.add('notification', function() {
     },
 
     /**
+      Dismiss the notification.
+
+      @param evt {Object} The click event.
+    */
+    _dismiss: function(evt) {
+      evt.stopPropagation();
+      const dismiss = this.props.dismiss;
+      dismiss && dismiss();
+    },
+
+    /**
       Generates the dismiss button if a dismiss function is provided.
       The parent is tasked with calling the correct dismiss functionality as
       it will be on a per use basis.
@@ -68,7 +79,7 @@ YUI.add('notification', function() {
       return (
         <button
           className="p-notification__action"
-          onClick={this.props.dismiss}>
+          onClick={this._dismiss}>
             <window.juju.components.SvgIcon
             name="close_16" size="16" />
         </button>);
