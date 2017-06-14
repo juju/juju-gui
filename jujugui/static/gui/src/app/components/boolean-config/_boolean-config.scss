@@ -67,13 +67,13 @@
 
     &:before {
       z-index: index($z-indexed-elements, boolean-config--label);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10.2' viewBox='0 0 10 10.2'><path style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal' d='M1.14.1L0 1.24 3.86 5.1 0 8.96l1.14 1.14L5 6.24l3.86 3.86L10 8.96 6.14 5.1 10 1.24 8.86.1 5 3.96z' color='#000' font-family='sans-serif' white-space='normal' overflow='visible' solid-color='#000000' fill='#f3f3e7'/></svg%3E");
+      background-image: $svg-toggle-off;
     }
 
     &:after {
       z-index: index($z-indexed-elements, boolean-config--label);
       left: 29px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10.2' viewBox='0 0 12 10.2'><path style='line-height:125%;-inkscape-font-specification:Ubuntu;text-align:center' d='M11.08.77l-.088.077-6.233 5.46-3.655-3.135L0 4.422l4.76 5.007L12 1.81 11.08.77z' font-size='15' font-family='Ubuntu' letter-spacing='0' word-spacing='0' text-anchor='middle' fill='gray' fill-opacity='.478'/></svg%3E");
+      background-image: $svg-toggle-on-inactive;
     }
   }
 
@@ -84,11 +84,11 @@
     }
 
     &:before {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10.2' viewBox='0 0 10 10.2'><path style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal' d='M1.14.1L0 1.24 3.86 5.1 0 8.96l1.14 1.14L5 6.24l3.86 3.86L10 8.96 6.14 5.1 10 1.24 8.86.1 5 3.96z' color='#000' font-family='sans-serif' white-space='normal' overflow='visible' solid-color='#000000' fill='#888' fill-opacity='.494'/></svg%3E");
+      background-image: $svg-toggle-off-inactive;
     }
 
     &:after {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10.2' viewBox='0 0 12 10.2'><path style='line-height:125%;-inkscape-font-specification:Ubuntu;text-align:center' d='M11.08.77l-.088.077-6.233 5.46-3.655-3.135L0 4.422l4.76 5.007L12 1.81 11.08.77z' font-size='15' font-family='Ubuntu' letter-spacing='0' word-spacing='0' text-anchor='middle' fill='#f3f3e6' fill-opacity='.922'/></svg%3E");
+      background-image: $svg-toggle-on;
     }
   }
 

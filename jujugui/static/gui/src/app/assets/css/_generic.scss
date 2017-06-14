@@ -93,7 +93,7 @@ $pre-background: #fdf6f2;
     border-radius: $border-radius;
 
     &:after {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'><path opacity='.212' fill='none' d='M1 0h8v8H1z'/><path d='M8.386 1.114l-.058.05-4.156 3.64-2.436-2.09L1 3.55l3.173 3.338L9 1.806l-.614-.692z' style='line-height:125%;-inkscape-font-specification:Ubuntu;text-align:center' font-size='15' font-family='Ubuntu' letter-spacing='0' word-spacing='0' text-anchor='middle' fill='#fff'/></svg%3E");
+      background-image: $svg-tick;
       background-repeat: no-repeat;
       background-position: center 1px;
     }
