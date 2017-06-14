@@ -91,6 +91,7 @@ $asset-path: 'static/gui/build/app/assets/';
 
 // Imports need to be after vars.
 @import 'variables';
+@import 'sprites';
 @import 'animations';
 @import 'mixins';
 @import 'generic';

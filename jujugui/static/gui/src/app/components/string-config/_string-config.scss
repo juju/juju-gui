@@ -11,7 +11,10 @@
 
   &--changed {
     border-color: $uncommitted;
-    background: #fff url('static/gui/build/app/assets/svgs/uncommitted.svg') no-repeat 215px center;
+    background-color: $white;
+    background-image: $svg-uncommitted;
+    background-repeat: no-repeat;
+    background-position: 215px center;
   }
 
   &--disabled {

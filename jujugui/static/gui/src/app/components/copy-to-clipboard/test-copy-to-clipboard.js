@@ -52,7 +52,11 @@ describe('CopyToClipboard', function() {
                type="text"
                value=""/>
         <button className={className + '__btn'}
-                ref="btn"/>
+          ref="btn">
+          <juju.components.SvgIcon
+            name="get-link-url_16"
+            size="16"/>
+        </button>
       </div>
     );
     assert.deepEqual(output, expected, 'Did not render as expected');

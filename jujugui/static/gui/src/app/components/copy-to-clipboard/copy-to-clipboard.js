@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('copy-to-clipboard', function() {
 
   juju.components.CopyToClipboard = React.createClass({
+    className: 'CopyToClipboard',
 
     clipboard: null,
 
@@ -60,7 +61,11 @@ YUI.add('copy-to-clipboard', function() {
             type="text"
             value={this.props.value}/>
           <button className={className + '__btn'}
-            ref="btn" />
+            ref="btn">
+            <juju.components.SvgIcon
+              name="get-link-url_16"
+              size="16"/>
+          </button>
         </div>
       );
     }

@@ -42,7 +42,7 @@
 
   &__error {
     color: $error;
-    background-image: url('static/gui/build/app/assets/svgs/general-action-error.svg');
+    background-image: $svg-general-action-error;
     background-repeat: no-repeat;
     background-position: 0 4px;
     padding-left: 25px;

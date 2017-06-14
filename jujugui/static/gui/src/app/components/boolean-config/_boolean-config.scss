@@ -67,13 +67,13 @@
 
     &:before {
       z-index: index($z-indexed-elements, boolean-config--label);
-      background-image: url('static/gui/build/app/assets/images/toggle-off.png');
+      background-image: $svg-toggle-off;
     }
 
     &:after {
       z-index: index($z-indexed-elements, boolean-config--label);
       left: 29px;
-      background-image: url('static/gui/build/app/assets/images/toggle-on-inactive.png');
+      background-image: $svg-toggle-on-inactive;
     }
   }
 
@@ -84,11 +84,11 @@
     }
 
     &:before {
-      background-image: url('static/gui/build/app/assets/images/toggle-off-inactive.png');
+      background-image: $svg-toggle-off-inactive;
     }
 
     &:after {
-      background-image: url('static/gui/build/app/assets/images/toggle-on.png');
+      background-image: $svg-toggle-on;
     }
   }
 

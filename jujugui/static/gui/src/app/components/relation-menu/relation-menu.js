@@ -46,6 +46,28 @@ YUI.add('relation-menu', function() {
   }
 
   /**
+    Generate an icon to reflect the relation status.
+
+    @param {Object} relation The relation.
+    @returns {Object} The relation icon or null.
+  */
+  function _generateIcon(relation) {
+    let icon = '';
+    if (relation.hasRelationError()) {
+      icon = 'error-outline';
+    } else if (relation.pending) {
+      icon = 'uncommitted';
+    } else {
+      // Don't need to show an icon.
+      return null;
+    }
+    return (
+      <juju.components.SvgIcon
+        name={icon}
+        size="16"/>);
+  }
+
+  /**
     Generate a list of bindings.
 
     @method _generateRelations
@@ -65,6 +87,7 @@ YUI.add('relation-menu', function() {
         <li className={relationClasses}
           data-relationid={relation.id}
           key={relation.id}>
+          {_generateIcon(relation)}
           <span data-endpoint={relation.sourceId}
             className={sourceClasses}>
               {_getRealServiceName(relation.sourceId, relation)}
