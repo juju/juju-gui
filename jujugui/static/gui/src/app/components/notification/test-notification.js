@@ -134,6 +134,22 @@ describe('Notification', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can be dismissed', () => {
+    const dismiss = sinon.stub();
+    const stopPropagation = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Notification
+        content={<span></span>}
+        dismiss={dismiss}
+        />, true);
+    const output = renderer.getRenderOutput();
+    output.props.children.props.children[1].props.onClick({
+      stopPropagation: stopPropagation
+    });
+    assert.equal(dismiss.callCount, 1);
+    assert.equal(stopPropagation.callCount, 1);
+  });
+
   it('renders with a blocking div', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Notification
