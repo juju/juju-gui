@@ -1569,20 +1569,6 @@
         }
       }
     },
-    "eslint-plugin-react": {
-      "version": "7.1.0",
-      "from": "eslint-plugin-react@7.1.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.1.0.tgz",
-      "dev": true,
-      "dependencies": {
-        "doctrine": {
-          "version": "2.0.0",
-          "from": "doctrine@>=2.0.0 <3.0.0",
-          "resolved": "https://registry.npmjs.org/doctrine/-/doctrine-2.0.0.tgz",
-          "dev": true
-        }
-      }
-    },
     "eslint-scope": {
       "version": "3.7.1",
       "from": "eslint-scope@>=3.7.1 <4.0.0",
