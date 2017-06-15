@@ -209,6 +209,7 @@ images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
 
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
+	# Commented out as it's a hack for the new init to be built.
 	# $(NODE_MODULES)/.bin/browserify --no-builtins -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
 
 .PHONY: watch

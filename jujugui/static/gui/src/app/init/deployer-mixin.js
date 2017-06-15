@@ -1,6 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+/**
+  A mixin for the JujuGUI class.
+  Adds methods to handle deploying an application.
+*/
 const DeployerMixin = (superclass) => class extends superclass {
   /**
     Show the deploy/configuration panel for a charm.

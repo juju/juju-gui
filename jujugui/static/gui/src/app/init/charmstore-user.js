@@ -1,6 +1,11 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+/**
+  A mixin for the JujuGUI class.
+  Temporarily holds the Charmstore user storage methods. This logic should
+  either become part of the charmstore instance or part of the user instance.
+*/
 const CharmstoreUserMixin = (superclass) => class extends superclass {
 
   /**

@@ -55,7 +55,7 @@ class GUIApp {
       store.
       @type {Map}
     */
-    this.userPaths = new Map();
+    this._userPaths = new Map();
     /**
       Track anonymous mode. This value will be set to true when anonymous
       navigation is allowed, in essence when a GISF anonymous user is being
@@ -87,14 +87,14 @@ class GUIApp {
       Reference to the juju.Cookies instance.
       @type {juju.Cookies}
     */
-    this.cookieHandler = null;
+    this._cookieHandler = null;
     /**
       The keydown event listener from the hotkey activation.
       @type {Object}
     */
     this._hotkeyListener = hotkeys.activate(this);
     /**
-      The application database
+      The application database.
       @type {Object}
     */
     this.db = new yui.juju.models.Database();
@@ -102,7 +102,7 @@ class GUIApp {
       Timer for debouncing database change events.
       @type {Integer}
     */
-    this.dbChangedTimer = null;
+    this._dbChangedTimer = null;
     this._domEventHandlers['boundOnDatabaseChanged'] =
       this.onDatabaseChanged.bind(this);
     document.addEventListener(
@@ -127,18 +127,22 @@ class GUIApp {
       this.charmstore.setAuthCookie(value, callback);
     };
     /**
-      Application instance of the bakery
+      A bakery instance.
+      Used to perform requests on a macaroon authenticated endpoints.
       @type {Object}
     */
     this.bakery = yui.juju.bakeryutils.newBakery(
       config, this.user, stateGetter, cookieSetter, webHandler);
     /**
-      The application instance of the charmstore.
+      A charm store API client instance.
+      Used to retrieve information about charms and bundles via the charm store.
       @type {Object}
     */
-    this.charmstore = this._setupCharmstore(config, window.jujulib.charmstore);
+    this.charmstore = this._setupCharmstore(
+      config.charmstoreURL, window.jujulib.charmstore);
     /**
-      The application instance of the bundle service.
+      A bundle service API client instance.
+      Used to retrieve a list of actions to generate a bundle.
       @type {Object}
     */
     this.bundleService = this._setupBundleservice(
@@ -157,7 +161,7 @@ class GUIApp {
     const environments = yui.juju.environments;
     modelOptions.webHandler = new environments.web.WebHandler();
     /**
-      Application instance of the model API.
+      An API connection to the Juju model.
       @type {Object}
     */
     this.modelAPI = new environments.GoEnvironment(modelOptions);
@@ -221,7 +225,9 @@ class GUIApp {
       baseURL = `${window.location.origin}${baseURL}`;
     }
     /**
-      Application instance of State.
+      A state instance.
+      Used to manage the whole application state and reflect changes in
+      the URL path.
       @type {Object}
     */
     this.state = this._setupState(baseURL);
@@ -249,7 +255,9 @@ class GUIApp {
     }
 
     /**
-      Application instance of the ACL.
+      The ACL object including methods for checking whether the user has
+      permission to perform specific actions, like deploying a charm or
+      destroying a model.
       @type {Object}
     */
     this.acl = new yui.juju.generateAcl(this.controllerAPI, this.modelAPI);
@@ -304,20 +312,18 @@ class GUIApp {
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
-    @param {object} config The app instantiation configuration.
+    @param {object} charmstoreURL The URL of the charmstore api.
     @param {Object} Charmstore The Charmstore class.
     @return {Object} The existing or new instance of charmstore.
   */
-  _setupCharmstore(config, Charmstore) {
-    if (this.charmstore === undefined) {
-      return new Charmstore(config.charmstoreURL, this.bakery);
-      // Store away the charmstore auth info.
-      if (this.bakery.storage.get(config.charmstoreURL)) {
-        this.users['charmstore'] = {loading: true};
-        this.storeUser('charmstore', false, true);
-      }
+  _setupCharmstore(charmstoreURL, Charmstore, bakery) {
+    const charmstore = new Charmstore(charmstoreURL, bakery);
+    // Store away the charmstore auth info.
+    if (bakery.storage.get(charmstoreURL)) {
+      this.users['charmstore'] = {loading: true};
+      this.storeUser('charmstore', false, true);
     }
-    return this.charmstore;
+    return charmstore;
   }
 
   /**
@@ -379,8 +385,8 @@ class GUIApp {
   authorizeCookieUse(state, next) {
     var GTM_enabled = this.GTM_enabled;
     if (GTM_enabled) {
-      this.cookieHandler = this.cookieHandler || new yui.juju.Cookies();
-      this.cookieHandler.check();
+      this._cookieHandler = this._cookieHandler || new yui.juju.Cookies();
+      this._cookieHandler.check();
     }
     next();
   }
@@ -666,7 +672,7 @@ class GUIApp {
     @return {Promise} A promise with the charmstore entity if one exists.
   */
   _fetchEntityFromUserState(userState) {
-    const userPaths = this.userPaths;
+    const userPaths = this._userPaths;
     const entityCache = userPaths.get(userState);
     if (entityCache && entityCache.promise) {
       return entityCache.promise;
@@ -903,11 +909,11 @@ class GUIApp {
     Debounce database change events then call handler.
    */
   onDatabaseChanged() {
-    const changedTimer = this.dbChangedTimer;
+    const changedTimer = this._dbChangedTimer;
     if (changedTimer) {
       clearTimeout(changedTimer);
     }
-    this.dbChangedTimer = setTimeout(this._dbChangedHandler.bind(this), 100);
+    this._dbChangedTimer = setTimeout(this._dbChangedHandler.bind(this), 100);
     return;
   }
 
@@ -1556,8 +1562,8 @@ class GUIApp {
     Cleans up the instance of the application.
   */
   destructor() {
-    if (this.dbChangedTimer) {
-      clearTimeout(this.dbChangedTimer);
+    if (this._dbChangedTimer) {
+      clearTimeout(this._dbChangedTimer);
     }
     // Destroy YUI classes.
     this.modelAPI.destroy();
@@ -1581,10 +1587,10 @@ class GUIApp {
   }
 }
 
-class JujuGUI extends mixwith.mix(GUIApp)
-                             .with(
-                               csUser.CharmstoreUserMixin,
-                               ComponentRenderersMixin,
-                               DeployerMixin) {}
+class JujuGUI extends mixwith.mix(GUIApp).with(
+  csUser.CharmstoreUserMixin,
+  ComponentRenderersMixin,
+  DeployerMixin
+) {}
 
 module.exports = JujuGUI;

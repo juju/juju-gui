@@ -2,7 +2,10 @@
 'use strict';
 
 const yui = window.yui;
-
+/**
+    A mixin for the JujuGUI class.
+    Stores all of the component renderer and cleanup methods.
+*/
 const ComponentRenderersMixin = (superclass) => class extends superclass {
   _clearRoot() {}
   /**
