@@ -138,7 +138,7 @@ YUI.add('machine-view', function() {
       @method _openStore
     */
     _openStore: function() {
-      this.props.changeState({store: ''});
+      this.props.changeState({root: 'store'});
     },
 
     /**

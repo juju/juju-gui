@@ -283,7 +283,7 @@ describe('MachineView', function() {
     output.props.children.props.children[0].props.children[1].props.children[1]
       .props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {store: ''});
+    assert.deepEqual(changeState.args[0][0], {root: 'store'});
   });
 
   it('can display onboarding if there are no unplaced units', function() {
