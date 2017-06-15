@@ -139,7 +139,7 @@ class GUIApp {
       @type {Object}
     */
     this.charmstore = this._setupCharmstore(
-      config.charmstoreURL, window.jujulib.charmstore);
+      config.charmstoreURL, window.jujulib.charmstore, this.bakery);
     /**
       A bundle service API client instance.
       Used to retrieve a list of actions to generate a bundle.
