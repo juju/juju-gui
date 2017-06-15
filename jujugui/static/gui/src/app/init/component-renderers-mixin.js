@@ -300,7 +300,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         gisf={gisf}
         homePath={homePath}
         showProfile={showProfile}
-         />,
+      />,
       document.getElementById('header-logo'));
   }
 
@@ -348,7 +348,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         deployTarget={this.deployTarget.bind(this, charmstore)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
-            this.bundleImporter)}
+          this.bundleImporter)}
         getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
         getEntity={getEntity}
         getFile={charmstore.getFile.bind(charmstore)}
@@ -497,7 +497,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <window.juju.components.MachineView
         acl={this.acl}
         addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
-            this, this.db, this.modelAPI)}
+          this, this.db, this.modelAPI)}
         autoPlaceUnits={this._autoPlaceUnits.bind(this)}
         changeState={this.state.changeState.bind(this.state)}
         createMachine={this._createMachine.bind(this)}
@@ -634,10 +634,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           series={utils.getSeriesList()}
           upgradeServiceUsingLocalCharm={
             localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
-            this, model, db)}
+              this, model, db)}
           uploadLocalCharm={
             localCharmHelpers.uploadLocalCharm.bind(
-            this, model, db)}
+              this, model, db)}
         />
       );
     } else {
@@ -728,7 +728,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}
         createUser={
-            this.payment && this.payment.createUser.bind(this.payment)}
+          this.payment && this.payment.createUser.bind(this.payment)}
         credential={modelAPI.get('credential')}
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
@@ -745,7 +745,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
             utils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
-            this.terms.getAgreementsByTerms.bind(this.terms)}
+          this.terms.getAgreementsByTerms.bind(this.terms)}
         isLoggedIn={isLoggedIn}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -754,7 +754,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getCountries={
-            this.payment && this.payment.getCountries.bind(this.payment)
+          this.payment && this.payment.getCountries.bind(this.payment)
             || null}
         getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
         getEntity={charmstore.getEntity.bind(charmstore)}
@@ -856,7 +856,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         gisf={this.applicationConfig.gisf}
         loginToAPIs={this.loginToAPIs.bind(this)}
         loginToController={loginToController} />,
-        document.getElementById('login-container'));
+      document.getElementById('login-container'));
   }
 
   /**
@@ -931,7 +931,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
       USSOLoginLink={USSOLoginLink}
-     />, linkContainer);
+    />, linkContainer);
   }
 
   /**
@@ -1055,7 +1055,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderZoom() {
     ReactDOM.render(
       <window.juju.components.Zoom
-      topo={this.topology.topo} />,
+        topo={this.topology.topo} />,
       document.getElementById('zoom-container'));
   }
   /**

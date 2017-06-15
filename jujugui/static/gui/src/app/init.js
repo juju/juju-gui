@@ -269,20 +269,20 @@ class GUIApp {
     document.addEventListener('delta', this._domEventHandlers['onDeltaBound']);
 
     this.db.machines.after(
-        ['add', 'remove', '*:change'],
-        this.onDatabaseChanged, this);
+      ['add', 'remove', '*:change'],
+      this.onDatabaseChanged, this);
     this.db.services.after(
-        ['add', 'remove', '*:change'],
-        this.onDatabaseChanged, this);
+      ['add', 'remove', '*:change'],
+      this.onDatabaseChanged, this);
     this.db.relations.after(
-        ['add', 'remove', '*:change'],
-        this.onDatabaseChanged, this);
+      ['add', 'remove', '*:change'],
+      this.onDatabaseChanged, this);
     this.db.environment.after(
-        ['add', 'remove', '*:change'],
-        this.onDatabaseChanged, this);
+      ['add', 'remove', '*:change'],
+      this.onDatabaseChanged, this);
     this.db.units.after(
-        ['add', 'remove', '*:change'],
-        this.onDatabaseChanged, this);
+      ['add', 'remove', '*:change'],
+      this.onDatabaseChanged, this);
     this.db.notifications.after('add', this._renderNotifications, this);
 
     // When someone wants a charm to be deployed they fire an event and we
@@ -373,7 +373,7 @@ class GUIApp {
     if (
       !this.controllerAPI.get('connecting') &&
       !this.controllerAPI.get('connected')
-      ) {
+    ) {
       this.controllerAPI.connect();
     }
     next();
@@ -860,16 +860,16 @@ class GUIApp {
     if ((
       !creds.areAvailable && gisf && rootState === 'new'
     ) || (
-      this.anonymousMode && rootState !== 'login'
-    )) {
+        this.anonymousMode && rootState !== 'login'
+      )) {
       this.anonymousMode = true;
       console.log('now in anonymous mode');
       this.maskVisibility(false);
       return;
     }
     if (!creds.areAvailable ||
-      // When using direct deploy when a user is not logged in it will
-      // navigate to show the login if we do not have this state check.
+    // When using direct deploy when a user is not logged in it will
+    // navigate to show the login if we do not have this state check.
         (currentState.special && currentState.special.dd)) {
       this._displayLogin();
       return;

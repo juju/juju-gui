@@ -98,12 +98,12 @@ const DeployerMixin = (superclass) => class extends superclass {
       // removes the ghost unit from the database. The real unit should then
       // be created reacting to the mega-watcher changes.
       this.modelAPI.add_unit(
-          ghostServiceId, // The service to which the unit is added.
-          1, // Add a single unit.
-          null, // For now the unit is unplaced.
-          this._addUnitCallback.bind(this, ghostUnit), // The callback.
-          // Options used by ECS, ignored by environment.
-          {modelId: unitId}
+        ghostServiceId, // The service to which the unit is added.
+        1, // Add a single unit.
+        null, // For now the unit is unplaced.
+        this._addUnitCallback.bind(this, ghostUnit), // The callback.
+        // Options used by ECS, ignored by environment.
+        {modelId: unitId}
       );
     }
     this.state.changeState({
