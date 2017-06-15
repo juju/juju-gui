@@ -42,17 +42,17 @@ describe('InspectorChangeVersion', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
@@ -78,17 +78,17 @@ describe('InspectorChangeVersion', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     getAvailableVersions.callsArgWith(1, null, ['cs:django']);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
@@ -119,17 +119,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     var list = output.props.children[1];
@@ -171,17 +171,17 @@ describe('InspectorChangeVersion', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub().callsArg(1, 'bad wolf', []);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
@@ -211,17 +211,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.children[1].props.onClick();
@@ -240,17 +240,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.itemAction();
@@ -275,17 +275,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          getMacaroon={getMacaroon}
-          addCharm={addCharm}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
@@ -314,17 +314,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          changeState={changeState}
-          charmId="cs:django-5"
-          getMacaroon={getMacaroon}
-          addCharm={addCharm}
-          service={service}
-          addNotification={addNotification}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        changeState={changeState}
+        charmId="cs:django-5"
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
+        service={service}
+        addNotification={addNotification}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     const output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
@@ -347,17 +347,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          addNotification={addNotification}
-          getMacaroon={getMacaroon}
-          addCharm={addCharm}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        addNotification={addNotification}
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
@@ -382,17 +382,17 @@ describe('InspectorChangeVersion', function() {
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          addNotification={addNotification}
-          getMacaroon={getMacaroon}
-          addCharm={addCharm}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        addNotification={addNotification}
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
@@ -413,17 +413,17 @@ describe('InspectorChangeVersion', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub().returns({abort: abort});
     var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorChangeVersion
-          acl={acl}
-          addCharm={sinon.stub()}
-          addNotification={sinon.stub()}
-          changeState={changeState}
-          charmId="cs:django-5"
-          service={service}
-          setCharm={setCharm}
-          getCharm={getCharm}
-          getAvailableVersions={getAvailableVersions}
-          getMacaroon={sinon.stub()} />, true);
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={sinon.stub()}
+        changeState={changeState}
+        charmId="cs:django-5"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     shallowRenderer.unmount();
     assert.equal(abort.callCount, 1);

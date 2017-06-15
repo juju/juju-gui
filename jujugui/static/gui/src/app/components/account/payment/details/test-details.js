@@ -98,19 +98,19 @@ describe('AccountPaymentDetails', () => {
               disabled={true}
               label="Name"
               value="Geoffrey Spinach" />
-           <juju.components.GenericInput
-             disabled={true}
-             label="Email address"
-             value="spinach@example.com" />
-           <juju.components.GenericInput
-             disabled={true}
-             label="VAT number (optional)"
-             value="1234" />
-           <juju.components.GenericInput
-             disabled={true}
-             label="Business name"
-             value="Spinachy business" />
-           </div>
+            <juju.components.GenericInput
+              disabled={true}
+              label="Email address"
+              value="spinach@example.com" />
+            <juju.components.GenericInput
+              disabled={true}
+              label="VAT number (optional)"
+              value="1234" />
+            <juju.components.GenericInput
+              disabled={true}
+              label="Business name"
+              value="Spinachy business" />
+          </div>
           <h4>
             Addresses
             <juju.components.GenericButton

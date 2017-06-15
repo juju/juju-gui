@@ -140,7 +140,7 @@ YUI.add('juju-charm-models', function(Y) {
     sync: function(action, options, callback) {
       if (action !== 'read') {
         throw (
-            'Only use the "read" action; "' + action + '" not supported.');
+          'Only use the "read" action; "' + action + '" not supported.');
       }
       if (utils.isValue(options.get_charm)) {
         // This is an env.
@@ -211,8 +211,8 @@ YUI.add('juju-charm-models', function(Y) {
       // Otherwise sort by package name, then by owner, then by revision.
       } else {
         return (
-                (this.get('package_name').localeCompare(
-                other.get('package_name'))) ||
+          (this.get('package_name').localeCompare(
+            other.get('package_name'))) ||
                 (owner ? owner.localeCompare(otherOwner) : 0) ||
                 (this.get('revision') - other.get('revision')));
       }
@@ -467,8 +467,8 @@ YUI.add('juju-charm-models', function(Y) {
                   var result = (
                       // Prefer case-insensitive sort, but honor case when
                       // string match in a case-insensitive comparison.
-                      segmentA.localeCompare(
-                          segmentB, undefined, {sensitivity: 'accent'}) ||
+                    segmentA.localeCompare(
+                      segmentB, undefined, {sensitivity: 'accent'}) ||
                       segmentA.localeCompare(segmentB));
                   if (result) {
                     return result;

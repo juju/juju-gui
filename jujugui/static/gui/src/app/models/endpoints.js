@@ -101,7 +101,7 @@ YUI.add('juju-endpoints', function(Y) {
     // Every non subordinate service implicitly provides this.
     if (!appIsSubordinate) {
       provides.push(convert(
-          appId, {'interface': 'juju-info', 'name': 'juju-info'}));
+        appId, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
     // Now check every other application to see if it can be a valid target.
     db.services.each(target => {

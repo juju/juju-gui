@@ -86,7 +86,7 @@ YUI.add('entity-content-readme', function() {
       } else {
         var id = entityModel.get('id');
         this.readmeXhr = this.props.getFile(
-            id, readmeFile, this._getReadmeCallback);
+          id, readmeFile, this._getReadmeCallback);
       }
     },
 

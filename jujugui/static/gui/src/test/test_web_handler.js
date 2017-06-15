@@ -42,7 +42,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         setRequestHeader: sinon.stub(context, 'setRequestHeader'),
         send: sinon.stub(context, 'send'),
         removeEventListener: sinon.stub(
-            context, 'removeEventListener')
+          context, 'removeEventListener')
       };
     });
 
@@ -98,8 +98,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPostRequest(
-            path, headers, data, 'user', 'passwd', false,
-            function() {return 'progress';}, function() {return 'completed';});
+          path, headers, data, 'user', 'passwd', false,
+          function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -128,7 +128,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -136,8 +136,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false,
-            function() {}, completedCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false,
+          function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });
 
@@ -151,8 +151,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPutRequest(
-            path, headers, data, 'user', 'passwd', false,
-            function() {return 'progress';}, function() {return 'completed';});
+          path, headers, data, 'user', 'passwd', false,
+          function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -181,7 +181,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -189,8 +189,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false,
-            function() {}, completedCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false,
+          function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });
 
@@ -202,8 +202,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var path = '/juju-core/charms?url=local:trusty/django-42';
         // Make a GET request.
         webHandler.sendGetRequest(
-            path, null, 'user', 'passwd', false,
-            function() {return 'progress';}, function() {return 'completed';});
+          path, null, 'user', 'passwd', false,
+          function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -231,7 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
-            '/path/', {}, 'user', 'passwd', false, progressCallback);
+          '/path/', {}, 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -239,8 +239,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
-            '/path/', {}, 'user', 'passwd', false,
-            function() {}, completedCallback);
+          '/path/', {}, 'user', 'passwd', false,
+          function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });
 
@@ -254,8 +254,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var data = 'a zip file object';
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-            path, headers, data, 'user', 'passwd', false,
-            function() {return 'progress';}, function() {return 'completed';});
+          path, headers, data, 'user', 'passwd', false,
+          function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -284,7 +284,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -292,8 +292,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-            '/path/', {}, 'data', 'user', 'passwd', false,
-            function() {}, completedCallback);
+          '/path/', {}, 'data', 'user', 'passwd', false,
+          function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });
     });

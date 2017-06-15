@@ -80,18 +80,18 @@ YUI.add('notification', function() {
         <button
           className="p-notification__action"
           onClick={this._dismiss}>
-            <window.juju.components.SvgIcon
+          <window.juju.components.SvgIcon
             name="close_16" size="16" />
         </button>);
     },
 
     render: function() {
       const content = (<div className={this._generateClasses()}>
-          <p className="p-notification__response">
-            {this.props.content}
-            {this._generateDismiss()}
-          </p>
-        </div>);
+        <p className="p-notification__response">
+          {this.props.content}
+          {this._generateDismiss()}
+        </p>
+      </div>);
       if (this.props.isBlocking && this.props.dismiss) {
         return (
           <div className="p-notification__blocker" onClick={this.props.dismiss}>

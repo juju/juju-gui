@@ -258,8 +258,8 @@ describe('EnvList', function() {
         switchModel={switchModel}
         user={{username: 'who@local', displayName: 'who'}} />);
     testUtils.Simulate.click(
-        ReactDOM.findDOMNode(component)
-                .querySelector('.button--neutral'));
+      ReactDOM.findDOMNode(component)
+        .querySelector('.button--neutral'));
     assert.equal(switchModel.callCount, 1);
   });
 
@@ -277,8 +277,8 @@ describe('EnvList', function() {
         switchModel={switchModel}
         user={{username: 'who@local', displayName: 'who'}} />);
     testUtils.Simulate.click(
-        ReactDOM.findDOMNode(component)
-                .querySelector('.button--neutral'));
+      ReactDOM.findDOMNode(component)
+        .querySelector('.button--neutral'));
     assert.equal(switchModel.callCount, 0);
   });
 });

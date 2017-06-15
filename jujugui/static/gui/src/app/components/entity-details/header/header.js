@@ -252,14 +252,14 @@ YUI.add('entity-header', function() {
       var unitCount = entity.unitCount;
       var machineCount = entity.machineCount;
       return (<ul className="bullets inline entity-header__properties">
-          <li className="entity-header__counts">
-            {serviceCount} {this.props.pluralize('application', serviceCount)},
+        <li className="entity-header__counts">
+          {serviceCount} {this.props.pluralize('application', serviceCount)},
             &nbsp;
-            {machineCount} {this.props.pluralize('machine', machineCount)},
+          {machineCount} {this.props.pluralize('machine', machineCount)},
             &nbsp;
-            {unitCount} {this.props.pluralize('unit', unitCount)}
-          </li>
-        </ul>);
+          {unitCount} {this.props.pluralize('unit', unitCount)}
+        </li>
+      </ul>);
     },
 
     /**
@@ -278,7 +278,7 @@ YUI.add('entity-header', function() {
           <a href={
             'https://jujucharms.com/docs/stable/' +
             'authors-subordinate-applications'}
-            target="_blank">
+          target="_blank">
             <juju.components.SvgIcon
               name="help_16"
               size="16"/>
@@ -310,9 +310,9 @@ YUI.add('entity-header', function() {
       const url = props.urllib.fromLegacyString(lastRevision);
       return (
         <li key={lastRevision} className="entity-header__series">
-            <span className="link" onClick={this._onLastRevisionClick}>
+          <span className="link" onClick={this._onLastRevisionClick}>
               Latest revision ({url.revision})
-            </span>
+          </span>
         </li>
       );
     },
@@ -420,7 +420,7 @@ YUI.add('entity-header', function() {
 
       if (entity.type !== 'bundle') {
         icon = (<img src={entity.iconPath} alt={entity.displayName}
-             width="96" className="entity-header__icon"/>);
+          width="96" className="entity-header__icon"/>);
       }
       return (
         <div className="row-hero"
@@ -464,8 +464,8 @@ YUI.add('entity-header', function() {
                   </li>
                   <li>
                     <a id="item-googleplus"
-                       target="_blank"
-                       href={googlePlusUrl}>
+                      target="_blank"
+                      href={googlePlusUrl}>
                       <juju.components.SvgIcon
                         name="icon-social-google"
                         size="36"/>

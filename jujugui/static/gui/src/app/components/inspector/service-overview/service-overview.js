@@ -130,15 +130,15 @@ YUI.add('service-overview', function() {
       const items = [];
       actions.forEach(function(action) {
         items.push(
-            <juju.components.OverviewAction
-              key={action.title}
-              icon={action.icon}
-              action={action.action}
-              title={action.title}
-              value={action.value}
-              valueType={action.valueType}
-              linkAction={action.linkAction}
-              linkTitle={action.linkTitle} />);
+          <juju.components.OverviewAction
+            key={action.title}
+            icon={action.icon}
+            action={action.action}
+            title={action.title}
+            value={action.value}
+            valueType={action.valueType}
+            linkAction={action.linkAction}
+            linkTitle={action.linkTitle} />);
       });
       return items;
     },

@@ -80,10 +80,10 @@ YUI.add('account-payment-details', function() {
               disabled={true}
               label="Name"
               value={user.name} />
-           <juju.components.GenericInput
-             disabled={true}
-             label="Email address"
-             value={user.email} />
+            <juju.components.GenericInput
+              disabled={true}
+              label="Email address"
+              value={user.email} />
             {business ? (
               <juju.components.GenericInput
                 disabled={true}
@@ -147,7 +147,7 @@ YUI.add('account-payment-details', function() {
               billing ? this.state.billingAddressEdit : this.state.addressEdit}
             updateAddress={
               billing ? this.props.updateBillingAddress :
-              this.props.updateAddress}
+                this.props.updateAddress}
             updated={this.props.updateUser}
             username={this.props.username}
             validateForm={this.props.validateForm} />);

@@ -31,7 +31,7 @@ describe('Spinner', function() {
 
   it('renders the spinner', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.Spinner/>);
+      <juju.components.Spinner/>);
     expect(output).toEqualJSX(
       <div className="spinner-container">
         <div className="spinner-loading">

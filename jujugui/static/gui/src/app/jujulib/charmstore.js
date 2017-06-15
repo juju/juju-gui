@@ -126,7 +126,7 @@ var module = module;
         // Create shallow copies of objects for the copy.
         var copy =
             (typeof obj[key] === 'object' && obj[key] !== null) ?
-                JSON.parse(JSON.stringify(obj[key])) : obj[key];
+              JSON.parse(JSON.stringify(obj[key])) : obj[key];
         host[newKey] = copy;
         if (typeof obj[key] === 'object' && obj[key] !== null) {
           // Decrement exclude by one if it exists.
@@ -503,7 +503,7 @@ var module = module;
     */
     getBundleYAML: function(id, callback) {
       this.getEntity(
-          id, this._getBundleYAMLResponse.bind(this, callback));
+        id, this._getBundleYAMLResponse.bind(this, callback));
     },
 
     /**

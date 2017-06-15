@@ -171,7 +171,7 @@ YUI.add('machine-view', function() {
                 Add applications to get started
               </span>
             </div>
-        );
+          );
         } else {
           icon = 'task-done_16';
           content = 'You have placed all of your units';

@@ -63,7 +63,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
-        expanded={false}>
+      expanded={false}>
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
@@ -143,7 +143,7 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
-        expanded={false}>
+      expanded={false}>
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
@@ -224,8 +224,8 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
-        key="django-cluster"
-        expanded={false}>
+      key="django-cluster"
+      expanded={false}>
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
@@ -321,8 +321,8 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
-        key="django-cluster"
-        expanded={false}>
+      key="django-cluster"
+      expanded={false}>
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
@@ -467,8 +467,8 @@ describe('UserProfileEntity', () => {
     const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
-        key="cs:django"
-        expanded={false}>
+      key="cs:django"
+      expanded={false}>
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">

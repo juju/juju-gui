@@ -38,24 +38,24 @@ describe('EntityContentConfigOption', function() {
       <juju.components.EntityContentConfigOption
         option={option} />);
     assert.deepEqual(output,
-        <div className="entity-content__config-option">
-          <dt id="charm-config-password"
-              className="entity-content__config-name">
+      <div className="entity-content__config-option">
+        <dt id="charm-config-password"
+          className="entity-content__config-name">
             password
-          </dt>
-          <dd className="entity-content__config-description">
-            <p>
-              <span className="entity-content__config-type">
+        </dt>
+        <dd className="entity-content__config-description">
+          <p>
+            <span className="entity-content__config-type">
                 ({'string'})
-              </span>
-              {' '}
+            </span>
+            {' '}
               Required password
-            </p>
-          </dd>
-          <dd className="entity-content__config-default">
+          </p>
+        </dd>
+        <dd className="entity-content__config-default">
             abc123
-          </dd>
-        </div>);
+        </dd>
+      </div>);
   });
 
   it('can render without a default value', function() {
@@ -68,21 +68,21 @@ describe('EntityContentConfigOption', function() {
       <juju.components.EntityContentConfigOption
         option={option} />);
     assert.deepEqual(output,
-        <div className="entity-content__config-option">
-          <dt id="charm-config-password"
-              className="entity-content__config-name">
+      <div className="entity-content__config-option">
+        <dt id="charm-config-password"
+          className="entity-content__config-name">
             password
-          </dt>
-          <dd className="entity-content__config-description">
-            <p>
-              <span className="entity-content__config-type">
+        </dt>
+        <dd className="entity-content__config-description">
+          <p>
+            <span className="entity-content__config-type">
                 ({'string'})
-              </span>
-              {' '}
+            </span>
+            {' '}
               Required password
-            </p>
-          </dd>
-          {undefined}
-        </div>);
+          </p>
+        </dd>
+        {undefined}
+      </div>);
   });
 });

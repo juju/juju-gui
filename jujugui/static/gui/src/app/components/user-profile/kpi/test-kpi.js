@@ -55,17 +55,17 @@ describe('UserProfileEntityKPI', () => {
   // Makyo 2017-04-03
   it('can render a default metric', () => {
     let renderer = jsTestUtils.shallowRender(
-        <juju.components.UserProfileEntityKPI
-          d3={d3}
-          metricTypes={metricTypes}
-          metrics={metrics} />, true);
+      <juju.components.UserProfileEntityKPI
+        d3={d3}
+        metricTypes={metricTypes}
+        metrics={metrics} />, true);
     let output = renderer.getRenderOutput();
     let expected = (
-        <div className="twelve-col last-col">
-          <juju.components.UserProfileEntityMetric
-            d3={d3}
-            metric={[]} />
-        </div>);
+      <div className="twelve-col last-col">
+        <juju.components.UserProfileEntityMetric
+          d3={d3}
+          metric={[]} />
+      </div>);
     assert.deepEqual(output, expected);
   });
 });

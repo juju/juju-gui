@@ -23,10 +23,10 @@ describe('topology utils', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use(['array-extras', 'juju-topology-utils'],
-        function(Y) {
-          utils = Y.namespace('juju.topology.utils');
-          done();
-        });
+      function(Y) {
+        utils = Y.namespace('juju.topology.utils');
+        done();
+      });
   });
 
   it('should translate service boxes to vertices', function() {
@@ -38,7 +38,7 @@ describe('topology utils', function() {
     };
     var mungedBoxes = utils.serviceBoxesToVertices(serviceBoxes);
     assert.deepEqual(mungedBoxes,
-        [[100, 100], [200, 100], [100, 200], [200, 200]]);
+      [[100, 100], [200, 100], [100, 200], [200, 200]]);
   });
 
   it('translates service boxes to centers coordinates', function() {
@@ -112,8 +112,8 @@ describe('topology utils', function() {
         point_two = [13, 23];
 
     assert.deepEqual(
-        [6.5, 11.5],
-        utils.findCenterPoint(point_one, point_two)
+      [6.5, 11.5],
+      utils.findCenterPoint(point_one, point_two)
     );
   });
 
@@ -122,8 +122,8 @@ describe('topology utils', function() {
         point_two = [13.3, 23.54];
 
     assert.deepEqual(
-        [6.65, 11.77],
-        utils.findCenterPoint(point_one, point_two)
+      [6.65, 11.77],
+      utils.findCenterPoint(point_one, point_two)
     );
   });
 
@@ -135,8 +135,8 @@ describe('topology utils', function() {
     // X = 15 + 7.5 + 13
     // Y = 20 * 1.5 + 23
     assert.deepEqual(
-        [35.5, 53],
-        utils.locateRelativePointOnCanvas(endpoint, offset, scale)
+      [35.5, 53],
+      utils.locateRelativePointOnCanvas(endpoint, offset, scale)
     );
   });
 
@@ -152,11 +152,11 @@ describe('topology utils', function() {
       var css = utils.getVisibilityClasses(trueFlag);
       var label = trueFlag + 'ed: ';
       assert.equal(css[trueFlag], true,
-                   label + trueFlag + ' should be true');
+        label + trueFlag + ' should be true');
       flags.forEach(function(flag) {
         if (trueFlag !== flag) {
           assert.equal(css[flag], false,
-                       label + flag + ' should be false');
+            label + flag + ' should be false');
         }
       });
     }

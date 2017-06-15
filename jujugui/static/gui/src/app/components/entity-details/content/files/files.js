@@ -151,7 +151,7 @@ YUI.add('entity-files', function() {
           // the corresponding comment below.
           Object.keys(children).forEach(child => {
             childItems.push(buildList.call(this, `${path}/${child}`,
-                                           children[child]));
+              children[child]));
           });
           return (
             <li key={path}

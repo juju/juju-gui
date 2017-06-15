@@ -27,13 +27,13 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       // You must pass a context and it must be a valid object.
       if (arguments.length < 1) {
         throw (
-            'makeContainer requires a context in order to track containers' +
+          'makeContainer requires a context in order to track containers' +
             'to cleanup.');
       }
 
       if (typeof ctx !== 'object') {
         throw (
-            'makeContainer requires a context in order to track containers' +
+          'makeContainer requires a context in order to track containers' +
             'to cleanup.');
       }
 

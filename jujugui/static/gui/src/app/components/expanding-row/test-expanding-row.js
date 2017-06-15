@@ -39,7 +39,7 @@ describe('ExpandingRow', () => {
     var expected = (
       <li className={
         'expanding-row twelve-col extraClass expanding-row--clickable'}
-        onClick={instance._toggle}>
+      onClick={instance._toggle}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
@@ -68,9 +68,9 @@ describe('ExpandingRow', () => {
     output = renderer.getRenderOutput();
     const expected = (
       <li className={
-          'expanding-row twelve-col expanding-row--expanded ' +
+        'expanding-row twelve-col expanding-row--expanded ' +
           'expanding-row--clickable'}
-        onClick={instance._toggle}>
+      onClick={instance._toggle}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
@@ -103,7 +103,7 @@ describe('ExpandingRow', () => {
       <li className={
         'expanding-row twelve-col expanding-row--expanded ' +
         'expanding-row--clickable'}
-        onClick={instance._toggle}>
+      onClick={instance._toggle}>
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);
@@ -133,7 +133,7 @@ describe('ExpandingRow', () => {
       <li className={
         'expanding-row twelve-col expanding-row--expanded ' +
         'expanding-row--clickable'}
-        onClick={instance._toggle}>
+      onClick={instance._toggle}>
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);

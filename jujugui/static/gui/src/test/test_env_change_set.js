@@ -94,7 +94,7 @@ describe('Environment Change Set', function() {
         ecs._updateChangesetFromResults({key: 'bar-1'}, null);
 
         assert.isTrue(
-            ecs.changeSet['foo-1'].command.onParentResults.calledOnce);
+          ecs.changeSet['foo-1'].command.onParentResults.calledOnce);
       });
     });
 
@@ -149,14 +149,14 @@ describe('Environment Change Set', function() {
             cs = ecs.changeSet;
         ecs._updateChangesetFromResults({key: key}, null);
         assert.equal(
-            cs['addUnits-1'].command.onParentResults.calledOnce,
-            true,
-            'subrecord not updated'
+          cs['addUnits-1'].command.onParentResults.calledOnce,
+          true,
+          'subrecord not updated'
         );
         assert.equal(
-            cs['addUnits-2'].command.onParentResults.calledOnce,
-            false,
-            'non-child record updated'
+          cs['addUnits-2'].command.onParentResults.calledOnce,
+          false,
+          'non-child record updated'
         );
       });
     });
@@ -177,7 +177,7 @@ describe('Environment Change Set', function() {
       it('creates a new record of the specified type', function() {
         var command = { foo: 'foo' };
         var wrapCallback = sinon.stub(
-            ecs, '_wrapCallback').returns(command);
+          ecs, '_wrapCallback').returns(command);
         this._cleanups.push(wrapCallback.restore);
         var key = ecs._createNewRecord('service', command);
         assert.equal(wrapCallback.calledOnce, true);
@@ -204,7 +204,7 @@ describe('Environment Change Set', function() {
       it('adds supplied parent records to the new record', function() {
         var command = { foo: 'foo' };
         var wrapCallback = sinon.stub(
-            ecs, '_wrapCallback').returns(command);
+          ecs, '_wrapCallback').returns(command);
         this._cleanups.push(wrapCallback.restore);
         var parent = ['service-123'];
         var key = ecs._createNewRecord('service', command, parent);
@@ -423,7 +423,7 @@ describe('Environment Change Set', function() {
         // XXX assert.deepEqual does not seem to play well with arrays
         // of objects.  Slack card on board - Makyo 2014-04-23
         assert.equal(filterStub.calledOnce, true,
-                     'no call to find unplaced units');
+          'no call to find unplaced units');
         assert.equal(JSON.stringify(result), JSON.stringify([
           [
             {
@@ -496,7 +496,7 @@ describe('Environment Change Set', function() {
         assert.equal(execute.callCount, 1);
         assert.equal(ecs.currentIndex, 1, 'Current index not incremented');
         assert.equal(ecs.changeSet['service-123'].index, 1,
-            'uncommitted record\'s index changed');
+          'uncommitted record\'s index changed');
       });
 
       it('passes the commit index through an event', function() {
@@ -914,9 +914,9 @@ describe('Environment Change Set', function() {
         assert.equal(stubRemove.calledOnce, true, 'remove not called');
         assert.equal(stubDestroy.calledOnce, true, 'destroy not called');
         assert.equal(
-            stubRemoveUnits.calledOnce, true, 'remove units not called');
+          stubRemoveUnits.calledOnce, true, 'remove units not called');
         assert.equal(db.relations.remove.calledOnce, true,
-            'remove relations not called');
+          'remove relations not called');
         assert.deepEqual(ecs.changeSet, {});
       });
 
@@ -1044,7 +1044,7 @@ describe('Environment Change Set', function() {
 
       it('removes records for queued uncommitted machines', function() {
         var stubDestroy = sinon.stub(
-            ecs, '_destroyQueuedMachine');
+          ecs, '_destroyQueuedMachine');
         this._cleanups.push(stubDestroy.restore);
         ecs.get('db').machines = {
           detachAll: function() {},
@@ -1354,9 +1354,9 @@ describe('Environment Change Set', function() {
         // The first add_unit argument has been updated with the new service
         // name.
         assert.strictEqual(command.args[0], 'my-service',
-                           'service name not set properly');
+          'service name not set properly');
         assert.equal(command.options.modelId, 'my-service/3',
-                     'options model id not updated');
+          'options model id not updated');
       });
 
     });
@@ -1473,11 +1473,11 @@ describe('Environment Change Set', function() {
         assert.equal(record.command.method, '_add_relation');
         assert.equal(record.command.args.length, 3);
         assert.deepEqual(
-            record.command.args[0],
-            ['serviceId1$', ['db', 'client']]);
+          record.command.args[0],
+          ['serviceId1$', ['db', 'client']]);
         assert.deepEqual(
-            record.command.args[1],
-            ['serviceId2$', ['db', 'server']]);
+          record.command.args[1],
+          ['serviceId2$', ['db', 'server']]);
         assert.equal(typeof record.command.args[2], 'function');
         assert.equal(typeof record.command.onParentResults, 'function');
         assert.equal(record.executed, false);
@@ -1545,8 +1545,8 @@ describe('Environment Change Set', function() {
         assert.equal(typeof ecsRecord.command.args[2], 'function');
         assert.equal(ecsRecord.command.method, '_remove_relation');
         assert.deepEqual(
-            db.relations.getRelationFromEndpoints.lastCall.args[0],
-            ['args1', 'args2']);
+          db.relations.getRelationFromEndpoints.lastCall.args[0],
+          ['args1', 'args2']);
         assert.equal(setStub.calledOnce, true);
         assert.deepEqual(setStub.lastCall.args, ['deleted', true]);
       });
@@ -1727,7 +1727,7 @@ describe('Environment Change Set', function() {
         // Remove the options param off of the end and compare to that. as it
         // should be removed before env.deploy is called.
         assert.deepEqual(
-            setConfigArgs, Array.prototype.slice.call(args, 0, -1));
+          setConfigArgs, Array.prototype.slice.call(args, 0, -1));
         // make sure that we don't add it to the changeSet.
         assert.equal(lazySetConfig.callCount, 0);
       });
@@ -1738,11 +1738,11 @@ describe('Environment Change Set', function() {
         var callback = sinon.stub();
         ecs.changeSet.foo = {};
         assert.throws(
-            // this is using bind instead of apply because of how the
-            // assert.throws assertion operates.
-            envObj.set_config.bind(
-                envObj, 'foo', {}, callback, { immediate: true}),
-            'You cannot immediately set config on a queued application');
+          // this is using bind instead of apply because of how the
+          // assert.throws assertion operates.
+          envObj.set_config.bind(
+            envObj, 'foo', {}, callback, { immediate: true}),
+          'You cannot immediately set config on a queued application');
         assert.equal(envObj._set_config.callCount, 0);
         // make sure that we don't add it to the changeSet.
         assert.equal(lazySetConfig.callCount, 0);
@@ -1915,7 +1915,7 @@ describe('Environment Change Set', function() {
         // Mock the validateUnitPlacement function: without errors the function
         // returns null.
         mockValidateUnitPlacement = sinon.stub(
-            ecs, 'validateUnitPlacement').returns(null);
+          ecs, 'validateUnitPlacement').returns(null);
         this._cleanups.push(mockValidateUnitPlacement.restore);
         // Set up a base changeset: tests can override this value if required.
         ecs.changeSet = {
@@ -2019,8 +2019,8 @@ describe('Environment Change Set', function() {
         ecs.changeSet = {};
         var err = ecs.placeUnit(unit, machineId);
         assert.strictEqual(
-            err,
-            'attempted to place a unit which has not been added: django/42');
+          err,
+          'attempted to place a unit which has not been added: django/42');
       });
 
     });
@@ -2069,7 +2069,7 @@ describe('Environment Change Set', function() {
       machines.getById('0').series = 'trusty';
       var err = ecs.validateUnitPlacement(unit, '0', db);
       assert.strictEqual(
-          err, 'unable to place a utopic unit on the trusty machine 0');
+        err, 'unable to place a utopic unit on the trusty machine 0');
     });
 
     it('checks the series of a machine with existing units', function() {
@@ -2082,8 +2082,8 @@ describe('Environment Change Set', function() {
       });
       var err = ecs.validateUnitPlacement(unit, '0', db);
       assert.strictEqual(
-          err,
-          'machine 0 already includes units with a different series: trusty');
+        err,
+        'machine 0 already includes units with a different series: trusty');
     });
 
   });

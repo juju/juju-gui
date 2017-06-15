@@ -48,7 +48,7 @@ describe('InspectorRelateTo', function() {
             onClick={output.props.children.props.children[0].props.onClick}
             tabIndex="0"
             role="button">
-              <img src="icon" className="inspector-view__item-icon" />
+            <img src="icon" className="inspector-view__item-icon" />
               name
           </li>]}
         </ul>

@@ -40,13 +40,13 @@ describe('App Renderer Extension', function() {
 
   beforeEach(function() {
     Renderer = Y.Base.create(
-        'apprenderer', Y.Base, [juju.AppRenderer], {}, {
-          ATTRS: {
-            gisf: {
-              value: false
-            }
+      'apprenderer', Y.Base, [juju.AppRenderer], {}, {
+        ATTRS: {
+          gisf: {
+            value: false
           }
-        });
+        }
+      });
     renderer = new Renderer();
     // React method stubs.
     renderStub = sinon.stub(ReactDOM, 'render');
@@ -115,7 +115,7 @@ describe('App Renderer Extension', function() {
       renderer._renderBreadcrumb({showEnvSwitcher: showEnvSwitcher});
       var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], showEnvSwitcher,
-                   'The showEnvSwitcher prop was not set properly.');
+        'The showEnvSwitcher prop was not set properly.');
     });
 
     it('hides the switcher when controllerAPI is not set', function() {
@@ -123,7 +123,7 @@ describe('App Renderer Extension', function() {
       renderer._renderBreadcrumb();
       var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,
-                   'The showEnvSwitcher prop was not set properly.');
+        'The showEnvSwitcher prop was not set properly.');
     });
 
     it('hides the switcher when facade versions are not set', function() {
@@ -131,7 +131,7 @@ describe('App Renderer Extension', function() {
       renderer._renderBreadcrumb();
       var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,
-                   'The showEnvSwitcher prop was not set properly.');
+        'The showEnvSwitcher prop was not set properly.');
     });
 
     it('shows the switcher when gisf is true', function() {
@@ -139,7 +139,7 @@ describe('App Renderer Extension', function() {
       renderer._renderBreadcrumb();
       var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], true,
-                   'The showEnvSwitcher prop was not set properly.');
+        'The showEnvSwitcher prop was not set properly.');
     });
   });
 });

@@ -25,12 +25,12 @@ describe('topology relation module', function() {
     Y = YUI(GlobalConfig).use(
       ['juju-tests-utils', 'juju-topology', 'node', 'relation-utils',
         'juju-models'],
-        function(Y) {
-          views = Y.namespace('juju.views');
-          utils = Y.namespace('juju-tests.utils');
-          models = Y.namespace('juju.models');
-          done();
-        });
+      function(Y) {
+        views = Y.namespace('juju.views');
+        utils = Y.namespace('juju-tests.utils');
+        models = Y.namespace('juju.models');
+        done();
+      });
   });
 
   beforeEach(function() {
@@ -91,23 +91,23 @@ describe('topology relation module', function() {
   });
 
   it('fires "changeState" topo event for clicking a relation endpoint',
-      function() {
-        const state = {
-          changeState: sinon.stub()
-        };
-        var topo = {
-          get: sinon.stub().withArgs('state').returns(state)
-        };
-        view.set('component', topo);
-        const relation = document.createElement('div');
-        relation.setAttribute('data-endpoint', 'one:two');
-        view.inspectRelationClick.call(relation, undefined, view);
-        assert.equal(state.changeState.callCount, 1);
-        assert.deepEqual(state.changeState.args[0][0], {
-          gui: {
-            inspector: { id: 'one' }
-          }});
-      });
+    function() {
+      const state = {
+        changeState: sinon.stub()
+      };
+      var topo = {
+        get: sinon.stub().withArgs('state').returns(state)
+      };
+      view.set('component', topo);
+      const relation = document.createElement('div');
+      relation.setAttribute('data-endpoint', 'one:two');
+      view.inspectRelationClick.call(relation, undefined, view);
+      assert.equal(state.changeState.callCount, 1);
+      assert.deepEqual(state.changeState.args[0][0], {
+        gui: {
+          inspector: { id: 'one' }
+        }});
+    });
 
   describe('updateRelationVisibility', function() {
     it('is called on update', function() {
@@ -118,7 +118,7 @@ describe('topology relation module', function() {
       var update = sinon.stub(view, 'updateLinks');
       this._cleanups.push(update.restore);
       var updateSubs = sinon.stub(
-          view, 'updateSubordinateRelationsCount');
+        view, 'updateSubordinateRelationsCount');
       this._cleanups.push(updateSubs.restore);
       view.set('component', {
         get: function() {
@@ -341,8 +341,8 @@ describe('topology relation module', function() {
         set: set
       };
       var locate = sinon.stub(
-          Y.juju.topology.utils, 'locateRelativePointOnCanvas').returns(
-          ['locate1', 'locate2']);
+        Y.juju.topology.utils, 'locateRelativePointOnCanvas').returns(
+        ['locate1', 'locate2']);
       this._cleanups.push(locate.restore);
 
       view._positionAmbiguousRelationMenu(menu, topo, 'm', 'context');

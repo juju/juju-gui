@@ -252,7 +252,7 @@ describe('AddressForm', function() {
                 }]}
                 value={undefined}/>
             </div>
-          {null}
+            {null}
           </div>
         </div>
       </div>);

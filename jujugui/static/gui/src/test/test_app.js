@@ -216,9 +216,9 @@ describe('App', function() {
         assert.equal(app.get('charmstore').url, 'http://1.2.3.4/v5');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
-            app.get('charmstore').url,
-            'http://1.2.3.4/v5',
-            'It should only ever create a single instance of the charmstore');
+          app.get('charmstore').url,
+          'http://1.2.3.4/v5',
+          'It should only ever create a single instance of the charmstore');
       });
     });
 
@@ -249,11 +249,11 @@ describe('App', function() {
       // that the DOM exists when it initializes.
       container = testUtils.makeAppContainer();
       Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
-          function(Y) {
-            juju = Y.namespace('juju');
-            done();
-          });
+        ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
     });
 
     beforeEach(function() {
@@ -464,11 +464,11 @@ describe('App', function() {
       }, this);
 
       determineFileTypeStub = sinon.stub(
-          app, '_determineFileType').returns('zip');
+        app, '_determineFileType').returns('zip');
       renderDragOverStub = sinon.stub(
-          app, '_renderDragOverNotification');
+        app, '_renderDragOverNotification');
       dragTimerControlStub = sinon.stub(
-          app, '_dragleaveTimerControl');
+        app, '_dragleaveTimerControl');
       this._cleanups.concat([
         determineFileTypeStub.restore,
         renderDragOverStub.restore,
@@ -711,10 +711,10 @@ describe('App', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
-          function(Y) {
-            juju = Y.namespace('juju');
-            done();
-          });
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
     });
 
     beforeEach(function() {
@@ -952,7 +952,7 @@ describe('App', function() {
       assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
       var topo = app.views.environment.instance.topo;
       assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
-                    'canvas centering was not reset.');
+        'canvas centering was not reset.');
     });
 
     it('clears and resets the env, db, and ecs on change', function() {
@@ -964,7 +964,7 @@ describe('App', function() {
       assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
       var topo = app.views.environment.instance.topo;
       assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
-                    'canvas centering was not reset.');
+        'canvas centering was not reset.');
     });
 
     it('can not clear and reset the db, and ecs on change', function() {
@@ -1181,9 +1181,9 @@ describe('App', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-gui'], function(Y) {
-            done();
-          });
+        ['juju-gui'], function(Y) {
+          done();
+        });
     });
 
     beforeEach(function() {

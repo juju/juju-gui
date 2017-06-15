@@ -106,13 +106,13 @@ describe('StringConfig', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     var expected = (
-    <div className="string-config--value string-config--disabled">
-      <juju.components.StringConfigInput
-        config={config}
-        disabled={true}
-        ref="editableInput"
-        setValue={instance._setValue} />
-    </div>);
+      <div className="string-config--value string-config--disabled">
+        <juju.components.StringConfigInput
+          config={config}
+          disabled={true}
+          ref="editableInput"
+          setValue={instance._setValue} />
+      </div>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 

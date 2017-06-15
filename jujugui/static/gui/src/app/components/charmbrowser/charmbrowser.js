@@ -160,70 +160,70 @@ YUI.add('charmbrowser-component', function() {
       switch (this.state.activeComponent) {
         case 'store':
           activeChild = (
-              <juju.components.Store
-                changeState={changeState}
-                gisf={this.props.gisf}
-                staticURL={this.props.staticURL}
-                charmstoreURL={this.props.charmstoreURL}
-                apiVersion={this.props.apiVersion}
-                setPageTitle={this.props.setPageTitle} />
+            <juju.components.Store
+              changeState={changeState}
+              gisf={this.props.gisf}
+              staticURL={this.props.staticURL}
+              charmstoreURL={this.props.charmstoreURL}
+              apiVersion={this.props.apiVersion}
+              setPageTitle={this.props.setPageTitle} />
           );
           break;
         case 'search-results':
           const search = currentState.search;
           activeChild = (
-              <juju.components.SearchResults
-                acl={this.props.acl}
-                changeState={changeState}
-                generatePath={appState.generatePath.bind(appState)}
-                charmstoreSearch={this.props.charmstoreSearch}
-                deployTarget={this.props.deployTarget}
-                getName={utils.getName}
-                makeEntityModel={this.props.makeEntityModel}
-                owner={search.owner}
-                provides={search.provides}
-                query={search.text}
-                requires={search.requires}
-                series={search.series}
-                seriesList={this.props.series}
-                setPageTitle={this.props.setPageTitle}
-                sort={search.sort}
-                tags={search.tags}
-                type={search.type} />
+            <juju.components.SearchResults
+              acl={this.props.acl}
+              changeState={changeState}
+              generatePath={appState.generatePath.bind(appState)}
+              charmstoreSearch={this.props.charmstoreSearch}
+              deployTarget={this.props.deployTarget}
+              getName={utils.getName}
+              makeEntityModel={this.props.makeEntityModel}
+              owner={search.owner}
+              provides={search.provides}
+              query={search.text}
+              requires={search.requires}
+              series={search.series}
+              seriesList={this.props.series}
+              setPageTitle={this.props.setPageTitle}
+              sort={search.sort}
+              tags={search.tags}
+              type={search.type} />
           );
           break;
         case 'entity-details':
           // TODO frankban: do we still really need this?
           const id = currentState.store || `~${currentState.user}`;
           activeChild = (
-              <juju.components.EntityDetails
-                acl={this.props.acl}
-                addNotification={this.props.addNotification}
-                apiUrl={this.props.apiUrl}
-                changeState={changeState}
-                importBundleYAML={this.props.importBundleYAML}
-                getBundleYAML={this.props.getBundleYAML}
-                getEntity={this.props.getEntity}
-                deployService={this.props.deployService}
-                getDiagramURL={this.props.getDiagramURL}
-                getModelName={this.props.getModelName}
-                getFile={this.props.getFile}
-                hash={currentState.hash}
-                scrollPosition={this.state.scrollPosition}
-                renderMarkdown={this.props.renderMarkdown}
-                id={id}
+            <juju.components.EntityDetails
+              acl={this.props.acl}
+              addNotification={this.props.addNotification}
+              apiUrl={this.props.apiUrl}
+              changeState={changeState}
+              importBundleYAML={this.props.importBundleYAML}
+              getBundleYAML={this.props.getBundleYAML}
+              getEntity={this.props.getEntity}
+              deployService={this.props.deployService}
+              getDiagramURL={this.props.getDiagramURL}
+              getModelName={this.props.getModelName}
+              getFile={this.props.getFile}
+              hash={currentState.hash}
+              scrollPosition={this.state.scrollPosition}
+              renderMarkdown={this.props.renderMarkdown}
+              id={id}
                 // This is used to force a component remount when the entity
                 // changes, for instance a charm detail page has a link to
                 // another charm detail page.
-                key={id}
-                pluralize={utils.pluralize}
-                listPlansForCharm={this.props.listPlansForCharm}
-                makeEntityModel={this.props.makeEntityModel}
-                scrollCharmbrowser={this._scrollCharmbrowser}
-                setPageTitle={this.props.setPageTitle}
-                showTerms={this.props.showTerms}
-                urllib={this.props.urllib}
-              />
+              key={id}
+              pluralize={utils.pluralize}
+              listPlansForCharm={this.props.listPlansForCharm}
+              makeEntityModel={this.props.makeEntityModel}
+              scrollCharmbrowser={this._scrollCharmbrowser}
+              setPageTitle={this.props.setPageTitle}
+              showTerms={this.props.showTerms}
+              urllib={this.props.urllib}
+            />
           );
           break;
       }

@@ -278,10 +278,10 @@ YUI.add('generic-input', function() {
       );
       // If there's an error and an inline icon has been explicitly asked for.
       const errorIcon = showErrors && this.props.inlineErrorIcon ?
-      (<juju.components.SvgIcon
-        name="relation-icon-error"
-        size={16}
-      />) : undefined;
+        (<juju.components.SvgIcon
+          name="relation-icon-error"
+          size={16}
+        />) : undefined;
       return (
         <div className={classes}>
           {labelElement}

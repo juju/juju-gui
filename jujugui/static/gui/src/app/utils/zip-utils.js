@@ -49,14 +49,14 @@ YUI.add('zip-utils', function(Y) {
   */
   var getEntries = function(file, callback, errback) {
     zip.createReader(
-        new zip.BlobReader(file),
-        function(reader) {
-          reader.getEntries(function(entries) {
-            callback(entries);
-            reader.close();
-          });
-        },
-        errback
+      new zip.BlobReader(file),
+      function(reader) {
+        reader.getEntries(function(entries) {
+          callback(entries);
+          reader.close();
+        });
+      },
+      errback
     );
   };
   module.getEntries = getEntries;
@@ -161,7 +161,7 @@ YUI.add('zip-utils', function(Y) {
         });
       } catch (err) {
         console.error(
-            'zip.TextWriter error reading ' + entry.filename + ': ' + err);
+          'zip.TextWriter error reading ' + entry.filename + ': ' + err);
       }
     });
   };

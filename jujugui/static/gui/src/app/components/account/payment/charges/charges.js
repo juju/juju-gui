@@ -182,11 +182,11 @@ YUI.add('account-payment-charges', function() {
                 {(charge.price + charge.vat) / 100} {charge.currency}
               </div>
               <div className="two-col last-col no-margin-bottom">
-              <juju.components.GenericButton
-                action={this._togglePopup.bind(this, charge.id)}
-                disabled={false}
-                type="inline-neutral"
-                title="Show receipt" />
+                <juju.components.GenericButton
+                  action={this._togglePopup.bind(this, charge.id)}
+                  disabled={false}
+                  type="inline-neutral"
+                  title="Show receipt" />
               </div>
             </div>
             <div className="twelve-col">

@@ -129,25 +129,25 @@ YUI.add('juju-topology', function(Y) {
       var base = canvas.select('.topology-canvas');
       if (base.empty()) {
         base = canvas.append('div')
-              .classed('topology-canvas', true);
+          .classed('topology-canvas', true);
       }
 
       // Cache the canvas element for style modifications.
       this.set('canvas', container.querySelector('.topology-canvas'));
 
       svg = base.append('svg:svg')
-                .attr('width', width)
-                .attr('height', height)
-                .attr('class', 'the-canvas');
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'the-canvas');
       this.svg = svg;
 
       this.zoomPlane = svg.append('rect')
-                          .attr('class', 'zoom-plane')
-                          .attr('width', width)
-                          .attr('height', height)
-                          .attr('pointer-events', 'all')
-                          .call(this.zoom)
-                          .on('dblclick.zoom', null);
+        .attr('class', 'zoom-plane')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('pointer-events', 'all')
+        .call(this.zoom)
+        .on('dblclick.zoom', null);
 
       vis = svg.append('svg:g');
       this.vis = vis;
@@ -192,9 +192,9 @@ YUI.add('juju-topology', function(Y) {
               .split(',');
             plus
               .attr('transform',
-                  'translate('
+                'translate('
                     + [d3.event.dx + parseInt(oldCoords[0], 10),
-                      d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
+                    d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
           });
         plusIndicator.call(plusDrag);
       }
@@ -245,19 +245,19 @@ YUI.add('juju-topology', function(Y) {
         .nice();
 
       this.zoom.x(this.xScale)
-               .y(this.yScale)
-               .scaleExtent([this.options.minZoom, this.options.maxZoom])
-               .on('zoom', evt => {
-                 document.dispatchEvent(new CustomEvent('topo.zoom', {
-                   detail: [d3.event]
-                 }));
-                 // If the canvas has actually been moved then set the flag.
-                 self.zoomed = true;
-               })
-               .on('zoomend', function(evt) {
-                 // Reset the flag for checking if the canvas has been moved.
-                 self.zoomed = false;
-               });
+        .y(this.yScale)
+        .scaleExtent([this.options.minZoom, this.options.maxZoom])
+        .on('zoom', evt => {
+          document.dispatchEvent(new CustomEvent('topo.zoom', {
+            detail: [d3.event]
+          }));
+          // If the canvas has actually been moved then set the flag.
+          self.zoomed = true;
+        })
+        .on('zoomend', function(evt) {
+          // Reset the flag for checking if the canvas has been moved.
+          self.zoomed = false;
+        });
     },
 
     /*
@@ -313,7 +313,7 @@ YUI.add('juju-topology', function(Y) {
         service.set('annotations', annotations);
       } else {
         this.get('env').update_annotations(
-            box.id, 'application', {'gui-x': box.x, 'gui-y': box.y});
+          box.id, 'application', {'gui-x': box.x, 'gui-y': box.y});
         box.inDrag = views.DRAG_ENDING;
       }
     }

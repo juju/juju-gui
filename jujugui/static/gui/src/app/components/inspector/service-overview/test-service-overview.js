@@ -224,19 +224,19 @@ describe('ServiceOverview', function() {
 
   it('shows the all units action even if there are no units', function() {
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            changeState={sinon.stub()}
-            charm={fakeCharm}
-            clearState={sinon.stub()}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts()}
-            modelUUID="abc123"
-            service={fakeService}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -261,19 +261,19 @@ describe('ServiceOverview', function() {
     };
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            clearState={sinon.stub()}
-            charm={fakeCharm}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts()}
-            modelUUID="abc123"
-            changeState={changeState}
-            service={service}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        clearState={sinon.stub()}
+        charm={fakeCharm}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        changeState={changeState}
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     output.props.children[1].props.children[0].props.action({
@@ -300,19 +300,19 @@ describe('ServiceOverview', function() {
       {}
     ]});
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            changeState={sinon.stub()}
-            charm={fakeCharm}
-            clearState={sinon.stub()}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts(0, 0, 2)}
-            modelUUID="abc123"
-            service={fakeService}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts(0, 0, 2)}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
@@ -330,19 +330,19 @@ describe('ServiceOverview', function() {
       {agent_state: 'pending'}
     ]});
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            changeState={sinon.stub()}
-            charm={fakeCharm}
-            clearState={sinon.stub()}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts(0, 1, 0)}
-            modelUUID="abc123"
-            service={fakeService}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts(0, 1, 0)}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
@@ -360,19 +360,19 @@ describe('ServiceOverview', function() {
       {agent_state: 'error'}
     ]});
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            changeState={sinon.stub()}
-            charm={fakeCharm}
-            clearState={sinon.stub()}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts(1, 0, 0)}
-            modelUUID="abc123"
-            service={fakeService}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts(1, 0, 0)}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
@@ -387,19 +387,19 @@ describe('ServiceOverview', function() {
 
   it('shows the configure action', function() {
     const output = jsTestUtils.shallowRender(
-          <juju.components.ServiceOverview
-            acl={acl}
-            changeState={sinon.stub()}
-            charm={fakeCharm}
-            clearState={sinon.stub()}
-            destroyService={sinon.stub()}
-            displayPlans={false}
-            getUnitStatusCounts={getUnitStatusCounts()}
-            modelUUID="abc123"
-            service={fakeService}
-            serviceRelations={[1]}
-            showActivePlan={sinon.stub()}
-            showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Configure"
@@ -423,19 +423,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1, 2, 3]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1, 2, 3]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[2],
       <juju.components.OverviewAction
         key="Relations"
@@ -461,19 +461,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[3],
       <juju.components.OverviewAction
         key="Expose"
@@ -500,19 +500,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[4],
       <juju.components.OverviewAction
         key="Resources"
@@ -544,19 +544,19 @@ describe('ServiceOverview', function() {
       hasMetrics: sinon.stub().returns(true)
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={charm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.equal(output.props.children[1].props.children.length, 5);
   });
 
@@ -573,19 +573,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[5],
       <juju.components.OverviewAction
         key="Change version"
@@ -613,19 +613,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          clearState={sinon.stub()}
-          charm={fakeCharm}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          changeState={changeState}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        clearState={sinon.stub()}
+        charm={fakeCharm}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        changeState={changeState}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     output.props.children[1].props.children[5].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -645,19 +645,19 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[1, 2, 3]}
-          showActivePlan={sinon.stub()}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1, 2, 3]}
+        showActivePlan={sinon.stub()}
+        showPlans={false} />);
     assert.equal(output.props.children[1].props.children.length, 5);
   });
 
@@ -684,19 +684,19 @@ describe('ServiceOverview', function() {
     };
     const showActivePlan = sinon.stub();
     const output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={charm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={true}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[]}
-          showActivePlan={showActivePlan}
-          showPlans={false} />);
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={true}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[]}
+        showActivePlan={showActivePlan}
+        showPlans={false} />);
     assert.equal(
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');

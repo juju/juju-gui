@@ -54,8 +54,8 @@ describe('InsetSelect', function() {
           required={undefined}
           ref="field">
           {[<option
-             key="splade0"
-             value="splade">
+            key="splade0"
+            value="splade">
             Splade!
           </option>]}
         </select>
@@ -128,8 +128,8 @@ describe('InsetSelect', function() {
           required={undefined}
           ref="field">
           {[<option
-             key="splade0"
-             value="splade">
+            key="splade0"
+            value="splade">
             Splade!
           </option>]}
         </select>

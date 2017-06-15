@@ -67,7 +67,7 @@ YUI.add('juju-topology-utils', function(Y) {
       var furthestDistance = 0, furthestVertex = [0, 0];
       hull.forEach(vertex => {
         var distance = Math.sqrt(
-            Math.pow(vertex[0], 2) +
+          Math.pow(vertex[0], 2) +
             Math.pow(vertex[1], 2));
         if (distance >= furthestDistance) {
           furthestDistance = distance;
@@ -92,9 +92,9 @@ YUI.add('juju-topology-utils', function(Y) {
         // Pad to the right of the right-most existing service.
         return [
           (vertices[0][0] > vertices[1][0] ?
-           vertices[0][0] : vertices[1][0]) + padding,
+            vertices[0][0] : vertices[1][0]) + padding,
           (vertices[0][1] > vertices[1][1] ?
-           vertices[0][1] : vertices[1][1])
+            vertices[0][1] : vertices[1][1])
         ];
       default:
         // Pad to the right of the convex hull of existing services

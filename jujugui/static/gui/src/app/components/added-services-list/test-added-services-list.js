@@ -40,16 +40,16 @@ describe('AddedServicesList', () => {
     var hoverService = sinon.stub();
     var panToService = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.AddedServicesList
-          updateUnitFlags={sinon.stub()}
-          findRelatedServices={sinon.stub()}
-          findUnrelatedServices={sinon.stub()}
-          changeState={changeState}
-          hoverService={hoverService}
-          hoveredId="mysql"
-          getUnitStatusCounts={getUnitStatusCounts}
-          panToService={panToService}
-          services={services}/>, true);
+      <juju.components.AddedServicesList
+        updateUnitFlags={sinon.stub()}
+        findRelatedServices={sinon.stub()}
+        findUnrelatedServices={sinon.stub()}
+        changeState={changeState}
+        hoverService={hoverService}
+        hoveredId="mysql"
+        getUnitStatusCounts={getUnitStatusCounts}
+        panToService={panToService}
+        services={services}/>, true);
 
     var output = renderer.getRenderOutput();
 

@@ -53,10 +53,10 @@ describe('DeploymentChanges', function() {
             change={changes[0]}
             key={changes[0].id}
             showTime={false} />,
-            <juju.components.DeploymentChangeItem
-              change={changes[1]}
-              key={changes[1].id}
-              showTime={false} />]}
+          <juju.components.DeploymentChangeItem
+            change={changes[1]}
+            key={changes[1].id}
+            showTime={false} />]}
         </ul>
       </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);

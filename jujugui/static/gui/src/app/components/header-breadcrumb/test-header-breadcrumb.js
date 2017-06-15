@@ -90,9 +90,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="who">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
-               onClick={comp.clickUser}
-               title="who"
-               href="/u/who">
+              onClick={comp.clickUser}
+              title="who"
+              href="/u/who">
               who
             </a>
           </li>
@@ -125,9 +125,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="dalek">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
-               onClick={comp.clickUser}
-               title="rose"
-               href="/u/rose">
+              onClick={comp.clickUser}
+              title="rose"
+              href="/u/rose">
               rose
             </a>
           </li>
@@ -161,9 +161,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="dalek">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
-               onClick={comp.clickUser}
-               title="cyberman"
-               href="/u/cyberman">
+              onClick={comp.clickUser}
+              title="cyberman"
+              href="/u/cyberman">
               cyberman
             </a>
           </li>

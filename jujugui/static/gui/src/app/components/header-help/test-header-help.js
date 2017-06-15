@@ -48,25 +48,25 @@ describe('HeaderHelp', function() {
     const instance = renderer.getMountedInstance();
 
     const expected = <div className="header-menu">
-        <span className={'header-menu__button'}
-          onClick={instance.toggleHelpMenu}
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="headerHelpMenu"
-          aria-controls="headerHelpMenu"
-          aria-expanded="false">
-          <juju.components.SvgIcon name="help_16"
-            className="header-menu__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
+      <span className={'header-menu__button'}
+        onClick={instance.toggleHelpMenu}
+        role="button"
+        tabIndex="0"
+        aria-haspopup="true"
+        aria-owns="headerHelpMenu"
+        aria-controls="headerHelpMenu"
+        aria-expanded="false">
+        <juju.components.SvgIcon name="help_16"
+          className="header-menu__icon"
+          size="16" />
+        <span className="tooltip__tooltip--below">
+          <span className="tooltip__inner tooltip__inner--up">
               Help
-            </span>
           </span>
         </span>
-        {''}
-      </div>;
+      </span>
+      {''}
+    </div>;
 
     assert.deepEqual(output, expected);
   });
@@ -93,26 +93,26 @@ describe('HeaderHelp', function() {
       const expected = (<juju.components.Panel
         instanceName="header-menu__menu"
         visible={true}>
-          <ul className="header-menu__menu-list" role="menubar">
-            <li className="header-menu__menu-list-item
+        <ul className="header-menu__menu-list" role="menubar">
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                href={issueUrl} target="_blank">File Issue</a>
-            </li>
-            <li className="header-menu__menu-list-item
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              href={issueUrl} target="_blank">File Issue</a>
+          </li>
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuItem" tabIndex="0"
-              onClick={instance._handleShortcutsLink}>
-              <span className="header-menu__menu-list-item-link">
+            role="menuItem" tabIndex="0"
+            onClick={instance._handleShortcutsLink}>
+            <span className="header-menu__menu-list-item-link">
                 Keyboard shortcuts
-                <span className="header-menu__menu-extra-info">
+              <span className="header-menu__menu-extra-info">
                   Shift + ?
-                </span>
               </span>
-            </li>
-          </ul>
-        </juju.components.Panel>);
+            </span>
+          </li>
+        </ul>
+      </juju.components.Panel>);
       expect(output.props.children[1]).toEqualJSX(expected);
     });
 
@@ -133,34 +133,34 @@ describe('HeaderHelp', function() {
       const expected = (<juju.components.Panel
         instanceName="header-menu__menu"
         visible={true}>
-          <ul className="header-menu__menu-list" role="menubar">
-            <li className="header-menu__menu-list-item
+        <ul className="header-menu__menu-list" role="menubar">
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                href={docsUrl}
-                target="_blank">
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              href={docsUrl}
+              target="_blank">
                 View Documentation</a>
-            </li>
-            <li className="header-menu__menu-list-item
+          </li>
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                href={issueUrl} target="_blank">File Issue</a>
-            </li>
-            <li className="header-menu__menu-list-item
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              href={issueUrl} target="_blank">File Issue</a>
+          </li>
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuItem" tabIndex="0"
-              onClick={instance._handleShortcutsLink}>
-              <span className="header-menu__menu-list-item-link">
+            role="menuItem" tabIndex="0"
+            onClick={instance._handleShortcutsLink}>
+            <span className="header-menu__menu-list-item-link">
                 Keyboard shortcuts
-                <span className="header-menu__menu-extra-info">
+              <span className="header-menu__menu-extra-info">
                   Shift + ?
-                </span>
               </span>
-            </li>
-          </ul>
-        </juju.components.Panel>);
+            </span>
+          </li>
+        </ul>
+      </juju.components.Panel>);
       expect(output.props.children[1]).toEqualJSX(expected);
     });
 
@@ -183,34 +183,34 @@ describe('HeaderHelp', function() {
         const expected = (<juju.components.Panel
           instanceName="header-menu__menu"
           visible={true}>
-            <ul className="header-menu__menu-list" role="menubar">
-              <li className="header-menu__menu-list-item
+          <ul className="header-menu__menu-list" role="menubar">
+            <li className="header-menu__menu-list-item
                 header-menu__menu-list-item-with-link"
-                role="menuitem" tabIndex="0">
-                <a className="header-menu__menu-list-item-link"
-                  href={docsUrl}
-                  target="_blank">
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
+                href={docsUrl}
+                target="_blank">
                   View Documentation</a>
-              </li>
-              <li className="header-menu__menu-list-item
+            </li>
+            <li className="header-menu__menu-list-item
                 header-menu__menu-list-item-with-link"
-                role="menuitem" tabIndex="0">
-                <a className="header-menu__menu-list-item-link"
-                  href={loggedInIssueUrl} target="_blank">Get Support</a>
-              </li>
-              <li className="header-menu__menu-list-item
+              role="menuitem" tabIndex="0">
+              <a className="header-menu__menu-list-item-link"
+                href={loggedInIssueUrl} target="_blank">Get Support</a>
+            </li>
+            <li className="header-menu__menu-list-item
                 header-menu__menu-list-item-with-link"
-                role="menuItem" tabIndex="0"
-                onClick={instance._handleShortcutsLink}>
-                <span className="header-menu__menu-list-item-link">
+              role="menuItem" tabIndex="0"
+              onClick={instance._handleShortcutsLink}>
+              <span className="header-menu__menu-list-item-link">
                   Keyboard shortcuts
-                  <span className="header-menu__menu-extra-info">
+                <span className="header-menu__menu-extra-info">
                     Shift + ?
-                  </span>
                 </span>
-              </li>
-            </ul>
-          </juju.components.Panel>);
+              </span>
+            </li>
+          </ul>
+        </juju.components.Panel>);
         expect(output.props.children[1]).toEqualJSX(expected);
       }
     );

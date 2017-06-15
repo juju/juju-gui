@@ -81,8 +81,8 @@ YUI.add('inspector-expose', function() {
         return;
       }
       return <ul className="inspector-expose__units">
-          {this._generateUnits()}
-        </ul>;
+        {this._generateUnits()}
+      </ul>;
     },
 
     /**
@@ -95,10 +95,10 @@ YUI.add('inspector-expose', function() {
       var serviceId = service.get('id');
       if (service.get('exposed')) {
         this.props.unexposeService(serviceId,
-            this._exposeServiceCallback, {});
+          this._exposeServiceCallback, {});
       } else {
         this.props.exposeService(serviceId,
-            this._exposeServiceCallback, {});
+          this._exposeServiceCallback, {});
       }
     },
 
@@ -126,21 +126,21 @@ YUI.add('inspector-expose', function() {
       };
       return (
         <div className="inspector-expose">
-            <div className="inspector-expose__control">
-              <juju.components.BooleanConfig
-                disabled={this.props.acl.isReadOnly()}
-                key={toggle.key}
-                ref={toggle.key}
-                option={toggle}
-                onChange={this._handleExposeChange}
-                label="Expose application"
-                config={this.props.service.get('exposed')} />
-            </div>
-            <p className="inspector-expose__warning">
+          <div className="inspector-expose__control">
+            <juju.components.BooleanConfig
+              disabled={this.props.acl.isReadOnly()}
+              key={toggle.key}
+              ref={toggle.key}
+              option={toggle}
+              onChange={this._handleExposeChange}
+              label="Expose application"
+              config={this.props.service.get('exposed')} />
+          </div>
+          <p className="inspector-expose__warning">
               Exposing this application may make it publicly accessible from
               the web
-            </p>
-            {this._displayUnitList()}
+          </p>
+          {this._displayUnitList()}
         </div>
       );
     }

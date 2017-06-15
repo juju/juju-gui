@@ -58,13 +58,13 @@ YUI.add('bundle-import-notifications', function(Y) {
           // Start watching scheduled/in progress bundle deployments.
           if (status === 'scheduled' || status === 'started') {
             ns.BundleNotifications._watchDeployment(
-                change.deploymentId, env, db);
+              change.deploymentId, env, db);
             return;
           }
           // Notify bundle deployment errors occurred in the last hour.
           if (change.err && change.time >= timestamp) {
             ns.BundleNotifications._notifyDeploymentChange(
-                db, change.deploymentId, status, change.err);
+              db, change.deploymentId, status, change.err);
           }
           // If none of the previous blocks detect any changes then ignore
           // successfully completed/old/canceled deployments.
@@ -156,7 +156,7 @@ YUI.add('bundle-import-notifications', function(Y) {
           var newChange = data.Changes[data.Changes.length - 1];
           // Notify the new deployment change.
           ns.BundleNotifications._notifyDeploymentChange(
-              db, newChange.DeploymentId, newChange.Status, newChange.Error);
+            db, newChange.DeploymentId, newChange.Status, newChange.Error);
           // If the status is 'completed' then we're done watching this.
           if (newChange.Status === 'completed') {
             // There's nothing else to see here.

@@ -51,8 +51,8 @@ describe('SearchResultsSelectFilter', function() {
         {'Sort by'}:
         <select onChange={output.props.children[2].props.onChange}
           defaultValue={null}>
-            <option value="-downloads" key="-downloads">Most popular</option>
-            <option value="downloads" key="downloads">Least popular</option>
+          <option value="-downloads" key="-downloads">Most popular</option>
+          <option value="downloads" key="downloads">Least popular</option>
         </select>
       </div>);
   });
@@ -78,8 +78,8 @@ describe('SearchResultsSelectFilter', function() {
         {'Sort by'}:
         <select onChange={output.props.children[2].props.onChange}
           defaultValue="downloads">
-            <option value="-downloads" key="-downloads">Most popular</option>
-            <option value="downloads" key="downloads">Least popular</option>
+          <option value="-downloads" key="-downloads">Most popular</option>
+          <option value="downloads" key="downloads">Least popular</option>
         </select>
       </div>);
   });

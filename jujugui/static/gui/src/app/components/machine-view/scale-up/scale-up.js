@@ -101,7 +101,7 @@ YUI.add('machine-view-scale-up', function() {
       }];
       return (
         <form className="machine-view__scale-up"
-           onSubmit={this._handleAddUnits}>
+          onSubmit={this._handleAddUnits}>
           {this._generateServices()}
           <juju.components.ButtonRow buttons={buttons} />
         </form>

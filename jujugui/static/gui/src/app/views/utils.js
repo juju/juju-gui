@@ -229,7 +229,7 @@ YUI.add('juju-view-utils', function(Y) {
     */
     function substitute(stringOrFunction, number) {
       var string = typeof stringOrFunction === 'function' ?
-          stringOrFunction(number, distanceMillis) : stringOrFunction,
+            stringOrFunction(number, distanceMillis) : stringOrFunction,
           value = (l.numbers && l.numbers[number]) || number;
       return string.replace(/%d/i, value);
     }
@@ -447,7 +447,7 @@ YUI.add('juju-view-utils', function(Y) {
             right: [
               this.x + this.w - (margins && (margins.right * this.w) || 0),
               this.y + (this.h / 2) - (
-                  margins && (margins.bottom * this.h / 2 -
+                margins && (margins.bottom * this.h / 2 -
                               margins.top * this.h / 2) || 0)
             ],
             bottom: [
@@ -457,7 +457,7 @@ YUI.add('juju-view-utils', function(Y) {
             left: [
               this.x + (margins && (margins.left * this.w) || 0),
               this.y + (this.h / 2) - (
-                  margins && (margins.bottom * this.h / 2 -
+                margins && (margins.bottom * this.h / 2 -
                               margins.top * this.h / 2) || 0)
             ]
           };
@@ -571,21 +571,21 @@ YUI.add('juju-view-utils', function(Y) {
       }
     });
     services.each(
-        function(service) {
-          var id = service.get('id');
-          if (result[id] !== undefined) {
-            result[id].model = service;
-          } else {
-            result[id] = new BoundingBox(module, service);
-          }
-          if (!service.get('icon') && service.get('charm')) {
-            var icon;
-            var charmId = service.get('charm');
-            icon = utils.getIconPath(charmId, null, env);
-            service.set('icon', icon);
-          }
-          result[id].icon = service.get('icon');
+      function(service) {
+        var id = service.get('id');
+        if (result[id] !== undefined) {
+          result[id].model = service;
+        } else {
+          result[id] = new BoundingBox(module, service);
         }
+        if (!service.get('icon') && service.get('charm')) {
+          var icon;
+          var charmId = service.get('charm');
+          icon = utils.getIconPath(charmId, null, env);
+          service.set('icon', icon);
+        }
+        result[id].icon = service.get('icon');
+      }
     );
     return result;
   };
@@ -638,7 +638,7 @@ YUI.add('juju-view-utils', function(Y) {
     // In order to support Safari 7 the type of this blob needs
     // to be text/plain instead of it's actual type of application/yaml.
     var exportBlob = new Blob([exportData],
-        {type: 'text/plain;charset=utf-8'});
+      {type: 'text/plain;charset=utf-8'});
     var envName = db.environment.get('name');
     saveAs(exportBlob, this._genereateBundleExportFileName(envName));
   },
@@ -750,9 +750,9 @@ YUI.add('juju-view-utils', function(Y) {
           serviceUnitAnnotation = serviceOrUnit.annotations;
         }
         annotation = (
-            serviceUnitAnnotation &&
+          serviceUnitAnnotation &&
             serviceUnitAnnotation['landscape-computer']
-            );
+        );
         if (!annotation) {
           console.warn('Unit missing the landscape-computer annotation!');
           return undefined;
@@ -898,7 +898,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} constraints The constraints to create the new machines with.
   */
   utils.createMachinesPlaceUnits = function(
-      db, env, service, numUnits, constraints) {
+    db, env, service, numUnits, constraints) {
     let machine;
     let parentId = null;
     let containerType =null;
@@ -912,8 +912,8 @@ YUI.add('juju-view-utils', function(Y) {
         db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
       env.placeUnit(
-          utils.addGhostAndEcsUnits(db, env, service, 1)[0],
-          machine.id);
+        utils.addGhostAndEcsUnits(db, env, service, 1)[0],
+        machine.id);
     }
   };
 
@@ -948,7 +948,7 @@ YUI.add('juju-view-utils', function(Y) {
     // canvas.
     if (serviceName.indexOf('$') > 0) {
       displayName = service.get('displayName')
-                           .replace(/^\(/, '').replace(/\)$/, '');
+        .replace(/^\(/, '').replace(/\)$/, '');
     } else {
       displayName = serviceName;
     }
@@ -963,11 +963,11 @@ YUI.add('juju-view-utils', function(Y) {
         subordinate: service.get('subordinate')
       });
       env.add_unit(
-          serviceName,
-          1,
-          null,
-          removeGhostAddUnitCallback.bind(null, ghostUnit, db, callback),
-          {modelId: unitId});
+        serviceName,
+        1,
+        null,
+        removeGhostAddUnitCallback.bind(null, ghostUnit, db, callback),
+        {modelId: unitId});
       units.push(ghostUnit);
     }
     return units;
@@ -1007,8 +1007,8 @@ YUI.add('juju-view-utils', function(Y) {
   utils.destroyService = function(db, env, service, callback) {
     if (service.name === 'service') {
       env.destroyApplication(service.get('id'),
-          utils._destroyServiceCallback.bind(this, service, db, callback),
-          {modelId: null});
+        utils._destroyServiceCallback.bind(this, service, db, callback),
+        {modelId: null});
     } else if (service.get('pending')) {
       db.services.remove(service);
       service.destroy();
@@ -1180,7 +1180,7 @@ YUI.add('juju-view-utils', function(Y) {
   // escaped the forward slashes and removed the negative-lookbehind, which JS
   // does not support. See line 46 in Gruber's gist; that's the line/feature
   // I had to take out.
-  var URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/ig;  // eslint-disable-line max-len
+  var URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/ig; // eslint-disable-line max-len
   /**
     Convert plain text links to anchor tags.
 
@@ -1704,12 +1704,12 @@ YUI.add('juju-view-utils', function(Y) {
         message: (
           <p>
             Need help? Read more about <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+              href="https://jujucharms.com/docs/stable/credentials"
+              target="_blank" title="Cloud credentials help">credentials in
             general</a> or <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/help-google"
-            target="_blank"
-            title="Help using the Google Compute Engine public cloud">setting up
+              href="https://jujucharms.com/docs/stable/help-google"
+              target="_blank"
+              title="Help using the Google Compute Engine public cloud">setting up
             GCE credentials</a>.
           </p>
         )
@@ -1737,11 +1737,11 @@ YUI.add('juju-view-utils', function(Y) {
         message: (
           <p>
             Need help? Read more about <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+              href="https://jujucharms.com/docs/stable/credentials"
+              target="_blank" title="Cloud credentials help">credentials in
             general</a> or <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/help-azure" target="_blank"
-            title="Help using the Microsoft Azure public cloud">setting up
+              href="https://jujucharms.com/docs/stable/help-azure" target="_blank"
+              title="Help using the Microsoft Azure public cloud">setting up
             Azure credentials</a>.
           </p>
         )
@@ -1767,11 +1767,11 @@ YUI.add('juju-view-utils', function(Y) {
         message: (
           <p>
             Need help? Read more about <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+              href="https://jujucharms.com/docs/stable/credentials"
+              target="_blank" title="Cloud credentials help">credentials in
             general</a> or <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/help-aws" target="_blank"
-            title="Help using the Amazon Web Service public cloud">setting up
+              href="https://jujucharms.com/docs/stable/help-aws" target="_blank"
+              title="Help using the Amazon Web Service public cloud">setting up
             AWS credentials</a>.
           </p>
         )

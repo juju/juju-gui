@@ -43,20 +43,20 @@ describe('RelationUtils', function() {
       assert.isNumber(relationUtils.generateHash('qumquat'));
       // It's stable.
       assert.strictEqual(
-          relationUtils.generateHash('kumquat'),
-          relationUtils.generateHash('kumquat'));
+        relationUtils.generateHash('kumquat'),
+        relationUtils.generateHash('kumquat'));
       // Different values hash differently.
       assert.notEqual(
-          relationUtils.generateHash('kumquat'),
-          relationUtils.generateHash('qumquat'));
+        relationUtils.generateHash('kumquat'),
+        relationUtils.generateHash('qumquat'));
     });
 
     it('can generate safe relation ids', function() {
       var relationId;
       relationId = 'foo:Bar relation-00000006!@#';
       assert.strictEqual(
-          relationUtils.generateSafeDOMId(relationId),
-          'e-foo_Bar_relation_00000006___-' +
+        relationUtils.generateSafeDOMId(relationId),
+        'e-foo_Bar_relation_00000006___-' +
           relationUtils.generateHash(relationId));
     });
 
@@ -64,11 +64,11 @@ describe('RelationUtils', function() {
       var relationId;
       relationId = 'foo:Bar relation-00000006!@#';
       assert.notEqual(
-          relationUtils.generateSafeDOMId(relationId, 'topo1'),
-          relationUtils.generateSafeDOMId(relationId, 'topo2'));
+        relationUtils.generateSafeDOMId(relationId, 'topo1'),
+        relationUtils.generateSafeDOMId(relationId, 'topo2'));
       assert.strictEqual(
-          relationUtils.generateSafeDOMId(relationId, 'topo1'),
-          'e-foo_Bar_relation_00000006___-' +
+        relationUtils.generateSafeDOMId(relationId, 'topo1'),
+        'e-foo_Bar_relation_00000006___-' +
           relationUtils.generateHash(relationId + 'topo1'));
     });
   });
@@ -331,9 +331,9 @@ describe('RelationUtils', function() {
       assert.strictEqual('global', result.scope, 'scope');
       assert.strictEqual('relation-0000000002', result.id, 'id');
       assert.strictEqual(
-          relationUtils.generateSafeDOMId('relation-0000000002'),
-          result.elementId,
-          'elementId'
+        relationUtils.generateSafeDOMId('relation-0000000002'),
+        result.elementId,
+        'elementId'
       );
       assert.strictEqual('mydb:2', result.ident, 'ident');
       assert.strictEqual('mysql', result.near.service, 'near service');
@@ -397,9 +397,9 @@ describe('RelationUtils', function() {
       assert.strictEqual('global', result.scope, 'scope');
       assert.strictEqual('mediawiki:db mysql:mydb', result.id, 'id');
       assert.strictEqual(
-          relationUtils.generateSafeDOMId('mediawiki:db mysql:mydb'),
-          result.elementId,
-          'elementId'
+        relationUtils.generateSafeDOMId('mediawiki:db mysql:mydb'),
+        result.elementId,
+        'elementId'
       );
       assert.strictEqual('mediawiki:db mysql:mydb', result.ident, 'ident');
       assert.strictEqual('mysql', result.near.service, 'near service');
@@ -943,8 +943,8 @@ describe('RelationUtils', function() {
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
       var dataStub = sinon.stub(
-          relationUtils, 'getRelationDataForService').returns(
-              JSON.parse(vals.getRelationDataForService));
+        relationUtils, 'getRelationDataForService').returns(
+        JSON.parse(vals.getRelationDataForService));
       context._cleanups.push(dataStub.restore);
       return relationUtils.getAvailableEndpoints(
         endpointsController, db, getEndpoints, applicationFrom, applicationTo);

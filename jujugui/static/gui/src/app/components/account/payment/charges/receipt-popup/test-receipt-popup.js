@@ -39,7 +39,7 @@ describe('ReceiptPopup', function() {
         getReceipt={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-        <juju.components.Spinner />);
+      <juju.components.Spinner />);
     expect(output.props.children).toEqualJSX(expected);
   });
 

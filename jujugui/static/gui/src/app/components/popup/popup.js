@@ -71,10 +71,10 @@ YUI.add('popup', function() {
         return (
           <div className="popup__close">
             <juju.components.GenericButton
-               action={close}
-               type="base"
-               icon="close_16" />
-           </div>);
+              action={close}
+              type="base"
+              icon="close_16" />
+          </div>);
       }
     },
 

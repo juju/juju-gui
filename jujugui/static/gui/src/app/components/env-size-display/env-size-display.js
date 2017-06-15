@@ -74,25 +74,25 @@ YUI.add('env-size-display', function() {
       return (
         <div className="env-size-display">
           <ul className="env-size-display__list">
-              <li className={this._genClasses('application')}>
-                  <a data-view="application"
-                    onClick={this._changeEnvironmentView}
-                    className="env-size-display__link">
-                    <juju.components.SvgIcon name="relations"
-                      className="env-size-display__icon" size="16" />
-                    {serviceCount}&nbsp;
-                    {pluralize('application', serviceCount)}
-                  </a>
-              </li>
-              <li className={this._genClasses('machine')}>
-                  <a data-view="machine" onClick={this._changeEnvironmentView}
-                    className="env-size-display__link">
-                    <juju.components.SvgIcon name="changes-machine-created"
-                      className="env-size-display__icon" size="16" />
-                    {machineCount}&nbsp;
-                    {pluralize('machine', machineCount)}
-                  </a>
-              </li>
+            <li className={this._genClasses('application')}>
+              <a data-view="application"
+                onClick={this._changeEnvironmentView}
+                className="env-size-display__link">
+                <juju.components.SvgIcon name="relations"
+                  className="env-size-display__icon" size="16" />
+                {serviceCount}&nbsp;
+                {pluralize('application', serviceCount)}
+              </a>
+            </li>
+            <li className={this._genClasses('machine')}>
+              <a data-view="machine" onClick={this._changeEnvironmentView}
+                className="env-size-display__link">
+                <juju.components.SvgIcon name="changes-machine-created"
+                  className="env-size-display__icon" size="16" />
+                {machineCount}&nbsp;
+                {pluralize('machine', machineCount)}
+              </a>
+            </li>
           </ul>
         </div>
       );

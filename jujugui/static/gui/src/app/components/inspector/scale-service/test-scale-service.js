@@ -229,7 +229,7 @@ describe('ScaleService', function() {
           </div>
         </div>
         <div className="scale-service--constraints hidden"
-        ref="constraintsContainer">
+          ref="constraintsContainer">
           <juju.components.Constraints
             disabled={true}
             hasUnit={true}

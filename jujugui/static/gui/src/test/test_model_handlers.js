@@ -1003,11 +1003,11 @@ describe('Juju delta handlers utilities', function() {
       // Clean up application tags.
       assert.equal('mysql', cleanUpEntityTags('application-mysql'));
       assert.equal(
-          'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
+        'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
       // Clean up unit tags.
       assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
       assert.equal(
-          'buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
+        'buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
       // Clean up machine tags.
       assert.equal('0', cleanUpEntityTags('machine-0'));
       assert.equal('42', cleanUpEntityTags('machine-42'));

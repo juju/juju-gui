@@ -336,11 +336,11 @@ describe('AccountPaymentCharges', function() {
       .props.children[5].props.children.props.action();
     output = renderer.getRenderOutput();
     const expected = (
-        <juju.components.ReceiptPopup
-          addNotification={addNotification}
-          close={instance._togglePopup}
-          chargeId="TEST-12344"
-          getReceipt={getReceipt} />);
+      <juju.components.ReceiptPopup
+        addNotification={addNotification}
+        close={instance._togglePopup}
+        chargeId="TEST-12344"
+        getReceipt={getReceipt} />);
     expect(output.props.children.props.children[2]).toEqualJSX(expected);
   });
 

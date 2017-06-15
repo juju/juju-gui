@@ -101,7 +101,7 @@ YUI.add('inspector-change-version', function() {
         return;
       }
       this.props.setCharm(this.props.service.get('id'), charmId, false, false,
-          this._setCharmCallback.bind(this, charmId));
+        this._setCharmCallback.bind(this, charmId));
     },
 
     /**
@@ -154,7 +154,7 @@ YUI.add('inspector-change-version', function() {
     _getVersions: function(charmId) {
       this.setState({loading: true});
       this.versionsXhr = this.props.getAvailableVersions(
-          charmId, this._getVersionsCallback);
+        charmId, this._getVersionsCallback);
     },
 
     /**
@@ -173,7 +173,7 @@ YUI.add('inspector-change-version', function() {
       if (!versions || versions.length === 1) {
         components = <li className="inspector-change-version__none">
               No other versions found.
-            </li>;
+        </li>;
       } else {
         const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
         versions.forEach(function(version) {
@@ -233,7 +233,7 @@ YUI.add('inspector-change-version', function() {
             </div>
           </div>
           {this._displayVersionsList(this.state.loading,
-              this.state.versionsList)}
+            this.state.versionsList)}
         </div>
       );
     }

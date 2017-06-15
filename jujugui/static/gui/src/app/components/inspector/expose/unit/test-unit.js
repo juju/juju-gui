@@ -45,40 +45,40 @@ describe('InspectorExposeUnit', function() {
     };
     var action = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorExposeUnit
-          action={action}
-          unit={unit} />, true);
+      <juju.components.InspectorExposeUnit
+        action={action}
+        unit={unit} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <li className="inspector-expose__unit" tabIndex="0" role="button"
         data-id="django/1"
         onClick={action}>
-          <div className="inspector-expose__unit-detail">
+        <div className="inspector-expose__unit-detail">
               django/1
-          </div>
-          <ul className="inspector-expose__unit-list">
-            <li className="inspector-expose__item"
-              key="20.20.20.199:9000-10000/udp">
-              <span>{'20.20.20.199:9000-10000/udp'}</span>
-            </li>
-            <li className="inspector-expose__item"
-              key="https://20.20.20.199:443">
-              <a href="https://20.20.20.199:443"
-                onClick={instance._stopBubble}
-                target="_blank">
-                {'20.20.20.199:443'}
-              </a>
-            </li>
-            <li className="inspector-expose__item"
-              key="http://20.20.20.199:8080">
-              <a href="http://20.20.20.199:8080"
-                onClick={instance._stopBubble}
-                target="_blank">
-                {'20.20.20.199:8080'}
-              </a>
-            </li>
-          </ul>
+        </div>
+        <ul className="inspector-expose__unit-list">
+          <li className="inspector-expose__item"
+            key="20.20.20.199:9000-10000/udp">
+            <span>{'20.20.20.199:9000-10000/udp'}</span>
+          </li>
+          <li className="inspector-expose__item"
+            key="https://20.20.20.199:443">
+            <a href="https://20.20.20.199:443"
+              onClick={instance._stopBubble}
+              target="_blank">
+              {'20.20.20.199:443'}
+            </a>
+          </li>
+          <li className="inspector-expose__item"
+            key="http://20.20.20.199:8080">
+            <a href="http://20.20.20.199:8080"
+              onClick={instance._stopBubble}
+              target="_blank">
+              {'20.20.20.199:8080'}
+            </a>
+          </li>
+        </ul>
       </li>);
     assert.deepEqual(output, expected);
   });
@@ -90,21 +90,21 @@ describe('InspectorExposeUnit', function() {
     };
     var action = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorExposeUnit
-          action={action}
-          unit={unit} />);
+      <juju.components.InspectorExposeUnit
+        action={action}
+        unit={unit} />);
     var expected = (
       <li className="inspector-expose__unit"
         tabIndex="0"
         role="button"
         data-id="django/1"
         onClick={action}>
-          <div className="inspector-expose__unit-detail">
+        <div className="inspector-expose__unit-detail">
               django/1
-          </div>
-          <div className="inspector-expose__unit-detail">
+        </div>
+        <div className="inspector-expose__unit-detail">
               No public address
-          </div>
+        </div>
       </li>);
     assert.deepEqual(output, expected);
   });

@@ -970,8 +970,8 @@ YUI.add('juju-env-api', function(Y) {
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendPostRequest(
-          path, headers, file, tags.build(tags.USER, credentials.user),
-          credentials.password, progress, callback);
+        path, headers, file, tags.build(tags.USER, credentials.user),
+        credentials.password, progress, callback);
     },
 
     /**
@@ -988,7 +988,7 @@ YUI.add('juju-env-api', function(Y) {
     getLocalCharmFileUrl: function(charmUrl, filename) {
       const credentials = this.get('user').model;
       const path = _getCharmAPIPath(
-          this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
+        this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       const webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       return webHandler.getUrl(
@@ -1030,8 +1030,8 @@ YUI.add('juju-env-api', function(Y) {
       var headers = Object.create(null);
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendGetRequest(
-          path, headers, tags.build(tags.USER, credentials.user),
-          credentials.password, progress, callback);
+        path, headers, tags.build(tags.USER, credentials.user),
+        credentials.password, progress, callback);
     },
 
     /**
@@ -1064,7 +1064,7 @@ YUI.add('juju-env-api', function(Y) {
     getLocalCharmFileContents: function(
       charmUrl, filename, progress, callback) {
       var path = _getCharmAPIPath(
-          this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
+        this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       this._jujuHttpGet(path, progress, callback);
     },
 
@@ -1751,7 +1751,7 @@ YUI.add('juju-env-api', function(Y) {
       @method add_unit
     */
     add_unit: function(
-        applicationName, numUnits, toMachine, callback, options) {
+      applicationName, numUnits, toMachine, callback, options) {
       if (options && options.immediate) {
         this._add_unit(applicationName, numUnits, toMachine, callback);
         return;

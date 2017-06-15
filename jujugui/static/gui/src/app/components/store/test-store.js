@@ -55,7 +55,7 @@ describe('Store', function() {
         setPageTitle={sinon.stub()} />);
     assert.equal(
       output.props.children[3].props.children.props.children[0]
-      .props.children.props.children[0].props.children,
+        .props.children.props.children[0].props.children,
       'Container management');
   }),
 
@@ -78,11 +78,11 @@ describe('Store', function() {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-            <a target="_blank"
-              className="link"
-              href={href}>
+              <a target="_blank"
+                className="link"
+                href={href}>
               Learn more about writing charms&nbsp;&rsaquo;
-            </a></p>
+              </a></p>
           </div>
         </div>
         <div>
@@ -164,6 +164,6 @@ describe('Store', function() {
         setPageTitle={sinon.stub()} />);
     assert.isDefined(
       output.props.children[0].props.children[0].props.children[1]
-      .props.children[1].props.onClick);
+        .props.children[1].props.onClick);
   });
 });

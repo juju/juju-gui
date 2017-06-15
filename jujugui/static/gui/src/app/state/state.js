@@ -130,10 +130,10 @@ const State = class State {
     if (query) {
       processed.query = {};
       query.split('&')
-           .forEach(section => {
-             const parts = section.split('=');
-             processed.query[parts[0]] = parts[1];
-           });
+        .forEach(section => {
+          const parts = section.split('=');
+          processed.query[parts[0]] = parts[1];
+        });
     }
     const hash = splitURL[3];
     if (hash) {

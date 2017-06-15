@@ -98,7 +98,7 @@ YUI.add('app-cookies-extension', function(Y) {
           content={content}
           dismiss={this.close.bind(this)}
           extraClasses="p-notification--center-bottom" />,
-          document.getElementById('cookie-container'));
+        document.getElementById('cookie-container'));
     },
 
     /**
@@ -106,7 +106,7 @@ YUI.add('app-cookies-extension', function(Y) {
     */
     _removeNotification: function() {
       ReactDOM.unmountComponentAtNode(
-         document.getElementById('cookie-container'));
+        document.getElementById('cookie-container'));
     },
 
     /**

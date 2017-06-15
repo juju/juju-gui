@@ -53,7 +53,7 @@ YUI.add('juju-topology-service', function(Y) {
 
     var visibleServices = db.services.visible();
     views.toBoundingBoxes(
-        this, visibleServices, topo.service_boxes, env);
+      this, visibleServices, topo.service_boxes, env);
     // Store the size of the visibleServices model list because it gets
     // reset below.
     var serviceCount = visibleServices.size();
@@ -139,7 +139,7 @@ YUI.add('juju-topology-service', function(Y) {
     node.filter(function(d) {
       return d.subordinate;
     })
-        .classed('subordinate', true);
+      .classed('subordinate', true);
 
     // Size the node for drawing.
     node.attr({
@@ -249,13 +249,13 @@ YUI.add('juju-topology-service', function(Y) {
         .select('.sub-rel-block').empty() &&
         d.subordinate;
     })
-        .insert('g', ':first-child')
-        .attr('class', 'sub-rel-block')
-        .attr('transform', function(d) {
-          // Position the block so that the relation indicator will
-          // appear at the right connector.
-          return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
-        });
+      .insert('g', ':first-child')
+      .attr('class', 'sub-rel-block')
+      .attr('transform', function(d) {
+        // Position the block so that the relation indicator will
+        // appear at the right connector.
+        return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
+      });
 
     subRelationIndicator.append('line')
       .attr({
@@ -299,26 +299,26 @@ YUI.add('juju-topology-service', function(Y) {
         charm_label_padding = 150;
 
     node.select('.name')
-        .attr({'style': function(d) {
-          // Programmatically size the font.
-          // Number derived from service assets:
-          // font-size 22px when asset is 224px.
-          return 'font-size:' + d.h *
+      .attr({'style': function(d) {
+        // Programmatically size the font.
+        // Number derived from service assets:
+        // font-size 22px when asset is 224px.
+        return 'font-size:' + d.h *
               (name_size / service_height) + 'px';
-        },
-          'x': function(d) { return d.w / 2; },
-          'y': function(d) {
-            // Number derived from service assets:
-            // padding-top 26px when asset is 224px.
-            return d.h * (name_padding / service_height) + d.h *
+      },
+      'x': function(d) { return d.w / 2; },
+      'y': function(d) {
+          // Number derived from service assets:
+          // padding-top 26px when asset is 224px.
+          return d.h * (name_padding / service_height) + d.h *
                 (name_size / service_height) / 2;
-          }
-        });
+        }
+      });
 
     node.select('.name').text(
-        function(d) {
-          return self.truncateServiceName(d);
-        });
+      function(d) {
+        return self.truncateServiceName(d);
+      });
 
     node.select('.charm-label').attr({
       'style': function(d) {
@@ -627,11 +627,11 @@ YUI.add('juju-topology-service', function(Y) {
       }
       box.tapped = true;
       this.serviceClick.call(
-          node,
-          box,
-          this,
-          // Specifying the event type to avoid d3.mouse() error
-          'touch'
+        node,
+        box,
+        this,
+        // Specifying the event type to avoid d3.mouse() error
+        'touch'
       );
     },
 
@@ -937,9 +937,9 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _extractCharmMetadata: function(file, topo, env, db) {
       ziputils.getEntries(
-          file,
-          this._findCharmEntries.bind(this, file, topo, env, db),
-          this._zipExtractionError.bind(this, db, topo, file));
+        file,
+        this._findCharmEntries.bind(this, file, topo, env, db),
+        this._zipExtractionError.bind(this, db, topo, file));
     },
 
     /**
@@ -984,9 +984,9 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _readCharmEntries: function(file, topo, env, db, entries) {
       ziputils.readCharmEntries(
-          entries,
-          this._checkForExistingServices.bind(this, file, topo, env, db),
-          this._zipExtractionError.bind(this, db, topo, file));
+        entries,
+        this._checkForExistingServices.bind(this, file, topo, env, db),
+        this._zipExtractionError.bind(this, db, topo, file));
     },
 
     /**
@@ -1098,14 +1098,14 @@ YUI.add('juju-topology-service', function(Y) {
           });
           var charmstore = topo.get('charmstore');
           charmstore.getBundleYAML(
-              entityData.id.replace('cs:', ''),
-              function(error, bundleYAML) {
-                if (error) {
-                  console.error(error);
-                  return;
-                }
-                topo.get('bundleImporter').importBundleYAML(bundleYAML);
-              }.bind(this));
+            entityData.id.replace('cs:', ''),
+            function(error, bundleYAML) {
+              if (error) {
+                console.error(error);
+                return;
+              }
+              topo.get('bundleImporter').importBundleYAML(bundleYAML);
+            }.bind(this));
         }
       }
     },
@@ -1303,8 +1303,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (includeTransition) {
         selection = selection.transition()
-        .duration(500)
-        .ease('elastic');
+          .duration(500)
+          .ease('elastic');
       }
 
       selection.attr('transform', function(d, i) {
@@ -1353,9 +1353,9 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (!this.dragBehavior) {
         this.dragBehavior = d3.behavior.drag()
-        .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
-        .on('drag', function(d) { self.drag.call(this, d, self);})
-        .on('dragend', function(d) { self.dragend.call(this, d, self);});
+          .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
+          .on('drag', function(d) { self.drag.call(this, d, self);})
+          .on('dragend', function(d) { self.dragend.call(this, d, self);});
       }
 
       //Process any changed data.
@@ -1395,10 +1395,10 @@ YUI.add('juju-topology-service', function(Y) {
       // new_service_boxes are those w/o current x/y pos and no
       // annotations.
       var new_service_boxes = Object.keys(topo.service_boxes).map(
-      k => topo.service_boxes[k]).filter(function(boundingBox) {
-            // In the case where a model has been removed from the database
-            // and update runs before exit, boundingBox.model will be empty;
-            // these can automatically be ignored.
+        k => topo.service_boxes[k]).filter(function(boundingBox) {
+        // In the case where a model has been removed from the database
+        // and update runs before exit, boundingBox.model will be empty;
+        // these can automatically be ignored.
         if (boundingBox.model) {
           var annotations = boundingBox.model.get('annotations');
           return (isNaN(boundingBox.x) &&
@@ -1433,16 +1433,16 @@ YUI.add('juju-topology-service', function(Y) {
           // Set the size of the visualization to the size of the
           // viewport (unscaledPack discards this, but it is
           // convention).
-                   .size([width, height])
-              // Set the value function for the size of each child node
-              // to the number of units within that node.
-                   .value(function(d) { return Math.max(d.unit_count, 1); })
-              // Set the padding space around each node.
-                   .padding(300)
-              // Set a sensible radius to prevent nodes from overlapping.
-                   .radius(50)
-              // Run the pack layout on the new service boxes.
-                   .nodes({children: new_service_boxes});
+            .size([width, height])
+          // Set the value function for the size of each child node
+          // to the number of units within that node.
+            .value(function(d) { return Math.max(d.unit_count, 1); })
+          // Set the padding space around each node.
+            .padding(300)
+          // Set a sensible radius to prevent nodes from overlapping.
+            .radius(50)
+          // Run the pack layout on the new service boxes.
+            .nodes({children: new_service_boxes});
           if (new_service_boxes.length <
             Object.keys(topo.service_boxes).length) {
             // If we have new services that do not have x/y coords and are
@@ -1483,12 +1483,12 @@ YUI.add('juju-topology-service', function(Y) {
 
       // enter
       node
-      .enter().append('g')
-      .attr({
-        'pointer-events': 'all', // IE needs this.
-        'class': function(d) {
-          return (d.subordinate ? 'subordinate ' : '') + 'service';
-        }})
+        .enter().append('g')
+        .attr({
+          'pointer-events': 'all', // IE needs this.
+          'class': function(d) {
+            return (d.subordinate ? 'subordinate ' : '') + 'service';
+          }})
         .call(this.dragBehavior)
         .call(self.createServiceNode, self)
         .attr('transform', function(d) { return d.translateStr; });
@@ -1595,15 +1595,15 @@ YUI.add('juju-topology-service', function(Y) {
       // Draw a relation button.
       var relationButton = node.filter(function(d) {
         return d3.select(this)
-            .select('.relation-button').empty();
+          .select('.relation-button').empty();
       })
-          .insert('g', ':first-child')
-          .attr('class', 'relation-button')
-          .attr('transform', function(d) {
-            // Position the block so that the relation indicator will
-            // appear at the top.
-            return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
-          });
+        .insert('g', ':first-child')
+        .attr('class', 'relation-button')
+        .attr('transform', function(d) {
+          // Position the block so that the relation indicator will
+          // appear at the top.
+          return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
+        });
 
       relationButton.append('line')
         .attr({
@@ -1686,18 +1686,18 @@ YUI.add('juju-topology-service', function(Y) {
         .classed('service-block', true);
 
       node.append('image')
-       .classed('service-icon', true)
-       .attr({
-         'xlink:href': function(d) {
-           return d.icon;
-         },
-         width: 96,
-         height: 96,
-         transform: function(d) {
-           return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
-         },
-         'clip-path': function(d) { return 'url(#clip-mask)'; }
-       });
+        .classed('service-icon', true)
+        .attr({
+          'xlink:href': function(d) {
+            return d.icon;
+          },
+          width: 96,
+          height: 96,
+          transform: function(d) {
+            return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
+          },
+          'clip-path': function(d) { return 'url(#clip-mask)'; }
+        });
 
       // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
@@ -1775,7 +1775,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (evt.highlightRelated) {
         var service = topo.service_boxes[serviceNames[0]].model;
         var relationData = relationUtils.getRelationDataForService(
-            topo.get('db'), service);
+          topo.get('db'), service);
         relationData.forEach(function(relation) {
           serviceNames.push(relation.far.service);
         });
@@ -1805,7 +1805,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (evt.unhighlightRelated) {
         var service = topo.service_boxes[serviceNames[0]].model;
         var relationData = relationUtils.getRelationDataForService(
-            topo.get('db'), service);
+          topo.get('db'), service);
         relationData.forEach(function(relation) {
           serviceNames.push(relation.far.service);
         });

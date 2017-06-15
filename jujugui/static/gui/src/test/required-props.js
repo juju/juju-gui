@@ -5,7 +5,7 @@
 // Validate prop type errors.
 
 beforeEach(function() {
-  spyOn(console, 'error').and.callThrough();  // eslint-disable-line no-undef
+  spyOn(console, 'error').and.callThrough(); // eslint-disable-line no-undef
 });
 
 afterEach(function() {

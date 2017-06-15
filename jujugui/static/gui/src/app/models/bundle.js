@@ -108,7 +108,7 @@ YUI.add('juju-bundle-models', function(Y) {
         parsedServices.push({
           id: id,
           iconPath: utils.getIconPath(id, false),
-          url: '',  // XXX implement once determined how to handle links
+          url: '', // XXX implement once determined how to handle links
           displayName: name.replace('-', ' ')
         });
       }

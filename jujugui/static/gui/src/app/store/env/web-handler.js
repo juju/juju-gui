@@ -66,11 +66,11 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     sendPostRequest: function(path, headers, data, username, password,
-                              withCredentials, progressCallback,
-                              completedCallback) {
+      withCredentials, progressCallback,
+      completedCallback) {
       var xhr = this._createRequest(
-          path, 'POST', headers, username, password, withCredentials,
-          progressCallback, completedCallback);
+        path, 'POST', headers, username, password, withCredentials,
+        progressCallback, completedCallback);
       // Send the POST data.
       xhr.send(data);
       return xhr;
@@ -93,11 +93,11 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     sendPutRequest: function(path, headers, data, username, password,
-                             withCredentials, progressCallback,
-                             completedCallback) {
+      withCredentials, progressCallback,
+      completedCallback) {
       var xhr = this._createRequest(
-          path, 'PUT', headers, username, password, withCredentials,
-          progressCallback, completedCallback);
+        path, 'PUT', headers, username, password, withCredentials,
+        progressCallback, completedCallback);
       // Send the PUT data.
       xhr.send(data);
       return xhr;
@@ -120,11 +120,11 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     sendPatchRequest: function(path, headers, data, username, password,
-                             withCredentials, progressCallback,
-                             completedCallback) {
+      withCredentials, progressCallback,
+      completedCallback) {
       var xhr = this._createRequest(
-          path, 'PATCH', headers, username, password, withCredentials,
-          progressCallback, completedCallback);
+        path, 'PATCH', headers, username, password, withCredentials,
+        progressCallback, completedCallback);
       // Send the PATCH data.
       xhr.send(data);
       return xhr;
@@ -145,10 +145,10 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     sendGetRequest: function(path, headers, username, password, withCredentials,
-                             progressCallback, completedCallback) {
+      progressCallback, completedCallback) {
       var xhr = this._createRequest(
-          path, 'GET', headers, username, password, withCredentials,
-          progressCallback, completedCallback);
+        path, 'GET', headers, username, password, withCredentials,
+        progressCallback, completedCallback);
       // Send the GET request.
       xhr.send();
       return xhr;
@@ -169,11 +169,11 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     sendDeleteRequest: function(path, headers, username, password,
-                                withCredentials, progressCallback,
-                                completedCallback) {
+      withCredentials, progressCallback,
+      completedCallback) {
       var xhr = this._createRequest(
-          path, 'DELETE', headers, username, password, withCredentials,
-          progressCallback, completedCallback);
+        path, 'DELETE', headers, username, password, withCredentials,
+        progressCallback, completedCallback);
       // Send the GET request.
       xhr.send();
       return xhr;
@@ -267,13 +267,13 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     _createRequest: function(path, method, headers, username, password,
-                             withCredentials, progressCallback,
-                             completedCallback) {
+      withCredentials, progressCallback,
+      completedCallback) {
       var xhr = new XMLHttpRequest({});
       // Set up the event handlers.
       var progressHandler = this._createProgressHandler(progressCallback);
       var completedHandler = this._createCompletedHandler(
-          completedCallback, progressHandler, xhr);
+        completedCallback, progressHandler, xhr);
       xhr.addEventListener('progress', progressHandler, false);
       xhr.addEventListener('error', completedHandler, false);
       xhr.addEventListener('load', completedHandler, false);

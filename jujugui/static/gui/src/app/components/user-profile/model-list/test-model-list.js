@@ -642,7 +642,7 @@ describe('UserProfileModelList', () => {
     };
     instance._displayConfirmation(model);
     assert.equal(addNotification.callCount, 1,
-                 'addNotification was not called');
+      'addNotification was not called');
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Cannot destroy model',
       message: 'The controller model cannot be destroyed.',

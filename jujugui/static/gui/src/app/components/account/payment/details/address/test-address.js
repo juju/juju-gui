@@ -86,26 +86,26 @@ describe('AccountPaymentDetailsAddress', () => {
           address={address}
           getCountries={getCountries} />
         <div className="twelve-col account-payment-details-address__edit">
-           <juju.components.AddressForm
-             addNotification={addNotification}
-             address={address}
-             disabled={false}
-             getCountries={getCountries}
-             ref="addressForm"
-             validateForm={validateForm} />
-           <div className={
-             'twelve-col account-payment-details-address__buttons'}>
-             <juju.components.GenericButton
-               action={close}
-               disabled={false}
-               type="inline-neutral"
-               title="Cancel" />
-             <juju.components.GenericButton
-               action={instance._updateAddress}
-               disabled={false}
-               type="inline-positive"
-               title="Update" />
-           </div>
+          <juju.components.AddressForm
+            addNotification={addNotification}
+            address={address}
+            disabled={false}
+            getCountries={getCountries}
+            ref="addressForm"
+            validateForm={validateForm} />
+          <div className={
+            'twelve-col account-payment-details-address__buttons'}>
+            <juju.components.GenericButton
+              action={close}
+              disabled={false}
+              type="inline-neutral"
+              title="Cancel" />
+            <juju.components.GenericButton
+              action={instance._updateAddress}
+              disabled={false}
+              type="inline-positive"
+              title="Update" />
+          </div>
         </div>
       </juju.components.ExpandingRow>);
     expect(output).toEqualJSX(expected);

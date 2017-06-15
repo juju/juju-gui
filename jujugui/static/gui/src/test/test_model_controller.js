@@ -24,17 +24,17 @@ describe('Model Controller Promises', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use(
-        'juju-charm-models', 'juju-models', 'juju-tests-factory',
-        'juju-tests-utils', 'juju-view-environment', 'model-controller',
-        function(Y) {
-          var goenv = Y.juju.environments.GoEnvironment;
-          yui = Y;
-          load = Y.juju.models.Charm.prototype.load;
-          getApplicationConfig = goenv.prototype.getApplicationConfig;
-          utils = Y.namespace('juju-tests.utils');
-          factory = Y.namespace('juju-tests.factory');
-          done();
-        });
+      'juju-charm-models', 'juju-models', 'juju-tests-factory',
+      'juju-tests-utils', 'juju-view-environment', 'model-controller',
+      function(Y) {
+        var goenv = Y.juju.environments.GoEnvironment;
+        yui = Y;
+        load = Y.juju.models.Charm.prototype.load;
+        getApplicationConfig = goenv.prototype.getApplicationConfig;
+        utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
   });
 
   beforeEach(function() {
@@ -147,15 +147,15 @@ describe('Model Controller Promises', function() {
     assert(promise instanceof Promise, true);
     assert(!!db.charms.getById(charmId), true);
     promise.then(
-        function(charm) {
-          assert(charm.get('id'), charmId);
-          assert(!!db.charms.getById(charmId), true);
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          done();
-        });
+      function(charm) {
+        assert(charm.get('id'), charmId);
+        assert(!!db.charms.getById(charmId), true);
+        done();
+      },
+      function() {
+        assert.fail('This should not have failed.');
+        done();
+      });
   });
 
   it('will return a promise with a loaded charm', function(done) {
@@ -166,14 +166,14 @@ describe('Model Controller Promises', function() {
     assert(promise instanceof Promise, true);
     assert(db.charms.getById(charmId), null);
     promise.then(
-        function(charm) {
-          assert(charm.get('package_name'), 'wordpress');
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          done();
-        });
+      function(charm) {
+        assert(charm.get('package_name'), 'wordpress');
+        done();
+      },
+      function() {
+        assert.fail('This should not have failed.');
+        done();
+      });
   });
 
   it('will return a promise with a stored loaded service', function(done) {
@@ -186,15 +186,15 @@ describe('Model Controller Promises', function() {
     assert(promise instanceof Promise, true);
     assert(!!db.services.getById(serviceId), true);
     promise.then(
-        function(service) {
-          assert(service.get('id'), serviceId);
-          assert(!!db.services.getById(serviceId), true);
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          done();
-        });
+      function(service) {
+        assert(service.get('id'), serviceId);
+        assert(!!db.services.getById(serviceId), true);
+        done();
+      },
+      function() {
+        assert.fail('This should not have failed.');
+        done();
+      });
 
   });
 
@@ -206,15 +206,15 @@ describe('Model Controller Promises', function() {
     assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
-        function(service) {
-          assert(service.get('id'), serviceId);
-          assert(!!db.services.getById(serviceId), true);
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          done();
-        });
+      function(service) {
+        assert(service.get('id'), serviceId);
+        assert(!!db.services.getById(serviceId), true);
+        done();
+      },
+      function() {
+        assert.fail('This should not have failed.');
+        done();
+      });
   });
 
   it('will reject the promise if the service does not exist', function(done) {
@@ -225,40 +225,40 @@ describe('Model Controller Promises', function() {
     assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
-        function() {
-          assert.fail('This should not have been successful.');
-          done();
-        },
-        function(err) {
-          assert(err.err, true);
-          done();
-        });
+      function() {
+        assert.fail('This should not have been successful.');
+        done();
+      },
+      function(err) {
+        assert(err.err, true);
+        done();
+      });
   });
 
   it('will return a promise with a loaded charm and service',
-      function(done) {
-        clobberLoad();
-        clobberGetApplicationConfig();
-        var serviceId = 'wordpress',
-            charmId = 'cs:precise/wordpress-7';
-        db.services.add({
-          id: serviceId,
-          loaded: true,
-          charm: charmId
-        });
-        var promise = modelController.getServiceWithCharm(serviceId);
-        assert(promise instanceof Promise, true);
-        promise.then(
-            function(result) {
-              assert(result.service.get('id'), serviceId);
-              assert(result.charm.get('id'), charmId);
-              assert(!!db.services.getById(serviceId), true);
-              assert(!!db.charms.getById(charmId), true);
-              done();
-            },
-            function() {
-              assert.fail('This should not have failed.');
-              done();
-            });
+    function(done) {
+      clobberLoad();
+      clobberGetApplicationConfig();
+      var serviceId = 'wordpress',
+          charmId = 'cs:precise/wordpress-7';
+      db.services.add({
+        id: serviceId,
+        loaded: true,
+        charm: charmId
       });
+      var promise = modelController.getServiceWithCharm(serviceId);
+      assert(promise instanceof Promise, true);
+      promise.then(
+        function(result) {
+          assert(result.service.get('id'), serviceId);
+          assert(result.charm.get('id'), charmId);
+          assert(!!db.services.getById(serviceId), true);
+          assert(!!db.charms.getById(charmId), true);
+          done();
+        },
+        function() {
+          assert.fail('This should not have failed.');
+          done();
+        });
+    });
 });

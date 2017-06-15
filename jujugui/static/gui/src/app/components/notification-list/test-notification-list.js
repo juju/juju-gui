@@ -63,8 +63,8 @@ describe('NotificationList', function() {
         type={notification.level} />];
     const expected = (
       <ul className="notification-list"
-          onMouseOver={instance._clearTimeouts}
-          onMouseOut={instance._restartTimeouts}>
+        onMouseOver={instance._clearTimeouts}
+        onMouseOut={instance._restartTimeouts}>
         {items}
       </ul>
     );
@@ -166,13 +166,13 @@ describe('NotificationList', function() {
     const instance = renderer.getMountedInstance();
     renderer.getRenderOutput();
     assert.equal(instance.timeouts.length, 1,
-                 'notification timeouts were not populated');
+      'notification timeouts were not populated');
     instance._clearTimeouts();
     assert.equal(instance.timeouts.length, 0,
-                 'notification timeouts did not clear');
+      'notification timeouts did not clear');
     instance._restartTimeouts();
     assert.equal(instance.timeouts.length, 1,
-                 'notification timeouts were not restarted');
+      'notification timeouts were not restarted');
     // Let everything clear out.
     clock.tick(longTimeout + 10);
   });

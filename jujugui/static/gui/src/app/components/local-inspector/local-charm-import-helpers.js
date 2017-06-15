@@ -55,10 +55,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       var helper = ns.localCharmHelpers;
       series = series || env.get('defaultSeries');
       env.uploadLocalCharm(
-          file,
-          series,
-          helper._uploadLocalCharmProgress,
-          helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
+        file,
+        series,
+        helper._uploadLocalCharmProgress,
+        helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
     },
 
     /**
@@ -147,7 +147,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
         var callback;
         if (options && options.services) {
           callback = helper._upgradeServices.bind(
-              null, options.services, env, db);
+            null, options.services, env, db);
         } else {
           callback = helper._loadCharmDetailsCallback;
         }
@@ -169,10 +169,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       var helper = ns.localCharmHelpers;
       services.forEach(function(service) {
         env.setCharm(
-            service.get('id'),
-            charmUrl,
-            false,
-            helper._showServiceUpgradedNotification.bind(null, db));
+          service.get('id'),
+          charmUrl,
+          false,
+          helper._showServiceUpgradedNotification.bind(null, db));
       });
     },
 

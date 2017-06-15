@@ -268,7 +268,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({detail: {data: Y.clone(environment_delta)}});
       db.fireEvent = sinon.stub();
       var charmData = testUtils.loadFixture('data/mysql-api-response.json',
-                                            true);
+        true);
       charm = new models.Charm(charmData.charm);
       db.charms.add(charm);
       view = new views.environment({
@@ -369,22 +369,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must render services blocks correctly',
-        function() {
-          // Create an instance of EnvironmentView with custom env
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          });
-          view.render();
-          const serviceBlock = container.querySelector(
-            '.service').querySelector('.service-block');
-          serviceBlock.getAttribute('r').should.equal('90');
-          serviceBlock.getAttribute('cy').should.equal('95');
-          serviceBlock.getAttribute('cx').should.equal('95');
+      function() {
+        // Create an instance of EnvironmentView with custom env
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
         });
+        view.render();
+        const serviceBlock = container.querySelector(
+          '.service').querySelector('.service-block');
+        serviceBlock.getAttribute('r').should.equal('90');
+        serviceBlock.getAttribute('cy').should.equal('95');
+        serviceBlock.getAttribute('cx').should.equal('95');
+      });
 
     it('properly renders the create relation icon', function() {
       // Create an instance of EnvironmentView with custom env
@@ -455,60 +455,60 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     // Ensure the environment view loads properly
     it('must be able to render service blocks and relations',
-        function() {
-          // Create an instance of EnvironmentView with custom env
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          });
-          view.render();
-          container.querySelectorAll('.service').length.should.equal(4);
+      function() {
+        // Create an instance of EnvironmentView with custom env
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        });
+        view.render();
+        container.querySelectorAll('.service').length.should.equal(4);
 
-          // Count all the real relations.
-          (container.querySelectorAll('.relation').length -
+        // Count all the real relations.
+        (container.querySelectorAll('.relation').length -
            container.querySelectorAll('.pending-relation').length)
-              .should.equal(2);
+          .should.equal(2);
 
-          // Count all the subordinate relations.
-          container.querySelectorAll('.rel-group .relation.subordinate').length
-              .should.equal(1);
+        // Count all the subordinate relations.
+        container.querySelectorAll('.rel-group .relation.subordinate').length
+          .should.equal(1);
 
-          // Verify that the paths render 'properly' where this
-          // means no NaN in the paths
-          var line = container.querySelector('.relation');
-          ['x1', 'y1', 'x2', 'y2'].forEach(e => {
-            isNaN(parseInt(line.getAttribute(e), 10)).should.equal(false);
-          });
-
-          // Verify that the node id has been munged as expected from the
-          // relation id. This is particularly important for Juju Core.
-          var node = container.querySelector(
-              '#' + relationUtils.generateSafeDOMId(
-                  'puppet:juju-info wordpress:juju-info', getParentId(view)));
-          assert.isNotNull(node);
-          assert.isDefined(node);
+        // Verify that the paths render 'properly' where this
+        // means no NaN in the paths
+        var line = container.querySelector('.relation');
+        ['x1', 'y1', 'x2', 'y2'].forEach(e => {
+          isNaN(parseInt(line.getAttribute(e), 10)).should.equal(false);
         });
 
-    it('must be able to render subordinate and normal services',
-        function(done) {
-          // Create an instance of EnvironmentView with custom env
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          });
-          view.render();
-          container.querySelectorAll('.service').length.should.equal(4);
-          container.querySelectorAll(
-            '.subordinate.service').length.should.equal(1);
+        // Verify that the node id has been munged as expected from the
+        // relation id. This is particularly important for Juju Core.
+        var node = container.querySelector(
+          '#' + relationUtils.generateSafeDOMId(
+            'puppet:juju-info wordpress:juju-info', getParentId(view)));
+        assert.isNotNull(node);
+        assert.isDefined(node);
+      });
 
-          done();
-        }
+    it('must be able to render subordinate and normal services',
+      function(done) {
+        // Create an instance of EnvironmentView with custom env
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        });
+        view.render();
+        container.querySelectorAll('.service').length.should.equal(4);
+        container.querySelectorAll(
+          '.subordinate.service').length.should.equal(1);
+
+        done();
+      }
     );
 
     it('must be able to render service icons', function(done) {
@@ -635,7 +635,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
 
       validateRelationCount(container.querySelector('.subordinate.service'),
-          relationModule, 2).should.equal(true);
+        relationModule, 2).should.equal(true);
     });
 
     it('must not duplicate nodes when services are added', function() {
@@ -679,131 +679,131 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must resize the service health graph properly when units are added',
-        function() {
-          new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          });
-          var tmp_data = {
-            result: [
-              ['machine', 'add', {
-                'agent-state': 'running',
-                'instance-state': 'running',
-                'id': 1,
-                'instance-id': 'local',
-                'dns-name': 'localhost'
-              }],
-              ['unit', 'add', {
-                'machine': 1,
-                'agent-state': 'started',
-                'public-address': '192.168.122.114',
-                'id': 'wordpress/1'
-              }]
-            ],
-            op: 'delta'
-          };
+      function() {
+        new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        });
+        var tmp_data = {
+          result: [
+            ['machine', 'add', {
+              'agent-state': 'running',
+              'instance-state': 'running',
+              'id': 1,
+              'instance-id': 'local',
+              'dns-name': 'localhost'
+            }],
+            ['unit', 'add', {
+              'machine': 1,
+              'agent-state': 'started',
+              'public-address': '192.168.122.114',
+              'id': 'wordpress/1'
+            }]
+          ],
+          op: 'delta'
+        };
 
-          function chartSizedProperly(serviceNode) {
-            var node = d3.select(serviceNode);
-            var outerRadius = node.attr('data-outerradius');
-            var maskWidth = node.select('.service-health-mask')
-                .attr('width');
-            return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
-          }
-
-          container.querySelectorAll('.service').forEach(service => {
-            chartSizedProperly(service).should.equal(true);
-          });
-
-          db.onDelta({detail: { data: tmp_data }});
-
-          container.querySelectorAll('.service').forEach(service => {
-            chartSizedProperly(service).should.equal(true);
-          });
+        function chartSizedProperly(serviceNode) {
+          var node = d3.select(serviceNode);
+          var outerRadius = node.attr('data-outerradius');
+          var maskWidth = node.select('.service-health-mask')
+            .attr('width');
+          return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
         }
+
+        container.querySelectorAll('.service').forEach(service => {
+          chartSizedProperly(service).should.equal(true);
+        });
+
+        db.onDelta({detail: { data: tmp_data }});
+
+        container.querySelectorAll('.service').forEach(service => {
+          chartSizedProperly(service).should.equal(true);
+        });
+      }
     );
 
     it('must recalculate relation endpoints when services are resized',
-        function() {
-          new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          }).render();
-          var tmp_data = {
-            result: [
-              ['machine', 'add', {
-                'agent-state': 'running',
-                'instance-state': 'running',
-                'id': 1,
-                'instance-id': 'local',
-                'dns-name': 'localhost'
-              }],
-              ['machine', 'add', {
-                'agent-state': 'running',
-                'instance-state': 'running',
-                'id': 2,
-                'instance-id': 'local',
-                'dns-name': 'localhost'
-              }],
-              ['unit', 'add', {
-                'machine': 1,
-                'agent-state': 'started',
-                'public-address': '192.168.122.114',
-                'id': 'wordpress/1'
-              }],
-              ['unit', 'add', {
-                'machine': 2,
-                'agent-state': 'started',
-                'public-address': '192.168.122.114',
-                'id': 'wordpress/2'
-              }]
-            ],
-            op: 'delta'
-          };
+      function() {
+        new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        var tmp_data = {
+          result: [
+            ['machine', 'add', {
+              'agent-state': 'running',
+              'instance-state': 'running',
+              'id': 1,
+              'instance-id': 'local',
+              'dns-name': 'localhost'
+            }],
+            ['machine', 'add', {
+              'agent-state': 'running',
+              'instance-state': 'running',
+              'id': 2,
+              'instance-id': 'local',
+              'dns-name': 'localhost'
+            }],
+            ['unit', 'add', {
+              'machine': 1,
+              'agent-state': 'started',
+              'public-address': '192.168.122.114',
+              'id': 'wordpress/1'
+            }],
+            ['unit', 'add', {
+              'machine': 2,
+              'agent-state': 'started',
+              'public-address': '192.168.122.114',
+              'id': 'wordpress/2'
+            }]
+          ],
+          op: 'delta'
+        };
 
-          function floor(o) {
-            return Math.floor(parseFloat(o.toString()));
-          }
-          function cmp(a, b) {
-            return floor(a) === floor(b);
-          }
-          // Ensure that line endpoints match with calculated endpoints.
-          function endpointsCalculatedProperly(relation) {
-            var node = d3.select(relation);
-            var line = node.select('line');
-            var boxpair = node.datum();
-            var connectors = boxpair.source
-              .getConnectorPair(boxpair.target);
+        function floor(o) {
+          return Math.floor(parseFloat(o.toString()));
+        }
+        function cmp(a, b) {
+          return floor(a) === floor(b);
+        }
+        // Ensure that line endpoints match with calculated endpoints.
+        function endpointsCalculatedProperly(relation) {
+          var node = d3.select(relation);
+          var line = node.select('line');
+          var boxpair = node.datum();
+          var connectors = boxpair.source
+            .getConnectorPair(boxpair.target);
 
-            return cmp(line.attr('x1'), connectors[0][0]) &&
+          return cmp(line.attr('x1'), connectors[0][0]) &&
                    cmp(line.attr('y1'), connectors[0][1]) &&
                    cmp(line.attr('x2'), connectors[1][0]) &&
                    cmp(line.attr('y2'), connectors[1][1]);
-          }
-
-          // Ensure that endpoints match for all services before any
-          // service is resized.
-          container.querySelectorAll('.rel-group').forEach(relationGroup => {
-            endpointsCalculatedProperly(relationGroup)
-              .should.equal(true);
-          });
-
-          // Resize the wordpress service.
-          db.onDelta({detail: { data: tmp_data }});
-
-          // Ensure that endpoints still match for all services, now that
-          // one service has been resized.  This is the real test here.
-          container.querySelectorAll('.rel-group').forEach(relationGroup => {
-            endpointsCalculatedProperly(relationGroup)
-              .should.equal(true);
-          });
         }
+
+        // Ensure that endpoints match for all services before any
+        // service is resized.
+        container.querySelectorAll('.rel-group').forEach(relationGroup => {
+          endpointsCalculatedProperly(relationGroup)
+            .should.equal(true);
+        });
+
+        // Resize the wordpress service.
+        db.onDelta({detail: { data: tmp_data }});
+
+        // Ensure that endpoints still match for all services, now that
+        // one service has been resized.  This is the real test here.
+        container.querySelectorAll('.rel-group').forEach(relationGroup => {
+          endpointsCalculatedProperly(relationGroup)
+            .should.equal(true);
+        });
+      }
     );
 
     it('must be able to place new services properly', function() {
@@ -892,8 +892,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
 
       assert.notDeepEqual(
-          view.topo.service_boxes.wordpressa.center,
-          view.topo.service_boxes.wordpressb.center);
+        view.topo.service_boxes.wordpressa.center,
+        view.topo.service_boxes.wordpressb.center);
     });
 
     it('must be able to use position annotations', function() {
@@ -956,82 +956,82 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must be able to render subordinate relation indicators',
-       function() {
-         new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore,
-           state: {changeState: sinon.stub()}
-         }).render();
-         var rel_block = container.querySelector('.sub-rel-count');
+      function() {
+        new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        var rel_block = container.querySelector('.sub-rel-count');
 
-         // Get the contents of the subordinate relation count; YUI cannot
-         // get this directly as the node is not an HTMLElement, so use
-         // native SVG methods.
-         rel_block.firstChild.nodeValue.should.equal('1');
-       }
+        // Get the contents of the subordinate relation count; YUI cannot
+        // get this directly as the node is not an HTMLElement, so use
+        // native SVG methods.
+        rel_block.firstChild.nodeValue.should.equal('1');
+      }
     );
 
     // Ensure that sizes are computed properly
     it('must be able to compute rect sizes based on the svg and' +
        ' viewport size',
-       function() {
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore,
-           state: {changeState: sinon.stub()}
-         }).render();
-         // Attach the view to the DOM so that sizes get set properly
-         // from the viewport (only available from DOM).
-         view.rendered();
+    function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
+      }).render();
+      // Attach the view to the DOM so that sizes get set properly
+      // from the viewport (only available from DOM).
+      view.rendered();
 
-         var svg = document.querySelector('.the-canvas');
+      var svg = document.querySelector('.the-canvas');
 
-         parseInt(svg.querySelector('g').getAttribute('height'), 10)
-          .should.equal(
-         parseInt(window.getComputedStyle(svg).getPropertyValue('height'), 10));
-         parseInt(svg.querySelector('g').getAttribute('width'), 10)
-          .should.equal(
-         parseInt(window.getComputedStyle(svg).getPropertyValue('width'), 10));
-       }
+      parseInt(svg.querySelector('g').getAttribute('height'), 10)
+        .should.equal(
+          parseInt(window.getComputedStyle(svg).getPropertyValue('height'), 10));
+      parseInt(svg.querySelector('g').getAttribute('width'), 10)
+        .should.equal(
+          parseInt(window.getComputedStyle(svg).getPropertyValue('width'), 10));
+    }
     );
 
     // Ensure that sizes are computed properly
     it('must be able to compute sizes by the viewport with a minimum',
-       function() {
-         // The height of a navbar is used in calculating the viewport size,
-         // so add a temporary one to the DOM
-         const navbar = document.createElement('div');
-         navbar.classList.add('header-banner');
-         navbar.style.height = '70px';
-         document.body.appendChild(navbar);
-         const viewport = document.createElement('div');
-         viewport.setAttribute('id', 'viewport');
-         viewport.style.width = '800px';
-         document.body.appendChild(viewport);
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore,
-           state: {changeState: sinon.stub()}
-         }).render();
-         // Attach the view to the DOM so that sizes get set properly
-         // from the viewport (only available from DOM).
-         view.rendered();
-         var svg = container.querySelector('.the-canvas'),
-             canvas = container.querySelector('.topology');
-         // We have to hide the canvas so it does not affect our calculations.
-         canvas.style.display = 'none';
-         parseInt(svg.getAttribute('height'), 10)
+      function() {
+        // The height of a navbar is used in calculating the viewport size,
+        // so add a temporary one to the DOM
+        const navbar = document.createElement('div');
+        navbar.classList.add('header-banner');
+        navbar.style.height = '70px';
+        document.body.appendChild(navbar);
+        const viewport = document.createElement('div');
+        viewport.setAttribute('id', 'viewport');
+        viewport.style.width = '800px';
+        document.body.appendChild(viewport);
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        // Attach the view to the DOM so that sizes get set properly
+        // from the viewport (only available from DOM).
+        view.rendered();
+        var svg = container.querySelector('.the-canvas'),
+            canvas = container.querySelector('.topology');
+        // We have to hide the canvas so it does not affect our calculations.
+        canvas.style.display = 'none';
+        parseInt(svg.getAttribute('height'), 10)
           .should.be.above(199);
-         // Destroy the navbar
-         navbar.remove(true);
-         viewport.remove(true);
-       }
+        // Destroy the navbar
+        navbar.remove(true);
+        viewport.remove(true);
+      }
     );
 
     function assertClassPresent(cssClass) {
@@ -1041,13 +1041,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         return d.id === 'mysql:db wordpress:db';
       });
       assert.equal(relation.classed(cssClass), true,
-                   'relation does not have the ' + cssClass + ' class');
+        'relation does not have the ' + cssClass + ' class');
       var services = vis.selectAll('.service');
       var service = services.filter(function(d) {
         return d.id === 'mysql';
       });
       assert.equal(service.classed(cssClass), true,
-                   'service does not have the ' + cssClass + ' class');
+        'service does not have the ' + cssClass + ' class');
     }
 
     it('should show services and relations', function(done) {
@@ -1064,104 +1064,104 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must be able to add a relation from the service menu',
-       function() {
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore,
-           state: {changeState: sinon.stub()}
-         }).render();
-         var serviceNode = container.querySelector('.service'),
-             add_rel = container.querySelector('.relation-button__link');
-         var service = d3.select(serviceNode).datum();
-         var endpoints = {},
-             serviceName = serviceNode.getAttribute('data-name'),
-             nextServiceName = serviceNode.nextSibling.getAttribute(
-               'data-name');
-         endpoints[nextServiceName] = [
-           [{
-             service: serviceName,
-             name: 'relName',
-             type: 'relType'
-           }, {
-             service: nextServiceName,
-             name: 'relName',
-             type: 'relType'
-           }]];
-         // Add a mock charm for the service.
-         var charm = { id: service.charm, loaded: false };
-         var charm2 = { id: 'cs:precise/mediawiki-3', loaded: false };
-         db.charms.add(charm);
-         db.charms.add(charm2);
-         charm = db.charms.getById(service.charm);
-         charm.loaded = true;
-         // Mock endpoints
-         var existing = models.getEndpoints;
-         models.getEndpoints = function() {
-           return endpoints;
-         };
+      function() {
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        var serviceNode = container.querySelector('.service'),
+            add_rel = container.querySelector('.relation-button__link');
+        var service = d3.select(serviceNode).datum();
+        var endpoints = {},
+            serviceName = serviceNode.getAttribute('data-name'),
+            nextServiceName = serviceNode.nextSibling.getAttribute(
+              'data-name');
+        endpoints[nextServiceName] = [
+          [{
+            service: serviceName,
+            name: 'relName',
+            type: 'relType'
+          }, {
+            service: nextServiceName,
+            name: 'relName',
+            type: 'relType'
+          }]];
+        // Add a mock charm for the service.
+        var charm = { id: service.charm, loaded: false };
+        var charm2 = { id: 'cs:precise/mediawiki-3', loaded: false };
+        db.charms.add(charm);
+        db.charms.add(charm2);
+        charm = db.charms.getById(service.charm);
+        charm.loaded = true;
+        // Mock endpoints
+        var existing = models.getEndpoints;
+        models.getEndpoints = function() {
+          return endpoints;
+        };
 
-         // Toggle the service menu for the Add Relation button.
-         var module = view.topo.modules.RelationModule;
-         var sm = view.topo.modules.ServiceModule;
+        // Toggle the service menu for the Add Relation button.
+        var module = view.topo.modules.RelationModule;
+        var sm = view.topo.modules.ServiceModule;
 
-         sm.showServiceDetails(service, {
-           fire: function() {},
-           get: sinon.stub().withArgs('state').returns(
-             {changeState: sinon.stub()})
-         });
-         // Mock an event object so that d3.mouse does not throw a NPE.
-         d3.event = {};
-         add_rel.dispatchEvent(click);
-         container.querySelectorAll('.selectable-service')
-               .length
-               .should.equal(2);
-         container.querySelectorAll('.dragline')
-               .length
-               .should.equal(1);
+        sm.showServiceDetails(service, {
+          fire: function() {},
+          get: sinon.stub().withArgs('state').returns(
+            {changeState: sinon.stub()})
+        });
+        // Mock an event object so that d3.mouse does not throw a NPE.
+        d3.event = {};
+        add_rel.dispatchEvent(click);
+        container.querySelectorAll('.selectable-service')
+          .length
+          .should.equal(2);
+        container.querySelectorAll('.dragline')
+          .length
+          .should.equal(1);
 
-         // Start the process of adding a relation.
-         module.ambiguousAddRelationCheck(
-             d3.select(serviceNode.nextSibling).datum(),
-             module,
-             serviceNode.nextSibling);
-         container.querySelectorAll('.selectable-service').length
-            .should.equal(0);
-         // The database is initialized with three relations in beforeEach.
-         assert.equal(4, db.relations.size());
-         // restore original getEndpoints function
-         models.getEndpoints = existing;
-         view.destroy();
-       });
+        // Start the process of adding a relation.
+        module.ambiguousAddRelationCheck(
+          d3.select(serviceNode.nextSibling).datum(),
+          module,
+          serviceNode.nextSibling);
+        container.querySelectorAll('.selectable-service').length
+          .should.equal(0);
+        // The database is initialized with three relations in beforeEach.
+        assert.equal(4, db.relations.size());
+        // restore original getEndpoints function
+        models.getEndpoints = existing;
+        view.destroy();
+      });
 
     it('must be able to remove a relation between services',
-       function(done) {
-         var oldRemove = env.remove_relation;
-         let remove_called = false;
-         env.remove_relation = function() {
-           remove_called = true;
-           env.remove_relation = oldRemove;
-           done();
-         };
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore,
-           state: {changeState: sinon.stub()}
-         }).render();
+      function(done) {
+        var oldRemove = env.remove_relation;
+        let remove_called = false;
+        env.remove_relation = function() {
+          remove_called = true;
+          env.remove_relation = oldRemove;
+          done();
+        };
+        var view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
 
-         var relation = container.querySelector(
-           '#' +
+        var relation = container.querySelector(
+          '#' +
            relationUtils.generateSafeDOMId(
              'mysql:db wordpress:db', getParentId(view)) +
            ' .rel-indicator');
-         relation.dispatchEvent(click);
-         const menu = container.querySelector('#relation-menu');
-         menu.querySelector('.relation-remove').dispatchEvent(click);
-         assert.isTrue(remove_called);
-       });
+        relation.dispatchEvent(click);
+        const menu = container.querySelector('#relation-menu');
+        menu.querySelector('.relation-remove').dispatchEvent(click);
+        assert.isTrue(remove_called);
+      });
 
     it('builds a menu of relations in a collection', function() {
       db.onDelta({detail: {data: additionalRelations}});
@@ -1176,8 +1176,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation
       var relation = container.querySelector(
-          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
-          getParentId(view)) +
+            '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
+              getParentId(view)) +
           ' .rel-indicator'),
           menu;
       relation.dispatchEvent(click);
@@ -1192,13 +1192,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Assert that relation module is storing the menu state for rerendering.
       assert.equal(module.get('relationMenuActive'), true);
       assert.equal(module.get('relationMenuRelation').id,
-          'mysql:db wordpress:db');
+        'mysql:db wordpress:db');
 
       // Multiple relations
       relation = container.querySelector(
-          '#' +
+        '#' +
           relationUtils.generateSafeDOMId('mysql:db mediawiki:db',
-          getParentId(view)) +
+            getParentId(view)) +
           ' .rel-indicator');
       relation.dispatchEvent(click);
       menu = container.querySelector('#relation-menu');
@@ -1300,11 +1300,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }).render();
       // This stops the simulate() call later on from causing a 'script error'
       container.insertAdjacentHTML('beforeend',
-          '<div id="bws-sidebar"><div class="bws-content"></div></div>');
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
       var relation = container.querySelector(
-          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
-          getParentId(view)) +
+            '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
+              getParentId(view)) +
           ' .rel-indicator'),
           menu;
 
@@ -1325,89 +1325,89 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must not remove a deployed subordinate relation between services',
-        function() {
-          view = new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore,
-            state: {changeState: sinon.stub()}
-          }).render();
-          assert.equal(db.notifications.size(), 0);
+      function() {
+        view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        assert.equal(db.notifications.size(), 0);
 
-         // Get a subordinate relation.
-          var relation = container.querySelector(
+        // Get a subordinate relation.
+        var relation = container.querySelector(
               '#' + relationUtils.generateSafeDOMId(
-                  'puppet:juju-info wordpress:juju-info',
-         getParentId(view)) +
+                'puppet:juju-info wordpress:juju-info',
+                getParentId(view)) +
               ' .rel-indicator'),
-              menu;
+            menu;
 
-          relation.dispatchEvent(click);
-          menu = container.querySelector('#relation-menu');
-          menu.querySelector('.relation-remove').click();
-          assert.equal(db.notifications.size(), 1);
-        });
+        relation.dispatchEvent(click);
+        menu = container.querySelector('#relation-menu');
+        menu.querySelector('.relation-remove').click();
+        assert.equal(db.notifications.size(), 1);
+      });
 
     it('should remove a pending subordinate relation between services',
-        function() {
-          view = new views.environment({
-            container: container,
+      function() {
+        view = new views.environment({
+          container: container,
+          db: db,
+          env: env,
+          charmstore: fakeStore,
+          state: {changeState: sinon.stub()}
+        }).render();
+        db.relations.item(1).set('pending', true);
+
+        // Get a subordinate relation.
+        const relation = container.querySelector(
+          '#' + relationUtils.generateSafeDOMId(
+            'puppet:juju-info wordpress:juju-info',
+            getParentId(view)) +
+              ' .rel-indicator');
+        relation.dispatchEvent(click);
+        const menu = container.querySelector('#relation-menu');
+        menu.querySelector('.relation-remove').dispatchEvent(click);
+        assert.equal(db.notifications.size(), 0);
+      });
+
+    it('should stop creating a relation if the background is clicked',
+      function() {
+        var db = new models.Database(),
+            endpointsMap = {'service-1': {requires: [], provides: []}};
+        var fauxController = new Y.Base();
+        fauxController.endpointsMap = endpointsMap;
+        fauxController.set('db', db);
+        var view = new views.environment(
+          { container: container,
             db: db,
+            endpointsController: fauxController,
             env: env,
             charmstore: fakeStore,
             state: {changeState: sinon.stub()}
-          }).render();
-          db.relations.item(1).set('pending', true);
-
-         // Get a subordinate relation.
-          const relation = container.querySelector(
-              '#' + relationUtils.generateSafeDOMId(
-                  'puppet:juju-info wordpress:juju-info',
-         getParentId(view)) +
-              ' .rel-indicator');
-          relation.dispatchEvent(click);
-          const menu = container.querySelector('#relation-menu');
-          menu.querySelector('.relation-remove').dispatchEvent(click);
-          assert.equal(db.notifications.size(), 0);
-        });
-
-    it('should stop creating a relation if the background is clicked',
-        function() {
-          var db = new models.Database(),
-              endpointsMap = {'service-1': {requires: [], provides: []}};
-          var fauxController = new Y.Base();
-          fauxController.endpointsMap = endpointsMap;
-          fauxController.set('db', db);
-          var view = new views.environment(
-            { container: container,
-              db: db,
-              endpointsController: fauxController,
-              env: env,
-              charmstore: fakeStore,
-              state: {changeState: sinon.stub()}
-            });
-          var service = new models.Service({
-            id: 'service-1',
-            charm: 'precise/mysql-1'
           });
-
-          db.services.add([service]);
-          view.render();
-
-          // If the user has clicked on the "Add Relation" menu item...
-          var module = view.topo.modules.RelationModule;
-          var sm = view.topo.modules.ServiceModule;
-          var topo = module.get('component');
-          module.startRelation(service);
-          assert.isTrue(topo.buildingRelation);
-          // ...clicking on the background causes the relation drag to stop.
-          sm.backgroundClicked();
-          assert.isFalse(topo.buildingRelation);
-          view.destroy();
-          db.destroy();
-          fauxController.destroy();
+        var service = new models.Service({
+          id: 'service-1',
+          charm: 'precise/mysql-1'
         });
+
+        db.services.add([service]);
+        view.render();
+
+        // If the user has clicked on the "Add Relation" menu item...
+        var module = view.topo.modules.RelationModule;
+        var sm = view.topo.modules.ServiceModule;
+        var topo = module.get('component');
+        module.startRelation(service);
+        assert.isTrue(topo.buildingRelation);
+        // ...clicking on the background causes the relation drag to stop.
+        sm.backgroundClicked();
+        assert.isFalse(topo.buildingRelation);
+        view.destroy();
+        db.destroy();
+        fauxController.destroy();
+      });
 
     it('stores relations in collections', function() {
       db.onDelta({detail: {data: additionalRelations}});
@@ -1426,7 +1426,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Only one line is drawn (that is, there are four container relations,
       // but only three lines on the canvas).
       assert.equal(view.topo.vis.selectAll('.relation').size(),
-          module.relations.length);
+        module.relations.length);
       assert.equal(module.relations.length, 3);
       assert.equal(db.relations.filter(function(relation) {
         return relation.get('scope') !== 'container';
@@ -1449,26 +1449,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('onboarding integration with the environment', function() {
       it('shows/hides the integrated button when a service is added',
-          function() {
-            db = new models.Database();
-            view.set('db', db);
-            view.render().rendered();
-            var includedPlus = view.topo.vis.select('.included-plus');
-            var helpText = container.querySelector('.environment-help');
-            assert.equal(false, includedPlus.classed('show'));
-            assert.equal(false, helpText.classList.contains('shrink'));
+        function() {
+          db = new models.Database();
+          view.set('db', db);
+          view.render().rendered();
+          var includedPlus = view.topo.vis.select('.included-plus');
+          var helpText = container.querySelector('.environment-help');
+          assert.equal(false, includedPlus.classed('show'));
+          assert.equal(false, helpText.classList.contains('shrink'));
 
-            var service = new models.Service({
-              id: 'service-1',
-              charm: 'precise/mysql-1'
-            });
-            db.services.add([service]);
+          var service = new models.Service({
+            id: 'service-1',
+            charm: 'precise/mysql-1'
+          });
+          db.services.add([service]);
 
-            assert.equal(true, includedPlus.classed('show'));
-            assert.equal(true, helpText.classList.contains('shrink'));
-            view.destroy();
-          }
-        );
+          assert.equal(true, includedPlus.classed('show'));
+          assert.equal(true, helpText.classList.contains('shrink'));
+          view.destroy();
+        }
+      );
     });
   });
 
@@ -1478,12 +1478,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       YUI(GlobalConfig).use(
         ['juju-views', 'juju-models', 'charmstore-api', 'juju-view-utils'],
-          function(Y) {
-            views = Y.namespace('juju.views');
-            models = Y.namespace('juju.models');
-            viewUtils = Y.namespace('juju.views.utils');
-            done();
-          });
+        function(Y) {
+          views = Y.namespace('juju.views');
+          models = Y.namespace('juju.models');
+          viewUtils = Y.namespace('juju.views.utils');
+          done();
+        });
     });
 
     beforeEach(function() {
@@ -1497,35 +1497,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must be able to get us nearest connectors when snapping to poles',
-       function() {
+      function() {
 
-         var b1 = views.BoundingBox(module, service),
-             b2 = views.BoundingBox(module, service);
+        var b1 = views.BoundingBox(module, service),
+            b2 = views.BoundingBox(module, service);
 
-         // raw property access
-         b1.x = 0; b1.y = 0;
-         b1.w = 100; b1.h = 200;
+        // raw property access
+        b1.x = 0; b1.y = 0;
+        b1.w = 100; b1.h = 200;
 
-         // Use pos to set b2
-         b2.pos = {x: 200, y: 300, w: 100, h: 200};
+        // Use pos to set b2
+        b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
-         b1.xy.should.eql([0, 0]);
-         b2.wh.should.eql([100, 200]);
+        b1.xy.should.eql([0, 0]);
+        b2.wh.should.eql([100, 200]);
 
-         viewUtils.snapToPoles = true;
+        viewUtils.snapToPoles = true;
 
-         b1.getNearestConnector([0, 0]);
+        b1.getNearestConnector([0, 0]);
 
-         b1.getNearestConnector(b2).should
+        b1.getNearestConnector(b2).should
           .eql(b1.connectors.bottom);
 
-         b2.getNearestConnector(b1).should
+        b2.getNearestConnector(b1).should
           .eql(b2.connectors.top);
 
-         b1.getConnectorPair(b2).should.eql([
-           b1.connectors.bottom,
-           b2.connectors.top]);
-       });
+        b1.getConnectorPair(b2).should.eql([
+          b1.connectors.bottom,
+          b2.connectors.top]);
+      });
 
     it('must be able to get us nearest connectors when centering',
       function() {
@@ -1546,10 +1546,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         viewUtils.snapToPoles = false;
 
         b1.getNearestConnector(b2).should
-         .eql(b1.connectors.center);
+          .eql(b1.connectors.center);
 
         b2.getNearestConnector(b1).should
-         .eql(b2.connectors.center);
+          .eql(b2.connectors.center);
       });
 
     it('must be able to tell if a point is inside a box', function() {
@@ -1561,28 +1561,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must be able to save and restore old position information',
-       function() {
-         var b1 = views.BoundingBox(module, service),
-             b2 = views.BoundingBox(module, service);
+      function() {
+        var b1 = views.BoundingBox(module, service),
+            b2 = views.BoundingBox(module, service);
 
-         // raw property access
-         b1.x = 0; b1.y = 0;
-         b1.w = 100; b1.h = 200;
+        // raw property access
+        b1.x = 0; b1.y = 0;
+        b1.w = 100; b1.h = 200;
 
-         // Use pos to set b2
-         b2.pos = {x: 200, y: 300, w: 100, h: 200};
+        // Use pos to set b2
+        b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
-         // Update using property.
-         b1.x = 100;
-         b1.x.should.equal(100);
-         b1.px.should.equal(0);
+        // Update using property.
+        b1.x = 100;
+        b1.x.should.equal(100);
+        b1.px.should.equal(0);
 
-         // Update using position.
-         b2.pos = {x: 300};
-         b2.x.should.equal(300);
-         b2.px.should.equal(200);
+        // Update using position.
+        b2.pos = {x: 300};
+        b2.x.should.equal(300);
+        b2.px.should.equal(200);
 
-       });
+      });
 
     it('must be able to access model attributes', function() {
       var b1 = new views.BoundingBox(module, service);
@@ -1595,57 +1595,57 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must be able to update position data and not touch model data',
-       function() {
-         var b1 = views.BoundingBox(module, service);
-         b1.x = 0; b1.y = 0;
-         b1.w = 100; b1.h = 200;
-         b1.id.should.equal('mediawiki');
+      function() {
+        var b1 = views.BoundingBox(module, service);
+        b1.x = 0; b1.y = 0;
+        b1.w = 100; b1.h = 200;
+        b1.id.should.equal('mediawiki');
 
-         // X/Y updated, other keys ignored
-         b1.pos = {x: 100, y: 100, id: 'blubber'};
-         b1.x.should.equal(100);
-         b1.id.should.equal('mediawiki');
-       });
+        // X/Y updated, other keys ignored
+        b1.pos = {x: 100, y: 100, id: 'blubber'};
+        b1.x.should.equal(100);
+        b1.id.should.equal('mediawiki');
+      });
 
     it('must be able to map from sequence of models to boundingboxes',
-       function() {
-         var services = new models.ServiceList();
-         services.add([{id: 'mysql'},
-                       {id: 'haproxy'},
-                       {id: 'memcache'},
-                       {id: 'wordpress'}]);
+      function() {
+        var services = new models.ServiceList();
+        services.add([{id: 'mysql'},
+          {id: 'haproxy'},
+          {id: 'memcache'},
+          {id: 'wordpress'}]);
 
-         services.size().should.equal(4);
-         var boxes = views.toBoundingBoxes(module, services);
-         boxes.mysql.id.should.equal('mysql');
-         boxes.wordpress.id.should.equal('wordpress');
-       });
+        services.size().should.equal(4);
+        var boxes = views.toBoundingBoxes(module, services);
+        boxes.mysql.id.should.equal('mysql');
+        boxes.wordpress.id.should.equal('wordpress');
+      });
 
     it('must be able to update boxes with new model data',
-       function() {
-         var services = new models.ServiceList();
-         services.add([{id: 'mysql', exposed: false},
-                       {id: 'haproxy'},
-                       {id: 'memcache'},
-                       {id: 'wordpress'}]);
+      function() {
+        var services = new models.ServiceList();
+        services.add([{id: 'mysql', exposed: false},
+          {id: 'haproxy'},
+          {id: 'memcache'},
+          {id: 'wordpress'}]);
 
-         services.size().should.equal(4);
-         var boxes = views.toBoundingBoxes(module, services);
-         var mysql = services.getById('mysql');
+        services.size().should.equal(4);
+        var boxes = views.toBoundingBoxes(module, services);
+        var mysql = services.getById('mysql');
 
-         boxes.mysql.exposed.should.equal(false);
-         mysql.set('exposed', true);
+        boxes.mysql.exposed.should.equal(false);
+        mysql.set('exposed', true);
 
-         // The third argument here implies an update.
-         views.toBoundingBoxes(module, services, boxes);
-         boxes.mysql.exposed.should.equal(true);
-       });
+        // The third argument here implies an update.
+        views.toBoundingBoxes(module, services, boxes);
+        boxes.mysql.exposed.should.equal(true);
+      });
 
     it('must cull removed services from the existing list', function() {
       var services = new models.ServiceList();
       services.add([{id: 'mysql', exposed: false},
-                    {id: 'memcache'},
-                    {id: 'wordpress'}]);
+        {id: 'memcache'},
+        {id: 'wordpress'}]);
       var existing = {
         'mysql': {},
         'haproxy': {}, // This entry is stale and will be removed.

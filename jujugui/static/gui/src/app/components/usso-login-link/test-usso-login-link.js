@@ -36,28 +36,28 @@ describe('USSOLoginLink', () => {
 
   it('can render a text link', () => {
     const output = jsTestUtils.shallowRender(
-        <juju.components.USSOLoginLink
-          displayType={'text'}
-          loginToController={sinon.stub()} />);
+      <juju.components.USSOLoginLink
+        displayType={'text'}
+        loginToController={sinon.stub()} />);
     const expected = <div className="usso-login">
-        <a className={'logout-link usso-login__action'}
-           onClick={output.props.children[0].props.onClick}
-           target="_blank">
+      <a className={'logout-link usso-login__action'}
+        onClick={output.props.children[0].props.onClick}
+        target="_blank">
           Login
-        </a>
-        <div className="usso-login__notification">
-          {notification}
-        </div>
-      </div>;
+      </a>
+      <div className="usso-login__notification">
+        {notification}
+      </div>
+    </div>;
     assert.deepEqual(output, expected);
   });
 
   it('calls loginToController on click for text link', () => {
     const loginToController = sinon.stub();
     const output = testUtils.renderIntoDocument(
-        <juju.components.USSOLoginLink
-          displayType={'text'}
-          loginToController={loginToController} />, true);
+      <juju.components.USSOLoginLink
+        displayType={'text'}
+        loginToController={loginToController} />, true);
     testUtils.Simulate.click(
       testUtils.findRenderedDOMComponentWithTag(output, 'a'));
     assert.equal(loginToController.callCount, 1);
@@ -65,11 +65,11 @@ describe('USSOLoginLink', () => {
 
   it('can render a button link', () => {
     const component = jsTestUtils.shallowRender(
-        <juju.components.USSOLoginLink
-          displayType={'button'}
-          loginToController={sinon.stub()}
-          sendPost={sinon.stub()}
-          gisf={false}/>, true);
+      <juju.components.USSOLoginLink
+        displayType={'button'}
+        loginToController={sinon.stub()}
+        sendPost={sinon.stub()}
+        gisf={false}/>, true);
     const output = component.getRenderOutput();
     var expected = (
       <div className="usso-login">
@@ -88,26 +88,26 @@ describe('USSOLoginLink', () => {
 
   it('can render a button link with custom content', () => {
     const component = jsTestUtils.shallowRender(
-        <juju.components.USSOLoginLink
-          displayType={'button'}
-          loginToController={sinon.stub()}
-          sendPost={sinon.stub()}
-          gisf={false}>
+      <juju.components.USSOLoginLink
+        displayType={'button'}
+        loginToController={sinon.stub()}
+        sendPost={sinon.stub()}
+        gisf={false}>
           Scooby Doo
-        </juju.components.USSOLoginLink>, true);
+      </juju.components.USSOLoginLink>, true);
     const output = component.getRenderOutput();
     assert.equal(output.props.children[0].props.children, 'Scooby Doo');
   });
 
   it('can render a text link with custom content', () => {
     const component = jsTestUtils.shallowRender(
-        <juju.components.USSOLoginLink
-          displayType={'text'}
-          loginToController={sinon.stub()}
-          sendPost={sinon.stub()}
-          gisf={false}>
+      <juju.components.USSOLoginLink
+        displayType={'text'}
+        loginToController={sinon.stub()}
+        sendPost={sinon.stub()}
+        gisf={false}>
           Scooby Doo
-        </juju.components.USSOLoginLink>, true);
+      </juju.components.USSOLoginLink>, true);
     const output = component.getRenderOutput();
     assert.equal(output.props.children[0].props.children, 'Scooby Doo');
   });
@@ -115,9 +115,9 @@ describe('USSOLoginLink', () => {
   it('calls loginToController on click for button link', () => {
     const loginToController = sinon.stub();
     const output = testUtils.renderIntoDocument(
-        <juju.components.USSOLoginLink
-          displayType={'button'}
-          loginToController={loginToController} />, true);
+      <juju.components.USSOLoginLink
+        displayType={'button'}
+        loginToController={loginToController} />, true);
     testUtils.Simulate.click(
       testUtils.findRenderedDOMComponentWithTag(output, 'button'));
     assert.equal(loginToController.callCount, 1);

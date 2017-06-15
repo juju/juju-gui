@@ -132,14 +132,14 @@ describe('DeploymentBudget', function() {
                   disabled={false}
                   type="base"
                   title="Cancel" />
-                </div>
-                <div className="two-col last-col">
+              </div>
+              <div className="two-col last-col">
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={false}
                   type="neutral"
                   title="Confirm" />
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -226,14 +226,14 @@ describe('DeploymentBudget', function() {
                   disabled={true}
                   type="base"
                   title="Cancel" />
-                </div>
-                <div className="two-col last-col">
+              </div>
+              <div className="two-col last-col">
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={true}
                   type="neutral"
                   title="Confirm" />
-                </div>
+              </div>
             </div>
           </div>
         </div>

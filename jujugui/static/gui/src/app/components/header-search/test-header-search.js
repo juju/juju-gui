@@ -148,8 +148,8 @@ describe('HeaderSearch', function() {
     const input = output.refs.searchInput;
     testUtils.Simulate.focus(input);
     assert.isTrue(
-        output.refs.headerSearchContainer
-                   .classList.contains('header-search--active'));
+      output.refs.headerSearchContainer
+        .classList.contains('header-search--active'));
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       root: 'store',

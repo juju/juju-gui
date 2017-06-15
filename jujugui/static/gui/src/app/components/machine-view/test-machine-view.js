@@ -321,7 +321,7 @@ describe('MachineView', function() {
       </div>);
     expect(
       output.props.children.props.children[0].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can display a service scale up form', function() {
@@ -363,7 +363,7 @@ describe('MachineView', function() {
         toggleScaleUp={instance._toggleScaleUp} />);
     expect(
       output.props.children.props.children[0].props.children[0]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can display a list of unplaced units', function() {
@@ -443,7 +443,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1]).toEqualJSX(expected);
+        .props.children[1]).toEqualJSX(expected);
   });
 
   it('does not display unplaced subordinate units', function() {
@@ -512,7 +512,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[0].props.children[1]
-      .props.children[1]).toEqualJSX(expected);
+        .props.children[1]).toEqualJSX(expected);
   });
 
   it('displays onboarding if there are only subordinate units', function() {
@@ -563,7 +563,7 @@ describe('MachineView', function() {
       </div>);
     expect(
       output.props.children.props.children[0].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can auto place units', function() {
@@ -715,7 +715,7 @@ describe('MachineView', function() {
       </div>);
     expect(
       output.props.children.props.children[1].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can display onboarding if there is one machine', function() {
@@ -766,7 +766,7 @@ describe('MachineView', function() {
       </div>);
     expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[0]).toEqualJSX(expected);
+        .props.children[0]).toEqualJSX(expected);
   });
 
   it('can display a list of machines', function() {
@@ -861,7 +861,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1]).toEqualJSX(expected);
+        .props.children[1]).toEqualJSX(expected);
   });
 
   it('can order a list of machines', function() {
@@ -960,7 +960,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1]).toEqualJSX(expected);
+        .props.children[1]).toEqualJSX(expected);
   });
 
   it('can toggle constraints on machines', function() {
@@ -1056,7 +1056,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
-      .props.children[1]).toEqualJSX(expected);
+        .props.children[1]).toEqualJSX(expected);
   });
 
   it('can display a form for adding a machine', function() {
@@ -1109,7 +1109,7 @@ describe('MachineView', function() {
         unit={null} />);
     expect(
       output.props.children.props.children[1].props.children[0]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can select a machine', function() {
@@ -1239,7 +1239,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can order a list of containers', function() {
@@ -1342,7 +1342,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can display a form for adding a container', function() {
@@ -1406,7 +1406,7 @@ describe('MachineView', function() {
         unit={null} />);
     expect(
       output.props.children.props.children[2].props.children[0]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('does not show an add container form for deleted machines', function() {
@@ -1487,7 +1487,7 @@ describe('MachineView', function() {
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(
-        expected);
+      expected);
   });
 
   it('can remove a unit', function() {

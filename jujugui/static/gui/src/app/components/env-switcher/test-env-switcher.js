@@ -47,28 +47,28 @@ describe('EnvSwitcher', function() {
     var output = renderer.getRenderOutput();
 
     var expected = <div className="env-switcher"
-        role="navigation"
-        aria-label="Model switcher">
-        <div
-          className="env-switcher__toggle"
-          onClick={instance.toggleEnvList}
-          onKeyPress={instance.handleKeyToggle}
-          id="environmentSwitcherToggle"
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="environmentSwitcherMenu"
-          aria-controls="environmentSwitcherMenu"
-          aria-expanded="false">
-          <span className="env-switcher__name">
+      role="navigation"
+      aria-label="Model switcher">
+      <div
+        className="env-switcher__toggle"
+        onClick={instance.toggleEnvList}
+        onKeyPress={instance.handleKeyToggle}
+        id="environmentSwitcherToggle"
+        role="button"
+        tabIndex="0"
+        aria-haspopup="true"
+        aria-owns="environmentSwitcherMenu"
+        aria-controls="environmentSwitcherMenu"
+        aria-expanded="false">
+        <span className="env-switcher__name">
             MyEnv
-          </span>
-          <juju.components.SvgIcon name="chevron_down_16"
-            className="env-switcher__chevron"
-            size="16" />
-        </div>
-        {undefined}
-      </div>;
+        </span>
+        <juju.components.SvgIcon name="chevron_down_16"
+          className="env-switcher__chevron"
+          size="16" />
+      </div>
+      {undefined}
+    </div>;
     assert.deepEqual(output, expected);
   });
 

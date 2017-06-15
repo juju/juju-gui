@@ -123,13 +123,13 @@ YUI.add('inspector-relations', function() {
       relations.forEach(function(relation, index) {
         var ref = 'CheckListItem-' + relation.id;
         components.push(
-        <juju.components.CheckListItem
-          action={this._handleRelationClick.bind(this, index)}
-          disabled={disabled}
-          key={relation.id}
-          ref={ref}
-          label={this._generateRelationLabel(relation)}
-          whenChanged={this._updateActiveCount} />);
+          <juju.components.CheckListItem
+            action={this._handleRelationClick.bind(this, index)}
+            disabled={disabled}
+            key={relation.id}
+            ref={ref}
+            label={this._generateRelationLabel(relation)}
+            whenChanged={this._updateActiveCount} />);
       }, this);
       return components;
     },

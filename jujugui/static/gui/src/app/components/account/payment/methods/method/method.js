@@ -55,13 +55,13 @@ YUI.add('account-payment-method', function() {
     */
     _generatePaymentMethod: function() {
       return (
-          <juju.components.AccountPaymentMethodCard
-            addNotification={this.props.addNotification}
-            card={this.props.paymentMethod}
-            onPaymentMethodRemoved={this.props.updateUser}
-            removePaymentMethod={this.props.removePaymentMethod}
-            updatePaymentMethod={this._toggleForm}
-            username={this.props.username} />);
+        <juju.components.AccountPaymentMethodCard
+          addNotification={this.props.addNotification}
+          card={this.props.paymentMethod}
+          onPaymentMethodRemoved={this.props.updateUser}
+          removePaymentMethod={this.props.removePaymentMethod}
+          updatePaymentMethod={this._toggleForm}
+          username={this.props.username} />);
     },
 
     /**

@@ -48,20 +48,20 @@ describe('EntityHeader', function() {
 
   it('renders the latest entity properly', function() {
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getModelName={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          hasPlans={false}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getModelName={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        hasPlans={false}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -72,7 +72,7 @@ describe('EntityHeader', function() {
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
               <img src="data:image/gif;base64," alt="django"
-                   width="96" className="entity-header__icon"/>
+                width="96" className="entity-header__icon"/>
               <h1
                 className="entity-header__title"
                 itemProp="name"
@@ -149,24 +149,24 @@ describe('EntityHeader', function() {
   it('renders an old entity properly', function() {
     mockEntity.set('revision_id', 122);
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={false}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={false}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     assert.deepEqual(
       output.props.children.props.children.props.children[0].
-      props.children[1].props.children[2].props.children[1],
+        props.children[1].props.children[2].props.children[1],
       122
     );
   });
@@ -174,21 +174,21 @@ describe('EntityHeader', function() {
   it('can display plans', function() {
     const plans = [{url: 'test'}];
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getModelName={sinon.stub()}
-          getBundleYAML={sinon.stub()}
-          hasPlans={true}
-          plans={plans}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getModelName={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        hasPlans={true}
+        plans={plans}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <select className="entity-header__select"
@@ -206,21 +206,21 @@ describe('EntityHeader', function() {
 
   it('displays correctly when loading plans', function() {
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={true}
-          plans={null}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={true}
+        plans={null}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <select className="entity-header__select"
@@ -235,21 +235,21 @@ describe('EntityHeader', function() {
 
   it('displays correctly when there are no plans', function() {
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={true}
-          plans={[]}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={true}
+        plans={[]}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     assert.deepEqual(
       output.props.children.props.children.props.children[1].props.children[0],
@@ -264,20 +264,20 @@ describe('EntityHeader', function() {
     pluralize.withArgs('unit').returns('units');
     const entity = jsTestUtils.makeEntity(true);
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={entity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={false}
-          importBundleYAML={sinon.stub()}
-          pluralize={pluralize}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={entity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={false}
+        importBundleYAML={sinon.stub()}
+        pluralize={pluralize}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <ul className="bullets inline entity-header__properties">
@@ -291,26 +291,26 @@ describe('EntityHeader', function() {
       </ul>);
     expect(
       output.props.children.props.children.props.children[0].
-      props.children[3]).toEqualJSX(expectedOutput);
+        props.children[3]).toEqualJSX(expectedOutput);
   });
 
   it('can mark charms as subordinates', function() {
     const entity = jsTestUtils.makeEntity(false, {is_subordinate: true});
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={entity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={false}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={entity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={false}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <li className="entity-header__subordinate">
@@ -318,7 +318,7 @@ describe('EntityHeader', function() {
         <a href={
           'https://jujucharms.com/docs/stable/' +
           'authors-subordinate-applications'}
-          target="_blank">
+        target="_blank">
           <juju.components.SvgIcon
             name="help_16"
             size="16"/>
@@ -326,7 +326,7 @@ describe('EntityHeader', function() {
       </li>);
     expect(
       output.props.children.props.children.props.children[0].
-      props.children[2].props.children[1]).toEqualJSX(expected);
+        props.children[2].props.children[1]).toEqualJSX(expected);
   });
 
   it('displays an add to model button', function() {
@@ -655,20 +655,20 @@ describe('EntityHeader', function() {
   it('can disable the deploy button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityHeader
-          acl={acl}
-          addNotification={sinon.stub()}
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          entityModel={mockEntity}
-          getBundleYAML={sinon.stub()}
-          getModelName={sinon.stub()}
-          hasPlans={false}
-          importBundleYAML={sinon.stub()}
-          pluralize={sinon.stub()}
-          scrollPosition={0}
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityHeader
+        acl={acl}
+        addNotification={sinon.stub()}
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
+        hasPlans={false}
+        importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
+        scrollPosition={0}
+        urllib={urllib}
+      />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (

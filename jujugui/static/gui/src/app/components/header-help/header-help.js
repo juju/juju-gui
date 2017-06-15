@@ -117,22 +117,22 @@ YUI.add('header-help', function() {
           <juju.components.Panel
             instanceName="header-menu__menu"
             visible={true}>
-              <ul className="header-menu__menu-list" role="menubar">
-                {this._generateDocsLink()}
-                {this._generateIssuesLink()}
-                <li className="header-menu__menu-list-item
+            <ul className="header-menu__menu-list" role="menubar">
+              {this._generateDocsLink()}
+              {this._generateIssuesLink()}
+              <li className="header-menu__menu-list-item
                   header-menu__menu-list-item-with-link"
-                  role="menuItem"
-                  tabIndex="0" onClick={this._handleShortcutsLink}>
-                  <span className="header-menu__menu-list-item-link">
+                role="menuItem"
+                tabIndex="0" onClick={this._handleShortcutsLink}>
+                <span className="header-menu__menu-list-item-link">
                     Keyboard shortcuts
-                    <span className="header-menu__menu-extra-info">
+                  <span className="header-menu__menu-extra-info">
                       Shift + ?
-                    </span>
                   </span>
-                </li>
-              </ul>
-            </juju.components.Panel>);
+                </span>
+              </li>
+            </ul>
+          </juju.components.Panel>);
       }
       return '';
     },

@@ -107,9 +107,9 @@ describe('Bundle Importer', function() {
         var asText = sinon.stub();
         var generate = sinon.stub(
           bundleImporter, '_generateFileReader').returns({
-            onload: '',
-            readAsText: asText
-          });
+          onload: '',
+          readAsText: asText
+        });
         var hideNotification = sinon.stub();
         bundleImporter.hideDragOverNotification = hideNotification;
         var onload = sinon.stub(bundleImporter, '_fileReaderOnload');
@@ -265,7 +265,7 @@ describe('Bundle Importer', function() {
 
     it('properly sorts a recordSet', function() {
       var data = utils.loadFixture(
-          'data/wordpress-bundle-recordset.json', true);
+        'data/wordpress-bundle-recordset.json', true);
       var sorted = bundleImporter._sortDryRunRecords(data);
       var order = [
         'addCharm-0', 'deploy-1', 'setAnnotations-2',
@@ -288,7 +288,7 @@ describe('Bundle Importer', function() {
       ];
       var execute = sinon.stub(bundleImporter, '_executeRecord');
       var notification = sinon.stub(
-          bundleImporter.db.notifications, 'add');
+        bundleImporter.db.notifications, 'add');
       this._cleanups.push(notification.restore);
       bundleImporter._executeDryRun(sortedRecords);
       const args = execute.lastCall.args;
@@ -310,7 +310,7 @@ describe('Bundle Importer', function() {
         callback(null, entityId);
       };
       var data = utils.loadFixture(
-          'data/wordpress-bundle-recordset.json', true);
+        'data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
         // Cleans up internals.
@@ -333,7 +333,7 @@ describe('Bundle Importer', function() {
         assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
         assert.equal(db.units.item(0).displayName, 'haproxy/0');
         assert.equal(db.services.item(1).get('charm'),
-            'cs:precise/wordpress-27');
+          'cs:precise/wordpress-27');
         assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
         assert.equal(db.units.item(1).displayName, 'wordpress/0');
         assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
@@ -358,11 +358,11 @@ describe('Bundle Importer', function() {
           db.services.item(2).get('id')
         ];
         assert.equal(
-            db.relations.item(0).get('id'),
-            `pending-$deploy-1:reverseproxy${id[0]}$deploy-4:website${id[1]}`);
+          db.relations.item(0).get('id'),
+          `pending-$deploy-1:reverseproxy${id[0]}$deploy-4:website${id[1]}`);
         assert.equal(
-            db.relations.item(1).get('id'),
-            `pending-$deploy-4:db${id[1]}$deploy-7:db${id[2]}`);
+          db.relations.item(1).get('id'),
+          `pending-$deploy-4:db${id[1]}$deploy-7:db${id[2]}`);
         // Expose
         assert.equal(db.services.item(0).get('exposed'), false);
         assert.equal(db.services.item(1).get('exposed'), false);
@@ -381,7 +381,7 @@ describe('Bundle Importer', function() {
         charm: 'cs:precise/haproxy-35'
       }));
       var data = utils.loadFixture(
-          'data/wordpress-bundle-recordset.json', true);
+        'data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
         assert.equal(db.services.item(0).get('name'), 'haproxy');
@@ -394,7 +394,7 @@ describe('Bundle Importer', function() {
 
     it('sets up the correct model (v3 colocation)', function() {
       var data = utils.loadFixture(
-          'data/wordpress-bundle-v3-recordset.json', true);
+        'data/wordpress-bundle-v3-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
       assert.equal(db.services.size(), 2);
       assert.equal(db.units.size(), 2);

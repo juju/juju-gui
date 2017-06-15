@@ -100,12 +100,12 @@ describe('topology', function() {
   }
 
   it('should be able to create a topology with standard env view modules',
-     function() {
-       topo = createStandardTopo();
-       topo.render();
-       // Verify that we have built the default scene.
-       viewUtils.isValue(topo.vis).should.equal(true);
-     });
+    function() {
+      topo = createStandardTopo();
+      topo.render();
+      // Verify that we have built the default scene.
+      viewUtils.isValue(topo.vis).should.equal(true);
+    });
 
   describe('servicePointOutside', function() {
     var padding = 200;

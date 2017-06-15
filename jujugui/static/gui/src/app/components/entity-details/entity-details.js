@@ -73,58 +73,58 @@ YUI.add('entity-details', function() {
       switch (this.state.activeComponent) {
         case 'loading':
           activeChild = (
-              <div>
-                <juju.components.Spinner />
-              </div>
+            <div>
+              <juju.components.Spinner />
+            </div>
           );
           break;
         case 'entity-details':
           var entityModel = this.state.entityModel;
           activeChild = (
-              <div>
-                <juju.components.EntityHeader
-                  acl={this.props.acl}
-                  entityModel={entityModel}
-                  addNotification={this.props.addNotification}
-                  importBundleYAML={this.props.importBundleYAML}
-                  getBundleYAML={this.props.getBundleYAML}
-                  getModelName={this.props.getModelName}
-                  hasPlans={this.state.hasPlans}
-                  changeState={this.props.changeState}
-                  deployService={this.props.deployService}
-                  plans={this.state.plans}
-                  pluralize={this.props.pluralize}
-                  scrollPosition={this.props.scrollPosition}
-                  urllib={this.props.urllib}
-                />
-                {this._generateDiagram(entityModel)}
-                <juju.components.EntityContent
-                  addNotification={this.props.addNotification}
-                  apiUrl={this.props.apiUrl}
-                  changeState={this.props.changeState}
-                  getFile={this.props.getFile}
-                  hash={this.props.hash}
-                  hasPlans={this.state.hasPlans}
-                  renderMarkdown={this.props.renderMarkdown}
-                  entityModel={entityModel}
-                  plans={this.state.plans}
-                  pluralize={this.props.pluralize}
-                  scrollCharmbrowser={this.props.scrollCharmbrowser}
-                  showTerms={this.props.showTerms}
-                />
-              </div>
+            <div>
+              <juju.components.EntityHeader
+                acl={this.props.acl}
+                entityModel={entityModel}
+                addNotification={this.props.addNotification}
+                importBundleYAML={this.props.importBundleYAML}
+                getBundleYAML={this.props.getBundleYAML}
+                getModelName={this.props.getModelName}
+                hasPlans={this.state.hasPlans}
+                changeState={this.props.changeState}
+                deployService={this.props.deployService}
+                plans={this.state.plans}
+                pluralize={this.props.pluralize}
+                scrollPosition={this.props.scrollPosition}
+                urllib={this.props.urllib}
+              />
+              {this._generateDiagram(entityModel)}
+              <juju.components.EntityContent
+                addNotification={this.props.addNotification}
+                apiUrl={this.props.apiUrl}
+                changeState={this.props.changeState}
+                getFile={this.props.getFile}
+                hash={this.props.hash}
+                hasPlans={this.state.hasPlans}
+                renderMarkdown={this.props.renderMarkdown}
+                entityModel={entityModel}
+                plans={this.state.plans}
+                pluralize={this.props.pluralize}
+                scrollCharmbrowser={this.props.scrollCharmbrowser}
+                showTerms={this.props.showTerms}
+              />
+            </div>
           );
           break;
         case 'error':
           activeChild = (
-              <p className="error">
+            <p className="error">
                 There was a problem while loading the entity details.
                 You could try searching for another charm or bundle or go{' '}
-                <span className="link"
-                  onClick={this._handleBack}>
+              <span className="link"
+                onClick={this._handleBack}>
                   back
-                </span>.
-              </p>
+              </span>.
+            </p>
           );
           break;
       }

@@ -43,7 +43,7 @@ YUI.add('search-results', function(Y) {
       type: React.PropTypes.string
     },
 
-     /**
+    /**
       If it's the same charm but for different series, collapse into one
       entity. We do this by converting the list to an OrderedDict, keyed on
       the match criteria (name, owner, type). When there is a key collision,
@@ -210,7 +210,7 @@ YUI.add('search-results', function(Y) {
       @param {String} series The series to filter by.
     */
     searchRequest: function(query, tags, type, sort, series, provides,
-                            requires, owner) {
+      requires, owner) {
       var filters = {text: query, tags: tags};
       // Don't add the type property unless required otherwise the API will
       // filter by charm.
@@ -277,9 +277,9 @@ YUI.add('search-results', function(Y) {
       const query = this.props.query ? ` for: ${this.props.query}` : '';
       this.props.setPageTitle(`Search results${query}`);
       this.searchRequest(
-          this.props.query, this.props.tags, this.props.type,
-          this.props.sort, this.props.series, this.props.provides,
-          this.props.requires, this.props.owner);
+        this.props.query, this.props.tags, this.props.type,
+        this.props.sort, this.props.series, this.props.provides,
+        this.props.requires, this.props.owner);
     },
 
     componentWillUnmount: function() {
@@ -312,7 +312,7 @@ YUI.add('search-results', function(Y) {
         showCommunity: nextProps.showCommunity || false
       };
       var currentType = nextProps.type !== undefined ?
-          nextProps.type : this.props.type;
+        nextProps.type : this.props.type;
       switch (state.activeComponent) {
         case 'loading':
           state.activeChild = {
@@ -382,7 +382,7 @@ YUI.add('search-results', function(Y) {
                             filter='series'
                             items={seriesItems}
                             currentValue={
-                                nextProps.series || this.props.series} />
+                              nextProps.series || this.props.series} />
                         </form>
                       </div>
                     </div>
@@ -536,7 +536,7 @@ YUI.add('search-results', function(Y) {
             type="inline-neutral"
             extraClasses="show-community-button"
             title={buttonTitle} />
-          </div>) : null;
+        </div>) : null;
       return (<div className="clearfix community-results">
         {button}
         <div className={holderClasses}>

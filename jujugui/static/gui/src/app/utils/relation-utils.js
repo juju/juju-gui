@@ -31,11 +31,11 @@ YUI.add('relation-utils', function(Y) {
    */
   var generateHash = function(value) {
     return value.split('').reduce(
-        function(hash, character) {
-          hash = ((hash << 5) - hash) + character.charCodeAt(0);
-          return hash & hash;
-        },
-        0
+      function(hash, character) {
+        hash = ((hash << 5) - hash) + character.charCodeAt(0);
+        return hash & hash;
+      },
+      0
     );
   };
   RelationUtils.generateHash = generateHash;
@@ -54,7 +54,7 @@ YUI.add('relation-utils', function(Y) {
   var generateSafeDOMId = function(value, parentId) {
     parentId = parentId || '';
     return (
-        'e-' + value.replace(/\W/g, '_') + '-' +
+      'e-' + value.replace(/\W/g, '_') + '-' +
         generateHash(value + parentId));
   };
   RelationUtils.generateSafeDOMId = generateSafeDOMId;
@@ -179,10 +179,10 @@ YUI.add('relation-utils', function(Y) {
       result.service = db.services.getById(result.name);
       if (result.service) {
         result.charm = db.charms.getById(
-            result.service.get('charm'));
+          result.service.get('charm'));
         if (!result.charm) {
           console.warn('Failed to load charm',
-                       result.charm, db.charms.size(), db.charms.get('id'));
+            result.charm, db.charms.size(), db.charms.get('id'));
         }
       } else {
         console.warn('failed to resolve service', result.name);
@@ -318,7 +318,7 @@ YUI.add('relation-utils', function(Y) {
     decorated._endpointHasError = function(service) {
       // Find the endpoints pertinent to each end of the service.
       var endpoint = this.endpoints[0][0] === service.id ?
-          this.endpoints[0] : this.endpoints[1];
+        this.endpoints[0] : this.endpoints[1];
       // Search the units belonging to the source service for pertinent units
       // in error.
       // Repeat the search for the target service's units.  This relies
@@ -492,7 +492,7 @@ YUI.add('relation-utils', function(Y) {
         collections[key].relations.push(relation);
       } else {
         collections[key] = new RelationCollection(
-            relation.source, relation.target, [relation]);
+          relation.source, relation.target, [relation]);
       }
     });
     // Dump just the collections; the keys are not needed for the data that
@@ -627,7 +627,7 @@ YUI.add('relation-utils', function(Y) {
         !existing.some(existingRelation =>
           relation[0].name === existingRelation.far.name ||
           relation[1].name === existingRelation.near.name
-      ));
+        ));
     return availableEndpoints;
   };
 
@@ -642,7 +642,7 @@ YUI.add('relation-utils', function(Y) {
   */
   RelationUtils.getRelatableApplications = function(db, endpoints) {
     return Object.keys(endpoints)
-                 .map(appName => db.services.getById(appName));
+      .map(appName => db.services.getById(appName));
   };
 
   window.juju.utils.RelationUtils = RelationUtils;

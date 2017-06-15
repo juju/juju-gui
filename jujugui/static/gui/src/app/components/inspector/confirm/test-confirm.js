@@ -48,40 +48,40 @@ describe('InspectorConfirm', function() {
 
   it('generates the correct classes if it is closed', function() {
     const output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm
-          buttons={buttons}
-          message="My message" />);
+      <juju.components.InspectorConfirm
+        buttons={buttons}
+        message="My message" />);
     assert.deepEqual(output,
       <div className="inspector-confirm">
         <p className="inspector-confirm__message">
           My message
         </p>
         <juju.components.ButtonRow
-        buttons={buttons} />
+          buttons={buttons} />
       </div>);
   });
 
   it('generates the correct classes if it is open', function() {
     const output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm
-          buttons={buttons}
-          message="My message"
-          open={true} />);
+      <juju.components.InspectorConfirm
+        buttons={buttons}
+        message="My message"
+        open={true} />);
     assert.deepEqual(output,
       <div className="inspector-confirm inspector-confirm--open">
         <p className="inspector-confirm__message">
           My message
         </p>
         <juju.components.ButtonRow
-        buttons={buttons} />
+          buttons={buttons} />
       </div>);
   });
 
   it('displays the provided message', function() {
     const output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm
-          buttons={buttons}
-          message="My message" />);
+      <juju.components.InspectorConfirm
+        buttons={buttons}
+        message="My message" />);
     assert.deepEqual(output.props.children[0],
       <p className="inspector-confirm__message">
         My message
@@ -90,8 +90,8 @@ describe('InspectorConfirm', function() {
 
   it('hides the message if one is not provided', function() {
     const output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm
-          buttons={buttons} />);
+      <juju.components.InspectorConfirm
+        buttons={buttons} />);
     assert.deepEqual(output.props.children[0],
       <p className="inspector-confirm__message hidden">
         {undefined}
@@ -101,8 +101,8 @@ describe('InspectorConfirm', function() {
   it('leaves out the button row if there are no buttons', function() {
     buttons = [];
     const output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm
-          buttons={buttons} />);
+      <juju.components.InspectorConfirm
+        buttons={buttons} />);
     assert.deepEqual(output.props.children[1], undefined);
   });
 });

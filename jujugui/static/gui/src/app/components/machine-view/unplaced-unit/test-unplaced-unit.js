@@ -64,8 +64,8 @@ describe('MachineViewUnplacedUnit', function() {
             label: 'Destroy',
             action: output.props.children[2].props.items[1].action
           }]} />
-          {undefined}
-          <div className="machine-view__unplaced-unit-drag-state"></div>
+        {undefined}
+        <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>);
     assert.deepEqual(output, expected);
   });

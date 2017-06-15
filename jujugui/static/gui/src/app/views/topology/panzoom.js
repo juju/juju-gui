@@ -69,9 +69,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       this.toScale = d3.scale.linear()
-                            .domain([options.minZoom, options.maxZoom])
-                            .range([options.minZoom, options.maxZoom])
-                            .clamp(true);
+        .domain([options.minZoom, options.maxZoom])
+        .range([options.minZoom, options.maxZoom])
+        .clamp(true);
     },
 
     /**

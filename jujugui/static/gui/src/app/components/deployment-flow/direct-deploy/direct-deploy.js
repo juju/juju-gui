@@ -60,10 +60,10 @@ YUI.add('deployment-direct-deploy', function() {
       const ddEntityId = this.props.ddData.id;
       if (this.state.isBundle) {
         diagram = (<div className="six-col deployment-direct-deploy__image">
-            <juju.components.EntityContentDiagram
-              getDiagramURL={this.props.getDiagramURL}
-              id={ddEntityId} />
-          </div>);
+          <juju.components.EntityContentDiagram
+            getDiagramURL={this.props.getDiagramURL}
+            id={ddEntityId} />
+        </div>);
       }
 
       if (this.state.entityModel) {
@@ -73,8 +73,8 @@ YUI.add('deployment-direct-deploy', function() {
           renderMarkdown={this.props.renderMarkdown} />;
         const title = (<h3
           className="deployment-direct-deploy__title">
-            {entity.displayName}
-          </h3>);
+          {entity.displayName}
+        </h3>);
 
         let url;
         let link;
@@ -89,9 +89,9 @@ YUI.add('deployment-direct-deploy', function() {
         
         if (url) {
           link = (<a href={`${url}`}
-              className="link" target="_blank">
+            className="link" target="_blank">
               Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
-            </a>);
+          </a>);
         }
 
         const wrapperClasses = classNames(
@@ -104,10 +104,10 @@ YUI.add('deployment-direct-deploy', function() {
 
         titleAndDescription = (<div
           className={wrapperClasses}>
-            {title}
-            {description}
-            {link}
-          </div>);
+          {title}
+          {description}
+          {link}
+        </div>);
       }
 
       return (

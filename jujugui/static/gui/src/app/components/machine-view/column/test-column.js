@@ -86,9 +86,9 @@ describe('MachineViewColumn', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__column machine-view__column--drop">
-          {output.props.children}
-        </div>);
+      <div className="machine-view__column machine-view__column--drop">
+        {output.props.children}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -103,9 +103,9 @@ describe('MachineViewColumn', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__column machine-view__column--droppable">
-          {output.props.children}
-        </div>);
+      <div className="machine-view__column machine-view__column--droppable">
+        {output.props.children}
+      </div>);
     assert.deepEqual(output, expected);
   });
 });

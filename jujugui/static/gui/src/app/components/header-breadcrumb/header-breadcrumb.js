@@ -178,8 +178,8 @@ YUI.add('header-breadcrumb', function() {
         <div className={this._generateClasses()}>
           <div className="header-breadcrumb__loading">Loading model</div>
           <ul className="header-breadcrumb__list"
-              // This attribute is required by uitests.
-              data-username={user && user.displayName}>
+            // This attribute is required by uitests.
+            data-username={user && user.displayName}>
             {userItem}
             {this._renderEnvSwitcher()}
           </ul>

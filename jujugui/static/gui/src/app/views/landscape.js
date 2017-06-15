@@ -77,7 +77,7 @@ YUI.add('juju-landscape', function(Y) {
       //
       // Iterate each landscape annotation.
       ['landscape-security-upgrades', 'landscape-needs-reboot'].forEach(
-      annotationName => {
+        annotationName => {
         // Iterate each service, we do this so we can rollup
         // when no unit in the services set has the annotation.
         // This is needed to be able to detect and clear annotations
@@ -85,20 +85,20 @@ YUI.add('juju-landscape', function(Y) {
         // are cleared.
         // The inner loop uses .some allowing it to stop on the
         // first true value.
-        var serviceFlagged = false;
-        db.services.toArray().forEach(service => {
+          var serviceFlagged = false;
+          db.services.toArray().forEach(service => {
           /*jslint bitwise: true*/
           // The above lint is needed to allow a |= expression
           // to pass the linter.
-          serviceFlagged |= service[annotationName] = service.get('units').some(
+            serviceFlagged |= service[annotationName] = service.get('units').some(
               unit => {
                 var annotations = unit.annotations;
                 return Boolean(
-                    annotations && annotations[annotationName]);
+                  annotations && annotations[annotationName]);
               });
+          });
+          env[annotationName] = Boolean(serviceFlagged);
         });
-        env[annotationName] = Boolean(serviceFlagged);
-      });
       return this;
     },
 

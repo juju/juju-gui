@@ -193,11 +193,11 @@ YUI.add('bundle-importer', function(Y) {
         record.requires.forEach(function(requiredRecordId) {
           requires.push(requiredRecordId);
           this._collectRequires(
-              records,
-              records.filter(function(r) {
-                return r.id === requiredRecordId;
-              })[0],
-              requires);
+            records,
+            records.filter(function(r) {
+              return r.id === requiredRecordId;
+            })[0],
+            requires);
         }, this);
       }
       return requires;
@@ -306,7 +306,7 @@ YUI.add('bundle-importer', function(Y) {
       var method = this['_execute_' + record.method];
       if (typeof method === 'function') {
         this['_execute_' + record.method](
-            record, this._executeDryRun.bind(this, records));
+          record, this._executeDryRun.bind(this, records));
       } else {
         this.db.notifications.add({
           title: 'Unknown method type',
@@ -696,18 +696,18 @@ YUI.add('bundle-importer', function(Y) {
         display_name: 'pending'
       });
       this.modelAPI.add_relation(
-          endpoints[0], endpoints[1],
-          function(evt) {
-            this.db.relations.create({
-              relation_id: evt.result.id,
-              type: evt.result['interface'],
-              endpoints: endpoints,
-              pending: false,
-              scope: evt.result.scope
-            });
-            this.db.relations.remove(pendingRelation);
-          }.bind(this),
-          {modelId: pendingRelation.get('id')});
+        endpoints[0], endpoints[1],
+        function(evt) {
+          this.db.relations.create({
+            relation_id: evt.result.id,
+            type: evt.result['interface'],
+            endpoints: endpoints,
+            pending: false,
+            scope: evt.result.scope
+          });
+          this.db.relations.remove(pendingRelation);
+        }.bind(this),
+        {modelId: pendingRelation.get('id')});
       next();
     },
 

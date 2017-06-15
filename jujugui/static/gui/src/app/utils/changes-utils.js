@@ -101,12 +101,12 @@ YUI.add('changes-utils', function(Y) {
     @param {Object} changeSet The current environment change set.
   */
   ChangesUtils.generateAllChangeDescriptions = function(services, units,
-                                                        changeSet) {
+    changeSet) {
     var changes = [],
         change;
     Object.keys(changeSet).forEach(function(key) {
       change = this.generateChangeDescription(
-          services, units, changeSet[key]);
+        services, units, changeSet[key]);
       if (change) {
         changes.push(change);
       }
@@ -124,7 +124,7 @@ YUI.add('changes-utils', function(Y) {
     @param {Bool} skipTime optional, used for testing, don't generate time.
   */
   ChangesUtils.generateChangeDescription = function(services, units, change,
-                                                    skipTime) {
+    skipTime) {
     var changeItem = {};
 
     if (change && change.command) {
@@ -160,7 +160,7 @@ YUI.add('changes-utils', function(Y) {
             return;
           }
           var ghostService = services.getById(
-              change.command.options.modelId);
+            change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
           changeItem.description = ' ' + ghostService.get('name') +
               ' has been added to the model.';
@@ -172,7 +172,7 @@ YUI.add('changes-utils', function(Y) {
           break;
         case '_add_unit':
           var service = this.getServiceByUnitId(
-              change.command.options.modelId, services, units);
+            change.command.options.modelId, services, units);
           changeItem.icon = 'changes-units-added';
           var units = change.command.args[1],
               msg;
@@ -207,7 +207,7 @@ YUI.add('changes-utils', function(Y) {
           break;
         case '_add_relation':
           var serviceList = this.getRealRelationEndpointNames(
-              change.command.args, services);
+            change.command.args, services);
           changeItem.icon = 'changes-relation-added';
           changeItem.description = change.command.args[0][1].name +
               ' relation added between ' +
@@ -223,7 +223,7 @@ YUI.add('changes-utils', function(Y) {
           break;
         case '_addMachines':
           var machineType = change.command.args[0][0].parentId ?
-              'container' : 'machine';
+            'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-created';
           changeItem.description = change.command.args[0].length +
               ' ' + machineType +
@@ -232,7 +232,7 @@ YUI.add('changes-utils', function(Y) {
           break;
         case '_destroyMachines':
           var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
-              'container' : 'machine';
+            'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-destroyed';
           changeItem.description = change.command.args[0].length +
               ' ' + machineType +

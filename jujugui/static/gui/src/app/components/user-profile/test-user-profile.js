@@ -111,7 +111,7 @@ describe('UserProfile', () => {
         getKpiMetrics={getKpiMetrics}
         type='charm'
         user={userInfo.external}
-       />
+      />
     ];
     const expected = (
       <div className="inner-wrapper">
