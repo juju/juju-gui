@@ -7,9 +7,9 @@
   working on the new system.
 
   index.html.mako
-    - Uncomment the init-pkg.js script tags lines 309, 318.
-    - Uncomment the initialization code lines 358, 359.
-    - Comment the old init code lines 357, 362.
+    - Uncomment the init-pkg.js script tags lines 310, 318.
+    - Uncomment the initialization code lines 360, 361.
+    - Comment the old init code lines 359, 364.
   Makefile
     - Uncomment the hack to generate the init-pkg file Line 212.
 
