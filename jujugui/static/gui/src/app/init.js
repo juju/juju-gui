@@ -480,7 +480,10 @@ class GUIApp {
         this._renderDeployment.bind(this),
         this._clearDeployment.bind(this)],
       // Nothing needs to be done at the top level when the hash changes.
-      ['hash']
+      ['hash'],
+      // special dd is handled by the root dispatcher as it requires /new
+      // for now.
+      ['special.dd']
     ]);
     return state;
   }

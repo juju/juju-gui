@@ -743,6 +743,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generateMachineDetails={
           utils.generateMachineDetails.bind(
             utils, modelAPI.genericConstraints, db.units)}
+        generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
             this.terms.getAgreementsByTerms.bind(this.terms)}
         isLoggedIn={isLoggedIn}
@@ -889,8 +890,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         controllerAPI, bakery)}
     />);
     let logoutUrl = '/logout';
-    if (window.juju_config.baseUrl) {
-      logoutUrl = window.juju_config.baseUrl + logoutUrl;
+    const applicationConfig = this.applicationConfig;
+    if (applicationConfig.baseUrl) {
+      logoutUrl = applicationConfig.baseUrl.replace(/\/?$/, logoutUrl);
     }
     const doCharmstoreLogout = () => {
       return this.getUser('charmstore') && !this.get('gisf');
