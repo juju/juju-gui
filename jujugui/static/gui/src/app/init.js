@@ -138,8 +138,7 @@ class GUIApp {
       Used to retrieve information about charms and bundles via the charm store.
       @type {Object}
     */
-    this.charmstore = this._setupCharmstore(
-      config.charmstoreURL, window.jujulib.charmstore, this.bakery);
+    this.charmstore = this._setupCharmstore(config, window.jujulib.charmstore);
     /**
       A bundle service API client instance.
       Used to retrieve a list of actions to generate a bundle.
@@ -307,23 +306,25 @@ class GUIApp {
       @type {Object}
     */
     this.topology = this._renderTopology();
-
+    this._renderComponents();
     this.state.bootstrap();
   }
   /**
     Creates a new instance of the charm store API. This method is idempotent.
-    @param {object} charmstoreURL The URL of the charmstore api.
+    @param {object} config The app instantiation configuration.
     @param {Object} Charmstore The Charmstore class.
     @return {Object} The existing or new instance of charmstore.
   */
-  _setupCharmstore(charmstoreURL, Charmstore, bakery) {
-    const charmstore = new Charmstore(charmstoreURL, bakery);
-    // Store away the charmstore auth info.
-    if (bakery.storage.get(charmstoreURL)) {
-      this.users['charmstore'] = {loading: true};
-      this.storeUser('charmstore', false, true);
+  _setupCharmstore(config, Charmstore) {
+    if (this.charmstore === undefined) {
+      return new Charmstore(config.charmstoreURL, this.bakery);
+      // Store away the charmstore auth info.
+      if (this.bakery.storage.get(config.charmstoreURL)) {
+        this.users['charmstore'] = {loading: true};
+        this.storeUser('charmstore', false, true);
+      }
     }
-    return charmstore;
+    return this.charmstore;
   }
 
   /**

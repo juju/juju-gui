@@ -1171,6 +1171,10 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} env Reference to the app env.
   */
   utils.unloadWindow = function() {
+    if (!this.env) {
+      // If we're being run by the new init.
+      return;
+    }
     var currentChangeSet = this.env.get('ecs').getCurrentChangeSet();
     if (Object.keys(currentChangeSet).length > 0) {
       return 'You have uncommitted changes to your model. You will ' +
@@ -1325,10 +1329,17 @@ YUI.add('juju-view-utils', function(Y) {
       are uncommitted changes.
   */
   utils.switchModel = function(modelAPI, model, confirmUncommitted=true) {
-    // If app.js is gone the this.get('modelUUID') || can be removed.
-    if (model && model.id === this.get('modelUUID') ||
-      // It is the new init.
-      (this.applicationConfig && this.modelUUID)) {
+    // XXX if app.js is gone then this appconfig check can be removed.
+    if (this.applicationConfig) {
+      if (model && model.id === this.modelUUID) {
+        // There is nothing to be done as we are already connected to the model.
+        // Note that this check is always false when switching models from the
+        // profile view, as the "modelUUID" is set to null in that case.
+        return;
+      }
+    }
+    // XXX If app.js is gone the this.get('modelUUID') || can be removed.
+    else if (model && model.id === this.get('modelUUID')) {
       // There is nothing to be done as we are already connected to this model.
       // Note that this check is always false when switching models from the
       // profile view, as the "modelUUID" is set to null in that case.
