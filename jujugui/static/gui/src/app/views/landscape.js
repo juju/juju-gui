@@ -90,12 +90,12 @@ YUI.add('juju-landscape', function(Y) {
           /*jslint bitwise: true*/
           // The above lint is needed to allow a |= expression
           // to pass the linter.
-            serviceFlagged |= service[annotationName] = service.get('units').some(
-              unit => {
-                var annotations = unit.annotations;
-                return Boolean(
-                  annotations && annotations[annotationName]);
-              });
+            serviceFlagged |= service[annotationName] =
+            service.get('units').some(unit => {
+              var annotations = unit.annotations;
+              return Boolean(
+                annotations && annotations[annotationName]);
+            });
           });
           env[annotationName] = Boolean(serviceFlagged);
         });

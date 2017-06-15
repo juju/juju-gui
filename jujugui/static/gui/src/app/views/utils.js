@@ -1709,8 +1709,8 @@ YUI.add('juju-view-utils', function(Y) {
             general</a> or <a className="deployment-panel__link"
               href="https://jujucharms.com/docs/stable/help-google"
               target="_blank"
-              title="Help using the Google Compute Engine public cloud">setting up
-            GCE credentials</a>.
+              title="Help using the Google Compute Engine public cloud">
+              setting up GCE credentials</a>.
           </p>
         )
       },
@@ -1740,7 +1740,8 @@ YUI.add('juju-view-utils', function(Y) {
               href="https://jujucharms.com/docs/stable/credentials"
               target="_blank" title="Cloud credentials help">credentials in
             general</a> or <a className="deployment-panel__link"
-              href="https://jujucharms.com/docs/stable/help-azure" target="_blank"
+              href="https://jujucharms.com/docs/stable/help-azure"
+              target="_blank"
               title="Help using the Microsoft Azure public cloud">setting up
             Azure credentials</a>.
           </p>

@@ -1009,8 +1009,8 @@ describe('Configuration', function() {
             onChange={instance._handleOnChange}
             option={{
               key: 'Application name',
-              description: 'Specify a custom application name. The application' +
-              ' name cannot be changed once it has been deployed.'
+              description: 'Specify a custom application name. The application'
+                + ' name cannot be changed once it has been deployed.'
             }}
             config="abc123$" />
           {undefined}

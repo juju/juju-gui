@@ -991,8 +991,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var svg = document.querySelector('.the-canvas');
 
       parseInt(svg.querySelector('g').getAttribute('height'), 10)
-        .should.equal(
-          parseInt(window.getComputedStyle(svg).getPropertyValue('height'), 10));
+        .should.equal(parseInt(
+          window.getComputedStyle(svg).getPropertyValue('height'), 10));
       parseInt(svg.querySelector('g').getAttribute('width'), 10)
         .should.equal(
           parseInt(window.getComputedStyle(svg).getPropertyValue('width'), 10));
