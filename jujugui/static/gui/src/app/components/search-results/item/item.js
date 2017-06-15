@@ -42,7 +42,7 @@ YUI.add('search-results-item', function(Y) {
         return;
       }
       return (
-          <span className="special-flag"></span>
+        <span className="special-flag"></span>
       );
     },
 

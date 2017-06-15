@@ -33,8 +33,8 @@ describe('GenericButton', function() {
   it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          action={callbackStub} />);
+      <juju.components.GenericButton
+        action={callbackStub} />);
     output.props.onClick({
       stopPropagation: sinon.stub()
     });
@@ -44,9 +44,9 @@ describe('GenericButton', function() {
   it('does not call the callable if clicked when disabled', function() {
     var callbackStub = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          disabled={true}
-          action={callbackStub} />);
+      <juju.components.GenericButton
+        disabled={true}
+        action={callbackStub} />);
     output.props.onClick({
       stopPropagation: sinon.stub()
     });
@@ -56,9 +56,9 @@ describe('GenericButton', function() {
   it('does not submit when disabled', function() {
     var preventDefault = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          disabled={true}
-          submit={true} />);
+      <juju.components.GenericButton
+        disabled={true}
+        submit={true} />);
     output.props.onClick({
       preventDefault: preventDefault,
       stopPropagation: sinon.stub()
@@ -70,7 +70,7 @@ describe('GenericButton', function() {
     // This is checking that code is not executed and so there are no side
     // effects to check. No syntax error is considered a success.
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton />);
+      <juju.components.GenericButton />);
     output.props.onClick({
       stopPropagation: sinon.stub()
     });
@@ -80,8 +80,8 @@ describe('GenericButton', function() {
     var callbackStub = sinon.stub();
     var stopPropagation = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          action={callbackStub} />);
+      <juju.components.GenericButton
+        action={callbackStub} />);
     output.props.onClick({
       stopPropagation: stopPropagation
     });
@@ -90,9 +90,9 @@ describe('GenericButton', function() {
 
   it('displays the provided title and tooltip', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          title="My action"
-          tooltip="My tooltip" />);
+      <juju.components.GenericButton
+        title="My action"
+        tooltip="My tooltip" />);
     assert.deepEqual(output,
       <button className="button--neutral"
         title="My tooltip"
@@ -104,8 +104,8 @@ describe('GenericButton', function() {
 
   it('displays a provided icon', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          icon="plus_1" />);
+      <juju.components.GenericButton
+        icon="plus_1" />);
     assert.deepEqual(output,
       <button className="button--neutral"
         title={undefined}
@@ -133,42 +133,42 @@ describe('GenericButton', function() {
 
   it('sets the type class', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          title="My action"
-          type="neutral" />);
+      <juju.components.GenericButton
+        title="My action"
+        type="neutral" />);
     assert.deepEqual(output,
       <button className="button--neutral"
-       title={undefined}
-       onClick={output.props.onClick}
-       type="button">
+        title={undefined}
+        onClick={output.props.onClick}
+        type="button">
         My action
       </button>);
   });
 
   it('sets the disabled class if disabled', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          title="My action"
-          disabled={true} />);
+      <juju.components.GenericButton
+        title="My action"
+        disabled={true} />);
     assert.deepEqual(output,
       <button className="button--neutral button--disabled"
-       title={undefined}
-       onClick={output.props.onClick}
-       type="button">
+        title={undefined}
+        onClick={output.props.onClick}
+        type="button">
         My action
       </button>);
   });
 
   it('sets the extra classes if provided', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.GenericButton
-          title="My action"
-          extraClasses="button--large" />);
+      <juju.components.GenericButton
+        title="My action"
+        extraClasses="button--large" />);
     assert.deepEqual(output,
       <button className="button--neutral button--large"
-       title={undefined}
-       onClick={output.props.onClick}
-       type="button">
+        title={undefined}
+        onClick={output.props.onClick}
+        type="button">
         My action
       </button>);
   });

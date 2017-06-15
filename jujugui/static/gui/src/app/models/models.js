@@ -206,10 +206,10 @@ YUI.add('juju-models', function(Y) {
       // This allows the databinding engine to react to a relation change on
       // any of this services relations.
       this._events.push(
-          this.get('relations').on(
-              ['*:change', '*:add', '*:remove'], function(e) {
-                this.set('relationChangeTrigger', e);
-              }, this));
+        this.get('relations').on(
+          ['*:change', '*:add', '*:remove'], function(e) {
+            this.set('relationChangeTrigger', e);
+          }, this));
     },
 
     /**
@@ -230,8 +230,8 @@ YUI.add('juju-models', function(Y) {
       // done by anything but this method so that it says as representation of
       // the config options as juju sees it.
       this.set(
-          'environmentConfig',
-          Y.merge(this.get('environmentConfig'), changeConfig));
+        'environmentConfig',
+        Y.merge(this.get('environmentConfig'), changeConfig));
       // Update the config property with the appropriate values.
       this.set('config', combined);
     },
@@ -693,7 +693,7 @@ YUI.add('juju-models', function(Y) {
         annotations: {},
         pending: true,
         charm: charmId,
-        unit_count: 0,  // No units yet.
+        unit_count: 0, // No units yet.
         loaded: false,
         subordinate: charm.get('is_subordinate'),
         config: config
@@ -1067,7 +1067,7 @@ YUI.add('juju-models', function(Y) {
     add: function(models, allowed) {
       if (!allowed && this.get('preventDirectChanges')) {
         throw new Error(
-            'direct calls to units.add() are not allowed: ' +
+          'direct calls to units.add() are not allowed: ' +
             'use db.addUnits() instead'
         );
       }
@@ -1093,7 +1093,7 @@ YUI.add('juju-models', function(Y) {
     remove: function(models, allowed) {
       if (!allowed && this.get('preventDirectChanges')) {
         throw new Error(
-            'direct calls to units.remove() are not allowed: ' +
+          'direct calls to units.remove() are not allowed: ' +
             'use db.removeUnits() instead'
         );
       }
@@ -1184,7 +1184,7 @@ YUI.add('juju-models', function(Y) {
 
       units_for_service.each(function(unit) {
         var state = utils.determineCategoryType(
-                              utils.simplifyState(unit, serviceLife));
+          utils.simplifyState(unit, serviceLife));
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         } else {
@@ -1875,7 +1875,7 @@ YUI.add('juju-models', function(Y) {
       var relationModel, matching;
       this.some(function(relation) {
         matching = this.compareRelationEndpoints(
-                               relation.get('endpoints'), endpoints);
+          relation.get('endpoints'), endpoints);
         if (matching) {
           relationModel = relation;
           return true;
@@ -1955,30 +1955,30 @@ YUI.add('juju-models', function(Y) {
           ep_matched = false;
 
       return this.some(
-          function(rel) {
-            svc_matched = ep_matched = false;
+        function(rel) {
+          svc_matched = ep_matched = false;
 
-            // Match endpoint and svc name across endpoints of a relation.
-            rel.get('endpoints').forEach(rep => {
-              if (ep.type !== rel.get('interface')) {
-                return;
-              }
-              if (!ep_matched) {
-                ep_matched = (ep.service === rep[0] &&
-                    ep.name === rep[1].name);
-              }
-              if (svc_name && !svc_matched && rep[0] === svc_name) {
-                svc_matched = true;
-              }
-            });
-
-            if (!svc_name && ep_matched) {
-              return true;
-            } else if (svc_name && ep_matched && svc_matched) {
-              return true;
+          // Match endpoint and svc name across endpoints of a relation.
+          rel.get('endpoints').forEach(rep => {
+            if (ep.type !== rel.get('interface')) {
+              return;
             }
-            return false;
+            if (!ep_matched) {
+              ep_matched = (ep.service === rep[0] &&
+                    ep.name === rep[1].name);
+            }
+            if (svc_name && !svc_matched && rep[0] === svc_name) {
+              svc_matched = true;
+            }
           });
+
+          if (!svc_name && ep_matched) {
+            return true;
+          } else if (svc_name && ep_matched && svc_matched) {
+            return true;
+          }
+          return false;
+        });
     },
 
     get_relations_for_service: function(service, asList) {
@@ -2075,7 +2075,7 @@ YUI.add('juju-models', function(Y) {
           modelList = modelId[0];
           modelId = modelId[1];
           return (modelList === model.name) && (
-              modelId === modelKey);
+            modelId === modelKey);
         }
         return false;
       });
@@ -2361,7 +2361,7 @@ YUI.add('juju-models', function(Y) {
       const machinePlacement = this._mapServicesToMachines(this.machines);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(
-          machinePlacement, this.machines, applications);
+        machinePlacement, this.machines, applications);
       return result;
     },
 
@@ -2734,7 +2734,7 @@ YUI.add('juju-models', function(Y) {
     */
     findRelatedServices: function(service, asArray) {
       var relationData = relationUtils.getRelationDataForService(this, service);
-      var related = [service.get('name')];  // Add own name to related list.
+      var related = [service.get('name')]; // Add own name to related list.
       // Compile the list of related services.
       relationData.forEach(function(relation) {
         // Some relations (e.g., peer relations) may not have the far endpoint
@@ -2832,11 +2832,11 @@ YUI.add('juju-models', function(Y) {
       this.machines.each(function(machine) {
         var units = this.units.filterByMachine(machine.id, true);
         var keepVisible = this._highlightedServices.some(
-            function(highlightedService) {
-              return units.some(function(unit) {
-                return unit.service === highlightedService;
-              });
+          function(highlightedService) {
+            return units.some(function(unit) {
+              return unit.service === highlightedService;
             });
+          });
         // If we no longer have any services highlighted then we want to show
         // all machine tokens.
         if (this._highlightedServices.length < 1) {

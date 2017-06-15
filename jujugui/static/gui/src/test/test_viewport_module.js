@@ -24,11 +24,11 @@ describe('views.ViewportModule (Topology module)', function() {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
       'juju-topology-viewport'];
     YUI(GlobalConfig).use(modules,
-        function(Y) {
-          views = Y.namespace('juju.views');
-          testUtils = Y.namespace('juju-tests').utils;
-          done();
-        });
+      function(Y) {
+        views = Y.namespace('juju.views');
+        testUtils = Y.namespace('juju-tests').utils;
+        done();
+      });
   });
 
   it('aborts a resize if the canvas is not available', function() {
@@ -101,11 +101,11 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     var modules = ['node', 'juju-views', 'juju-tests-utils',
       'juju-topology-viewport'];
     YUI(GlobalConfig).use(modules,
-        function(Y) {
-          views = Y.namespace('juju.views');
-          testUtils = Y.namespace('juju-tests').utils;
-          done();
-        });
+      function(Y) {
+        views = Y.namespace('juju.views');
+        testUtils = Y.namespace('juju-tests').utils;
+        done();
+      });
   });
 
   beforeEach(function() {

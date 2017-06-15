@@ -50,25 +50,25 @@ describe('AddedServicesListItem', function() {
     mockService.set('fade', false);
 
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.AddedServicesListItem
-          focusService={sinon.stub()}
-          unfocusService={sinon.stub()}
-          changeState={sinon.stub()}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          hoverService={sinon.stub()}
-          panToService={sinon.stub()}
-          service={mockService} />, true);
+      <juju.components.AddedServicesListItem
+        focusService={sinon.stub()}
+        unfocusService={sinon.stub()}
+        changeState={sinon.stub()}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        hoverService={sinon.stub()}
+        panToService={sinon.stub()}
+        service={mockService} />, true);
 
     var output = renderer.getRenderOutput();
 
     var expected = (
       <li className="inspector-view__list-item"
-          data-serviceid="wordpress"
-          onClick={output.props.onClick}
-          onMouseEnter={output.props.onMouseEnter}
-          onMouseLeave={output.props.onMouseLeave}
-          tabIndex="0"
-          role="button">
+        data-serviceid="wordpress"
+        onClick={output.props.onClick}
+        onMouseEnter={output.props.onMouseEnter}
+        onMouseLeave={output.props.onMouseLeave}
+        tabIndex="0"
+        role="button">
         <img src="icon.gif" className="inspector-view__item-icon" />
         <span className="inspector-view__item-count">2</span>
         {' '}
@@ -121,25 +121,25 @@ describe('AddedServicesListItem', function() {
           return false;
         }};
       var renderer = jsTestUtils.shallowRender(
-          <juju.components.AddedServicesListItem
-            focusService={sinon.stub()}
-            unfocusService={sinon.stub()}
-            changeState={sinon.stub()}
-            getUnitStatusCounts={status.statusCounts}
-            hoverService={sinon.stub()}
-            panToService={sinon.stub()}
-            service={service} />, true);
+        <juju.components.AddedServicesListItem
+          focusService={sinon.stub()}
+          unfocusService={sinon.stub()}
+          changeState={sinon.stub()}
+          getUnitStatusCounts={status.statusCounts}
+          hoverService={sinon.stub()}
+          panToService={sinon.stub()}
+          service={service} />, true);
 
       var output = renderer.getRenderOutput();
 
       assert.deepEqual(output,
         <li className="inspector-view__list-item"
-            data-serviceid="demo"
-            onClick={output.props.onClick}
-            onMouseEnter={output.props.onMouseEnter}
-            onMouseLeave={output.props.onMouseLeave}
-            tabIndex="0"
-            role="button">
+          data-serviceid="demo"
+          onClick={output.props.onClick}
+          onMouseEnter={output.props.onMouseEnter}
+          onMouseLeave={output.props.onMouseLeave}
+          tabIndex="0"
+          role="button">
           <img src="icon.gif" className="inspector-view__item-icon" />
           <span className="inspector-view__item-count">1</span>
           {' '}
@@ -180,23 +180,23 @@ describe('AddedServicesListItem', function() {
     var output = renderer.getRenderOutput();
 
     assert.deepEqual(output,
-        <li className="inspector-view__list-item"
-            data-serviceid="demo"
-            onClick={output.props.onClick}
-            onMouseEnter={output.props.onMouseEnter}
-            onMouseLeave={output.props.onMouseLeave}
-            tabIndex="0"
-            role="button">
-          <img src="icon.gif" className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">5</span>
-          {' '}
-          <span className="inspector-view__item-name">
+      <li className="inspector-view__list-item"
+        data-serviceid="demo"
+        onClick={output.props.onClick}
+        onMouseEnter={output.props.onMouseEnter}
+        onMouseLeave={output.props.onMouseLeave}
+        tabIndex="0"
+        role="button">
+        <img src="icon.gif" className="inspector-view__item-icon" />
+        <span className="inspector-view__item-count">5</span>
+        {' '}
+        <span className="inspector-view__item-name">
             demo
-          </span>
-          <span className="inspector-view__status-block">
-            {undefined}
-          </span>
-        </li>);
+        </span>
+        <span className="inspector-view__status-block">
+          {undefined}
+        </span>
+      </li>);
   });
 
   it('prioiritizes error, over pending status icon', function() {
@@ -225,23 +225,23 @@ describe('AddedServicesListItem', function() {
     var output = renderer.getRenderOutput();
 
     assert.deepEqual(output,
-        <li className="inspector-view__list-item"
-            data-serviceid="demo"
-            onClick={output.props.onClick}
-            onMouseEnter={output.props.onMouseEnter}
-            onMouseLeave={output.props.onMouseLeave}
-            tabIndex="0"
-            role="button">
-          <img src="icon.gif" className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">2</span>
-          {' '}
-          <span className="inspector-view__item-name">
+      <li className="inspector-view__list-item"
+        data-serviceid="demo"
+        onClick={output.props.onClick}
+        onMouseEnter={output.props.onMouseEnter}
+        onMouseLeave={output.props.onMouseLeave}
+        tabIndex="0"
+        role="button">
+        <img src="icon.gif" className="inspector-view__item-icon" />
+        <span className="inspector-view__item-count">2</span>
+        {' '}
+        <span className="inspector-view__item-name">
             demo
-          </span>
-          <span className="inspector-view__status-block">
-            <span className="inspector-view__status--error">1</span>
-          </span>
-        </li>);
+        </span>
+        <span className="inspector-view__status-block">
+          <span className="inspector-view__status--error">1</span>
+        </span>
+      </li>);
   });
 
   it('prioritizes pending over uncommitted status icon', function() {
@@ -270,23 +270,23 @@ describe('AddedServicesListItem', function() {
     var output = renderer.getRenderOutput();
 
     assert.deepEqual(output,
-        <li className="inspector-view__list-item"
-            data-serviceid="demo"
-            onClick={output.props.onClick}
-            onMouseEnter={output.props.onMouseEnter}
-            onMouseLeave={output.props.onMouseLeave}
-            tabIndex="0"
-            role="button">
-          <img src="icon.gif" className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">2</span>
-          {' '}
-          <span className="inspector-view__item-name">
+      <li className="inspector-view__list-item"
+        data-serviceid="demo"
+        onClick={output.props.onClick}
+        onMouseEnter={output.props.onMouseEnter}
+        onMouseLeave={output.props.onMouseLeave}
+        tabIndex="0"
+        role="button">
+        <img src="icon.gif" className="inspector-view__item-icon" />
+        <span className="inspector-view__item-count">2</span>
+        {' '}
+        <span className="inspector-view__item-name">
             demo
-          </span>
-          <span className="inspector-view__status-block">
-            <span className="inspector-view__status--pending">1</span>
-          </span>
-        </li>);
+        </span>
+        <span className="inspector-view__status-block">
+          <span className="inspector-view__status--pending">1</span>
+        </span>
+      </li>);
   });
 
   it('calls the changeState callable on click', function() {
@@ -306,14 +306,14 @@ describe('AddedServicesListItem', function() {
     var panToService = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.AddedServicesListItem
-          focusService={sinon.stub()}
-          unfocusService={sinon.stub()}
-          changeState={changeStub}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          hoverService={sinon.stub()}
-          panToService={panToService}
-          service={service} />);
+      <juju.components.AddedServicesListItem
+        focusService={sinon.stub()}
+        unfocusService={sinon.stub()}
+        changeState={changeStub}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        hoverService={sinon.stub()}
+        panToService={panToService}
+        service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.onClick({
       currentTarget: {
@@ -345,14 +345,14 @@ describe('AddedServicesListItem', function() {
     var changeStub = sinon.stub();
     var hoverService = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.AddedServicesListItem
-          changeState={changeStub}
-          focusService={sinon.stub()}
-          hoverService={hoverService}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          panToService={sinon.stub()}
-          service={service}
-          unfocusService={sinon.stub()} />);
+      <juju.components.AddedServicesListItem
+        changeState={changeStub}
+        focusService={sinon.stub()}
+        hoverService={hoverService}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        panToService={sinon.stub()}
+        service={service}
+        unfocusService={sinon.stub()} />);
     output.props.onMouseEnter();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');
@@ -373,14 +373,14 @@ describe('AddedServicesListItem', function() {
     var changeStub = sinon.stub();
     var hoverService = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.AddedServicesListItem
-          changeState={changeStub}
-          focusService={sinon.stub()}
-          hoverService={hoverService}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          panToService={sinon.stub()}
-          service={service}
-          unfocusService={sinon.stub()} />);
+      <juju.components.AddedServicesListItem
+        changeState={changeStub}
+        focusService={sinon.stub()}
+        hoverService={hoverService}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        panToService={sinon.stub()}
+        service={service}
+        unfocusService={sinon.stub()} />);
     output.props.onMouseLeave();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');

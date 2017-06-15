@@ -260,13 +260,13 @@ YUI.add('deployment-credential', function() {
       return (
         <form className="deployment-credential__form">
           <div className="prepend-two four-col">
-          <juju.components.InsetSelect
-            disabled={disabled}
-            label="Credential"
-            onChange={this._handleCredentialChange}
-            options={this._generateCredentials()}
-            ref="credential"
-            value={this.props.credential} />
+            <juju.components.InsetSelect
+              disabled={disabled}
+              label="Credential"
+              onChange={this._handleCredentialChange}
+              options={this._generateCredentials()}
+              ref="credential"
+              value={this.props.credential} />
           </div>
           <div className="four-col">
             <juju.components.InsetSelect

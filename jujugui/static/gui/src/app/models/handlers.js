@@ -367,9 +367,9 @@ YUI.add('juju-delta-handlers', function(Y) {
         // corresponding application is added to the db. In this case, wait for
         // the application delta to arrive before adding a relation.
         console.log(
-            'relation change', change.key,
-            'delayed, waiting for missing application',
-            applicationName);
+          'relation change', change.key,
+          'delayed, waiting for missing application',
+          applicationName);
         var hooks = applicationChangedHooks[applicationName] || [];
         hooks.push(processRelation);
         applicationChangedHooks[applicationName] = hooks;

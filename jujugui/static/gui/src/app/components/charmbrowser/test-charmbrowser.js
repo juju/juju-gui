@@ -85,33 +85,33 @@ describe('Charmbrowser', function() {
     var output = renderer.getRenderOutput();
     const searchResults = output.props.children.props.children.props;
     var expected = (
-        <juju.components.Panel
-          instanceName="white-box"
-          clickAction={instance._close}
-          focus={false}
-          visible={true}>
-          <div className="charmbrowser"
-            ref="charmbrowser">
-            <juju.components.SearchResults
-              acl={acl}
-              changeState={searchResults.changeState}
-              charmstoreSearch={charmstoreSearch}
-              deployTarget={deployTarget}
-              generatePath={searchResults.generatePath}
-              getName={utils.getName}
-              makeEntityModel={makeEntityModel}
-              owner={undefined}
-              provides={undefined}
-              query={query}
-              requires={undefined}
-              series={undefined}
-              seriesList={series}
-              setPageTitle={setPageTitle}
-              sort={undefined}
-              tags={undefined}
-              type={undefined} />
-            </div>
-        </juju.components.Panel>);
+      <juju.components.Panel
+        instanceName="white-box"
+        clickAction={instance._close}
+        focus={false}
+        visible={true}>
+        <div className="charmbrowser"
+          ref="charmbrowser">
+          <juju.components.SearchResults
+            acl={acl}
+            changeState={searchResults.changeState}
+            charmstoreSearch={charmstoreSearch}
+            deployTarget={deployTarget}
+            generatePath={searchResults.generatePath}
+            getName={utils.getName}
+            makeEntityModel={makeEntityModel}
+            owner={undefined}
+            provides={undefined}
+            query={query}
+            requires={undefined}
+            series={undefined}
+            seriesList={series}
+            setPageTitle={setPageTitle}
+            sort={undefined}
+            tags={undefined}
+            type={undefined} />
+        </div>
+      </juju.components.Panel>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -151,23 +151,23 @@ describe('Charmbrowser', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-        <juju.components.Panel
-          instanceName="white-box"
-          clickAction={instance._close}
-          focus={false}
-          visible={true}>
-          <div className="charmbrowser"
-            ref="charmbrowser">
-            <juju.components.Store
-              staticURL='surl'
-              apiVersion="v5"
-              charmstoreURL="http://1.2.3.4/"
-              changeState={
-                output.props.children.props.children.props.changeState}
-              gisf={true}
-              setPageTitle={setPageTitle} />
-          </div>
-        </juju.components.Panel>);
+      <juju.components.Panel
+        instanceName="white-box"
+        clickAction={instance._close}
+        focus={false}
+        visible={true}>
+        <div className="charmbrowser"
+          ref="charmbrowser">
+          <juju.components.Store
+            staticURL='surl'
+            apiVersion="v5"
+            charmstoreURL="http://1.2.3.4/"
+            changeState={
+              output.props.children.props.children.props.changeState}
+            gisf={true}
+            setPageTitle={setPageTitle} />
+        </div>
+      </juju.components.Panel>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -224,40 +224,40 @@ describe('Charmbrowser', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
-        <juju.components.Panel
-          instanceName="white-box"
-          clickAction={instance._close}
-          focus={false}
-          visible={true}>
-          <div className="charmbrowser"
-            ref="charmbrowser">
-            <juju.components.EntityDetails
-              acl={acl}
-              apiUrl={apiUrl}
-              importBundleYAML={importBundleYAML}
-              getBundleYAML={getBundleYAML}
-              changeState={
-                output.props.children.props.children.props.changeState}
-              getEntity={getEntity}
-              getModelName={getModelName}
-              hash="readme"
-              scrollPosition={0}
-              listPlansForCharm={listPlansForCharm}
-              makeEntityModel={makeEntityModel}
-              getDiagramURL={getDiagramURL}
-              getFile={getFile}
-              renderMarkdown={renderMarkdown}
-              deployService={deployService}
-              id={id}
-              addNotification={addNotification}
-              pluralize={utils.pluralize}
-              scrollCharmbrowser={instance._scrollCharmbrowser}
-              setPageTitle={setPageTitle}
-              showTerms={showTerms}
-              urllib={urllib}
-            />
-          </div>
-        </juju.components.Panel>);
+      <juju.components.Panel
+        instanceName="white-box"
+        clickAction={instance._close}
+        focus={false}
+        visible={true}>
+        <div className="charmbrowser"
+          ref="charmbrowser">
+          <juju.components.EntityDetails
+            acl={acl}
+            apiUrl={apiUrl}
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
+            changeState={
+              output.props.children.props.children.props.changeState}
+            getEntity={getEntity}
+            getModelName={getModelName}
+            hash="readme"
+            scrollPosition={0}
+            listPlansForCharm={listPlansForCharm}
+            makeEntityModel={makeEntityModel}
+            getDiagramURL={getDiagramURL}
+            getFile={getFile}
+            renderMarkdown={renderMarkdown}
+            deployService={deployService}
+            id={id}
+            addNotification={addNotification}
+            pluralize={utils.pluralize}
+            scrollCharmbrowser={instance._scrollCharmbrowser}
+            setPageTitle={setPageTitle}
+            showTerms={showTerms}
+            urllib={urllib}
+          />
+        </div>
+      </juju.components.Panel>);
     expect(output).toEqualJSX(expectedOutput);
   });
 

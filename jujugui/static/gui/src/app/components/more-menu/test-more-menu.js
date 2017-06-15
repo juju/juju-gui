@@ -43,17 +43,17 @@ describe('MoreMenu', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-        <div className="more-menu">
-          <span className="more-menu__toggle"
-            onClick={instance._handleToggleMenu}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon
-              name="contextual-menu-16"
-              size="16" />
-          </span>
-          {undefined}
-        </div>);
+      <div className="more-menu">
+        <span className="more-menu__toggle"
+          onClick={instance._handleToggleMenu}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon
+            name="contextual-menu-16"
+            size="16" />
+        </span>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -72,32 +72,32 @@ describe('MoreMenu', function() {
     instance._handleToggleMenu();
     var output = renderer.getRenderOutput();
     var expected = (
-        <div className="more-menu more-menu--active">
-          <span className="more-menu__toggle"
-            onClick={instance._handleToggleMenu}
+      <div className="more-menu more-menu--active">
+        <span className="more-menu__toggle"
+          onClick={instance._handleToggleMenu}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon
+            name="contextual-menu-16"
+            size="16" />
+        </span>
+        <ul className="more-menu__menu">
+          <li className="more-menu__menu-item"
+            key="Add machine"
+            onClick={output.props.children[1].props.children[0].props.onClick}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon
-              name="contextual-menu-16"
-              size="16" />
-          </span>
-          <ul className="more-menu__menu">
-            <li className="more-menu__menu-item"
-              key="Add machine"
-              onClick={output.props.children[1].props.children[0].props.onClick}
-              role="button"
-              tabIndex="0">
               Add machine
-            </li>
-            <li className="more-menu__menu-item more-menu__menu-item--inactive"
-              key="Add container"
-              onClick={output.props.children[1].props.children[1].props.onClick}
-              role="button"
-              tabIndex="0">
+          </li>
+          <li className="more-menu__menu-item more-menu__menu-item--inactive"
+            key="Add container"
+            onClick={output.props.children[1].props.children[1].props.onClick}
+            role="button"
+            tabIndex="0">
               Add container
-            </li>
-          </ul>
-        </div>);
+          </li>
+        </ul>
+      </div>);
     assert.deepEqual(output, expected);
   });
 

@@ -179,7 +179,7 @@ YUI.add('inspector-component', function() {
         case 'unit':
           var unitId = appState.current.gui.inspector.unit;
           var unit = service.get('units').getById(
-                serviceId + '/' + unitId);
+            serviceId + '/' + unitId);
           var unitStatus = null;
           var previousComponent;
           var id;
@@ -351,9 +351,9 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorRelateTo
-              changeState={changeState}
-              application={service}
-              relatableApplications={this.props.relatableApplications}/>,
+                changeState={changeState}
+                application={service}
+                relatableApplications={this.props.relatableApplications}/>,
             backState: {
               gui: {
                 inspector: {

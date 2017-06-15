@@ -639,12 +639,12 @@ describe('State', () => {
       assert.deepEqual(
         state._parseSearch(
           'k8s/core', {tags: 'ops,db', series: 'yakkety'}, {}), {
-            search: {
-              series: 'yakkety',
-              tags: ['ops', 'db'],
-              text: 'k8s/core'
-            }
-          });
+          search: {
+            series: 'yakkety',
+            tags: ['ops', 'db'],
+            text: 'k8s/core'
+          }
+        });
     });
   });
 

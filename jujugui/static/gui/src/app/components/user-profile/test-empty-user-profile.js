@@ -31,10 +31,10 @@ describe('EmptyUserProfile', () => {
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
-       changeState={changeState}
-       isCurrentUser={true}
-       switchModel={sinon.stub()}
-       staticURL={staticURL} />, true);
+        changeState={changeState}
+        isCurrentUser={true}
+        switchModel={sinon.stub()}
+        staticURL={staticURL} />, true);
     const src = staticURL + '/static/gui/build/app'
               + '/assets/images/non-sprites/empty_profile.png';
     const output = component.getRenderOutput();
@@ -66,10 +66,10 @@ describe('EmptyUserProfile', () => {
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
-       changeState={changeState}
-       isCurrentUser={false}
-       switchModel={sinon.stub()}
-       staticURL={staticURL} />, true);
+        changeState={changeState}
+        isCurrentUser={false}
+        switchModel={sinon.stub()}
+        staticURL={staticURL} />, true);
     const src = staticURL + '/static/gui/build/app'
               + '/assets/images/non-sprites/empty_profile.png';
     const output = component.getRenderOutput();

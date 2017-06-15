@@ -257,14 +257,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('converts integer constraints', function() {
         var constraints = env.prepareConstraints(
-            {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
+          {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
         assert.deepEqual(
-            constraints, {'root-disk': 800, 'cpu-cores': 4, mem: 2000});
+          constraints, {'root-disk': 800, 'cpu-cores': 4, mem: 2000});
       });
 
       it('removes integer constraints with invalid values', function() {
         var constraints = env.prepareConstraints(
-            {'cpu-power': 'four kquad', 'cpu-cores': 'tons', mem: 2000});
+          {'cpu-power': 'four kquad', 'cpu-cores': 'tons', mem: 2000});
         assert.deepEqual(constraints, {mem: 2000});
       });
 
@@ -286,7 +286,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('removes unexpected constraints', function() {
         var constraints = env.prepareConstraints(
-            {arch: 'i386', invalid: 'not-a-constraint'});
+          {arch: 'i386', invalid: 'not-a-constraint'});
         assert.deepEqual(constraints, {arch: 'i386'});
       });
 
@@ -312,7 +312,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('converts tags with spaces', function() {
         var constraints = env.prepareConstraints(
-            {tags: 'first tag, second   tag'});
+          {tags: 'first tag, second   tag'});
         assert.deepEqual(constraints, {tags: ['first-tag', 'second-tag']});
       });
 
@@ -1107,26 +1107,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         const mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
-            'a zip file', 'trusty',
-            function() {return 'progress';},
-            function() {return 'completed';});
+          'a zip file', 'trusty',
+          function() {return 'progress';},
+          function() {return 'completed';});
         // Ensure the web handler's sendPostRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendPostRequest.callCount, 1);
         const lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
-            lastArguments[0],
-            '/juju-core/model/this-is-a-uuid/charms?series=trusty'); // Path.
+          lastArguments[0],
+          '/juju-core/model/this-is-a-uuid/charms?series=trusty'); // Path.
         assert.deepEqual(
-            lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
+          lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
         assert.strictEqual(lastArguments[3], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[4], 'password'); // Password.
         assert.strictEqual(
-            lastArguments[5](), 'progress'); // Progress callback.
+          lastArguments[5](), 'progress'); // Progress callback.
         assert.strictEqual(
-            lastArguments[6](), 'completed'); // Completed callback.
+          lastArguments[6](), 'completed'); // Completed callback.
       });
 
     });
@@ -1136,7 +1136,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         const mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
         env.set('webHandler', mockWebHandler);
         const url = env.getLocalCharmFileUrl(
-            'local:trusty/django-42', 'icon.svg');
+          'local:trusty/django-42', 'icon.svg');
         assert.strictEqual(url, 'myurl');
         // Ensure the web handler's getUrl method has been called with the
         // expected arguments.
@@ -1176,9 +1176,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.listLocalCharmFiles(
-            'local:trusty/django-42',
-            function() {return 'progress';},
-            function() {return 'completed';});
+          'local:trusty/django-42',
+          function() {return 'progress';},
+          function() {return 'completed';});
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
@@ -1191,9 +1191,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
-            lastArguments[4](), 'progress'); // Progress callback.
+          lastArguments[4](), 'progress'); // Progress callback.
         assert.strictEqual(
-            lastArguments[5](), 'completed'); // Completed callback.
+          lastArguments[5](), 'completed'); // Completed callback.
       });
 
     });
@@ -1204,9 +1204,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.getLocalCharmFileContents(
-            'local:trusty/django-42', 'hooks/install',
-            function() {return 'progress';},
-            function() {return 'completed';});
+          'local:trusty/django-42', 'hooks/install',
+          function() {return 'progress';},
+          function() {return 'completed';});
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
@@ -1219,9 +1219,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
-            lastArguments[4](), 'progress'); // Progress callback.
+          lastArguments[4](), 'progress'); // Progress callback.
         assert.strictEqual(
-            lastArguments[5](), 'completed'); // Completed callback.
+          lastArguments[5](), 'completed'); // Completed callback.
       });
 
     });
@@ -1909,7 +1909,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('adds a machine with the given series and constraints', function() {
       var constraints = {'cpu-cores': 4, 'mem': 4000};
       env.addMachines([{series: 'trusty', constraints: constraints}], null,
-          {immediate: true});
+        {immediate: true});
       var expectedMsg = {
         'request-id': 1,
         type: 'Client',
@@ -1945,8 +1945,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('adds a saucy container to a specific machine', function() {
       env.addMachines(
-          [{containerType: 'lxc', parentId: '42', series: 'saucy'}],
-          null, {immediate: true});
+        [{containerType: 'lxc', parentId: '42', series: 'saucy'}],
+        null, {immediate: true});
       var expectedMsg = {
         'request-id': 1,
         type: 'Client',
@@ -2083,7 +2083,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('removes multiple machines/containers', function() {
       env.destroyMachines(['1', '47', '42/lxc/0'], null, null,
-          {immediate: true});
+        {immediate: true});
       assertDestroyMachinesRequestSent(['1', '47', '42/lxc/0'], false);
     });
 
@@ -2214,9 +2214,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully sets annotation', function() {
       var err;
       env.update_annotations('mysql', 'application', {'mykey': 'myvalue'},
-          function(data) {
-            err = data.err;
-          });
+        function(data) {
+          err = data.err;
+        });
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2244,9 +2244,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully removes annotations', function() {
       var err;
       env.remove_annotations('mysql', 'application', ['key1', 'key2'],
-          function(data) {
-            err = data.err;
-          });
+        function(data) {
+          err = data.err;
+        });
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2316,9 +2316,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('correctly handles errors from removing annotations', function() {
       var err;
       env.remove_annotations('haproxy', 'application', ['key1', 'key2'],
-          function(data) {
-            err = data.err;
-          });
+        function(data) {
+          err = data.err;
+        });
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -3162,8 +3162,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var providerFeatures = Y.juju.environments.providerFeatures;
       providers.forEach(function(provider) {
         assert.equal(
-            Array.isArray(providerFeatures[provider].supportedContainerTypes),
-            true);
+          Array.isArray(providerFeatures[provider].supportedContainerTypes),
+          true);
       });
     });
 

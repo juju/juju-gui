@@ -47,7 +47,7 @@ describe('EntityFiles', function() {
         apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.stub().returns('files')} />
-    , true);
+      , true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var archiveUrl = `${apiUrl}/django/archive`;

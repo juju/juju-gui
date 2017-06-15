@@ -142,8 +142,8 @@ YUI.add('notification-list', function() {
     render: function() {
       return (
         <ul onMouseOver={this._clearTimeouts}
-            onMouseOut={this._restartTimeouts}
-            className="notification-list">
+          onMouseOut={this._restartTimeouts}
+          className="notification-list">
           {this._generateNotifications()}
         </ul>);
     }

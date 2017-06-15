@@ -31,7 +31,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Notification
         content={<span>Hello</span>}
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification">
@@ -48,7 +48,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         type="positive"
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--positive">
@@ -65,7 +65,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         type="caution"
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--caution">
@@ -82,7 +82,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         type="negative"
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--negative">
@@ -99,7 +99,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         extraClasses="test"
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification test">
@@ -117,7 +117,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         dismiss={dismiss}
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification">
@@ -141,7 +141,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         dismiss={dismiss}
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.onClick({
       stopPropagation: stopPropagation
@@ -155,7 +155,7 @@ describe('Notification', function() {
       <juju.components.Notification
         content={<span></span>}
         isBlocking={true}
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification__blocker">
@@ -176,7 +176,7 @@ describe('Notification', function() {
         content={<span></span>}
         dismiss={dismiss}
         isBlocking={true}
-        />, true);
+      />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification__blocker"

@@ -59,39 +59,39 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.EntityDetails
-          acl={acl}
-          apiUrl={apiUrl}
-          changeState={changeState}
-          deployService={deployService}
-          importBundleYAML={importBundleYAML}
-          getBundleYAML={getBundleYAML}
-          getDiagramURL={sinon.stub()}
-          getEntity={getEntity}
-          getFile={getFile}
-          getModelName={getModelName}
-          hash="readme"
-          listPlansForCharm={sinon.stub()}
-          scrollPosition={100}
-          renderMarkdown={renderMarkdown}
-          id={id}
-          pluralize={pluralize}
-          addNotification={addNotification}
-          makeEntityModel={makeEntityModel}
-          scrollCharmbrowser={scrollCharmbrowser}
-          setPageTitle={sinon.stub()}
-          showTerms={showTerms}
-          staticURL="http://example.com"
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityDetails
+        acl={acl}
+        apiUrl={apiUrl}
+        changeState={changeState}
+        deployService={deployService}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={getFile}
+        getModelName={getModelName}
+        hash="readme"
+        listPlansForCharm={sinon.stub()}
+        scrollPosition={100}
+        renderMarkdown={renderMarkdown}
+        id={id}
+        pluralize={pluralize}
+        addNotification={addNotification}
+        makeEntityModel={makeEntityModel}
+        scrollCharmbrowser={scrollCharmbrowser}
+        setPageTitle={sinon.stub()}
+        showTerms={showTerms}
+        staticURL="http://example.com"
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
     const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
+      'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
+      'getEntity not called with the entity ID');
     const expectedOutput = (
       <div className="entity-details charm"
         ref="content"
@@ -127,7 +127,7 @@ describe('EntityDetails', function() {
             scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
-          </div>
+        </div>
       </div>
     );
     expect(output).toEqualJSX(expectedOutput);
@@ -144,30 +144,30 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.EntityDetails
-          acl={acl}
-          addNotification={sinon.stub()}
-          apiUrl="http://example.com/"
-          changeState={changeState}
-          deployService={deployService}
-          importBundleYAML={importBundleYAML}
-          getBundleYAML={getBundleYAML}
-          getDiagramURL={sinon.stub()}
-          getEntity={getEntity}
-          getFile={getFile}
-          getModelName={sinon.stub()}
-          listPlansForCharm={sinon.spy()}
-          makeEntityModel={sinon.spy()}
-          renderMarkdown={renderMarkdown}
-          id={id}
-          pluralize={pluralize}
-          scrollCharmbrowser={sinon.stub()}
-          scrollPosition={0}
-          setPageTitle={sinon.stub()}
-          showTerms={sinon.stub()}
-          staticURL="http://example.com"
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityDetails
+        acl={acl}
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
+        changeState={changeState}
+        deployService={deployService}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={getFile}
+        getModelName={sinon.stub()}
+        listPlansForCharm={sinon.spy()}
+        makeEntityModel={sinon.spy()}
+        renderMarkdown={renderMarkdown}
+        id={id}
+        pluralize={pluralize}
+        scrollCharmbrowser={sinon.stub()}
+        scrollPosition={0}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -207,39 +207,39 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.EntityDetails
-          acl={acl}
-          apiUrl={apiUrl}
-          changeState={changeState}
-          deployService={deployService}
-          importBundleYAML={importBundleYAML}
-          getBundleYAML={getBundleYAML}
-          getEntity={getEntity}
-          getFile={getFile}
-          getModelName={getModelName}
-          scrollPosition={100}
-          renderMarkdown={renderMarkdown}
-          getDiagramURL={getDiagramURL}
-          hash="readme"
-          listPlansForCharm={sinon.stub()}
-          id={id}
-          pluralize={pluralize}
-          addNotification={addNotification}
-          makeEntityModel={makeEntityModel}
-          scrollCharmbrowser={scrollCharmbrowser}
-          setPageTitle={sinon.stub()}
-          showTerms={sinon.stub()}
-          staticURL="http://example.com"
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityDetails
+        acl={acl}
+        apiUrl={apiUrl}
+        changeState={changeState}
+        deployService={deployService}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        getEntity={getEntity}
+        getFile={getFile}
+        getModelName={getModelName}
+        scrollPosition={100}
+        renderMarkdown={renderMarkdown}
+        getDiagramURL={getDiagramURL}
+        hash="readme"
+        listPlansForCharm={sinon.stub()}
+        id={id}
+        pluralize={pluralize}
+        addNotification={addNotification}
+        makeEntityModel={makeEntityModel}
+        scrollCharmbrowser={scrollCharmbrowser}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
     const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
+      'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
+      'getEntity not called with the entity ID');
     const expectedOutput = (
       <div className={'entity-details bundle'}
         ref="content"
@@ -279,7 +279,7 @@ describe('EntityDetails', function() {
             scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
-          </div>
+        </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
   });
@@ -296,30 +296,30 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.EntityDetails
-          acl={acl}
-          addNotification={sinon.stub()}
-          apiUrl="http://example.com/"
-          changeState={changeState}
-          deployService={deployService}
-          importBundleYAML={importBundleYAML}
-          getBundleYAML={getBundleYAML}
-          getDiagramURL={sinon.stub()}
-          getEntity={getEntity}
-          getFile={getFile}
-          getModelName={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
-          makeEntityModel={sinon.spy()}
-          renderMarkdown={renderMarkdown}
-          id={id}
-          pluralize={pluralize}
-          scrollCharmbrowser={sinon.stub()}
-          scrollPosition={0}
-          setPageTitle={sinon.stub()}
-          showTerms={sinon.stub()}
-          staticURL="http://example.com"
-          urllib={urllib}
-        />, true);
+      <juju.components.EntityDetails
+        acl={acl}
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
+        changeState={changeState}
+        deployService={deployService}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={getFile}
+        getModelName={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        makeEntityModel={sinon.spy()}
+        renderMarkdown={renderMarkdown}
+        id={id}
+        pluralize={pluralize}
+        scrollCharmbrowser={sinon.stub()}
+        scrollPosition={0}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
+        urllib={urllib}
+      />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -410,9 +410,9 @@ describe('EntityDetails', function() {
     instance.componentDidMount();
     const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
+      'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
+      'getEntity not called with the entity ID');
     const expectedOutput = (
       <div className={'entity-details charm'}
         ref="content"
@@ -448,7 +448,7 @@ describe('EntityDetails', function() {
             scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
-          </div>
+        </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
     assert.equal(listPlansForCharm.callCount, 1);
@@ -504,9 +504,9 @@ describe('EntityDetails', function() {
     instance.componentDidMount();
     const output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
+      'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
+      'getEntity not called with the entity ID');
     const expectedOutput = (
       <div className={'entity-details charm'}
         ref="content"
@@ -542,7 +542,7 @@ describe('EntityDetails', function() {
             scrollCharmbrowser={scrollCharmbrowser}
             showTerms={showTerms}
           />
-          </div>
+        </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
     assert.equal(listPlansForCharm.callCount, 1);

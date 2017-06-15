@@ -27,7 +27,7 @@ var module = module;
   */
   const serializeObject = function(obj) {
     return Object.keys(obj).map(p =>
-        `${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`).join('&');
+      `${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`).join('&');
   };
   /**
     @param {Function} callback The callback to wrap.

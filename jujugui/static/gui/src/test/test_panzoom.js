@@ -58,41 +58,41 @@ describe('pan zoom module', function() {
 
   // Test the zoom calculations.
   it('should handle fractional values within the limit for rescale',
-     function() {
-       // Floor is used so the scale will round down.
-       var evt =
+    function() {
+      // Floor is used so the scale will round down.
+      var evt =
            { scale: 0.609,
              translate: [0, 0]};
-       pz.rescale(evt);
-       topo.get('scale').should.equal(0.609);
-       var translate = evt.translate;
-       var expected = 'translate(' + translate + ') scale(0.609)';
-       vis.attr('transform').should.equal(expected);
-     });
+      pz.rescale(evt);
+      topo.get('scale').should.equal(0.609);
+      var translate = evt.translate;
+      var expected = 'translate(' + translate + ') scale(0.609)';
+      vis.attr('transform').should.equal(expected);
+    });
 
   it('should set an upper limit for rescale',
-     function() {
-       var evt =
+    function() {
+      var evt =
            { scale: 2.1,
              translate: [0, 0]};
-       pz.rescale(evt);
-       topo.get('scale').should.equal(2.0);
-       var translate = evt.translate;
-       var expected = 'translate(' + translate + ') scale(2)';
-       vis.attr('transform').should.equal(expected);
-     });
+      pz.rescale(evt);
+      topo.get('scale').should.equal(2.0);
+      var translate = evt.translate;
+      var expected = 'translate(' + translate + ') scale(2)';
+      vis.attr('transform').should.equal(expected);
+    });
 
   it('should set a lower limit for rescale',
-     function() {
-       var evt =
+    function() {
+      var evt =
            { scale: 0.2,
              translate: [0, 0]};
-       pz.rescale(evt);
-       topo.get('scale').should.equal(0.25);
-       var translate = evt.translate;
-       var expected = 'translate(' + translate + ') scale(0.25)';
-       vis.attr('transform').should.equal(expected);
-     });
+      pz.rescale(evt);
+      topo.get('scale').should.equal(0.25);
+      var translate = evt.translate;
+      var expected = 'translate(' + translate + ') scale(0.25)';
+      vis.attr('transform').should.equal(expected);
+    });
 
   it('must be able to handle zoom in/out events', function() {
     const svg = viewContainer.querySelector('.the-canvas g');

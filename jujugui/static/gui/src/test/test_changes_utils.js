@@ -58,7 +58,7 @@ describe('ChangesUtils', function() {
     it('returns the service', function() {
       addEntities(db);
       var service = changesUtils.getServiceByUnitId('django/0',
-          db.services, db.units);
+        db.services, db.units);
       assert.strictEqual(service.get('id'), 'django');
     });
 
@@ -222,11 +222,11 @@ describe('ChangesUtils', function() {
     }];
     // This method needs to be stubbed out for the add relation path.
     var endpointNames = sinon.stub(
-        changesUtils, 'getRealRelationEndpointNames').returns(['foo', 'baz']);
+      changesUtils, 'getRealRelationEndpointNames').returns(['foo', 'baz']);
     this._cleanups.push(endpointNames.restore);
     tests.forEach(function(test) {
       var change = changesUtils.generateChangeDescription(
-          db.services, db.units, test.change, true);
+        db.services, db.units, test.change, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
       if (test.timestamp) {
@@ -239,12 +239,12 @@ describe('ChangesUtils', function() {
 
   it('can generate descriptions for all the changes in the ecs', function() {
     var stubDescription = sinon.stub(
-        changesUtils,
-        'generateChangeDescription');
+      changesUtils,
+      'generateChangeDescription');
     this._cleanups.push(stubDescription.restore);
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
     changesUtils.generateAllChangeDescriptions(
-        db.services, db.units, ecs.changeSet);
+      db.services, db.units, ecs.changeSet);
     assert.equal(stubDescription.callCount, 2);
   });
 

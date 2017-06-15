@@ -238,22 +238,22 @@ describe('AccountCredentials', () => {
             </li>,
             <li className="user-profile__list-row twelve-col"
               key="gce_spinach@external_test2">
-                <span className="six-col user-profile__list-col">
+              <span className="six-col user-profile__list-col">
                   test2
-                </span>
-                <span className="four-col user-profile__list-col">
+              </span>
+              <span className="four-col user-profile__list-col">
                   Google
-                </span>
-                <span className="two-col last-col user-profile__list-col
+              </span>
+              <span className="two-col last-col user-profile__list-col
                   no-margin-bottom">
-                  <juju.components.GenericButton
-                    action={
-                      credentials[1].props.children[2].props.children
-                        .props.action}
-                    disabled={false}
-                    type="neutral"
-                    title="Remove" />
-                </span>
+                <juju.components.GenericButton
+                  action={
+                    credentials[1].props.children[2].props.children
+                      .props.action}
+                  disabled={false}
+                  type="neutral"
+                  title="Remove" />
+              </span>
             </li>]}
         </ul>
       </div>);
@@ -511,22 +511,22 @@ describe('AccountCredentials', () => {
           </li>
           {[<li className="user-profile__list-row twelve-col"
             key="gce_spinach@external_test2">
-              <span className="six-col  user-profile__list-col">
+            <span className="six-col  user-profile__list-col">
                 test2
-              </span>
-              <span className="four-col  user-profile__list-col">
+            </span>
+            <span className="four-col  user-profile__list-col">
                 Google
-              </span>
-              <span className="two-col last-col  user-profile__list-col
+            </span>
+            <span className="two-col last-col  user-profile__list-col
                 no-margin-bottom">
-                <juju.components.GenericButton
-                  action={
-                    credentials[0].props.children[2].props.children
-                      .props.action}
-                  disabled={false}
-                  type="neutral"
-                  title="Remove" />
-              </span>
+              <juju.components.GenericButton
+                action={
+                  credentials[0].props.children[2].props.children
+                    .props.action}
+                disabled={false}
+                type="neutral"
+                title="Remove" />
+            </span>
           </li>]}
         </ul>
       </div>);
@@ -595,14 +595,14 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             <div>
               {null}
-               <juju.components.DeploymentCloud
-                 acl={acl}
-                 cloud={null}
-                 controllerIsReady={controllerIsReady}
-                 listClouds={listClouds}
-                 getCloudProviderDetails={getCloudProviderDetails}
-                 setCloud={instance._setCloud} />
-               {null}
+              <juju.components.DeploymentCloud
+                acl={acl}
+                cloud={null}
+                controllerIsReady={controllerIsReady}
+                listClouds={listClouds}
+                getCloudProviderDetails={getCloudProviderDetails}
+                setCloud={instance._setCloud} />
+              {null}
             </div>
           </div>
         </juju.components.ExpandingRow>
@@ -650,7 +650,7 @@ describe('AccountCredentials', () => {
               <juju.components.GenericButton
                 action={
                   output.props.children[1].props.children[1].props.children
-                  .props.children[0].props.children.props.action}
+                    .props.children[0].props.children.props.action}
                 type="inline-neutral"
                 title="Change cloud" />
             </div>

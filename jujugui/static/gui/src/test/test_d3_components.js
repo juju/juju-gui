@@ -124,39 +124,39 @@ describe('d3-components', function() {
   });
 
   it('should allow event bindings through the use of a declarative object',
-     function() {
-       comp = new NS.Component();
-       comp.setAttrs({container: container});
+    function() {
+      comp = new NS.Component();
+      comp.setAttrs({container: container});
 
-       // Change test module to use rich captures on some events.
-       // This defines a phase for click (before, after, on (default))
-       // and also shows an inline callback (which is discouraged but allowed)
-       modA = new TestModule();
-       modA.events.scene['.thing'] = {
-         click: {phase: 'after',
-           callback: 'afterThing'},
-         dblclick: {phase: 'on',
-           callback: function(evt) {
-             state.dbldbl = true;
-           }}};
-       modA.afterThing = function(evt) {
-         state.clicked = true;
-       };
-       comp.addModule(modA);
-       comp.render();
+      // Change test module to use rich captures on some events.
+      // This defines a phase for click (before, after, on (default))
+      // and also shows an inline callback (which is discouraged but allowed)
+      modA = new TestModule();
+      modA.events.scene['.thing'] = {
+        click: {phase: 'after',
+          callback: 'afterThing'},
+        dblclick: {phase: 'on',
+          callback: function(evt) {
+            state.dbldbl = true;
+          }}};
+      modA.afterThing = function(evt) {
+        state.clicked = true;
+      };
+      comp.addModule(modA);
+      comp.render();
 
-       document.querySelector('.thing').click();
-       state.clicked.should.equal(true);
+      document.querySelector('.thing').click();
+      state.clicked.should.equal(true);
 
-       const event = new MouseEvent('dblclick', {
-         'view': window,
-         'bubbles': true,
-         'cancelable': true
-       });
-       document.querySelector('.thing').dispatchEvent(event);
-       state.dbldbl.should.equal(true);
+      const event = new MouseEvent('dblclick', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': true
+      });
+      document.querySelector('.thing').dispatchEvent(event);
+      state.dbldbl.should.equal(true);
 
-     });
+    });
 
   it('should correctly handle synthetic event bindings', function(done) {
     comp = new NS.Component();
@@ -183,7 +183,7 @@ describe('d3-components', function() {
     compB.render();
 
     assert.notEqual(compA.events.TestModule.subscriptions[1].callable,
-                    compB.events.TestModule.subscriptions[1].callable);
+      compB.events.TestModule.subscriptions[1].callable);
 
     // Cleanup
     compA.unbind();
@@ -193,34 +193,34 @@ describe('d3-components', function() {
   });
 
   it('should support basic rendering from all modules',
-     function() {
-       var modA = new TestModule(),
-           modB = new TestModule();
+    function() {
+      var modA = new TestModule(),
+          modB = new TestModule();
 
-       comp = new NS.Component();
-       // Give each of these a render method that adds to container
-       modA.name = 'moda';
-       modA.render = function() {
-         const node = document.createElement('div');
-         node.setAttribute('id', 'fromA');
-         this.get('container').appendChild(node);
-       };
+      comp = new NS.Component();
+      // Give each of these a render method that adds to container
+      modA.name = 'moda';
+      modA.render = function() {
+        const node = document.createElement('div');
+        node.setAttribute('id', 'fromA');
+        this.get('container').appendChild(node);
+      };
 
-       modB.name = 'modb';
-       modB.render = function() {
-         const node = document.createElement('div');
-         node.setAttribute('id', 'fromB');
-         this.get('container').appendChild(node);
-       };
+      modB.name = 'modb';
+      modB.render = function() {
+        const node = document.createElement('div');
+        node.setAttribute('id', 'fromB');
+        this.get('container').appendChild(node);
+      };
 
-       comp.setAttrs({container: container});
-       comp.addModule(modA)
+      comp.setAttrs({container: container});
+      comp.addModule(modA)
         .addModule(modB);
 
-       comp.render();
-       viewUtils.isValue(document.querySelector('#fromA')).should.equal(true);
-       viewUtils.isValue(document.querySelector('#fromB')).should.equal(true);
-     });
+      comp.render();
+      viewUtils.isValue(document.querySelector('#fromA')).should.equal(true);
+      viewUtils.isValue(document.querySelector('#fromB')).should.equal(true);
+    });
 
   it('should support d3 event bindings post render', function() {
     comp = new NS.Component();

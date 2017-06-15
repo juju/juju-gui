@@ -211,14 +211,14 @@ YUI.add('deployment-budget', function() {
                     disabled={disabled}
                     type="base"
                     title="Cancel" />
-                  </div>
-                  <div className="two-col last-col">
+                </div>
+                <div className="two-col last-col">
                   <juju.components.GenericButton
                     action={this._toggleIncrease}
                     disabled={disabled}
                     type="neutral"
                     title="Confirm" />
-                  </div>
+                </div>
               </div>
             </div>
           </div>

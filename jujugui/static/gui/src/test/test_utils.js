@@ -23,11 +23,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var views;
     before(function(done) {
       YUI(GlobalConfig).use(
-          'juju-view-utils',
-          function(Y) {
-            views = Y.namespace('juju.views');
-            done();
-          });
+        'juju-view-utils',
+        function(Y) {
+          views = Y.namespace('juju.views');
+          done();
+        });
     });
 
     it('generates the correct export file name', function() {
@@ -295,7 +295,7 @@ describe('utilities', function() {
     it('returns the security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, null, 'security');
       var expected = makeURL(
-          '+alert:security-upgrades/packages/list?filter=security');
+        '+alert:security-upgrades/packages/list?filter=security');
       assert.strictEqual(url, expected);
     });
 
@@ -308,14 +308,14 @@ describe('utilities', function() {
     it('returns the service reboot Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, service, 'reboot');
       var expected = makeURL(
-          '+service:django/+alert:computer-reboot/info#power');
+        '+service:django/+alert:computer-reboot/info#power');
       assert.strictEqual(url, expected);
     });
 
     it('returns the service security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, service, 'security');
       var expected = makeURL(
-          '+service:django/+alert:security-upgrades/packages/list' +
+        '+service:django/+alert:security-upgrades/packages/list' +
           '?filter=security');
       assert.strictEqual(url, expected);
     });
@@ -329,14 +329,14 @@ describe('utilities', function() {
     it('returns the unit reboot Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, unit, 'reboot');
       var expected = makeURL(
-          '+unit:django-42/+alert:computer-reboot/info#power');
+        '+unit:django-42/+alert:computer-reboot/info#power');
       assert.strictEqual(url, expected);
     });
 
     it('returns the unit security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, unit, 'security');
       var expected = makeURL(
-          '+unit:django-42/+alert:security-upgrades/packages/list' +
+        '+unit:django-42/+alert:security-upgrades/packages/list' +
           '?filter=security');
       assert.strictEqual(url, expected);
     });
@@ -382,16 +382,16 @@ describe('utilities', function() {
     it('returns a qualified charmstoreURL icon location', function() {
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
       assert.equal(
-          path,
-          'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
+        path,
+        'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
 
     it('handles charmstoreURL with no trailing slash', function() {
       window.juju_config = {charmstoreURL: 'http://4.3.2.1'};
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
       assert.equal(
-          path,
-          'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
+        path,
+        'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
   });
 
@@ -455,7 +455,7 @@ describe('utilities', function() {
       var callback = sinon.stub();
 
       var units = utils.addGhostAndEcsUnits(
-          db, env, service, unitCount, callback);
+        db, env, service, unitCount, callback);
       // Test the db.addUnits call.
       assert.equal(db.addUnits.callCount, 2, 'db addUnits not called');
       var addUnitsArgs = db.addUnits.args;
@@ -499,21 +499,21 @@ describe('utilities', function() {
     }
 
     it('creates machines, units; places units; updates unit lists',
-       function() {
-         testScaleUp('myService');
-       }
+      function() {
+        testScaleUp('myService');
+      }
     );
 
     it('creates machines, units; places units; updates unit lists (no units)',
-       function() {
-         testScaleUp('no-units');
-       }
+      function() {
+        testScaleUp('no-units');
+      }
     );
 
     it('creates machines, units; places units; updates unit lists for ghosts',
-        function() {
-          testScaleUp('myGhostService$');
-        }
+      function() {
+        testScaleUp('myGhostService$');
+      }
     );
 
     it('properly removes the ghost units on env add_unit callback', function() {
@@ -590,9 +590,9 @@ describe('utilities', function() {
           add: function(attrs) {
             // The notification has the required attributes.
             assert.equal(attrs.hasOwnProperty('title'), true,
-                'Does not have a title');
+              'Does not have a title');
             assert.equal(attrs.hasOwnProperty('message'), true,
-                'Does not have a message');
+              'Does not have a message');
             // The service name is mentioned in the error message.
             assert.notEqual(attrs.message.indexOf(APPNAME, -1));
             assert.equal(attrs.level, 'important');
@@ -608,7 +608,7 @@ describe('utilities', function() {
       assert.isTrue(notificationAdded);
       // Check that relations were removed.
       assert.equal(db.relations.remove.calledOnce, true,
-          'Remove relations not called');
+        'Remove relations not called');
     });
   });
 
@@ -785,39 +785,39 @@ describe('utilities', function() {
       },
       {
         text: 'www.domain.com',
-        expected: '<a href="www.domain.com" target="_blank">www.domain.com</a>'  // eslint-disable-line max-len
+        expected: '<a href="www.domain.com" target="_blank">www.domain.com</a>' // eslint-disable-line max-len
       },
       {
         text: 'thisisareallylongdomainnamewithunder62parts.co',
-        expected: '<a href="thisisareallylongdomainnamewithunder62parts.co" target="_blank">thisisareallylongdomainnamewithunder62parts.co</a>'  // eslint-disable-line max-len
+        expected: '<a href="thisisareallylongdomainnamewithunder62parts.co" target="_blank">thisisareallylongdomainnamewithunder62parts.co</a>' // eslint-disable-line max-len
       },
       {
         text: 'node-1.www4.example.com.jp',
-        expected: '<a href="node-1.www4.example.com.jp" target="_blank">node-1.www4.example.com.jp</a>'  // eslint-disable-line max-len
+        expected: '<a href="node-1.www4.example.com.jp" target="_blank">node-1.www4.example.com.jp</a>' // eslint-disable-line max-len
       },
       {
         text: 'http://domain.com',
-        expected: '<a href="http://domain.com" target="_blank">http://domain.com</a>'  // eslint-disable-line max-len
+        expected: '<a href="http://domain.com" target="_blank">http://domain.com</a>' // eslint-disable-line max-len
       },
       {
         text: 'ftp://foo.1.example.com.uk',
-        expected: '<a href="ftp://foo.1.example.com.uk" target="_blank">ftp://foo.1.example.com.uk</a>'  // eslint-disable-line max-len
+        expected: '<a href="ftp://foo.1.example.com.uk" target="_blank">ftp://foo.1.example.com.uk</a>' // eslint-disable-line max-len
       },
       {
         text: 'example.com/?foo=bar',
-        expected: '<a href="example.com/?foo=bar" target="_blank">example.com/?foo=bar</a>'  // eslint-disable-line max-len
+        expected: '<a href="example.com/?foo=bar" target="_blank">example.com/?foo=bar</a>' // eslint-disable-line max-len
       },
       {
         text: 'example.com/foo/bar?baz=true&something=%20alsotrue',
-        expected: '<a href="example.com/foo/bar?baz=true&amp;something=%20alsotrue" target="_blank">example.com/foo/bar?baz=true&amp;something=%20alsotrue</a>'  // eslint-disable-line max-len
+        expected: '<a href="example.com/foo/bar?baz=true&amp;something=%20alsotrue" target="_blank">example.com/foo/bar?baz=true&amp;something=%20alsotrue</a>' // eslint-disable-line max-len
       },
       {
-        text: 'http://example.com/index?foo=bar<script>alert(\'xss\')</script>',  // eslint-disable-line max-len
-        expected: '<a href="http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt" target="_blank">http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt</a>;'  // eslint-disable-line max-len
+        text: 'http://example.com/index?foo=bar<script>alert(\'xss\')</script>', // eslint-disable-line max-len
+        expected: '<a href="http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt" target="_blank">http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt</a>;' // eslint-disable-line max-len
       },
       {
         text: 'http://example.com/foo"bar',
-        expected: '<a href="http://example.com/foo&quot;bar" target="_blank">http://example.com/foo"bar</a>'  // eslint-disable-line max-len
+        expected: '<a href="http://example.com/foo&quot;bar" target="_blank">http://example.com/foo"bar</a>' // eslint-disable-line max-len
       },
       {
         text: 'Hi there John.Bob',
@@ -1333,25 +1333,25 @@ describe('utilities', function() {
     it('can return a parsed query string', function() {
       assert.deepEqual(utils.parseQueryString(
         'http://example.com?one=1&two=2'), {
-          one: '1',
-          two: '2'
-        });
+        one: '1',
+        two: '2'
+      });
     });
 
     it('can handle being passed only the querystring', function() {
       assert.deepEqual(utils.parseQueryString(
         '?one=1&two=2'), {
-          one: '1',
-          two: '2'
-        });
+        one: '1',
+        two: '2'
+      });
     });
 
     it('can handle being passed a querystring without a "?"', function() {
       assert.deepEqual(utils.parseQueryString(
         'one=1&two=2'), {
-          one: '1',
-          two: '2'
-        });
+        one: '1',
+        two: '2'
+      });
     });
 
     it('can handle a URL with no querystring', function() {
@@ -1367,17 +1367,17 @@ describe('utilities', function() {
     it('can handle a URL with multiple question marks', function() {
       assert.deepEqual(utils.parseQueryString(
         'http://example.com??one=1&two=2'), {
-          one: '1',
-          two: '2'
-        });
+        one: '1',
+        two: '2'
+      });
     });
 
     it('can handle a URL with multiple querystrings', function() {
       assert.deepEqual(utils.parseQueryString(
         'http://example.com?one=1&two=2?one=1&two=2'), {
-          one: ['1', '1'],
-          two: ['2', '2']
-        });
+        one: ['1', '1'],
+        two: ['2', '2']
+      });
     });
 
     it('does not return empty values', function() {

@@ -45,17 +45,17 @@ describe('SearchResults', function() {
     it('can initially show the spinner', function() {
       var query = 'spinach';
       var output = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={sinon.stub()}
-            charmstoreSearch={sinon.stub()}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={sinon.stub()}
-            query={query}
-            seriesList={{}}
-            setPageTitle={sinon.stub()} />);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={sinon.stub()}
+          charmstoreSearch={sinon.stub()}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={sinon.stub()}
+          query={query}
+          seriesList={{}}
+          setPageTitle={sinon.stub()} />);
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
@@ -67,17 +67,17 @@ describe('SearchResults', function() {
     it('can display a message if there are no results', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
       var shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={sinon.stub()}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={sinon.stub()}
-            query="nothing here"
-            seriesList={{}}
-            setPageTitle={sinon.stub()} />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={sinon.stub()}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={sinon.stub()}
+          query="nothing here"
+          seriesList={{}}
+          setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -103,17 +103,17 @@ describe('SearchResults', function() {
     it('can display a message if there is a loading error', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
       var shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={sinon.stub()}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={sinon.stub()}
-            query="nothing here"
-            seriesList={{}}
-            setPageTitle={sinon.stub()} />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={sinon.stub()}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={sinon.stub()}
+          query="nothing here"
+          seriesList={{}}
+          setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -158,30 +158,30 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
 
       var shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={sinon.stub()}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={makeEntityModel}
-            query={query}
-            seriesList={series}
-            setPageTitle={sinon.stub()} />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={sinon.stub()}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={makeEntityModel}
+          query={query}
+          seriesList={series}
+          setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       shallowRenderer.getRenderOutput();
 
       assert.isTrue(charmstoreSearch.calledOnce,
-                    'search function not called');
+        'search function not called');
       assert.isTrue(mockModel.toEntity.callCount == mockData.length,
-                    'all models not converted to plain old objects');
+        'all models not converted to plain old objects');
       var data = instance.state.data;
       assert.equal(data.text, query,
-                   'search text not set to the query');
+        'search text not set to the query');
       assert.equal(data.solutionsCount, mockData.length,
-                   'total results returned is incorrect');
+        'total results returned is incorrect');
     });
 
     const changeState = sinon.spy();
@@ -372,20 +372,20 @@ describe('SearchResults', function() {
 
     it('can render the promulgated search results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={changeState}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={deployTarget}
-            generatePath={generatePath}
-            getName={getName}
-            makeEntityModel={makeEntityModel}
-            query="mysql"
-            series="wily"
-            seriesList={series}
-            setPageTitle={sinon.stub()}
-            sort="-name"
-            type="charm" />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={changeState}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={deployTarget}
+          generatePath={generatePath}
+          getName={getName}
+          makeEntityModel={makeEntityModel}
+          query="mysql"
+          series="wily"
+          seriesList={series}
+          setPageTitle={sinon.stub()}
+          sort="-name"
+          type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       const output = shallowRenderer.getRenderOutput();
@@ -396,20 +396,20 @@ describe('SearchResults', function() {
 
     it('will show community results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={changeState}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={deployTarget}
-            generatePath={generatePath}
-            getName={getName}
-            makeEntityModel={makeEntityModel}
-            query="mysql"
-            series="wily"
-            seriesList={series}
-            setPageTitle={sinon.stub()}
-            sort="-name"
-            type="charm" />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={changeState}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={deployTarget}
+          generatePath={generatePath}
+          getName={getName}
+          makeEntityModel={makeEntityModel}
+          query="mysql"
+          series="wily"
+          seriesList={series}
+          setPageTitle={sinon.stub()}
+          sort="-name"
+          type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       instance._toggleCommunityResults();
@@ -423,17 +423,17 @@ describe('SearchResults', function() {
       const abort = sinon.stub();
       const charmstoreSearch = sinon.stub().returns({abort: abort});
       const renderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={sinon.stub()}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={makeEntityModel}
-            query="apache2"
-            seriesList={series}
-            setPageTitle={sinon.stub()} />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={sinon.stub()}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={makeEntityModel}
+          query="apache2"
+          seriesList={series}
+          setPageTitle={sinon.stub()} />, true);
       const instance = renderer.getMountedInstance();
       instance.componentDidMount();
       assert.equal(abort.callCount, 0);
@@ -552,17 +552,17 @@ describe('SearchResults', function() {
       ];
       var actual = searchResults.collapseSeries(entities, getName);
       assert.equal(actual[0].name, 'foo1',
-                   'foo1 did not maintain sort position');
+        'foo1 did not maintain sort position');
       assert.equal(actual[0].downloads, 10,
-                   'foo1 downloads not aggregated');
+        'foo1 downloads not aggregated');
       assert.equal(actual[1].name, 'foo2',
-                   'foo2 did not maintain sort position');
+        'foo2 did not maintain sort position');
       assert.equal(actual[1].downloads, 8,
-                   'foo2 downloads not aggregated');
+        'foo2 downloads not aggregated');
       assert.equal(actual[2].name, 'foo3',
-                   'foo3 did not maintain sort position');
+        'foo3 did not maintain sort position');
       assert.equal(actual[2].downloads, 13,
-                   'foo3 downloads not aggregated');
+        'foo3 downloads not aggregated');
     });
 
     it('sorts the series within collapsed results', function() {
@@ -640,9 +640,9 @@ describe('SearchResults', function() {
       searchResults.searchCallback(null, rawResults);
       var spy = searchResults.setState;
       assert.deepEqual(spy.getCall(0).args[0], {waitingForSearch: false},
-                       'waitingForSearch flag still set');
+        'waitingForSearch flag still set');
       assert.deepEqual(spy.getCall(1).args[0], {data: expected},
-                       'search data returned is incorrect');
+        'search data returned is incorrect');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
 
@@ -654,10 +654,10 @@ describe('SearchResults', function() {
       searchResults.props = {charmstoreSearch: searchSpy};
       searchResults.searchRequest(query, 'ops');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
-                       'waitingForSearch flag is not set');
+        'waitingForSearch flag is not set');
       assert.deepEqual(searchSpy.getCall(0).args[0],
-                       {text: query, tags: 'ops'},
-                       'query not passed in correctly');
+        {text: query, tags: 'ops'},
+        'query not passed in correctly');
     });
 
     it('passes the optional parameters to the search', function() {
@@ -668,20 +668,20 @@ describe('SearchResults', function() {
       searchResults.props = {charmstoreSearch: searchSpy};
       searchResults.searchRequest(query, 'ops', 'bundle', '-name');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
-                       'waitingForSearch flag is not set');
+        'waitingForSearch flag is not set');
       assert.deepEqual(
-          searchSpy.getCall(0).args[0],
-          {text: query, tags: 'ops', type: 'bundle', sort: '-name'},
-          'query not passed in correctly');
+        searchSpy.getCall(0).args[0],
+        {text: query, tags: 'ops', type: 'bundle', sort: '-name'},
+        'query not passed in correctly');
     });
 
     it('decides to search when the query changes', function() {
       var query = 'spinach';
       searchResults.state = {data: {text: query}};
       assert.isFalse(searchResults.shouldSearch({query: query}),
-                     'Unchanged query should not trigger search');
+        'Unchanged query should not trigger search');
       assert.isTrue(searchResults.shouldSearch({query: 'foo'}),
-                    'Changed query should trigger search');
+        'Changed query should trigger search');
     });
 
     it('triggers a search request upon component mount', function() {
@@ -707,21 +707,21 @@ describe('SearchResults', function() {
       searchResults.shouldSearch = sinon.stub().returns(true);
       searchResults.state = {waitingForSearch: false};
       assert.isTrue(searchResults.shouldComponentUpdate(),
-                    'Should re-render after new search finished');
+        'Should re-render after new search finished');
       searchResults.shouldSearch = sinon.stub().returns(false);
       searchResults.state = {
         waitingForSearch: false,
         activeComponent: 'loading'
       };
       assert.isFalse(searchResults.shouldComponentUpdate(),
-                     'Should not re-render without a new search');
+        'Should not re-render without a new search');
       searchResults.shouldSearch = sinon.stub().returns(true);
       searchResults.state = {
         waitingForSearch: true,
         activeComponent: 'loading'
       };
       assert.isFalse(searchResults.shouldComponentUpdate(),
-                     'Should not re-render when waiting for a search');
+        'Should not re-render when waiting for a search');
     });
 
     it('will abort the request when unmounting', function() {
@@ -742,17 +742,17 @@ describe('SearchResults', function() {
       mockModel.toEntity = sinon.stub().returns(result);
       var charmstoreSearch = sinon.stub().returns({abort: abort});
       var shallowRenderer = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            acl={acl}
-            changeState={changeState}
-            charmstoreSearch={charmstoreSearch}
-            deployTarget={sinon.stub()}
-            generatePath={generatePath}
-            getName={sinon.stub()}
-            makeEntityModel={sinon.stub()}
-            query={query}
-            seriesList={{}}
-            setPageTitle={sinon.stub()} />, true);
+        <juju.components.SearchResults
+          acl={acl}
+          changeState={changeState}
+          charmstoreSearch={charmstoreSearch}
+          deployTarget={sinon.stub()}
+          generatePath={generatePath}
+          getName={sinon.stub()}
+          makeEntityModel={sinon.stub()}
+          query={query}
+          seriesList={{}}
+          setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);
@@ -815,13 +815,13 @@ describe('SearchResults', function() {
       searchResults.searchCallback(null, rawResults);
       var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
       assert.deepEqual(actualResults[0].storeId,
-                       'cs:~charmers/trusty/mysql-38');
+        'cs:~charmers/trusty/mysql-38');
       assert.deepEqual(actualResults[1].storeId,
-                       'cs:~stub/precise/postgresql-psql-9');
+        'cs:~stub/precise/postgresql-psql-9');
       assert.deepEqual(actualResults[2].storeId,
-                       'cs:~charmers/precise/nova-volume-6');
+        'cs:~charmers/precise/nova-volume-6');
       assert.deepEqual(actualResults[3].storeId,
-                       'cs:~cloudbaseit/win2012r2/mssql-express-1');
+        'cs:~cloudbaseit/win2012r2/mssql-express-1');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });

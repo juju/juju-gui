@@ -328,8 +328,8 @@ describe('jujulib charmstore', function() {
       var transform = sinon.stub(charmstore, '_transformQueryResults');
       charmstore.search({}, 'cb');
       assert.equal(
-          charmstore.bakery.get.callCount, 1,
-          'sendGetRequest not called');
+        charmstore.bakery.get.callCount, 1,
+        'sendGetRequest not called');
       var requestArgs = charmstore.bakery.get.lastCall.args;
       var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
@@ -365,15 +365,15 @@ describe('jujulib charmstore', function() {
       charmstore.list('test-author', 'cb', 'bundle');
       var qs = generatePath.lastCall.args[1];
       assert.equal(qs.indexOf('type=bundle') > -1, true,
-                   'bundle not set in query string');
+        'bundle not set in query string');
     });
 
     it('calls to make a valid charmstore list request', function() {
       var transform = sinon.stub(charmstore, '_transformQueryResults');
       charmstore.list('test-author', 'cb');
       assert.equal(
-          charmstore.bakery.get.callCount, 1,
-          'sendGetRequest not called');
+        charmstore.bakery.get.callCount, 1,
+        'sendGetRequest not called');
       var requestArgs = charmstore.bakery.get.lastCall.args;
       var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
@@ -386,7 +386,7 @@ describe('jujulib charmstore', function() {
   describe('getDiagramURL', function() {
     it('can generate a URL for a bundle diagram', function() {
       assert.equal(charmstore.getDiagramURL('apache2'),
-          'local/v5/apache2/diagram.svg');
+        'local/v5/apache2/diagram.svg');
     });
   });
 
@@ -414,7 +414,7 @@ describe('jujulib charmstore', function() {
 
     it('_getBundleYAMLResponse fetches yaml file contents', function() {
       charmstore._getBundleYAMLResponse(
-          cb, null, [{ deployerFileUrl: 'deployer file' }]);
+        cb, null, [{ deployerFileUrl: 'deployer file' }]);
       var requestArgs = charmstore.bakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'deployer file');
       // Should be the anon success callback handler.
@@ -449,7 +449,7 @@ describe('jujulib charmstore', function() {
       assert.equal(requestArgs[0], 'local/v5/precise/ghost-5/expand-id');
       // Call the makeRequest success handler simulating a response object;
       requestArgs[2](null,
-          {target: { responseText: '[{"Id": "cs:precise/ghost-4"}]'}});
+        {target: { responseText: '[{"Id": "cs:precise/ghost-4"}]'}});
     });
 
     it('calls the failure handler for json parse failures', function(done) {
@@ -463,7 +463,7 @@ describe('jujulib charmstore', function() {
       charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
       // Call the makeRequest success handler simulating a response object;
       charmstore.bakery.get.lastCall.args[2](null,
-          {target: { responseText: '[notvalidjson]'}});
+        {target: { responseText: '[notvalidjson]'}});
     });
   });
 
@@ -487,7 +487,7 @@ describe('jujulib charmstore', function() {
       assert.equal(requestArgs[0], 'local/v5/whoami');
       // Call the makeRequest success handler simulating a response object;
       requestArgs[2](null,
-          {target: { responseText: '{"User": "test", "Groups": []}'}});
+        {target: { responseText: '{"User": "test", "Groups": []}'}});
     });
 
     it('calls the failure handler for json parse failures', function(done) {
@@ -501,7 +501,7 @@ describe('jujulib charmstore', function() {
       charmstore.whoami(cb);
       // Call the makeRequest success handler simulating a response object;
       charmstore.bakery.get.lastCall.args[2](
-          {target: { responseText: '[notvalidjson]'}});
+        {target: { responseText: '[notvalidjson]'}});
     });
   });
 
@@ -542,7 +542,7 @@ describe('jujulib charmstore', function() {
       charmstore.getEntity('cs:foobar', sinon.stub());
       var path = charmstore.bakery.get.lastCall.args[0];
       assert.equal(path.indexOf('cs:'), -1,
-                   'The string "cs:" should not be found in the path');
+        'The string "cs:" should not be found in the path');
     });
 
     it('calls the correct path', function() {

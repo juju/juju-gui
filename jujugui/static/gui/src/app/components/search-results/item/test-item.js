@@ -56,12 +56,12 @@ describe('SearchResultsItem', function() {
   it('can render an item', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
     const series = output.props.children[2].props.children.props.children;
     const icons = output.props.children[3].props.children.props.children;
@@ -84,7 +84,7 @@ describe('SearchResultsItem', function() {
                 onClick={tags[0].props.children.props.onClick}>
                 tag1
               </a>
-             </li>
+            </li>
             <li className="tag-list--item">
               <a className="list-block__list--item-link"
                 href="/u/spinach/apache2"
@@ -123,8 +123,8 @@ describe('SearchResultsItem', function() {
                   <img src={
                     'static/gui/build/app/assets/images/non-sprites/' +
                     'charm_160.svg'}
-                    className="list-icons__image"
-                    alt="mysql" />
+                  className="list-icons__image"
+                  alt="mysql" />
                   <span className="tooltip__tooltip">
                     <span className="tooltip__inner tooltip__inner--down">
                       mysql
@@ -165,12 +165,12 @@ describe('SearchResultsItem', function() {
     item.series = [];
     item.tags = null;
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
@@ -204,8 +204,8 @@ describe('SearchResultsItem', function() {
                   <img src={
                     'static/gui/build/app/assets/images/non-sprites/' +
                     'charm_160.svg'}
-                    className="list-icons__image"
-                    alt="mysql" />
+                  className="list-icons__image"
+                  alt="mysql" />
                   <span className="tooltip__tooltip">
                     <span className="tooltip__inner tooltip__inner--down">
                       mysql
@@ -256,20 +256,20 @@ describe('SearchResultsItem', function() {
       iconPath: 'apache2.svg'
     }];
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
     var expected = (
       <li className="list-block__list--item bundle">
-      <a className="list-block__list--item-main-link"
-        href="/u/spinach/apache2"
-        onClick={output.props.children[0].props.onClick}></a>
+        <a className="list-block__list--item-main-link"
+          href="/u/spinach/apache2"
+          onClick={output.props.children[0].props.onClick}></a>
         <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
@@ -348,12 +348,12 @@ describe('SearchResultsItem', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     output.props.children[0].props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
@@ -368,12 +368,12 @@ describe('SearchResultsItem', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     const series = output.props.children[2].props.children.props.children;
     series[0].props.children.props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
@@ -397,14 +397,14 @@ describe('SearchResultsItem', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     output.props.children[1].props.children[1].props.children[0].props.children
-        .props.onClick({preventDefault: preventDefault});
+      .props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -424,14 +424,14 @@ describe('SearchResultsItem', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
     const output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
     output.props.children[4].props.children.props.children[1]
-        .props.onClick({preventDefault: preventDefault});
+      .props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -442,12 +442,12 @@ describe('SearchResultsItem', function() {
 
   it('gives the correct class names for charm list item', function() {
     const output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={sinon.stub()}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={sinon.stub()}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
 
     const seriesClass = output.props.children[2].props.className;
     const iconsClass = output.props.children[3].props.className;
@@ -459,12 +459,12 @@ describe('SearchResultsItem', function() {
   it('gives the correct class names for bundle list item', function() {
     item.type = 'bundle';
     var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={sinon.stub()}
-          deployTarget={sinon.stub()}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={sinon.stub()}
+        deployTarget={sinon.stub()}
+        generatePath={generatePath}
+        item={item} />);
 
     const seriesClass = output.props.children[2].props.className;
     const iconsClass = output.props.children[3].props.className;
@@ -477,12 +477,12 @@ describe('SearchResultsItem', function() {
     const changeState = sinon.stub();
     const deployTarget = sinon.stub();
     const output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          acl={acl}
-          changeState={changeState}
-          deployTarget={deployTarget}
-          generatePath={generatePath}
-          item={item} />);
+      <juju.components.SearchResultsItem
+        acl={acl}
+        changeState={changeState}
+        deployTarget={deployTarget}
+        generatePath={generatePath}
+        item={item} />);
     output.props.children[5].props.children.props.action();
     assert.equal(changeState.callCount, 1);
     assert.equal(deployTarget.callCount, 1);

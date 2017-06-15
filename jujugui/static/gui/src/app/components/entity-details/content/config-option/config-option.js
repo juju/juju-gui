@@ -37,8 +37,8 @@ YUI.add('entity-content-config-option', function() {
     _generateDefault: function(defaultValue) {
       if (defaultValue) {
         return <dd className="entity-content__config-default">
-            {defaultValue}
-          </dd>;
+          {defaultValue}
+        </dd>;
       }
       return;
     },
@@ -48,7 +48,7 @@ YUI.add('entity-content-config-option', function() {
       return (
         <div className="entity-content__config-option">
           <dt id={'charm-config-' + option.name}
-              className="entity-content__config-name">
+            className="entity-content__config-name">
             {option.name}
           </dt>
           <dd className="entity-content__config-description">

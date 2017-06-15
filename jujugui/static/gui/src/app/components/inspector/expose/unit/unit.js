@@ -85,10 +85,10 @@ YUI.add('inspector-expose-unit', function() {
         <li className="inspector-expose__unit" tabIndex="0" role="button"
           data-id={unit.id}
           onClick={this.props.action}>
-            <div className="inspector-expose__unit-detail">
-                {unit.displayName}
-            </div>
-            {publicList}
+          <div className="inspector-expose__unit-detail">
+            {unit.displayName}
+          </div>
+          {publicList}
         </li>
       );
     }

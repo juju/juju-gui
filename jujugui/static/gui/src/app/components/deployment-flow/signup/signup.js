@@ -173,7 +173,7 @@ YUI.add('deployment-signup', function() {
               </div>
             </div>
           </div>
-      </juju.components.DeploymentPanel>
+        </juju.components.DeploymentPanel>
       );
     }
 

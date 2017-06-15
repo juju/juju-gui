@@ -916,8 +916,8 @@ YUI.add('environment-change-set', function(Y) {
       dirtyFields = dirtyFields.concat(Object.keys(changedFields));
       service.set(DIRTYFIELDS, dirtyFields);
       service.set(
-          'config',
-          Y.mix(service.get('config'), changedFields, true, null, null, true));
+        'config',
+        Y.mix(service.get('config'), changedFields, true, null, null, true));
       // XXX Jeff - We may want to flatten this into the deploy service
       // command on 'commit' if there is a queued service for this command.
       // We will want to flatten multiple setConfig calls to the same service
@@ -1003,8 +1003,8 @@ YUI.add('environment-change-set', function(Y) {
         if (command.method === '_add_relation') {
           // If there is a matching ecs relation then remove it from the queue.
           if (relations.compareRelationEndpoints(
-                                        [command.args[0], command.args[1]],
-                                        argsEndpoints)) {
+            [command.args[0], command.args[1]],
+            argsEndpoints)) {
             ghosted = true;
             this._removeExistingRecord(key);
             // Remove the relation from the relations db. Even the ghost
@@ -1245,7 +1245,7 @@ YUI.add('environment-change-set', function(Y) {
             var newParentId = results[0].machines[0].name;
             this.args[0].forEach(function(param) {
               param.parentId = param.parentId.replace(
-                  currentParentId, newParentId);
+                currentParentId, newParentId);
             });
           }
         }

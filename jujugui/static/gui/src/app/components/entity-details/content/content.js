@@ -489,9 +489,9 @@ YUI.add('entity-content', function() {
         var quantityItem;
         if (quantity) {
           quantityItem = (
-          <span className="entity-content__plan-price-quantity">
+            <span className="entity-content__plan-price-quantity">
             / {quantity}
-          </span>);
+            </span>);
         }
         priceList.push(
           <li className="entity-content__plan-price-item"

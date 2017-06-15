@@ -231,11 +231,11 @@ describe('UserProfileEntityList', () => {
       />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
-                 'charmstore list not called');
+      'charmstore list not called');
     assert.equal(charmstore.list.args[0][0], 'who',
-                 'username not passed to list request');
+      'username not passed to list request');
     assert.deepEqual(instance.state.entityList, charms,
-                     'callback does not properly set entity state');
+      'callback does not properly set entity state');
   });
 
   it('requests bundles and updates state', () => {
@@ -249,11 +249,11 @@ describe('UserProfileEntityList', () => {
       />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
-                 'charmstore list not called');
+      'charmstore list not called');
     assert.equal(charmstore.list.args[0][0], 'who',
-                 'username not passed to list request');
+      'username not passed to list request');
     assert.deepEqual(instance.state.entityList, bundles,
-                     'callback does not properly set entity state');
+      'callback does not properly set entity state');
   });
 
   it('will abort the requests when unmounting', function() {

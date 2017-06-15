@@ -49,14 +49,14 @@ describe('DeploymentBarNotification', function() {
       description: 'Django added'
     };
     var output = jsTestUtils.shallowRender(
-        <juju.components.DeploymentBarNotification
-          change={change} />);
+      <juju.components.DeploymentBarNotification
+        change={change} />);
     assert.deepEqual(output,
-        <div className="deployment-bar__notification"
-          onClick={output.props.onClick}
-          ref="deploymentBarNotificationContainer">
+      <div className="deployment-bar__notification"
+        onClick={output.props.onClick}
+        ref="deploymentBarNotificationContainer">
           Django added
-        </div>);
+      </div>);
   });
 
   it('can hide the notification when it is clicked', function() {
@@ -65,15 +65,15 @@ describe('DeploymentBarNotification', function() {
       description: 'Django added'
     };
     var output = jsTestUtils.shallowRender(
-        <juju.components.DeploymentBarNotification
-          change={change} />);
+      <juju.components.DeploymentBarNotification
+        change={change} />);
     output.props.onClick();
     assert.deepEqual(output,
-        <div className="deployment-bar__notification"
-          onClick={output.props.onClick}
-          ref="deploymentBarNotificationContainer">
+      <div className="deployment-bar__notification"
+        onClick={output.props.onClick}
+        ref="deploymentBarNotificationContainer">
           Django added
-        </div>);
+      </div>);
     assert.equal(window.clearTimeout.callCount, 1);
   });
 
@@ -85,11 +85,11 @@ describe('DeploymentBarNotification', function() {
     // Have to render to the document here as the shallow renderer does not
     // support componentDidMount or componentWillReceiveProps.
     var output = testUtils.renderIntoDocument(
-        <juju.components.DeploymentBarNotification
-          change={change} />);
+      <juju.components.DeploymentBarNotification
+        change={change} />);
     assert.isTrue(
-        output.refs.deploymentBarNotificationContainer
-              .classList.contains('deployment-bar__notification--visible'));
+      output.refs.deploymentBarNotificationContainer
+        .classList.contains('deployment-bar__notification--visible'));
     assert.equal(window.clearTimeout.callCount, 1);
     assert.equal(window.setTimeout.callCount, 1);
   });
@@ -103,15 +103,15 @@ describe('DeploymentBarNotification', function() {
     // support componentDidMount or componentWillReceiveProps.
     var node = document.createElement('div');
     var component = ReactDOM.render(
-        <juju.components.DeploymentBarNotification
-          change={change} />, node);
+      <juju.components.DeploymentBarNotification
+        change={change} />, node);
 
     testUtils.Simulate.click(ReactDOM.findDOMNode(component));
     var container = component.refs.deploymentBarNotificationContainer;
     assert.equal(container.classList.length, 1);
     ReactDOM.render(
-        <juju.components.DeploymentBarNotification
-          change={change} />, node);
+      <juju.components.DeploymentBarNotification
+        change={change} />, node);
     assert.equal(window.setTimeout.callCount, 1);
     assert.equal(container.classList.length, 1);
   });

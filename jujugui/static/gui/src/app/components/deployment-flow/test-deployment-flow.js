@@ -905,7 +905,7 @@ describe('DeploymentFlow', function() {
       charmsGetById: charmsGetById,
       cloud: {name: 'cloud'},
       credential: 'cred',
-      deploy: sinon.stub(),  // Don't trigger a re-render by calling callback.
+      deploy: sinon.stub(), // Don't trigger a re-render by calling callback.
       modelCommitted: true,
       region: 'north'
     });

@@ -52,7 +52,7 @@ YUI.add('d3-components', function(Y) {
 
     initializer: function() {
       this.events = Y.mix(this.events, this._defaultEvents,
-                          false, undefined, 0, true);
+        false, undefined, 0, true);
 
     },
 
@@ -182,7 +182,7 @@ YUI.add('d3-components', function(Y) {
       }
       if (typeof(result.callback) !== 'function') {
         console.error('Unable to resolve a proper callback for',
-                      selector, handler, module.name, result);
+          selector, handler, module.name, result);
         return;
       }
       // Set up binding context for callback.

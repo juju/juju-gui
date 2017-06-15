@@ -63,7 +63,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
             callback(null, xhr);
           } else {
             xhr.target.responseText = JSON.stringify(
-                {message: 'Unable to load charm ' + path});
+              {message: 'Unable to load charm ' + path});
             callback('bad wolf', xhr);
           }
         }

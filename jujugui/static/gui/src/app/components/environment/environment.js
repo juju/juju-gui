@@ -30,9 +30,9 @@ YUI.add('environment', function() {
                 Add a charm or bundle to get started
               </p>
               <div className="environment-help__drop-message">
-                  <p className="environment-help__drop-message-content">
+                <p className="environment-help__drop-message-content">
                     Drop file to add to model
-                  </p>
+                </p>
               </div>
               <svg className="environment-help__image"
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +79,7 @@ YUI.add('environment', function() {
           </div>
           <div className="environment-menu top" id="relation-menu"></div>
         </div>
-    </div>
+      </div>
     );
   };
 

@@ -92,11 +92,11 @@ YUI.add('bakery-utils', function(Y) {
       const url = error.Info.VisitURL;
       const holder = document.getElementById('login-notification');
       const content = (
-          <span>
+        <span>
           To proceed with the authentication, please accept the pop up
         window or&nbsp;
           <a href={url} target="_blank">click here</a>.
-          </span>);
+        </span>);
       let dismiss = null;
       if (stateGetter().root !== 'login') {
         dismiss = () => {

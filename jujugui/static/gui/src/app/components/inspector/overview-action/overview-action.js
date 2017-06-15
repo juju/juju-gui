@@ -47,7 +47,7 @@ YUI.add('overview-action', function() {
       return classNames(
         this.baseClass + '__value',
         this.props.valueType ?
-            this.baseClass + '__value--type-' + this.props.valueType : '',
+          this.baseClass + '__value--type-' + this.props.valueType : '',
         {
           hidden: !this.props.value
         }
@@ -103,8 +103,8 @@ YUI.add('overview-action', function() {
       var titleClass = this.baseClass + '__title';
       return (
         <li className={this.baseClass}
-            onClick={this.props.action}
-            title={this.props.title} tabIndex="0" role="button">
+          onClick={this.props.action}
+          title={this.props.title} tabIndex="0" role="button">
           {this._generateIcon()}
           <span className={titleClass}>
             {this.props.title}

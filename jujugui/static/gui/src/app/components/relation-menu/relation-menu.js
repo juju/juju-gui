@@ -41,8 +41,8 @@ YUI.add('relation-menu', function() {
     }
     var type = id.split(':')[1];
     return endpoint.displayName
-                   .replace(/^\(/, '')
-                   .replace(/\)$/, '') + ':' + type;
+      .replace(/^\(/, '')
+      .replace(/\)$/, '') + ':' + type;
   }
 
   /**
@@ -90,7 +90,7 @@ YUI.add('relation-menu', function() {
           {_generateIcon(relation)}
           <span data-endpoint={relation.sourceId}
             className={sourceClasses}>
-              {_getRealServiceName(relation.sourceId, relation)}
+            {_getRealServiceName(relation.sourceId, relation)}
           </span>
           {' '}-{' '}
           <span data-endpoint={relation.targetId}

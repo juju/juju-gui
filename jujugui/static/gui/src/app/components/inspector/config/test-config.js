@@ -1003,16 +1003,16 @@ describe('Configuration', function() {
     var expected = (
       <div className="inspector-config">
         <div className="inspector-config__fields">
-        <juju.components.StringConfig
-          disabled={true}
-          ref="ServiceName"
-          onChange={instance._handleOnChange}
-          option={{
-            key: 'Application name',
-            description: 'Specify a custom application name. The application' +
-              ' name cannot be changed once it has been deployed.'
-          }}
-          config="abc123$" />
+          <juju.components.StringConfig
+            disabled={true}
+            ref="ServiceName"
+            onChange={instance._handleOnChange}
+            option={{
+              key: 'Application name',
+              description: 'Specify a custom application name. The application'
+                + ' name cannot be changed once it has been deployed.'
+            }}
+            config="abc123$" />
           {undefined}
           <form ref="file-form">
             <input

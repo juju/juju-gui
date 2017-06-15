@@ -143,9 +143,9 @@ YUI.add('deployment-cloud', function() {
       }
       return info.showLogo ? (
         <juju.components.SvgIcon
-        height={info.svgHeight}
-        name={info.id}
-        width={info.svgWidth} />) : info.title;
+          height={info.svgHeight}
+          name={info.id}
+          width={info.svgWidth} />) : info.title;
     },
 
     render: function() {

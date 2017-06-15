@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};  // eslint-disable-line no-unused-vars
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 var realClipboard;
 
@@ -42,15 +42,15 @@ describe('CopyToClipboard', function() {
 
   it('renders with a default value', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.CopyToClipboard/>);
+      <juju.components.CopyToClipboard/>);
     var className = output.props.className;
     var expected = (
       <div className={className}>
         <input className={className + '__input'}
-               ref="input"
-               readOnly="true"
-               type="text"
-               value=""/>
+          ref="input"
+          readOnly="true"
+          type="text"
+          value=""/>
         <button className={className + '__btn'}
           ref="btn">
           <juju.components.SvgIcon
@@ -65,16 +65,16 @@ describe('CopyToClipboard', function() {
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
     var output = testUtils.renderIntoDocument(
-        <juju.components.CopyToClipboard value={value}/>);
+      <juju.components.CopyToClipboard value={value}/>);
     assert.equal(output.refs.input.value, value,
-                 'Value is not set properly for input');
+      'Value is not set properly for input');
   });
 
   it('initializes the Clipboard widget', function() {
     var component = testUtils.renderIntoDocument(
-        <juju.components.CopyToClipboard/>);
+      <juju.components.CopyToClipboard/>);
     var node = ReactDOM.findDOMNode(component).querySelector('button');
     assert.deepEqual(Clipboard.getCall(0).args[0], node,
-                     'Clipboard was not initialized with expected node');
+      'Clipboard was not initialized with expected node');
   });
 });

@@ -51,7 +51,7 @@ describe('GenericInput', function() {
         <label className={
           'generic-input__label generic-input__label--value-present ' +
           'generic-input__label--placeholder-present'}
-          htmlFor="Region">
+        htmlFor="Region">
           Region
         </label>
         <input className="generic-input__field"
@@ -97,7 +97,7 @@ describe('GenericInput', function() {
         <label className={
           'generic-input__label generic-input__label--value-present ' +
           'generic-input__label--placeholder-present'}
-          htmlFor="Region">
+        htmlFor="Region">
           Region
         </label>
         <div className="generic-input__multiline-field"
@@ -136,7 +136,7 @@ describe('GenericInput', function() {
         <label className={
           'generic-input__label generic-input__label--value-present ' +
           'generic-input__label--placeholder-present'}
-          htmlFor="Region">
+        htmlFor="Region">
           Region
         </label>
         <input className="generic-input__field"

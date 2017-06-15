@@ -261,7 +261,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return;
           }
           var decoratedRelation = relationUtils.DecoratedRelation(
-              relation, source, target);
+            relation, source, target);
           // Copy the relation type to the box.
           decorated.push(decoratedRelation);
         }
@@ -306,15 +306,15 @@ YUI.add('juju-topology-relation', function(Y) {
       }).forEach(relation => {
         // Select only the pertinent relation groups.
         var rel_group = topo.vis.select(
-            '#' + relationUtils.generateSafeDOMId(relation.id, parentId));
+          '#' + relationUtils.generateSafeDOMId(relation.id, parentId));
         var connectors = relation.source.getConnectorPair(relation.target);
         var s = connectors[0];
         var t = connectors[1];
         rel_group.select('line')
-                 .attr('x1', s[0])
-                 .attr('y1', s[1])
-                 .attr('x2', t[0])
-                 .attr('y2', t[1]);
+          .attr('x1', s[0])
+          .attr('y1', s[1])
+          .attr('x2', t[0])
+          .attr('y2', t[1]);
       });
     },
 
@@ -345,34 +345,34 @@ YUI.add('juju-topology-relation', function(Y) {
         })
         .classed('rel-group', true);
       enter.append('svg:line', 'g.service')
-           .attr('class', function(d) {
-             // Style relation lines differently depending on status.
-             return 'relation ' + d.aggregatedStatus;
-           });
+        .attr('class', function(d) {
+          // Style relation lines differently depending on status.
+          return 'relation ' + d.aggregatedStatus;
+        });
 
       // The knob connecting the relation line with the FROM service block
       enter.append('circle')
-            .attr({
-              'cx': 0,
-              'cy': 0,
-              'r': 4,
-              'class': function(d) {
-                // Style relation connector differently depending on status.
-                return 'connector1 ' + d.aggregatedStatus;
-              }
-            });
+        .attr({
+          'cx': 0,
+          'cy': 0,
+          'r': 4,
+          'class': function(d) {
+            // Style relation connector differently depending on status.
+            return 'connector1 ' + d.aggregatedStatus;
+          }
+        });
 
       // The knob connecting the relation line with the TO service block
       enter.append('circle')
-            .attr({
-              'cx': 0,
-              'cy': 0,
-              'r': 4,
-              'class': function(d) {
-                // Style relation connector differently depending on status.
-                return 'connector2 ' + d.aggregatedStatus;
-              }
-            });
+        .attr({
+          'cx': 0,
+          'cy': 0,
+          'r': 4,
+          'class': function(d) {
+            // Style relation connector differently depending on status.
+            return 'connector2 ' + d.aggregatedStatus;
+          }
+        });
       enter.append('g')
         .classed('rel-indicator', true)
         .append('image')
@@ -390,16 +390,16 @@ YUI.add('juju-topology-relation', function(Y) {
 
       g.filter(function(d) {
         var currStatus = d3.select(this).select('image')
-            .attr('xlink:href') || '';
+          .attr('xlink:href') || '';
         currStatus = currStatus.split('relation-icon-')
-            .reverse()[0]
-            .split('.')[0];
+          .reverse()[0]
+          .split('.')[0];
         return currStatus !== d.aggregatedStatus;
       })
         .selectAll('image')
         .attr('xlink:href', function(d) {
           return (
-              basePath + '/assets/svgs/relation-icon-' +
+            basePath + '/assets/svgs/relation-icon-' +
               d.aggregatedStatus + '.svg');
         });
       return g;
@@ -407,7 +407,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
     drawRelation: function(relation) {
       var connectors = relation.source
-                .getConnectorPair(relation.target);
+        .getConnectorPair(relation.target);
       var s = connectors[0];
       var t = connectors[1];
       var link = d3.select(this).select('line');
@@ -418,14 +418,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var tRadius = (relation.target.w / 2) - 4;
 
       link
-                .attr('x1', s[0])
-                .attr('y1', s[1])
-                .attr('x2', t[0])
-                .attr('y2', t[1])
-                .attr('class', function(d) {
-                  // Style relation lines differently depending on status.
-                  return 'relation ' + relation.aggregatedStatus;
-                });
+        .attr('x1', s[0])
+        .attr('y1', s[1])
+        .attr('x2', t[0])
+        .attr('y2', t[1])
+        .attr('class', function(d) {
+          // Style relation lines differently depending on status.
+          return 'relation ' + relation.aggregatedStatus;
+        });
 
       // Calculate the angle in radians from both service block
       var deg = Math.atan2(s[1] - t[1], s[0] - t[0]);
@@ -504,8 +504,8 @@ YUI.add('juju-topology-relation', function(Y) {
     mouseMoveHandler: function(evt) {
       const container = this.getContainer();
       this.mousemove.call(
-          container.querySelector('.zoom-plane'),
-          null, this);
+        container.querySelector('.zoom-plane'),
+        null, this);
     },
 
     snapToService: function(evt) {
@@ -525,14 +525,14 @@ YUI.add('juju-topology-relation', function(Y) {
       // the two services.
       if (this.dragline) {
         var connectors = d.getConnectorPair(
-            this.get('addRelationStart_service'));
+          this.get('addRelationStart_service'));
         var s = connectors[0];
         var t = connectors[1];
         this.dragline.select('line').attr('x1', t[0])
-        .attr('y1', t[1])
-        .attr('x2', s[0])
-        .attr('y2', s[1])
-        .attr('class', 'relation pending-relation dragline');
+          .attr('y1', t[1])
+          .attr('x2', s[0])
+          .attr('y2', s[1])
+          .attr('class', 'relation pending-relation dragline');
         this.draglineOverService = true;
       }
     },
@@ -542,7 +542,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       if (this.dragline) {
         this.dragline.select('line').attr('class',
-            'relation pending-relation dragline dragging');
+          'relation pending-relation dragline dragging');
         this.draglineOverService = false;
         this.clickAddRelation = true;
         this.get('component').buildingRelation = true;
@@ -562,9 +562,9 @@ YUI.add('juju-topology-relation', function(Y) {
         // Create a pending drag-line.
         var vis = this.get('component').vis;
         var dragline = vis.insert('g', ':first-child')
-                          .attr('class', 'drag-relation-group');
+          .attr('class', 'drag-relation-group');
         dragline.insert('line')
-                .attr('class', 'relation pending-relation dragline dragging');
+          .attr('class', 'relation pending-relation dragline dragging');
         dragline.append('circle')
           .attr('class', 'dragline__indicator')
           .attr({
@@ -592,17 +592,17 @@ YUI.add('juju-topology-relation', function(Y) {
         var imagePos = (point[0][0] - 8) + ', ' + (point[0][1] - 8);
 
         dragline.select('line')
-                .classed('dragline__line', true)
-                .attr('x1', point[0][0])
-                .attr('y1', point[0][1])
-                .attr('x2', point[1][0])
-                .attr('y2', point[1][1]);
+          .classed('dragline__line', true)
+          .attr('x1', point[0][0])
+          .attr('y1', point[0][1])
+          .attr('x2', point[1][0])
+          .attr('y2', point[1][1]);
         dragline.select('circle')
-                .attr('cx', point[0][0])
-                .attr('cy', point[0][1]);
+          .attr('cx', point[0][0])
+          .attr('cy', point[0][1]);
         dragline.select('image')
-                .attr('transform',
-                  'translate(' + imagePos + ')');
+          .attr('transform',
+            'translate(' + imagePos + ')');
         this.dragline = dragline;
         vis.select('.plus-service').classed('fade', true);
         // Start the add-relation process.
@@ -644,16 +644,16 @@ YUI.add('juju-topology-relation', function(Y) {
         var connectors = this.cursorBox.getConnectorPair(d),
             s = connectors[1];
         this.dragline.select('line')
-              .attr('x1', s[0])
-              .attr('y1', s[1])
-              .attr('x2', mouseX)
-              .attr('y2', mouseY);
+          .attr('x1', s[0])
+          .attr('y1', s[1])
+          .attr('x2', mouseX)
+          .attr('y2', mouseY);
         this.dragline.select('circle')
-              .attr('cx', mouseX)
-              .attr('cy', mouseY);
+          .attr('cx', mouseX)
+          .attr('cy', mouseY);
         this.dragline.select('image')
-              .attr('transform',
-                'translate(' + imagePos + ')');
+          .attr('transform',
+            'translate(' + imagePos + ')');
       }
     },
 
@@ -868,11 +868,11 @@ YUI.add('juju-topology-relation', function(Y) {
       // all services as selectable and then
       // removes the invalid ones.
       var sel = vis.selectAll('.service')
-              .classed('selectable-service', true)
-              .filter(function(d) {
-                return (d.id in invalidRelationTargets &&
+        .classed('selectable-service', true)
+        .filter(function(d) {
+          return (d.id in invalidRelationTargets &&
                           d.id !== service.get('id'));
-              });
+        });
       document.dispatchEvent(new CustomEvent('topo.fade', {
         detail: [{
           selection: sel,
@@ -909,7 +909,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
-          'addRelationStart_possibleEndpoints')[m.id];
+        'addRelationStart_possibleEndpoints')[m.id];
       var topo = view.get('component');
 
       if (endpoints && endpoints.length === 1) {
@@ -961,9 +961,9 @@ YUI.add('juju-topology-relation', function(Y) {
           serviceName = handle.service;
           if (serviceName.indexOf('$') > 0) {
             displayName = topo.get('db').services
-                                     .getById(serviceName)
-                                     .get('displayName')
-                                     .replace(/^\(/, '').replace(/\)$/, '');
+              .getById(serviceName)
+              .get('displayName')
+              .replace(/^\(/, '').replace(/\)$/, '');
           } else {
             displayName = serviceName;
           }

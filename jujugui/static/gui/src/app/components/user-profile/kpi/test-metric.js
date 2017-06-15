@@ -52,15 +52,15 @@ describe('UserProfileEntityMetrics', () => {
 
   it('renders a chart', () => {
     let renderer = jsTestUtils.shallowRender(
-        <juju.components.UserProfileEntityMetric
-          d3={d3}
-          metricTypes={metricTypes}
-          metric={metrics} />, true);
+      <juju.components.UserProfileEntityMetric
+        d3={d3}
+        metricTypes={metricTypes}
+        metric={metrics} />, true);
     let output = renderer.getRenderOutput();
     const expected = (
-        <div className='kpi-metric-chart'
-          ref={output.ref}>
-        </div>);
+      <div className='kpi-metric-chart'
+        ref={output.ref}>
+      </div>);
     assert.deepEqual(output, expected);
     renderer.getMountedInstance()._renderChart(document.body);
     // We need to check the endpoints of the line generated from the metrics

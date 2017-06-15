@@ -44,9 +44,9 @@ describe('Popup', () => {
         <div className="popup__panel popup__panel--narrow">
           <div className="popup__close">
             <juju.components.GenericButton
-               action={close}
-               type="base"
-               icon="close_16" />
+              action={close}
+              type="base"
+              icon="close_16" />
           </div>
           <h3 className="popup__title">
             A title

@@ -31,7 +31,7 @@ describe('Bundle initialization', function() {
   it('must be able to create a bundle', function() {
     var expected = '~bac/wiki/3/wiki';
     var bundle = new models.Bundle(
-        {id: expected});
+      {id: expected});
     assert.equal(expected, bundle.get('id'));
   });
 
@@ -52,7 +52,7 @@ describe('The bundle model', function() {
       utils = Y.namespace('juju-tests.utils');
       charmstore = new window.jujulib.charmstore('local/');
       origData = charmstore._processEntityQueryData(
-          utils.loadFixture('data/apiv5-bundle.json', true));
+        utils.loadFixture('data/apiv5-bundle.json', true));
       done();
     });
   });
@@ -172,7 +172,7 @@ describe('The bundle model', function() {
   it('parses full name-email string', function() {
     instance = new models.Bundle();
     var parts = instance.parseNameEmail(
-        'Jorge O. O\'Castro <jcastro@example.com>');
+      'Jorge O. O\'Castro <jcastro@example.com>');
     assert.deepEqual(['Jorge O. O\'Castro', 'jcastro@example.com'], parts);
   });
 

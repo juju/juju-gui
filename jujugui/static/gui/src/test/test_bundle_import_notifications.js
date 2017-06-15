@@ -25,11 +25,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       YUI(GlobalConfig).use(
-          'bundle-import-notifications',
-          function(Y) {
-            ns = Y.namespace('juju');
-            done();
-          });
+        'bundle-import-notifications',
+        function(Y) {
+          ns = Y.namespace('juju');
+          done();
+        });
     });
 
     beforeEach(function() {
@@ -149,7 +149,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('notifies an error', function() {
       bundleNotifications._notifyDeploymentChange(
-          db, 42, 'completed', 'bad wolf');
+        db, 42, 'completed', 'bad wolf');
       assertNotification({
         title: 'Updated status for deployment id: 42',
         message: 'An error occurred while deploying the bundle: bad wolf',

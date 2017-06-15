@@ -76,21 +76,21 @@ YUI.add('model-controller', function(Y) {
           env = this.get('env');
 
       return this._getPromise(
-          charmId, this._charmPromises,
-          function(resolve, reject) {
-            var charm = db.charms.getById(charmId);
-            if (charm && charm.loaded) {
-              resolve(charm);
-            } else {
-              charm = db.charms.add({url: charmId}).load(env,
-                  // If views are bound to the charm model, firing "update" is
-                  // unnecessary, and potentially even mildly harmful.
-                  function(err, data) {
-                    db.fireEvent('update');
-                    resolve(db.charms.getById(charmId));
-                  });
-            }
-          });
+        charmId, this._charmPromises,
+        function(resolve, reject) {
+          var charm = db.charms.getById(charmId);
+          if (charm && charm.loaded) {
+            resolve(charm);
+          } else {
+            charm = db.charms.add({url: charmId}).load(env,
+              // If views are bound to the charm model, firing "update" is
+              // unnecessary, and potentially even mildly harmful.
+              function(err, data) {
+                db.fireEvent('update');
+                resolve(db.charms.getById(charmId));
+              });
+          }
+        });
     },
 
     /**
@@ -105,34 +105,34 @@ YUI.add('model-controller', function(Y) {
           env = this.get('env');
 
       return this._getPromise(
-          serviceId, this._servicePromises,
-          function(resolve, reject) {
-            // `this` points to the serviceList
-            var service = db.services.getById(serviceId);
-            // If the service and all data has already been loaded, or if the
-            // service is pending, resolve.
-            if (service && (service.get('loaded') || service.get('pending'))) {
-              resolve(service);
-              return;
-            }
-            if (!service || !service.get('loaded')) {
-              env.getApplicationConfig(serviceId, function(result) {
-                if (result.err) {
-                  // The service doesn't exist
-                  reject(result);
-                } else {
-                  var service = db.services.getById(result.applicationName);
-                  service.setAttrs({
-                    config: result.result.config,
-                    constraints: result.result.constraints,
-                    loaded: true,
-                    series: result.result.series
-                  });
-                  resolve(service);
-                }
-              });
-            }
-          });
+        serviceId, this._servicePromises,
+        function(resolve, reject) {
+          // `this` points to the serviceList
+          var service = db.services.getById(serviceId);
+          // If the service and all data has already been loaded, or if the
+          // service is pending, resolve.
+          if (service && (service.get('loaded') || service.get('pending'))) {
+            resolve(service);
+            return;
+          }
+          if (!service || !service.get('loaded')) {
+            env.getApplicationConfig(serviceId, function(result) {
+              if (result.err) {
+                // The service doesn't exist
+                reject(result);
+              } else {
+                var service = db.services.getById(result.applicationName);
+                service.setAttrs({
+                  config: result.result.config,
+                  constraints: result.result.constraints,
+                  loaded: true,
+                  series: result.result.series
+                });
+                resolve(service);
+              }
+            });
+          }
+        });
     },
 
     /**
@@ -146,14 +146,14 @@ YUI.add('model-controller', function(Y) {
       var mController = this;
 
       return this._getPromise(
-          serviceId, this._serviceCharmPromises,
-          function(resolve, reject) {
-            mController.getService(serviceId).then(function(service) {
-              mController.getCharm(service.get('charm')).then(function(charm) {
-                resolve({service: service, charm: charm});
-              }, reject);
+        serviceId, this._serviceCharmPromises,
+        function(resolve, reject) {
+          mController.getService(serviceId).then(function(service) {
+            mController.getCharm(service.get('charm')).then(function(charm) {
+              resolve({service: service, charm: charm});
             }, reject);
-          });
+          }, reject);
+        });
     }
 
   }, {

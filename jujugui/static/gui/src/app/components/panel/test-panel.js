@@ -33,9 +33,9 @@ describe('PanelComponent', function() {
   it('generates a visible panel when visible flag is provided', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName={instanceName}
-          visible={true} />, true);
+      <juju.components.Panel
+        instanceName={instanceName}
+        visible={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -54,9 +54,9 @@ describe('PanelComponent', function() {
   it('generates a hidden panel if visible flag is falsey', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName={instanceName}
-          visible={false} />, true);
+      <juju.components.Panel
+        instanceName={instanceName}
+        visible={false} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -75,11 +75,11 @@ describe('PanelComponent', function() {
   it('renders provided children components', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName={instanceName}
-          visible={true}>
-          <div>child</div>
-        </juju.components.Panel>, true);
+      <juju.components.Panel
+        instanceName={instanceName}
+        visible={true}>
+        <div>child</div>
+      </juju.components.Panel>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,
@@ -98,10 +98,10 @@ describe('PanelComponent', function() {
     var instanceName = 'custom-instance-name';
     var clickAction = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName={instanceName}
-          clickAction={clickAction}
-          visible={true} />, true);
+      <juju.components.Panel
+        instanceName={instanceName}
+        clickAction={clickAction}
+        visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance._handleClick();
     assert.equal(clickAction.callCount, 1);
@@ -112,10 +112,10 @@ describe('PanelComponent', function() {
     var clickAction = sinon.stub();
     var stopPropagation = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName={instanceName}
-          clickAction={clickAction}
-          visible={true} />, true);
+      <juju.components.Panel
+        instanceName={instanceName}
+        clickAction={clickAction}
+        visible={true} />, true);
     var output = renderer.getRenderOutput();
     output.props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(stopPropagation.callCount, 1);
@@ -125,9 +125,9 @@ describe('PanelComponent', function() {
   it('sets the keyboard focus when it loads', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName="my-panel"
-          visible={true} />, true);
+      <juju.components.Panel
+        instanceName="my-panel"
+        visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
     instance.componentDidMount();
@@ -137,10 +137,10 @@ describe('PanelComponent', function() {
   it('can not set the keyboard focus on load', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-        <juju.components.Panel
-          instanceName="my-panel"
-          focus={false}
-          visible={true} />, true);
+      <juju.components.Panel
+        instanceName="my-panel"
+        focus={false}
+        visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
     instance.componentDidMount();

@@ -59,9 +59,9 @@ YUI.add('header-logo', function() {
     render: function() {
       return (
         <a href={this.props.homePath}
-           onClick={this._showProfile}
-           role="button"
-           title="Home">
+          onClick={this._showProfile}
+          role="button"
+          title="Home">
           {this._svg()}
         </a>);
     }

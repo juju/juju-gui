@@ -65,26 +65,26 @@ describe('Landscape integration', function() {
     var url;
     url = landscape.getLandscapeURL(db.environment);
     url.should.equal(
-        'http://landscape.example.com/computers/criteria/environment:test/');
+      'http://landscape.example.com/computers/criteria/environment:test/');
 
     url = landscape.getLandscapeURL(db.environment, 'security');
     url.should.equal(
-        'http://landscape.example.com/computers/criteria/environment:test' +
+      'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:security-upgrades/packages/list?filter=security');
 
     url = landscape.getLandscapeURL(db.environment, 'reboot');
     url.should.equal(
-        'http://landscape.example.com/computers/criteria/environment:test' +
+      'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:computer-reboot/info#power');
 
     url = landscape.getLandscapeURL(db.services.getById('mysql'));
     url.should.equal(
-        'http://landscape.example.com/computers/criteria/' +
+      'http://landscape.example.com/computers/criteria/' +
         'environment:test+service:mysql/');
     var units = db.services.getById('mysql').get('units');
     url = landscape.getLandscapeURL(units.revive(units.item(0)));
     url.should.equal(
-        'http://landscape.example.com/computers/criteria/' +
+      'http://landscape.example.com/computers/criteria/' +
         'environment:test+unit:mysql-0/');
   });
 

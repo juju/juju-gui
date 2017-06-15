@@ -65,9 +65,9 @@ YUI.add('search-results-type-filter', function(Y) {
       items.forEach(function(item) {
         components.push(
           <li className={this._generateClasses(item.selected)}
-              onClick={this._handleFilterClick.bind(this, item.action)}
-              key={item.label}
-              tabIndex="0" role="button">
+            onClick={this._handleFilterClick.bind(this, item.action)}
+            key={item.label}
+            tabIndex="0" role="button">
             {item.label}
           </li>);
       }, this);

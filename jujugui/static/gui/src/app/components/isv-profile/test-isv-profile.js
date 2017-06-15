@@ -34,21 +34,21 @@ describe('ISVProfile', () => {
     var output = component.getRenderOutput();
     var content = output.props.children.props.children.props.children[0];
     var expected = (<nav className="three-col isv-profile__navigation">
-        <ul className="isv-profile__navigation-list">
-          <li className="isv-profile__navigation-item--title">
-            <a href="">Acme Corp</a>
-          </li>
-          <li className="isv-profile__navigation-item">
-            <a href="">Charms</a>
-          </li>
-          <li className="isv-profile__navigation-item">
-            <a href="">Issues</a>
-          </li>
-          <li className="isv-profile__navigation-item">
-            <a href="">Revenue</a>
-          </li>
-        </ul>
-      </nav>);
+      <ul className="isv-profile__navigation-list">
+        <li className="isv-profile__navigation-item--title">
+          <a href="">Acme Corp</a>
+        </li>
+        <li className="isv-profile__navigation-item">
+          <a href="">Charms</a>
+        </li>
+        <li className="isv-profile__navigation-item">
+          <a href="">Issues</a>
+        </li>
+        <li className="isv-profile__navigation-item">
+          <a href="">Revenue</a>
+        </li>
+      </ul>
+    </nav>);
     assert.deepEqual(content, expected);
   });
 

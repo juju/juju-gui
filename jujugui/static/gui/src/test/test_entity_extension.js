@@ -58,13 +58,13 @@ describe('Entity Extension', function() {
 
   it('parses owner from the ID', function() {
     assert.equal('owner', entityModel.ownerFromId(),
-                 'owner was not extracted properly from the ID');
+      'owner was not extracted properly from the ID');
   });
 
   it('defaults to charmers when owner is not in ID', function() {
     entityModel.set('id', 'foobar');
     assert.equal('charmers', entityModel.ownerFromId(),
-                 'default owner was not set to "charmers"');
+      'default owner was not set to "charmers"');
   });
 
   it('converts a charm to an entity POJO', function() {
@@ -98,7 +98,7 @@ describe('Entity Extension', function() {
     };
 
     assert.deepEqual(expected, entity,
-                     'charm POJO did not match expected object');
+      'charm POJO did not match expected object');
   });
 
   it('converts a bundle to an entity POJO', function() {
@@ -139,7 +139,7 @@ describe('Entity Extension', function() {
       unitCount: 5
     };
     assert.deepEqual(expected, entity,
-                     'bundle POJO did not match expected object');
+      'bundle POJO did not match expected object');
   });
 
   it('uses the staticURL for bundle asset if available', function() {
@@ -157,7 +157,7 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     assert.deepEqual(
       entity.iconPath,
-       'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
+      'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
   });
 
   it('uses the correct name for the canonical-kubernetes bundle', function() {

@@ -353,41 +353,41 @@ YUI.add('user-profile-entity', function() {
       // can be passed in here, but will need UX first.
       // Makyo - 2017-03-10
       this.props.getKpiMetrics(
-          this.props.entity.id,
-          filters,
-          (error, charmMetrics) => {
-            if (error) {
-              // TODO When there are designs for showing errors for metrics,
-              // we'll be able to implement them here.
-              // Makyo - 2017-04-13
-              console.error(error);
-              // don't render metrics in case of an error
-              this.setState({hasMetrics: false});
-              return;
-            }
-            if (charmMetrics.length > 0) {
-              let metrics = [];
-              let metricTypes = this.state.metricTypes;
-              charmMetrics.forEach(item => {
-                // refrain from adding duplicate types to metricTypes
-                if (metricTypes.indexOf(item.metric) === -1) {
-                  metricTypes.push(item.metric);
-                }
-                metrics.push(item);
-              });
-              this.setState({
-                hasMetrics: true,
-                metrics: metrics,
-                metricTypes: metricTypes
-              });
-            } else {
-              this.setState({
-                hasMetrics: false,
-                metrics: {},
-                metricTypes: []
-              });
-            }
-          });
+        this.props.entity.id,
+        filters,
+        (error, charmMetrics) => {
+          if (error) {
+            // TODO When there are designs for showing errors for metrics,
+            // we'll be able to implement them here.
+            // Makyo - 2017-04-13
+            console.error(error);
+            // don't render metrics in case of an error
+            this.setState({hasMetrics: false});
+            return;
+          }
+          if (charmMetrics.length > 0) {
+            let metrics = [];
+            let metricTypes = this.state.metricTypes;
+            charmMetrics.forEach(item => {
+              // refrain from adding duplicate types to metricTypes
+              if (metricTypes.indexOf(item.metric) === -1) {
+                metricTypes.push(item.metric);
+              }
+              metrics.push(item);
+            });
+            this.setState({
+              hasMetrics: true,
+              metrics: metrics,
+              metricTypes: metricTypes
+            });
+          } else {
+            this.setState({
+              hasMetrics: false,
+              metrics: {},
+              metricTypes: []
+            });
+          }
+        });
     },
 
     /**

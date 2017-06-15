@@ -94,26 +94,26 @@ YUI.add('account-payment-details-address', function() {
             address={this.props.address}
             getCountries={this.props.getCountries} />
           <div className="twelve-col account-payment-details-address__edit">
-             <juju.components.AddressForm
-               addNotification={this.props.addNotification}
-               address={this.props.address}
-               disabled={disabled}
-               getCountries={this.props.getCountries}
-               ref="addressForm"
-               validateForm={this.props.validateForm} />
-             <div className={
-               'twelve-col account-payment-details-address__buttons'}>
-               <juju.components.GenericButton
-                 action={this.props.close}
-                 disabled={disabled}
-                 type="inline-neutral"
-                 title="Cancel" />
-               <juju.components.GenericButton
-                 action={this._updateAddress}
-                 disabled={disabled}
-                 type="inline-positive"
-                 title="Update" />
-             </div>
+            <juju.components.AddressForm
+              addNotification={this.props.addNotification}
+              address={this.props.address}
+              disabled={disabled}
+              getCountries={this.props.getCountries}
+              ref="addressForm"
+              validateForm={this.props.validateForm} />
+            <div className={
+              'twelve-col account-payment-details-address__buttons'}>
+              <juju.components.GenericButton
+                action={this.props.close}
+                disabled={disabled}
+                type="inline-neutral"
+                title="Cancel" />
+              <juju.components.GenericButton
+                action={this._updateAddress}
+                disabled={disabled}
+                type="inline-positive"
+                title="Update" />
+            </div>
           </div>
         </juju.components.ExpandingRow>
       );

@@ -124,21 +124,21 @@ YUI.add('user-profile-budget-list', function() {
       return (
         <li className="user-profile__list-row twelve-col"
           key={budget.budget}>
-            <span className="user-profile__list-col three-col">
-              {budget.budget}
-            </span>
-            <span className="user-profile__list-col two-col">
+          <span className="user-profile__list-col three-col">
+            {budget.budget}
+          </span>
+          <span className="user-profile__list-col two-col">
               ${budget.allocated}
-            </span>
-            <span className="user-profile__list-col two-col">
+          </span>
+          <span className="user-profile__list-col two-col">
               ${budget.limit}
-            </span>
-            <span className="user-profile__list-col four-col">
+          </span>
+          <span className="user-profile__list-col four-col">
               ${budget.available}
-            </span>
-            <span className="user-profile__list-col one-col last-col">
+          </span>
+          <span className="user-profile__list-col one-col last-col">
               ${budget.consumed}
-            </span>
+          </span>
         </li>);
     },
 

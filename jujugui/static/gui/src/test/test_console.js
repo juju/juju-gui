@@ -22,11 +22,11 @@ describe('application console', function() {
   var consoleManager;
   before(function(done) {
     YUI(GlobalConfig).use(['juju-views', 'juju-view-utils', 'juju-tests-utils'],
-    function(Y) {
-      consoleManager = Y.namespace('juju.views.utils')
-                          .consoleManager();
-      done();
-    });
+      function(Y) {
+        consoleManager = Y.namespace('juju.views.utils')
+          .consoleManager();
+        done();
+      });
   });
 
   afterEach(function() {

@@ -37,20 +37,20 @@ YUI.add('inspector-resources-list', function() {
         return (
           <li className="inspector-resources-list__resource"
             key={resource.Name + i}>
-              <p>{resource.Name}</p>
-              <p>{resource.Description}</p>
+            <p>{resource.Name}</p>
+            <p>{resource.Description}</p>
           </li>);
       });
       return (
         <ul className="inspector-resources-list__list">
-            {resourceList}
+          {resourceList}
         </ul>);
     },
 
     render: function() {
       return (
         <div className="inspector-resources-list">
-            {this._generateResources()}
+          {this._generateResources()}
         </div>
       );
     }

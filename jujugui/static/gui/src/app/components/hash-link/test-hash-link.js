@@ -28,9 +28,9 @@ describe('HashLink', () => {
 
   it('can render', () => {
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.HashLink
-          changeState={sinon.stub()}
-          hash="readme" />, true);
+      <juju.components.HashLink
+        changeState={sinon.stub()}
+        hash="readme" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -46,9 +46,9 @@ describe('HashLink', () => {
   it('can change the has state', () => {
     const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.HashLink
-          changeState={changeState}
-          hash="readme" />, true);
+      <juju.components.HashLink
+        changeState={changeState}
+        hash="readme" />, true);
     const output = renderer.getRenderOutput();
     output.props.onClick();
     assert.equal(changeState.callCount, 1);

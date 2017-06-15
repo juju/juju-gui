@@ -48,7 +48,7 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     authorizePlan: function(uuid, charmUrl, applicationName, planUrl, budget,
-        limit, callback) {
+      limit, callback) {
       const url = this.url + '/plan/authorize';
       const body = JSON.stringify({
         'env-uuid': uuid,

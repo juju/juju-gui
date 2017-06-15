@@ -215,21 +215,21 @@ YUI.add('account-credentials', function() {
         return (
           <li className="user-profile__list-row twelve-col"
             key={credential.id}>
-              <span className="six-col user-profile__list-col">
-                {credential.name}
-              </span>
-              <span className="four-col user-profile__list-col">
-                {title}
-              </span>
-              <span className="two-col last-col user-profile__list-col
+            <span className="six-col user-profile__list-col">
+              {credential.name}
+            </span>
+            <span className="four-col user-profile__list-col">
+              {title}
+            </span>
+            <span className="two-col last-col user-profile__list-col
                 no-margin-bottom">
-                <juju.components.GenericButton
-                  action={
-                    this._handleDeleteCredential.bind(this, credential.id)}
-                  disabled={credential.cloud === LOCAL_CLOUD}
-                  type="neutral"
-                  title="Remove" />
-              </span>
+              <juju.components.GenericButton
+                action={
+                  this._handleDeleteCredential.bind(this, credential.id)}
+                disabled={credential.cloud === LOCAL_CLOUD}
+                type="neutral"
+                title="Remove" />
+            </span>
           </li>);
       });
       if (credentialsList.length > 0) {
@@ -322,14 +322,14 @@ YUI.add('account-credentials', function() {
         content = (
           <div>
             {chooseCloud}
-             <juju.components.DeploymentCloud
-               acl={this.props.acl}
-               cloud={this.state.cloud}
-               controllerIsReady={this.props.controllerIsReady}
-               listClouds={this.props.listClouds}
-               getCloudProviderDetails={this.props.getCloudProviderDetails}
-               setCloud={this._setCloud} />
-             {addForm}
+            <juju.components.DeploymentCloud
+              acl={this.props.acl}
+              cloud={this.state.cloud}
+              controllerIsReady={this.props.controllerIsReady}
+              listClouds={this.props.listClouds}
+              getCloudProviderDetails={this.props.getCloudProviderDetails}
+              setCloud={this._setCloud} />
+            {addForm}
           </div>);
       }
       return (

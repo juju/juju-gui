@@ -33,35 +33,35 @@ describe('Ghost Deployer Extension', function() {
 
   beforeEach(function() {
     GhostDeployer = Y.Base.create(
-        'deployer', Y.Base, [juju.GhostDeployer], {
-          views: {
-            environment: {
-              instance: {
-                topo: {service_boxes: {}},
-                createServiceInspector: sinon.stub()
-              }
-            }
-          },
-          env: {
-            deploy: sinon.stub(),
-            add_unit: sinon.stub(),
-            addCharm: sinon.stub(),
-            addPendingResources: sinon.stub()
-          },
-          state: {
-            changeState: sinon.stub()
-          }
-        }, {
-          ATTRS: {
-            charmstore: {
-              value: {
-                bakery: {
-                  getMacaroon: sinon.stub().returns('cookies are better')
-                }
-              }
+      'deployer', Y.Base, [juju.GhostDeployer], {
+        views: {
+          environment: {
+            instance: {
+              topo: {service_boxes: {}},
+              createServiceInspector: sinon.stub()
             }
           }
-        });
+        },
+        env: {
+          deploy: sinon.stub(),
+          add_unit: sinon.stub(),
+          addCharm: sinon.stub(),
+          addPendingResources: sinon.stub()
+        },
+        state: {
+          changeState: sinon.stub()
+        }
+      }, {
+        ATTRS: {
+          charmstore: {
+            value: {
+              bakery: {
+                getMacaroon: sinon.stub().returns('cookies are better')
+              }
+            }
+          }
+        }
+      });
     ghostDeployer = new GhostDeployer();
     var getMethod = sinon.stub();
     ghostDeployer.db = {
@@ -359,8 +359,8 @@ describe('Ghost Deployer Extension', function() {
     var notification = notifications.add.lastCall.args[0];
     assert.equal(notification.title, 'Error adding unit django/42');
     assert.equal(
-        notification.message,
-        'Could not add the requested unit. Server responded with: bad wolf');
+      notification.message,
+      'Could not add the requested unit. Server responded with: bad wolf');
     assert.equal(notification.level, 'error');
   });
 
@@ -373,8 +373,8 @@ describe('Ghost Deployer Extension', function() {
     var notification = notifications.add.lastCall.args[0];
     assert.equal(notification.title, 'Added unit django/42');
     assert.equal(
-        notification.message,
-        'Successfully created the requested unit.');
+      notification.message,
+      'Successfully created the requested unit.');
     assert.equal(notification.level, 'info');
   });
 

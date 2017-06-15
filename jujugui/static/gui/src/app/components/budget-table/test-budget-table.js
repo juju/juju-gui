@@ -73,31 +73,31 @@ describe('BudgetTable', function() {
           </div>
         </div>
         {[<juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={0}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={false}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={true} />,
-          <juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={1}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={false}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={true} />]}
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={0}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={false}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={true} />,
+        <juju.components.BudgetTableRow
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={1}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={false}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -127,31 +127,31 @@ describe('BudgetTable', function() {
           {undefined}
         </div>
         {[<juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={0}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={false}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={false} />,
-          <juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={1}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={false}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={false} />]}
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={0}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={false}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={false} />,
+        <juju.components.BudgetTableRow
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={1}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={false}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={false} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -194,31 +194,31 @@ describe('BudgetTable', function() {
           </div>
         </div>
         {[<juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={0}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={true}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={true} />,
-          <juju.components.BudgetTableRow
-            acl={acl}
-            allocationEditable={false}
-            charmsGetById={undefined}
-            extraInfo={undefined}
-            key={1}
-            listPlansForCharm={listPlansForCharm}
-            parseTermId={undefined}
-            plansEditable={true}
-            service={{}}
-            showExtra={undefined}
-            showTerms={showTerms}
-            withPlans={true} />]}
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={0}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={true}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={true} />,
+        <juju.components.BudgetTableRow
+          acl={acl}
+          allocationEditable={false}
+          charmsGetById={undefined}
+          extraInfo={undefined}
+          key={1}
+          listPlansForCharm={listPlansForCharm}
+          parseTermId={undefined}
+          plansEditable={true}
+          service={{}}
+          showExtra={undefined}
+          showTerms={showTerms}
+          withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
   });

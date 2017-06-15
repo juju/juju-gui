@@ -40,7 +40,7 @@ describe('UserMenu', () => {
         controllerAPI={props.controllerAPI || {}}
         navigateUserAccount={props.navigateUserAccount || sinon.stub()}
         navigateUserProfile={props.navigateUserProfile || sinon.stub()}
-        />, true);
+      />, true);
     return {
       renderer: renderer,
       output: renderer.getRenderOutput(),
@@ -51,18 +51,18 @@ describe('UserMenu', () => {
   it('renders login text when user not authed', () => {
     const userMenu = createEle();
     const expected = <div className="header-menu">
-        <span className={'header-menu__button header-menu__button-with-text'}
-          onClick={userMenu.instance.toggleUserMenu}
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="userMenu"
-          aria-controls="userMenu"
-          aria-expanded="false">
-          {{}}
-        </span>
-        {undefined}
-      </div>;
+      <span className={'header-menu__button header-menu__button-with-text'}
+        onClick={userMenu.instance.toggleUserMenu}
+        role="button"
+        tabIndex="0"
+        aria-haspopup="true"
+        aria-owns="userMenu"
+        aria-controls="userMenu"
+        aria-expanded="false">
+        {{}}
+      </span>
+      {undefined}
+    </div>;
     assert.deepEqual(userMenu.output, expected);
   });
 
@@ -74,20 +74,20 @@ describe('UserMenu', () => {
       }
     });
     const expected = <div className="header-menu">
-        <span className={'header-menu__button'}
-          onClick={userMenu.instance.toggleUserMenu}
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="userMenu"
-          aria-controls="userMenu"
-          aria-expanded="false">
-          <juju.components.SvgIcon name="user_16"
-            className="header-menu__icon"
-            size="16" />
-        </span>
-        {userMenu.instance._generateUserMenu()}
-      </div>;
+      <span className={'header-menu__button'}
+        onClick={userMenu.instance.toggleUserMenu}
+        role="button"
+        tabIndex="0"
+        aria-haspopup="true"
+        aria-owns="userMenu"
+        aria-controls="userMenu"
+        aria-expanded="false">
+        <juju.components.SvgIcon name="user_16"
+          className="header-menu__icon"
+          size="16" />
+      </span>
+      {userMenu.instance._generateUserMenu()}
+    </div>;
     assert.deepEqual(userMenu.output, expected);
   });
 
@@ -116,28 +116,28 @@ describe('UserMenu', () => {
       const expectedOutput = (<juju.components.Panel
         instanceName="header-menu__menu"
         visible={true}>
-          <ul className="header-menu__menu-list" role="menubar">
-            <li className="header-menu__menu-list-item
+        <ul className="header-menu__menu-list" role="menubar">
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                role="button"
-                onClick={userMenu.instance._handleProfileClick}>Profile</a>
-            </li>
-            <li className="header-menu__menu-list-item
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              role="button"
+              onClick={userMenu.instance._handleProfileClick}>Profile</a>
+          </li>
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                role="button"
-                onClick={userMenu.instance._handleAccountClick}>Account</a>
-            </li>
-            <li className="header-menu__menu-list-item
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              role="button"
+              onClick={userMenu.instance._handleAccountClick}>Account</a>
+          </li>
+          <li className="header-menu__menu-list-item
               header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              {LogoutLink}
-            </li>
-          </ul>
-        </juju.components.Panel>);
+            role="menuitem" tabIndex="0">
+            {LogoutLink}
+          </li>
+        </ul>
+      </juju.components.Panel>);
       expect(output.props.children[1]).toEqualJSX(expectedOutput);
     });
 

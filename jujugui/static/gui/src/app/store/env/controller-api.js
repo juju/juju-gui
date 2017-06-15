@@ -852,7 +852,7 @@ YUI.add('juju-controller-api', function(Y) {
       }, handler);
     },
 
-  /**
+    /**
       List all models the user can access on the current controller.
 
       @method listModels
@@ -1144,7 +1144,7 @@ YUI.add('juju-controller-api', function(Y) {
             return tags.parse(tags.CREDENTIAL, credentialTag);
           });
           const displayNames = names.map(
-              name => this._parseCredentialName(name));
+            name => this._parseCredentialName(name));
           return {
             names: names,
             displayNames: displayNames

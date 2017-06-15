@@ -463,7 +463,7 @@ YUI.add('juju-gui', function(Y) {
 
       // When the environment name becomes available, display it.
       this.env.after('environmentNameChange',
-          this.onEnvironmentNameChange, this);
+        this.onEnvironmentNameChange, this);
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
       // Once we know about MAAS server, update the header accordingly.
@@ -523,20 +523,20 @@ YUI.add('juju-gui', function(Y) {
       // up sometimes and this binding creates spooky interaction
       // at a distance and strange failures.
       this.db.machines.after(
-          ['add', 'remove', '*:change'],
-          this.on_database_changed, this);
+        ['add', 'remove', '*:change'],
+        this.on_database_changed, this);
       this.db.services.after(
-          ['add', 'remove', '*:change'],
-          this.on_database_changed, this);
+        ['add', 'remove', '*:change'],
+        this.on_database_changed, this);
       this.db.relations.after(
-          ['add', 'remove', '*:change'],
-          this.on_database_changed, this);
+        ['add', 'remove', '*:change'],
+        this.on_database_changed, this);
       this.db.environment.after(
-          ['add', 'remove', '*:change'],
-          this.on_database_changed, this);
+        ['add', 'remove', '*:change'],
+        this.on_database_changed, this);
       this.db.units.after(
-          ['add', 'remove', '*:change'],
-          this.on_database_changed, this);
+        ['add', 'remove', '*:change'],
+        this.on_database_changed, this);
       this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -730,16 +730,16 @@ YUI.add('juju-gui', function(Y) {
         if ((
           !creds.areAvailable && gisf && rootState === 'new'
         ) || (
-          this.anonymousMode && rootState !== 'login'
-        )) {
+            this.anonymousMode && rootState !== 'login'
+          )) {
           this.anonymousMode = true;
           console.log('now in anonymous mode');
           this.maskVisibility(false);
           return;
         }
         if (!creds.areAvailable ||
-          // When using direct deploy when a user is not logged in it will
-          // navigate to show the login if we do not have this state check.
+        // When using direct deploy when a user is not logged in it will
+        // navigate to show the login if we do not have this state check.
             (currentState.special && currentState.special.dd)) {
           this._displayLogin();
           return;
@@ -856,7 +856,7 @@ YUI.add('juju-gui', function(Y) {
         this.switchEnv(this.createSocketURL(
           this.get('socketTemplate'),
           this.get('modelUUID'), publicHost.value, publicHost.port), null,
-          null, null, true, false);
+        null, null, true, false);
       });
     },
 
@@ -885,7 +885,7 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController} />,
-          document.getElementById('login-container'));
+        document.getElementById('login-container'));
     },
 
     /**
@@ -951,7 +951,7 @@ YUI.add('juju-gui', function(Y) {
         navigateUserAccount={navigateUserAccount}
         navigateUserProfile={navigateUserProfile}
         USSOLoginLink={USSOLoginLink}
-       />, linkContainer);
+      />, linkContainer);
     },
 
     /**
@@ -1222,7 +1222,7 @@ YUI.add('juju-gui', function(Y) {
           gisf={gisf}
           homePath={homePath}
           showProfile={showProfile}
-           />,
+        />,
         document.getElementById('header-logo'));
     },
 
@@ -1308,7 +1308,7 @@ YUI.add('juju-gui', function(Y) {
           createCardElement={
             this.stripe && this.stripe.createCardElement.bind(this.stripe)}
           createUser={
-              this.payment && this.payment.createUser.bind(this.payment)}
+            this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}
           changes={currentChangeSet}
           charmsGetById={db.charms.getById.bind(db.charms)}
@@ -1325,7 +1325,7 @@ YUI.add('juju-gui', function(Y) {
               utils, env.genericConstraints, db.units)}
           generatePath={this.state.generatePath.bind(this.state)}
           getAgreementsByTerms={
-              this.terms.getAgreementsByTerms.bind(this.terms)}
+            this.terms.getAgreementsByTerms.bind(this.terms)}
           isLoggedIn={isLoggedIn}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -1334,7 +1334,7 @@ YUI.add('juju-gui', function(Y) {
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
           getCountries={
-              this.payment && this.payment.getCountries.bind(this.payment)
+            this.payment && this.payment.getCountries.bind(this.payment)
               || null}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           getEntity={charmstore.getEntity.bind(charmstore)}
@@ -1532,7 +1532,7 @@ YUI.add('juju-gui', function(Y) {
     _renderZoom: function() {
       ReactDOM.render(
         <window.juju.components.Zoom
-        topo={this.views.environment.instance.topo} />,
+          topo={this.views.environment.instance.topo} />,
         document.getElementById('zoom-container'));
     },
 
@@ -1699,10 +1699,10 @@ YUI.add('juju-gui', function(Y) {
             series={utils.getSeriesList()}
             upgradeServiceUsingLocalCharm={
               localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
-              this, model, db)}
+                this, model, db)}
             uploadLocalCharm={
               localCharmHelpers.uploadLocalCharm.bind(
-              this, model, db)}
+                this, model, db)}
           />
         );
       } else {
@@ -1762,7 +1762,7 @@ YUI.add('juju-gui', function(Y) {
           deployTarget={this.deployTarget.bind(this, charmstore)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
-              this.bundleImporter)}
+            this.bundleImporter)}
           getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
           getEntity={getEntity}
           getFile={charmstore.getFile.bind(charmstore)}
@@ -1868,7 +1868,7 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.MachineView
           acl={this.acl}
           addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
-              this, this.db, this.env)}
+            this, this.db, this.env)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeState={this.state.changeState.bind(this.state)}
           createMachine={this._createMachine.bind(this)}
@@ -2110,7 +2110,7 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
-  /**
+    /**
     Ensures the controller is connected on dispatch. Does nothing if the
    controller is already connecting/connected or if we're trying to disconnect.
    @param {Object} state - The application state.
@@ -2120,7 +2120,7 @@ YUI.add('juju-gui', function(Y) {
       if (
         !this.controllerAPI.get('connecting') &&
         !this.controllerAPI.get('connected')
-        ) {
+      ) {
         this.controllerAPI.connect();
       }
       next();

@@ -79,19 +79,19 @@ YUI.add('juju-view-environment', function(Y) {
         EnvironmentView.superclass.render.apply(this, arguments);
         ReactDOM.render(
           <juju.components.Environment />,
-            container);
+          container);
         this._rendered = true;
       }
 
       topo = this.createTopology();
       topo.recordSubscription(
-          'ServiceModule',
-          db.services.after('remove',
-                            this.updateHelpIndicator.bind(this)));
+        'ServiceModule',
+        db.services.after('remove',
+          this.updateHelpIndicator.bind(this)));
 
       topo.recordSubscription(
-          'ServiceModule',
-          db.services.after('add', this.updateHelpIndicator.bind(this)));
+        'ServiceModule',
+        db.services.after('add', this.updateHelpIndicator.bind(this)));
 
       topo.render();
       this.boundRenderedHandler = this.updateHelpIndicator.bind(this);

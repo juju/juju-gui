@@ -193,9 +193,9 @@ describe('MachineViewMachine', function() {
     var expected = (
       <div className={'machine-view__machine machine-view__machine--drop ' +
         'machine-view__machine--machine'}
-        onClick={instance._handleSelectMachine}
-        role="button"
-        tabIndex="0">
+      onClick={instance._handleSelectMachine}
+      role="button"
+      tabIndex="0">
         {output.props.children}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -230,9 +230,9 @@ describe('MachineViewMachine', function() {
     var expected = (
       <div className={'machine-view__machine ' +
         'machine-view__machine--uncommitted machine-view__machine--machine'}
-        onClick={instance._handleSelectMachine}
-        role="button"
-        tabIndex="0">
+      onClick={instance._handleSelectMachine}
+      role="button"
+      tabIndex="0">
         {output.props.children}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -267,9 +267,9 @@ describe('MachineViewMachine', function() {
     var expected = (
       <div className={'machine-view__machine ' +
         'machine-view__machine--uncommitted machine-view__machine--machine'}
-        onClick={instance._handleSelectMachine}
-        role="button"
-        tabIndex="0">
+      onClick={instance._handleSelectMachine}
+      role="button"
+      tabIndex="0">
         {output.props.children}
       </div>);
     expect(output).toEqualJSX(expected);

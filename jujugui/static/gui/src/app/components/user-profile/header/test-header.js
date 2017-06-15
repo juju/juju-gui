@@ -64,15 +64,15 @@ describe('UserProfileHeader', () => {
         <ul className="user-profile-header__links">
           <li className={
             'user-profile-header__link user-profile-header__link--is-link'}
-            key="a link"
-            onClick={links[0].action}
-            role="button"
-            tabIndex="0">
+          key="a link"
+          onClick={links[0].action}
+          role="button"
+          tabIndex="0">
             a link
           </li>
           <li className={
             'user-profile-header__link user-profile-header__link--testClass'}
-            key="some text">
+          key="some text">
             some text
           </li>
         </ul>

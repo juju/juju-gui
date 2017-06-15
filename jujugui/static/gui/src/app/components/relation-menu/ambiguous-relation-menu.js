@@ -34,12 +34,12 @@ YUI.add('ambiguous-relation-menu', function() {
       var end = endpoint[1];
       components.push(
         <li
-            data-startservice={start.service}
-            data-startname={start.name}
-            data-endservice={end.service}
-            data-endname={end.name}
-            key={start.name + end.name + i}>
-            {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
+          data-startservice={start.service}
+          data-startname={start.name}
+          data-endservice={end.service}
+          data-endname={end.name}
+          key={start.name + end.name + i}>
+          {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
         </li>);
     });
     return components;

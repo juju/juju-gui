@@ -92,11 +92,11 @@ YUI.add('deployment-bar-notification', function() {
         description = this.props.change.description;
       }
       return (
-          <div className="deployment-bar__notification"
-            onClick={this._handleClick}
-            ref="deploymentBarNotificationContainer">
-            {description}
-          </div>
+        <div className="deployment-bar__notification"
+          onClick={this._handleClick}
+          ref="deploymentBarNotificationContainer">
+          {description}
+        </div>
       );
     }
   });

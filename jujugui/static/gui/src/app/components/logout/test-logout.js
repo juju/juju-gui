@@ -46,7 +46,7 @@ describe('Logout', () => {
         href={logoutUrl}
         onClick={output.props.onClick}
         target="_self">Logout</a>
-      );
+    );
     assert.deepEqual(output, expected);
   });
 

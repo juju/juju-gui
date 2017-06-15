@@ -72,31 +72,31 @@ describe('service module annotations', function() {
 
   // Test the drag end handler.
   it('should set location annotations on service block drag end',
-     function() {
-       var d =
+    function() {
+      var d =
            { id: 'wordpress',
              inDrag: views.DRAG_ACTIVE,
              x: 100.1,
              y: 200.2};
-       serviceModule.dragend(d, serviceModule);
-       assert.isTrue(called);
-       location['gui-x'].should.equal(100.1);
-       location['gui-y'].should.equal(200.2);
-     });
+      serviceModule.dragend(d, serviceModule);
+      assert.isTrue(called);
+      location['gui-x'].should.equal(100.1);
+      location['gui-y'].should.equal(200.2);
+    });
 
   it('should not set annotations on drag end if building a relation',
-     function() {
-       var d =
+    function() {
+      var d =
            { id: 'wordpress',
              x: 100.1,
              y: 200.2};
-       var topo = serviceModule.get('component');
-       topo.buildingRelation = true;
-       serviceModule.dragend(d, serviceModule);
-       assert.isFalse(called);
-       location['gui-x'].should.equal(0);
-       location['gui-y'].should.equal(0);
-     });
+      var topo = serviceModule.get('component');
+      topo.buildingRelation = true;
+      serviceModule.dragend(d, serviceModule);
+      assert.isFalse(called);
+      location['gui-x'].should.equal(0);
+      location['gui-y'].should.equal(0);
+    });
 
   it('should clear the state when the event is fired', function() {
     const topo = serviceModule.get('component');
@@ -305,15 +305,15 @@ describe.skip('service module events', function() {
     serviceModule.highlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, true);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-        '/static/gui/build/app/assets/svgs/service_module_selected.svg');
+      '/static/gui/build/app/assets/svgs/service_module_selected.svg');
     assert.notEqual(topo.vis.select('.service.highlight')[0][0],
-        null, 'Highlight class not found');
+      null, 'Highlight class not found');
     serviceModule.unhighlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, false);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-        '/static/gui/build/app/assets/svgs/service_module.svg');
+      '/static/gui/build/app/assets/svgs/service_module.svg');
     assert.notEqual(topo.vis.select('.service.unhighlight')[0][0],
-        null, 'Unhighlight class not found');
+      null, 'Unhighlight class not found');
   });
 
   it('should highlight and unhighlight related services', function() {
@@ -338,7 +338,7 @@ describe.skip('service module events', function() {
 
   it('can generate a selection from a list of service names', function() {
     assert.deepEqual(serviceModule.selectionFromServiceNames(['haproxy']),
-        topo.vis.selectAll('.service'));
+      topo.vis.selectAll('.service'));
   });
 
   it('should display an indicator for pending services', function() {
@@ -370,7 +370,7 @@ describe.skip('service module events', function() {
     serviceModule.update();
     db.fire('bundleImportComplete', {services: [db.services.item(0)]});
     assert.equal(stubFindCentroid.calledOnce, true,
-        'findCentroid not called');
+      'findCentroid not called');
   });
 
   it('should deploy a service on charm token drop events', function(done) {
@@ -489,7 +489,7 @@ describe.skip('service module events', function() {
 
     serviceModule.set('component', view.topo);
     var extractCharmMetadata = sinon.stub(
-        serviceModule, '_extractCharmMetadata');
+      serviceModule, '_extractCharmMetadata');
     this._cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
@@ -522,7 +522,7 @@ describe.skip('service module events', function() {
 
     serviceModule.set('component', view.topo);
     var extractCharmMetadata = sinon.stub(
-        serviceModule, '_extractCharmMetadata');
+      serviceModule, '_extractCharmMetadata');
     this._cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
@@ -543,10 +543,10 @@ describe.skip('service module events', function() {
     var getEntries = sinon.stub(Y.juju.ziputils, 'getEntries');
     this._cleanups.push(getEntries.restore);
     var findCharmEntries = sinon.stub(
-        serviceModule, '_findCharmEntries');
+      serviceModule, '_findCharmEntries');
     this._cleanups.push(findCharmEntries.restore);
     var zipExtractionError = sinon.stub(
-        serviceModule, '_zipExtractionError');
+      serviceModule, '_zipExtractionError');
     this._cleanups.push(zipExtractionError);
 
     serviceModule._extractCharmMetadata(fileObj, topoObj, envObj, dbObj);
@@ -589,10 +589,10 @@ describe.skip('service module events', function() {
     it('finds the files in the zip', function() {
       var entries = { metadata: 'foo' };
       var findEntries = sinon.stub(
-          Y.juju.ziputils, 'findCharmEntries').returns(entries);
+        Y.juju.ziputils, 'findCharmEntries').returns(entries);
       this._cleanups.push(findEntries.restore);
       var readEntries = sinon.stub(
-          serviceModule, '_readCharmEntries');
+        serviceModule, '_readCharmEntries');
       this._cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
@@ -611,10 +611,10 @@ describe.skip('service module events', function() {
     it('shows an error notification if there is no metadata.yaml', function() {
       var entries = { foo: 'bar' };
       var findEntries = sinon.stub(
-          Y.juju.ziputils, 'findCharmEntries').returns(entries);
+        Y.juju.ziputils, 'findCharmEntries').returns(entries);
       this._cleanups.push(findEntries.restore);
       var readEntries = sinon.stub(
-          serviceModule, '_readCharmEntries');
+        serviceModule, '_readCharmEntries');
       this._cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
@@ -639,10 +639,10 @@ describe.skip('service module events', function() {
     var readEntries = sinon.stub(Y.juju.ziputils, 'readCharmEntries');
     this._cleanups.push(readEntries.restore);
     var existingServices = sinon.stub(
-        serviceModule, '_checkForExistingServices');
+      serviceModule, '_checkForExistingServices');
     this._cleanups.push(existingServices);
     var extractionError = sinon.stub(
-        serviceModule, '_zipExtractionError');
+      serviceModule, '_zipExtractionError');
 
     serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
@@ -682,7 +682,7 @@ describe.skip('service module events', function() {
       jsYamlMock = sinon.stub(jsyaml, 'safeLoad').returns({ name: 'ghost' });
       context._cleanups.push(jsYamlMock.restore);
       showInspector = sinon.stub(
-          serviceModule, '_showUpgradeOrNewInspector');
+        serviceModule, '_showUpgradeOrNewInspector');
       context._cleanups.push(showInspector.restore);
       deployCharm = sinon.stub(serviceModule, '_deployLocalCharm');
       context._cleanups.push(deployCharm.restore);
@@ -701,7 +701,7 @@ describe.skip('service module events', function() {
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
-          fileObj, topoObj, envObj, dbObj, contentsObj);
+        fileObj, topoObj, envObj, dbObj, contentsObj);
 
       sharedAssert();
 
@@ -716,7 +716,7 @@ describe.skip('service module events', function() {
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
-          fileObj, topoObj, envObj, dbObj, contentsObj);
+        fileObj, topoObj, envObj, dbObj, contentsObj);
 
       sharedAssert();
 
@@ -850,8 +850,8 @@ describe('canvasDropHandler', function() {
     // Calling both functions with arguments that result in an early-out is the
     // easiest way to show that the one is just a shim around the other.
     assert.equal(
-        serviceModule.canvasDropHandler(evt),
-        serviceModule._canvasDropHandler(files));
+      serviceModule.canvasDropHandler(evt),
+      serviceModule._canvasDropHandler(files));
   });
 
   it('halts the event so FF does not try to reload the page', function(done) {

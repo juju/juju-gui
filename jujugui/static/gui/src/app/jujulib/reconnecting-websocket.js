@@ -56,7 +56,7 @@ var module = module;
 
   function ReconnectingWebSocket(url, protocols) {
 
-      // These can be altered by calling code.
+    // These can be altered by calling code.
     this.debug = false;
     this.reconnectInterval = 1000;
     this.timeoutInterval = 2000;
@@ -124,7 +124,7 @@ var module = module;
           if (!reconnectAttempt && !timedOut) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
               console.debug(
-                  'ReconnectingWebSocket', 'onclose reconnect', url);
+                'ReconnectingWebSocket', 'onclose reconnect', url);
             }
             self.onclose(event);
           }

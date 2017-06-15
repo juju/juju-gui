@@ -45,15 +45,15 @@ describe('MachineViewHeader', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__header">
+      <div className="machine-view__header">
           Sandbox
-          {undefined}
-          <div className="machine-view__header-drop-target">
-            <div className="machine-view__header-drop-message">
+        {undefined}
+        <div className="machine-view__header-drop-target">
+          <div className="machine-view__header-drop-message">
               Create new {'machine'}
-            </div>
           </div>
-        </div>);
+        </div>
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -68,9 +68,9 @@ describe('MachineViewHeader', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__header machine-view__header--drop">
-          {output.props.children}
-        </div>);
+      <div className="machine-view__header machine-view__header--drop">
+        {output.props.children}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -85,9 +85,9 @@ describe('MachineViewHeader', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__header machine-view__header--droppable">
-          {output.props.children}
-        </div>);
+      <div className="machine-view__header machine-view__header--droppable">
+        {output.props.children}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -105,17 +105,17 @@ describe('MachineViewHeader', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__header">
+      <div className="machine-view__header">
           Sandbox
-          <juju.components.MoreMenu
-            activeItem="name"
-            items={menuItems} />
-          <div className="machine-view__header-drop-target">
-            <div className="machine-view__header-drop-message">
+        <juju.components.MoreMenu
+          activeItem="name"
+          items={menuItems} />
+        <div className="machine-view__header-drop-target">
+          <div className="machine-view__header-drop-message">
               Create new {'machine'}
-            </div>
           </div>
-        </div>);
+        </div>
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -136,19 +136,19 @@ describe('MachineViewHeader', function() {
         title="Sandbox"
         type="machine" />);
     var expected = (
-        <div className="machine-view__header">
+      <div className="machine-view__header">
           Sandbox
-          <juju.components.GenericButton
-            action={action}
-            disabled={false}
-            type="inline-positive"
-            icon="close_16_white" />
-          <div className="machine-view__header-drop-target">
-            <div className="machine-view__header-drop-message">
+        <juju.components.GenericButton
+          action={action}
+          disabled={false}
+          type="inline-positive"
+          icon="close_16_white" />
+        <div className="machine-view__header-drop-target">
+          <div className="machine-view__header-drop-message">
               Create new {'machine'}
-            </div>
           </div>
-        </div>);
+        </div>
+      </div>);
     assert.deepEqual(output, expected);
   });
 });

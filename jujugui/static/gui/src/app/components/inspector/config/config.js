@@ -267,23 +267,23 @@ YUI.add('inspector-config', function() {
         if (option.type === 'boolean') {
           const label = option.key + ':';
           configElements.push(
-              <juju.components.BooleanConfig
-                disabled={disabled}
-                key={ref}
-                ref={ref}
-                option={option}
-                onChange={this._handleOnChange}
-                label={label}
-                config={serviceConfig[key]} />);
+            <juju.components.BooleanConfig
+              disabled={disabled}
+              key={ref}
+              ref={ref}
+              option={option}
+              onChange={this._handleOnChange}
+              label={label}
+              config={serviceConfig[key]} />);
         } else {
           configElements.push(
-              <juju.components.StringConfig
-                disabled={disabled}
-                key={ref}
-                ref={ref}
-                option={option}
-                onChange={this._handleOnChange}
-                config={serviceConfig[key]} />);
+            <juju.components.StringConfig
+              disabled={disabled}
+              key={ref}
+              ref={ref}
+              option={option}
+              onChange={this._handleOnChange}
+              config={serviceConfig[key]} />);
         }
       });
       return configElements;

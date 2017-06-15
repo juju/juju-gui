@@ -93,9 +93,9 @@ describe('UserProfileAgreementList', () => {
               One fancy term
             </span>
             <span className="user-profile__list-col four-col last-col">
-            <juju.components.DateDisplay
-              date={agreements[0].createdAt}
-              relative={true} />
+              <juju.components.DateDisplay
+                date={agreements[0].createdAt}
+                relative={true} />
             </span>
           </li>]}
         </ul>

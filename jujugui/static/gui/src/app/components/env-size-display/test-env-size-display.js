@@ -51,40 +51,40 @@ describe('EnvSizeDisplay', function() {
     pluralize.withArgs('application').returns('applications');
     pluralize.withArgs('machine').returns('machines');
     var component = renderIntoDocument(
-        <juju.components.EnvSizeDisplay
-          appState={appState}
-          machineCount={4}
-          pluralize={pluralize}
-          serviceCount={3} />);
+      <juju.components.EnvSizeDisplay
+        appState={appState}
+        machineCount={4}
+        pluralize={pluralize}
+        serviceCount={3} />);
     assert.equal(
-        queryComponentSelector(
-            component, 'a[data-view=application]').innerText, '3 applications');
+      queryComponentSelector(
+        component, 'a[data-view=application]').innerText, '3 applications');
     assert.equal(
-        queryComponentSelector(
-            component, 'a[data-view=machine]').innerText, '4 machines');
+      queryComponentSelector(
+        component, 'a[data-view=machine]').innerText, '4 machines');
   });
 
   it('highlights active tab on initial render', function() {
     var component = renderIntoDocument(
-        <juju.components.EnvSizeDisplay
-          serviceCount={3}
-          machineCount={4}
-          appState={appState}
-          pluralize={sinon.stub()} />);
+      <juju.components.EnvSizeDisplay
+        serviceCount={3}
+        machineCount={4}
+        appState={appState}
+        pluralize={sinon.stub()} />);
     assert.notEqual(
-        queryComponentSelector(
-            component,
-            '.env-size-display__list-item.is-active a[data-view=machine]'),
-            null);
+      queryComponentSelector(
+        component,
+        '.env-size-display__list-item.is-active a[data-view=machine]'),
+      null);
   });
 
   it('calls to change state when list item is clicked', function() {
     var component = renderIntoDocument(
-        <juju.components.EnvSizeDisplay
-          serviceCount={3}
-          machineCount={4}
-          appState={appState}
-          pluralize={sinon.stub()} />);
+      <juju.components.EnvSizeDisplay
+        serviceCount={3}
+        machineCount={4}
+        appState={appState}
+        pluralize={sinon.stub()} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -103,11 +103,11 @@ describe('EnvSizeDisplay', function() {
 
   it('highlights the tab which was clicked on', function() {
     var component = renderIntoDocument(
-        <juju.components.EnvSizeDisplay
-          serviceCount={3}
-          machineCount={4}
-          appState={appState}
-          pluralize={sinon.stub()} />);
+      <juju.components.EnvSizeDisplay
+        serviceCount={3}
+        machineCount={4}
+        appState={appState}
+        pluralize={sinon.stub()} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -115,10 +115,10 @@ describe('EnvSizeDisplay', function() {
 
     testUtils.Simulate.click(machineLink);
     assert.notEqual(
-        queryComponentSelector(
-            component,
-            '.env-size-display__list-item.is-active a[data-view=machine]'),
-            null);
+      queryComponentSelector(
+        component,
+        '.env-size-display__list-item.is-active a[data-view=machine]'),
+      null);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -129,10 +129,10 @@ describe('EnvSizeDisplay', function() {
     appState.current.gui.application = true;
     testUtils.Simulate.click(serviceLink);
     assert.notEqual(
-        queryComponentSelector(
-            component,
-            '.env-size-display__list-item.is-active a[data-view=application]'),
-            null);
+      queryComponentSelector(
+        component,
+        '.env-size-display__list-item.is-active a[data-view=application]'),
+      null);
 
     assert.equal(appState.changeState.callCount, 2);
     assert.deepEqual(appState.changeState.args[0][0], {

@@ -101,21 +101,21 @@ describe('UserProfileBudgetList', () => {
           </li>
           {[<li className="user-profile__list-row twelve-col"
             key="my-budget">
-              <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col three-col">
                 my-budget
-              </span>
-              <span className="user-profile__list-col two-col">
+            </span>
+            <span className="user-profile__list-col two-col">
                 ${'77'}
-              </span>
-              <span className="user-profile__list-col two-col">
+            </span>
+            <span className="user-profile__list-col two-col">
                 ${'99'}
-              </span>
-              <span className="user-profile__list-col four-col">
+            </span>
+            <span className="user-profile__list-col four-col">
                 ${'22'}
-              </span>
-              <span className="user-profile__list-col one-col last-col">
+            </span>
+            <span className="user-profile__list-col one-col last-col">
                 ${'55'}
-              </span>
+            </span>
           </li>]}
         </ul>
       </div>

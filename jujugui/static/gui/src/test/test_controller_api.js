@@ -854,7 +854,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.owner, 'admin@local');
         assert.strictEqual(result1.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result1.isController, false,
-                           'unexpected controller model');
+          'unexpected controller model');
         const result2 = models[1];
         assert.strictEqual(result2.id, id2);
         assert.strictEqual(result2.name, 'model2');
@@ -871,7 +871,7 @@ describe('Controller API', function() {
         assert.strictEqual(result2.owner, 'dalek@skaro');
         assert.strictEqual(result2.isAlive, false, 'unexpected alive model');
         assert.strictEqual(result2.isController, false,
-                           'unexpected controller model');
+          'unexpected controller model');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
@@ -1014,7 +1014,7 @@ describe('Controller API', function() {
         assert.strictEqual(result.owner, 'admin@local');
         assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result.isController, false,
-                           'unexpected controller model');
+          'unexpected controller model');
         assert.deepEqual(
           result.lastConnection, new Date('2000-01-01T00:00:00Z'));
         assert.equal(conn.messages.length, 2);
@@ -1111,7 +1111,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.owner, 'dalek@local');
         assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
         assert.strictEqual(result1.isController, false,
-                           'unexpected admin model');
+          'unexpected admin model');
         assert.strictEqual(result1.lastConnection, null);
         const result2 = models[1];
         assert.strictEqual(result2.err, undefined);
@@ -1130,7 +1130,7 @@ describe('Controller API', function() {
         assert.strictEqual(result2.owner, 'who@local');
         assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result2.isController, false,
-                           'unexpected controller model');
+          'unexpected controller model');
         assert.strictEqual(result2.lastConnection, null);
         const result3 = models[2];
         assert.strictEqual(result3.err, undefined);
@@ -1149,7 +1149,7 @@ describe('Controller API', function() {
         assert.strictEqual(result3.owner, 'cyberman@local');
         assert.strictEqual(result3.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result3.isController, false,
-                           'unexpected controller model');
+          'unexpected controller model');
         assert.strictEqual(result3.lastConnection, null);
         assert.equal(conn.messages.length, 2);
         assert.deepEqual(conn.messages[0], {
