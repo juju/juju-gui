@@ -2570,6 +2570,93 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
+      Add new authorized SSH keys for the specified user.
+
+      @param {String} user The user for whom the keys must be added.
+      @param {Array} keys The SSH keys, like ["ssh-rsa ...", ...].
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments:
+          - a global error string, in the case an API/connection error is
+            encountered, or null otherwise;
+          - a list of possible errors encountered when adding keys, with
+            indexes corresponding to the indexes in the keys argument.
+          For instance, given a call to add key1 and key2, if it succeeds the
+          callback is called with (null, [null, null]) while if key1 fails the
+          callback is called with (null, ["some error", null]).
+    */
+    addKeys: function(user, keys, callback) {
+      this._addOrImportKeys('AddKeys', user, keys, callback);
+    },
+
+    /**
+      Import new authorized SSH keys from the given key ids for the given user.
+
+      @param {String} user The user for whom the keys must be imported.
+      @param {Array} ids The list of sources from which to import SSH keys,
+        with "gh:" (github) or "lp:" (launchpad) prefixes, for instance
+        ["gh:who", "lp:dalek"].
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments:
+          - a global error string, in the case an API/connection error is
+            encountered, or null otherwise;
+          - a list of possible errors encountered when importing keys, with
+            indexes corresponding to the indexes in the ids argument.
+          For instance, given a call to import id1 and id2, if it succeeds the
+          callback is called with (null, [null, null]) while if id1 fails the
+          callback is called with (null, ["some error", null]).
+    */
+    importKeys: function(user, ids, callback) {
+      this._addOrImportKeys('ImportKeys', user, ids, callback);
+    },
+
+    /**
+      Used by addKeys and importKeys to either add the specified keys or import
+      the specified ids.
+
+      The request argument is either "AddKeys" or "ImportKeys"; all other
+      arguments are described in the callers' docstrings.
+    */
+    _addOrImportKeys: function(request, user, keysOrIds, callback) {
+      // Perform some client side validation.
+      if (!user) {
+        callback('no user provided', []);
+        return;
+      }
+      if (!keysOrIds || !keysOrIds.length) {
+        callback(null, []);
+        return;
+      }
+
+      // Define the response handler.
+      const handler = data => {
+        if (!callback) {
+          console.log(`data returned by KeyManager.${request} API:`, data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, []);
+          return;
+        }
+        const results = data.response && data.response.results;
+        if (!results || results.length !== keysOrIds.length) {
+          // This should never happen.
+          callback('unexpected results: ' + JSON.stringify(results), []);
+          return;
+        }
+        callback(null, results.map(result => {
+          return result.error ? result.error.message : null;
+        }));
+      };
+
+      // Send the API call.
+      this._send_rpc({
+        type: 'KeyManager',
+        request: request,
+        params: {user: user, 'ssh-keys': keysOrIds}
+      }, handler);
+    },
+
+    /**
       Return the authorized SSH keys for the specified user.
 
       @method listKeys

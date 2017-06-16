@@ -3167,6 +3167,260 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('addKeys', function() {
+      it('adds a single key', function(done) {
+        // Perform the request.
+        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null]);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'AddKeys',
+            version: 77,
+            params: {user: 'who', 'ssh-keys': ['ssh-rsa key1']}
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}]
+          }
+        });
+      });
+
+      it('adds multiple keys', function(done) {
+        // Perform the request.
+        env.addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null, null]);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'AddKeys',
+            version: 77,
+            params: {
+              user: 'who',
+              'ssh-keys': ['ssh-rsa key1', 'ssh-rsa key2']
+            }
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}, {}]
+          }
+        });
+      });
+
+      it('adds no keys', function(done) {
+        // Perform the request.
+        env.addKeys('who', [], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, []);
+          done();
+        });
+      });
+
+      it('handles errors when no user is provided', function(done) {
+        // Perform the request.
+        env.addKeys('', ['ssh-rsa key1'], (err, errors) => {
+          assert.strictEqual(err, 'no user provided');
+          assert.deepEqual(errors, []);
+          done();
+        });
+      });
+
+      it('handles request failures while adding keys', function(done) {
+        // Perform the request.
+        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles API failures while adding keys', function(done) {
+        // Perform the request.
+        const keys = ['ssh-rsa key1', 'ssh-rsa key2', 'ssh-rsa key3'];
+        env.addKeys('dalek', keys, (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null, 'bad wolf', null]);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}, {error: {message: 'bad wolf'}}, {}]
+          }
+        });
+      });
+
+      it('fails for unexpected results', function(done) {
+        // Perform the request.
+        env.addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
+          assert.strictEqual(err, 'unexpected results: [{},{}]');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{}, {}]}
+        });
+      });
+
+      it('fails for no results', function(done) {
+        // Perform the request.
+        env.addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
+          assert.strictEqual(err, 'unexpected results: []');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: []}
+        });
+      });
+    });
+
+    describe('importKeys', function() {
+      it('imports a single key', function(done) {
+        // Perform the request.
+        env.importKeys('who', ['gh:who'], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null]);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'ImportKeys',
+            version: 77,
+            params: {user: 'who', 'ssh-keys': ['gh:who']}
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}]
+          }
+        });
+      });
+
+      it('imports multiple keys', function(done) {
+        // Perform the request.
+        env.importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null, null]);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'ImportKeys',
+            version: 77,
+            params: {
+              user: 'who',
+              'ssh-keys': ['gh:rose', 'lp:dalek']
+            }
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}, {}]
+          }
+        });
+      });
+
+      it('imports no keys', function(done) {
+        // Perform the request.
+        env.importKeys('who', [], (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, []);
+          done();
+        });
+      });
+
+      it('handles errors when no user is provided', function(done) {
+        // Perform the request.
+        env.importKeys('', ['gh:who'], (err, errors) => {
+          assert.strictEqual(err, 'no user provided');
+          assert.deepEqual(errors, []);
+          done();
+        });
+      });
+
+      it('handles request failures while importing keys', function(done) {
+        // Perform the request.
+        env.importKeys('who', ['gh:who'], (err, errors) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles API failures while importing keys', function(done) {
+        // Perform the request.
+        const ids = ['gh:rose', 'bb:cyberman', 'lp:dalek'];
+        env.importKeys('dalek', ids, (err, errors) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(errors, [null, 'bad wolf', null]);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{}, {error: {message: 'bad wolf'}}, {}]
+          }
+        });
+      });
+
+      it('fails for unexpected results', function(done) {
+        // Perform the request.
+        env.importKeys('cyberman', ['gh:who'], (err, errors) => {
+          assert.strictEqual(err, 'unexpected results: [{},{}]');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{}, {}]}
+        });
+      });
+
+      it('fails for no results', function(done) {
+        // Perform the request.
+        env.importKeys('rose', ['gh:who'], (err, errors) => {
+          assert.strictEqual(err, 'unexpected results: []');
+          assert.deepEqual(errors, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: []}
+        });
+      });
+    });
+
     describe('listKeys', function() {
       it('retrieves keys', function(done) {
         // Perform the request.
