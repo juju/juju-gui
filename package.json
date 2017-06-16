@@ -12,12 +12,14 @@
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-react-jsx": "^6.23.0",
     "babel-preset-babili": "0.0.12",
+    "browserify": "^14.4.0",
     "classnames": "^2.2.5",
     "clipboard": "^1.6.1",
     "cloud-vanilla-theme": "0.0.24",
     "cryptojs": ">= 2.5.3",
     "graceful-fs": "^4.1.11",
     "marked": "^0.3.6",
+    "mixwith": "^0.1.1",
     "mkdirp": "^0.5.1",
     "prismjs": "^1.6.0",
     "react": "^15.4.2",
@@ -29,6 +31,7 @@
     "yui": "3.11.0"
   },
   "devDependencies": {
+    "babelify": "^7.3.0",
     "chai": "^3.5.0",
     "diff": "^3.2.0",
     "eslint": "^4.0.0",

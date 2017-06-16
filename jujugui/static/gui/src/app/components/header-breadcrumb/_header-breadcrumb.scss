@@ -70,6 +70,7 @@
     line-height: $breadcrumb-line-height;
     margin-left: 20px;
     position: absolute;
+    min-width: 300px;
 
     @keyframes ellipsis {
       to {
