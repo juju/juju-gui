@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const dragSource = {
+const machineViewUnplacedUnitDragSource = {
   /**
     Called when the component starts the drag.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
@@ -57,7 +57,7 @@ function collect(connect, monitor) {
 }
 
 const MachineViewUnplacedUnit = ReactDnD.DragSource(
-  'unit', dragSource, collect)(React.createClass({
+  'unit', machineViewUnplacedUnitDragSource, collect)(React.createClass({
   propTypes: {
     acl: React.PropTypes.object.isRequired,
     connectDragSource: React.PropTypes.func.isRequired,

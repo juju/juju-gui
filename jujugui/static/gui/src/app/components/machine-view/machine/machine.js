@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const dropTarget = {
+const machineViewMachineDropTarget = {
   /**
     Called when something is dropped on the machine.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -61,7 +61,7 @@ function collect(connect, monitor) {
 }
 
 const MachineViewMachine = ReactDnD.DropTarget(
-  'unit', dropTarget, collect)(React.createClass({
+  'unit', machineViewMachineDropTarget, collect)(React.createClass({
   displayName: 'MachineViewMachine',
 
   propTypes: {

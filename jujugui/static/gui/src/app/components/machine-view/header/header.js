@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const dropTarget = {
+const machineViewHeaderDropTarget = {
   /**
     Called when something is dropped on the header.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -63,7 +63,7 @@ function collect(connect, monitor) {
 }
 
 const MachineViewHeader = ReactDnD.DropTarget(
-  'unit', dropTarget, collect)(React.createClass({
+  'unit', machineViewHeaderDropTarget, collect)(React.createClass({
   propTypes: {
     acl: React.PropTypes.object.isRequired,
     activeMenuItem: React.PropTypes.string,
