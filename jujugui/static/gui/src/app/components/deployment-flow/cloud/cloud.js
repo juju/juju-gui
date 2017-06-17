@@ -18,147 +18,147 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-cloud', function() {
+const DeploymentCloud = React.createClass({
+  displayName: 'DeploymentCloud',
 
-  juju.components.DeploymentCloud = React.createClass({
-    displayName: 'DeploymentCloud',
+  propTypes: {
+    acl: React.PropTypes.object.isRequired,
+    cloud: React.PropTypes.object,
+    controllerIsReady: React.PropTypes.func.isRequired,
+    getCloudProviderDetails: React.PropTypes.func.isRequired,
+    listClouds: React.PropTypes.func.isRequired,
+    setCloud: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.object,
-      controllerIsReady: React.PropTypes.func.isRequired,
-      getCloudProviderDetails: React.PropTypes.func.isRequired,
-      listClouds: React.PropTypes.func.isRequired,
-      setCloud: React.PropTypes.func.isRequired
-    },
+  getInitialState: function() {
+    return {
+      clouds: [],
+      cloudsLoading: true
+    };
+  },
 
-    getInitialState: function() {
-      return {
-        clouds: [],
-        cloudsLoading: true
-      };
-    },
-
-    componentWillMount: function() {
-      const listClouds = () => {
-        // It is possible that the controller hasn't yet connected so
-        // bounce until it's connected then fetch the clouds list.
-        if (!this.props.controllerIsReady()) {
-          setTimeout(listClouds, 500);
+  componentWillMount: function() {
+    const listClouds = () => {
+      // It is possible that the controller hasn't yet connected so
+      // bounce until it's connected then fetch the clouds list.
+      if (!this.props.controllerIsReady()) {
+        setTimeout(listClouds, 500);
+        return;
+      }
+      this.props.listClouds((error, clouds) => {
+        if (error) {
+          console.error('unable to list clouds:', error);
           return;
         }
-        this.props.listClouds((error, clouds) => {
-          if (error) {
-            console.error('unable to list clouds:', error);
-            return;
-          }
-          let cloudList = [];
-          if (clouds) {
-            cloudList = Object.keys(clouds).map(name => {
-              const cloud = clouds[name];
-              cloud.name = name;
-              return cloud;
-            });
-          }
-          this.setState({
-            clouds: cloudList,
-            cloudsLoading: false
+        let cloudList = [];
+        if (clouds) {
+          cloudList = Object.keys(clouds).map(name => {
+            const cloud = clouds[name];
+            cloud.name = name;
+            return cloud;
           });
-          // If there is only one cloud then automatically select it.
-          if (cloudList.length === 1) {
-            this.props.setCloud(cloudList[0]);
-          }
+        }
+        this.setState({
+          clouds: cloudList,
+          cloudsLoading: false
         });
-      };
-      listClouds();
-    },
-
-    /**
-      Generate the list of clouds.
-
-      @method _generateClouds
-      @returns {Object} The cloud list.
-    */
-    _generateClouds: function() {
-      if (this.state.cloudsLoading) {
-        return (
-          <div className="deployment-cloud__loading">
-            <juju.components.Spinner />
-          </div>);
-      }
-      if (this.props.cloud) {
-        return;
-      }
-      var clouds = [];
-      this.state.clouds.forEach((cloud, i) => {
-        var classes = classNames(
-          'deployment-cloud__cloud',
-          'four-col',
-          {'last-col': i % 3 === 2});
-        clouds.push(
-          <li className={classes}
-            key={cloud.name}
-            onClick={this.props.setCloud.bind(null, cloud)}
-            role="button"
-            tabIndex="0">
-            <span className="deployment-cloud__cloud-logo">
-              {this._generateLogo(cloud)}
-            </span>
-          </li>);
+        // If there is only one cloud then automatically select it.
+        if (cloudList.length === 1) {
+          this.props.setCloud(cloudList[0]);
+        }
       });
-      return (
-        <ul className="deployment-cloud__list">
-          {clouds}
-        </ul>);
-    },
+    };
+    listClouds();
+  },
 
-    /**
-      Generate the logo for the selected cloud.
+  /**
+    Generate the list of clouds.
 
-      @method _generateCloud
-      @returns {Object} The cloud.
-    */
-    _generateCloud: function() {
-      var cloud = this.props.cloud;
-      if (!cloud) {
-        return;
-      }
+    @method _generateClouds
+    @returns {Object} The cloud list.
+  */
+  _generateClouds: function() {
+    if (this.state.cloudsLoading) {
       return (
-        <div className="deployment-cloud__chosen">
-          {this._generateLogo(cloud)}
+        <div className="deployment-cloud__loading">
+          <juju.components.Spinner />
         </div>);
-    },
-
-    /**
-      Generate the logo for a cloud;
-
-      @method _generateLogo
-      @param {Object} cloud A cloud.
-      @returns {Array} The logo.
-    */
-    _generateLogo: function(cloud) {
-      const info = this.props.getCloudProviderDetails(cloud.cloudType);
-      if (!info) {
-        return cloud.name;
-      }
-      return info.showLogo ? (
-        <juju.components.SvgIcon
-          height={info.svgHeight}
-          name={info.id}
-          width={info.svgWidth} />) : info.title;
-    },
-
-    render: function() {
-      return (
-        <div>
-          {this._generateClouds()}
-          {this._generateCloud()}
-        </div>
-      );
     }
+    if (this.props.cloud) {
+      return;
+    }
+    var clouds = [];
+    this.state.clouds.forEach((cloud, i) => {
+      var classes = classNames(
+        'deployment-cloud__cloud',
+        'four-col',
+        {'last-col': i % 3 === 2});
+      clouds.push(
+        <li className={classes}
+          key={cloud.name}
+          onClick={this.props.setCloud.bind(null, cloud)}
+          role="button"
+          tabIndex="0">
+          <span className="deployment-cloud__cloud-logo">
+            {this._generateLogo(cloud)}
+          </span>
+        </li>);
+    });
+    return (
+      <ul className="deployment-cloud__list">
+        {clouds}
+      </ul>);
+  },
 
-  });
+  /**
+    Generate the logo for the selected cloud.
 
+    @method _generateCloud
+    @returns {Object} The cloud.
+  */
+  _generateCloud: function() {
+    var cloud = this.props.cloud;
+    if (!cloud) {
+      return;
+    }
+    return (
+      <div className="deployment-cloud__chosen">
+        {this._generateLogo(cloud)}
+      </div>);
+  },
+
+  /**
+    Generate the logo for a cloud;
+
+    @method _generateLogo
+    @param {Object} cloud A cloud.
+    @returns {Array} The logo.
+  */
+  _generateLogo: function(cloud) {
+    const info = this.props.getCloudProviderDetails(cloud.cloudType);
+    if (!info) {
+      return cloud.name;
+    }
+    return info.showLogo ? (
+      <juju.components.SvgIcon
+        height={info.svgHeight}
+        name={info.id}
+        width={info.svgWidth} />) : info.title;
+  },
+
+  render: function() {
+    return (
+      <div>
+        {this._generateClouds()}
+        {this._generateCloud()}
+      </div>
+    );
+  }
+
+});
+
+YUI.add('deployment-cloud', function() {
+  juju.components.DeploymentCloud = DeploymentCloud;
 }, '0.1.0', {
   requires: [
     'loading-spinner',
