@@ -18,66 +18,66 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const Zoom = React.createClass({
+  propTypes: {
+    scaleJump: React.PropTypes.number,
+    topo: React.PropTypes.object.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {scaleJump: .2};
+  },
+
+  /**
+    Fires the zoom function with an increased zoom value
+
+    @method _zoomIn
+  */
+  _zoomIn: function() {
+    var topo = this.props.topo;
+    var panZoomModule = topo.modules.PanZoomModule;
+    var currentScale = topo.get('scale');
+    var newScale = currentScale + this.props.scaleJump;
+    panZoomModule._fire_zoom(newScale);
+  },
+
+  /**
+    Fires the zoom function with an decreased zoom value
+
+    @method _zoomOut
+  */
+  _zoomOut: function() {
+    var topo = this.props.topo;
+    var panZoomModule = topo.modules.PanZoomModule;
+    var currentScale = topo.get('scale');
+    var newScale = currentScale - this.props.scaleJump;
+    panZoomModule._fire_zoom(newScale);
+  },
+
+  render: function() {
+    return (
+      <ul className="zoom">
+        <li className="zoom__in link"
+          onClick={this._zoomIn}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon name="add_16"
+            className="zoom-in__icon"
+            size="12" />
+        </li>
+        <li className="zoom__out link"
+          onClick={this._zoomOut}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon name="minus_16"
+            className="zoom-out__icon"
+            size="12" />
+        </li>
+      </ul>
+    );
+  }
+});
+
 YUI.add('zoom', function() {
-
-  juju.components.Zoom = React.createClass({
-    propTypes: {
-      scaleJump: React.PropTypes.number,
-      topo: React.PropTypes.object.isRequired
-    },
-
-    getDefaultProps: function() {
-      return {scaleJump: .2};
-    },
-
-    /**
-      Fires the zoom function with an increased zoom value
-
-      @method _zoomIn
-    */
-    _zoomIn: function() {
-      var topo = this.props.topo;
-      var panZoomModule = topo.modules.PanZoomModule;
-      var currentScale = topo.get('scale');
-      var newScale = currentScale + this.props.scaleJump;
-      panZoomModule._fire_zoom(newScale);
-    },
-
-    /**
-      Fires the zoom function with an decreased zoom value
-
-      @method _zoomOut
-    */
-    _zoomOut: function() {
-      var topo = this.props.topo;
-      var panZoomModule = topo.modules.PanZoomModule;
-      var currentScale = topo.get('scale');
-      var newScale = currentScale - this.props.scaleJump;
-      panZoomModule._fire_zoom(newScale);
-    },
-
-    render: function() {
-      return (
-        <ul className="zoom">
-          <li className="zoom__in link"
-            onClick={this._zoomIn}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="add_16"
-              className="zoom-in__icon"
-              size="12" />
-          </li>
-          <li className="zoom__out link"
-            onClick={this._zoomOut}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="minus_16"
-              className="zoom-out__icon"
-              size="12" />
-          </li>
-        </ul>
-      );
-    }
-  });
-
+  juju.components.Zoom = Zoom;
 }, '0.1.0', { requires: []});
