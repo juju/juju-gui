@@ -18,230 +18,230 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('constraints', function() {
+const Constraints = React.createClass({
+  displayName: 'Constraints',
 
-  juju.components.Constraints = React.createClass({
-    displayName: 'Constraints',
+  propTypes: {
+    constraints: React.PropTypes.object,
+    containerType: React.PropTypes.string,
+    currentSeries: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    hasUnit: React.PropTypes.bool,
+    providerType: React.PropTypes.string,
+    series: React.PropTypes.array,
+    valuesChanged: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      constraints: React.PropTypes.object,
-      containerType: React.PropTypes.string,
-      currentSeries: React.PropTypes.string,
-      disabled: React.PropTypes.bool,
-      hasUnit: React.PropTypes.bool,
-      providerType: React.PropTypes.string,
-      series: React.PropTypes.array,
-      valuesChanged: React.PropTypes.func.isRequired
-    },
+  getDefaultProps: () => {
+    return {disabled: false, hasUnit: false, providerType: '', series: []};
+  },
 
-    getDefaultProps: () => {
-      return {disabled: false, hasUnit: false, providerType: '', series: []};
-    },
+  /**
+    Called when the component is first mounted.
 
-    /**
-      Called when the component is first mounted.
+    @method componentDidMount
+  */
+  componentDidMount: function () {
+    // Pass the parent the initial data.
+    this._handleValueChanged();
+  },
 
-      @method componentDidMount
-    */
-    componentDidMount: function () {
-      // Pass the parent the initial data.
-      this._handleValueChanged();
-    },
+  /**
+    Call the parent method with the new values of the constraints.
 
-    /**
-      Call the parent method with the new values of the constraints.
+    @method _handleValueChanged
+  */
+  _handleValueChanged: function() {
+    const refs = this.refs;
+    const defaultRef = {value: null};
+    const arch = refs.archConstraintSelect || defaultRef;
+    const cpu = refs.cpuConstraintInput || defaultRef;
+    const cores = refs.coresConstraintInput || defaultRef;
+    const mem = refs.memConstraintInput || defaultRef;
+    const disk = refs.diskConstraintInput || defaultRef;
+    const series = refs.seriesConstraintSelect || defaultRef;
+    this.props.valuesChanged({
+      'arch': arch.value,
+      'cpu-power': cpu.value,
+      'cpu-cores': cores.value,
+      mem: mem.value,
+      'root-disk': disk.value,
+      // Even if series are not technically a constraint in Juju, we include
+      // them as part of constraints. When adding the machine the series is
+      // extracted and handled separately in the API call.
+      series: series.value
+    });
+  },
 
-      @method _handleValueChanged
-    */
-    _handleValueChanged: function() {
-      const refs = this.refs;
-      const defaultRef = {value: null};
-      const arch = refs.archConstraintSelect || defaultRef;
-      const cpu = refs.cpuConstraintInput || defaultRef;
-      const cores = refs.coresConstraintInput || defaultRef;
-      const mem = refs.memConstraintInput || defaultRef;
-      const disk = refs.diskConstraintInput || defaultRef;
-      const series = refs.seriesConstraintSelect || defaultRef;
-      this.props.valuesChanged({
-        'arch': arch.value,
-        'cpu-power': cpu.value,
-        'cpu-cores': cores.value,
-        mem: mem.value,
-        'root-disk': disk.value,
-        // Even if series are not technically a constraint in Juju, we include
-        // them as part of constraints. When adding the machine the series is
-        // extracted and handled separately in the API call.
-        series: series.value
+  render: function() {
+    const props = this.props;
+    const disabled = props.disabled;
+    const constraints = props.constraints || {};
+    let series;
+    // Only allow selecting a series if there is no unit already assigned.
+    // If there is a unit, the machine must have the same series as the unit.
+    if (!props.hasUnit && props.series.length) {
+      // Generate a list of series options.
+      const seriesOptions = props.series.map(ser => {
+        return <option key={ser} value={ser}>{ser}</option>;
       });
-    },
-
-    render: function() {
-      const props = this.props;
-      const disabled = props.disabled;
-      const constraints = props.constraints || {};
-      let series;
-      // Only allow selecting a series if there is no unit already assigned.
-      // If there is a unit, the machine must have the same series as the unit.
-      if (!props.hasUnit && props.series.length) {
-        // Generate a list of series options.
-        const seriesOptions = props.series.map(ser => {
-          return <option key={ser} value={ser}>{ser}</option>;
-        });
-        series = (
-          <select
-            className="constraints__select"
-            ref="seriesConstraintSelect"
-            defaultValue={props.currentSeries}
-            disabled={disabled}
-            key="seriesConstraintSelect"
-            id="series-constraint"
-            name="series-constraint"
-            onChange={this._handleValueChanged}>
-            <option key="default" value="">Optionally choose a series</option>
-            {seriesOptions}
-          </select>
-        );
-      }
-      // Compose constraints fragments based on current provider type.
-      // See <https://jujucharms.com/docs/2.0/reference-constraints>.
-      const arch = (
+      series = (
         <select
           className="constraints__select"
-          ref="archConstraintSelect"
+          ref="seriesConstraintSelect"
+          defaultValue={props.currentSeries}
           disabled={disabled}
-          defaultValue={constraints.arch}
-          key="archConstraintSelect"
-          id="arch-constraint"
-          name="arch-constraint"
+          key="seriesConstraintSelect"
+          id="series-constraint"
+          name="series-constraint"
           onChange={this._handleValueChanged}>
-          <option key="default" value="">
-            Optionally choose an architecture
-          </option>
-          <option key="amd64" value="amd64">amd64</option>
-          <option key="i386" value="i386">i386</option>
+          <option key="default" value="">Optionally choose a series</option>
+          {seriesOptions}
         </select>
       );
-      const cpu = (
-        <div key="cpu-constraint-div">
-          <label htmlFor="cpu-constraint" className="constraints__label">
-            CPU (GHZ)
-          </label>
-          <input type="text"
-            className="constraints__input"
-            defaultValue={constraints['cpu-power']}
-            disabled={disabled}
-            id="cpu-constraint"
-            name="cpu-constraint"
-            onChange={this._handleValueChanged}
-            ref="cpuConstraintInput"
-          />
-        </div>
-      );
-      const cores = (
-        <div key="cores-constraint-div">
-          <label htmlFor="cores-constraint" className="constraints__label">
-            Cores
-          </label>
-          <input type="text"
-            className="constraints__input"
-            defaultValue={constraints['cpu-cores']}
-            disabled={disabled}
-            id="cores-constraint"
-            name="cores-constraint"
-            onChange={this._handleValueChanged}
-            ref="coresConstraintInput"
-          />
-        </div>
-      );
-      const mem = (
-        <div key="mem-constraint-div">
-          <label htmlFor="mem-constraint" className="constraints__label">
-            Ram (MB)
-          </label>
-          <input type="text"
-            className="constraints__input"
-            defaultValue={constraints.mem}
-            disabled={disabled}
-            id="mem-constraint"
-            name="mem-constraint"
-            onChange={this._handleValueChanged}
-            ref="memConstraintInput"
-          />
-        </div>
-      );
-      const disk = (
-        <div key="disk-constraint-div">
-          <label htmlFor="disk-constraint" className="constraints__label">
-            Disk (MB)
-          </label>
-          <input type="text"
-            className="constraints__input"
-            defaultValue={constraints['root-disk']}
-            disabled={disabled}
-            id="disk-constraint"
-            name="disk-constraint"
-            onChange={this._handleValueChanged}
-            ref="diskConstraintInput"
-          />
-        </div>
-      );
-      let parts = [arch, cpu, cores, mem, disk];
-      if (props.containerType) {
-        // This is a container machine.
-        switch (props.containerType) {
-          case 'kvm':
-            parts = [cores, mem, disk];
-            break;
-          case 'lxc':
-            parts = [];
-            break;
-          case 'lxd':
-            parts = [];
-            break;
-        }
-      } else {
-        // This is a top level machine, constraints are supported based on the
-        // current provider type.
-        switch (props.providerType) {
-          case 'azure':
-            parts = [cores, mem, disk];
-            break;
-          case 'ec2':
-            parts = [arch, cpu, cores, mem, disk];
-            break;
-          case 'gce':
-            parts = [arch, cpu, cores, mem, disk];
-            break;
-          case 'joyent':
-            parts = [arch, cores, mem, disk];
-            break;
-          case 'local':
-            parts = [];
-            break;
-          case 'lxd':
-            parts = [];
-            break;
-          case 'maas':
-            parts = [cores, mem, disk];
-            break;
-          case 'manual':
-            parts = [cores, mem, disk];
-            break;
-          case 'openstack':
-            parts = [arch, cores, mem, disk];
-            break;
-          case 'vsphere':
-            parts = [arch, cpu, cores, mem, disk];
-            break;
-        }
-      }
-      return (
-        <div className="constraints">
-          {series}
-          {parts}
-        </div>
-      );
     }
-  });
+    // Compose constraints fragments based on current provider type.
+    // See <https://jujucharms.com/docs/2.0/reference-constraints>.
+    const arch = (
+      <select
+        className="constraints__select"
+        ref="archConstraintSelect"
+        disabled={disabled}
+        defaultValue={constraints.arch}
+        key="archConstraintSelect"
+        id="arch-constraint"
+        name="arch-constraint"
+        onChange={this._handleValueChanged}>
+        <option key="default" value="">
+          Optionally choose an architecture
+        </option>
+        <option key="amd64" value="amd64">amd64</option>
+        <option key="i386" value="i386">i386</option>
+      </select>
+    );
+    const cpu = (
+      <div key="cpu-constraint-div">
+        <label htmlFor="cpu-constraint" className="constraints__label">
+          CPU (GHZ)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          defaultValue={constraints['cpu-power']}
+          disabled={disabled}
+          id="cpu-constraint"
+          name="cpu-constraint"
+          onChange={this._handleValueChanged}
+          ref="cpuConstraintInput"
+        />
+      </div>
+    );
+    const cores = (
+      <div key="cores-constraint-div">
+        <label htmlFor="cores-constraint" className="constraints__label">
+          Cores
+        </label>
+        <input type="text"
+          className="constraints__input"
+          defaultValue={constraints['cpu-cores']}
+          disabled={disabled}
+          id="cores-constraint"
+          name="cores-constraint"
+          onChange={this._handleValueChanged}
+          ref="coresConstraintInput"
+        />
+      </div>
+    );
+    const mem = (
+      <div key="mem-constraint-div">
+        <label htmlFor="mem-constraint" className="constraints__label">
+          Ram (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          defaultValue={constraints.mem}
+          disabled={disabled}
+          id="mem-constraint"
+          name="mem-constraint"
+          onChange={this._handleValueChanged}
+          ref="memConstraintInput"
+        />
+      </div>
+    );
+    const disk = (
+      <div key="disk-constraint-div">
+        <label htmlFor="disk-constraint" className="constraints__label">
+          Disk (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          defaultValue={constraints['root-disk']}
+          disabled={disabled}
+          id="disk-constraint"
+          name="disk-constraint"
+          onChange={this._handleValueChanged}
+          ref="diskConstraintInput"
+        />
+      </div>
+    );
+    let parts = [arch, cpu, cores, mem, disk];
+    if (props.containerType) {
+      // This is a container machine.
+      switch (props.containerType) {
+        case 'kvm':
+          parts = [cores, mem, disk];
+          break;
+        case 'lxc':
+          parts = [];
+          break;
+        case 'lxd':
+          parts = [];
+          break;
+      }
+    } else {
+      // This is a top level machine, constraints are supported based on the
+      // current provider type.
+      switch (props.providerType) {
+        case 'azure':
+          parts = [cores, mem, disk];
+          break;
+        case 'ec2':
+          parts = [arch, cpu, cores, mem, disk];
+          break;
+        case 'gce':
+          parts = [arch, cpu, cores, mem, disk];
+          break;
+        case 'joyent':
+          parts = [arch, cores, mem, disk];
+          break;
+        case 'local':
+          parts = [];
+          break;
+        case 'lxd':
+          parts = [];
+          break;
+        case 'maas':
+          parts = [cores, mem, disk];
+          break;
+        case 'manual':
+          parts = [cores, mem, disk];
+          break;
+        case 'openstack':
+          parts = [arch, cores, mem, disk];
+          break;
+        case 'vsphere':
+          parts = [arch, cpu, cores, mem, disk];
+          break;
+      }
+    }
+    return (
+      <div className="constraints">
+        {series}
+        {parts}
+      </div>
+    );
+  }
+});
 
+YUI.add('constraints', function() {
+  juju.components.Constraints = Constraints;
 }, '0.1.0', { requires: [] });
