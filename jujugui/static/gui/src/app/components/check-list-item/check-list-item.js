@@ -18,161 +18,161 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('check-list-item', function() {
+const CheckListItem = React.createClass({
+  displayName: 'CheckListItem',
 
-  juju.components.CheckListItem = React.createClass({
-    displayName: 'CheckListItem',
+  propTypes: {
+    action: React.PropTypes.func,
+    aside: React.PropTypes.string,
+    className: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    extraInfo: React.PropTypes.string,
+    id: React.PropTypes.string,
+    label: React.PropTypes.string.isRequired,
+    whenChanged: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      action: React.PropTypes.func,
-      aside: React.PropTypes.string,
-      className: React.PropTypes.string,
-      disabled: React.PropTypes.bool,
-      extraInfo: React.PropTypes.string,
-      id: React.PropTypes.string,
-      label: React.PropTypes.string.isRequired,
-      whenChanged: React.PropTypes.func.isRequired
-    },
+  /**
+    Returns the classes for the item based on the provided props.
 
-    /**
-      Returns the classes for the item based on the provided props.
+    @method _valueClasses
+    @returns {String} The collection of class names.
+  */
+  _generateClasses: function() {
+    var className = this.props.className;
+    return classNames(
+      'check-list-item',
+      className ? 'check-list-item--' + className : '',
+      {'check-list-item--nav': this.props.action},
+      {'check-list-item--extra-info': this.props.extraInfo}
+    );
+  },
 
-      @method _valueClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      var className = this.props.className;
-      return classNames(
-        'check-list-item',
-        className ? 'check-list-item--' + className : '',
-        {'check-list-item--nav': this.props.action},
-        {'check-list-item--extra-info': this.props.extraInfo}
-      );
-    },
+  /**
+    Returns the id if the item is not a navigation element.
 
-    /**
-      Returns the id if the item is not a navigation element.
+    @method _valueClasses
+    @param {String} id The id of the checkbox.
+    @returns {String} The id of the element or a blank string.
+  */
+  _generateId: function(id) {
+    return this.props.action ? '' : id;
+  },
 
-      @method _valueClasses
-      @param {String} id The id of the checkbox.
-      @returns {String} The id of the element or a blank string.
-    */
-    _generateId: function(id) {
-      return this.props.action ? '' : id;
-    },
+  /**
+    Get the current state of the inspector.
 
-    /**
-      Get the current state of the inspector.
+    @method getInitialState
+    @returns {String} The current state.
+  */
+  getInitialState: function() {
+    // Setting a default state object.
+    return {
+      checked: false
+    };
+  },
 
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      return {
-        checked: false
-      };
-    },
+  /**
+    Handles the checkbox change action by either calling the parent supplied
+    whenChanged method and by setting the local checked state.
 
-    /**
-      Handles the checkbox change action by either calling the parent supplied
-      whenChanged method and by setting the local checked state.
-
-      @method _handleChange
-      @param {Object} The change event from the checkbox.
-    */
-    _handleChange: function(e) {
-      var whenChanged = this.props.whenChanged;
-      var checked = e.currentTarget.checked;
-      this.setState({checked: checked}, () => {
-        // When whenChanged is set by the list parent and is used to (de)select
-        // all checkboxes. It is called in the setState callback so that the
-        // updated state is available if we inspect it from whenChanged.
-        if (whenChanged) {
-          whenChanged(checked);
-        }
-      });
-    },
-
-    /**
-      Toggle the checkbox when the hit area is clicked.
-
-      @param evt {Object} The click event from the hit area.
-    */
-    _hitAreaClick: function(evt) {
-      // If there is no action to be triggered by clicking on the list item then
-      // we don't need to capture and pass the event to the checkbox.
-      if (!this.props.action) {
-        return;
+    @method _handleChange
+    @param {Object} The change event from the checkbox.
+  */
+  _handleChange: function(e) {
+    var whenChanged = this.props.whenChanged;
+    var checked = e.currentTarget.checked;
+    this.setState({checked: checked}, () => {
+      // When whenChanged is set by the list parent and is used to (de)select
+      // all checkboxes. It is called in the setState callback so that the
+      // updated state is available if we inspect it from whenChanged.
+      if (whenChanged) {
+        whenChanged(checked);
       }
-      this._stopBubble(evt);
-      // Simulate the click on the checkbox.
-      this._handleChange({currentTarget: {checked: !this.state.checked}});
-    },
+    });
+  },
 
-    /**
-      Don't bubble the click event to the parent.
+  /**
+    Toggle the checkbox when the hit area is clicked.
 
-      @method _stopBubble
-      @param {Object} The click event from the checkbox.
-    */
-    _stopBubble: function(e) {
-      e.stopPropagation();
-    },
-
-    /**
-      Display the aside if it is available.
-
-      @method _generateAside
-    */
-    _generateAside: function() {
-      var aside = this.props.aside;
-      if (aside) {
-        return (
-          <span className="check-list-item__aside">
-            {aside}
-          </span>);
-      }
-    },
-
-    _generateExtraInfo: function(extraInfo) {
-      if (!extraInfo || extraInfo === '') {
-        return;
-      }
-      return (
-        <span className="check-list-item__extra-info"
-          title={this.props.extraInfo}>
-          {this.props.extraInfo}
-        </span>);
-    },
-
-    render: function() {
-      var id = this.props.label + '-item';
-      return (
-        <li className={this._generateClasses()}
-          data-id={this.props.id}
-          onClick={this.props.action} tabIndex="0" role="button">
-          <label htmlFor={this._generateId(id)}>
-            <div className="check-list-item__hit-area"
-              onClick={this._hitAreaClick}>
-              <input
-                disabled={this.props.disabled}
-                type="checkbox"
-                id={id}
-                onClick={this._stopBubble}
-                onChange={this._handleChange}
-                checked={this.state.checked} />
-            </div>
-            <span className="check-list-item__label">
-              {this.props.label}
-            </span>
-            {this._generateExtraInfo(this.props.extraInfo)}
-            {this._generateAside()}
-          </label>
-        </li>
-      );
+    @param evt {Object} The click event from the hit area.
+  */
+  _hitAreaClick: function(evt) {
+    // If there is no action to be triggered by clicking on the list item then
+    // we don't need to capture and pass the event to the checkbox.
+    if (!this.props.action) {
+      return;
     }
+    this._stopBubble(evt);
+    // Simulate the click on the checkbox.
+    this._handleChange({currentTarget: {checked: !this.state.checked}});
+  },
 
-  });
+  /**
+    Don't bubble the click event to the parent.
 
+    @method _stopBubble
+    @param {Object} The click event from the checkbox.
+  */
+  _stopBubble: function(e) {
+    e.stopPropagation();
+  },
+
+  /**
+    Display the aside if it is available.
+
+    @method _generateAside
+  */
+  _generateAside: function() {
+    var aside = this.props.aside;
+    if (aside) {
+      return (
+        <span className="check-list-item__aside">
+          {aside}
+        </span>);
+    }
+  },
+
+  _generateExtraInfo: function(extraInfo) {
+    if (!extraInfo || extraInfo === '') {
+      return;
+    }
+    return (
+      <span className="check-list-item__extra-info"
+        title={this.props.extraInfo}>
+        {this.props.extraInfo}
+      </span>);
+  },
+
+  render: function() {
+    var id = this.props.label + '-item';
+    return (
+      <li className={this._generateClasses()}
+        data-id={this.props.id}
+        onClick={this.props.action} tabIndex="0" role="button">
+        <label htmlFor={this._generateId(id)}>
+          <div className="check-list-item__hit-area"
+            onClick={this._hitAreaClick}>
+            <input
+              disabled={this.props.disabled}
+              type="checkbox"
+              id={id}
+              onClick={this._stopBubble}
+              onChange={this._handleChange}
+              checked={this.state.checked} />
+          </div>
+          <span className="check-list-item__label">
+            {this.props.label}
+          </span>
+          {this._generateExtraInfo(this.props.extraInfo)}
+          {this._generateAside()}
+        </label>
+      </li>
+    );
+  }
+
+});
+
+YUI.add('check-list-item', function() {
+  juju.components.CheckListItem = CheckListItem;
 }, '0.1.0', { requires: []});
