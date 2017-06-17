@@ -18,35 +18,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-relation-details', function() {
+const InspectorRelationDetails = React.createClass({
+  propTypes: {
+    relation: React.PropTypes.object.isRequired
+  },
 
-  juju.components.InspectorRelationDetails = React.createClass({
-    propTypes: {
-      relation: React.PropTypes.object.isRequired
-    },
-
-    render: function() {
-      var relation = this.props.relation;
-      return (
-        <div className="inspector-relation-details">
-          <div className="inspector-relation-details__properties">
-            <p className="inspector-relation-details__property">
-              Interface: {relation.interface || 'none'}
-            </p>
-            <p className="inspector-relation-details__property">
-              Name: {relation.near.name || 'none'}
-            </p>
-            <p className="inspector-relation-details__property">
-              Role: {relation.near.role || 'none'}
-            </p>
-            <p className="inspector-relation-details__property">
-              Scope: {relation.scope || 'none'}
-            </p>
-          </div>
+  render: function() {
+    var relation = this.props.relation;
+    return (
+      <div className="inspector-relation-details">
+        <div className="inspector-relation-details__properties">
+          <p className="inspector-relation-details__property">
+            Interface: {relation.interface || 'none'}
+          </p>
+          <p className="inspector-relation-details__property">
+            Name: {relation.near.name || 'none'}
+          </p>
+          <p className="inspector-relation-details__property">
+            Role: {relation.near.role || 'none'}
+          </p>
+          <p className="inspector-relation-details__property">
+            Scope: {relation.scope || 'none'}
+          </p>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-  });
+});
 
+YUI.add('inspector-relation-details', function() {
+  juju.components.InspectorRelationDetails = InspectorRelationDetails;
 }, '0.1.0', { requires: []});
