@@ -18,59 +18,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('logout-component', function() {
+const Logout = React.createClass({
 
-  juju.components.Logout = React.createClass({
+  propTypes: {
+    charmstoreLogoutUrl: React.PropTypes.string.isRequired,
+    doCharmstoreLogout: React.PropTypes.func.isRequired,
+    locationAssign: React.PropTypes.func.isRequired,
+    logoutUrl: React.PropTypes.string.isRequired,
+    visible: React.PropTypes.bool.isRequired
+  },
 
-    propTypes: {
-      charmstoreLogoutUrl: React.PropTypes.string.isRequired,
-      doCharmstoreLogout: React.PropTypes.func.isRequired,
-      locationAssign: React.PropTypes.func.isRequired,
-      logoutUrl: React.PropTypes.string.isRequired,
-      visible: React.PropTypes.bool.isRequired
-    },
+  /**
+    Generate the classes based on the props.
 
-    /**
-      Generate the classes based on the props.
-
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        'logout-link',
-        {
-          'logout-link--hidden': !this.props.visible
-        }
-      );
-    },
-
-    handleClick: function() {
-      const props = this.props;
-      if (props.doCharmstoreLogout()) {
-        props.locationAssign(props.logoutUrl);
+    @method _generateClasses
+    @returns {String} The collection of class names.
+  */
+  _generateClasses: function() {
+    return classNames(
+      'logout-link',
+      {
+        'logout-link--hidden': !this.props.visible
       }
-    },
+    );
+  },
 
-    render: function() {
-      const props = this.props;
-      let logoutUrl = props.logoutUrl;
-      let target = '_self';
-      if (props.doCharmstoreLogout()) {
-        logoutUrl = props.charmstoreLogoutUrl;
-        target = '_blank';
-      }
+  handleClick: function() {
+    const props = this.props;
+    if (props.doCharmstoreLogout()) {
+      props.locationAssign(props.logoutUrl);
+    }
+  },
 
-      return (
-        <a className={this._generateClasses()}
-          href={logoutUrl}
-          target={target}
-          onClick={this.handleClick}>
-          Logout
-        </a>
-      );
+  render: function() {
+    const props = this.props;
+    let logoutUrl = props.logoutUrl;
+    let target = '_self';
+    if (props.doCharmstoreLogout()) {
+      logoutUrl = props.charmstoreLogoutUrl;
+      target = '_blank';
     }
 
-  });
+    return (
+      <a className={this._generateClasses()}
+        href={logoutUrl}
+        target={target}
+        onClick={this.handleClick}>
+        Logout
+      </a>
+    );
+  }
 
+});
+
+YUI.add('logout-component', function() {
+  juju.components.Logout = Logout;
 }, '0.1.0', { requires: []});
