@@ -18,148 +18,148 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('login-component', function() {
+const Login = React.createClass({
 
-  juju.components.Login = React.createClass({
+  propTypes: {
+    controllerIsConnected: React.PropTypes.func.isRequired,
+    errorMessage: React.PropTypes.string,
+    gisf: React.PropTypes.bool.isRequired,
+    loginToAPIs: React.PropTypes.func.isRequired,
+    loginToController: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      controllerIsConnected: React.PropTypes.func.isRequired,
-      errorMessage: React.PropTypes.string,
-      gisf: React.PropTypes.bool.isRequired,
-      loginToAPIs: React.PropTypes.func.isRequired,
-      loginToController: React.PropTypes.func.isRequired
-    },
-
-    componentDidMount: function () {
-      if (this.props.gisf) {
-        const bounce = (startTime) => {
-          if (this.props.controllerIsConnected()) {
-            if (this.refs.USSOLoginLink) {
-              this.refs.USSOLoginLink.handleLogin();
-            }
-          } else if ((performance.now() - startTime) < 5000) {
-            console.log(
-              'controller not yet connected, attempting retry.');
-            setTimeout(bounce, 150, performance.now());
-          } else {
-            console.error('controller never connected');
+  componentDidMount: function () {
+    if (this.props.gisf) {
+      const bounce = (startTime) => {
+        if (this.props.controllerIsConnected()) {
+          if (this.refs.USSOLoginLink) {
+            this.refs.USSOLoginLink.handleLogin();
           }
-        };
-        bounce(performance.now());
-      } else {
-        this.refs.username.focus();
-      }
-    },
+        } else if ((performance.now() - startTime) < 5000) {
+          console.log(
+            'controller not yet connected, attempting retry.');
+          setTimeout(bounce, 150, performance.now());
+        } else {
+          console.error('controller never connected');
+        }
+      };
+      bounce(performance.now());
+    } else {
+      this.refs.username.focus();
+    }
+  },
 
-    /**
-      Handle the form submit in the case traditional user/password credentials
-      are provided by the user. Call the set credentials and login methods with
-      the appropriate values.
+  /**
+    Handle the form submit in the case traditional user/password credentials
+    are provided by the user. Call the set credentials and login methods with
+    the appropriate values.
 
-      @method _handleLoginSubmit
-      @param {Object} evt The submit event.
-    */
-    _handleLoginSubmit: function(evt) {
-      if (evt && evt.preventDefault) {
-        evt.preventDefault();
-      }
-      this.props.loginToAPIs({
-        user: this.refs.username.value,
-        password: this.refs.password.value
-      }, false);
-    },
+    @method _handleLoginSubmit
+    @param {Object} evt The submit event.
+  */
+  _handleLoginSubmit: function(evt) {
+    if (evt && evt.preventDefault) {
+      evt.preventDefault();
+    }
+    this.props.loginToAPIs({
+      user: this.refs.username.value,
+      password: this.refs.password.value
+    }, false);
+  },
 
-    /**
-      Display a message if the login failed.
+  /**
+    Display a message if the login failed.
 
-      @method _generateErrorMessage
-    */
-    _generateErrorMessage: function() {
-      var msg = this.props.errorMessage;
-      if (msg) {
-        return <div className="login__failure-message">{msg}</div>;
-      }
-    },
+    @method _generateErrorMessage
+  */
+  _generateErrorMessage: function() {
+    var msg = this.props.errorMessage;
+    if (msg) {
+      return <div className="login__failure-message">{msg}</div>;
+    }
+  },
 
-    /**
-      Generates the login help message based on if we're in legacy Juju or not.
+  /**
+    Generates the login help message based on if we're in legacy Juju or not.
 
-      @method _generateHelpMessage
-      @return {Object} The message.
-    */
-    _generateHelpMessage: function() {
-      return (
-        <p>
-          Find your username and password with<br />
-          <code>juju show-controller --show-password</code>
-        </p>);
-    },
+    @method _generateHelpMessage
+    @return {Object} The message.
+  */
+  _generateHelpMessage: function() {
+    return (
+      <p>
+        Find your username and password with<br />
+        <code>juju show-controller --show-password</code>
+      </p>);
+  },
 
-    _generateUSSOLink: function () {
-      return (
-        <juju.components.USSOLoginLink
-          displayType="button"
-          loginToController={this.props.loginToController}
-          ref="USSOLoginLink" />);
-    },
+  _generateUSSOLink: function () {
+    return (
+      <juju.components.USSOLoginLink
+        displayType="button"
+        loginToController={this.props.loginToController}
+        ref="USSOLoginLink" />);
+  },
 
-    _generateClassnames: function() {
-      return classNames('login', {'hidden': this.props.gisf});
-    },
+  _generateClassnames: function() {
+    return classNames('login', {'hidden': this.props.gisf});
+  },
 
-    render: function() {
-      return (
-        <div className={this._generateClassnames()}>
-          <div className="login__logo">
-            <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+  render: function() {
+    return (
+      <div className={this._generateClassnames()}>
+        <div className="login__logo">
+          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
           </div>
-          <div className="login__full-form">
-            <div className="login__env-name">
-              Login
-            </div>
-            {this._generateErrorMessage()}
-            <form
-              className="login__form"
-              ref="form"
-              onSubmit={this._handleLoginSubmit}>
-              <label
-                className="login__label">
-                Username
-                <input
-                  className="login__input"
-                  type="text"
-                  name="username"
-                  ref="username" />
-              </label>
-              <label
-                className="login__label">
-                Password
-                <input
-                  className="login__input"
-                  type="password"
-                  name="password"
-                  ref="password" />
-              </label>
-              <juju.components.GenericButton
-                submit={true}
-                title={'Login'}
-                type={'positive'} />
-              {this._generateUSSOLink()}
-            </form>
-          </div>
-          <div className="login__message">
-            {this._generateHelpMessage()}
-            <div className="login__message-link">
-              <a href="https://jujucharms.com" target="_blank">
-                jujucharms.com
-              </a>
-            </div>
+          {this._generateErrorMessage()}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={this._handleLoginSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.GenericButton
+              submit={true}
+              title={'Login'}
+              type={'positive'} />
+            {this._generateUSSOLink()}
+          </form>
+        </div>
+        <div className="login__message">
+          {this._generateHelpMessage()}
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
           </div>
         </div>
-      );
-    }
-  });
+      </div>
+    );
+  }
+});
 
+YUI.add('login-component', function() {
+  juju.components.Login = Login;
 }, '0.1.0', {
   requires: [
     'generic-button',
