@@ -18,629 +18,629 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('entity-content', function() {
+const EntityContent = React.createClass({
+  displayName: 'EntityContent',
 
-  juju.components.EntityContent = React.createClass({
-    displayName: 'EntityContent',
+  propTypes: {
+    addNotification: React.PropTypes.func.isRequired,
+    apiUrl: React.PropTypes.string.isRequired,
+    changeState: React.PropTypes.func.isRequired,
+    entityModel: React.PropTypes.object.isRequired,
+    getFile: React.PropTypes.func.isRequired,
+    hasPlans: React.PropTypes.bool.isRequired,
+    hash: React.PropTypes.string,
+    plans: React.PropTypes.array,
+    pluralize: React.PropTypes.func.isRequired,
+    renderMarkdown: React.PropTypes.func.isRequired,
+    scrollCharmbrowser: React.PropTypes.func.isRequired,
+    showTerms: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      addNotification: React.PropTypes.func.isRequired,
-      apiUrl: React.PropTypes.string.isRequired,
-      changeState: React.PropTypes.func.isRequired,
-      entityModel: React.PropTypes.object.isRequired,
-      getFile: React.PropTypes.func.isRequired,
-      hasPlans: React.PropTypes.bool.isRequired,
-      hash: React.PropTypes.string,
-      plans: React.PropTypes.array,
-      pluralize: React.PropTypes.func.isRequired,
-      renderMarkdown: React.PropTypes.func.isRequired,
-      scrollCharmbrowser: React.PropTypes.func.isRequired,
-      showTerms: React.PropTypes.func.isRequired
-    },
+  getInitialState: function() {
+    this.xhrs = [];
+    return {
+      terms: [],
+      termsLoading: false
+    };
+  },
 
-    getInitialState: function() {
-      this.xhrs = [];
-      return {
-        terms: [],
-        termsLoading: false
-      };
-    },
+  componentWillMount: function() {
+    this._getTerms();
+  },
 
-    componentWillMount: function() {
-      this._getTerms();
-    },
+  componentWillUnmount: function() {
+    this.xhrs.forEach(xhr => {
+      xhr && xhr.abort && xhr.abort();
+    });
+  },
 
-    componentWillUnmount: function() {
-      this.xhrs.forEach(xhr => {
-        xhr && xhr.abort && xhr.abort();
-      });
-    },
+  /**
+    Get the list of terms for the charm, updating the state with these
+    terms.
 
-    /**
-      Get the list of terms for the charm, updating the state with these
-      terms.
-
-      @method _getTerms
-    */
-    _getTerms: function() {
-      const entityTerms = this.props.entityModel.get('terms');
-      if (!entityTerms || !entityTerms.length) {
-        this.setState({termsLoading: false});
-        return null;
-      }
-      this.setState({termsLoading: true}, () => {
-        entityTerms.forEach(term => {
-          const xhr = this.props.showTerms(term, null, (error, response) => {
-            if (error) {
-              const message = `Failed to load terms for ${term}`;
-              this.props.addNotification({
-                title: message,
-                message: `${message}: ${error}`,
-                level: 'error'
-              });
-              console.error(`${message}: ${error}`);
-              this.setState({termsLoading: false});
-              return;
-            }
-            const terms = this.state.terms;
-            terms.push(response);
-            this.setState({terms: terms}, () => {
-              // If all the terms have loaded then we can finally hide the
-              // loading spinner.
-              if (terms.length === entityTerms.length) {
-                this.setState({termsLoading: false});
-              }
+    @method _getTerms
+  */
+  _getTerms: function() {
+    const entityTerms = this.props.entityModel.get('terms');
+    if (!entityTerms || !entityTerms.length) {
+      this.setState({termsLoading: false});
+      return null;
+    }
+    this.setState({termsLoading: true}, () => {
+      entityTerms.forEach(term => {
+        const xhr = this.props.showTerms(term, null, (error, response) => {
+          if (error) {
+            const message = `Failed to load terms for ${term}`;
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
             });
+            console.error(`${message}: ${error}`);
+            this.setState({termsLoading: false});
+            return;
+          }
+          const terms = this.state.terms;
+          terms.push(response);
+          this.setState({terms: terms}, () => {
+            // If all the terms have loaded then we can finally hide the
+            // loading spinner.
+            if (terms.length === entityTerms.length) {
+              this.setState({termsLoading: false});
+            }
           });
-          this.xhrs.push(xhr);
         });
+        this.xhrs.push(xhr);
       });
-    },
+    });
+  },
 
-    /**
-      Generate the list of configuration options for a charm.
+  /**
+    Generate the list of configuration options for a charm.
 
-      @method _generateCharmConfig
-      @param {Object} entityModel The entity model.
-      @return {Object} The options markup.
-    */
-    _generateCharmConfig: function(entityModel) {
-      var options = entityModel.get('options');
-      if (!options) {
-        return;
-      }
-      var optionsList = [];
-      Object.keys(options).forEach(function(name) {
-        var option = options[name];
-        option.name = name;
-        optionsList.push(
-          <juju.components.EntityContentConfigOption
-            key={name}
-            option={option} />
-        );
-      }, this);
-      return (
-        <dl>
-          {optionsList}
-        </dl>);
-    },
+    @method _generateCharmConfig
+    @param {Object} entityModel The entity model.
+    @return {Object} The options markup.
+  */
+  _generateCharmConfig: function(entityModel) {
+    var options = entityModel.get('options');
+    if (!options) {
+      return;
+    }
+    var optionsList = [];
+    Object.keys(options).forEach(function(name) {
+      var option = options[name];
+      option.name = name;
+      optionsList.push(
+        <juju.components.EntityContentConfigOption
+          key={name}
+          option={option} />
+      );
+    }, this);
+    return (
+      <dl>
+        {optionsList}
+      </dl>);
+  },
 
-    /**
-      Generate the list of configuration options for a bundle.
+  /**
+    Generate the list of configuration options for a bundle.
 
-      @method _generateBundleConfig
-      @param {Object} entityModel The entity model.
-      @return {Object} The options markup.
-    */
-    _generateBundleConfig: function(entityModel) {
-      let applications;
-      applications = entityModel.get('applications');
-      if (!applications) {
-        return;
-      }
-      // Generate the options for each application in this bundle.
-      var applicationsList = Object.keys(applications).map(application => {
-        var options = applications[application].options || {};
-        // Generate the list of options for this application.
-        var optionsList = Object.keys(options).map((name, i) => {
-          return (
-            <div className="entity-content__config-option"
-              key={name + i}>
-              <dt className="entity-content__config-name">
-                {name}
-              </dt>
-              <dd className="entity-content__config-description">
-                <p>
-                  {options[name]}
-                </p>
-              </dd>
-            </div>);
-        });
-        var classes = {
-          'entity-content__bundle-config': true
-        };
-        if (optionsList.length === 0) {
-          optionsList.push(
-            <div key="none">
-              Config options not modified in this bundle.
-            </div>);
-        }
+    @method _generateBundleConfig
+    @param {Object} entityModel The entity model.
+    @return {Object} The options markup.
+  */
+  _generateBundleConfig: function(entityModel) {
+    let applications;
+    applications = entityModel.get('applications');
+    if (!applications) {
+      return;
+    }
+    // Generate the options for each application in this bundle.
+    var applicationsList = Object.keys(applications).map(application => {
+      var options = applications[application].options || {};
+      // Generate the list of options for this application.
+      var optionsList = Object.keys(options).map((name, i) => {
         return (
-          <juju.components.ExpandingRow
-            classes={classes}
-            key={application}>
-            <div className="entity-content__bundle-config-title">
-              {application}
-              <div className="entity-content__bundle-config-chevron">
-                <div className="entity-content__bundle-config-expand">
-                  <juju.components.SvgIcon
-                    name="chevron_down_16"
-                    size="16" />
-                </div>
-                <div className="entity-content__bundle-config-contract">
-                  <juju.components.SvgIcon
-                    name="chevron_up_16"
-                    size="16" />
-                </div>
-              </div>
-            </div>
-            <dl className="entity-content__bundle-config-options">
-              {optionsList}
-            </dl>
-          </juju.components.ExpandingRow>);
-      });
-      return (
-        <ul>
-          {applicationsList}
-        </ul>);
-    },
-
-    /**
-      Generate the list of configuration options.
-
-      @method _generateOptionsList
-      @param {Object} entityModel The entity model.
-      @return {Object} The options markup.
-    */
-    _generateOptionsList: function(entityModel) {
-      var optionsList;
-      if (entityModel.get('entityType') === 'charm') {
-        optionsList = this._generateCharmConfig(entityModel);
-      } else {
-        optionsList = this._generateBundleConfig(entityModel);
-      }
-      if (optionsList) {
-        return (
-          <div id="configuration"
-            className="row row--grey entity-content__configuration">
-            <div className="inner-wrapper">
-              <div className="twelve-col">
-                <h2 className="entity-content__header">Configuration</h2>
-                {optionsList}
-              </div>
-            </div>
-          </div>
-        );
-      }
-    },
-
-    /**
-      Generates an HTML list from the supplied array.
-
-      @method _generateList
-      @param {Array} list The list of objects to markup.
-      @param {Function} handler The click handler for each item.
-      @return {Array} The list markup.
-    */
-    _generateList: function(list, handler) {
-      return list.map(function(item, i) {
-        return (
-          <li key={item + i}>
-            <a data-id={item} className="link" onClick={handler}>
-              {item}
-            </a>
-          </li>
-        );
-      });
-    },
-
-    /**
-      Generate the list of Tags if available.
-
-      @method _generateTags
-      @return {Array} The tags markup.
-    */
-    _generateTags: function() {
-      // Have to convert {0: 'database'} to ['database'].
-      var tags = [],
-          entityTags = this.props.entityModel.get('tags'),
-          index;
-      if (!entityTags) {
-        return;
-      }
-      for (index in entityTags) {
-        tags.push(entityTags[index]);
-      }
-      return (
-        <div className="four-col entity-content__metadata">
-          <h4>Tags</h4>
-          <ul>
-            {this._generateList(tags, this._handleTagClick)}
-          </ul>
-        </div>);
-    },
-
-    /**
-      Handle clicks on tags.
-
-      @method _handleTagClick
-      @param {Object} e The event.
-    */
-    _handleTagClick: function(e) {
-      e.stopPropagation();
-      this.props.changeState({
-        hash: null,
-        search: {
-          tags: e.target.getAttribute('data-id'),
-          text: ''
-        },
-        store: null
-      });
-    },
-
-    /**
-      Generate the list of terms if available.
-
-      @method _generateTerms
-      @return {Array} The terms markup.
-    */
-    _generateTerms: function() {
-      const terms = this.state.terms;
-      let content;
-      if (this.state.termsLoading) {
-        content = <juju.components.Spinner />;
-      } else if (terms.length === 0) {
-        return null;
-      } else {
-        const items = terms.map(item => {
-          return (
-            <li className="link"
-              key={item.name}
-              onClick={this._toggleTerms.bind(this, item)}>
-              {item.name}
-            </li>
-          );
-        });
-        content = (
-          <ul>
-            {items}
-          </ul>);
-      }
-      return (
-        <div className="four-col entity-content__metadata">
-          <h4>Terms</h4>
-          {content}
-        </div>);
-    },
-
-    /**
-      Generate the list of terms if available.
-
-      @method _toggleTerms
-      @param {Object} terms The terms to display.
-    */
-    _toggleTerms: function(terms=null) {
-      this.setState({showTerms: terms});
-    },
-
-    /**
-      Generate the terms popup.
-
-      @method _generateTermsPopup
-      @returns {Object} The terms popup markup.
-    */
-    _generateTermsPopup: function() {
-      const terms = this.state.showTerms;
-      if (!terms) {
-        return null;
-      }
-      return (
-        <juju.components.TermsPopup
-          close={this._toggleTerms}
-          terms={[terms]} />);
-    },
-
-    /**
-      Generate the description.
-
-      @method _generateDescription
-      @param {Object} entityModel The entity model.
-      @return {Object} The description markup.
-    */
-    _generateDescription: function(entityModel) {
-      return (<juju.components.EntityContentDescription
-        entityModel={entityModel}
-        includeHeading={true}
-        renderMarkdown={this.props.renderMarkdown} />);
-    },
-
-    /**
-      Generate tags and terms.
-
-      @method _generateTagsAndTerms
-      @param {Object} entityModel The entity model.
-      @return {Object} The tags and terms markup.
-    */
-    _generateTagsAndTerms: function(entityModel) {
-      if (this.props.entityModel.get('entityType') === 'charm') {
-        return(
-          <div className="row row--grey entity-content__terms">
-            <div className="inner-wrapper">
-              {this._generateTags()}
-              {this._generateTerms()}
-            </div>
-          </div>
-        );
-      }
-      return false;
-    },
-
-    /**
-      Display the resources if this is a charm.
-
-      @method _generateResources
-    */
-    _generateResources: function() {
-      var entityModel = this.props.entityModel;
-      if (entityModel.get('entityType') === 'charm') {
-        return (
-          <juju.components.EntityResources
-            apiUrl={this.props.apiUrl}
-            entityId={entityModel.get('id')}
-            pluralize={this.props.pluralize}
-            resources={entityModel.get('resources')} />);
-      }
-    },
-
-    /**
-      We only show the relations when it's a charm, but not a bundle.
-
-      @method _showEntityRelations
-    */
-    _showEntityRelations: function() {
-      var entityModel = this.props.entityModel;
-      if (entityModel.get('entityType') === 'charm') {
-        // Need to flatten out the relations to determine if we have any.
-        var relations = entityModel.get('relations');
-        // Normal behavior when there are no relations is to provide an empty
-        // object. That said, in the interest of defensively protecting against
-        // unexpected data, make sure these variables are at least empty
-        // objects.
-        var requires = relations.requires || {};
-        var provides = relations.provides || {};
-        var relationsList = Object.keys(requires).concat(Object.keys(provides));
-        if (relationsList.length > 0) {
-          return (
-            <juju.components.EntityContentRelations
-              changeState={this.props.changeState}
-              relations={relations} />);
-        }
-      }
-    },
-
-    /**
-      Generate the actions links.
-
-      @method _generateActions
-    */
-    _generateActions: function() {
-      const entity = this.props.entityModel.getAttrs();
-      let bugLink = entity.bugUrl;
-      let homepageLink = entity.homepage;
-      if (entity.entityType === 'bundle' && !homepageLink) {
-        homepageLink = 'https://code.launchpad.net/' +
-          `~charmers/charms/bundles/${entity.name}/bundle`;
-      } else if (entity.entityType === 'charm' && !bugLink) {
-        bugLink = 'https://bugs.launchpad.net/charms/' +
-          `+source/${entity.name}`;
-      }
-      return (
-        <div className="section">
-          <h3 className="section__title">
-            Contribute
-          </h3>
-          <ul className="section__links">
-            {bugLink ? (
-              <li>
-                <a href={bugLink}
-                  className="link"
-                  target="_blank">
-                  Submit a bug
-                </a>
-              </li>) : undefined}
-            {homepageLink ? (
-              <li>
-                <a href={homepageLink}
-                  className="link"
-                  target="_blank">
-                  Project homepage
-                </a>
-              </li>) : undefined}
-          </ul>
-        </div>);
-    },
-
-    /**
-      Transform and generate the price list from a provided string of prices.
-
-      @method _generatePriceList
-      @param {String} prices The string of prices in the format
-        'price/quantity;price/quantity'.
-      @returns {Object} The price list JSX components.
-    */
-    _generatePriceList: function(prices) {
-      var prices = prices.split(';');
-      var priceList = [];
-      prices.forEach((price, i) => {
-        if (price === '') {
-          return;
-        }
-        var [amount, quantity] = price.split('/');
-        var quantityItem;
-        if (quantity) {
-          quantityItem = (
-            <span className="entity-content__plan-price-quantity">
-            / {quantity}
-            </span>);
-        }
-        priceList.push(
-          <li className="entity-content__plan-price-item"
-            key={amount + (quantity || '') + i}>
-            <span className="entity-content__plan-price-amount">
-              {amount}
-            </span>
-            {quantityItem}
-          </li>);
-      });
-      return priceList;
-    },
-
-    /**
-      Generate the list of plans.
-
-      @method _generatePlans
-    */
-    _generatePlans: function() {
-      var props = this.props;
-      if (props.entityModel.get('entityType') !== 'charm' ||
-        !this.props.hasPlans) {
-        return;
-      }
-      var plans = props.plans;
-      // Return a spinner if null (we don't have a response yet) or nothing if
-      // plans are a 0-length array (no plans found, likely due to an error).
-      if (!plans) {
-        return <juju.components.Spinner />;
-      }
-      if (!plans.length) {
-        return;
-      }
-      var plansList = [];
-      plans.forEach((plan, i) => {
-        var classes = classNames(
-          'entity-content__plan',
-          'four-col',
-          {'last-col': (i + 1) % 3 === 0});
-
-        plansList.push(
-          <div className={classes}
-            key={plan.url + i}>
-            <div className="entity-content__plan-content">
-              <h3 className="entity-content__plan-title">
-                {plan.url}
-              </h3>
-              <ul className="entity-content__plan-price">
-                {this._generatePriceList(plan.price)}
-              </ul>
-              <p className="entity-content__plan-description">
-                {plan.description}
+          <div className="entity-content__config-option"
+            key={name + i}>
+            <dt className="entity-content__config-name">
+              {name}
+            </dt>
+            <dd className="entity-content__config-description">
+              <p>
+                {options[name]}
               </p>
-            </div>
+            </dd>
           </div>);
       });
+      var classes = {
+        'entity-content__bundle-config': true
+      };
+      if (optionsList.length === 0) {
+        optionsList.push(
+          <div key="none">
+            Config options not modified in this bundle.
+          </div>);
+      }
       return (
-        <div id="plans"
-          className="row entity-content__plans">
+        <juju.components.ExpandingRow
+          classes={classes}
+          key={application}>
+          <div className="entity-content__bundle-config-title">
+            {application}
+            <div className="entity-content__bundle-config-chevron">
+              <div className="entity-content__bundle-config-expand">
+                <juju.components.SvgIcon
+                  name="chevron_down_16"
+                  size="16" />
+              </div>
+              <div className="entity-content__bundle-config-contract">
+                <juju.components.SvgIcon
+                  name="chevron_up_16"
+                  size="16" />
+              </div>
+            </div>
+          </div>
+          <dl className="entity-content__bundle-config-options">
+            {optionsList}
+          </dl>
+        </juju.components.ExpandingRow>);
+    });
+    return (
+      <ul>
+        {applicationsList}
+      </ul>);
+  },
+
+  /**
+    Generate the list of configuration options.
+
+    @method _generateOptionsList
+    @param {Object} entityModel The entity model.
+    @return {Object} The options markup.
+  */
+  _generateOptionsList: function(entityModel) {
+    var optionsList;
+    if (entityModel.get('entityType') === 'charm') {
+      optionsList = this._generateCharmConfig(entityModel);
+    } else {
+      optionsList = this._generateBundleConfig(entityModel);
+    }
+    if (optionsList) {
+      return (
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <h2 className="entity-content__header">Plans</h2>
-              <div className="equal-height">
-                {plansList}
-              </div>
+              <h2 className="entity-content__header">Configuration</h2>
+              {optionsList}
             </div>
           </div>
-        </div>);
-    },
-
-    /**
-      Generate the Juju card example.
-
-      @return {Object} React "div" that contains the card holder.
-    */
-    _generateCard: function() {
-      const entityModel = this.props.entityModel;
-      const entity = entityModel.toEntity();
-      const storeId = entity.type === 'charm' ?
-        entity.storeId : entity.id.split('cs:').join('');
-      const script = '<script ' +
-      'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
-      '<div class="juju-card" data-id="' + storeId +'"></div>';
-
-      return (
-        <div className="entity-content__card section clearfix">
-          <h3 className="section__title">
-            Embed this charm
-          </h3>
-          <p>
-            Add this card to your website by copying the code below.&nbsp;
-            <a href="https://jujucharms.com/community/cards" target="_blank"
-              className="link">
-              Learn more
-            </a>.
-          </p>
-          <textarea
-            rows="2" cols="70" readOnly="readonly" wrap="off"
-            className="twelve-col" defaultValue={script}></textarea>
-          <h4>Preview</h4>
-          <div className="juju-card" data-id={storeId}></div>
-        </div>);
-    },
-
-    componentDidMount: function() {
-      if (window.jujuCards) {
-        window.jujuCards();
-      }
-    },
-
-    render: function() {
-      const entityModel = this.props.entityModel;
-      return (
-        <div className="entity-content">
-          {this._generateTagsAndTerms(entityModel)}
-          {this._generatePlans()}
-          <div className="row">
-            <div className="inner-wrapper">
-              <div className="seven-col append-one">
-                {this._generateDescription(entityModel)}
-                <juju.components.EntityContentReadme
-                  changeState={this.props.changeState}
-                  entityModel={entityModel}
-                  getFile={this.props.getFile}
-                  hash={this.props.hash}
-                  renderMarkdown={this.props.renderMarkdown}
-                  scrollCharmbrowser={this.props.scrollCharmbrowser} />
-              </div>
-              <div className="four-col">
-                {this._generateActions()}
-                {this._generateResources()}
-                {this._showEntityRelations()}
-                <juju.components.EntityFiles
-                  apiUrl={this.props.apiUrl}
-                  entityModel={entityModel}
-                  pluralize={this.props.pluralize} />
-                <juju.components.EntityContentRevisions
-                  revisions={entityModel.get('revisions')} />
-                {this._generateCard()}
-              </div>
-            </div>
-          </div>
-          {this._generateOptionsList(entityModel)}
-          {this._generateTermsPopup()}
         </div>
       );
     }
-  });
+  },
 
+  /**
+    Generates an HTML list from the supplied array.
+
+    @method _generateList
+    @param {Array} list The list of objects to markup.
+    @param {Function} handler The click handler for each item.
+    @return {Array} The list markup.
+  */
+  _generateList: function(list, handler) {
+    return list.map(function(item, i) {
+      return (
+        <li key={item + i}>
+          <a data-id={item} className="link" onClick={handler}>
+            {item}
+          </a>
+        </li>
+      );
+    });
+  },
+
+  /**
+    Generate the list of Tags if available.
+
+    @method _generateTags
+    @return {Array} The tags markup.
+  */
+  _generateTags: function() {
+    // Have to convert {0: 'database'} to ['database'].
+    var tags = [],
+        entityTags = this.props.entityModel.get('tags'),
+        index;
+    if (!entityTags) {
+      return;
+    }
+    for (index in entityTags) {
+      tags.push(entityTags[index]);
+    }
+    return (
+      <div className="four-col entity-content__metadata">
+        <h4>Tags</h4>
+        <ul>
+          {this._generateList(tags, this._handleTagClick)}
+        </ul>
+      </div>);
+  },
+
+  /**
+    Handle clicks on tags.
+
+    @method _handleTagClick
+    @param {Object} e The event.
+  */
+  _handleTagClick: function(e) {
+    e.stopPropagation();
+    this.props.changeState({
+      hash: null,
+      search: {
+        tags: e.target.getAttribute('data-id'),
+        text: ''
+      },
+      store: null
+    });
+  },
+
+  /**
+    Generate the list of terms if available.
+
+    @method _generateTerms
+    @return {Array} The terms markup.
+  */
+  _generateTerms: function() {
+    const terms = this.state.terms;
+    let content;
+    if (this.state.termsLoading) {
+      content = <juju.components.Spinner />;
+    } else if (terms.length === 0) {
+      return null;
+    } else {
+      const items = terms.map(item => {
+        return (
+          <li className="link"
+            key={item.name}
+            onClick={this._toggleTerms.bind(this, item)}>
+            {item.name}
+          </li>
+        );
+      });
+      content = (
+        <ul>
+          {items}
+        </ul>);
+    }
+    return (
+      <div className="four-col entity-content__metadata">
+        <h4>Terms</h4>
+        {content}
+      </div>);
+  },
+
+  /**
+    Generate the list of terms if available.
+
+    @method _toggleTerms
+    @param {Object} terms The terms to display.
+  */
+  _toggleTerms: function(terms=null) {
+    this.setState({showTerms: terms});
+  },
+
+  /**
+    Generate the terms popup.
+
+    @method _generateTermsPopup
+    @returns {Object} The terms popup markup.
+  */
+  _generateTermsPopup: function() {
+    const terms = this.state.showTerms;
+    if (!terms) {
+      return null;
+    }
+    return (
+      <juju.components.TermsPopup
+        close={this._toggleTerms}
+        terms={[terms]} />);
+  },
+
+  /**
+    Generate the description.
+
+    @method _generateDescription
+    @param {Object} entityModel The entity model.
+    @return {Object} The description markup.
+  */
+  _generateDescription: function(entityModel) {
+    return (<juju.components.EntityContentDescription
+      entityModel={entityModel}
+      includeHeading={true}
+      renderMarkdown={this.props.renderMarkdown} />);
+  },
+
+  /**
+    Generate tags and terms.
+
+    @method _generateTagsAndTerms
+    @param {Object} entityModel The entity model.
+    @return {Object} The tags and terms markup.
+  */
+  _generateTagsAndTerms: function(entityModel) {
+    if (this.props.entityModel.get('entityType') === 'charm') {
+      return(
+        <div className="row row--grey entity-content__terms">
+          <div className="inner-wrapper">
+            {this._generateTags()}
+            {this._generateTerms()}
+          </div>
+        </div>
+      );
+    }
+    return false;
+  },
+
+  /**
+    Display the resources if this is a charm.
+
+    @method _generateResources
+  */
+  _generateResources: function() {
+    var entityModel = this.props.entityModel;
+    if (entityModel.get('entityType') === 'charm') {
+      return (
+        <juju.components.EntityResources
+          apiUrl={this.props.apiUrl}
+          entityId={entityModel.get('id')}
+          pluralize={this.props.pluralize}
+          resources={entityModel.get('resources')} />);
+    }
+  },
+
+  /**
+    We only show the relations when it's a charm, but not a bundle.
+
+    @method _showEntityRelations
+  */
+  _showEntityRelations: function() {
+    var entityModel = this.props.entityModel;
+    if (entityModel.get('entityType') === 'charm') {
+      // Need to flatten out the relations to determine if we have any.
+      var relations = entityModel.get('relations');
+      // Normal behavior when there are no relations is to provide an empty
+      // object. That said, in the interest of defensively protecting against
+      // unexpected data, make sure these variables are at least empty
+      // objects.
+      var requires = relations.requires || {};
+      var provides = relations.provides || {};
+      var relationsList = Object.keys(requires).concat(Object.keys(provides));
+      if (relationsList.length > 0) {
+        return (
+          <juju.components.EntityContentRelations
+            changeState={this.props.changeState}
+            relations={relations} />);
+      }
+    }
+  },
+
+  /**
+    Generate the actions links.
+
+    @method _generateActions
+  */
+  _generateActions: function() {
+    const entity = this.props.entityModel.getAttrs();
+    let bugLink = entity.bugUrl;
+    let homepageLink = entity.homepage;
+    if (entity.entityType === 'bundle' && !homepageLink) {
+      homepageLink = 'https://code.launchpad.net/' +
+        `~charmers/charms/bundles/${entity.name}/bundle`;
+    } else if (entity.entityType === 'charm' && !bugLink) {
+      bugLink = 'https://bugs.launchpad.net/charms/' +
+        `+source/${entity.name}`;
+    }
+    return (
+      <div className="section">
+        <h3 className="section__title">
+          Contribute
+        </h3>
+        <ul className="section__links">
+          {bugLink ? (
+            <li>
+              <a href={bugLink}
+                className="link"
+                target="_blank">
+                Submit a bug
+              </a>
+            </li>) : undefined}
+          {homepageLink ? (
+            <li>
+              <a href={homepageLink}
+                className="link"
+                target="_blank">
+                Project homepage
+              </a>
+            </li>) : undefined}
+        </ul>
+      </div>);
+  },
+
+  /**
+    Transform and generate the price list from a provided string of prices.
+
+    @method _generatePriceList
+    @param {String} prices The string of prices in the format
+      'price/quantity;price/quantity'.
+    @returns {Object} The price list JSX components.
+  */
+  _generatePriceList: function(prices) {
+    var prices = prices.split(';');
+    var priceList = [];
+    prices.forEach((price, i) => {
+      if (price === '') {
+        return;
+      }
+      var [amount, quantity] = price.split('/');
+      var quantityItem;
+      if (quantity) {
+        quantityItem = (
+          <span className="entity-content__plan-price-quantity">
+          / {quantity}
+          </span>);
+      }
+      priceList.push(
+        <li className="entity-content__plan-price-item"
+          key={amount + (quantity || '') + i}>
+          <span className="entity-content__plan-price-amount">
+            {amount}
+          </span>
+          {quantityItem}
+        </li>);
+    });
+    return priceList;
+  },
+
+  /**
+    Generate the list of plans.
+
+    @method _generatePlans
+  */
+  _generatePlans: function() {
+    var props = this.props;
+    if (props.entityModel.get('entityType') !== 'charm' ||
+      !this.props.hasPlans) {
+      return;
+    }
+    var plans = props.plans;
+    // Return a spinner if null (we don't have a response yet) or nothing if
+    // plans are a 0-length array (no plans found, likely due to an error).
+    if (!plans) {
+      return <juju.components.Spinner />;
+    }
+    if (!plans.length) {
+      return;
+    }
+    var plansList = [];
+    plans.forEach((plan, i) => {
+      var classes = classNames(
+        'entity-content__plan',
+        'four-col',
+        {'last-col': (i + 1) % 3 === 0});
+
+      plansList.push(
+        <div className={classes}
+          key={plan.url + i}>
+          <div className="entity-content__plan-content">
+            <h3 className="entity-content__plan-title">
+              {plan.url}
+            </h3>
+            <ul className="entity-content__plan-price">
+              {this._generatePriceList(plan.price)}
+            </ul>
+            <p className="entity-content__plan-description">
+              {plan.description}
+            </p>
+          </div>
+        </div>);
+    });
+    return (
+      <div id="plans"
+        className="row entity-content__plans">
+        <div className="inner-wrapper">
+          <div className="twelve-col">
+            <h2 className="entity-content__header">Plans</h2>
+            <div className="equal-height">
+              {plansList}
+            </div>
+          </div>
+        </div>
+      </div>);
+  },
+
+  /**
+    Generate the Juju card example.
+
+    @return {Object} React "div" that contains the card holder.
+  */
+  _generateCard: function() {
+    const entityModel = this.props.entityModel;
+    const entity = entityModel.toEntity();
+    const storeId = entity.type === 'charm' ?
+      entity.storeId : entity.id.split('cs:').join('');
+    const script = '<script ' +
+    'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
+    '<div class="juju-card" data-id="' + storeId +'"></div>';
+
+    return (
+      <div className="entity-content__card section clearfix">
+        <h3 className="section__title">
+          Embed this charm
+        </h3>
+        <p>
+          Add this card to your website by copying the code below.&nbsp;
+          <a href="https://jujucharms.com/community/cards" target="_blank"
+            className="link">
+            Learn more
+          </a>.
+        </p>
+        <textarea
+          rows="2" cols="70" readOnly="readonly" wrap="off"
+          className="twelve-col" defaultValue={script}></textarea>
+        <h4>Preview</h4>
+        <div className="juju-card" data-id={storeId}></div>
+      </div>);
+  },
+
+  componentDidMount: function() {
+    if (window.jujuCards) {
+      window.jujuCards();
+    }
+  },
+
+  render: function() {
+    const entityModel = this.props.entityModel;
+    return (
+      <div className="entity-content">
+        {this._generateTagsAndTerms(entityModel)}
+        {this._generatePlans()}
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              {this._generateDescription(entityModel)}
+              <juju.components.EntityContentReadme
+                changeState={this.props.changeState}
+                entityModel={entityModel}
+                getFile={this.props.getFile}
+                hash={this.props.hash}
+                renderMarkdown={this.props.renderMarkdown}
+                scrollCharmbrowser={this.props.scrollCharmbrowser} />
+            </div>
+            <div className="four-col">
+              {this._generateActions()}
+              {this._generateResources()}
+              {this._showEntityRelations()}
+              <juju.components.EntityFiles
+                apiUrl={this.props.apiUrl}
+                entityModel={entityModel}
+                pluralize={this.props.pluralize} />
+              <juju.components.EntityContentRevisions
+                revisions={entityModel.get('revisions')} />
+              {this._generateCard()}
+            </div>
+          </div>
+        </div>
+        {this._generateOptionsList(entityModel)}
+        {this._generateTermsPopup()}
+      </div>
+    );
+  }
+});
+
+YUI.add('entity-content', function() {
+  juju.components.EntityContent = EntityContent;
 }, '0.1.0', {
   requires: [
     'entity-content-config-option',
