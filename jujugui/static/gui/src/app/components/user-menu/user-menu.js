@@ -22,137 +22,135 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   Provides a user menu to the header - shows Profile, Account and Logout links.
   If user is not logged in the user icon is replaced with a login button.
 */
-YUI.add('user-menu', function() {
+const UserMenu = enhanceWithClickOutside(React.createClass({
 
-  const UserMenu = React.createClass({
+  propTypes: {
+    LogoutLink: React.PropTypes.object,
+    USSOLoginLink: React.PropTypes.object,
+    controllerAPI: React.PropTypes.object,
+    navigateUserAccount: React.PropTypes.func.isRequired,
+    navigateUserProfile: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      LogoutLink: React.PropTypes.object,
-      USSOLoginLink: React.PropTypes.object,
-      controllerAPI: React.PropTypes.object,
-      navigateUserAccount: React.PropTypes.func.isRequired,
-      navigateUserProfile: React.PropTypes.func.isRequired
-    },
+  getInitialState: function() {
+    return {
+      showUserMenu: false
+    };
+  },
 
-    getInitialState: function() {
-      return {
-        showUserMenu: false
-      };
-    },
+  /**
+    When the menu is shown, clicking anywhere but the menu will close
+    the menu.
 
-    /**
-      When the menu is shown, clicking anywhere but the menu will close
-      the menu.
+    @method handleClickOutside
+  */
+  handleClickOutside: function() {
+    this.setState({ showUserMenu: false });
+  },
 
-      @method handleClickOutside
-    */
-    handleClickOutside: function() {
-      this.setState({ showUserMenu: false });
-    },
+  /**
+    Clicking the help menu will toggle whether it's visibility.
 
-    /**
-      Clicking the help menu will toggle whether it's visibility.
+    @method toggleUserMenu
+  */
+  toggleUserMenu: function() {
+    this.setState({ showUserMenu: !this.state.showUserMenu });
+  },
 
-      @method toggleUserMenu
-    */
-    toggleUserMenu: function() {
-      this.setState({ showUserMenu: !this.state.showUserMenu });
-    },
+  _handleProfileClick: function() {
+    this.props.navigateUserProfile();
+    this.toggleUserMenu();
+  },
 
-    _handleProfileClick: function() {
-      this.props.navigateUserProfile();
-      this.toggleUserMenu();
-    },
+  _handleAccountClick: function() {
+    this.props.navigateUserAccount();
+    this.toggleUserMenu();
+  },
 
-    _handleAccountClick: function() {
-      this.props.navigateUserAccount();
-      this.toggleUserMenu();
-    },
+  /**
+    Generate menu based on whether the button has been clicked.
 
-    /**
-      Generate menu based on whether the button has been clicked.
-
-      @method generateUserMenu
-    */
-    _generateUserMenu: function() {
-      if (!this.state.showUserMenu) {
-        return '';
-      }
-      const logoutLink = this.props.LogoutLink;
-      return (
-        <juju.components.Panel instanceName="header-menu__menu" visible={true}>
-          <ul className="header-menu__menu-list" role="menubar">
-            <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                role="button" onClick={this._handleProfileClick}>Profile</a>
-            </li>
-            <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a className="header-menu__menu-list-item-link"
-                role="button" onClick={this._handleAccountClick}>Account</a>
-            </li>
-            <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-              role="menuitem" tabIndex="0">
-              {logoutLink}
-            </li>
-          </ul>
-        </juju.components.Panel>
-      );
-    },
-
-    /**
-      Get class names based on whether the menu is shown.
-
-      @method _getClassNames
-    */
-    _getClassNames: function(isLogin) {
-      return classNames(
-        'header-menu__button',
-        {
-          'header-menu__button-with-text': isLogin,
-          'header-menu__show-menu': this.state.showUserMenu
-        });
-    },
-
-    render: function() {
-      const controllerAPI = this.props.controllerAPI;
-      const loginEle = this.props.USSOLoginLink;
-      const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
-      let buttonContent;
-      let menu;
-
-      if (showLogin) {
-        buttonContent = loginEle;
-      } else {
-        buttonContent = (<juju.components.SvgIcon name="user_16"
-          className="header-menu__icon"
-          size="16" />);
-        menu = this._generateUserMenu();
-      }
-      return (
-        <div className="header-menu">
-          <span className={this._getClassNames(showLogin)}
-            onClick={this.toggleUserMenu}
-            role="button"
-            tabIndex="0"
-            aria-haspopup="true"
-            aria-owns="userMenu"
-            aria-controls="userMenu"
-            aria-expanded="false">
-            {buttonContent}
-          </span>
-          {menu}
-        </div>
-      );
+    @method generateUserMenu
+  */
+  _generateUserMenu: function() {
+    if (!this.state.showUserMenu) {
+      return '';
     }
-  });
+    const logoutLink = this.props.LogoutLink;
+    return (
+      <juju.components.Panel instanceName="header-menu__menu" visible={true}>
+        <ul className="header-menu__menu-list" role="menubar">
+          <li className="header-menu__menu-list-item
+            header-menu__menu-list-item-with-link"
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              role="button" onClick={this._handleProfileClick}>Profile</a>
+          </li>
+          <li className="header-menu__menu-list-item
+            header-menu__menu-list-item-with-link"
+            role="menuitem" tabIndex="0">
+            <a className="header-menu__menu-list-item-link"
+              role="button" onClick={this._handleAccountClick}>Account</a>
+          </li>
+          <li className="header-menu__menu-list-item
+            header-menu__menu-list-item-with-link"
+            role="menuitem" tabIndex="0">
+            {logoutLink}
+          </li>
+        </ul>
+      </juju.components.Panel>
+    );
+  },
 
-  juju.components.UserMenu = enhanceWithClickOutside(UserMenu);
+  /**
+    Get class names based on whether the menu is shown.
 
+    @method _getClassNames
+  */
+  _getClassNames: function(isLogin) {
+    return classNames(
+      'header-menu__button',
+      {
+        'header-menu__button-with-text': isLogin,
+        'header-menu__show-menu': this.state.showUserMenu
+      });
+  },
+
+  render: function() {
+    const controllerAPI = this.props.controllerAPI;
+    const loginEle = this.props.USSOLoginLink;
+    const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
+    let buttonContent;
+    let menu;
+
+    if (showLogin) {
+      buttonContent = loginEle;
+    } else {
+      buttonContent = (<juju.components.SvgIcon name="user_16"
+        className="header-menu__icon"
+        size="16" />);
+      menu = this._generateUserMenu();
+    }
+    return (
+      <div className="header-menu">
+        <span className={this._getClassNames(showLogin)}
+          onClick={this.toggleUserMenu}
+          role="button"
+          tabIndex="0"
+          aria-haspopup="true"
+          aria-owns="userMenu"
+          aria-controls="userMenu"
+          aria-expanded="false">
+          {buttonContent}
+        </span>
+        {menu}
+      </div>
+    );
+  }
+}));
+
+YUI.add('user-menu', function() {
+  juju.components.UserMenu = UserMenu;
 }, '0.1.0', { requires: [
   'panel-component',
   'svg-icon'
