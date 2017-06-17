@@ -18,34 +18,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const ExpandingProgress = React.createClass({
+
+  getInitialState: function() {
+    return {active: false};
+  },
+
+  componentDidMount: function() {
+    // componentDidMount appears to actually fire before the element is in
+    // the DOM so this class gets triggered too early causing the css
+    // transitions to not be applied. This setTimeout hack makes sure that
+    // it is done after it's in the DOM.
+    setTimeout(() => {
+      this.setState({active: true});
+    });
+  },
+
+  render: function() {
+    var classes = classNames('expanding-progress', {
+      'expanding-progress--active' : this.state.active
+    });
+    return (
+      <div className={classes}></div>
+    );
+  }
+});
+
 YUI.add('expanding-progress', function() {
-
-  juju.components.ExpandingProgress = React.createClass({
-
-    getInitialState: function() {
-      return {active: false};
-    },
-
-    componentDidMount: function() {
-      // componentDidMount appears to actually fire before the element is in
-      // the DOM so this class gets triggered too early causing the css
-      // transitions to not be applied. This setTimeout hack makes sure that
-      // it is done after it's in the DOM.
-      setTimeout(() => {
-        this.setState({active: true});
-      });
-    },
-
-    render: function() {
-      var classes = classNames('expanding-progress', {
-        'expanding-progress--active' : this.state.active
-      });
-      return (
-        <div className={classes}></div>
-      );
-    }
-  });
-
+  juju.components.ExpandingProgress = ExpandingProgress;
 }, '0.1.0', {
   requires: []
 });
