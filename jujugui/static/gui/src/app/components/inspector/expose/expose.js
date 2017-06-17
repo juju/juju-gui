@@ -18,135 +18,135 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-expose', function() {
+const InspectorExpose = React.createClass({
 
-  juju.components.InspectorExpose = React.createClass({
+  propTypes: {
+    acl: React.PropTypes.object.isRequired,
+    addNotification: React.PropTypes.func.isRequired,
+    changeState: React.PropTypes.func.isRequired,
+    exposeService: React.PropTypes.func.isRequired,
+    service: React.PropTypes.object.isRequired,
+    unexposeService: React.PropTypes.func.isRequired,
+    units: React.PropTypes.object.isRequired
+  },
 
-    propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      addNotification: React.PropTypes.func.isRequired,
-      changeState: React.PropTypes.func.isRequired,
-      exposeService: React.PropTypes.func.isRequired,
-      service: React.PropTypes.object.isRequired,
-      unexposeService: React.PropTypes.func.isRequired,
-      units: React.PropTypes.object.isRequired
-    },
+  /**
+    The callable to be passed to the unit items for navigating to the unit
+    details.
 
-    /**
-      The callable to be passed to the unit items for navigating to the unit
-      details.
-
-      @method _unitItemAction
-      @param {Object} e The click event.
-    */
-    _unitItemAction: function(e) {
-      var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
-      this.props.changeState({
-        gui: {
-          inspector: {
-            id: this.props.service.get('id'),
-            unit: unitId,
-            activeComponent: 'unit'
-          }
+    @method _unitItemAction
+    @param {Object} e The click event.
+  */
+  _unitItemAction: function(e) {
+    var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
+    this.props.changeState({
+      gui: {
+        inspector: {
+          id: this.props.service.get('id'),
+          unit: unitId,
+          activeComponent: 'unit'
         }
-      });
-    },
-
-    /**
-      Generate a list of units for the service.
-
-      @method _generateUnits
-      @returns {Array} A list of units.
-    */
-    _generateUnits: function() {
-      var units = [];
-      this.props.units.toArray().forEach(function(unit) {
-        units.push(
-          <juju.components.InspectorExposeUnit
-            key={unit.id}
-            action={this._unitItemAction}
-            unit={unit} />);
-      }, this);
-      return units;
-    },
-
-    /**
-      Display a list of units if the service is exposed.
-
-      @method _displayUnitList
-      @returns {Object} A list of units.
-    */
-    _displayUnitList: function() {
-      if (!this.props.service.get('exposed')) {
-        return;
       }
-      return <ul className="inspector-expose__units">
-        {this._generateUnits()}
-      </ul>;
-    },
+    });
+  },
 
-    /**
-      Expose the service when toggled.
+  /**
+    Generate a list of units for the service.
 
-      @method _handleExposeChange
-    */
-    _handleExposeChange: function() {
-      var service = this.props.service;
-      var serviceId = service.get('id');
-      if (service.get('exposed')) {
-        this.props.unexposeService(serviceId,
-          this._exposeServiceCallback, {});
-      } else {
-        this.props.exposeService(serviceId,
-          this._exposeServiceCallback, {});
-      }
-    },
+    @method _generateUnits
+    @returns {Array} A list of units.
+  */
+  _generateUnits: function() {
+    var units = [];
+    this.props.units.toArray().forEach(function(unit) {
+      units.push(
+        <juju.components.InspectorExposeUnit
+          key={unit.id}
+          action={this._unitItemAction}
+          unit={unit} />);
+    }, this);
+    return units;
+  },
 
-    /**
-      Callback to handle errors when exposing a service.
+  /**
+    Display a list of units if the service is exposed.
 
-      @method _exposeServiceCallback
-      @param {object} e The expose event
-    */
-    _exposeServiceCallback: function(e) {
-      if (e.err) {
-        console.error(e.err);
-        this.props.addNotification({
-          title: 'Exposing charm failed',
-          message: 'The application' + this.props.service.get('name') +
-            ' failed to expose:' + e.err,
-          level: 'error'
-        });
-      }
-    },
-
-    render: function() {
-      var toggle = {
-        key: 'expose-toggle'
-      };
-      return (
-        <div className="inspector-expose">
-          <div className="inspector-expose__control">
-            <juju.components.BooleanConfig
-              disabled={this.props.acl.isReadOnly()}
-              key={toggle.key}
-              ref={toggle.key}
-              option={toggle}
-              onChange={this._handleExposeChange}
-              label="Expose application"
-              config={this.props.service.get('exposed')} />
-          </div>
-          <p className="inspector-expose__warning">
-              Exposing this application may make it publicly accessible from
-              the web
-          </p>
-          {this._displayUnitList()}
-        </div>
-      );
+    @method _displayUnitList
+    @returns {Object} A list of units.
+  */
+  _displayUnitList: function() {
+    if (!this.props.service.get('exposed')) {
+      return;
     }
+    return <ul className="inspector-expose__units">
+      {this._generateUnits()}
+    </ul>;
+  },
 
-  });
+  /**
+    Expose the service when toggled.
 
+    @method _handleExposeChange
+  */
+  _handleExposeChange: function() {
+    var service = this.props.service;
+    var serviceId = service.get('id');
+    if (service.get('exposed')) {
+      this.props.unexposeService(serviceId,
+        this._exposeServiceCallback, {});
+    } else {
+      this.props.exposeService(serviceId,
+        this._exposeServiceCallback, {});
+    }
+  },
+
+  /**
+    Callback to handle errors when exposing a service.
+
+    @method _exposeServiceCallback
+    @param {object} e The expose event
+  */
+  _exposeServiceCallback: function(e) {
+    if (e.err) {
+      console.error(e.err);
+      this.props.addNotification({
+        title: 'Exposing charm failed',
+        message: 'The application' + this.props.service.get('name') +
+          ' failed to expose:' + e.err,
+        level: 'error'
+      });
+    }
+  },
+
+  render: function() {
+    var toggle = {
+      key: 'expose-toggle'
+    };
+    return (
+      <div className="inspector-expose">
+        <div className="inspector-expose__control">
+          <juju.components.BooleanConfig
+            disabled={this.props.acl.isReadOnly()}
+            key={toggle.key}
+            ref={toggle.key}
+            option={toggle}
+            onChange={this._handleExposeChange}
+            label="Expose application"
+            config={this.props.service.get('exposed')} />
+        </div>
+        <p className="inspector-expose__warning">
+            Exposing this application may make it publicly accessible from
+            the web
+        </p>
+        {this._displayUnitList()}
+      </div>
+    );
+  }
+
+});
+
+YUI.add('inspector-expose', function() {
+  juju.components.InspectorExpose = InspectorExpose;
 }, '0.1.0', { requires: [
   'boolean-config',
   'inspector-expose-unit'
