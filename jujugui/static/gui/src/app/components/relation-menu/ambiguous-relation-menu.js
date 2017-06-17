@@ -18,53 +18,51 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('ambiguous-relation-menu', function() {
+/**
+  Generate a list of bindings.
 
-  /**
-    Generate a list of bindings.
+  @method _generateRelations
+  @param {Array} endpoints A list of endpoints.
+  @returns {Object} The endpoint components to display.
+*/
+function _generateRelations(endpoints) {
+  var components = [];
+  endpoints.forEach((endpoint, i) => {
+    var start = endpoint[0];
+    var end = endpoint[1];
+    components.push(
+      <li
+        data-startservice={start.service}
+        data-startname={start.name}
+        data-endservice={end.service}
+        data-endname={end.name}
+        key={start.name + end.name + i}>
+        {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
+      </li>);
+  });
+  return components;
+}
 
-    @method _generateRelations
-    @param {Array} endpoints A list of endpoints.
-    @returns {Object} The endpoint components to display.
-  */
-  function _generateRelations(endpoints) {
-    var components = [];
-    endpoints.forEach((endpoint, i) => {
-      var start = endpoint[0];
-      var end = endpoint[1];
-      components.push(
-        <li
-          data-startservice={start.service}
-          data-startname={start.name}
-          data-endservice={end.service}
-          data-endname={end.name}
-          key={start.name + end.name + i}>
-          {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
-        </li>);
-    });
-    return components;
-  }
-
-  var AmbiguousRelationMenu = function(props) {
-    return (
-      <div className="menu">
-        <ul>
-          {_generateRelations(props.endpoints)}
-        </ul>
-        <div className="cancel link" role="button" tabIndex="0">
-          <juju.components.SvgIcon name="close_16"
-            size="16" />
-        </div>
+const AmbiguousRelationMenu = function(props) {
+  return (
+    <div className="menu">
+      <ul>
+        {_generateRelations(props.endpoints)}
+      </ul>
+      <div className="cancel link" role="button" tabIndex="0">
+        <juju.components.SvgIcon name="close_16"
+          size="16" />
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  AmbiguousRelationMenu.propTypes = {
-    endpoints: React.PropTypes.array.isRequired
-  };
+AmbiguousRelationMenu.propTypes = {
+  endpoints: React.PropTypes.array.isRequired
+};
 
+YUI.add('ambiguous-relation-menu', function() {
   juju.components.AmbiguousRelationMenu = AmbiguousRelationMenu;
-
 }, '0.1.0', { requires: [
   'svg-icon'
 ]});
