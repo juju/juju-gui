@@ -18,59 +18,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const CopyToClipboard = React.createClass({
+  className: 'CopyToClipboard',
+
+  clipboard: null,
+
+  /* Define and validate the properites available on this component. */
+  propTypes: {
+    className: React.PropTypes.string,
+    value: React.PropTypes.string.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {
+      className: 'copy-to-clipboard',
+      value: ''
+    };
+  },
+
+  componentDidMount: function() {
+    var node = ReactDOM.findDOMNode(this).querySelector('button');
+    this.clipboard = new Clipboard(node, {
+      target: function(trigger) {
+        return trigger.previousElementSibling;
+      }
+    });
+  },
+
+  componentWillUnmount: function() {
+    this.clipboard.destroy();
+  },
+
+  render: function() {
+    var className = this.props.className;
+    return (
+      <div className={className}>
+        <input className={className + '__input'}
+          ref="input"
+          readOnly="true"
+          type="text"
+          value={this.props.value}/>
+        <button className={className + '__btn'}
+          ref="btn">
+          <juju.components.SvgIcon
+            name="get-link-url_16"
+            size="16"/>
+        </button>
+      </div>
+    );
+  }
+});
+
 YUI.add('copy-to-clipboard', function() {
-
-  juju.components.CopyToClipboard = React.createClass({
-    className: 'CopyToClipboard',
-
-    clipboard: null,
-
-    /* Define and validate the properites available on this component. */
-    propTypes: {
-      className: React.PropTypes.string,
-      value: React.PropTypes.string.isRequired
-    },
-
-    getDefaultProps: function() {
-      return {
-        className: 'copy-to-clipboard',
-        value: ''
-      };
-    },
-
-    componentDidMount: function() {
-      var node = ReactDOM.findDOMNode(this).querySelector('button');
-      this.clipboard = new Clipboard(node, {
-        target: function(trigger) {
-          return trigger.previousElementSibling;
-        }
-      });
-    },
-
-    componentWillUnmount: function() {
-      this.clipboard.destroy();
-    },
-
-    render: function() {
-      var className = this.props.className;
-      return (
-        <div className={className}>
-          <input className={className + '__input'}
-            ref="input"
-            readOnly="true"
-            type="text"
-            value={this.props.value}/>
-          <button className={className + '__btn'}
-            ref="btn">
-            <juju.components.SvgIcon
-              name="get-link-url_16"
-              size="16"/>
-          </button>
-        </div>
-      );
-    }
-  });
-
+  juju.components.CopyToClipboard = CopyToClipboard;
 }, '0.1.0', {
   requires: [
     'svg-icon'
