@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const USSOLoginLink = React.createClass({
+  displayName: 'USSOLoginLink',
 
   propTypes: {
     callback: React.PropTypes.func,
