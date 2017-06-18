@@ -18,32 +18,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
-  Generate a list of bindings.
-
-  @method _generateRelations
-  @param {Array} endpoints A list of endpoints.
-  @returns {Object} The endpoint components to display.
-*/
-function _generateRelations(endpoints) {
-  var components = [];
-  endpoints.forEach((endpoint, i) => {
-    var start = endpoint[0];
-    var end = endpoint[1];
-    components.push(
-      <li
-        data-startservice={start.service}
-        data-startname={start.name}
-        data-endservice={end.service}
-        data-endname={end.name}
-        key={start.name + end.name + i}>
-        {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
-      </li>);
-  });
-  return components;
-}
-
 const AmbiguousRelationMenu = function(props) {
+  /**
+    Generate a list of bindings.
+
+    @method _generateRelations
+    @param {Array} endpoints A list of endpoints.
+    @returns {Object} The endpoint components to display.
+  */
+  function _generateRelations(endpoints) {
+    var components = [];
+    endpoints.forEach((endpoint, i) => {
+      var start = endpoint[0];
+      var end = endpoint[1];
+      components.push(
+        <li
+          data-startservice={start.service}
+          data-startname={start.name}
+          data-endservice={end.service}
+          data-endname={end.name}
+          key={start.name + end.name + i}>
+          {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
+        </li>);
+    });
+    return components;
+  }
+
   return (
     <div className="menu">
       <ul>
