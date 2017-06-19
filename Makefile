@@ -3,7 +3,7 @@ PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
-SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
+SVG_SPRITE_DIR := $(GUISRC)/app/assets
 SVG_SPRITE_FILE := $(SVG_SPRITE_DIR)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 SVG_FILES := $(shell find $(SVG_SPRITE_SOURCE_DIR) -name "*.svg")
@@ -206,6 +206,11 @@ $(FAVICON):
 
 .PHONY: images
 images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
+
+.PHONY: svg-sprite
+svg-sprite: $(SVG_FILES) $(NODE_MODULES)
+	npm install svg-sprite@1.3.6
+	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)

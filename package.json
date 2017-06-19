@@ -27,7 +27,6 @@
     "react-dnd-html5-backend": "^2.2.4",
     "react-dom": "^15.4.2",
     "sass-lint": "^1.10.2",
-    "svg-sprite": "^1.3.6",
     "yui": "3.11.0"
   },
   "devDependencies": {
