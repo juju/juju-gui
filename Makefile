@@ -19,6 +19,7 @@ FLAKE8 := bin/flake8
 PYRAMID := lib/python2.7/site-packages/pyramid
 PYTESTPKG := lib/python2.7/site-packages/pytest.py
 NODE_MODULES := node_modules
+SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
 MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
@@ -204,12 +205,14 @@ $(STATIC_IMAGES):
 $(FAVICON):
 	cp $(GUISRC)/app/favicon.ico $(GUIBUILD)/app/favicon.ico
 
+$(SVG_SPRITE_MODULE): $(NODE_MODULES)
+	npm install svg-sprite@1.3.6
+
 .PHONY: images
 images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
 
 .PHONY: svg-sprite
-svg-sprite: $(SVG_FILES) $(NODE_MODULES)
-	npm install svg-sprite@1.3.6
+svg-sprite: $(SVG_FILES) $(SVG_SPRITE_MODULE)
 	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
 .PHONY: gui
