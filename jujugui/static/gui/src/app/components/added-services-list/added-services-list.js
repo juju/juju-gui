@@ -18,59 +18,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const AddedServicesList = React.createClass({
+
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    findRelatedServices: React.PropTypes.func.isRequired,
+    findUnrelatedServices: React.PropTypes.func.isRequired,
+    getUnitStatusCounts: React.PropTypes.func.isRequired,
+    hoverService: React.PropTypes.func.isRequired,
+    hoveredId: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.bool
+    ]),
+    panToService: React.PropTypes.func.isRequired,
+    services: React.PropTypes.object.isRequired,
+    updateUnitFlags: React.PropTypes.func.isRequired
+  },
+
+  generateItemList: function(services) {
+    var items = [];
+    services.each((service) => {
+      items.push(
+        <juju.components.AddedServicesListItem
+          // We use the 'name' instead of the 'id' here because when a
+          // ghost service is added it uses the ghost id structure instead
+          // of the final deployed service id structure and we want react
+          // to treat them as the same record instead of re-rendering
+          // when they key changes.
+          key={service.get('name')}
+          hovered={service.get('id') === this.props.hoveredId}
+          changeState={this.props.changeState}
+          getUnitStatusCounts={this.props.getUnitStatusCounts}
+          ref={'AddedServicesListItem-' + service.get('id')}
+          hoverService={this.props.hoverService}
+          panToService={this.props.panToService}
+          service={service} />);
+    });
+    return items;
+  },
+
+  render: function() {
+    return (
+      <div className="inspector-view">
+        <ul className="added-services-list inspector-view__list">
+          {this.generateItemList(this.props.services)}
+        </ul>
+      </div>
+    );
+  }
+
+});
+
 YUI.add('added-services-list', function() {
-
-  juju.components.AddedServicesList = React.createClass({
-
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      findRelatedServices: React.PropTypes.func.isRequired,
-      findUnrelatedServices: React.PropTypes.func.isRequired,
-      getUnitStatusCounts: React.PropTypes.func.isRequired,
-      hoverService: React.PropTypes.func.isRequired,
-      hoveredId: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.bool
-      ]),
-      panToService: React.PropTypes.func.isRequired,
-      services: React.PropTypes.object.isRequired,
-      updateUnitFlags: React.PropTypes.func.isRequired
-    },
-
-    generateItemList: function(services) {
-      var items = [];
-      services.each((service) => {
-        items.push(
-          <juju.components.AddedServicesListItem
-            // We use the 'name' instead of the 'id' here because when a
-            // ghost service is added it uses the ghost id structure instead
-            // of the final deployed service id structure and we want react
-            // to treat them as the same record instead of re-rendering
-            // when they key changes.
-            key={service.get('name')}
-            hovered={service.get('id') === this.props.hoveredId}
-            changeState={this.props.changeState}
-            getUnitStatusCounts={this.props.getUnitStatusCounts}
-            ref={'AddedServicesListItem-' + service.get('id')}
-            hoverService={this.props.hoverService}
-            panToService={this.props.panToService}
-            service={service} />);
-      });
-      return items;
-    },
-
-    render: function() {
-      return (
-        <div className="inspector-view">
-          <ul className="added-services-list inspector-view__list">
-            {this.generateItemList(this.props.services)}
-          </ul>
-        </div>
-      );
-    }
-
-  });
-
+  juju.components.AddedServicesList = AddedServicesList;
 }, '0.1.0', { requires: [
   'added-services-list-item'
 ]});

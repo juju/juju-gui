@@ -18,45 +18,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const InspectorResourcesList = React.createClass({
+
+  propTypes: {
+    acl: React.PropTypes.object.isRequired,
+    resources: React.PropTypes.array.isRequired
+  },
+  /**
+    Generate a list of resources to display.
+
+    @returns {Object} The resource list markup.
+  */
+  _generateResources: function() {
+    const resources = this.props.resources;
+    const resourceList = resources.map((resource, i) => {
+      return (
+        <li className="inspector-resources-list__resource"
+          key={resource.Name + i}>
+          <p>{resource.Name}</p>
+          <p>{resource.Description}</p>
+        </li>);
+    });
+    return (
+      <ul className="inspector-resources-list__list">
+        {resourceList}
+      </ul>);
+  },
+
+  render: function() {
+    return (
+      <div className="inspector-resources-list">
+        {this._generateResources()}
+      </div>
+    );
+  }
+
+});
+
 YUI.add('inspector-resources-list', function() {
-
-  juju.components.InspectorResourcesList = React.createClass({
-
-    propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      resources: React.PropTypes.array.isRequired
-    },
-    /**
-      Generate a list of resources to display.
-
-      @returns {Object} The resource list markup.
-    */
-    _generateResources: function() {
-      const resources = this.props.resources;
-      const resourceList = resources.map((resource, i) => {
-        return (
-          <li className="inspector-resources-list__resource"
-            key={resource.Name + i}>
-            <p>{resource.Name}</p>
-            <p>{resource.Description}</p>
-          </li>);
-      });
-      return (
-        <ul className="inspector-resources-list__list">
-          {resourceList}
-        </ul>);
-    },
-
-    render: function() {
-      return (
-        <div className="inspector-resources-list">
-          {this._generateResources()}
-        </div>
-      );
-    }
-
-  });
-
+  juju.components.InspectorResourcesList = InspectorResourcesList;
 }, '0.1.0', { requires: [
   'loading-spinner'
 ]});

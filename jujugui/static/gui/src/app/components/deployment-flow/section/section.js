@@ -18,124 +18,124 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-section', function() {
+const DeploymentSection = React.createClass({
+  displayName: 'DeploymentSection',
 
-  juju.components.DeploymentSection = React.createClass({
-    displayName: 'DeploymentSection',
+  propTypes: {
+    buttons: React.PropTypes.array,
+    children: React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.object
+    ]),
+    completed: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+    extra: React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.object,
+      React.PropTypes.string
+    ]),
+    instance: React.PropTypes.string,
+    showCheck: React.PropTypes.bool,
+    title: React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.object,
+      React.PropTypes.string
+    ])
+  },
 
-    propTypes: {
-      buttons: React.PropTypes.array,
-      children: React.PropTypes.oneOfType([
-        React.PropTypes.array,
-        React.PropTypes.object
-      ]),
-      completed: React.PropTypes.bool,
-      disabled: React.PropTypes.bool,
-      extra: React.PropTypes.oneOfType([
-        React.PropTypes.array,
-        React.PropTypes.object,
-        React.PropTypes.string
-      ]),
-      instance: React.PropTypes.string,
-      showCheck: React.PropTypes.bool,
-      title: React.PropTypes.oneOfType([
-        React.PropTypes.array,
-        React.PropTypes.object,
-        React.PropTypes.string
-      ])
-    },
+  /**
+    Generate the actions.
 
-    /**
-      Generate the actions.
-
-      @method _generateCheck
-      @returns {Object} The actions markup.
-    */
-    _generateActions: function() {
-      if (!this.props.buttons && !this.props.extra) {
-        return;
-      }
-      return (
-        <div className="deployment-section__actions">
-          {this._generateExtra()}
-          {this._generateButtons()}
-        </div>);
-    },
-
-    /**
-      Generate the buttons.
-
-      @method _generateButtons
-      @returns {Object} The buttons component.
-    */
-    _generateButtons: function() {
-      var buttons = this.props.buttons;
-      if (!buttons) {
-        return;
-      }
-      return (
-        <juju.components.ButtonRow
-          buttons={this.props.buttons} />);
-    },
-
-    /**
-      Generate the extra info.
-
-      @method _generateExtra
-      @returns {Object} The actions markup.
-    */
-    _generateExtra: function() {
-      var extra = this.props.extra;
-      if (!extra) {
-        return;
-      }
-      return (
-        <div className="deployment-section__extra">
-          {extra}
-        </div>);
-    },
-
-    /**
-      Generate the check icon if it should be displayed.
-
-      @method _generateCheck
-      @returns {Object} The check markup.
-    */
-    _generateCheck: function() {
-      if (!this.props.showCheck) {
-        return;
-      }
-      return (
-        <juju.components.SvgIcon
-          className="deployment-section__title-checkmark"
-          name="complete"
-          size="24" />);
-    },
-
-    render: function() {
-      var instance = this.props.instance;
-      var extra = {
-        'deployment-section--active': !this.props.disabled,
-        'deployment-section--completed': this.props.completed
-      };
-      extra[instance] = !!instance;
-      var classes = classNames(
-        'deployment-section',
-        'twelve-col',
-        extra);
-      return (
-        <div className={classes}>
-          {this._generateActions()}
-          <h3 className="deployment-section__title">
-            {this._generateCheck()}
-            {this.props.title}
-          </h3>
-          {this.props.children}
-        </div>
-      );
+    @method _generateCheck
+    @returns {Object} The actions markup.
+  */
+  _generateActions: function() {
+    if (!this.props.buttons && !this.props.extra) {
+      return;
     }
-  });
+    return (
+      <div className="deployment-section__actions">
+        {this._generateExtra()}
+        {this._generateButtons()}
+      </div>);
+  },
 
+  /**
+    Generate the buttons.
+
+    @method _generateButtons
+    @returns {Object} The buttons component.
+  */
+  _generateButtons: function() {
+    var buttons = this.props.buttons;
+    if (!buttons) {
+      return;
+    }
+    return (
+      <juju.components.ButtonRow
+        buttons={this.props.buttons} />);
+  },
+
+  /**
+    Generate the extra info.
+
+    @method _generateExtra
+    @returns {Object} The actions markup.
+  */
+  _generateExtra: function() {
+    var extra = this.props.extra;
+    if (!extra) {
+      return;
+    }
+    return (
+      <div className="deployment-section__extra">
+        {extra}
+      </div>);
+  },
+
+  /**
+    Generate the check icon if it should be displayed.
+
+    @method _generateCheck
+    @returns {Object} The check markup.
+  */
+  _generateCheck: function() {
+    if (!this.props.showCheck) {
+      return;
+    }
+    return (
+      <juju.components.SvgIcon
+        className="deployment-section__title-checkmark"
+        name="complete"
+        size="24" />);
+  },
+
+  render: function() {
+    var instance = this.props.instance;
+    var extra = {
+      'deployment-section--active': !this.props.disabled,
+      'deployment-section--completed': this.props.completed
+    };
+    extra[instance] = !!instance;
+    var classes = classNames(
+      'deployment-section',
+      'twelve-col',
+      extra);
+    return (
+      <div className={classes}>
+        {this._generateActions()}
+        <h3 className="deployment-section__title">
+          {this._generateCheck()}
+          {this.props.title}
+        </h3>
+        {this.props.children}
+      </div>
+    );
+  }
+});
+
+YUI.add('deployment-section', function() {
+  juju.components.DeploymentSection = DeploymentSection;
 }, '0.1.0', { requires: [
   'button-row',
   'svg-icon'

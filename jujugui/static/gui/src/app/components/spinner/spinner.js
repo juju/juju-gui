@@ -18,20 +18,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const Spinner = React.createClass({
+  displayName: 'Spinner',
+
+  render: function() {
+    return (
+      <div className="spinner-container">
+        <div className="spinner-loading">Loading...</div>
+      </div>
+    );
+  }
+});
+
 YUI.add('loading-spinner', function() {
-
-  juju.components.Spinner = React.createClass({
-    displayName: 'Spinner',
-
-    render: function() {
-      return (
-        <div className="spinner-container">
-          <div className="spinner-loading">Loading...</div>
-        </div>
-      );
-    }
-  });
-
+  juju.components.Spinner = Spinner;
 }, '0.1.0', {
   requires: []
 });

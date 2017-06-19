@@ -18,46 +18,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const DeploymentChanges = React.createClass({
+  displayName: 'DeploymentChanges',
+
+  propTypes: {
+    generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+    getCurrentChangeSet: React.PropTypes.func.isRequired
+  },
+
+  getInitialState: function() {
+    return {
+      changes: this.props.getCurrentChangeSet()
+    };
+  },
+
+  render: function() {
+    const state = this.state;
+    return (
+      <juju.components.ExpandingRow
+        classes={{'twelve-col': true}}
+        clickable={true}>
+        <div>
+          Show changes ({Object.keys(state.changes).length})
+          &rsaquo;
+        </div>
+        <ul className="deployment-changes">
+          {this.props.generateAllChangeDescriptions(state.changes)
+            .map(change => (
+              <juju.components.DeploymentChangeItem
+                change={change}
+                key={change.id}
+                showTime={false} />))}
+        </ul>
+      </juju.components.ExpandingRow>
+    );
+  }
+
+});
+
 YUI.add('deployment-changes', function() {
-
-  juju.components.DeploymentChanges = React.createClass({
-    displayName: 'DeploymentChanges',
-
-    propTypes: {
-      generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-      getCurrentChangeSet: React.PropTypes.func.isRequired
-    },
-
-    getInitialState: function() {
-      return {
-        changes: this.props.getCurrentChangeSet()
-      };
-    },
-
-    render: function() {
-      const state = this.state;
-      return (
-        <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
-          clickable={true}>
-          <div>
-            Show changes ({Object.keys(state.changes).length})
-            &rsaquo;
-          </div>
-          <ul className="deployment-changes">
-            {this.props.generateAllChangeDescriptions(state.changes)
-              .map(change => (
-                <juju.components.DeploymentChangeItem
-                  change={change}
-                  key={change.id}
-                  showTime={false} />))}
-          </ul>
-        </juju.components.ExpandingRow>
-      );
-    }
-
-  });
-
+  juju.components.DeploymentChanges = DeploymentChanges;
 }, '0.1.0', {
   requires: [
     'deployment-change-item',

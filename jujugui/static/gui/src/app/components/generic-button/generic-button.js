@@ -18,91 +18,91 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('generic-button', function() {
+const GenericButton = React.createClass({
+  displayName: 'GenericButton',
 
-  juju.components.GenericButton = React.createClass({
-    displayName: 'GenericButton',
+  propTypes: {
+    action: React.PropTypes.func,
+    children: React.PropTypes.node,
+    disabled: React.PropTypes.bool,
+    extraClasses: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    submit: React.PropTypes.bool,
+    title: React.PropTypes.string,
+    tooltip: React.PropTypes.string,
+    type: React.PropTypes.string
+  },
 
-    propTypes: {
-      action: React.PropTypes.func,
-      children: React.PropTypes.node,
-      disabled: React.PropTypes.bool,
-      extraClasses: React.PropTypes.string,
-      icon: React.PropTypes.string,
-      submit: React.PropTypes.bool,
-      title: React.PropTypes.string,
-      tooltip: React.PropTypes.string,
-      type: React.PropTypes.string
-    },
+  /**
+    Returns the classes for the button based on the provided props.
+    @method _generateClasses
+    @returns {String} The collection of class names.
+  */
+  _generateClasses: function() {
+    return classNames(
+      this.props.type ? 'button--' + this.props.type : 'button--neutral',
+      {
+        'button--disabled': this.props.disabled
+      },
+      this.props.extraClasses
+    );
+  },
 
-    /**
-      Returns the classes for the button based on the provided props.
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        this.props.type ? 'button--' + this.props.type : 'button--neutral',
-        {
-          'button--disabled': this.props.disabled
-        },
-        this.props.extraClasses
-      );
-    },
+  /**
+    Call the action if not disabled.
 
-    /**
-      Call the action if not disabled.
-
-      @method _handleClick
-      @param {Object} e The click event.
-    */
-    _handleClick: function(e) {
-      // Don't bubble the click the parent.
-      e.stopPropagation();
-      // If submit is true then typically no action is provided because it
-      // is submitting a form.
-      if (!this.props.disabled && this.props.action) {
-        this.props.action();
-      }
-      if (this.props.disabled && this.props.submit) {
-        e.preventDefault();
-      }
-    },
-
-    /**
-      Generate the label or icon.
-
-      @method _generateContent
-    */
-    _generateContent: function() {
-      // If children are present, the title and icon props are ignored.
-      if (this.props.children) {
-        return this.props.children;
-      } else {
-        var title = this.props.title;
-        var icon = this.props.icon;
-        if (title) {
-          return title;
-        } else if (icon) {
-          return (
-            <juju.components.SvgIcon name={icon}
-              size="16" />);
-        }
-      }
-    },
-
-    render: function() {
-      return (
-        <button className={this._generateClasses()}
-          title={this.props.tooltip}
-          onClick={this._handleClick}
-          type={this.props.submit ? 'submit' : 'button'}>
-          {this._generateContent()}
-        </button>
-      );
+    @method _handleClick
+    @param {Object} e The click event.
+  */
+  _handleClick: function(e) {
+    // Don't bubble the click the parent.
+    e.stopPropagation();
+    // If submit is true then typically no action is provided because it
+    // is submitting a form.
+    if (!this.props.disabled && this.props.action) {
+      this.props.action();
     }
-  });
+    if (this.props.disabled && this.props.submit) {
+      e.preventDefault();
+    }
+  },
 
+  /**
+    Generate the label or icon.
+
+    @method _generateContent
+  */
+  _generateContent: function() {
+    // If children are present, the title and icon props are ignored.
+    if (this.props.children) {
+      return this.props.children;
+    } else {
+      var title = this.props.title;
+      var icon = this.props.icon;
+      if (title) {
+        return title;
+      } else if (icon) {
+        return (
+          <juju.components.SvgIcon name={icon}
+            size="16" />);
+      }
+    }
+  },
+
+  render: function() {
+    return (
+      <button className={this._generateClasses()}
+        title={this.props.tooltip}
+        onClick={this._handleClick}
+        type={this.props.submit ? 'submit' : 'button'}>
+        {this._generateContent()}
+      </button>
+    );
+  }
+});
+
+YUI.add('generic-button', function() {
+  juju.components.GenericButton = GenericButton;
 }, '0.1.0', { requires: [
   'svg-icon'
 ]});

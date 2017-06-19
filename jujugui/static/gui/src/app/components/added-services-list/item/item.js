@@ -18,146 +18,146 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('added-services-list-item', function() {
+const AddedServicesListItem = React.createClass({
 
-  juju.components.AddedServicesListItem = React.createClass({
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    getUnitStatusCounts: React.PropTypes.func.isRequired,
+    hoverService: React.PropTypes.func.isRequired,
+    hovered: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.bool
+    ]),
+    panToService: React.PropTypes.func.isRequired,
+    service: React.PropTypes.object.isRequired
+  },
 
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      getUnitStatusCounts: React.PropTypes.func.isRequired,
-      hoverService: React.PropTypes.func.isRequired,
-      hovered: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.bool
-      ]),
-      panToService: React.PropTypes.func.isRequired,
-      service: React.PropTypes.object.isRequired
-    },
+  /**
+    Parses the supplied unit data to return the status color and number
+    to display.
 
-    /**
-      Parses the supplied unit data to return the status color and number
-      to display.
-
-      @method _getPriorityUnits
-      @param {Array} units An array of units.
-    */
-    _getPriorityUnits: function(units) {
-      var unitStatuses = this.props.getUnitStatusCounts(units);
-      var top = { priority: 99, key: '', size: 0 };
-      var status;
-      for (var key in unitStatuses) {
-        status = unitStatuses[key];
-        if (key !== 'started' && status.priority < top.priority &&
-            status.size > 0) {
-          top = {
-            key: key,
-            priority: status.priority,
-            size: status.size
-          };
-        }
+    @method _getPriorityUnits
+    @param {Array} units An array of units.
+  */
+  _getPriorityUnits: function(units) {
+    var unitStatuses = this.props.getUnitStatusCounts(units);
+    var top = { priority: 99, key: '', size: 0 };
+    var status;
+    for (var key in unitStatuses) {
+      status = unitStatuses[key];
+      if (key !== 'started' && status.priority < top.priority &&
+          status.size > 0) {
+        top = {
+          key: key,
+          priority: status.priority,
+          size: status.size
+        };
       }
-      // size needs to be a string for test comparison purposes because react
-      // converts this to a string for output but doesn't convert it in
-      // the js dom.
-      top.size = top.size + '';
-      return top;
-    },
+    }
+    // size needs to be a string for test comparison purposes because react
+    // converts this to a string for output but doesn't convert it in
+    // the js dom.
+    top.size = top.size + '';
+    return top;
+  },
 
-    /**
-      Renders and returns the status icon if necessary.
+  /**
+    Renders and returns the status icon if necessary.
 
-      @method _renderStatusIndicator
-      @param {Object} statusData The status data that will be used to generate
-        the status icon.
-    */
-    _renderStatusIndicator: function(statusData) {
-      var shownStatuses = ['uncommitted', 'pending', 'error'];
-      var className = 'inspector-view__status--' + statusData.key;
-      if (shownStatuses.indexOf(statusData.key) > -1) {
-        return (
-          <span className={className}>{statusData.size}</span>
-        );
-      }
-    },
-
-    /**
-      Click handler for clicks on the entire list item.
-
-      @method _onClickHandler
-      @param {Object} e The click event.
-    */
-    _onClickHandler: function(e) {
-      this.props.panToService(this.props.service.get('id'));
-      this.props.changeState({
-        gui: {
-          inspector: {
-            id: e.currentTarget.getAttribute('data-serviceid')
-          }
-        }
-      });
-    },
-
-    _generateClassName: function() {
-      var props = this.props;
-      var service = props.service;
-      return classNames(
-        'inspector-view__list-item',
-        {
-          'visibility-toggled': service.get('highlight') || service.get('fade'),
-          hover: props.hovered
-        }
-      );
-    },
-
-    /**
-      Handle highlighting a service token when the item is hovered.
-
-      @method _onMouseEnter
-      @param {Object} e The mouse event.
-    */
-    _onMouseEnter: function(e) {
-      this.props.hoverService(this.props.service.get('id'), true);
-    },
-
-    /**
-      Handle unhighlighting a service token when the item is no longer hovered.
-
-      @method _onMouseLeave
-      @param {Object} e The mouse event.
-    */
-    _onMouseLeave: function(e) {
-      this.props.hoverService(this.props.service.get('id'), false);
-    },
-
-    render: function() {
-      var service = this.props.service.getAttrs();
-      var statusData = this._getPriorityUnits(service.units.toArray());
-      var statusIndicator = this._renderStatusIndicator(statusData);
+    @method _renderStatusIndicator
+    @param {Object} statusData The status data that will be used to generate
+      the status icon.
+  */
+  _renderStatusIndicator: function(statusData) {
+    var shownStatuses = ['uncommitted', 'pending', 'error'];
+    var className = 'inspector-view__status--' + statusData.key;
+    if (shownStatuses.indexOf(statusData.key) > -1) {
       return (
-        <li className={this._generateClassName()}
-          data-serviceid={service.id}
-          onClick={this._onClickHandler}
-          onMouseEnter={this._onMouseEnter}
-          onMouseLeave={this._onMouseLeave}
-          tabIndex="0"
-          role="button">
-          <img src={service.icon} className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">
-            {service.unit_count}
-          </span>
-          {' '}
-          <span className="inspector-view__item-name">
-            {service.name}
-          </span>
-          <span className="inspector-view__status-block">
-            {statusIndicator}
-          </span>
-        </li>
+        <span className={className}>{statusData.size}</span>
       );
     }
+  },
 
-  });
+  /**
+    Click handler for clicks on the entire list item.
 
+    @method _onClickHandler
+    @param {Object} e The click event.
+  */
+  _onClickHandler: function(e) {
+    this.props.panToService(this.props.service.get('id'));
+    this.props.changeState({
+      gui: {
+        inspector: {
+          id: e.currentTarget.getAttribute('data-serviceid')
+        }
+      }
+    });
+  },
+
+  _generateClassName: function() {
+    var props = this.props;
+    var service = props.service;
+    return classNames(
+      'inspector-view__list-item',
+      {
+        'visibility-toggled': service.get('highlight') || service.get('fade'),
+        hover: props.hovered
+      }
+    );
+  },
+
+  /**
+    Handle highlighting a service token when the item is hovered.
+
+    @method _onMouseEnter
+    @param {Object} e The mouse event.
+  */
+  _onMouseEnter: function(e) {
+    this.props.hoverService(this.props.service.get('id'), true);
+  },
+
+  /**
+    Handle unhighlighting a service token when the item is no longer hovered.
+
+    @method _onMouseLeave
+    @param {Object} e The mouse event.
+  */
+  _onMouseLeave: function(e) {
+    this.props.hoverService(this.props.service.get('id'), false);
+  },
+
+  render: function() {
+    var service = this.props.service.getAttrs();
+    var statusData = this._getPriorityUnits(service.units.toArray());
+    var statusIndicator = this._renderStatusIndicator(statusData);
+    return (
+      <li className={this._generateClassName()}
+        data-serviceid={service.id}
+        onClick={this._onClickHandler}
+        onMouseEnter={this._onMouseEnter}
+        onMouseLeave={this._onMouseLeave}
+        tabIndex="0"
+        role="button">
+        <img src={service.icon} className="inspector-view__item-icon" />
+        <span className="inspector-view__item-count">
+          {service.unit_count}
+        </span>
+        {' '}
+        <span className="inspector-view__item-name">
+          {service.name}
+        </span>
+        <span className="inspector-view__status-block">
+          {statusIndicator}
+        </span>
+      </li>
+    );
+  }
+
+});
+
+YUI.add('added-services-list-item', function() {
+  juju.components.AddedServicesListItem = AddedServicesListItem;
 }, '0.1.0', {
   requires: [
     'svg-icon'

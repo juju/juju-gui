@@ -18,47 +18,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('entity-content-description', function() {
+const EntityContentDescription = React.createClass({
+  displayName: 'EntityContentDescription',
 
-  juju.components.EntityContentDescription = React.createClass({
-    displayName: 'EntityContentDescription',
+  /* Define and validate the properites available on this component. */
+  propTypes: {
+    changeState: React.PropTypes.func,
+    entityModel: React.PropTypes.object,
+    includeHeading: React.PropTypes.bool,
+    renderMarkdown: React.PropTypes.func.isRequired
+  },
 
-    /* Define and validate the properites available on this component. */
-    propTypes: {
-      changeState: React.PropTypes.func,
-      entityModel: React.PropTypes.object,
-      includeHeading: React.PropTypes.bool,
-      renderMarkdown: React.PropTypes.func.isRequired
-    },
-
-    render: function() {
-      const description = this.props.entityModel.get('description');
-      if (!description) {
-        return false;
-      }
-      const htmlDescription = this.props.renderMarkdown(description);
-      let heading = null;
-      if (this.props.includeHeading) {
-        heading = (
-          <h2 className="entity-content__header" id="description">
-            Description
-            <juju.components.HashLink
-              changeState={this.props.changeState}
-              hash="description" />
-          </h2>
-        );
-      }
-      return (
-        <div className="entity-content__description">
-          {heading}
-          <div className="entity-content__description-content"
-            dangerouslySetInnerHTML={{__html: htmlDescription}}>
-          </div>
-        </div>
+  render: function() {
+    const description = this.props.entityModel.get('description');
+    if (!description) {
+      return false;
+    }
+    const htmlDescription = this.props.renderMarkdown(description);
+    let heading = null;
+    if (this.props.includeHeading) {
+      heading = (
+        <h2 className="entity-content__header" id="description">
+          Description
+          <juju.components.HashLink
+            changeState={this.props.changeState}
+            hash="description" />
+        </h2>
       );
     }
-  });
+    return (
+      <div className="entity-content__description">
+        {heading}
+        <div className="entity-content__description-content"
+          dangerouslySetInnerHTML={{__html: htmlDescription}}>
+        </div>
+      </div>
+    );
+  }
+});
 
+YUI.add('entity-content-description', function() {
+  juju.components.EntityContentDescription = EntityContentDescription;
 }, '0.1.0', {
   requires: ['hash-link']
 });

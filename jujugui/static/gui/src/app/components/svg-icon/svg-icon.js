@@ -18,97 +18,97 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const SvgIcon = React.createClass({
+  displayName: 'SvgIcon',
+
+  propTypes: {
+    className: React.PropTypes.string,
+    height: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
+    name: React.PropTypes.string.isRequired,
+    size: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
+    width: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ])
+  },
+
+  getInitialState: function() {
+    return this._generateDimensions(this.props);
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState(this._generateDimensions(nextProps));
+  },
+
+  /**
+    Generate the width and height based on the supplied props.
+
+    @param {Object} props The component props.
+    @returns {Object} The object of dimensions.
+  */
+  _generateDimensions: function(props) {
+    var size = props.size || this.props.size || 16;
+    return {
+      width: props.width || this.props.width || size,
+      height: props.height || this.props.height || size
+    };
+  },
+
+  /**
+    Generates the classes for the icon based on the supplied props.
+
+    @method _generateClasses
+    @returns {String} The collection of class names.
+  */
+  _generateClasses: function() {
+    var className = this.props.className;
+    return classNames(
+      'svg-icon',
+      className ? className : ''
+    );
+  },
+
+  /**
+    Generates the styles for the icon based on the supplied props.
+
+    @method _generateStyles
+    @returns {Object} The object of styles.
+  */
+  _generateStyles: function() {
+    return {
+      width: this.state.width + 'px',
+      height: this.state.height + 'px'
+    };
+  },
+
+  /**
+    Generates the viewbox for the icon based on the supplied props.
+
+    @method _generateViewbox
+    @returns {String} The viewbox.
+  */
+  _generateViewbox: function() {
+    return '0 0 ' + this.state.width + ' ' + this.state.height;
+  },
+
+  render: function() {
+    return (
+      <svg className={this._generateClasses()}
+        viewBox={this._generateViewbox()}
+        style={this._generateStyles()}>
+        <use xlinkHref={'#' + this.props.name}/>
+      </svg>
+    );
+  }
+
+});
+
 YUI.add('svg-icon', function() {
-
-  juju.components.SvgIcon = React.createClass({
-    displayName: 'SvgIcon',
-
-    propTypes: {
-      className: React.PropTypes.string,
-      height: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number
-      ]),
-      name: React.PropTypes.string.isRequired,
-      size: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number
-      ]),
-      width: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number
-      ])
-    },
-
-    getInitialState: function() {
-      return this._generateDimensions(this.props);
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this.setState(this._generateDimensions(nextProps));
-    },
-
-    /**
-      Generate the width and height based on the supplied props.
-
-      @param {Object} props The component props.
-      @returns {Object} The object of dimensions.
-    */
-    _generateDimensions: function(props) {
-      var size = props.size || this.props.size || 16;
-      return {
-        width: props.width || this.props.width || size,
-        height: props.height || this.props.height || size
-      };
-    },
-
-    /**
-      Generates the classes for the icon based on the supplied props.
-
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      var className = this.props.className;
-      return classNames(
-        'svg-icon',
-        className ? className : ''
-      );
-    },
-
-    /**
-      Generates the styles for the icon based on the supplied props.
-
-      @method _generateStyles
-      @returns {Object} The object of styles.
-    */
-    _generateStyles: function() {
-      return {
-        width: this.state.width + 'px',
-        height: this.state.height + 'px'
-      };
-    },
-
-    /**
-      Generates the viewbox for the icon based on the supplied props.
-
-      @method _generateViewbox
-      @returns {String} The viewbox.
-    */
-    _generateViewbox: function() {
-      return '0 0 ' + this.state.width + ' ' + this.state.height;
-    },
-
-    render: function() {
-      return (
-        <svg className={this._generateClasses()}
-          viewBox={this._generateViewbox()}
-          style={this._generateStyles()}>
-          <use xlinkHref={'#' + this.props.name}/>
-        </svg>
-      );
-    }
-
-  });
-
+  juju.components.SvgIcon = SvgIcon;
 }, '0.1.0', { requires: []});

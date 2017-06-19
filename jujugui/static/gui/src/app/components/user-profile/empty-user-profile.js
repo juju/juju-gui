@@ -18,55 +18,55 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// This component handles the empty user profile.
+const EmptyUserProfile = React.createClass({
+  displayName: 'EmptyUserProfile',
+
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    isCurrentUser: React.PropTypes.bool,
+    staticURL: React.PropTypes.string,
+    switchModel: React.PropTypes.func.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {
+      staticURL: ''
+    };
+  },
+
+  render: function() {
+    const props = this.props;
+    const basePath = `${props.staticURL}/static/gui/build/app`;
+    const isCurrentUser = props.isCurrentUser;
+    return (
+      <div className="user-profile__empty twelve-col no-margin-bottom">
+        <img alt="Empty profile"
+          className="user-profile__empty-image"
+          src=
+            {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
+        <h2 className="user-profile__empty-title">
+          {isCurrentUser ? 'Your' : 'This user\'s'} profile is currently empty
+        </h2>
+        <p className="user-profile__empty-text">
+          {isCurrentUser ? 'Your' : 'This user\'s'} models, bundles, and
+          charms will appear here when {isCurrentUser ? 'you' : 'they'} create
+          them.
+        </p>
+        {isCurrentUser ? (
+          <juju.components.CreateModelButton
+            changeState={props.changeState}
+            switchModel={props.switchModel}
+            title="Start building"
+            type="inline-positive" />) : null}
+      </div>
+    );
+  }
+
+});
+
 YUI.add('empty-user-profile', function() {
-
-  // This component handles the empty user profile.
-  juju.components.EmptyUserProfile = React.createClass({
-    displayName: 'EmptyUserProfile',
-
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      isCurrentUser: React.PropTypes.bool,
-      staticURL: React.PropTypes.string,
-      switchModel: React.PropTypes.func.isRequired
-    },
-
-    getDefaultProps: function() {
-      return {
-        staticURL: ''
-      };
-    },
-
-    render: function() {
-      const props = this.props;
-      const basePath = `${props.staticURL}/static/gui/build/app`;
-      const isCurrentUser = props.isCurrentUser;
-      return (
-        <div className="user-profile__empty twelve-col no-margin-bottom">
-          <img alt="Empty profile"
-            className="user-profile__empty-image"
-            src=
-              {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-          <h2 className="user-profile__empty-title">
-            {isCurrentUser ? 'Your' : 'This user\'s'} profile is currently empty
-          </h2>
-          <p className="user-profile__empty-text">
-            {isCurrentUser ? 'Your' : 'This user\'s'} models, bundles, and
-            charms will appear here when {isCurrentUser ? 'you' : 'they'} create
-            them.
-          </p>
-          {isCurrentUser ? (
-            <juju.components.CreateModelButton
-              changeState={props.changeState}
-              switchModel={props.switchModel}
-              title="Start building"
-              type="inline-positive" />) : null}
-        </div>
-      );
-    }
-
-  });
-
+  juju.components.EmptyUserProfile = EmptyUserProfile;
 }, '', {
   requires: [
     'create-model-button'

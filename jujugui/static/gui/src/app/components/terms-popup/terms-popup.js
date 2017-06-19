@@ -18,46 +18,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('terms-popup', function() {
+const TermsPopup = React.createClass({
+  displayName: 'TermsPopup',
 
-  juju.components.TermsPopup = React.createClass({
-    displayName: 'TermsPopup',
+  propTypes: {
+    close: React.PropTypes.func.isRequired,
+    terms: React.PropTypes.array.isRequired
+  },
 
-    propTypes: {
-      close: React.PropTypes.func.isRequired,
-      terms: React.PropTypes.array.isRequired
-    },
-
-    render: function() {
-      let content;
-      const terms = this.props.terms;
-      if (terms.length === 0) {
-        content = <juju.components.Spinner />;
-      } else {
-        const termsList = terms.map(term => {
-          return (
-            <li key={term.name}>
-              <pre>{term.content}</pre>
-            </li>
-          );
-        });
-        content = (
-          <div className="terms-popup__container">
-            <ul className="terms-popup__terms">
-              {termsList}
-            </ul>
-          </div>);
-      }
-      return (
-        <juju.components.Popup
-          close={this.props.close}
-          type="wide">
-          {content}
-        </juju.components.Popup>);
+  render: function() {
+    let content;
+    const terms = this.props.terms;
+    if (terms.length === 0) {
+      content = <juju.components.Spinner />;
+    } else {
+      const termsList = terms.map(term => {
+        return (
+          <li key={term.name}>
+            <pre>{term.content}</pre>
+          </li>
+        );
+      });
+      content = (
+        <div className="terms-popup__container">
+          <ul className="terms-popup__terms">
+            {termsList}
+          </ul>
+        </div>);
     }
+    return (
+      <juju.components.Popup
+        close={this.props.close}
+        type="wide">
+        {content}
+      </juju.components.Popup>);
+  }
 
-  });
+});
 
+YUI.add('terms-popup', function() {
+  juju.components.TermsPopup = TermsPopup;
 }, '0.1.0', {
   requires: [
     'loading-spinner',

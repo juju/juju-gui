@@ -18,62 +18,62 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const SearchResultsSelectFilter = React.createClass({
+
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    currentValue: React.PropTypes.string,
+    filter: React.PropTypes.string.isRequired,
+    items: React.PropTypes.array.isRequired,
+    label: React.PropTypes.string.isRequired
+  },
+
+  /**
+    Generate a list of items.
+
+    @method _generateItems
+    @returns {Object} The components.
+  */
+  _generateItems: function() {
+    var components = [];
+    this.props.items.forEach(function(item) {
+      components.push(
+        <option value={item.value}
+          key={item.value}>
+          {item.label}
+        </option>);
+    }, this);
+    return components;
+  },
+
+  /**
+    Change the state when the value changes.
+
+    @method _handleChange
+    @param {Object} e The change event.
+  */
+  _handleChange: function(e) {
+    const search = {};
+    search[this.props.filter] = e.currentTarget.value;
+    this.props.changeState({
+      search: search
+    });
+  },
+
+  render: function() {
+    var className = 'list-block__' + this.props.filter;
+    return (
+      <div className={className}>
+        {this.props.label}:
+        <select onChange={this._handleChange}
+          defaultValue={this.props.currentValue}>
+          {this._generateItems()}
+        </select>
+      </div>
+    );
+  }
+});
+
 YUI.add('search-results-select-filter', function(Y) {
-
-  juju.components.SearchResultsSelectFilter = React.createClass({
-
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      currentValue: React.PropTypes.string,
-      filter: React.PropTypes.string.isRequired,
-      items: React.PropTypes.array.isRequired,
-      label: React.PropTypes.string.isRequired
-    },
-
-    /**
-      Generate a list of items.
-
-      @method _generateItems
-      @returns {Object} The components.
-    */
-    _generateItems: function() {
-      var components = [];
-      this.props.items.forEach(function(item) {
-        components.push(
-          <option value={item.value}
-            key={item.value}>
-            {item.label}
-          </option>);
-      }, this);
-      return components;
-    },
-
-    /**
-      Change the state when the value changes.
-
-      @method _handleChange
-      @param {Object} e The change event.
-    */
-    _handleChange: function(e) {
-      const search = {};
-      search[this.props.filter] = e.currentTarget.value;
-      this.props.changeState({
-        search: search
-      });
-    },
-
-    render: function() {
-      var className = 'list-block__' + this.props.filter;
-      return (
-        <div className={className}>
-          {this.props.label}:
-          <select onChange={this._handleChange}
-            defaultValue={this.props.currentValue}>
-            {this._generateItems()}
-          </select>
-        </div>
-      );
-    }
-  });
-
+  juju.components.SearchResultsSelectFilter = SearchResultsSelectFilter;
 }, '0.1.0', {requires: []});

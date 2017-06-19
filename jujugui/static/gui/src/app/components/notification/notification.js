@@ -18,97 +18,97 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('notification', function() {
+/**
+  Renders a new vanilla style notification
+  (https://docs.vanillaframework.io/en/patterns/notification). Can be
+  dismissed if a 'dismiss' function is passed, otherwise just displays
+  'content' in the desired style.
+*/
+const Notification = React.createClass({
+  displayName: 'Notification',
+
+  propTypes: {
+    content: React.PropTypes.object.isRequired,
+    dismiss: React.PropTypes.func,
+    extraClasses: React.PropTypes.string,
+    isBlocking: React.PropTypes.bool,
+    // Types: positive, caution, negative
+    type: React.PropTypes.string
+  },
 
   /**
-    Renders a new vanilla style notification
-    (https://docs.vanillaframework.io/en/patterns/notification). Can be
-    dismissed if a 'dismiss' function is passed, otherwise just displays
-    'content' in the desired style.
+    Generate classes based on 'type' and extra classes.
+
+    @return {string} The class string.
   */
-  juju.components.Notification = React.createClass({
-    displayName: 'Notification',
-
-    propTypes: {
-      content: React.PropTypes.object.isRequired,
-      dismiss: React.PropTypes.func,
-      extraClasses: React.PropTypes.string,
-      isBlocking: React.PropTypes.bool,
-      // Types: positive, caution, negative
-      type: React.PropTypes.string
-    },
-
-    /**
-      Generate classes based on 'type' and extra classes.
-
-      @return {string} The class string.
-    */
-    _generateClasses: function() {
-      let classes = 'p-notification';
-      if (this.props.type) {
-        classes = `${classes}--${this.props.type}`;
-      }
-      if (this.props.extraClasses) {
-        classes = `${classes} ${this.props.extraClasses}`;
-      }
-      return classes;
-    },
-
-    /**
-      Dismiss the notification.
-
-      @param evt {Object} The click event.
-    */
-    _dismiss: function(evt) {
-      evt.stopPropagation();
-      const dismiss = this.props.dismiss;
-      dismiss && dismiss();
-    },
-
-    /**
-      Generates the dismiss button if a dismiss function is provided.
-      The parent is tasked with calling the correct dismiss functionality as
-      it will be on a per use basis.
-
-      @return {object} React Button node.
-    */
-    _generateDismiss: function() {
-      if (!this.props.dismiss) {
-        return;
-      }
-      return (
-        <button
-          className="p-notification__action"
-          onClick={this._dismiss}>
-          <window.juju.components.SvgIcon
-            name="close_16" size="16" />
-        </button>);
-    },
-
-    render: function() {
-      const content = (<div className={this._generateClasses()}>
-        <p className="p-notification__response">
-          {this.props.content}
-          {this._generateDismiss()}
-        </p>
-      </div>);
-      if (this.props.isBlocking && this.props.dismiss) {
-        return (
-          <div className="p-notification__blocker" onClick={this.props.dismiss}>
-            {content}
-          </div>
-        );
-      } else if (this.props.isBlocking) {
-        return (
-          <div className="p-notification__blocker">
-            {content}
-          </div>
-        );
-      }
-      return content;
+  _generateClasses: function() {
+    let classes = 'p-notification';
+    if (this.props.type) {
+      classes = `${classes}--${this.props.type}`;
     }
-  });
+    if (this.props.extraClasses) {
+      classes = `${classes} ${this.props.extraClasses}`;
+    }
+    return classes;
+  },
 
+  /**
+    Dismiss the notification.
+
+    @param evt {Object} The click event.
+  */
+  _dismiss: function(evt) {
+    evt.stopPropagation();
+    const dismiss = this.props.dismiss;
+    dismiss && dismiss();
+  },
+
+  /**
+    Generates the dismiss button if a dismiss function is provided.
+    The parent is tasked with calling the correct dismiss functionality as
+    it will be on a per use basis.
+
+    @return {object} React Button node.
+  */
+  _generateDismiss: function() {
+    if (!this.props.dismiss) {
+      return;
+    }
+    return (
+      <button
+        className="p-notification__action"
+        onClick={this._dismiss}>
+        <window.juju.components.SvgIcon
+          name="close_16" size="16" />
+      </button>);
+  },
+
+  render: function() {
+    const content = (<div className={this._generateClasses()}>
+      <p className="p-notification__response">
+        {this.props.content}
+        {this._generateDismiss()}
+      </p>
+    </div>);
+    if (this.props.isBlocking && this.props.dismiss) {
+      return (
+        <div className="p-notification__blocker" onClick={this.props.dismiss}>
+          {content}
+        </div>
+      );
+    } else if (this.props.isBlocking) {
+      return (
+        <div className="p-notification__blocker">
+          {content}
+        </div>
+      );
+    }
+    return content;
+  }
+});
+
+YUI.add('notification', function() {
+  juju.components.Notification = Notification;
 }, '0.1.0', {
   requires: [
     'svg-icon'

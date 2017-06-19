@@ -18,8 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('ambiguous-relation-menu', function() {
-
+const AmbiguousRelationMenu = function(props) {
   /**
     Generate a list of bindings.
 
@@ -45,26 +44,25 @@ YUI.add('ambiguous-relation-menu', function() {
     return components;
   }
 
-  var AmbiguousRelationMenu = function(props) {
-    return (
-      <div className="menu">
-        <ul>
-          {_generateRelations(props.endpoints)}
-        </ul>
-        <div className="cancel link" role="button" tabIndex="0">
-          <juju.components.SvgIcon name="close_16"
-            size="16" />
-        </div>
+  return (
+    <div className="menu">
+      <ul>
+        {_generateRelations(props.endpoints)}
+      </ul>
+      <div className="cancel link" role="button" tabIndex="0">
+        <juju.components.SvgIcon name="close_16"
+          size="16" />
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  AmbiguousRelationMenu.propTypes = {
-    endpoints: React.PropTypes.array.isRequired
-  };
+AmbiguousRelationMenu.propTypes = {
+  endpoints: React.PropTypes.array.isRequired
+};
 
+YUI.add('ambiguous-relation-menu', function() {
   juju.components.AmbiguousRelationMenu = AmbiguousRelationMenu;
-
 }, '0.1.0', { requires: [
   'svg-icon'
 ]});

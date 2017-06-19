@@ -49,7 +49,7 @@ describe('USSOLoginLink', () => {
         {notification}
       </div>
     </div>;
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('calls loginToController on click for text link', () => {
@@ -83,7 +83,7 @@ describe('USSOLoginLink', () => {
           {notification}
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render a button link with custom content', () => {

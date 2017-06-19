@@ -18,91 +18,91 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('panel-component', function() {
+const Panel = React.createClass({
+  displayName: 'Panel',
 
-  juju.components.Panel = React.createClass({
-    displayName: 'Panel',
+  propTypes: {
+    children: React.PropTypes.oneOfType([
+      React.PropTypes.object,
+      React.PropTypes.array
+    ]),
+    clickAction: React.PropTypes.func,
+    focus: React.PropTypes.bool,
+    instanceName: React.PropTypes.string.isRequired,
+    visible: React.PropTypes.bool.isRequired
+  },
 
-    propTypes: {
-      children: React.PropTypes.oneOfType([
-        React.PropTypes.object,
-        React.PropTypes.array
-      ]),
-      clickAction: React.PropTypes.func,
-      focus: React.PropTypes.bool,
-      instanceName: React.PropTypes.string.isRequired,
-      visible: React.PropTypes.bool.isRequired
-    },
+  getDefaultProps: function() {
+    return {focus: true};
+  },
 
-    getDefaultProps: function() {
-      return {focus: true};
-    },
-
-    componentDidMount: function() {
-      // Set the keyboard focus on the component so it can be scrolled with the
-      // keyboard. Requires tabIndex to be set on the element.
-      if (this.props.focus) {
-        this.refs.content.focus();
-      }
-    },
-
-    /**
-      Returns the supplied classes with the 'active' class applied if the
-      component is the one which is active.
-
-      @method _generateClasses
-      @param {String} section The section you want to check if it needs to be
-        active.
-      @returns {String} The collection of class names.
-    */
-    _genClasses: function(section) {
-      return classNames(
-        'panel-component',
-        this.props.instanceName,
-        {
-          hidden: !this.props.visible
-        }
-      );
-    },
-
-    /**
-      Call a click action if it exists.
-
-      @method _handleClick
-    */
-    _handleClick: function() {
-      var clickAction = this.props.clickAction;
-      if (clickAction) {
-        clickAction();
-      }
-    },
-
-    /**
-      Don't bubble the click event to the parent.
-
-      @method _stopBubble
-      @param {Object} The click event.
-    */
-    _stopBubble: function(e) {
-      if (this.props.clickAction) {
-        e.stopPropagation();
-      }
-    },
-
-    render: function() {
-      return (
-        <div className={this._genClasses()}
-          onClick={this._handleClick}
-          ref="content"
-          tabIndex="0">
-          <div className="panel-component__inner"
-            onClick={this._stopBubble}>
-            {this.props.children}
-          </div>
-        </div>
-      );
+  componentDidMount: function() {
+    // Set the keyboard focus on the component so it can be scrolled with the
+    // keyboard. Requires tabIndex to be set on the element.
+    if (this.props.focus) {
+      this.refs.content.focus();
     }
+  },
 
-  });
+  /**
+    Returns the supplied classes with the 'active' class applied if the
+    component is the one which is active.
 
+    @method _generateClasses
+    @param {String} section The section you want to check if it needs to be
+      active.
+    @returns {String} The collection of class names.
+  */
+  _genClasses: function(section) {
+    return classNames(
+      'panel-component',
+      this.props.instanceName,
+      {
+        hidden: !this.props.visible
+      }
+    );
+  },
+
+  /**
+    Call a click action if it exists.
+
+    @method _handleClick
+  */
+  _handleClick: function() {
+    var clickAction = this.props.clickAction;
+    if (clickAction) {
+      clickAction();
+    }
+  },
+
+  /**
+    Don't bubble the click event to the parent.
+
+    @method _stopBubble
+    @param {Object} The click event.
+  */
+  _stopBubble: function(e) {
+    if (this.props.clickAction) {
+      e.stopPropagation();
+    }
+  },
+
+  render: function() {
+    return (
+      <div className={this._genClasses()}
+        onClick={this._handleClick}
+        ref="content"
+        tabIndex="0">
+        <div className="panel-component__inner"
+          onClick={this._stopBubble}>
+          {this.props.children}
+        </div>
+      </div>
+    );
+  }
+
+});
+
+YUI.add('panel-component', function() {
+  juju.components.Panel = Panel;
 }, '0.1.0', { requires: []});

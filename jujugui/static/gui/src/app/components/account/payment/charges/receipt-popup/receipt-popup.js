@@ -18,87 +18,87 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('receipt-popup', function() {
+const ReceiptPopup = React.createClass({
+  displayName: 'ReceiptPopup',
 
-  juju.components.ReceiptPopup = React.createClass({
-    displayName: 'ReceiptPopup',
+  propTypes: {
+    addNotification: React.PropTypes.func.isRequired,
+    chargeId: React.PropTypes.string.isRequired,
+    close: React.PropTypes.func.isRequired,
+    getReceipt: React.PropTypes.func.isRequired
+  },
 
-    propTypes: {
-      addNotification: React.PropTypes.func.isRequired,
-      chargeId: React.PropTypes.string.isRequired,
-      close: React.PropTypes.func.isRequired,
-      getReceipt: React.PropTypes.func.isRequired
-    },
+  getInitialState: function() {
+    this.xhrs = [];
+    return {
+      receipt: null,
+      loading: false
+    };
+  },
 
-    getInitialState: function() {
-      this.xhrs = [];
-      return {
-        receipt: null,
-        loading: false
-      };
-    },
+  componentWillMount: function() {
+    this._getReceipt();
+  },
 
-    componentWillMount: function() {
-      this._getReceipt();
-    },
+  componentWillUnmount: function() {
+    this.xhrs.forEach((xhr) => {
+      xhr && xhr.abort && xhr.abort();
+    });
+  },
 
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
+  /**
+    Get a receipt.
+
+    @method _getReceipt
+  */
+  _getReceipt: function() {
+    this.setState({loading: true}, () => {
+      const chargeId = this.props.chargeId;
+      const xhr = this.props.getReceipt(chargeId, (error, response) => {
+        if (error) {
+          const message = 'Could not load the receipt';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
+          return;
+        }
+        this.setState({loading: false, receipt: response});
       });
-    },
+      this.xhrs.push(xhr);
+    });
+  },
 
-    /**
-      Get a receipt.
-
-      @method _getReceipt
-    */
-    _getReceipt: function() {
-      this.setState({loading: true}, () => {
-        const chargeId = this.props.chargeId;
-        const xhr = this.props.getReceipt(chargeId, (error, response) => {
-          if (error) {
-            const message = 'Could not load the receipt';
-            this.props.addNotification({
-              title: message,
-              message: `${message}: ${error}`,
-              level: 'error'
-            });
-            console.error(message, error);
-            return;
-          }
-          this.setState({loading: false, receipt: response});
-        });
-        this.xhrs.push(xhr);
-      });
-    },
-
-    render: function() {
-      let content;
-      const receipt = this.state.receipt;
-      if (this.state.loading) {
-        content = <juju.components.Spinner />;
-      } else {
-        content = (
-          <div className="receipt-popup__container">
-            <iframe height="100%"
-              src={
-                `data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
-              width="100%">
-            </iframe>
-          </div>);
-      }
-      return (
-        <juju.components.Popup
-          className="receipt-popup"
-          close={this.props.close}
-          type="wide">
-          {content}
-        </juju.components.Popup>);
+  render: function() {
+    let content;
+    const receipt = this.state.receipt;
+    if (this.state.loading) {
+      content = <juju.components.Spinner />;
+    } else {
+      content = (
+        <div className="receipt-popup__container">
+          <iframe height="100%"
+            src={
+              `data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
+            width="100%">
+          </iframe>
+        </div>);
     }
+    return (
+      <juju.components.Popup
+        className="receipt-popup"
+        close={this.props.close}
+        type="wide">
+        {content}
+      </juju.components.Popup>);
+  }
 
-  });
+});
 
+YUI.add('receipt-popup', function() {
+  juju.components.ReceiptPopup = ReceiptPopup;
 }, '0.1.0', {
   requires: [
     'loading-spinner',

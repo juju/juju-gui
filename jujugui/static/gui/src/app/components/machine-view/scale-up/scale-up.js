@@ -18,96 +18,97 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('machine-view-scale-up', function() {
+const MachineViewScaleUp = React.createClass({
+  propTypes: {
+    acl: React.PropTypes.object.isRequired,
+    addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+    services: React.PropTypes.object.isRequired,
+    toggleScaleUp: React.PropTypes.func.isRequired
+  },
 
-  juju.components.MachineViewScaleUp = React.createClass({
-    propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-      services: React.PropTypes.object.isRequired,
-      toggleScaleUp: React.PropTypes.func.isRequired
-    },
+  /**
+    Display a list of services.
 
-    /**
-      Display a list of services.
-
-      @method _generateServices
-      @returns {Object} A unit list or onboarding.
-    */
-    _generateServices: function() {
-      var components = [];
-      var services = this.props.services.toArray();
-      services.forEach((service) => {
-        if (service.get('subordinate')) {
-          return;
-        }
-        components.push(
-          <li className="machine-view__scale-up-unit"
-            key={service.get('id')}>
-            <img alt={service.get('name')}
-              className="machine-view__scale-up-unit-icon"
-              src={service.get('icon')} />
-            <div className="machine-view__scale-up-unit-name"
-              title={service.get('name')}>
-              {service.get('name')}
-            </div>
-            <input
-              className="machine-view__scale-up-unit-input"
-              disabled={this.props.acl.isReadOnly()}
-              placeholder="units"
-              ref={'scaleUpUnit-' + service.get('id')}
-              type="number"
-              min="0"
-              step="1" />
-          </li>);
-      });
-      return (
-        <ul className="machine-view__scale-up-units">
-          {components}
-        </ul>);
-    },
-
-    /**
-      Add units to the services.
-
-      @method _handleAddUnits
-      @param {Object} e An event object.
-    */
-    _handleAddUnits: function(e) {
-      if (e) {
-        e.preventDefault();
+    @method _generateServices
+    @returns {Object} A unit list or onboarding.
+  */
+  _generateServices: function() {
+    var components = [];
+    var services = this.props.services.toArray();
+    services.forEach((service) => {
+      if (service.get('subordinate')) {
+        return;
       }
-      var re = /(scaleUpUnit-)(.*)/;
-      Object.keys(this.refs).forEach((ref) => {
-        var parts = re.exec(ref);
-        if (parts) {
-          var service = this.props.services.getById(parts[2]);
-          this.props.addGhostAndEcsUnits(service, this.refs[ref].value);
-        }
-      });
-      this.props.toggleScaleUp();
-    },
+      components.push(
+        <li className="machine-view__scale-up-unit"
+          key={service.get('id')}>
+          <img alt={service.get('name')}
+            className="machine-view__scale-up-unit-icon"
+            src={service.get('icon')} />
+          <div className="machine-view__scale-up-unit-name"
+            title={service.get('name')}>
+            {service.get('name')}
+          </div>
+          <input
+            className="machine-view__scale-up-unit-input"
+            disabled={this.props.acl.isReadOnly()}
+            placeholder="units"
+            ref={'scaleUpUnit-' + service.get('id')}
+            type="number"
+            min="0"
+            step="1" />
+        </li>);
+    });
+    return (
+      <ul className="machine-view__scale-up-units">
+        {components}
+      </ul>);
+  },
 
-    render: function() {
-      var buttons = [{
-        action: this.props.toggleScaleUp,
-        title: 'Cancel',
-        type: 'base'
-      }, {
-        action: this._handleAddUnits,
-        disabled: this.props.acl.isReadOnly(),
-        title: 'Add units',
-        type: 'neutral'
-      }];
-      return (
-        <form className="machine-view__scale-up"
-          onSubmit={this._handleAddUnits}>
-          {this._generateServices()}
-          <juju.components.ButtonRow buttons={buttons} />
-        </form>
-      );
+  /**
+    Add units to the services.
+
+    @method _handleAddUnits
+    @param {Object} e An event object.
+  */
+  _handleAddUnits: function(e) {
+    if (e) {
+      e.preventDefault();
     }
-  });
+    var re = /(scaleUpUnit-)(.*)/;
+    Object.keys(this.refs).forEach((ref) => {
+      var parts = re.exec(ref);
+      if (parts) {
+        var service = this.props.services.getById(parts[2]);
+        this.props.addGhostAndEcsUnits(service, this.refs[ref].value);
+      }
+    });
+    this.props.toggleScaleUp();
+  },
+
+  render: function() {
+    var buttons = [{
+      action: this.props.toggleScaleUp,
+      title: 'Cancel',
+      type: 'base'
+    }, {
+      action: this._handleAddUnits,
+      disabled: this.props.acl.isReadOnly(),
+      title: 'Add units',
+      type: 'neutral'
+    }];
+    return (
+      <form className="machine-view__scale-up"
+        onSubmit={this._handleAddUnits}>
+        {this._generateServices()}
+        <juju.components.ButtonRow buttons={buttons} />
+      </form>
+    );
+  }
+});
+
+YUI.add('machine-view-scale-up', function() {
+  juju.components.MachineViewScaleUp = MachineViewScaleUp;
 }, '0.1.0', {
   requires: [
     'button-row'

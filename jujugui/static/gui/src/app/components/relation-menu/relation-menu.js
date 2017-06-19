@@ -18,8 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('relation-menu', function() {
-
+const RelationMenu = function(props) {
   /**
     Get the real service name.
 
@@ -106,23 +105,22 @@ YUI.add('relation-menu', function() {
     return components;
   }
 
-  var RelationMenu = function(props) {
-    return (
-      <div className="menu">
-        <div className="triangle">&nbsp;</div>
-        <ul>
-          {_generateRelations(props.relations)}
-        </ul>
-      </div>
-    );
-  };
+  return (
+    <div className="menu">
+      <div className="triangle">&nbsp;</div>
+      <ul>
+        {_generateRelations(props.relations)}
+      </ul>
+    </div>
+  );
+};
 
-  RelationMenu.propTypes = {
-    relations: React.PropTypes.array.isRequired
-  };
+RelationMenu.propTypes = {
+  relations: React.PropTypes.array.isRequired
+};
 
+YUI.add('relation-menu', function() {
   juju.components.RelationMenu = RelationMenu;
-
 }, '0.1.0', { requires: [
   'svg-icon'
 ]});

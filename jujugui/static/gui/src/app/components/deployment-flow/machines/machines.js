@@ -18,96 +18,96 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-machines', function() {
+const DeploymentMachines = React.createClass({
+  displayName: 'DeploymentMachines',
 
-  juju.components.DeploymentMachines = React.createClass({
-    displayName: 'DeploymentMachines',
+  propTypes: {
+    acl: React.PropTypes.object.isRequired,
+    cloud: React.PropTypes.object,
+    formatConstraints: React.PropTypes.func.isRequired,
+    generateMachineDetails: React.PropTypes.func.isRequired,
+    machines: React.PropTypes.object
+  },
 
-    propTypes: {
-      acl: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.object,
-      formatConstraints: React.PropTypes.func.isRequired,
-      generateMachineDetails: React.PropTypes.func.isRequired,
-      machines: React.PropTypes.object
-    },
+  /**
+    Generate the list of machines
 
-    /**
-      Generate the list of machines
-
-      @method _generateMachines
-      @returns {Object} The list of machines.
-    */
-    _generateMachines: function() {
-      const machines = this.props.machines;
-      if (!machines || Object.keys(machines).length === 0) {
-        return;
-      }
-      let machineDetails = {};
-      Object.keys(machines).forEach(key => {
-        const machine = machines[key];
-        const args = machine.command.args[0][0];
-        const info = this.props.generateMachineDetails({
-          commitStatus: 'uncommitted',
-          constraints: this.props.formatConstraints(args.constraints),
-          id: machine.command.options.modelId,
-          series: args.series
-        });
-        const current = machineDetails[info] || 0;
-        machineDetails[info] = current + 1;
-      });
-      const cloud = this.props.cloud && this.props.cloud.name;
-      const machineList = Object.keys(machineDetails).map(machine => {
-        const count = machineDetails[machine];
-        return (
-          <li className="deployment-flow__row twelve-col"
-            key={machine}>
-            <div className="eight-col">
-              {machine}
-            </div>
-            <div className="three-col">
-              {cloud}
-            </div>
-            <div className="one-col last-col">
-              {count}
-            </div>
-          </li>);
-      });
-      return (
-        <ul className="deployment-machines__list">
-          <li className="deployment-flow__row-header twelve-col">
-            <div className="eight-col">
-              Type
-            </div>
-            <div className="three-col">
-              Provider
-            </div>
-            <div className="one-col last-col">
-              Quantity
-            </div>
-          </li>
-          {machineList}
-        </ul>);
-    },
-
-    render: function() {
-      let chargeMessage = '';
-      const cloudName = this.props.cloud ? this.props.cloud.name : 'the cloud';
-      if (cloudName !== 'localhost') {
-        chargeMessage = 'You will incur a charge from your cloud provider.';
-      }
-      return (
-        <div>
-          <p className="deployment-machines__message">
-            These machines will be provisioned on {cloudName}.&nbsp;
-            {chargeMessage}
-          </p>
-          {this._generateMachines()}
-        </div>
-      );
+    @method _generateMachines
+    @returns {Object} The list of machines.
+  */
+  _generateMachines: function() {
+    const machines = this.props.machines;
+    if (!machines || Object.keys(machines).length === 0) {
+      return;
     }
+    let machineDetails = {};
+    Object.keys(machines).forEach(key => {
+      const machine = machines[key];
+      const args = machine.command.args[0][0];
+      const info = this.props.generateMachineDetails({
+        commitStatus: 'uncommitted',
+        constraints: this.props.formatConstraints(args.constraints),
+        id: machine.command.options.modelId,
+        series: args.series
+      });
+      const current = machineDetails[info] || 0;
+      machineDetails[info] = current + 1;
+    });
+    const cloud = this.props.cloud && this.props.cloud.name;
+    const machineList = Object.keys(machineDetails).map(machine => {
+      const count = machineDetails[machine];
+      return (
+        <li className="deployment-flow__row twelve-col"
+          key={machine}>
+          <div className="eight-col">
+            {machine}
+          </div>
+          <div className="three-col">
+            {cloud}
+          </div>
+          <div className="one-col last-col">
+            {count}
+          </div>
+        </li>);
+    });
+    return (
+      <ul className="deployment-machines__list">
+        <li className="deployment-flow__row-header twelve-col">
+          <div className="eight-col">
+            Type
+          </div>
+          <div className="three-col">
+            Provider
+          </div>
+          <div className="one-col last-col">
+            Quantity
+          </div>
+        </li>
+        {machineList}
+      </ul>);
+  },
 
-  });
+  render: function() {
+    let chargeMessage = '';
+    const cloudName = this.props.cloud ? this.props.cloud.name : 'the cloud';
+    if (cloudName !== 'localhost') {
+      chargeMessage = 'You will incur a charge from your cloud provider.';
+    }
+    return (
+      <div>
+        <p className="deployment-machines__message">
+          These machines will be provisioned on {cloudName}.&nbsp;
+          {chargeMessage}
+        </p>
+        {this._generateMachines()}
+      </div>
+    );
+  }
 
+});
+
+YUI.add('deployment-machines', function() {
+  juju.components.DeploymentMachines = DeploymentMachines;
 }, '0.1.0', {
   requires: [
     'svg-icon'

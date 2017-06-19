@@ -18,82 +18,82 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('entity-content-relations', function() {
+const EntityContentRelations = React.createClass({
+  /* Define and validate the properites available on this component. */
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    relations: React.PropTypes.object.isRequired
+  },
 
-  juju.components.EntityContentRelations = React.createClass({
-    /* Define and validate the properites available on this component. */
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      relations: React.PropTypes.object.isRequired
-    },
+  /**
+    Handle clicks on tags.
 
-    /**
-      Handle clicks on tags.
+    @method _handleTagClick
+    @param {String} type The requirement type.
+    @param {String} name The requirement interface.
+  */
+  _handleRelationClick: function(type, name) {
+    const search = {
+      text: ''
+    };
+    search[type] = name;
+    this.props.changeState({
+      search: search,
+      store: null
+    });
+  },
+  /**
+    Generate the list of relations.
 
-      @method _handleTagClick
-      @param {String} type The requirement type.
-      @param {String} name The requirement interface.
-    */
-    _handleRelationClick: function(type, name) {
-      const search = {
-        text: ''
-      };
-      search[type] = name;
-      this.props.changeState({
-        search: search,
-        store: null
+    @method _generateRelations
+    @return {Object} The relation markup.
+  */
+  _generateRelations: function() {
+    var components = [];
+    var relations = this.props.relations;
+    var requires = [];
+    if (relations.requires) {
+      requires = Object.keys(relations.requires).map(function(key) {
+        return relations.requires[key];
       });
-    },
-    /**
-      Generate the list of relations.
-
-      @method _generateRelations
-      @return {Object} The relation markup.
-    */
-    _generateRelations: function() {
-      var components = [];
-      var relations = this.props.relations;
-      var requires = [];
-      if (relations.requires) {
-        requires = Object.keys(relations.requires).map(function(key) {
-          return relations.requires[key];
-        });
-      }
-      var provides = [];
-      if (relations.provides) {
-        provides = Object.keys(relations.provides).map(function(key) {
-          return relations.provides[key];
-        });
-      }
-      var relationsList = provides.concat(requires);
-      relationsList.forEach(function(relation) {
-        var type = this.role === 'requirer' ? 'requires' : 'provides';
-        components.push(
-          <li className="link section__list-item"
-            role="button"
-            tabIndex="0"
-            onClick={this._handleRelationClick.bind(
-              this, type, relation.interface)}
-            key={relation.name}>
-            {relation.name}: {relation.interface}
-          </li>
-        );
-      }, this);
-      return components;
-    },
-
-    render: function() {
-      return (
-        <div className="section entity-relations" id="relations">
-          <h3 className="section__title">
-            Relations
-          </h3>
-          <ul className="section__list" ref="list">
-            {this._generateRelations()}
-          </ul>
-        </div>
-      );
     }
-  });
+    var provides = [];
+    if (relations.provides) {
+      provides = Object.keys(relations.provides).map(function(key) {
+        return relations.provides[key];
+      });
+    }
+    var relationsList = provides.concat(requires);
+    relationsList.forEach(function(relation) {
+      var type = this.role === 'requirer' ? 'requires' : 'provides';
+      components.push(
+        <li className="link section__list-item"
+          role="button"
+          tabIndex="0"
+          onClick={this._handleRelationClick.bind(
+            this, type, relation.interface)}
+          key={relation.name}>
+          {relation.name}: {relation.interface}
+        </li>
+      );
+    }, this);
+    return components;
+  },
 
+  render: function() {
+    return (
+      <div className="section entity-relations" id="relations">
+        <h3 className="section__title">
+          Relations
+        </h3>
+        <ul className="section__list" ref="list">
+          {this._generateRelations()}
+        </ul>
+      </div>
+    );
+  }
+});
+
+YUI.add('entity-content-relations', function() {
+  juju.components.EntityContentRelations = EntityContentRelations;
 }, '0.1.0', {requires: []});
