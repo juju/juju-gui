@@ -340,6 +340,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
+          if (!juju_config.flags) {
+            juju_config.flags = {};
+          }
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
