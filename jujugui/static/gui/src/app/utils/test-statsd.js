@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -23,14 +7,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('StatsClient', () => {
-  let mockXHR, statsd;
-
-  beforeAll((done) => {
-    YUI().use('statsd', Y => {
-      statsd = Y.juju.statsd;
-      done();
-    });
-  });
+  let mockXHR;
 
   beforeEach(() => {
     const proto = XMLHttpRequest.prototype;
@@ -69,27 +46,27 @@ describe('StatsClient', () => {
 
   it('increases a counter', () => {
     const url = 'https://example.com/stats/';
-    const client = new statsd.StatsClient(url);
+    const client = new window.jujugui.StatsClient(url);
     client.increase('foo');
     assertXHRSent(url, 'foo:1|c');
   });
 
   it('adds the trailing slash to the URL', () => {
-    const client = new statsd.StatsClient('https://example.com');
+    const client = new window.jujugui.StatsClient('https://example.com');
     client.increase('bar');
     assertXHRSent('https://example.com/', 'bar:1|c');
   });
 
-  it('increases a counter more than one', () => {
+  it('increases a counter by more than one', () => {
     const url = 'https://example.com/stats/';
-    const client = new statsd.StatsClient(url);
+    const client = new window.jujugui.StatsClient(url);
     client.increase('my-key', 42);
     assertXHRSent(url, 'my-key:42|c');
   });
 
   it('can include a prefix', () => {
     const url = 'https://example.com/stats/';
-    const client = new statsd.StatsClient(url, 'gui');
+    const client = new window.jujugui.StatsClient(url, 'gui');
     client.increase('awesome');
     assertXHRSent(url, 'gui.awesome:1|c');
   });
