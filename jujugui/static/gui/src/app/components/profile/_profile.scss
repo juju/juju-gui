@@ -1,0 +1,33 @@
+.profile {
+  .inner-wrapper {
+    max-width: 1030px;
+  }
+
+  &__header {
+    margin-bottom: 30px;
+    background-color: #fff;
+  }
+
+  &__nav {
+    @extend %list-style;
+    float: left;
+    width: 238px;
+
+    &-link {
+      margin-bottom: 10px;
+      padding-left: 11px;
+      font-weight: 300 !important;
+
+      &--active {
+        padding-left: 10px;
+        border-left: 1px solid #cdcdcd;
+        font-weight: 400 !important;
+      }
+    }
+  }
+
+  &__content {
+    float: left;
+    width: 766px;
+  }
+}

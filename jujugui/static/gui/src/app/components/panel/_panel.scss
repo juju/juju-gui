@@ -66,6 +66,7 @@
   }
 
   &.account,
+  &.profile,
   &.isv-profile,
   &.user-profile {
     @extend %scroll-children;

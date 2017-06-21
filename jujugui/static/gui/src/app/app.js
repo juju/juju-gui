@@ -3107,6 +3107,7 @@ YUI.add('juju-gui', function(Y) {
     'modal-shortcuts',
     'notification-list',
     'panel-component',
+    'profile',
     'sharing',
     'svg-icon',
     'user-menu',
