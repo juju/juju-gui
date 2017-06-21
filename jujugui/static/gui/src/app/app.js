@@ -962,72 +962,8 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderUserProfile: function(state, next) {
-      // XXX Jeff - 1-2-2016 - Because of a bug in the state system the profile
-      // view renders itself and then makes requests to identity before the
-      // controller is setup and the user has successfully logged in. As a
-      // temporary workaround we will just prevent rendering the profile until
-      // the controller is connected.
-      // XXX frankban: it seems that the profile is rendered even when the
-      // profile is not included in the state.
-      const guiState = state.gui || {};
-      if (
-        guiState.deploy !== undefined ||
-        !state.profile ||
-        !this.controllerAPI.get('connected') ||
-        !this.controllerAPI.userIsAuthenticated
-      ) {
-        return;
-      }
-      // XXX Jeff - 18-11-2016 - This profile gets rendered before the
-      // controller has completed connecting and logging in when in gisf. The
-      // proper fix is to queue up the RPC calls but due to time constraints
-      // we're setting up this handler to simply re-render the profile when
-      // the controller is properly connected.
-      const facadesExist = !!this.controllerAPI.get('facades');
-      if (!facadesExist) {
-        const handler = this.controllerAPI.after('facadesChange', e => {
-          if (e.newVal) {
-            this._renderUserProfile(state, next);
-            handler.detach();
-          }
-        });
-      }
-      const charmstore = this.get('charmstore');
-      const utils = views.utils;
-      const currentModel = this.get('modelUUID');
-      // When going to the profile view, we are theoretically no longer
-      // connected to any model. Setting the current model identifier to null
-      // also allows switching to the same model from the profile view.
-      this.set('modelUUID', null);
-      // NOTE: we need to clone this.get('users') below; passing in without
-      // cloning breaks React's ability to distinguish between this.props and
-      // nextProps on the lifecycle methods.
       ReactDOM.render(
-        <window.juju.components.UserProfile
-          acl={this.acl}
-          addNotification=
-            {this.db.notifications.add.bind(this.db.notifications)}
-          charmstore={charmstore}
-          currentModel={currentModel}
-          d3={d3}
-          facadesExist={facadesExist}
-          listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModelsWithInfo={
-            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
-          getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
-          changeState={this.state.changeState.bind(this.state)}
-          destroyModels={
-            this.controllerAPI.destroyModels.bind(this.controllerAPI)}
-          getAgreements={this.terms.getAgreements.bind(this.terms)}
-          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          interactiveLogin={this.get('interactiveLogin')}
-          pluralize={utils.pluralize.bind(this)}
-          setPageTitle={this.setPageTitle}
-          staticURL={window.juju_config.staticURL}
-          storeUser={this.storeUser.bind(this)}
-          switchModel={utils.switchModel.bind(this, this.env)}
-          userInfo={this._getUserInfo(state)}
-        />,
+        <window.juju.components.Profile />,
         document.getElementById('top-page-container'));
     },
 
