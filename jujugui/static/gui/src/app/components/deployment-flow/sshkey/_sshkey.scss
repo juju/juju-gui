@@ -3,3 +3,11 @@
     word-wrap: break-word;
   }
 }
+
+.added-keys {
+
+  &__key-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

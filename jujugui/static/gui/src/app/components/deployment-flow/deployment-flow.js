@@ -559,7 +559,8 @@ const DeploymentFlow = React.createClass({
         completed={status.completed}
         disabled={status.disabled}
         instance="deployment-ssh-key"
-        showCheck={false}>
+        showCheck={true}
+        title="Add SSH keys">
         <juju.components.DeploymentSSHKey
           cloud={cloud}
           setSSHKey={this._setSSHKey}
