@@ -107,11 +107,9 @@ const DeploymentSSHKey = React.createClass({
       return;
     }
 
-
     let listBody = [];
     SSHkeys[0].forEach((key, i) => {
       let uniqueKey = key.id + i;
-      console.log(key);
       listBody.push(
          <li className="deployment-flow__row twelve-col" key={uniqueKey}>
           <div className="two-col">{key.type}</div>
