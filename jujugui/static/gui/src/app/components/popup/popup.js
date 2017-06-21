@@ -111,8 +111,10 @@ const Popup = React.createClass({
         instanceName="popup"
         visible={true}>
         <div className={this._generateClasses()}>
-          {this._generateClose()}
-          {this._generateTitle()}
+          <div className="popup__header">
+            {this._generateClose()}
+            {this._generateTitle()}
+          </div>
           {this.props.children}
           {this._generateButtons()}
         </div>

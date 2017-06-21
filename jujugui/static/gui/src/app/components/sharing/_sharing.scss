@@ -1,7 +1,14 @@
 .sharing {
   &__popup {
-    top: calc(50% - 250px);
-    padding-bottom: 0.625rem;
+    display: flex;
+    flex-direction: column;
+    top: 40px;
+    bottom: 40px;
+    padding-bottom: 10px;
+
+    &__header {
+      flex: 0 0 auto;
+    }
 
     .popup__close {
       position: absolute;
@@ -13,6 +20,39 @@
       margin: 0 -20px 1rem -20px;
       padding: 0 20px 20px;
     }
+
+    .button-row {
+      flex: 0 0 auto;
+      width: 100%;
+      text-align: right;
+
+      button {
+        width: auto;
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+    }
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+    margin: 0 -20px;
+    padding: 20px;
+    clear: both;
+    border-bottom: 1px solid #ccc;
+  }
+
+  &__help {
+    float: right;
+    width: 270px;
+    padding: 20px;
+    border: 1px solid #cdcdcd;
+    border-radius: $border-radius;
+  }
+
+  &__form {
+    width: calc(100% - 320px);
   }
 
   &__invite {
@@ -24,6 +64,10 @@
 
     label {
       display: none;
+    }
+
+    &-label {
+      padding-bottom: 10px;
     }
 
     .generic-input.has-error {
@@ -43,13 +87,13 @@
 
     &--username,
     &--access,
+    &--ssh,
     &--grant-button {
       display: inline-block;
+      margin-right: 20px;
     }
 
     &--username {
-      margin-right: 5px;
-
       .generic-input__field {
         margin-bottom: 0;
         width: 142px;
@@ -57,8 +101,6 @@
     }
 
     &--access {
-      margin-right: 5px;
-
       .inset-select {
         width: auto;
 
@@ -66,6 +108,18 @@
           line-height: normal;
           padding-right: 30px;
         }
+      }
+    }
+
+    &--ssh {
+      vertical-align: top;
+
+      label {
+        display: inline-block;
+      }
+
+      .boolean-config {
+        margin: 3px 0 0 0;
       }
     }
 
@@ -99,17 +153,17 @@
       float: left;
     }
     &-access {
-      width: 50px;
+      width: 200px;
+      float: left;
+    }
+    &-ssh {
+      width: 150px;
       float: left;
     }
   }
 
   &__users {
     max-height: 250px;
-    overflow-y: scroll;
-    margin: 0 -20px 0.625rem;
-    clear: both;
-    border-bottom: 1px solid #ccc;
   }
 
   &__user {
@@ -160,9 +214,19 @@
 
     &-access {
       float: left;
-      width: 50px;
+      width: 200px;
       line-height: 53px;
       text-transform: capitalize;
+    }
+
+    &-ssh {
+      float: left;
+      width: 150px;
+      padding-top: 10px;
+
+      .boolean-config {
+        margin: 0;
+      }
     }
 
     &:last-child {

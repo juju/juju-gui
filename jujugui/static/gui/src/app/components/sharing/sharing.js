@@ -188,6 +188,9 @@ const Sharing = React.createClass({
       return;
     }
     return users.map((user) => {
+      if (user.displayName === 'admin') {
+        return;
+      }
       if (user.err) {
         return (
           <div key={user.name} className="sharing__user">
@@ -225,15 +228,18 @@ const Sharing = React.createClass({
             <div className="sharing__user-name">
               {user.displayName}
             </div>
-            <div className="sharing__user-display-name">
-              {user.domain} user
-            </div>
             <div className="sharing__user-last-connection">
               {lastConnection}
             </div>
           </div>
           <div className="sharing__user-access">
             {user.access}
+          </div>
+          <div className="sharing__user-ssh">
+            <juju.components.BooleanConfig
+              option={{key: user.displayName}}
+              onChange={() => {}}
+              config={false} />
           </div>
           {revokeMarkup}
         </div>
@@ -272,9 +278,11 @@ const Sharing = React.createClass({
     ) : undefined;
     return (
       <div className="sharing__invite">
-        <div className="sharing__invite--header">Add a user</div>
         <form onSubmit={this._grantModelAccess}>
           <div className="sharing__invite--username">
+            <div className="sharing__invite-label">
+              Username
+            </div>
             <juju.components.GenericInput
               inlineErrorIcon={true}
               label="Username"
@@ -284,10 +292,22 @@ const Sharing = React.createClass({
               required={true} />
           </div>
           <div className="sharing__invite--access">
+            <div className="sharing__invite-label">
+              Permission
+            </div>
             <juju.components.InsetSelect
               label="Access"
               ref="access"
               options={accessOptions} />
+          </div>
+          <div className="sharing__invite--ssh">
+            <div className="sharing__invite-label">
+              Enable SSH
+            </div>
+            <juju.components.BooleanConfig
+              option={{key: 'ssh-toggle'}}
+              onChange={() => {}}
+              config={false} />
           </div>
           <div className="sharing__invite--grant-button">
             {this.generateAddButton()}
@@ -344,25 +364,45 @@ const Sharing = React.createClass({
   },
 
   render: function() {
+    const buttons = [{
+      title: 'Save',
+      type: 'inline-neutral',
+      action: this.props.closeHandler,
+      disabled: false
+    }];
     return (
       <juju.components.Popup
+        buttons={buttons}
         className="sharing__popup"
         close={this.props.closeHandler}
-        title="Share">
-        {this._generateInvite()}
-        <div className="sharing__users-header">
-          <div className="sharing__users-header-user">User</div>
-          <div className="sharing__users-header-access">Access</div>
+        title="Grant access"
+        type="wide">
+        <div className="sharing__content">
+          <div className="sharing__help">
+            <h4>Permissions</h4>
+            <p><strong>Admin:</strong> May modify sharing and destroy the model.</p>
+            <p><strong>Write:</strong> Can modify the model.</p>
+            <p><strong>Read:</strong> Can only view the model.</p>
+            <p><a href="">More about permissions&rsaquo;</a></p>
+            <br />
+            <h4>SSH access:</h4>
+            <p>
+              Enabling SSH will allow users to SSH to the machines in the model.
+            </p>
+            <p><a href="">More about ssh access&rsaquo;</a></p>
+          </div>
+          <div className="sharing__form">
+            {this._generateInvite()}
+            <div className="sharing__users-header">
+              <div className="sharing__users-header-user">User</div>
+              <div className="sharing__users-header-access">Permission</div>
+              <div className="sharing__users-header-ssh">SSH access</div>
+            </div>
+            <div className="sharing__users">
+              {this._generateUsersWithAccess()}
+            </div>
+          </div>
         </div>
-        <div className="sharing__users">
-          {this._generateUsersWithAccess()}
-        </div>
-        <juju.components.GenericButton
-          title="Done"
-          action={this.props.closeHandler}
-          type="inline-neutral"
-          extraClasses="right"
-        />
       </juju.components.Popup>
     );
   }
@@ -373,6 +413,7 @@ YUI.add('sharing', function() {
   juju.components.Sharing = Sharing;
 }, '0.1.0', {
   requires: [
+    'boolean-config',
     'generic-button',
     'generic-input',
     'inset-select',

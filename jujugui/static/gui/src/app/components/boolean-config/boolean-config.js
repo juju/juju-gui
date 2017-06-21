@@ -24,7 +24,7 @@ const BooleanConfig = React.createClass({
   propTypes: {
     config: React.PropTypes.any.isRequired,
     disabled: React.PropTypes.bool,
-    label: React.PropTypes.string.isRequired,
+    label: React.PropTypes.string,
     onChange: React.PropTypes.func,
     option: React.PropTypes.object.isRequired
   },
@@ -109,10 +109,12 @@ const BooleanConfig = React.createClass({
         'boolean-config--label-changed':
           this.state.value !== this.props.config
       });
+    const labelElement = this.props.label ? (
+      <div className="boolean-config--title">{this.props.label}</div>) : null;
     return (
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
-          <div className="boolean-config--title">{this.props.label}</div>
+          {labelElement}
           <div className="boolean-config--toggle">
             <input
               disabled={this.props.disabled}
