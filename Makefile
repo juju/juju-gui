@@ -4,9 +4,7 @@ PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 SVG_SPRITE_DIR := $(GUISRC)/app/assets
-SVG_SPRITE_FILE := $(SVG_SPRITE_DIR)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
-SVG_FILES := $(shell find $(SVG_SPRITE_SOURCE_DIR) -name "*.svg")
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
@@ -194,29 +192,30 @@ $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
 
-$(SVG_SPRITE_FILE): $(SVG_FILES) $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
-
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
+	mkdir -p $(GUIBUILD)/app/assets/stack/svg
+	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 $(FAVICON):
 	cp $(GUISRC)/app/favicon.ico $(GUIBUILD)/app/favicon.ico
 
-$(SVG_SPRITE_MODULE): $(NODE_MODULES)
+$(SVG_SPRITE_MODULE):
 	npm install svg-sprite@1.3.6
 
 .PHONY: images
-images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
+images: $(STATIC_IMAGES) $(FAVICON)
 
 .PHONY: svg-sprite
-svg-sprite: $(SVG_FILES) $(SVG_SPRITE_MODULE)
+svg-sprite: $(SVG_SPRITE_MODULE)
 	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
+	mkdir -p $(GUIBUILD)/app/assets/stack/svg
+	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
 	# Commented out as it's a hack for the new init to be built.
 	# $(NODE_MODULES)/.bin/browserify --no-builtins -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
 
