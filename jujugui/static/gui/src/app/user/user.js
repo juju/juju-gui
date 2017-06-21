@@ -251,3 +251,25 @@ const User = class User {
 };
 
 this.jujugui.User = User;
+
+/*
+   XXX This is just a stub of the SSH key mechanism retrieving keys from
+   GitHub. The code is pretty brief, but I think this is a good API if we
+   want to add the ability to fetch SSH keys from other services such as
+   GitLab, GOGS, etc.
+*/
+this.jujugui.githubSSHKeys = (username, cb) => {
+  fetch(`https://api.github.com/users/${username}/keys`)
+    .then((response) => {
+      return response.json();
+    }, console.error).then((data) => {
+      cb(data.map((item) => {
+        return {
+          'id': item.id,
+          'type': item.key.split(' ')[0],
+          'body': item.key.split(' ')[1],
+          'text': item.key
+        };
+      }));
+    }, console.error);
+};
