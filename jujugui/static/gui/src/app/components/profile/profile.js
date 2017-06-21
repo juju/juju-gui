@@ -94,10 +94,8 @@ const Profile = React.createClass({
         instanceName="profile"
         visible={true}>
         <div className="profile__header">
-          <div className="twelve-col">
-            <div className="inner-wrapper">
-              <img src="/static/gui/build/app/assets/images/profile/header.png" />
-            </div>
+          <div className="twelve-col" style={{textAlign: 'center', marginBottom: 0}}>
+            <img style={{verticalAlign: 'middle'}} src="/static/gui/build/app/assets/images/profile/header.png" />
           </div>
         </div>
         <div className="twelve-col">
