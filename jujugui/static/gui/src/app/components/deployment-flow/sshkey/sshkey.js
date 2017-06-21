@@ -65,6 +65,21 @@ const DeploymentSSHKey = React.createClass({
   },
 
   /**
+    Split a Manual Key into its parts
+
+    @method _splitKey
+    @param (String) sshkey
+   */
+  _splitKey: function(sshKey) {
+    return {
+      'body': sshKey.split(' ')[1],
+      'text': sshKey,
+      'type': sshKey.split(' ')[0],
+      'id': 0
+    }
+  },
+
+  /**
     Handle clicking AddMoreKeys.
 
     @method _handleAddMoreKeys
@@ -76,10 +91,22 @@ const DeploymentSSHKey = React.createClass({
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
       window.jujugui.githubSSHKeys(githubUsername, (keys) => {
-        SSHkeys.push(keys);
+        keys.forEach(key => {
+         SSHkeys.push(key);
+        })
         this.setState({SSHkeys: SSHkeys});
+        console.log(SSHkeys);
       });
+    } else if (source === 'manual') {
+      const maunalKey = this.refs.sshKey.getValue();
+      const key = this._splitKey(maunalKey);
+      let SSHkeys = this.state.SSHkeys;
+      SSHkeys.push(key);
+      this.setState({SSHkeys: SSHkeys});
+      console.log(SSHkeys);
+
     }
+
     return;
   },
 
@@ -108,7 +135,7 @@ const DeploymentSSHKey = React.createClass({
     }
 
     let listBody = [];
-    SSHkeys[0].forEach((key, i) => {
+    SSHkeys.forEach((key, i) => {
       let uniqueKey = key.id + i;
       listBody.push(
          <li className="deployment-flow__row twelve-col" key={uniqueKey}>
