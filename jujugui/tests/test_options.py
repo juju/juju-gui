@@ -31,6 +31,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.terms_url': options.DEFAULT_TERMS_URL,
         'jujugui.payment_url': options.DEFAULT_PAYMENT_URL,
         'jujugui.user': None,
+        'jujugui.flags': {},
     }
 
     def test_default_values(self):
@@ -62,6 +63,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
+            'jujugui.flags': {'foo': True}
         }
         settings = {
             'jujugui.auth': 'blob',
@@ -85,6 +87,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
+            'jujugui.flags': {'foo': True}
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)
