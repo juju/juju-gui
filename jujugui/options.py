@@ -28,6 +28,7 @@ def update(settings):
     _update(settings, 'jujugui.stripe_key', default='')
     _update(settings, 'jujugui.user', default=None)
     _update(settings, 'jujugui.static_url', default='')
+    _update(settings, 'jujugui.flags', default={})
 
     _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
     _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
