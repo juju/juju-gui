@@ -88,6 +88,7 @@ def config(request):
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
+        'flags': settings['jujugui.flags'],
         'serverRouting': False,
         'container': '#main',
         'viewContainer': '#main',
