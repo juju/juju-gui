@@ -187,7 +187,7 @@ $(STATIC_FONT_FILES): $(FONT_FILES)
 
 $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/css
-	bin/sassc -s compressed $(SCSS_FILE) $@
+	bin/sassc -I node_modules -s compressed $(SCSS_FILE) $@
 
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
