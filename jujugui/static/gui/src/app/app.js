@@ -2721,7 +2721,7 @@ YUI.add('juju-gui', function(Y) {
         alert(
           'Unable to create socketURL, no apiAddress provided. The GUI must ' +
           'be loaded with a valid configuration. Try GUIProxy if ' +
-          'running in development mode: https://github.com/frankban/guiproxy');
+          'running in development mode: https://github.com/juju/guiproxy');
         return;
       }
       if (template[0] === '/') {
