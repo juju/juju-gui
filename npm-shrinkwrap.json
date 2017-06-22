@@ -41,13 +41,13 @@
     },
     "classnames": {
       "version": "2.2.5",
-      "from": "classnames@>=2.2.5 <3.0.0",
+      "from": "classnames@2.2.5",
       "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
     },
     "clipboard": {
-      "version": "1.7.1",
-      "from": "clipboard@>=1.6.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.7.1.tgz"
+      "version": "1.6.1",
+      "from": "clipboard@1.6.1",
+      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.6.1.tgz"
     },
     "cloud-vanilla-theme": {
       "version": "0.1.2",
@@ -68,11 +68,6 @@
       "version": "1.2.7",
       "from": "core-js@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz"
-    },
-    "create-react-class": {
-      "version": "15.6.0",
-      "from": "create-react-class@>=15.6.0 <16.0.0",
-      "resolved": "https://registry.npmjs.org/create-react-class/-/create-react-class-15.6.0.tgz"
     },
     "cryptiles": {
       "version": "0.2.2",
@@ -106,7 +101,7 @@
     },
     "dnd-core": {
       "version": "2.4.0",
-      "from": "dnd-core@>=2.4.0 <3.0.0",
+      "from": "dnd-core@>=2.2.4 <3.0.0",
       "resolved": "https://registry.npmjs.org/dnd-core/-/dnd-core-2.4.0.tgz"
     },
     "encoding": {
@@ -116,7 +111,7 @@
     },
     "fbjs": {
       "version": "0.8.12",
-      "from": "fbjs@>=0.8.9 <0.9.0",
+      "from": "fbjs@>=0.8.4 <0.9.0",
       "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.12.tgz"
     },
     "forever-agent": {
@@ -131,12 +126,12 @@
     },
     "good-listener": {
       "version": "1.2.2",
-      "from": "good-listener@>=1.2.2 <2.0.0",
+      "from": "good-listener@>=1.2.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/good-listener/-/good-listener-1.2.2.tgz"
     },
     "graceful-fs": {
       "version": "4.1.11",
-      "from": "graceful-fs@>=4.1.11 <5.0.0",
+      "from": "graceful-fs@4.1.11",
       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.11.tgz"
     },
     "hawk": {
@@ -206,7 +201,7 @@
     },
     "marked": {
       "version": "0.3.6",
-      "from": "marked@>=0.3.6 <0.4.0",
+      "from": "marked@0.3.6",
       "resolved": "https://registry.npmjs.org/marked/-/marked-0.3.6.tgz"
     },
     "mime": {
@@ -216,7 +211,7 @@
     },
     "mixwith": {
       "version": "0.1.1",
-      "from": "mixwith@>=0.1.1 <0.2.0",
+      "from": "mixwith@0.1.1",
       "resolved": "https://registry.npmjs.org/mixwith/-/mixwith-0.1.1.tgz"
     },
     "node-fetch": {
@@ -241,7 +236,7 @@
     },
     "prismjs": {
       "version": "1.6.0",
-      "from": "prismjs@>=1.6.0 <2.0.0",
+      "from": "prismjs@1.6.0",
       "resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.6.0.tgz"
     },
     "promise": {
@@ -249,35 +244,30 @@
       "from": "promise@>=7.1.1 <8.0.0",
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.3.1.tgz"
     },
-    "prop-types": {
-      "version": "15.5.10",
-      "from": "prop-types@>=15.5.10 <16.0.0",
-      "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.10.tgz"
-    },
     "qs": {
       "version": "0.6.6",
       "from": "qs@>=0.6.0 <0.7.0",
       "resolved": "https://registry.npmjs.org/qs/-/qs-0.6.6.tgz"
     },
     "react": {
-      "version": "15.6.1",
-      "from": "react@>=15.4.2 <16.0.0",
-      "resolved": "https://registry.npmjs.org/react/-/react-15.6.1.tgz"
+      "version": "15.4.2",
+      "from": "react@15.4.2",
+      "resolved": "https://registry.npmjs.org/react/-/react-15.4.2.tgz"
     },
     "react-dnd": {
-      "version": "2.4.0",
-      "from": "react-dnd@>=2.2.4 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-dnd/-/react-dnd-2.4.0.tgz"
+      "version": "2.2.4",
+      "from": "react-dnd@2.2.4",
+      "resolved": "https://registry.npmjs.org/react-dnd/-/react-dnd-2.2.4.tgz"
     },
     "react-dnd-html5-backend": {
-      "version": "2.4.1",
-      "from": "react-dnd-html5-backend@>=2.2.4 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-dnd-html5-backend/-/react-dnd-html5-backend-2.4.1.tgz"
+      "version": "2.2.4",
+      "from": "react-dnd-html5-backend@2.2.4",
+      "resolved": "https://registry.npmjs.org/react-dnd-html5-backend/-/react-dnd-html5-backend-2.2.4.tgz"
     },
     "react-dom": {
-      "version": "15.6.1",
-      "from": "react-dom@>=15.4.2 <16.0.0",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.6.1.tgz"
+      "version": "15.4.2",
+      "from": "react-dom@15.4.2",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.4.2.tgz"
     },
     "redux": {
       "version": "3.7.0",
@@ -317,9 +307,9 @@
       "resolved": "https://registry.npmjs.org/symbol-observable/-/symbol-observable-1.0.4.tgz"
     },
     "tiny-emitter": {
-      "version": "2.0.0",
-      "from": "tiny-emitter@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-2.0.0.tgz"
+      "version": "1.2.0",
+      "from": "tiny-emitter@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-1.2.0.tgz"
     },
     "tunnel-agent": {
       "version": "0.3.0",
