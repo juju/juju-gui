@@ -3,7 +3,7 @@ PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
-SVG_SPRITE_DIR := $(GUISRC)/app/assets
+ASSETS_DIR := $(GUISRC)/app/assets
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
@@ -69,6 +69,7 @@ help:
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
 	@echo "start-karma - run Karma for development js testing"
+	@echo "svg-sprite - build the svg sprite"
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
@@ -210,7 +211,7 @@ images: $(STATIC_IMAGES) $(FAVICON)
 
 .PHONY: svg-sprite
 svg-sprite: $(SVG_SPRITE_MODULE)
-	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
+	$(NODE_MODULES)/.bin/svg-sprite --dest=$(ASSETS_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 	mkdir -p $(GUIBUILD)/app/assets/stack/svg
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
