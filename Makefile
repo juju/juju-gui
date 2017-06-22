@@ -115,7 +115,7 @@ run: gui
 	@echo
 	@echo "=============================================================="
 	@echo "To run the GUI you must point it at a running Juju controller."
-	@echo "The accepted way of doing this is via the GUIProxy project: https://github.com/frankban/guiproxy"
+	@echo "The accepted way of doing this is via the GUIProxy project: https://github.com/juju/guiproxy"
 	@echo "=============================================================="
 	@echo
 	$(MAKE) -j2 server watch
