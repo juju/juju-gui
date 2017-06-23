@@ -235,6 +235,12 @@ class GUIApp {
 
     this._setupRomulusServices(config, window.jujulib);
 
+    // Instantiate the statsd client if supported.
+    this.stats = null;
+    if (config.statsURL) {
+      this.stats = new window.jujugui.StatsClient(config.statsURL, 'gui');
+    }
+
     /**
       Application instance of the bundle importer.
       @type {Object}
@@ -638,7 +644,7 @@ class GUIApp {
       @type {Object}
     */
     this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
-    if (config.payFlag) {
+    if (config.flags.pay) {
       /**
         Application instance of the payment api.
         @type {Object}

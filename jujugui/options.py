@@ -28,16 +28,17 @@ def update(settings):
     _update(settings, 'jujugui.stripe_key', default='')
     _update(settings, 'jujugui.user', default=None)
     _update(settings, 'jujugui.static_url', default='')
+    _update(settings, 'jujugui.stats_url', default='')
     _update(settings, 'jujugui.flags', default={})
 
-    _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
-    _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
-    _update_url(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update_url(settings, 'jujugui.base_url', default='')
     _update_url(settings, 'jujugui.bundleservice_url',
                 default=DEFAULT_BUNDLESERVICE_URL)
     _update_url(settings, 'jujugui.charmstore_url',
                 default=DEFAULT_CHARMSTORE_URL)
+    _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
+    _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
+    _update_url(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
 
     _update_bool(settings, 'jujugui.combine', default=True)
     _update_bool(settings, 'jujugui.gisf', default=False)
