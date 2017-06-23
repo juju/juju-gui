@@ -40,6 +40,7 @@ describe('application hotkeys', function() {
       // multiple times.
       jujuConfig = window.juju_config;
       window.juju_config = {
+        flags: {},
         charmstoreURL: 'http://1.2.3.4/',
         plansURL: 'http://plans.example.com/',
         termsURL: 'http://terms.example.com/'

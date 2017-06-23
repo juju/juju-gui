@@ -75,6 +75,7 @@ const DeploymentFlow = React.createClass({
     setModelName: React.PropTypes.func.isRequired,
     showPay: React.PropTypes.bool,
     showTerms: React.PropTypes.func.isRequired,
+    stats: React.PropTypes.object,
     updateCloudCredential: React.PropTypes.func,
     updateModelName: React.PropTypes.func,
     validateForm: React.PropTypes.func.isRequired,
@@ -360,6 +361,12 @@ const DeploymentFlow = React.createClass({
       'Button click',
       'Deploy model'
     );
+    if (this.props.stats) {
+      const flags = window.juju_config.flags;
+      const statName = 'deploy' + (flags.ddeploy ? '.direct' : '.target');
+      this.props.stats.increase(statName);
+    }
+
     const args = {
       config: {},
       cloud: this.state.cloud && this.state.cloud.name || undefined,

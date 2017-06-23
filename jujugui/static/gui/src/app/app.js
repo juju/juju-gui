@@ -438,6 +438,12 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI);
       // Create Romulus API client instances.
       this._setupRomulusServices(window.juju_config, window.jujulib);
+      // Instantiate the statsd client if supported.
+      this.stats = null;
+      const statsURL = window.juju_config.statsURL;
+      if (statsURL) {
+        this.stats = new window.jujugui.StatsClient(statsURL, 'gui');
+      }
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
@@ -1133,7 +1139,7 @@ YUI.add('juju-gui', function(Y) {
           revokeCloudCredential={
             controllerAPI.revokeCloudCredential.bind(controllerAPI)}
           sendAnalytics={this.sendAnalytics}
-          showPay={window.juju_config.payFlag || false}
+          showPay={window.juju_config.flags.pay || false}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
           updateAddress={
@@ -1354,8 +1360,9 @@ YUI.add('juju-gui', function(Y) {
           region={env.get('region')}
           renderMarkdown={marked}
           servicesGetById={services.getById.bind(services)}
-          showPay={window.juju_config.payFlag || false}
+          showPay={window.juju_config.flags.pay || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
+          stats={this.stats}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
           validateForm={utils.validateForm.bind(utils)}
@@ -1676,7 +1683,7 @@ YUI.add('juju-gui', function(Y) {
             setCharm={model.setCharm.bind(model)}
             setConfig={model.set_config.bind(model)}
             showActivePlan={this.plans.showActivePlan.bind(this.plans)}
-            showPlans={window.juju_config.plansFlag || false}
+            showPlans={window.juju_config.flags.plans || false}
             unexposeService={model.unexpose.bind(model)}
             unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
             updateServiceUnitsDisplayname={
@@ -2408,7 +2415,7 @@ YUI.add('juju-gui', function(Y) {
       }
       this.plans = new window.jujulib.plans(config.plansURL, this.bakery);
       this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
-      if (config.payFlag) {
+      if (config.flags.pay) {
         this.payment = new window.jujulib.payment(
           config.paymentURL, this.bakery);
         this.stripe = new window.jujulib.stripe(

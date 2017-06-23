@@ -64,7 +64,7 @@ const ServiceOverview = React.createClass({
 
     if (!props.showPlans) {
       // If the showPlans is false then return here. This is set by the
-      // plansFlag config option.
+      // "plans" flag.
       return;
     }
 

@@ -448,7 +448,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         revokeCloudCredential={
           controllerAPI.revokeCloudCredential.bind(controllerAPI)}
         sendAnalytics={this.sendAnalytics}
-        showPay={window.juju_config.payFlag || false}
+        showPay={window.juju_config.flags.pay || false}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         updateAddress={
@@ -611,7 +611,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           setCharm={model.setCharm.bind(model)}
           setConfig={model.set_config.bind(model)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
-          showPlans={window.juju_config.plansFlag || false}
+          showPlans={window.juju_config.flags.plans || false}
           unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
@@ -774,8 +774,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         region={modelAPI.get('region')}
         renderMarkdown={marked}
         servicesGetById={services.getById.bind(services)}
-        showPay={this.applicationConfig.payFlag || false}
+        showPay={this.applicationConfig.flags.pay || false}
         showTerms={this.terms.showTerms.bind(this.terms)}
+        stats={this.stats}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         validateForm={utils.validateForm.bind(utils)}
