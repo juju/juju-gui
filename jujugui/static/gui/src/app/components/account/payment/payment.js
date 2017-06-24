@@ -18,59 +18,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPayment = React.createClass({
-  displayName: 'AccountPayment',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addAddress: React.PropTypes.func.isRequired,
-    addBillingAddress: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    createCardElement: React.PropTypes.func.isRequired,
-    createPaymentMethod: React.PropTypes.func.isRequired,
-    createToken: React.PropTypes.func.isRequired,
-    createUser: React.PropTypes.func.isRequired,
-    getCharges: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    getReceipt: React.PropTypes.func.isRequired,
-    getUser: React.PropTypes.func.isRequired,
-    removeAddress: React.PropTypes.func.isRequired,
-    removeBillingAddress: React.PropTypes.func.isRequired,
-    removePaymentMethod: React.PropTypes.func.isRequired,
-    updateAddress: React.PropTypes.func.isRequired,
-    updateBillingAddress: React.PropTypes.func.isRequired,
-    updatePaymentMethod: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class AccountPayment extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       loading: false,
       paymentUser: null,
       showAdd: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getUser();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Show or hide the add payment user form.
 
     @method _toggleAdd
   */
-  _toggleAdd: function() {
+  _toggleAdd() {
     this.setState({showAdd: !this.state.showAdd});
-  },
+  }
 
   /**
     Store the payment user in state.
@@ -78,26 +54,26 @@ const AccountPayment = React.createClass({
     @method _setUser
     @param {String} user The user deetails.
   */
-  _setUser: function(user) {
+  _setUser(user) {
     this.setState({paymentUser: user});
-  },
+  }
 
   /**
     Handle the user having been created.
 
     @method _handleUserCreated
   */
-  _handleUserCreated: function() {
+  _handleUserCreated() {
     this._toggleAdd();
     this._getUser();
-  },
+  }
 
   /**
     Get the payment details for the user.
 
     @method _getUser
   */
-  _getUser: function() {
+  _getUser() {
     this.setState({loading: true}, () => {
       const xhr = this.props.getUser(this.props.username, (error, user) => {
         // If the user is not found we don't want to display the error, but
@@ -118,14 +94,14 @@ const AccountPayment = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Generate the details for the payment method.
 
     @returns {Object} The payment details markup.
   */
-  _generatePaymentDetails: function() {
+  _generatePaymentDetails() {
     return (
       <div>
         <juju.components.AccountPaymentMethods
@@ -138,7 +114,7 @@ const AccountPayment = React.createClass({
           paymentUser={this.state.paymentUser}
           removePaymentMethod={this.props.removePaymentMethod}
           updatePaymentMethod={this.props.updatePaymentMethod}
-          updateUser={this._getUser}
+          updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
         <juju.components.AccountPaymentDetails
@@ -152,7 +128,7 @@ const AccountPayment = React.createClass({
           removeBillingAddress={this.props.removeBillingAddress}
           updateAddress={this.props.updateAddress}
           updateBillingAddress={this.props.updateBillingAddress}
-          updateUser={this._getUser}
+          updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
         <juju.components.AccountPaymentCharges
@@ -162,14 +138,14 @@ const AccountPayment = React.createClass({
           getReceipt={this.props.getReceipt}
           username={this.props.username} />
       </div>);
-  },
+  }
 
   /**
     Generate the details for the payment method.
 
     @method _generatePaymentForm
   */
-  _generatePaymentForm: function() {
+  _generatePaymentForm() {
     return (
       <div className="account__section">
         <h2 className="account__title twelve-col">
@@ -183,19 +159,19 @@ const AccountPayment = React.createClass({
             createToken={this.props.createToken}
             createUser={this.props.createUser}
             getCountries={this.props.getCountries}
-            onUserCreated={this._handleUserCreated}
+            onUserCreated={this._handleUserCreated.bind(this)}
             username={this.props.username}
             validateForm={this.props.validateForm} />
         </div>
       </div>);
-  },
+  }
 
   /**
     Generate the a notice if there is no user.
 
     @method _generateNoUser
   */
-  _generateNoUser: function() {
+  _generateNoUser() {
     return (
       <div className="account__section">
         <h2 className="account__title twelve-col">
@@ -204,14 +180,14 @@ const AccountPayment = React.createClass({
         <div className="account-payment__no-user">
           You are not set up to make payments.
           <juju.components.GenericButton
-            action={this._toggleAdd}
+            action={this._toggleAdd.bind(this)}
             type="inline-neutral"
             title="Set up payments" />
         </div>
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     let content;
     if (this.state.loading) {
       content = (
@@ -229,8 +205,31 @@ const AccountPayment = React.createClass({
       </div>
     );
   }
+};
 
-});
+AccountPayment.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addAddress: React.PropTypes.func.isRequired,
+  addBillingAddress: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  createCardElement: React.PropTypes.func.isRequired,
+  createPaymentMethod: React.PropTypes.func.isRequired,
+  createToken: React.PropTypes.func.isRequired,
+  createUser: React.PropTypes.func.isRequired,
+  getCharges: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  getReceipt: React.PropTypes.func.isRequired,
+  getUser: React.PropTypes.func.isRequired,
+  removeAddress: React.PropTypes.func.isRequired,
+  removeBillingAddress: React.PropTypes.func.isRequired,
+  removePaymentMethod: React.PropTypes.func.isRequired,
+  updateAddress: React.PropTypes.func.isRequired,
+  updateBillingAddress: React.PropTypes.func.isRequired,
+  updatePaymentMethod: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
+
 YUI.add('account-payment', function() {
   juju.components.AccountPayment = AccountPayment;
 }, '0.1.0', {
