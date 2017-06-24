@@ -18,28 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const BudgetTable = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    allocationEditable: React.PropTypes.bool,
-    charmsGetById: React.PropTypes.func,
-    extraInfo: React.PropTypes.object,
-    listPlansForCharm: React.PropTypes.func,
-    parseTermId: React.PropTypes.func,
-    plansEditable: React.PropTypes.bool,
-    services: React.PropTypes.array.isRequired,
-    showExtra: React.PropTypes.bool,
-    showTerms: React.PropTypes.func.isRequired,
-    withPlans: React.PropTypes.bool
-  },
-
+class BudgetTable extends React.Component {
   /**
    Generate the list of services.
 
    @method _generateServices
    @returns {Array} The list of services.
   */
-  _generateServices: function() {
+  _generateServices() {
     return this.props.services.map((service, i) => {
       return (
         <juju.components.BudgetTableRow
@@ -57,7 +43,7 @@ const BudgetTable = React.createClass({
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />);
     });
-  },
+  }
 
   /**
     Generate plan headers.
@@ -65,7 +51,7 @@ const BudgetTable = React.createClass({
     @method _generatePlanHeaders
     @returns {Object} The plan headers markup.
   */
-  _generatePlanHeaders: function() {
+  _generatePlanHeaders() {
     if (!this.props.withPlans) {
       return;
     }
@@ -86,9 +72,9 @@ const BudgetTable = React.createClass({
         </div>
       </div>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="budget-table">
         <div className="budget-table__row-header twelve-col">
@@ -104,8 +90,21 @@ const BudgetTable = React.createClass({
       </div>
     );
   }
+};
 
-});
+BudgetTable.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  allocationEditable: React.PropTypes.bool,
+  charmsGetById: React.PropTypes.func,
+  extraInfo: React.PropTypes.object,
+  listPlansForCharm: React.PropTypes.func,
+  parseTermId: React.PropTypes.func,
+  plansEditable: React.PropTypes.bool,
+  services: React.PropTypes.array.isRequired,
+  showExtra: React.PropTypes.bool,
+  showTerms: React.PropTypes.func.isRequired,
+  withPlans: React.PropTypes.bool
+};
 
 YUI.add('budget-table', function() {
   juju.components.BudgetTable = BudgetTable;
