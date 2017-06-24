@@ -18,26 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const BudgetTableRow = React.createClass({
-  displayName: 'BudgetTableRow',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    allocationEditable: React.PropTypes.bool,
-    charmsGetById: React.PropTypes.func,
-    extraInfo: React.PropTypes.object,
-    listPlansForCharm: React.PropTypes.func,
-    parseTermId: React.PropTypes.func,
-    plansEditable: React.PropTypes.bool,
-    service: React.PropTypes.object.isRequired,
-    showExtra: React.PropTypes.bool,
-    showTerms: React.PropTypes.func,
-    withPlans: React.PropTypes.bool
-  },
-
-  getInitialState: function() {
+class BudgetTableRow extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       editAllocation: false,
       expanded: false,
       plans: [],
@@ -46,34 +31,34 @@ const BudgetTableRow = React.createClass({
       terms: [],
       termsLoading: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     if (this.props.withPlans) {
       this._getPlans();
     }
     if (this.props.showTerms) {
       this._getTerms();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Get the list of plans available for the service.
     @method _getPlans
   */
-  _getPlans: function() {
+  _getPlans() {
     this.setState({plansLoading: true}, () => {
       const xhr = this.props.listPlansForCharm(
-        this.props.service.get('charm'), this._getPlansCallback);
+        this.props.service.get('charm'), this._getPlansCallback.bind(this));
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Callback for when plans for an entity have been successfully fetched.
@@ -82,7 +67,7 @@ const BudgetTableRow = React.createClass({
     @param {String} error An error message, or null if there's no error.
     @param {Array} plans A list of the plans found.
   */
-  _getPlansCallback: function(error, plans) {
+  _getPlansCallback(error, plans) {
     if (error) {
       console.error('Fetching plans failed: ' + error);
     } else {
@@ -91,34 +76,34 @@ const BudgetTableRow = React.createClass({
         plans: plans
       });
     }
-  },
+  }
 
   /**
    Toggle the expanded state.
 
    @method _toggle
   */
-  _toggle: function() {
+  _toggle() {
     this.setState({expanded: !this.state.expanded});
-  },
+  }
 
   /**
    Toggle the terms state.
 
    @method _toggleTerms
   */
-  _toggleTerms: function() {
+  _toggleTerms() {
     this.setState({showTerms: !this.state.showTerms});
-  },
+  }
 
   /**
    Toggle the allocation field state.
 
    @method _toggleAllocation
   */
-  _toggleAllocation: function() {
+  _toggleAllocation() {
     this.setState({editAllocation: !this.state.editAllocation});
-  },
+  }
 
   /**
    Generate the change plan form.
@@ -126,7 +111,7 @@ const BudgetTableRow = React.createClass({
    @method _generatePlans
    @returns {Object} The plan form.
   */
-  _generatePlans: function() {
+  _generatePlans() {
     var disabled = this.props.acl.isReadOnly();
     var plans = this.state.plans.map((plan, i) => {
       return (
@@ -144,7 +129,7 @@ const BudgetTableRow = React.createClass({
           </div>
           <div className="two-col last-col">
             <juju.components.GenericButton
-              action={this._toggle}
+              action={this._toggle.bind(this)}
               disabled={disabled}
               type="neutral"
               title="Select plan" />
@@ -155,7 +140,7 @@ const BudgetTableRow = React.createClass({
       <ul className="budget-table__plans twelve-col no-margin-bottom">
         {plans}
       </ul>);
-  },
+  }
 
   /**
    Generate the change plan form.
@@ -163,7 +148,7 @@ const BudgetTableRow = React.createClass({
    @method _generateChangePlan
    @returns {Object} The plan form.
   */
-  _generateChangePlan: function() {
+  _generateChangePlan() {
     if (!this.props.plansEditable ||
         this.state.plans && this.state.plans.length === 0) {
       return;
@@ -179,7 +164,7 @@ const BudgetTableRow = React.createClass({
           plans terms and conditions
         </p>
       </div>);
-  },
+  }
 
   /**
    Generate the edit button if editable.
@@ -187,7 +172,7 @@ const BudgetTableRow = React.createClass({
    @method _generateEdit
    @returns {Object} The edit component.
   */
-  _generateEdit: function() {
+  _generateEdit() {
     if (!this.props.plansEditable || this.state.plans.length === 0) {
       return;
     }
@@ -196,13 +181,13 @@ const BudgetTableRow = React.createClass({
       <div className="two-col last-col no-margin-bottom">
         <div className="budget-table__edit">
           <juju.components.GenericButton
-            action={this._toggle}
+            action={this._toggle.bind(this)}
             disabled={disabled}
             type="neutral"
             title="Change plan" />
         </div>
       </div>);
-  },
+  }
 
   /**
    Generate the input or display for the allocation.
@@ -210,7 +195,7 @@ const BudgetTableRow = React.createClass({
    @method _generateAllocation
    @returns {Object} The allocation markup.
   */
-  _generateAllocation: function() {
+  _generateAllocation() {
     if (this.props.allocationEditable && this.state.editAllocation) {
       return (
         <input className="budget-table-row__allocation-input"
@@ -223,7 +208,7 @@ const BudgetTableRow = React.createClass({
           $1
         </span>);
     }
-  },
+  }
 
   /**
    Generate the shared fields.
@@ -231,7 +216,7 @@ const BudgetTableRow = React.createClass({
    @method _generateSharedFields
    @returns {Object} The fields markup.
   */
-  _generateSharedFields: function() {
+  _generateSharedFields() {
     var service = this.props.service;
     return (
       <div>
@@ -244,7 +229,7 @@ const BudgetTableRow = React.createClass({
           {service.get('unit_count')}
         </div>
       </div>);
-  },
+  }
 
   /**
     Generate the details for the selected plan.
@@ -252,7 +237,7 @@ const BudgetTableRow = React.createClass({
     @method _generateSelectedPlan
     @returns {Object} The plan markup.
   */
-  _generateSelectedPlan: function() {
+  _generateSelectedPlan() {
     var service = this.props.service;
     var activePlan = service.get('activePlan');
     if (activePlan) {
@@ -271,7 +256,7 @@ const BudgetTableRow = React.createClass({
           -
         </span>);
     }
-  },
+  }
 
   /**
     Generate the extra info section.
@@ -279,7 +264,7 @@ const BudgetTableRow = React.createClass({
     @method _generateExtra
     @returns {Object} The extra info markup.
   */
-  _generateExtra: function() {
+  _generateExtra() {
     if (!this.props.showExtra) {
       return;
     }
@@ -287,7 +272,7 @@ const BudgetTableRow = React.createClass({
       <div className="twelve-col no-margin-bottom">
         {this.props.extraInfo}
       </div>);
-  },
+  }
 
   /**
     Get the list of terms for the application, updating the state with these
@@ -295,7 +280,7 @@ const BudgetTableRow = React.createClass({
 
     @method _getTerms
   */
-  _getTerms: function() {
+  _getTerms() {
     // Get the list of terms for the uncommitted apps.
     const terms = this._getTermIds();
     // If there are no terms for this application then we don't need to
@@ -323,7 +308,7 @@ const BudgetTableRow = React.createClass({
         this.setState({termsLoading: false});
       });
     });
-  },
+  }
 
   /**
     Generate the terms link.
@@ -331,7 +316,7 @@ const BudgetTableRow = React.createClass({
     @method _generateTermsLink
     @returns {Object} The terms link markup.
   */
-  _generateTermsLink: function() {
+  _generateTermsLink() {
     if (!this.props.showTerms) {
       return;
     }
@@ -341,12 +326,12 @@ const BudgetTableRow = React.createClass({
         <div className={
           'two-col prepend-five no-margin-bottom budget-table-row__link'}>
           <juju.components.GenericButton
-            action={this._toggleTerms}
+            action={this._toggleTerms.bind(this)}
             type="base"
             title="Terms" />
         </div>);
     }
-  },
+  }
 
   /**
     Get the terms ids for the application.
@@ -354,10 +339,10 @@ const BudgetTableRow = React.createClass({
     @method _getTermIds
     @returns {Array} The list of terms for the application.
   */
-  _getTermIds: function() {
+  _getTermIds() {
     return this.props.charmsGetById(
       this.props.service.get('charm')).get('terms') || [];
-  },
+  }
 
   /**
     Generate the terms the user needs to agree to.
@@ -365,15 +350,15 @@ const BudgetTableRow = React.createClass({
     @method _generateTerms
     @returns {Object} The terms markup.
   */
-  _generateTerms: function() {
+  _generateTerms() {
     if (!this.state.showTerms) {
       return;
     }
     return (
       <juju.components.TermsPopup
-        close={this._toggleTerms}
+        close={this._toggleTerms.bind(this)}
         terms={this.state.terms} />);
-  },
+  }
 
   /**
     Generate plan cols.
@@ -381,7 +366,7 @@ const BudgetTableRow = React.createClass({
     @method _generatePlanCols
     @returns {Object} The plan cols markup.
   */
-  _generatePlanCols: function() {
+  _generatePlanCols() {
     if (!this.props.withPlans) {
       return;
     }
@@ -405,9 +390,9 @@ const BudgetTableRow = React.createClass({
         {this._generateEdit()}
       </div>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var classes = {
       'budget-table-row': true,
       'twelve-col': true
@@ -432,8 +417,21 @@ const BudgetTableRow = React.createClass({
       </div>
     );
   }
+};
 
-});
+BudgetTableRow.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  allocationEditable: React.PropTypes.bool,
+  charmsGetById: React.PropTypes.func,
+  extraInfo: React.PropTypes.object,
+  listPlansForCharm: React.PropTypes.func,
+  parseTermId: React.PropTypes.func,
+  plansEditable: React.PropTypes.bool,
+  service: React.PropTypes.object.isRequired,
+  showExtra: React.PropTypes.bool,
+  showTerms: React.PropTypes.func,
+  withPlans: React.PropTypes.bool
+};
 
 YUI.add('budget-table-row', function() {
   juju.components.BudgetTableRow = BudgetTableRow;
