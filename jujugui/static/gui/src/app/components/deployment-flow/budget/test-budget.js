@@ -51,7 +51,7 @@ describe('DeploymentBudget', function() {
       <div className="deployment-budget__loading">
         <juju.components.Spinner />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render', function() {
@@ -144,7 +144,7 @@ describe('DeploymentBudget', function() {
           </div>
         </div>
       </juju.components.ExpandingRow>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can disable controls when read only', function() {
@@ -238,7 +238,7 @@ describe('DeploymentBudget', function() {
           </div>
         </div>
       </juju.components.ExpandingRow>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('should not load the budgets if there is no user', function() {
@@ -250,7 +250,7 @@ describe('DeploymentBudget', function() {
         setBudget={sinon.stub()}
         user={null} />, true);
     renderer.getRenderOutput();
-    assert.deepEqual(listBudgets.callCount, 0);
+    assert.equal(listBudgets.callCount, 0);
   });
 
   it('should load the budgets again if the user changes', function() {
@@ -262,14 +262,14 @@ describe('DeploymentBudget', function() {
         setBudget={sinon.stub()}
         user={null} />, true);
     renderer.getRenderOutput();
-    assert.deepEqual(listBudgets.callCount, 0);
+    assert.equal(listBudgets.callCount, 0);
     renderer.render(
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
-    assert.deepEqual(listBudgets.callCount, 1);
+    assert.equal(listBudgets.callCount, 1);
   });
 
   it('will abort the requests when unmounting', function() {
@@ -282,7 +282,7 @@ describe('DeploymentBudget', function() {
         setBudget={sinon.stub()}
         user="user-admin" />, true);
     renderer.unmount();
-    assert.deepEqual(abort.callCount, 1);
+    assert.equal(abort.callCount, 1);
   });
 
   it('can set the initial budget', function() {
