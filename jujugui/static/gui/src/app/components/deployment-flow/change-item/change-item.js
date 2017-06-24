@@ -18,17 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentChangeItem = React.createClass({
-
-  propTypes: {
-    change: React.PropTypes.object.isRequired,
-    showTime: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {showTime: true};
-  },
-
+class DeploymentChangeItem extends React.Component {
   /**
     Generate the icon node.
 
@@ -36,7 +26,7 @@ const DeploymentChangeItem = React.createClass({
     @param {String} icon The icon to display.
     @returns {Object} The icon node.
   */
-  _generateIcon: function(icon) {
+  _generateIcon(icon) {
     var node;
     var className = 'deployment-change-item__icon';
     if (icon.indexOf('.svg') > -1) {
@@ -48,7 +38,7 @@ const DeploymentChangeItem = React.createClass({
           size="16" />);
     }
     return node;
-  },
+  }
 
   /**
     Generate the time if required.
@@ -56,7 +46,7 @@ const DeploymentChangeItem = React.createClass({
     @method _generateTime
     @returns {Object} The time markup.
   */
-  _generateTime: function() {
+  _generateTime() {
     if (!this.props.showTime) {
       return;
     }
@@ -64,9 +54,9 @@ const DeploymentChangeItem = React.createClass({
       <span className="deployment-change-item__time">
         {this.props.change.time}
       </span>);
-  },
+  }
 
-  render: function() {
+  render() {
     var change = this.props.change;
     return (
       <li className="deployment-change-item">
@@ -78,7 +68,16 @@ const DeploymentChangeItem = React.createClass({
       </li>
     );
   }
-});
+};
+
+DeploymentChangeItem.propTypes = {
+  change: React.PropTypes.object.isRequired,
+  showTime: React.PropTypes.bool
+};
+
+DeploymentChangeItem.defaultProps = {
+  showTime: true
+};
 
 YUI.add('deployment-change-item', function() {
   juju.components.DeploymentChangeItem = DeploymentChangeItem;
