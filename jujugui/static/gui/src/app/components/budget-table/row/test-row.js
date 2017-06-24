@@ -23,7 +23,7 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-fdescribe('BudgetTableRow', function() {
+describe('BudgetTableRow', function() {
   var acl, listPlansForCharm, parseTermId, service;
 
   beforeAll(function(done) {
