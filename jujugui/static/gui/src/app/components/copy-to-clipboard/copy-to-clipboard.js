@@ -18,38 +18,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const CopyToClipboard = React.createClass({
-  className: 'CopyToClipboard',
+class CopyToClipboard extends React.Component {
+  constructor() {
+    super();
+    this.clipboard = null;
+  }
 
-  clipboard: null,
-
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    className: React.PropTypes.string,
-    value: React.PropTypes.string.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {
-      className: 'copy-to-clipboard',
-      value: ''
-    };
-  },
-
-  componentDidMount: function() {
+  componentDidMount() {
     var node = ReactDOM.findDOMNode(this).querySelector('button');
     this.clipboard = new Clipboard(node, {
-      target: function(trigger) {
+      target(trigger) {
         return trigger.previousElementSibling;
       }
     });
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.clipboard.destroy();
-  },
+  }
 
-  render: function() {
+  render() {
     var className = this.props.className;
     return (
       <div className={className}>
@@ -67,7 +55,17 @@ const CopyToClipboard = React.createClass({
       </div>
     );
   }
-});
+};
+
+CopyToClipboard.propTypes = {
+  className: React.PropTypes.string,
+  value: React.PropTypes.string.isRequired
+};
+
+CopyToClipboard.defaultProps = {
+  className: 'copy-to-clipboard',
+  value: ''
+};
 
 YUI.add('copy-to-clipboard', function() {
   juju.components.CopyToClipboard = CopyToClipboard;
