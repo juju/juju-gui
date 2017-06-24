@@ -18,34 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentBar = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    currentChangeSet: React.PropTypes.object.isRequired,
-    generateChangeDescription: React.PropTypes.func.isRequired,
-    hasEntities: React.PropTypes.bool.isRequired,
-    modelCommitted: React.PropTypes.bool.isRequired,
-    sendAnalytics: React.PropTypes.func.isRequired
-  },
-
-  previousNotifications: [],
-
-  /**
-    Get the current state of the deployment bar.
-
-    @method getInitialState
-    @returns {Object} The current state.
-  */
-  getInitialState: function() {
-    return {
+class DeploymentBar extends React.Component {
+  constructor() {
+    super();
+    this.previousNotifications = [];
+    this.state = {
       latestChangeDescription: null
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this._updateLatestChange(nextProps.currentChangeSet);
-  },
+  }
 
   /**
     Update the state with the latest change if it has changed.
@@ -53,7 +37,7 @@ const DeploymentBar = React.createClass({
     @method _updateLatestChange
     @param {Object} changeSet The collection of ecs changes.
   */
-  _updateLatestChange: function(changeSet) {
+  _updateLatestChange(changeSet) {
     var keys = Object.keys(changeSet);
     var latestChange = keys[keys.length - 1];
     var previousIndex = this.previousNotifications.indexOf(latestChange);
@@ -64,7 +48,7 @@ const DeploymentBar = React.createClass({
         latestChangeDescription: this.props.generateChangeDescription(change)
       });
     }
-  },
+  }
 
   /**
     Get the label for the deploy button.
@@ -72,19 +56,19 @@ const DeploymentBar = React.createClass({
     @method _getDeployButtonLabel
     @returns {String} the label for the deploy button
   */
-  _getDeployButtonLabel: function() {
+  _getDeployButtonLabel() {
     var label = this.props.modelCommitted ? 'Commit changes'
       : 'Deploy changes';
     return label + ' (' +
       Object.keys(this.props.currentChangeSet).length + ')';
-  },
+  }
 
   /**
     Display the deployment summary when the deploy button is clicked.
 
     @method _deployAction
   */
-  _deployAction: function() {
+  _deployAction() {
     this.props.sendAnalytics(
       'Deployment Flow',
       'Button click',
@@ -95,14 +79,14 @@ const DeploymentBar = React.createClass({
         deploy: ''
       }
     });
-  },
+  }
 
   /**
     Generate the deploy button or read-only notice.
 
     @method _generateButton
   */
-  _generateButton: function() {
+  _generateButton() {
     var changeCount = Object.keys(this.props.currentChangeSet).length;
     var deployButton = this._getDeployButtonLabel();
     if (this.props.acl.isReadOnly()) {
@@ -114,14 +98,14 @@ const DeploymentBar = React.createClass({
     return (
       <div className="deployment-bar__deploy">
         <juju.components.GenericButton
-          action={this._deployAction}
+          action={this._deployAction.bind(this)}
           type="inline-deployment"
           disabled={changeCount === 0}
           title={deployButton} />
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Panel
         instanceName="deployment-bar-panel"
@@ -134,7 +118,17 @@ const DeploymentBar = React.createClass({
       </juju.components.Panel>
     );
   }
-});
+};
+
+DeploymentBar.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  currentChangeSet: React.PropTypes.object.isRequired,
+  generateChangeDescription: React.PropTypes.func.isRequired,
+  hasEntities: React.PropTypes.bool.isRequired,
+  modelCommitted: React.PropTypes.bool.isRequired,
+  sendAnalytics: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-bar', function() {
   juju.components.DeploymentBar = DeploymentBar;
