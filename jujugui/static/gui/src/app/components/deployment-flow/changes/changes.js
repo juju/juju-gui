@@ -18,21 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentChanges = React.createClass({
-  displayName: 'DeploymentChanges',
-
-  propTypes: {
-    generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-    getCurrentChangeSet: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class DeploymentChanges extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       changes: this.props.getCurrentChangeSet()
     };
-  },
+  }
 
-  render: function() {
+  render() {
     const state = this.state;
     return (
       <juju.components.ExpandingRow
@@ -53,8 +47,12 @@ const DeploymentChanges = React.createClass({
       </juju.components.ExpandingRow>
     );
   }
+};
 
-});
+DeploymentChanges.propTypes = {
+  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+  getCurrentChangeSet: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-changes', function() {
   juju.components.DeploymentChanges = DeploymentChanges;
