@@ -18,20 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AddedServicesListItem = React.createClass({
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    getUnitStatusCounts: React.PropTypes.func.isRequired,
-    hoverService: React.PropTypes.func.isRequired,
-    hovered: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.bool
-    ]),
-    panToService: React.PropTypes.func.isRequired,
-    service: React.PropTypes.object.isRequired
-  },
-
+class AddedServicesListItem extends React.Component {
   /**
     Parses the supplied unit data to return the status color and number
     to display.
@@ -39,7 +26,7 @@ const AddedServicesListItem = React.createClass({
     @method _getPriorityUnits
     @param {Array} units An array of units.
   */
-  _getPriorityUnits: function(units) {
+  _getPriorityUnits(units) {
     var unitStatuses = this.props.getUnitStatusCounts(units);
     var top = { priority: 99, key: '', size: 0 };
     var status;
@@ -59,7 +46,7 @@ const AddedServicesListItem = React.createClass({
     // the js dom.
     top.size = top.size + '';
     return top;
-  },
+  }
 
   /**
     Renders and returns the status icon if necessary.
@@ -68,7 +55,7 @@ const AddedServicesListItem = React.createClass({
     @param {Object} statusData The status data that will be used to generate
       the status icon.
   */
-  _renderStatusIndicator: function(statusData) {
+  _renderStatusIndicator(statusData) {
     var shownStatuses = ['uncommitted', 'pending', 'error'];
     var className = 'inspector-view__status--' + statusData.key;
     if (shownStatuses.indexOf(statusData.key) > -1) {
@@ -76,7 +63,7 @@ const AddedServicesListItem = React.createClass({
         <span className={className}>{statusData.size}</span>
       );
     }
-  },
+  }
 
   /**
     Click handler for clicks on the entire list item.
@@ -84,7 +71,7 @@ const AddedServicesListItem = React.createClass({
     @method _onClickHandler
     @param {Object} e The click event.
   */
-  _onClickHandler: function(e) {
+  _onClickHandler(e) {
     this.props.panToService(this.props.service.get('id'));
     this.props.changeState({
       gui: {
@@ -93,9 +80,9 @@ const AddedServicesListItem = React.createClass({
         }
       }
     });
-  },
+  }
 
-  _generateClassName: function() {
+  _generateClassName() {
     var props = this.props;
     var service = props.service;
     return classNames(
@@ -105,7 +92,7 @@ const AddedServicesListItem = React.createClass({
         hover: props.hovered
       }
     );
-  },
+  }
 
   /**
     Handle highlighting a service token when the item is hovered.
@@ -113,9 +100,9 @@ const AddedServicesListItem = React.createClass({
     @method _onMouseEnter
     @param {Object} e The mouse event.
   */
-  _onMouseEnter: function(e) {
+  _onMouseEnter(e) {
     this.props.hoverService(this.props.service.get('id'), true);
-  },
+  }
 
   /**
     Handle unhighlighting a service token when the item is no longer hovered.
@@ -123,20 +110,20 @@ const AddedServicesListItem = React.createClass({
     @method _onMouseLeave
     @param {Object} e The mouse event.
   */
-  _onMouseLeave: function(e) {
+  _onMouseLeave(e) {
     this.props.hoverService(this.props.service.get('id'), false);
-  },
+  }
 
-  render: function() {
+  render() {
     var service = this.props.service.getAttrs();
     var statusData = this._getPriorityUnits(service.units.toArray());
     var statusIndicator = this._renderStatusIndicator(statusData);
     return (
       <li className={this._generateClassName()}
         data-serviceid={service.id}
-        onClick={this._onClickHandler}
-        onMouseEnter={this._onMouseEnter}
-        onMouseLeave={this._onMouseLeave}
+        onClick={this._onClickHandler.bind(this)}
+        onMouseEnter={this._onMouseEnter.bind(this)}
+        onMouseLeave={this._onMouseLeave.bind(this)}
         tabIndex="0"
         role="button">
         <img src={service.icon} className="inspector-view__item-icon" />
@@ -153,8 +140,19 @@ const AddedServicesListItem = React.createClass({
       </li>
     );
   }
+};
 
-});
+AddedServicesListItem.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  getUnitStatusCounts: React.PropTypes.func.isRequired,
+  hoverService: React.PropTypes.func.isRequired,
+  hovered: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.bool
+  ]),
+  panToService: React.PropTypes.func.isRequired,
+  service: React.PropTypes.object.isRequired
+};
 
 YUI.add('added-services-list-item', function() {
   juju.components.AddedServicesListItem = AddedServicesListItem;
