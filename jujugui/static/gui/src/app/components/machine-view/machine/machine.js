@@ -18,7 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const machineViewMachineDropTarget = {
+const MachineViewMachineGlobals = {};
+
+MachineViewMachineGlobals.dropTarget = {
   /**
     Called when something is dropped on the machine.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -52,16 +54,15 @@ const machineViewMachineDropTarget = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-function collect(connect, monitor) {
+MachineViewMachineGlobals.collect = function(connect, monitor) {
   return {
     canDrop: monitor.canDrop(),
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver()
   };
-}
+};
 
-const MachineViewMachine = ReactDnD.DropTarget(
-  'unit', machineViewMachineDropTarget, collect)(React.createClass({
+const MachineViewMachine = React.createClass({
   displayName: 'MachineViewMachine',
 
   propTypes: {
@@ -301,10 +302,12 @@ const MachineViewMachine = ReactDnD.DropTarget(
       </div>
     );
   }
-}));
+});
 
 YUI.add('machine-view-machine', function() {
-  juju.components.MachineViewMachine = MachineViewMachine;
+  juju.components.MachineViewMachine = ReactDnD.DropTarget(
+    'unit', MachineViewMachineGlobals.dropTarget,
+    MachineViewMachineGlobals.collect)(MachineViewMachine);
 }, '0.1.0', {
   requires: [
     'machine-view-machine-unit',

@@ -18,7 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const machineViewHeaderDropTarget = {
+const MachineViewHeaderGlobals = {};
+
+MachineViewHeaderGlobals.dropTarget = {
   /**
     Called when something is dropped on the header.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -54,16 +56,15 @@ const machineViewHeaderDropTarget = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-function collect(connect, monitor) {
+MachineViewHeaderGlobals.collect = function(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
     canDrop: monitor.canDrop(),
     isOver: monitor.isOver()
   };
-}
+};
 
-const MachineViewHeader = ReactDnD.DropTarget(
-  'unit', machineViewHeaderDropTarget, collect)(React.createClass({
+const MachineViewHeader = React.createClass({
   propTypes: {
     acl: React.PropTypes.object.isRequired,
     activeMenuItem: React.PropTypes.string,
@@ -131,10 +132,12 @@ const MachineViewHeader = ReactDnD.DropTarget(
       </div>
     );
   }
-}));
+});
 
 YUI.add('machine-view-header', function() {
-  juju.components.MachineViewHeader = MachineViewHeader;
+  juju.components.MachineViewHeader = ReactDnD.DropTarget(
+    'unit', MachineViewHeaderGlobals.dropTarget,
+    MachineViewHeaderGlobals.collect)(MachineViewHeader);
 
 }, '0.1.0', {
   requires: [

@@ -18,7 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const machineViewUnplacedUnitDragSource = {
+const MachineViewUnplacedUnitGlobals = {};
+
+MachineViewUnplacedUnitGlobals.dragSource = {
   /**
     Called when the component starts the drag.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
@@ -49,15 +51,14 @@ const machineViewUnplacedUnitDragSource = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-function collect(connect, monitor) {
+MachineViewUnplacedUnitGlobals.collect = function(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   };
-}
+};
 
-const MachineViewUnplacedUnit = ReactDnD.DragSource(
-  'unit', machineViewUnplacedUnitDragSource, collect)(React.createClass({
+const MachineViewUnplacedUnit = React.createClass({
   propTypes: {
     acl: React.PropTypes.object.isRequired,
     connectDragSource: React.PropTypes.func.isRequired,
@@ -153,10 +154,12 @@ const MachineViewUnplacedUnit = ReactDnD.DragSource(
       </li>
     );
   }
-}));
+});
 
 YUI.add('machine-view-unplaced-unit', function() {
-  juju.components.MachineViewUnplacedUnit = MachineViewUnplacedUnit;
+  juju.components.MachineViewUnplacedUnit = ReactDnD.DragSource(
+    'unit', MachineViewUnplacedUnitGlobals.dragSource,
+    MachineViewUnplacedUnitGlobals.collect)(MachineViewUnplacedUnit);
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

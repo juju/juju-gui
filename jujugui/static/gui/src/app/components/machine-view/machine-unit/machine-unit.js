@@ -18,7 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const dragSource = {
+const MachineViewMachineUnitGlobals = {};
+
+MachineViewMachineUnitGlobals.dragSource = {
   /**
     Called when the component starts the drag.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
@@ -49,16 +51,15 @@ const dragSource = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-function collect(connect, monitor) {
+MachineViewMachineUnitGlobals.collect = function(connect, monitor) {
   return {
     canDrag: monitor.canDrag(),
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   };
-}
+};
 
-const MachineViewMachineUnit = ReactDnD.DragSource(
-  'unit', dragSource, collect)(React.createClass({
+const MachineViewMachineUnit = React.createClass({
   propTypes: {
     acl: React.PropTypes.object.isRequired,
     canDrag: React.PropTypes.bool.isRequired,
@@ -121,10 +122,12 @@ const MachineViewMachineUnit = ReactDnD.DragSource(
       </li>
     );
   }
-}));
+});
 
 YUI.add('machine-view-machine-unit', function() {
-  juju.components.MachineViewMachineUnit = MachineViewMachineUnit;
+  juju.components.MachineViewMachineUnit = ReactDnD.DragSource(
+    'unit', MachineViewMachineUnitGlobals.dragSource,
+    MachineViewMachineUnitGlobals.collect)(MachineViewMachineUnit);
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

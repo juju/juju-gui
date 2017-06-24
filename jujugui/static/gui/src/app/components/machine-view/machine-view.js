@@ -18,8 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const MachineView = ReactDnD.DragDropContext(
-  ReactDnDHTML5Backend)(React.createClass({
+const MachineView = React.createClass({
   displayName: 'MachineView',
 
   propTypes: {
@@ -759,10 +758,11 @@ const MachineView = ReactDnD.DragDropContext(
       </div>
     );
   }
-}));
+});
 
 YUI.add('machine-view', function() {
-  juju.components.MachineView = MachineView;
+  juju.components.MachineView = ReactDnD.DragDropContext(
+    ReactDnDHTML5Backend)(MachineView);
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',
