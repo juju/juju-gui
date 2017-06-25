@@ -18,24 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentMachines = React.createClass({
-  displayName: 'DeploymentMachines',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    cloud: React.PropTypes.object,
-    formatConstraints: React.PropTypes.func.isRequired,
-    generateMachineDetails: React.PropTypes.func.isRequired,
-    machines: React.PropTypes.object
-  },
-
+class DeploymentMachines extends React.Component {
   /**
     Generate the list of machines
 
     @method _generateMachines
     @returns {Object} The list of machines.
   */
-  _generateMachines: function() {
+  _generateMachines() {
     const machines = this.props.machines;
     if (!machines || Object.keys(machines).length === 0) {
       return;
@@ -85,9 +75,9 @@ const DeploymentMachines = React.createClass({
         </li>
         {machineList}
       </ul>);
-  },
+  }
 
-  render: function() {
+  render() {
     let chargeMessage = '';
     const cloudName = this.props.cloud ? this.props.cloud.name : 'the cloud';
     if (cloudName !== 'localhost') {
@@ -103,8 +93,15 @@ const DeploymentMachines = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentMachines.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  cloud: React.PropTypes.object,
+  formatConstraints: React.PropTypes.func.isRequired,
+  generateMachineDetails: React.PropTypes.func.isRequired,
+  machines: React.PropTypes.object
+};
 
 YUI.add('deployment-machines', function() {
   juju.components.DeploymentMachines = DeploymentMachines;
