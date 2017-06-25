@@ -18,35 +18,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const FileField = React.createClass({
-
-  propTypes: {
-    accept: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    label: React.PropTypes.string.isRequired,
-    required: React.PropTypes.bool
-  },
-
-  getDefaultProps: () => {
-    return {
-      required: false
-    };
-  },
-
-  getInitialState: function() {
+class FileField extends React.Component {
+  constructor() {
+    super();
     this.ready = true;
-    return {
+    this.state = {
       errors: null,
       contents: null
     };
-  },
+  }
 
   /**
     Validate the field value.
 
     @method validate
   */
-  validate: function() {
+  validate() {
     const errors = [];
     let components;
     if (this.props.required && this.refs.field.files.length === 0) {
@@ -73,25 +60,25 @@ const FileField = React.createClass({
     // no longer.
     this.setState({errors: components});
     return errors.length === 0;
-  },
+  }
 
   /**
     Get the value of the field.
 
     @method getValue
   */
-  getValue: function() {
+  getValue() {
     return this.state.contents;
-  },
+  }
 
   /**
     Set the focus on the input.
 
     @method focus
   */
-  focus: function() {
+  focus() {
     return this.refs.field.focus();
-  },
+  }
 
   /**
     Set up and return a new file reader.
@@ -99,7 +86,7 @@ const FileField = React.createClass({
     @method _newFileReader
     @return {FileReader} The file reader.
   */
-  _newFileReader: function() {
+  _newFileReader() {
     const reader = new FileReader();
     reader.onload = evt => {
       // TODO frankban: handle errors.
@@ -107,26 +94,26 @@ const FileField = React.createClass({
       this.ready = true;
     };
     return reader;
-  },
+  }
 
   /**
     Handle uploading the file and getting the value.
 
     @method _handleFileChange
   */
-  _handleFileChange: function() {
+  _handleFileChange() {
     this.ready = false;
     const reader = this._newFileReader();
     const file = this.refs.field.files[0];
     reader.readAsText(file);
-  },
+  }
 
   /**
     Generates a label for the input if the prop is provided.
 
     @method _generateLabel
   */
-  _generateLabel: function() {
+  _generateLabel() {
     let label = this.props.label;
     const contents = this.state.contents;
     let element, id;
@@ -145,14 +132,14 @@ const FileField = React.createClass({
       labelElement: element,
       id: id
     };
-  },
+  }
 
   /**
     Render the component.
 
     @method render
   */
-  render: function() {
+  render() {
     const {labelElement, id} = this._generateLabel();
     const classes = classNames(
       'file-field', {
@@ -174,7 +161,18 @@ const FileField = React.createClass({
       </div>
     );
   }
-});
+};
+
+FileField.propTypes = {
+  accept: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  label: React.PropTypes.string.isRequired,
+  required: React.PropTypes.bool
+};
+
+FileField.defaultProps = {
+  required: false
+};
 
 YUI.add('file-field', function() {
   juju.components.FileField = FileField;
