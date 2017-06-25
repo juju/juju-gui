@@ -18,17 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentDiagram = React.createClass({
-  displayName: 'EntityContentDiagram',
-
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    getDiagramURL: React.PropTypes.func.isRequired,
-    id: React.PropTypes.string.isRequired,
-    isRow: React.PropTypes.bool
-  },
-
-  render: function() {
+class EntityContentDiagram extends React.Component {
+  render() {
     const url = this.props.getDiagramURL(this.props.id);
     const classes = classNames(
       'entity-content__diagram',
@@ -41,7 +32,13 @@ const EntityContentDiagram = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentDiagram.propTypes = {
+  getDiagramURL: React.PropTypes.func.isRequired,
+  id: React.PropTypes.string.isRequired,
+  isRow: React.PropTypes.bool
+};
 
 YUI.add('entity-content-diagram', function() {
   juju.components.EntityContentDiagram = EntityContentDiagram;
