@@ -24,38 +24,17 @@ const NO_MODEL = 'untitled-model';
 // This component handles the GUI header, in which the breadcrumb is
 // displayed, including information about the current model and all other
 // available models.
-const HeaderBreadcrumb = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    appState: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    humanizeTimestamp: React.PropTypes.func.isRequired,
-    listModelsWithInfo: React.PropTypes.func,
-    loadingModel: React.PropTypes.bool,
-    modelName: React.PropTypes.string,
-    modelOwner: React.PropTypes.string,
-    showEnvSwitcher: React.PropTypes.bool.isRequired,
-    showProfile: React.PropTypes.func.isRequired,
-    switchModel: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getDefaultProps: function() {
-    return {
-      loadingModel: false
-    };
-  },
-
+class HeaderBreadcrumb extends React.Component {
   /**
     Returns the classes for the button based on the provided props.
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames('header-breadcrumb', {
       'header-breadcrumb--loading-model': this.props.loadingModel
     });
-  },
+  }
 
   /**
     Renders the markup for the Env Switcher if the showEnvSwitcher prop is
@@ -63,7 +42,7 @@ const HeaderBreadcrumb = React.createClass({
 
     @method _renderEnvSwitcher
   */
-  _renderEnvSwitcher: function() {
+  _renderEnvSwitcher() {
     const props = this.props;
     const currentState = props.appState.current;
     if (
@@ -85,7 +64,7 @@ const HeaderBreadcrumb = React.createClass({
           switchModel={this.props.switchModel}
         />
       </li>);
-  },
+  }
 
   /**
     Handles clicks on the profile link. Does not navigate to the profile
@@ -95,14 +74,14 @@ const HeaderBreadcrumb = React.createClass({
     @param {String} username The name of the profile.
     @param {Object} evt The click event.
   */
-  _handleProfileClick: function(username, evt) {
+  _handleProfileClick(username, evt) {
     evt.preventDefault();
     if (!this.props.showEnvSwitcher) {
       // Nothing to be done: we are already in the profile view.
       return;
     }
     this.props.showProfile(username);
-  },
+  }
 
   /**
     Generate the model owner link. If there is no model or if the owner is
@@ -114,7 +93,7 @@ const HeaderBreadcrumb = React.createClass({
 
     @method _generateOwnerLink
   */
-  _generateOwnerLink: function() {
+  _generateOwnerLink() {
     const currentState = this.props.appState.current;
     if (currentState && currentState.profile) {
       return this._buildProfile(currentState.profile);
@@ -126,7 +105,7 @@ const HeaderBreadcrumb = React.createClass({
       return this._generateUserLink();
     }
     return this._buildProfile(modelOwner.split('@')[0]);
-  },
+  }
 
   /**
     Generate the user link. If we aren't showing the model switcher then the
@@ -135,13 +114,13 @@ const HeaderBreadcrumb = React.createClass({
 
     @method _generateUserLink
   */
-  _generateUserLink: function() {
+  _generateUserLink() {
     const user = this.props.user;
     if (user) {
       return this._buildProfile(user.displayName);
     }
     return null;
-  },
+  }
 
   /**
     Build a link for the given user name.
@@ -149,7 +128,7 @@ const HeaderBreadcrumb = React.createClass({
     @method _buildProfile
     @param {String} username The name of the profile.
   */
-  _buildProfile: function(username) {
+  _buildProfile(username) {
     const props = this.props;
     const linkClasses = classNames('header-breadcrumb--link', {
       'profile-disabled': !props.showEnvSwitcher
@@ -166,9 +145,9 @@ const HeaderBreadcrumb = React.createClass({
         </a>
       </li>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     const userItem = this._generateOwnerLink();
     const user = props.user;
@@ -184,8 +163,26 @@ const HeaderBreadcrumb = React.createClass({
       </div>
     );
   }
+};
 
-});
+HeaderBreadcrumb.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  appState: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  humanizeTimestamp: React.PropTypes.func.isRequired,
+  listModelsWithInfo: React.PropTypes.func,
+  loadingModel: React.PropTypes.bool,
+  modelName: React.PropTypes.string,
+  modelOwner: React.PropTypes.string,
+  showEnvSwitcher: React.PropTypes.bool.isRequired,
+  showProfile: React.PropTypes.func.isRequired,
+  switchModel: React.PropTypes.func.isRequired,
+  user: React.PropTypes.object
+};
+
+HeaderBreadcrumb.defaultProps = {
+  loadingModel: false
+};
 
 YUI.add('header-breadcrumb', function() {
   juju.components.HeaderBreadcrumb = HeaderBreadcrumb;
