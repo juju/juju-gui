@@ -18,38 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const GenericInput = React.createClass({
-  displayName: 'GenericInput',
-
-  propTypes: {
-    autocomplete: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    hasExternalError: React.PropTypes.bool,
-    inlineErrorIcon: React.PropTypes.bool,
-    label: React.PropTypes.string,
-    multiLine: React.PropTypes.bool,
-    onBlur: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    onFocus: React.PropTypes.func,
-    onKeyUp: React.PropTypes.func,
-    placeholder: React.PropTypes.string,
-    required: React.PropTypes.bool,
-    type: React.PropTypes.string,
-    validate: React.PropTypes.array,
-    value: React.PropTypes.string
-  },
-
-  getDefaultProps: () => {
-    return {
-      autocomplete: true,
-      required: false,
-      type: 'text'
-    };
-  },
-
-  getInitialState: function() {
-    return {errors: [], focus: false};
-  },
+class GenericInput extends React.Component {
+  constructor() {
+    super();
+    this.state = {errors: [], focus: false};
+  }
 
   /**
     Validate the field value.
@@ -57,7 +30,7 @@ const GenericInput = React.createClass({
     @param {Object} evt The trigger event.
     @method validate
   */
-  validate: function(evt) {
+  validate(evt) {
     const validate = this.props.validate;
     if (!validate) {
       // If there are no validators then this field should always be valid.
@@ -75,21 +48,21 @@ const GenericInput = React.createClass({
     // no longer.
     this.setState({errors: errors});
     return errors.length === 0;
-  },
+  }
 
   /**
     Get the value of the field.
 
     @method getValue
   */
-  getValue: function() {
+  getValue() {
     if (this.refs.field) {
       if (this.props.multiLine) {
         return this.refs.field.innerText;
       }
       return this.refs.field.value;
     }
-  },
+  }
 
   /**
     Set the value of the field.
@@ -97,7 +70,7 @@ const GenericInput = React.createClass({
     @method setValue
     @param {String} newValue The field's new value.
   */
-  setValue: function(newValue) {
+  setValue(newValue) {
     if (this.refs.field) {
       if (this.props.multiLine) {
         this.refs.field.innerText = newValue;
@@ -105,68 +78,68 @@ const GenericInput = React.createClass({
         this.refs.field.value = newValue;
       }
     }
-  },
+  }
 
   /**
     Set the focus on the input.
 
     @method focus
   */
-  focus: function() {
+  focus() {
     return this.refs.field.focus();
-  },
+  }
 
   /**
     Handle focus events for the input.
     @method _focusHandler
   */
-  _focusHandler: function() {
+  _focusHandler() {
     this.setState({focus: true});
-  },
+  }
 
   /**
     Handle keyup event if set in props.
     @param {Object} evt The keyboard event.
   */
-  _keyUpHandler: function (evt) {
+  _keyUpHandler (evt) {
     if (this.props.onKeyUp) {
       this.props.onKeyUp(evt);
     }
-  },
+  }
 
   /**
     Handle blur events for the input.
     @method _blurHandler
   */
-  _blurHandler: function(e) {
+  _blurHandler(e) {
     this.setState({focus: false});
     this.validate();
     if (this.props.onBlur) {
       this.props.onBlur(e);
     }
-  },
+  }
 
   /**
     Call the supplied onChange method with the value of the input.
 
     @method _callOnChange
   */
-  _callOnChange: function() {
+  _callOnChange() {
     var onChange = this.props.onChange;
     if (onChange) {
       onChange(this.getValue());
     }
-  },
+  }
 
   /**
     Handle the onChange event for a content editable element.
 
     @method _handleDIVOnchange
   */
-  _handleDIVOnchange: function() {
+  _handleDIVOnchange() {
     this.validate();
     this._callOnChange();
-  },
+  }
 
   /**
     Generate the error elements.
@@ -174,7 +147,7 @@ const GenericInput = React.createClass({
     @method _generateErrors
     @returns {Object} The errors markup.
   */
-  _generateErrors: function(evt) {
+  _generateErrors(evt) {
     const errors = this.state.errors;
     if (errors.length === 0) {
       return null;
@@ -191,13 +164,13 @@ const GenericInput = React.createClass({
       <ul className="generic-input__errors">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Generates a label for the input if the prop is provided.
     @method _generateLabel
   */
-  _generateLabel: function() {
+  _generateLabel() {
     var label = this.props.label;
     var element, id;
     var classes = classNames(
@@ -220,14 +193,14 @@ const GenericInput = React.createClass({
       labelElement: element,
       id: id
     };
-  },
+  }
 
   /**
     Generates a single or multi line input field.
     @method _generateInput
     @param {String} id The element id.
   */
-  _generateInput: function(id) {
+  _generateInput(id) {
     const disabled = this.props.disabled;
     const errors = this.state.errors.length > 0;
     if (this.props.multiLine) {
@@ -240,10 +213,10 @@ const GenericInput = React.createClass({
           contentEditable={!disabled}
           id={id}
           dangerouslySetInnerHTML={{__html: this.props.value}}
-          onChange={this._handleDIVOnchange}
-          onKeyUp={this._keyUpHandler}
-          onFocus={this._focusHandler}
-          onBlur={this._blurHandler}
+          onChange={this._handleDIVOnchange.bind(this)}
+          onKeyUp={this._keyUpHandler.bind(this)}
+          onFocus={this._focusHandler.bind(this)}
+          onBlur={this._blurHandler.bind(this)}
           aria-invalid={errors}
           ref="field">
         </div>);
@@ -256,16 +229,16 @@ const GenericInput = React.createClass({
         id={id}
         placeholder={this.props.placeholder}
         required={this.props.required}
-        onKeyUp={this._keyUpHandler}
-        onFocus={this._focusHandler}
-        onBlur={this._blurHandler}
-        onChange={this._callOnChange}
+        onKeyUp={this._keyUpHandler.bind(this)}
+        onFocus={this._focusHandler.bind(this)}
+        onBlur={this._blurHandler.bind(this)}
+        onChange={this._callOnChange.bind(this)}
         aria-invalid={errors}
         ref="field"
         type={this.props.type} />);
-  },
+  }
 
-  render: function() {
+  render() {
     const showErrors = this.state.errors.length > 0 ||
       this.props.hasExternalError;
     var {labelElement, id} = this._generateLabel();
@@ -289,7 +262,31 @@ const GenericInput = React.createClass({
       </div>
     );
   }
-});
+};
+
+GenericInput.propTypes = {
+  autocomplete: React.PropTypes.bool,
+  disabled: React.PropTypes.bool,
+  hasExternalError: React.PropTypes.bool,
+  inlineErrorIcon: React.PropTypes.bool,
+  label: React.PropTypes.string,
+  multiLine: React.PropTypes.bool,
+  onBlur: React.PropTypes.func,
+  onChange: React.PropTypes.func,
+  onFocus: React.PropTypes.func,
+  onKeyUp: React.PropTypes.func,
+  placeholder: React.PropTypes.string,
+  required: React.PropTypes.bool,
+  type: React.PropTypes.string,
+  validate: React.PropTypes.array,
+  value: React.PropTypes.string
+};
+
+GenericInput.defaultProps = {
+  autocomplete: true,
+  required: false,
+  type: 'text'
+};
 
 YUI.add('generic-input', function() {
   juju.components.GenericInput = GenericInput;
