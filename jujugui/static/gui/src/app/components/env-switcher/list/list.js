@@ -18,35 +18,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EnvList = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    environmentName: React.PropTypes.string,
-    envs: React.PropTypes.array.isRequired,
-    handleModelClick: React.PropTypes.func.isRequired,
-    humanizeTimestamp: React.PropTypes.func.isRequired,
-    switchModel: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getInitialState: function() {
-    return {
+class EnvList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       envs: this.props.envs
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState({envs: nextProps.envs});
-  },
+  }
 
   /**
     Generate the elements for the list of models.
 
     @method generateModelList
   */
-  generateModelList: function() {
+  generateModelList() {
     const models = this.state.envs;
     if (!models.length) {
       return false;
@@ -100,7 +89,7 @@ const EnvList = React.createClass({
           data-id={model.uuid}
           data-name={model.name}
           data-owner={model.owner}
-          onClick={this._handleModelClick}
+          onClick={this._handleModelClick.bind(this)}
           key={model.uuid}>
           {name}
           <div className="env-list__last-connected">
@@ -109,7 +98,7 @@ const EnvList = React.createClass({
         </li>
       );
     });
-  },
+  }
 
   /**
     Handle clicking on a model.
@@ -117,30 +106,30 @@ const EnvList = React.createClass({
     @method _handleModelClick
     @param {Object} evt The click event.
   */
-  _handleModelClick: function(evt) {
+  _handleModelClick(evt) {
     const currentTarget = evt.currentTarget;
     this.props.handleModelClick({
       id: currentTarget.getAttribute('data-id'),
       name: currentTarget.getAttribute('data-name'),
       owner: currentTarget.getAttribute('data-owner')
     });
-  },
+  }
 
   /**
     When creating a new model, the dropdown needs to be closed.
 
     @method _handleNewModelClick
   */
-  _handleNewModelClick: function() {
+  _handleNewModelClick() {
     this.props.handleModelClick();
-  },
+  }
 
   /**
     Generate the list of models.
 
     @method _generateModelList
   */
-  _generateModels: function() {
+  _generateModels() {
     return (
       <ul className="env-list"
         role="menubar"
@@ -151,9 +140,9 @@ const EnvList = React.createClass({
         {this.generateModelList()}
       </ul>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     // TODO frankban: retrieving gisf from the global state is a bad
     // practice and it is only done here as gisf is only required for a bug
     // in the ACL returned by JIMM. Once the bug is fixed, we can remove
@@ -169,7 +158,7 @@ const EnvList = React.createClass({
         disabled={!canAddModels}
         changeState={this.props.changeState}
         switchModel={this.props.switchModel}
-        action={this._handleNewModelClick}
+        action={this._handleNewModelClick.bind(this)}
       />;
     }
     return (
@@ -181,7 +170,18 @@ const EnvList = React.createClass({
       </juju.components.Panel>
     );
   }
-});
+};
+
+EnvList.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  environmentName: React.PropTypes.string,
+  envs: React.PropTypes.array.isRequired,
+  handleModelClick: React.PropTypes.func.isRequired,
+  humanizeTimestamp: React.PropTypes.func.isRequired,
+  switchModel: React.PropTypes.func.isRequired,
+  user: React.PropTypes.object
+};
 
 YUI.add('env-list', function() {
   juju.components.EnvList = EnvList;
