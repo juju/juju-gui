@@ -18,18 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorExpose = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    exposeService: React.PropTypes.func.isRequired,
-    service: React.PropTypes.object.isRequired,
-    unexposeService: React.PropTypes.func.isRequired,
-    units: React.PropTypes.object.isRequired
-  },
-
+class InspectorExpose extends React.Component {
   /**
     The callable to be passed to the unit items for navigating to the unit
     details.
@@ -37,7 +26,7 @@ const InspectorExpose = React.createClass({
     @method _unitItemAction
     @param {Object} e The click event.
   */
-  _unitItemAction: function(e) {
+  _unitItemAction(e) {
     var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
     this.props.changeState({
       gui: {
@@ -48,7 +37,7 @@ const InspectorExpose = React.createClass({
         }
       }
     });
-  },
+  }
 
   /**
     Generate a list of units for the service.
@@ -56,17 +45,17 @@ const InspectorExpose = React.createClass({
     @method _generateUnits
     @returns {Array} A list of units.
   */
-  _generateUnits: function() {
+  _generateUnits() {
     var units = [];
     this.props.units.toArray().forEach(function(unit) {
       units.push(
         <juju.components.InspectorExposeUnit
           key={unit.id}
-          action={this._unitItemAction}
+          action={this._unitItemAction.bind(this)}
           unit={unit} />);
     }, this);
     return units;
-  },
+  }
 
   /**
     Display a list of units if the service is exposed.
@@ -74,31 +63,31 @@ const InspectorExpose = React.createClass({
     @method _displayUnitList
     @returns {Object} A list of units.
   */
-  _displayUnitList: function() {
+  _displayUnitList() {
     if (!this.props.service.get('exposed')) {
       return;
     }
     return <ul className="inspector-expose__units">
       {this._generateUnits()}
     </ul>;
-  },
+  }
 
   /**
     Expose the service when toggled.
 
     @method _handleExposeChange
   */
-  _handleExposeChange: function() {
+  _handleExposeChange() {
     var service = this.props.service;
     var serviceId = service.get('id');
     if (service.get('exposed')) {
       this.props.unexposeService(serviceId,
-        this._exposeServiceCallback, {});
+        this._exposeServiceCallback.bind(this), {});
     } else {
       this.props.exposeService(serviceId,
-        this._exposeServiceCallback, {});
+        this._exposeServiceCallback.bind(this), {});
     }
-  },
+  }
 
   /**
     Callback to handle errors when exposing a service.
@@ -106,7 +95,7 @@ const InspectorExpose = React.createClass({
     @method _exposeServiceCallback
     @param {object} e The expose event
   */
-  _exposeServiceCallback: function(e) {
+  _exposeServiceCallback(e) {
     if (e.err) {
       console.error(e.err);
       this.props.addNotification({
@@ -116,9 +105,9 @@ const InspectorExpose = React.createClass({
         level: 'error'
       });
     }
-  },
+  }
 
-  render: function() {
+  render() {
     var toggle = {
       key: 'expose-toggle'
     };
@@ -130,7 +119,7 @@ const InspectorExpose = React.createClass({
             key={toggle.key}
             ref={toggle.key}
             option={toggle}
-            onChange={this._handleExposeChange}
+            onChange={this._handleExposeChange.bind(this)}
             label="Expose application"
             config={this.props.service.get('exposed')} />
         </div>
@@ -142,8 +131,17 @@ const InspectorExpose = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorExpose.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  exposeService: React.PropTypes.func.isRequired,
+  service: React.PropTypes.object.isRequired,
+  unexposeService: React.PropTypes.func.isRequired,
+  units: React.PropTypes.object.isRequired
+};
 
 YUI.add('inspector-expose', function() {
   juju.components.InspectorExpose = InspectorExpose;
