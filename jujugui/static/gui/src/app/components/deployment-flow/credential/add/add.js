@@ -18,36 +18,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentCredentialAdd = React.createClass({
-  displayName: 'DeploymentCredentialAdd',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    close: React.PropTypes.func.isRequired,
-    cloud: React.PropTypes.object,
-    credentials: React.PropTypes.array.isRequired,
-    generateCloudCredentialName: React.PropTypes.func.isRequired,
-    getCloudProviderDetails: React.PropTypes.func.isRequired,
-    getCredentials: React.PropTypes.func.isRequired,
-    hideCancel: React.PropTypes.bool,
-    sendAnalytics: React.PropTypes.func.isRequired,
-    setCredential: React.PropTypes.func.isRequired,
-    updateCloudCredential: React.PropTypes.func.isRequired,
-    user: React.PropTypes.string,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  DEFAULT_CLOUD_TYPE: 'gce',
-
-  getInitialState: function() {
+class DeploymentCredentialAdd extends React.Component {
+  constructor(props) {
+    super(props);
+    this.DEFAULT_CLOUD_TYPE = 'gce';
     const info = this._getInfo();
-    return {
+    this.state = {
       authType: info && info.forms && Object.keys(info.forms)[0] || ''
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const oldId = this.props.cloud && this.props.cloud.cloudType;
     const newId = nextProps.cloud && nextProps.cloud.cloudType;
     if (newId !== oldId) {
@@ -55,7 +36,7 @@ const DeploymentCredentialAdd = React.createClass({
       this.setState(
         {authType: info && info.forms && Object.keys(info.forms)[0]});
     }
-  },
+  }
 
   /**
     Generate a full credential object in the expected format.
@@ -63,7 +44,7 @@ const DeploymentCredentialAdd = React.createClass({
     @method _generateCredentials
     @returns {Object} The collection of field values.
   */
-  _generateCredentials: function() {
+  _generateCredentials() {
     const info = this._getInfo();
     const fields = {};
     info.forms[this.state.authType].forEach(field => {
@@ -74,14 +55,14 @@ const DeploymentCredentialAdd = React.createClass({
       fields[field.id] = value;
     });
     return fields;
-  },
+  }
 
   /**
     Handling clicking on a cloud option.
 
     @method _handleCloudClick
   */
-  _handleAddCredentials: function() {
+  _handleAddCredentials() {
     const props = this.props;
     const info = this._getInfo();
     if (!info || !info.forms) {
@@ -106,7 +87,7 @@ const DeploymentCredentialAdd = React.createClass({
       this.state.authType,
       this._generateCredentials(),
       this._updateCloudCredentialCallback.bind(this, credentialName));
-  },
+  }
 
   /**
     The method to be called once the updateCloudCredential request is
@@ -117,7 +98,7 @@ const DeploymentCredentialAdd = React.createClass({
       credential has been added and the list of credentials loaded again.
     @param {String} error An error message, or null if there's no error.
   */
-  _updateCloudCredentialCallback: function(credential, error) {
+  _updateCloudCredentialCallback(credential, error) {
     if (error) {
       this.props.addNotification({
         title: 'Could not add credential',
@@ -132,7 +113,7 @@ const DeploymentCredentialAdd = React.createClass({
       this.props.generateCloudCredentialName(
         this.props.cloud.name, this.props.user, credential));
     this.props.close();
-  },
+  }
 
   /**
     Set the authType state when the select changes.
@@ -140,9 +121,9 @@ const DeploymentCredentialAdd = React.createClass({
     @method _handleAuthChange
     @param {String} authType The selected authType.
   */
-  _handleAuthChange: function(authType) {
+  _handleAuthChange(authType) {
     this.setState({authType: authType});
-  },
+  }
 
   /**
     Generate the form select if the cloud has multiple forms.
@@ -151,7 +132,7 @@ const DeploymentCredentialAdd = React.createClass({
     @returns {Object} The auth type select component or undefined if there is
       only one auth type.
   */
-  _generateAuthSelect: function() {
+  _generateAuthSelect() {
     const info = this._getInfo();
     if (Object.keys(info.forms).length === 1) {
       return;
@@ -166,9 +147,9 @@ const DeploymentCredentialAdd = React.createClass({
       <juju.components.InsetSelect
         disabled={this.props.acl.isReadOnly()}
         label="Authentication type"
-        onChange={this._handleAuthChange}
+        onChange={this._handleAuthChange.bind(this)}
         options={authOptions} />);
-  },
+  }
 
   /**
     Get the info for a cloud
@@ -177,18 +158,18 @@ const DeploymentCredentialAdd = React.createClass({
     @param {Object} props The component props.
     @returns {Object} The cloud info if available.
   */
-  _getInfo: function(props=this.props) {
+  _getInfo(props=this.props) {
     const cloud = props.cloud;
     const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
     return props.getCloudProviderDetails(id);
-  },
+  }
 
   /**
     Generate the fields for entering cloud credentials.
 
     @method _generateCredentialsFields
   */
-  _generateCredentialsFields: function() {
+  _generateCredentialsFields() {
     var isReadOnly = this.props.acl.isReadOnly();
     const info = this._getInfo();
     if (!info || !info.forms) {
@@ -244,11 +225,11 @@ const DeploymentCredentialAdd = React.createClass({
           </p>
         </div>
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     let buttons = [{
-      action: this._handleAddCredentials,
+      action: this._handleAddCredentials.bind(this),
       submit: true,
       title: 'Add cloud credential',
       type: 'inline-positive'
@@ -320,8 +301,24 @@ const DeploymentCredentialAdd = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentCredentialAdd.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  close: React.PropTypes.func.isRequired,
+  cloud: React.PropTypes.object,
+  credentials: React.PropTypes.array.isRequired,
+  generateCloudCredentialName: React.PropTypes.func.isRequired,
+  getCloudProviderDetails: React.PropTypes.func.isRequired,
+  getCredentials: React.PropTypes.func.isRequired,
+  hideCancel: React.PropTypes.bool,
+  sendAnalytics: React.PropTypes.func.isRequired,
+  setCredential: React.PropTypes.func.isRequired,
+  updateCloudCredential: React.PropTypes.func.isRequired,
+  user: React.PropTypes.string,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-credential-add', function() {
   juju.components.DeploymentCredentialAdd = DeploymentCredentialAdd;
