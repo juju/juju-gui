@@ -18,25 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentPanel = React.createClass({
-  displayName: 'DeploymentPanel',
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    sendAnalytics: React.PropTypes.func,
-    title: React.PropTypes.string
-  },
-
+class DeploymentPanel extends React.Component {
   /**
     Handle closing the panel when the close button is clicked.
 
     @method _handleClose
   */
-  _handleClose: function() {
+  _handleClose() {
     this.props.sendAnalytics(
       'Button click',
       'Cancel deployment'
@@ -46,9 +34,9 @@ const DeploymentPanel = React.createClass({
       profile: null,
       special: {dd: null}
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Panel
         instanceName="deployment-flow-panel"
@@ -57,7 +45,7 @@ const DeploymentPanel = React.createClass({
           <div className="deployment-panel__header">
             <div className="deployment-panel__close">
               <juju.components.GenericButton
-                action={this._handleClose}
+                action={this._handleClose.bind(this)}
                 type="neutral"
                 title="Back to canvas" />
             </div>
@@ -76,8 +64,17 @@ const DeploymentPanel = React.createClass({
       </juju.components.Panel>
     );
   }
+};
 
-});
+DeploymentPanel.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  sendAnalytics: React.PropTypes.func,
+  title: React.PropTypes.string
+};
 
 YUI.add('deployment-panel', function() {
   juju.components.DeploymentPanel = DeploymentPanel;
