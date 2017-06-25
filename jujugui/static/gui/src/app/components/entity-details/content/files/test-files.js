@@ -46,8 +46,7 @@ describe('EntityFiles', function() {
       <juju.components.EntityFiles
         apiUrl={apiUrl}
         entityModel={mockEntity}
-        pluralize={sinon.stub().returns('files')} />
-      , true);
+        pluralize={sinon.stub().returns('files')} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var archiveUrl = `${apiUrl}/django/archive`;
@@ -107,7 +106,7 @@ describe('EntityFiles', function() {
         </ul>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders for an empty/null list of files', function() {
