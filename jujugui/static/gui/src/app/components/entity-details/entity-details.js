@@ -18,35 +18,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityDetails = React.createClass({
-  displayName: 'EntityDetails',
+class EntityDetails extends React.Component {
+  constructor(props) {
+    super(props);
+    this.xhrs = [];
+    var state = this.generateState(this.props);
+    state.entityModel = null;
+    state.hasPlans = false;
+    state.plans = null;
+    this.state = state;
+  }
 
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    apiUrl: React.PropTypes.string.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    deployService: React.PropTypes.func.isRequired,
-    getBundleYAML: React.PropTypes.func.isRequired,
-    getDiagramURL: React.PropTypes.func.isRequired,
-    getEntity: React.PropTypes.func.isRequired,
-    getFile: React.PropTypes.func.isRequired,
-    getModelName: React.PropTypes.func.isRequired,
-    hash: React.PropTypes.string,
-    id: React.PropTypes.string.isRequired,
-    importBundleYAML: React.PropTypes.func.isRequired,
-    listPlansForCharm: React.PropTypes.func.isRequired,
-    makeEntityModel: React.PropTypes.func.isRequired,
-    pluralize: React.PropTypes.func.isRequired,
-    renderMarkdown: React.PropTypes.func.isRequired,
-    scrollCharmbrowser: React.PropTypes.func.isRequired,
-    scrollPosition: React.PropTypes.number.isRequired,
-    setPageTitle: React.PropTypes.func.isRequired,
-    showTerms: React.PropTypes.func.isRequired,
-    urllib: React.PropTypes.func.isRequired
-  },
+  componentDidMount() {
+    // Set the keyboard focus on the component so it can be scrolled with the
+    // keyboard. Requires tabIndex to be set on the element.
+    this.refs.content.focus();
+    // Be sure to convert the id to the legacy id as the URL will be in the
+    // new id format.
+    const xhr = this.props.getEntity(
+      this.props.id, this._fetchCallback.bind(this));
+    this.xhrs.push(xhr);
+  }
 
+  componentWillUnmount() {
+    this.xhrs.forEach(xhr => {
+      xhr.abort();
+    });
+    this.props.setPageTitle();
+  }
   /**
     Generates the state for the search results.
 
@@ -54,11 +53,11 @@ const EntityDetails = React.createClass({
     @param {Object} nextProps The props which were sent to the component.
     @return {Object} A generated state object which can be passed to setState.
   */
-  generateState: function(nextProps) {
+  generateState(nextProps) {
     return {
       activeComponent: nextProps.activeComponent || 'loading'
     };
-  },
+  }
 
   /**
     Generate the content based on the state.
@@ -66,7 +65,7 @@ const EntityDetails = React.createClass({
     @method _generateContent
     @return {Object} The child components for the content.
   */
-  _generateContent: function() {
+  _generateContent() {
     var activeChild;
     switch (this.state.activeComponent) {
       case 'loading':
@@ -119,7 +118,7 @@ const EntityDetails = React.createClass({
               There was a problem while loading the entity details.
               You could try searching for another charm or bundle or go{' '}
             <span className="link"
-              onClick={this._handleBack}>
+              onClick={this._handleBack.bind(this)}>
                 back
             </span>.
           </p>
@@ -127,7 +126,7 @@ const EntityDetails = React.createClass({
         break;
     }
     return activeChild;
-  },
+  }
 
   /**
     Change the state to reflect the chosen component.
@@ -135,11 +134,11 @@ const EntityDetails = React.createClass({
     @method _changeActiveComponent
     @param {String} newComponent The component to switch to.
   */
-  _changeActiveComponent: function(newComponent) {
+  _changeActiveComponent(newComponent) {
     var nextProps = this.state;
     nextProps.activeComponent = newComponent;
     this.setState(this.generateState(nextProps));
-  },
+  }
 
   /**
     Callback for when an entity has been successfully fetched. Though the
@@ -149,7 +148,7 @@ const EntityDetails = React.createClass({
     @param {String} error An error message, or null if there's no error.
     @param {Array} models A list of the entity models found.
   */
-  fetchCallback: function(error, data) {
+  _fetchCallback(error, data) {
     if (error) {
       this._changeActiveComponent('error');
       console.error('cannot fetch the entity:' + error);
@@ -168,25 +167,25 @@ const EntityDetails = React.createClass({
       const title = `${displayName} (#${revision_id})`;
       this.props.setPageTitle(title);
     }
-  },
+  }
 
   /**
     Get the list of plans available for a charm.
 
     @method _getPlans
   */
-  _getPlans: function() {
+  _getPlans() {
     var entityModel = this.state.entityModel;
     if (entityModel.get('entityType') === 'charm') {
       if (entityModel.hasMetrics()) {
         this.setState({hasPlans: true}, () => {
           const xhr = this.props.listPlansForCharm(
-            entityModel.get('id'), this._getPlansCallback);
+            entityModel.get('id'), this._getPlansCallback.bind(this));
           this.xhrs.push(xhr);
         });
       }
     }
-  },
+  }
 
   /**
     Callback for when plans for an entity have been successfully fetched.
@@ -195,40 +194,14 @@ const EntityDetails = React.createClass({
     @param {String} error An error message, or null if there's no error.
     @param {Array} models A list of the plans found.
   */
-  _getPlansCallback: function(error, plans) {
+  _getPlansCallback(error, plans) {
     if (error) {
       console.error('Fetching plans failed: ' + error);
       this.setState({plans: []});
     } else {
       this.setState({plans: plans});
     }
-  },
-
-  getInitialState: function() {
-    this.xhrs = [];
-    var state = this.generateState(this.props);
-    state.entityModel = null;
-    state.hasPlans = false;
-    state.plans = null;
-    return state;
-  },
-
-  componentDidMount: function() {
-    // Set the keyboard focus on the component so it can be scrolled with the
-    // keyboard. Requires tabIndex to be set on the element.
-    this.refs.content.focus();
-    // Be sure to convert the id to the legacy id as the URL will be in the
-    // new id format.
-    const xhr = this.props.getEntity(this.props.id, this.fetchCallback);
-    this.xhrs.push(xhr);
-  },
-
-  componentWillUnmount: function() {
-    this.xhrs.forEach(xhr => {
-      xhr.abort();
-    });
-    this.props.setPageTitle();
-  },
+  }
 
   /**
   Generate the diagram markup for a bundle.
@@ -237,7 +210,7 @@ const EntityDetails = React.createClass({
   @param {Object} entityModel The entity model.
   @return {Object} The diagram markup.
   */
-  _generateDiagram: function(entityModel) {
+  _generateDiagram(entityModel) {
     if (entityModel.get('entityType') !== 'bundle') {
       return;
     }
@@ -245,16 +218,16 @@ const EntityDetails = React.createClass({
       getDiagramURL={this.props.getDiagramURL}
       id={entityModel.get('id')}
       isRow={true} />;
-  },
+  }
 
   /**
     Handle navigating back.
 
     @method _handleBack
   */
-  _handleBack: function() {
+  _handleBack() {
     window.history.back();
-  },
+  }
 
   /**
     Generate the base classes from the props.
@@ -262,7 +235,7 @@ const EntityDetails = React.createClass({
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var classes = {};
     var entityModel = this.state.entityModel;
     if (entityModel) {
@@ -272,9 +245,9 @@ const EntityDetails = React.createClass({
       'entity-details',
       classes
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className={this._generateClasses()}
         ref="content"
@@ -283,7 +256,32 @@ const EntityDetails = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityDetails.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  apiUrl: React.PropTypes.string.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  deployService: React.PropTypes.func.isRequired,
+  getBundleYAML: React.PropTypes.func.isRequired,
+  getDiagramURL: React.PropTypes.func.isRequired,
+  getEntity: React.PropTypes.func.isRequired,
+  getFile: React.PropTypes.func.isRequired,
+  getModelName: React.PropTypes.func.isRequired,
+  hash: React.PropTypes.string,
+  id: React.PropTypes.string.isRequired,
+  importBundleYAML: React.PropTypes.func.isRequired,
+  listPlansForCharm: React.PropTypes.func.isRequired,
+  makeEntityModel: React.PropTypes.func.isRequired,
+  pluralize: React.PropTypes.func.isRequired,
+  renderMarkdown: React.PropTypes.func.isRequired,
+  scrollCharmbrowser: React.PropTypes.func.isRequired,
+  scrollPosition: React.PropTypes.number.isRequired,
+  setPageTitle: React.PropTypes.func.isRequired,
+  showTerms: React.PropTypes.func.isRequired,
+  urllib: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-details', function() {
   juju.components.EntityDetails = EntityDetails;
