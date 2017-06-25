@@ -49,7 +49,7 @@ describe('HeaderHelp', function() {
 
     const expected = <div className="header-menu">
       <span className={'header-menu__button'}
-        onClick={instance.toggleHelpMenu}
+        onClick={instance._toggleHelpMenu}
         role="button"
         tabIndex="0"
         aria-haspopup="true"
@@ -68,7 +68,7 @@ describe('HeaderHelp', function() {
       {''}
     </div>;
 
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   describe('menu', function () {
@@ -83,7 +83,7 @@ describe('HeaderHelp', function() {
           displayShortcutsModal={sinon.stub()}
           gisf={false} />, true);
       const instance = renderer.getMountedInstance();
-      instance.toggleHelpMenu();
+      instance._toggleHelpMenu();
       const output = renderer.getRenderOutput();
 
       assert.equal(output.props.children.length, 2);
@@ -123,7 +123,7 @@ describe('HeaderHelp', function() {
           displayShortcutsModal={sinon.stub()}
           gisf={true} />, true);
       const instance = renderer.getMountedInstance();
-      instance.toggleHelpMenu();
+      instance._toggleHelpMenu();
       const output = renderer.getRenderOutput();
 
       assert.equal(output.props.children.length, 2);
@@ -173,7 +173,7 @@ describe('HeaderHelp', function() {
             gisf={true}
             user={{}} />, true);
         const instance = renderer.getMountedInstance();
-        instance.toggleHelpMenu();
+        instance._toggleHelpMenu();
         const output = renderer.getRenderOutput();
 
         assert.equal(output.props.children.length, 2);

@@ -22,20 +22,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   Provides a help menu to the header. The idea moving forward is to have a
   more complete 'built-in' small help system for tips.
 */
-const HeaderHelp = enhanceWithClickOutside(React.createClass({
-
-  propTypes: {
-    appState: React.PropTypes.object.isRequired,
-    displayShortcutsModal: React.PropTypes.func.isRequired,
-    gisf: React.PropTypes.bool.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getInitialState: function() {
-    return {
+class HeaderHelp extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       showHelpMenu: false
     };
-  },
+  }
 
   /**
     When the menu is shown, clicking anywhere but the menu will close
@@ -43,18 +36,18 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
 
     @method handleClickOutside
   */
-  handleClickOutside: function() {
+  handleClickOutside() {
     this.setState({ showHelpMenu: false });
-  },
+  }
 
   /**
     Clicking the help menu will toggle whether it's visibility.
 
-    @method toggleHelpMenu
+    @method _toggleHelpMenu
   */
-  toggleHelpMenu: function() {
+  _toggleHelpMenu() {
     this.setState({ showHelpMenu: !this.state.showHelpMenu });
-  },
+  }
 
   /**
     Generate a link to issues based on whether the user is logged in
@@ -62,7 +55,7 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
 
     @method _generateIssuesLink
    */
-  _generateIssuesLink: function() {
+  _generateIssuesLink() {
     let label = 'File Issue';
     let link = 'https://github.com/juju/juju-gui/issues';
     if (this.props.gisf && this.props.user) {
@@ -77,9 +70,9 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
           href={link} target="_blank">{label}</a>
       </li>
     );
-  },
+  }
 
-  _generateDocsLink: function() {
+  _generateDocsLink() {
     if (this.props.gisf) {
       return (<li className="header-menu__menu-list-item
         header-menu__menu-list-item-with-link"
@@ -92,24 +85,24 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
       </li>);
     }
     return;
-  },
+  }
 
   /**
    Click the button, get the help.
 
     @param {Object} evt The event that triggered the function
   */
-  _handleShortcutsLink: function(evt) {
-    this.toggleHelpMenu();
+  _handleShortcutsLink(evt) {
+    this._toggleHelpMenu();
     this.props.displayShortcutsModal();
-  },
+  }
 
   /**
    Generate menu based on whether the button has been clicked.
 
     @method generateHelpMenu
   */
-  _generateHelpMenu: function() {
+  _generateHelpMenu() {
     if (this.state.showHelpMenu) {
       return (
         <juju.components.Panel
@@ -121,7 +114,7 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
             <li className="header-menu__menu-list-item
                 header-menu__menu-list-item-with-link"
               role="menuItem"
-              tabIndex="0" onClick={this._handleShortcutsLink}>
+              tabIndex="0" onClick={this._handleShortcutsLink.bind(this)}>
               <span className="header-menu__menu-list-item-link">
                   Keyboard shortcuts
                 <span className="header-menu__menu-extra-info">
@@ -133,7 +126,7 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
         </juju.components.Panel>);
     }
     return '';
-  },
+  }
 
   /**
    Get class names based on whether the help menu is shown.
@@ -142,18 +135,18 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
 
     @method _getClassNames
   */
-  _getClassNames: function() {
+  _getClassNames() {
     return classNames(
       'header-menu__button', {
         'header-menu__show-menu': this.state.showHelpMenu
       });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="header-menu">
         <span className={this._getClassNames()}
-          onClick={this.toggleHelpMenu}
+          onClick={this._toggleHelpMenu.bind(this)}
           role="button"
           tabIndex="0"
           aria-haspopup="true"
@@ -172,10 +165,17 @@ const HeaderHelp = enhanceWithClickOutside(React.createClass({
         {this._generateHelpMenu()}
       </div>);
   }
-}));
+};
+
+HeaderHelp.propTypes = {
+  appState: React.PropTypes.object.isRequired,
+  displayShortcutsModal: React.PropTypes.func.isRequired,
+  gisf: React.PropTypes.bool.isRequired,
+  user: React.PropTypes.object
+};
 
 YUI.add('header-help', function() {
-  juju.components.HeaderHelp = HeaderHelp;
+  juju.components.HeaderHelp = enhanceWithClickOutside(HeaderHelp);
 }, '0.1.0', { requires: [
   'panel-component',
   'svg-icon'
