@@ -22,23 +22,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   This component allows users to provide their AWS virtual private cloud
   identifier.
 */
-const DeploymentVPC = React.createClass({
-  propTypes: {
-    setVPCId: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {force: false, forceEnabled: false};
-  },
+class DeploymentVPC extends React.Component {
+  constructor() {
+    super();
+    this.state = {force: false, forceEnabled: false};
+  }
 
   /**
     Handle text input blur changes by setting the VPC data.
 
     @param {Object} evt The blur event.
   */
-  _onInputBlur: function(evt) {
+  _onInputBlur(evt) {
     this.setVPC(this.state.force);
-  },
+  }
 
   /**
     Handle text input key up events by disabling or enabling the VPC force
@@ -46,43 +43,43 @@ const DeploymentVPC = React.createClass({
 
     @param {Object} evt The key up event.
   */
-  _onInputKeyUp: function(evt) {
+  _onInputKeyUp(evt) {
     this.setState({forceEnabled: !!this.refs.vpcId.getValue()});
-  },
+  }
 
   /**
     Handle VPC force check box changes by updating the VPC data.
 
     @param {Object} evt The change event from the check box.
   */
-  _onCheckboxChange: function(evt) {
+  _onCheckboxChange(evt) {
     const force = evt.target.checked;
     this.setState({force: force});
     this.setVPC(force);
-  },
+  }
 
   /**
     Stop the propagation of VPC force check box click events.
 
     @param {Object} evt The change event from the check box.
   */
-  _onCheckboxClick: function(evt) {
+  _onCheckboxClick(evt) {
     evt.stopPropagation();
-  },
+  }
 
   /**
     Set VPC id and force values based on the current state of VPC widgets.
 
     @param {Boolean} force Whether to force the id value, even if not valid.
   */
-  setVPC: function(force) {
+  setVPC(force) {
     this.props.setVPCId(this.refs.vpcId.getValue(), force);
-  },
+  }
 
   /**
     Render the component.
   */
-  render: function() {
+  render() {
     return (
       <div>
         <p>
@@ -95,15 +92,15 @@ const DeploymentVPC = React.createClass({
           key="vpcId"
           ref="vpcId"
           multiLine={false}
-          onBlur={this._onInputBlur}
-          onKeyUp={this._onInputKeyUp}
+          onBlur={this._onInputBlur.bind(this)}
+          onKeyUp={this._onInputKeyUp.bind(this)}
           required={false}
         />
         <input
           type="checkbox"
           id="vpcIdForce"
-          onChange={this._onCheckboxChange}
-          onClick={this._onCheckboxClick}
+          onChange={this._onCheckboxChange.bind(this)}
+          onClick={this._onCheckboxClick.bind(this)}
           checked={this.state.force}
           disabled={!this.state.forceEnabled}
         />
@@ -114,8 +111,11 @@ const DeploymentVPC = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentVPC.propTypes = {
+  setVPCId: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-vpc', function() {
   juju.components.DeploymentVPC = DeploymentVPC;
