@@ -18,41 +18,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContent = React.createClass({
-  displayName: 'EntityContent',
-
-  propTypes: {
-    addNotification: React.PropTypes.func.isRequired,
-    apiUrl: React.PropTypes.string.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    entityModel: React.PropTypes.object.isRequired,
-    getFile: React.PropTypes.func.isRequired,
-    hasPlans: React.PropTypes.bool.isRequired,
-    hash: React.PropTypes.string,
-    plans: React.PropTypes.array,
-    pluralize: React.PropTypes.func.isRequired,
-    renderMarkdown: React.PropTypes.func.isRequired,
-    scrollCharmbrowser: React.PropTypes.func.isRequired,
-    showTerms: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class EntityContent extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       terms: [],
       termsLoading: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getTerms();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Get the list of terms for the charm, updating the state with these
@@ -60,7 +44,7 @@ const EntityContent = React.createClass({
 
     @method _getTerms
   */
-  _getTerms: function() {
+  _getTerms() {
     const entityTerms = this.props.entityModel.get('terms');
     if (!entityTerms || !entityTerms.length) {
       this.setState({termsLoading: false});
@@ -93,7 +77,7 @@ const EntityContent = React.createClass({
         this.xhrs.push(xhr);
       });
     });
-  },
+  }
 
   /**
     Generate the list of configuration options for a charm.
@@ -102,7 +86,7 @@ const EntityContent = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The options markup.
   */
-  _generateCharmConfig: function(entityModel) {
+  _generateCharmConfig(entityModel) {
     var options = entityModel.get('options');
     if (!options) {
       return;
@@ -121,7 +105,7 @@ const EntityContent = React.createClass({
       <dl>
         {optionsList}
       </dl>);
-  },
+  }
 
   /**
     Generate the list of configuration options for a bundle.
@@ -130,7 +114,7 @@ const EntityContent = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The options markup.
   */
-  _generateBundleConfig: function(entityModel) {
+  _generateBundleConfig(entityModel) {
     let applications;
     applications = entityModel.get('applications');
     if (!applications) {
@@ -191,7 +175,7 @@ const EntityContent = React.createClass({
       <ul>
         {applicationsList}
       </ul>);
-  },
+  }
 
   /**
     Generate the list of configuration options.
@@ -200,7 +184,7 @@ const EntityContent = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The options markup.
   */
-  _generateOptionsList: function(entityModel) {
+  _generateOptionsList(entityModel) {
     var optionsList;
     if (entityModel.get('entityType') === 'charm') {
       optionsList = this._generateCharmConfig(entityModel);
@@ -220,7 +204,7 @@ const EntityContent = React.createClass({
         </div>
       );
     }
-  },
+  }
 
   /**
     Generates an HTML list from the supplied array.
@@ -230,7 +214,7 @@ const EntityContent = React.createClass({
     @param {Function} handler The click handler for each item.
     @return {Array} The list markup.
   */
-  _generateList: function(list, handler) {
+  _generateList(list, handler) {
     return list.map(function(item, i) {
       return (
         <li key={item + i}>
@@ -240,7 +224,7 @@ const EntityContent = React.createClass({
         </li>
       );
     });
-  },
+  }
 
   /**
     Generate the list of Tags if available.
@@ -248,7 +232,7 @@ const EntityContent = React.createClass({
     @method _generateTags
     @return {Array} The tags markup.
   */
-  _generateTags: function() {
+  _generateTags() {
     // Have to convert {0: 'database'} to ['database'].
     var tags = [],
         entityTags = this.props.entityModel.get('tags'),
@@ -263,10 +247,10 @@ const EntityContent = React.createClass({
       <div className="four-col entity-content__metadata">
         <h4>Tags</h4>
         <ul>
-          {this._generateList(tags, this._handleTagClick)}
+          {this._generateList(tags, this._handleTagClick.bind(this))}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Handle clicks on tags.
@@ -274,7 +258,7 @@ const EntityContent = React.createClass({
     @method _handleTagClick
     @param {Object} e The event.
   */
-  _handleTagClick: function(e) {
+  _handleTagClick(e) {
     e.stopPropagation();
     this.props.changeState({
       hash: null,
@@ -284,7 +268,7 @@ const EntityContent = React.createClass({
       },
       store: null
     });
-  },
+  }
 
   /**
     Generate the list of terms if available.
@@ -292,7 +276,7 @@ const EntityContent = React.createClass({
     @method _generateTerms
     @return {Array} The terms markup.
   */
-  _generateTerms: function() {
+  _generateTerms() {
     const terms = this.state.terms;
     let content;
     if (this.state.termsLoading) {
@@ -319,7 +303,7 @@ const EntityContent = React.createClass({
         <h4>Terms</h4>
         {content}
       </div>);
-  },
+  }
 
   /**
     Generate the list of terms if available.
@@ -327,9 +311,9 @@ const EntityContent = React.createClass({
     @method _toggleTerms
     @param {Object} terms The terms to display.
   */
-  _toggleTerms: function(terms=null) {
+  _toggleTerms(terms=null) {
     this.setState({showTerms: terms});
-  },
+  }
 
   /**
     Generate the terms popup.
@@ -337,16 +321,16 @@ const EntityContent = React.createClass({
     @method _generateTermsPopup
     @returns {Object} The terms popup markup.
   */
-  _generateTermsPopup: function() {
+  _generateTermsPopup() {
     const terms = this.state.showTerms;
     if (!terms) {
       return null;
     }
     return (
       <juju.components.TermsPopup
-        close={this._toggleTerms}
+        close={this._toggleTerms.bind(this)}
         terms={[terms]} />);
-  },
+  }
 
   /**
     Generate the description.
@@ -355,12 +339,12 @@ const EntityContent = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The description markup.
   */
-  _generateDescription: function(entityModel) {
+  _generateDescription(entityModel) {
     return (<juju.components.EntityContentDescription
       entityModel={entityModel}
       includeHeading={true}
       renderMarkdown={this.props.renderMarkdown} />);
-  },
+  }
 
   /**
     Generate tags and terms.
@@ -369,7 +353,7 @@ const EntityContent = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The tags and terms markup.
   */
-  _generateTagsAndTerms: function(entityModel) {
+  _generateTagsAndTerms(entityModel) {
     if (this.props.entityModel.get('entityType') === 'charm') {
       return(
         <div className="row row--grey entity-content__terms">
@@ -381,14 +365,14 @@ const EntityContent = React.createClass({
       );
     }
     return false;
-  },
+  }
 
   /**
     Display the resources if this is a charm.
 
     @method _generateResources
   */
-  _generateResources: function() {
+  _generateResources() {
     var entityModel = this.props.entityModel;
     if (entityModel.get('entityType') === 'charm') {
       return (
@@ -398,14 +382,14 @@ const EntityContent = React.createClass({
           pluralize={this.props.pluralize}
           resources={entityModel.get('resources')} />);
     }
-  },
+  }
 
   /**
     We only show the relations when it's a charm, but not a bundle.
 
     @method _showEntityRelations
   */
-  _showEntityRelations: function() {
+  _showEntityRelations() {
     var entityModel = this.props.entityModel;
     if (entityModel.get('entityType') === 'charm') {
       // Need to flatten out the relations to determine if we have any.
@@ -424,14 +408,14 @@ const EntityContent = React.createClass({
             relations={relations} />);
       }
     }
-  },
+  }
 
   /**
     Generate the actions links.
 
     @method _generateActions
   */
-  _generateActions: function() {
+  _generateActions() {
     const entity = this.props.entityModel.getAttrs();
     let bugLink = entity.bugUrl;
     let homepageLink = entity.homepage;
@@ -466,7 +450,7 @@ const EntityContent = React.createClass({
             </li>) : undefined}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Transform and generate the price list from a provided string of prices.
@@ -476,7 +460,7 @@ const EntityContent = React.createClass({
       'price/quantity;price/quantity'.
     @returns {Object} The price list JSX components.
   */
-  _generatePriceList: function(prices) {
+  _generatePriceList(prices) {
     var prices = prices.split(';');
     var priceList = [];
     prices.forEach((price, i) => {
@@ -501,14 +485,14 @@ const EntityContent = React.createClass({
         </li>);
     });
     return priceList;
-  },
+  }
 
   /**
     Generate the list of plans.
 
     @method _generatePlans
   */
-  _generatePlans: function() {
+  _generatePlans() {
     var props = this.props;
     if (props.entityModel.get('entityType') !== 'charm' ||
       !this.props.hasPlans) {
@@ -558,14 +542,14 @@ const EntityContent = React.createClass({
           </div>
         </div>
       </div>);
-  },
+  }
 
   /**
     Generate the Juju card example.
 
     @return {Object} React "div" that contains the card holder.
   */
-  _generateCard: function() {
+  _generateCard() {
     const entityModel = this.props.entityModel;
     const entity = entityModel.toEntity();
     const storeId = entity.type === 'charm' ?
@@ -592,15 +576,15 @@ const EntityContent = React.createClass({
         <h4>Preview</h4>
         <div className="juju-card" data-id={storeId}></div>
       </div>);
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     if (window.jujuCards) {
       window.jujuCards();
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const entityModel = this.props.entityModel;
     return (
       <div className="entity-content">
@@ -637,7 +621,22 @@ const EntityContent = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContent.propTypes = {
+  addNotification: React.PropTypes.func.isRequired,
+  apiUrl: React.PropTypes.string.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  entityModel: React.PropTypes.object.isRequired,
+  getFile: React.PropTypes.func.isRequired,
+  hasPlans: React.PropTypes.bool.isRequired,
+  hash: React.PropTypes.string,
+  plans: React.PropTypes.array,
+  pluralize: React.PropTypes.func.isRequired,
+  renderMarkdown: React.PropTypes.func.isRequired,
+  scrollCharmbrowser: React.PropTypes.func.isRequired,
+  showTerms: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-content', function() {
   juju.components.EntityContent = EntityContent;
