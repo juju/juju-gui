@@ -18,21 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentSignup = React.createClass({
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    exportEnvironmentFile: React.PropTypes.func.isRequired,
-    modelName: React.PropTypes.string.isRequired,
-    staticURL: React.PropTypes.string
-  },
-
+class DeploymentSignup extends React.Component {
   /**
     Set the cookie for hiding the sign-up page.
 
     @method _setBetaCookie
     @param {Boolean} permanent Whether the page must be permanently hidden.
   */
-  _setBetaCookie: function(permanent) {
+  _setBetaCookie(permanent) {
     const expiration = new Date();
     if (permanent) {
       expiration.setFullYear(2020);
@@ -41,14 +34,14 @@ const DeploymentSignup = React.createClass({
     }
     document.cookie = 'beta-signup-seen=true; expires='
       + expiration.toUTCString();
-  },
+  }
 
   /**
     Handle navigating to the deployment flow.
 
     @method _displayFlow
   */
-  _displayFlow: function() {
+  _displayFlow() {
     // TODO: In the future the deployment flow must be opened in sandbox mode
     // at demo.jujucharms.com.
     this.props.changeState({
@@ -57,23 +50,23 @@ const DeploymentSignup = React.createClass({
       }
     });
     this._setBetaCookie(false);
-  },
+  }
 
   /**
     Handle the email registration.
 
     @method _handleSignup
   */
-  _handleSignup: function() {
+  _handleSignup() {
     this._setBetaCookie(true);
     this.props.changeState({
       gui: {
         deploy: 'flow'
       }
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.DeploymentPanel
         changeState={this.props.changeState}
@@ -105,7 +98,7 @@ const DeploymentSignup = React.createClass({
               <p>
                 Continue to the&nbsp;
                 <juju.components.GenericButton
-                  action={this._displayFlow}
+                  action={this._displayFlow.bind(this)}
                   type="inline-neutral"
                   title="Deployment demo of Juju" />
               </p>
@@ -142,7 +135,7 @@ const DeploymentSignup = React.createClass({
                 <a href="https://jujucharms.com/beta"
                   target="_blank"
                   className="button--inline-positive"
-                  onClick={this._handleSignup}>
+                  onClick={this._handleSignup.bind(this)}>
                     Sign up for early access
                 </a>
               </p>
@@ -174,8 +167,14 @@ const DeploymentSignup = React.createClass({
       </juju.components.DeploymentPanel>
     );
   }
+};
 
-});
+DeploymentSignup.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  exportEnvironmentFile: React.PropTypes.func.isRequired,
+  modelName: React.PropTypes.string.isRequired,
+  staticURL: React.PropTypes.string
+};
 
 YUI.add('deployment-signup', function() {
   juju.components.DeploymentSignup = DeploymentSignup;
