@@ -21,73 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Define the VPC ID zero value.
 const INITIAL_VPC_ID = null;
 
-const DeploymentFlow = React.createClass({
-  displayName: 'DeploymentFlow',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addAgreement: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    applications: React.PropTypes.array.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    changes: React.PropTypes.object.isRequired,
-    changesFilterByParent: React.PropTypes.func.isRequired,
-    charmsGetById: React.PropTypes.func.isRequired,
-    charmstore: React.PropTypes.object.isRequired,
-    cloud: React.PropTypes.object,
-    controllerIsReady: React.PropTypes.func.isRequired,
-    createCardElement: React.PropTypes.func,
-    createToken: React.PropTypes.func,
-    createUser: React.PropTypes.func,
-    credential: React.PropTypes.string,
-    ddData: React.PropTypes.object,
-    deploy: React.PropTypes.func.isRequired,
-    formatConstraints: React.PropTypes.func.isRequired,
-    generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-    generateCloudCredentialName: React.PropTypes.func.isRequired,
-    generateMachineDetails: React.PropTypes.func.isRequired,
-    generatePath: React.PropTypes.func.isRequired,
-    getAgreementsByTerms: React.PropTypes.func.isRequired,
-    getCloudCredentialNames: React.PropTypes.func,
-    getCloudCredentials: React.PropTypes.func,
-    getCloudProviderDetails: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func,
-    getCurrentChangeSet: React.PropTypes.func.isRequired,
-    getDiagramURL: React.PropTypes.func,
-    getEntity: React.PropTypes.func,
-    getUser: React.PropTypes.func,
-    getUserName: React.PropTypes.func.isRequired,
-    gisf: React.PropTypes.bool,
-    groupedChanges: React.PropTypes.object.isRequired,
-    isLoggedIn: React.PropTypes.func.isRequired,
-    listBudgets: React.PropTypes.func.isRequired,
-    listClouds: React.PropTypes.func,
-    listPlansForCharm: React.PropTypes.func.isRequired,
-    loginToController: React.PropTypes.func.isRequired,
-    makeEntityModel: React.PropTypes.func.isRequired,
-    modelCommitted: React.PropTypes.bool,
-    modelName: React.PropTypes.string.isRequired,
-    profileUsername: React.PropTypes.string.isRequired,
-    region: React.PropTypes.string,
-    renderMarkdown: React.PropTypes.func.isRequired,
-    sendAnalytics: React.PropTypes.func.isRequired,
-    servicesGetById: React.PropTypes.func.isRequired,
-    setModelName: React.PropTypes.func.isRequired,
-    showPay: React.PropTypes.bool,
-    showTerms: React.PropTypes.func.isRequired,
-    stats: React.PropTypes.object,
-    updateCloudCredential: React.PropTypes.func,
-    updateModelName: React.PropTypes.func,
-    validateForm: React.PropTypes.func.isRequired,
-    withPlans: React.PropTypes.bool
-  },
-
-  getInitialState: function() {
+class DeploymentFlow extends React.Component {
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     // Set up the cloud, credential and region from props, as if they exist at
     // mount they can't be changed.
     const modelCommitted = this.props.modelCommitted;
-    return {
+    this.state = {
       cloud: modelCommitted ? this.props.cloud : null,
       deploying: false,
       credential: this.props.credential,
@@ -106,23 +47,23 @@ const DeploymentFlow = React.createClass({
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     if (this.state.loggedIn) {
       this._getAgreements();
     }
     this.sendAnalytics('Deployment started');
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     const modelName = this.refs.modelName;
     if (modelName) {
       modelName.focus();
     }
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const newApps = nextProps.applications;
     const currentApps = this.props.applications;
     // Filter the list of new apps to find that don't exist in the current
@@ -131,13 +72,13 @@ const DeploymentFlow = React.createClass({
     if (newApps.length !== currentApps.length || appDiff.length > 0) {
       this._getAgreements();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Use the props and state to figure out if a section should be visible,
@@ -147,7 +88,7 @@ const DeploymentFlow = React.createClass({
     @param {String} section The name of the section you want data for.
     @returns {Object} The object with completed, disabled and visible params.
   */
-  _getSectionStatus: function(section) {
+  _getSectionStatus(section) {
     let completed;
     let disabled;
     let visible;
@@ -225,7 +166,7 @@ const DeploymentFlow = React.createClass({
       disabled: disabled,
       visible: visible
     };
-  },
+  }
 
   /**
     Store the selected cloud in state.
@@ -233,9 +174,9 @@ const DeploymentFlow = React.createClass({
     @method _setCloud
     @param {String} cloud The selected cloud.
   */
-  _setCloud: function(cloud) {
+  _setCloud(cloud) {
     this.setState({cloud: cloud, vpcId: INITIAL_VPC_ID});
-  },
+  }
 
   /**
     Store the selected credential in state.
@@ -243,9 +184,9 @@ const DeploymentFlow = React.createClass({
     @method _setCredential
     @param {String} credential The selected credential.
   */
-  _setCredential: function(credential) {
+  _setCredential(credential) {
     this.setState({credential: credential});
-  },
+  }
 
   /**
     Store the selected region in state.
@@ -253,9 +194,9 @@ const DeploymentFlow = React.createClass({
     @method _setRegion
     @param {String} region The selected region.
   */
-  _setRegion: function(region) {
+  _setRegion(region) {
     this.setState({region: region});
-  },
+  }
 
   /**
     Store the provided SSH key in state.
@@ -263,9 +204,9 @@ const DeploymentFlow = React.createClass({
     @method _setSSHKey
     @param {String} key The SSH key.
   */
-  _setSSHKey: function(key) {
+  _setSSHKey(key) {
     this.setState({sshKey: key});
-  },
+  }
 
   /**
     Store the provided AWS virtual private cloud value in state.
@@ -276,13 +217,13 @@ const DeploymentFlow = React.createClass({
     @param {String} value The VPC identifier.
     @param {Boolean} force Whether to force the value. Ignored if !value.
   */
-  _setVPCId: function(value, force) {
+  _setVPCId(value, force) {
     if (!value) {
       value = INITIAL_VPC_ID;
       force = false;
     }
     this.setState({vpcId: value, vpcIdForce: !!force});
-  },
+  }
 
   /**
     Store the selected budget in state.
@@ -290,9 +231,9 @@ const DeploymentFlow = React.createClass({
     @method _setBudget
     @param {String} budget The selected budget.
   */
-  _setBudget: function(budget) {
+  _setBudget(budget) {
     this.setState({budget: budget});
-  },
+  }
 
   /**
     Store the payment user in state.
@@ -300,18 +241,18 @@ const DeploymentFlow = React.createClass({
     @method _setPaymentUser
     @param {String} user The user deetails.
   */
-  _setPaymentUser: function(user) {
+  _setPaymentUser(user) {
     this.setState({paymentUser: user});
-  },
+  }
 
   /**
     Toggle the visibility of the changelogs.
 
     @method _toggleChangelogs
   */
-  _toggleChangelogs: function() {
+  _toggleChangelogs() {
     this.setState({showChangelogs: !this.state.showChangelogs});
-  },
+  }
 
   /**
     Handle closing the panel when the close button is clicked.
@@ -319,7 +260,7 @@ const DeploymentFlow = React.createClass({
     @method _handleClose
     @param {String} err An error if deployment failed, null otherwise.
   */
-  _handleClose: function(err) {
+  _handleClose(err) {
     this.setState({deploying: false});
     if (err) {
       // Error handling is already done by the original deploy callback.
@@ -331,25 +272,25 @@ const DeploymentFlow = React.createClass({
         deploy: null
       }
     });
-  },
+  }
 
   /**
     Handle clearing the chosen cloud.
 
     @method _clearCloud
   */
-  _clearCloud: function() {
+  _clearCloud() {
     this._setCloud(null);
     // Also reset the chose credential.
     this._setCredential(null);
-  },
+  }
 
   /**
     Handle deploying the model.
 
     @method _handleDeploy
   */
-  _handleDeploy: function() {
+  _handleDeploy() {
     if (!this._deploymentAllowed()) {
       // This should never happen, as in these cases the deployment button is
       // disabled.
@@ -381,7 +322,7 @@ const DeploymentFlow = React.createClass({
       args.config['vpc-id-force'] = this.state.vpcIdForce;
     }
     const deploy = this.props.deploy.bind(
-      this, this._handleClose, true, this.state.modelName, args);
+      this, this._handleClose.bind(this), true, this.state.modelName, args);
     if (this.state.newTerms.length > 0) {
       const terms = this.state.newTerms.map(term => {
         const args = {
@@ -407,7 +348,7 @@ const DeploymentFlow = React.createClass({
     } else {
       deploy();
     }
-  },
+  }
 
   /**
     Get the list of terms for the uncommitted apps.
@@ -415,7 +356,7 @@ const DeploymentFlow = React.createClass({
     @method _getTerms
     @returns {Array} The list of terms.
   */
-  _getTerms: function() {
+  _getTerms() {
     const appIds = [];
     // Get the list of undeployed apps. _deploy is the key for added apps.
     const deployCommands = this.props.groupedChanges['_deploy'];
@@ -442,14 +383,14 @@ const DeploymentFlow = React.createClass({
       }
     });
     return termIds;
-  },
+  }
 
   /**
     Get the list of terms that the user has already agreed to.
 
     @method _getAgreements
   */
-  _getAgreements: function() {
+  _getAgreements() {
     // Get the list of terms for the uncommitted apps.
     const terms = this.state.terms;
     // If there are no charms with terms then we don't need to display
@@ -475,7 +416,7 @@ const DeploymentFlow = React.createClass({
         });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Split the term id into the attributes.
@@ -483,7 +424,7 @@ const DeploymentFlow = React.createClass({
     @method _parseTermId
     @returns {Object} The term attributes.
   */
-  _parseTermId: function(terms) {
+  _parseTermId(terms) {
     const parts = terms.split('/');
     let owner = null;
     let name = null;
@@ -510,7 +451,7 @@ const DeploymentFlow = React.createClass({
       name: name,
       revision: revision
     };
-  },
+  }
 
   /**
     Generate a change cloud action if a cloud has been selected.
@@ -518,17 +459,17 @@ const DeploymentFlow = React.createClass({
     @method _generateCloudAction
     @returns {Array} The list of actions.
   */
-  _generateCloudAction: function() {
+  _generateCloudAction() {
     if (!this.state.cloud || this.props.modelCommitted) {
       return;
     }
     return [{
-      action: this._clearCloud,
+      action: this._clearCloud.bind(this),
       disabled: this.props.acl.isReadOnly(),
       title: 'Change cloud',
       type: 'neutral'
     }];
-  },
+  }
 
   /**
     Generate a button to toggle the visibility of the changelogs.
@@ -536,18 +477,18 @@ const DeploymentFlow = React.createClass({
     @method _generateChangelogTitle
     @returns {Array} The action.
   */
-  _generateChangelogTitle: function() {
+  _generateChangelogTitle() {
     return (
       <span className="deployment-flow__service-title">
         Applications to be deployed
         <juju.components.GenericButton
-          action={this._toggleChangelogs}
+          action={this._toggleChangelogs.bind(this)}
           type="inline-neutral"
           extraClasses="right"
           title={this.state.showChangelogs ?
             'Hide changelog' : 'Show changelog'} />
       </span>);
-  },
+  }
 
   /**
     Generate the SSH key management section.
@@ -555,7 +496,7 @@ const DeploymentFlow = React.createClass({
     @method _generateSSHKeySection
     @returns {Object} The markup.
   */
-  _generateSSHKeySection: function() {
+  _generateSSHKeySection() {
     const status = this._getSectionStatus('ssh-key');
     if (!status.visible) {
       return;
@@ -569,10 +510,10 @@ const DeploymentFlow = React.createClass({
         showCheck={false}>
         <juju.components.DeploymentSSHKey
           cloud={cloud}
-          setSSHKey={this._setSSHKey}
+          setSSHKey={this._setSSHKey.bind(this)}
         />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the AWS VPC management section.
@@ -580,7 +521,7 @@ const DeploymentFlow = React.createClass({
     @method _generateVPCSection
     @returns {Object} The react component.
   */
-  _generateVPCSection: function() {
+  _generateVPCSection() {
     const status = this._getSectionStatus('vpc');
     if (!status.visible) {
       return;
@@ -591,9 +532,9 @@ const DeploymentFlow = React.createClass({
         disabled={status.disabled}
         instance="deployment-vpc"
         showCheck={false}>
-        <juju.components.DeploymentVPC setVPCId={this._setVPCId} />
+        <juju.components.DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the cloud section.
@@ -601,7 +542,7 @@ const DeploymentFlow = React.createClass({
     @method _generateModelNameSection
     @returns {Object} The markup.
   */
-  _generateModelNameSection: function() {
+  _generateModelNameSection() {
     const status = this._getSectionStatus('model-name');
     if (!status.visible) {
       return;
@@ -618,7 +559,7 @@ const DeploymentFlow = React.createClass({
             key="modelName"
             label="Model name"
             required={true}
-            onBlur={this._updateModelName}
+            onBlur={this._updateModelName.bind(this)}
             ref="modelName"
             validate={[{
               regex: /\S+/,
@@ -632,7 +573,7 @@ const DeploymentFlow = React.createClass({
             value={this.props.modelName} />
         </div>
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Updates the db's environment name when the model name is changed
@@ -640,13 +581,13 @@ const DeploymentFlow = React.createClass({
 
     @method _updateModelName
   */
-  _updateModelName: function(evt) {
+  _updateModelName(evt) {
     const modelName = this.refs.modelName.getValue();
     this.setState({modelName: modelName});
     if (modelName !== '') {
       this.props.setModelName(modelName);
     }
-  },
+  }
 
   /**
     Wrapper that generates a string based on various state to send to GA.
@@ -655,7 +596,7 @@ const DeploymentFlow = React.createClass({
     @param {string} action The action being performed.
     @param {arguments} args All arguments passed will be used.
   */
-  sendAnalytics: function(action, ...args) {
+  sendAnalytics(action, ...args) {
     if (this.props.ddData) {
       args.push('is DD');
     } else {
@@ -677,7 +618,7 @@ const DeploymentFlow = React.createClass({
       action,
       args.join(' - ')
     );
-  },
+  }
 
   /**
     Generate the login link
@@ -685,7 +626,7 @@ const DeploymentFlow = React.createClass({
     @method _generateLogin
     @returns {Object} The markup.
   */
-  _generateLogin: function() {
+  _generateLogin() {
     const callback = err => {
       if (!err) {
         this.setState({loggedIn: true});
@@ -745,7 +686,7 @@ const DeploymentFlow = React.createClass({
           </div>
         </div>
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the cloud section.
@@ -753,7 +694,7 @@ const DeploymentFlow = React.createClass({
     @method _generateCloudSection
     @returns {Object} The markup.
   */
-  _generateCloudSection: function() {
+  _generateCloudSection() {
     var status = this._getSectionStatus('cloud');
     if (!status.visible) {
       return;
@@ -775,7 +716,7 @@ const DeploymentFlow = React.createClass({
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           setCloud={this._setCloud} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the credentials section.
@@ -783,7 +724,7 @@ const DeploymentFlow = React.createClass({
     @method _generateCredentialSection
     @returns {Object} The markup.
   */
-  _generateCredentialSection: function() {
+  _generateCredentialSection() {
     var status = this._getSectionStatus('credential');
     if (!status.visible) {
       return;
@@ -814,7 +755,7 @@ const DeploymentFlow = React.createClass({
           user={this.props.getUserName()}
           validateForm={this.props.validateForm} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the machines section.
@@ -822,7 +763,7 @@ const DeploymentFlow = React.createClass({
     @method _generateMachinesSection
     @returns {Object} The markup.
   */
-  _generateMachinesSection: function() {
+  _generateMachinesSection() {
     var status = this._getSectionStatus('machines');
     if (!status.visible) {
       return;
@@ -842,7 +783,7 @@ const DeploymentFlow = React.createClass({
           generateMachineDetails={this.props.generateMachineDetails}
           machines={this.props.groupedChanges._addMachines} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the services section.
@@ -850,7 +791,7 @@ const DeploymentFlow = React.createClass({
     @method _generateServicesSection
     @returns {Object} The markup.
   */
-  _generateServicesSection: function() {
+  _generateServicesSection() {
     var status = this._getSectionStatus('services');
     if (!status.visible) {
       return;
@@ -876,7 +817,7 @@ const DeploymentFlow = React.createClass({
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the budget section.
@@ -884,7 +825,7 @@ const DeploymentFlow = React.createClass({
     @method _generateBudgetSection
     @returns {Object} The markup.
   */
-  _generateBudgetSection: function() {
+  _generateBudgetSection() {
     var status = this._getSectionStatus('budget');
     if (!status.visible) {
       return;
@@ -902,7 +843,7 @@ const DeploymentFlow = React.createClass({
           setBudget={this._setBudget}
           user={this.props.getUserName()} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the payment details section.
@@ -910,7 +851,7 @@ const DeploymentFlow = React.createClass({
     @method _generatePaymentSection
     @returns {Object} The markup.
   */
-  _generatePaymentSection: function() {
+  _generatePaymentSection() {
     const status = this._getSectionStatus('payment');
     if (!this.props.showPay || !status.visible) {
       return null;
@@ -935,7 +876,7 @@ const DeploymentFlow = React.createClass({
           username={this.props.profileUsername}
           validateForm={this.props.validateForm} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Generate the changes section.
@@ -943,7 +884,7 @@ const DeploymentFlow = React.createClass({
     @method _generateChangeSection
     @returns {Object} The markup.
   */
-  _generateChangeSection: function() {
+  _generateChangeSection() {
     var status = this._getSectionStatus('changes');
     // Do not show the changes if we're performing a Direct Deploy.
     const ddData = this.props.ddData;
@@ -963,7 +904,7 @@ const DeploymentFlow = React.createClass({
           generateAllChangeDescriptions={
             this.props.generateAllChangeDescriptions} />
       </juju.components.DeploymentSection>);
-  },
+  }
 
   /**
     Handles checking on the "I agree to the terms" checkbox.
@@ -971,9 +912,9 @@ const DeploymentFlow = React.createClass({
     @method _handleTermAgreement
     @param {Object} evt The change event.
   */
-  _handleTermsAgreement: function(evt) {
+  _handleTermsAgreement(evt) {
     this.setState({termsAgreed: evt.target.checked});
-  },
+  }
 
   /**
     Generate the agreements section.
@@ -981,7 +922,7 @@ const DeploymentFlow = React.createClass({
     @method _generateAgreementsSection
     @returns {Object} The markup.
   */
-  _generateAgreementsSection: function() {
+  _generateAgreementsSection() {
     const status = this._getSectionStatus('agreements');
     if (!status.visible) {
       return;
@@ -1004,13 +945,13 @@ const DeploymentFlow = React.createClass({
           I agree to all terms.
         </label>
       </div>);
-  },
+  }
 
   /**
     Generates the Direct Deploy component if necessary.
     @returns {Object} The React elements.
   */
-  _generateDirectDeploy: function() {
+  _generateDirectDeploy() {
     const props = this.props;
     if (props.ddData && props.ddData.id) {
       return (
@@ -1024,7 +965,7 @@ const DeploymentFlow = React.createClass({
       );
     }
     return false;
-  },
+  }
 
   /**
     Report whether going forward with the deployment is currently allowed.
@@ -1032,7 +973,7 @@ const DeploymentFlow = React.createClass({
     @method _deploymentAllowed
     @returns {Bool} Whether deployment is allowed.
   */
-  _deploymentAllowed: function() {
+  _deploymentAllowed() {
     // No deployments are possible without a model name.
     if (!this.state.modelName) {
       return false;
@@ -1075,9 +1016,9 @@ const DeploymentFlow = React.createClass({
     }
     // A new model is ready to be created.
     return true;
-  },
+  }
 
-  render: function() {
+  render() {
     const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
     if (this.state.loggedIn) {
       return (
@@ -1101,7 +1042,7 @@ const DeploymentFlow = React.createClass({
               {this._generateAgreementsSection()}
               <div className="deployment-flow__deploy-action">
                 <juju.components.GenericButton
-                  action={this._handleDeploy}
+                  action={this._handleDeploy.bind(this)}
                   disabled={!this._deploymentAllowed()}
                   type="positive"
                   title={deployTitle} />
@@ -1122,8 +1063,65 @@ const DeploymentFlow = React.createClass({
       );
     }
   }
+};
 
-});
+DeploymentFlow.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addAgreement: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  applications: React.PropTypes.array.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  changes: React.PropTypes.object.isRequired,
+  changesFilterByParent: React.PropTypes.func.isRequired,
+  charmsGetById: React.PropTypes.func.isRequired,
+  charmstore: React.PropTypes.object.isRequired,
+  cloud: React.PropTypes.object,
+  controllerIsReady: React.PropTypes.func.isRequired,
+  createCardElement: React.PropTypes.func,
+  createToken: React.PropTypes.func,
+  createUser: React.PropTypes.func,
+  credential: React.PropTypes.string,
+  ddData: React.PropTypes.object,
+  deploy: React.PropTypes.func.isRequired,
+  formatConstraints: React.PropTypes.func.isRequired,
+  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+  generateCloudCredentialName: React.PropTypes.func.isRequired,
+  generateMachineDetails: React.PropTypes.func.isRequired,
+  generatePath: React.PropTypes.func.isRequired,
+  getAgreementsByTerms: React.PropTypes.func.isRequired,
+  getCloudCredentialNames: React.PropTypes.func,
+  getCloudCredentials: React.PropTypes.func,
+  getCloudProviderDetails: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func,
+  getCurrentChangeSet: React.PropTypes.func.isRequired,
+  getDiagramURL: React.PropTypes.func,
+  getEntity: React.PropTypes.func,
+  getUser: React.PropTypes.func,
+  getUserName: React.PropTypes.func.isRequired,
+  gisf: React.PropTypes.bool,
+  groupedChanges: React.PropTypes.object.isRequired,
+  isLoggedIn: React.PropTypes.func.isRequired,
+  listBudgets: React.PropTypes.func.isRequired,
+  listClouds: React.PropTypes.func,
+  listPlansForCharm: React.PropTypes.func.isRequired,
+  loginToController: React.PropTypes.func.isRequired,
+  makeEntityModel: React.PropTypes.func.isRequired,
+  modelCommitted: React.PropTypes.bool,
+  modelName: React.PropTypes.string.isRequired,
+  profileUsername: React.PropTypes.string.isRequired,
+  region: React.PropTypes.string,
+  renderMarkdown: React.PropTypes.func.isRequired,
+  sendAnalytics: React.PropTypes.func.isRequired,
+  servicesGetById: React.PropTypes.func.isRequired,
+  setModelName: React.PropTypes.func.isRequired,
+  showPay: React.PropTypes.bool,
+  showTerms: React.PropTypes.func.isRequired,
+  stats: React.PropTypes.object,
+  updateCloudCredential: React.PropTypes.func,
+  updateModelName: React.PropTypes.func,
+  validateForm: React.PropTypes.func.isRequired,
+  withPlans: React.PropTypes.bool
+};
 
 YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = DeploymentFlow;
