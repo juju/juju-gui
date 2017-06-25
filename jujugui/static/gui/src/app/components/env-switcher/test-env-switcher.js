@@ -51,8 +51,8 @@ describe('EnvSwitcher', function() {
       aria-label="Model switcher">
       <div
         className="env-switcher__toggle"
-        onClick={instance.toggleEnvList}
-        onKeyPress={instance.handleKeyToggle}
+        onClick={instance._toggleEnvList}
+        onKeyPress={instance._handleKeyToggle}
         id="environmentSwitcherToggle"
         role="button"
         tabIndex="0"
@@ -69,7 +69,7 @@ describe('EnvSwitcher', function() {
       </div>
       {undefined}
     </div>;
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('opens the list on click', function() {
@@ -116,7 +116,7 @@ describe('EnvSwitcher', function() {
       user={user}
     />;
 
-    assert.deepEqual(output.props.children[1], expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('fetches a list of environments on mount', function() {
