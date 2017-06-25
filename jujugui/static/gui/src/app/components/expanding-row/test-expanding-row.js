@@ -51,7 +51,7 @@ describe('ExpandingRow', () => {
           </div>
         </div>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can toggle to the expanded view', () => {
@@ -82,7 +82,7 @@ describe('ExpandingRow', () => {
           </div>
         </div>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can initially be expanded', () => {
@@ -106,7 +106,7 @@ describe('ExpandingRow', () => {
       onClick={instance._toggle}>
         {output.props.children}
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can update to be expanded', () => {
@@ -136,7 +136,7 @@ describe('ExpandingRow', () => {
       onClick={instance._toggle}>
         {output.props.children}
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can be not clickable', () => {
@@ -158,7 +158,7 @@ describe('ExpandingRow', () => {
         onClick={undefined}>
         {output.props.children}
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can stop observing the DOM when unmounted', () => {
