@@ -80,7 +80,7 @@ describe('InspectorExposeUnit', function() {
           </li>
         </ul>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render the unit without a public address', function() {
@@ -106,6 +106,6 @@ describe('InspectorExposeUnit', function() {
               No public address
         </div>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });
