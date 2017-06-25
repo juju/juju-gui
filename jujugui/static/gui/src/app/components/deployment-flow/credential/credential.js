@@ -18,48 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentCredential = React.createClass({
-  displayName: 'DeploymentCredential',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    cloud: React.PropTypes.object,
-    controllerIsReady: React.PropTypes.func.isRequired,
-    credential: React.PropTypes.string,
-    editable: React.PropTypes.bool,
-    generateCloudCredentialName: React.PropTypes.func.isRequired,
-    getCloudCredentialNames: React.PropTypes.func.isRequired,
-    getCloudCredentials: React.PropTypes.func.isRequired,
-    getCloudProviderDetails: React.PropTypes.func.isRequired,
-    region: React.PropTypes.string,
-    sendAnalytics: React.PropTypes.func.isRequired,
-    setCredential: React.PropTypes.func.isRequired,
-    setRegion: React.PropTypes.func.isRequired,
-    updateCloudCredential: React.PropTypes.func.isRequired,
-    user: React.PropTypes.string,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class DeploymentCredential extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       credentials: [],
       credentialsLoading: false,
       showAdd: this.props.editable
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getCredentials();
-  },
+  }
 
-  componentDidUpdate: function(prevProps) {
+  componentDidUpdate(prevProps) {
     const prevId = prevProps.cloud && prevProps.cloud.name;
     const newId = this.props.cloud && this.props.cloud.name;
     if (newId !== prevId) {
       this._getCredentials();
     }
-  },
+  }
 
   /**
     Request credentials from the controller.
@@ -68,7 +47,7 @@ const DeploymentCredential = React.createClass({
     @param {String} credential An optional credential name to select after
       loading the list.
   */
-  _getCredentials: function(credential) {
+  _getCredentials(credential) {
     const cloud = this.props.cloud && this.props.cloud.name;
     const user = this.props.user;
     if (user && this.props.controllerIsReady()) {
@@ -78,7 +57,7 @@ const DeploymentCredential = React.createClass({
           this._getCloudCredentialNamesCallback.bind(this, credential));
       });
     }
-  },
+  }
 
   /**
     The method to be called when the credentials names response has been
@@ -90,7 +69,7 @@ const DeploymentCredential = React.createClass({
     @param {String} error An error message, or null if there's no error.
     @param {Array} tags A list of the tags found.
   */
-  _getCloudCredentialNamesCallback: function(credential, error, names) {
+  _getCloudCredentialNamesCallback(credential, error, names) {
     if (error) {
       console.error('unable to get names for credentials:', error);
       return;
@@ -102,7 +81,7 @@ const DeploymentCredential = React.createClass({
     const nameList = names.length && names[0].names || [];
     this.props.getCloudCredentials(
       nameList, this._getCredentialsCallback.bind(this, credential));
-  },
+  }
 
   /**
     The method to be called when the credentials response has been received.
@@ -113,7 +92,7 @@ const DeploymentCredential = React.createClass({
     @param {String} error An error message, or null if there's no error.
     @param {Array} credentials A list of the credentials found.
   */
-  _getCredentialsCallback: function(credential, error, credentials) {
+  _getCredentialsCallback(credential, error, credentials) {
     if (error) {
       console.error('Unable to get credentials', error);
       return;
@@ -154,7 +133,7 @@ const DeploymentCredential = React.createClass({
         this.refs.credential.setValue(select);
       }
     }
-  },
+  }
 
   /**
     Show the add credentials form.
@@ -163,7 +142,7 @@ const DeploymentCredential = React.createClass({
     @param {Boolean} cancel Indicates whether the add form is being hidden
                             due to a form submission or a cancel.
   */
-  _toggleAdd: function(cancel) {
+  _toggleAdd(cancel) {
     const showAdd = !this.state.showAdd;
     // When displaying the add credentials form we need to clear the
     // currently selected credential in case someone tries to deploy while
@@ -181,7 +160,7 @@ const DeploymentCredential = React.createClass({
       this.props.setCredential(this.state.savedCredential);
     }
     this.setState({showAdd: showAdd});
-  },
+  }
 
   /**
     Generate the list of credential options.
@@ -189,7 +168,7 @@ const DeploymentCredential = React.createClass({
     @method _generateCredentials
     @returns {Array} The list of credential options.
   */
-  _generateCredentials: function() {
+  _generateCredentials() {
     var credentials = this.state.credentials.map((credential) => {
       return {
         label: credential.displayName,
@@ -201,7 +180,7 @@ const DeploymentCredential = React.createClass({
       value: 'add-credential'
     });
     return credentials;
-  },
+  }
 
   /**
     Set the credential value or navigate to the add credentails form.
@@ -209,13 +188,13 @@ const DeploymentCredential = React.createClass({
     @method _handleCredentialChange
     @param {String} The select value.
   */
-  _handleCredentialChange: function(value) {
+  _handleCredentialChange(value) {
     if (value === 'add-credential') {
       this._toggleAdd();
     } else {
       this.props.setCredential(value);
     }
-  },
+  }
 
   /**
     Generate the list of region options.
@@ -223,7 +202,7 @@ const DeploymentCredential = React.createClass({
     @method _generateRegions
     @returns {Array} The list of region options.
   */
-  _generateRegions: function() {
+  _generateRegions() {
     const regions = !this.props.editable ? [{name: this.props.region}] :
       this.props.cloud && this.props.cloud.regions || [];
     // Setup the default option.
@@ -242,7 +221,7 @@ const DeploymentCredential = React.createClass({
       regionList = regionList.concat(regionValues);
     }
     return regionList;
-  },
+  }
 
   /**
     Generate a change cloud action if a cloud has been selected.
@@ -250,7 +229,7 @@ const DeploymentCredential = React.createClass({
     @method _generateAction
     @returns {Array} The list of actions.
   */
-  _generateSelect: function() {
+  _generateSelect() {
     if (this.state.showAdd) {
       return;
     }
@@ -261,7 +240,7 @@ const DeploymentCredential = React.createClass({
           <juju.components.InsetSelect
             disabled={disabled}
             label="Credential"
-            onChange={this._handleCredentialChange}
+            onChange={this._handleCredentialChange.bind(this)}
             options={this._generateCredentials()}
             ref="credential"
             value={this.props.credential} />
@@ -275,7 +254,7 @@ const DeploymentCredential = React.createClass({
             value={this.props.region} />
         </div>
       </form>);
-  },
+  }
 
   /**
     Generate the form for adding a credential.
@@ -283,7 +262,7 @@ const DeploymentCredential = React.createClass({
     @method _generateAdd
     @returns {Array} The credential form.
   */
-  _generateAdd: function() {
+  _generateAdd() {
     if (!this.state.showAdd) {
       return;
     }
@@ -291,20 +270,20 @@ const DeploymentCredential = React.createClass({
       <juju.components.DeploymentCredentialAdd
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        close={this._toggleAdd}
+        close={this._toggleAdd.bind(this)}
         cloud={this.props.cloud}
         credentials={this.state.credentials.map(credential =>
           credential.displayName)}
         getCloudProviderDetails={this.props.getCloudProviderDetails}
         generateCloudCredentialName={this.props.generateCloudCredentialName}
-        getCredentials={this._getCredentials}
+        getCredentials={this._getCredentials.bind(this)}
         hideCancel={!this.state.credentials.length}
         sendAnalytics={this.props.sendAnalytics}
         setCredential={this.props.setCredential}
         updateCloudCredential={this.props.updateCloudCredential}
         user={this.props.user}
         validateForm={this.props.validateForm} />);
-  },
+  }
 
   /**
     Display the credentials or a spinner if the data is loading.
@@ -312,7 +291,7 @@ const DeploymentCredential = React.createClass({
     @method _generateContent
     @returns {Object} The dom elements.
   */
-  _generateContent: function() {
+  _generateContent() {
     if (this.state.credentialsLoading) {
       return (
         <div className="deployment-credential__loading">
@@ -327,17 +306,36 @@ const DeploymentCredential = React.createClass({
         {this._generateSelect()}
         {this._generateAdd()}
       </juju.components.ExpandingRow>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         {this._generateContent()}
       </div>
     );
   }
+};
 
-});
+DeploymentCredential.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  cloud: React.PropTypes.object,
+  controllerIsReady: React.PropTypes.func.isRequired,
+  credential: React.PropTypes.string,
+  editable: React.PropTypes.bool,
+  generateCloudCredentialName: React.PropTypes.func.isRequired,
+  getCloudCredentialNames: React.PropTypes.func.isRequired,
+  getCloudCredentials: React.PropTypes.func.isRequired,
+  getCloudProviderDetails: React.PropTypes.func.isRequired,
+  region: React.PropTypes.string,
+  sendAnalytics: React.PropTypes.func.isRequired,
+  setCredential: React.PropTypes.func.isRequired,
+  setRegion: React.PropTypes.func.isRequired,
+  updateCloudCredential: React.PropTypes.func.isRequired,
+  user: React.PropTypes.string,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-credential', function() {
   juju.components.DeploymentCredential = DeploymentCredential;
