@@ -18,26 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentCloud = React.createClass({
-  displayName: 'DeploymentCloud',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    cloud: React.PropTypes.object,
-    controllerIsReady: React.PropTypes.func.isRequired,
-    getCloudProviderDetails: React.PropTypes.func.isRequired,
-    listClouds: React.PropTypes.func.isRequired,
-    setCloud: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class DeploymentCloud extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       clouds: [],
       cloudsLoading: true
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     const listClouds = () => {
       // It is possible that the controller hasn't yet connected so
       // bounce until it's connected then fetch the clouds list.
@@ -69,7 +59,7 @@ const DeploymentCloud = React.createClass({
       });
     };
     listClouds();
-  },
+  }
 
   /**
     Generate the list of clouds.
@@ -77,7 +67,7 @@ const DeploymentCloud = React.createClass({
     @method _generateClouds
     @returns {Object} The cloud list.
   */
-  _generateClouds: function() {
+  _generateClouds() {
     if (this.state.cloudsLoading) {
       return (
         <div className="deployment-cloud__loading">
@@ -108,7 +98,7 @@ const DeploymentCloud = React.createClass({
       <ul className="deployment-cloud__list">
         {clouds}
       </ul>);
-  },
+  }
 
   /**
     Generate the logo for the selected cloud.
@@ -116,7 +106,7 @@ const DeploymentCloud = React.createClass({
     @method _generateCloud
     @returns {Object} The cloud.
   */
-  _generateCloud: function() {
+  _generateCloud() {
     var cloud = this.props.cloud;
     if (!cloud) {
       return;
@@ -125,7 +115,7 @@ const DeploymentCloud = React.createClass({
       <div className="deployment-cloud__chosen">
         {this._generateLogo(cloud)}
       </div>);
-  },
+  }
 
   /**
     Generate the logo for a cloud;
@@ -134,7 +124,7 @@ const DeploymentCloud = React.createClass({
     @param {Object} cloud A cloud.
     @returns {Array} The logo.
   */
-  _generateLogo: function(cloud) {
+  _generateLogo(cloud) {
     const info = this.props.getCloudProviderDetails(cloud.cloudType);
     if (!info) {
       return cloud.name;
@@ -144,9 +134,9 @@ const DeploymentCloud = React.createClass({
         height={info.svgHeight}
         name={info.id}
         width={info.svgWidth} />) : info.title;
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         {this._generateClouds()}
@@ -154,8 +144,16 @@ const DeploymentCloud = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentCloud.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  cloud: React.PropTypes.object,
+  controllerIsReady: React.PropTypes.func.isRequired,
+  getCloudProviderDetails: React.PropTypes.func.isRequired,
+  listClouds: React.PropTypes.func.isRequired,
+  setCloud: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-cloud', function() {
   juju.components.DeploymentCloud = DeploymentCloud;
