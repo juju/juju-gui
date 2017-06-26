@@ -18,38 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const MachineView = React.createClass({
-  displayName: 'MachineView',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-    autoPlaceUnits: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    createMachine: React.PropTypes.func.isRequired,
-    destroyMachines: React.PropTypes.func.isRequired,
-    environmentName: React.PropTypes.string.isRequired,
-    generateMachineDetails: React.PropTypes.func.isRequired,
-    machines: React.PropTypes.object.isRequired,
-    parseConstraints: React.PropTypes.func.isRequired,
-    placeUnit: React.PropTypes.func.isRequired,
-    providerType: React.PropTypes.string,
-    removeUnits: React.PropTypes.func.isRequired,
-    series: React.PropTypes.array,
-    services: React.PropTypes.object.isRequired,
-    units: React.PropTypes.object.isRequired,
-    updateMachineConstraints: React.PropTypes.func.isRequired,
-    updateMachineSeries: React.PropTypes.func.isRequired
-  },
-
-  /**
-    Get the initial state.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
-    return {
+class MachineView extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       containerSort: 'name',
       machineSort: 'name',
       placingUnit: null,
@@ -58,7 +30,7 @@ const MachineView = React.createClass({
       showConstraints: true,
       showScaleUp: false
     };
-  },
+  }
 
   /**
     Called when the component is supplied with new props.
@@ -66,7 +38,7 @@ const MachineView = React.createClass({
     @method componentWillReceiveProps
     @param {Object} The new props.
   */
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     var selectedMachine = this.state.selectedMachine;
     if (selectedMachine) {
       // If the currently selected machine gets deployed the id will be
@@ -81,7 +53,7 @@ const MachineView = React.createClass({
       selectedMachine = this._getFirstMachineId(nextProps.machines);
     }
     this.setState({selectedMachine: selectedMachine});
-  },
+  }
 
   /**
     Get the id of the first machine.
@@ -90,13 +62,13 @@ const MachineView = React.createClass({
     @param {Object} machines The list of machines.
     @returns {String} The id of the first machine
   */
-  _getFirstMachineId: function(machines) {
+  _getFirstMachineId(machines) {
     var machineList = machines.filterByParent();
     if (machineList.length === 0) {
       return;
     }
     return machineList[0].id;
-  },
+  }
 
   /**
     Handle removing a unit.
@@ -104,9 +76,9 @@ const MachineView = React.createClass({
     @method _removeUnit
     @param id The unit id.
   */
-  _removeUnit: function(id) {
+  _removeUnit(id) {
     this.props.removeUnits([id]);
-  },
+  }
 
   /**
     Handle dropping a unit.
@@ -115,7 +87,7 @@ const MachineView = React.createClass({
     @param {Object} unit The unit that was dropped.
     @param {String} machine The machine id that the unit dropped onto.
   */
-  _dropUnit: function(unit, machine, newType) {
+  _dropUnit(unit, machine, newType) {
     if (machine) {
       this.props.placeUnit(unit, machine);
     } else {
@@ -128,16 +100,16 @@ const MachineView = React.createClass({
       state.placingUnit = unit;
       this.setState(state);
     }
-  },
+  }
 
   /**
     Handle opening the store.
 
     @method _openStore
   */
-  _openStore: function() {
+  _openStore() {
     this.props.changeState({root: 'store'});
-  },
+  }
 
   /**
     Display a list of unplaced units or onboarding.
@@ -145,7 +117,7 @@ const MachineView = React.createClass({
     @method _generateUnplacedUnits
     @returns {Object} A unit list or onboarding.
   */
-  _generateUnplacedUnits: function() {
+  _generateUnplacedUnits() {
     const props = this.props;
     let units = props.units.filterByMachine();
     units = units.filter((unit) => {
@@ -165,7 +137,7 @@ const MachineView = React.createClass({
               customise your deployment.
             </p>
             <span className="link"
-              onClick={this._openStore}>
+              onClick={this._openStore.bind(this)}>
               Add applications to get started
             </span>
           </div>
@@ -202,7 +174,7 @@ const MachineView = React.createClass({
           machines={props.machines}
           placeUnit={props.placeUnit}
           providerType={props.providerType}
-          removeUnit={this._removeUnit}
+          removeUnit={this._removeUnit.bind(this)}
           selectMachine={this.selectMachine}
           series={props.series}
           unit={unit}
@@ -227,7 +199,7 @@ const MachineView = React.createClass({
         </ul>
       </div>
     );
-  },
+  }
 
   /**
     Display the scale up form.
@@ -235,7 +207,7 @@ const MachineView = React.createClass({
     @method _generateScaleUp
     @returns {Object} The scale up component.
   */
-  _generateScaleUp: function() {
+  _generateScaleUp() {
     if (!this.state.showScaleUp) {
       return;
     }
@@ -244,8 +216,8 @@ const MachineView = React.createClass({
         acl={this.props.acl}
         addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
         services={this.props.services}
-        toggleScaleUp={this._toggleScaleUp} />);
-  },
+        toggleScaleUp={this._toggleScaleUp.bind(this)} />);
+  }
 
   /**
     Handle selecting a machine.
@@ -253,9 +225,9 @@ const MachineView = React.createClass({
     @method selectMachine
     @param {String} id The machine id to select.
   */
-  selectMachine: function(id) {
+  selectMachine(id) {
     this.setState({selectedMachine: id});
-  },
+  }
 
   /**
     Display a list of machines or onboarding.
@@ -263,7 +235,7 @@ const MachineView = React.createClass({
     @method _generateMachines
     @returns {Object} A list of machines or onboarding.
   */
-  _generateMachines: function() {
+  _generateMachines() {
     var machineList = this.props.machines.filterByParent();
     var machines = this._sortMachines(machineList, this.state.machineSort);
     var onboarding;
@@ -283,7 +255,7 @@ const MachineView = React.createClass({
             <li>Collocate applications</li>
           </ul>
           <span className="link"
-            onClick={this._addMachine}
+            onClick={this._addMachine.bind(this)}
             role="button"
             tabIndex="0">
             Add machine
@@ -303,7 +275,7 @@ const MachineView = React.createClass({
         <juju.components.MachineViewMachine
           acl={this.props.acl}
           destroyMachines={this.props.destroyMachines}
-          dropUnit={this._dropUnit}
+          dropUnit={this._dropUnit.bind(this)}
           generateMachineDetails={this.props.generateMachineDetails}
           key={machine.id}
           machine={machine}
@@ -328,7 +300,7 @@ const MachineView = React.createClass({
           {components}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Display a list of containers for the selected machine.
@@ -336,7 +308,7 @@ const MachineView = React.createClass({
     @method _generateContainers
     @returns {Object} A list of machines or onboarding.
   */
-  _generateContainers: function() {
+  _generateContainers() {
     var selectedMachine = this.state.selectedMachine;
     if (!selectedMachine) {
       return;
@@ -361,10 +333,10 @@ const MachineView = React.createClass({
         <juju.components.MachineViewMachine
           acl={this.props.acl}
           destroyMachines={this.props.destroyMachines}
-          dropUnit={this._dropUnit}
+          dropUnit={this._dropUnit.bind(this)}
           key={container.id}
           machine={container}
-          removeUnit={this._removeUnit}
+          removeUnit={this._removeUnit.bind(this)}
           services={this.props.services}
           type="container"
           units={this.props.units} />);
@@ -373,35 +345,35 @@ const MachineView = React.createClass({
       <ul className="machine-view__list">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Handle showing the UI for adding a machine.
 
     @method _addMachine
   */
-  _addMachine: function() {
+  _addMachine() {
     this.setState({showAddMachine: true});
-  },
+  }
 
   /**
     Handle closing the UI for adding a machine.
 
     @method _closeAddMachine
   */
-  _closeAddMachine: function() {
+  _closeAddMachine() {
     this.setState({
       placingUnit: null,
       showAddMachine: false
     });
-  },
+  }
 
   /**
     Generate the UI for adding a machine.
 
     @method _generateAddMachine
   */
-  _generateAddMachine: function() {
+  _generateAddMachine() {
     if (!this.state.showAddMachine) {
       return;
     }
@@ -409,7 +381,7 @@ const MachineView = React.createClass({
     return (
       <juju.components.MachineViewAddMachine
         acl={props.acl}
-        close={this._closeAddMachine}
+        close={this._closeAddMachine.bind(this)}
         createMachine={props.createMachine}
         placeUnit={props.placeUnit}
         providerType={props.providerType}
@@ -418,14 +390,14 @@ const MachineView = React.createClass({
         unit={this.state.placingUnit}
       />
     );
-  },
+  }
 
   /**
     Handle showing the UI for adding a container.
 
     @method _addContainer
   */
-  _addContainer: function() {
+  _addContainer() {
     var selectedMachine = this.state.selectedMachine;
     var deleted = false;
     if (selectedMachine) {
@@ -435,26 +407,26 @@ const MachineView = React.createClass({
     if (this.state.selectedMachine && !deleted) {
       this.setState({showAddContainer: true});
     }
-  },
+  }
 
   /**
     Handle closing the UI for adding a container.
 
     @method _closeAddContainer
   */
-  _closeAddContainer: function() {
+  _closeAddContainer() {
     this.setState({
       placingUnit: null,
       showAddContainer: false
     });
-  },
+  }
 
   /**
     Generate the UI for adding a container.
 
     @method _generateAddContainer
   */
-  _generateAddContainer: function() {
+  _generateAddContainer() {
     if (!this.state.showAddContainer) {
       return;
     }
@@ -462,7 +434,7 @@ const MachineView = React.createClass({
     return (
       <juju.components.MachineViewAddMachine
         acl={props.acl}
-        close={this._closeAddContainer}
+        close={this._closeAddContainer.bind(this)}
         createMachine={props.createMachine}
         parentId={this.state.selectedMachine}
         placeUnit={props.placeUnit}
@@ -471,7 +443,7 @@ const MachineView = React.createClass({
         unit={this.state.placingUnit}
       />
     );
-  },
+  }
 
   /**
     Generate the title for the machine column header.
@@ -479,28 +451,28 @@ const MachineView = React.createClass({
     @method _generateMachinesTitle
     @returns {String} the machine header title.
   */
-  _generateMachinesTitle: function() {
+  _generateMachinesTitle() {
     var machines = this.props.machines.filterByParent();
     return `${this.props.environmentName} (${machines.length})`;
-  },
+  }
 
   /**
     Toggle the visibililty of the constraints on machines.
 
     @method _toggleConstraints
   */
-  _toggleConstraints: function() {
+  _toggleConstraints() {
     this.setState({showConstraints: !this.state.showConstraints});
-  },
+  }
 
   /**
     Toggle the visibililty of the service scale up.
 
     @method _toggleScaleUp
   */
-  _toggleScaleUp: function() {
+  _toggleScaleUp() {
     this.setState({showScaleUp: !this.state.showScaleUp});
-  },
+  }
 
   /**
     Generate the title for the container column header.
@@ -508,7 +480,7 @@ const MachineView = React.createClass({
     @method _generateContainersTitle
     @returns {String} the container header title.
   */
-  _generateContainersTitle: function() {
+  _generateContainersTitle() {
     var selectedMachine = this.state.selectedMachine;
     var containerCount = 0;
     var unitCount = 0;
@@ -522,7 +494,7 @@ const MachineView = React.createClass({
     var unitPlural = unitCount === 1 ? '' : 's';
     return `${containerCount} container${containerPlural}, ` +
       `${unitCount} unit${unitPlural}`;
-  },
+  }
 
   /**
     Sort the machines.
@@ -532,7 +504,7 @@ const MachineView = React.createClass({
     @param {String} method The sort method.
     @returns {Array} A sorted list of machines
   */
-  _sortMachines: function(machines, method) {
+  _sortMachines(machines, method) {
     var sortMethod = this._getSortMethod(method);
     return machines.sort(function (a, b) {
       var sortedA = sortMethod(a);
@@ -545,7 +517,7 @@ const MachineView = React.createClass({
         return -1;
       }
     });
-  },
+  }
 
   /**
     Set the sort method to the given method.
@@ -554,7 +526,7 @@ const MachineView = React.createClass({
     @param {String} sort The sort method.
     @param {Boolean} sortContainers Whether to sort containers.
   */
-  _setSortMethod: function(sort, sortContainers) {
+  _setSortMethod(sort, sortContainers) {
     var state = {};
     if (sortContainers) {
       state.containerSort = sort;
@@ -562,7 +534,7 @@ const MachineView = React.createClass({
       state.machineSort = sort;
     }
     this.setState(state);
-  },
+  }
 
   /**
      Get the sort method for the given sort type.
@@ -571,7 +543,7 @@ const MachineView = React.createClass({
      @param {String} sort The sort type.
      @return {Function} The sorting method function.
    */
-  _getSortMethod: function(sort) {
+  _getSortMethod(sort) {
     var sortMethod;
     var weight = 0;
     var units = this.props.units;
@@ -659,17 +631,17 @@ const MachineView = React.createClass({
         break;
     }
     return sortMethod;
-  },
+  }
 
-  render: function() {
+  render() {
     var isReadOnly = this.props.acl.isReadOnly();
     var machineMenuItems = [{
       label: 'Add machine',
-      action: !isReadOnly && this._addMachine
+      action: !isReadOnly && this._addMachine.bind(this)
     }, {
       label: this.state.showConstraints ?
         'Hide constraints' : 'Show constaints',
-      action: this._toggleConstraints
+      action: this._toggleConstraints.bind(this)
     }, {
       label: 'Sort by:'
     }, {
@@ -700,7 +672,7 @@ const MachineView = React.createClass({
     var containerMenuItems = [{
       label: 'Add container',
       action: !isReadOnly && (
-        this.state.selectedMachine ? this._addContainer : null)
+        this.state.selectedMachine ? this._addContainer.bind(this) : null)
     }, {
       label: 'Sort by:'
     }, {
@@ -717,7 +689,7 @@ const MachineView = React.createClass({
       action: this._setSortMethod.bind(this, 'application', true)
     }];
     var unplacedToggle = {
-      action: this._toggleScaleUp,
+      action: this._toggleScaleUp.bind(this),
       disabled: this.props.services.size() === 0,
       toggleOn: this.state.showScaleUp
     };
@@ -736,7 +708,7 @@ const MachineView = React.createClass({
             acl={this.props.acl}
             activeMenuItem={this.state.machineSort}
             droppable={true}
-            dropUnit={this._dropUnit}
+            dropUnit={this._dropUnit.bind(this)}
             menuItems={machineMenuItems}
             title={this._generateMachinesTitle()}
             type="machine">
@@ -747,7 +719,7 @@ const MachineView = React.createClass({
             acl={this.props.acl}
             activeMenuItem={this.state.containerSort}
             droppable={!!this.state.selectedMachine}
-            dropUnit={this._dropUnit}
+            dropUnit={this._dropUnit.bind(this)}
             menuItems={containerMenuItems}
             title={this._generateContainersTitle()}
             type="container">
@@ -758,7 +730,28 @@ const MachineView = React.createClass({
       </div>
     );
   }
-});
+};
+
+MachineView.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+  autoPlaceUnits: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  createMachine: React.PropTypes.func.isRequired,
+  destroyMachines: React.PropTypes.func.isRequired,
+  environmentName: React.PropTypes.string.isRequired,
+  generateMachineDetails: React.PropTypes.func.isRequired,
+  machines: React.PropTypes.object.isRequired,
+  parseConstraints: React.PropTypes.func.isRequired,
+  placeUnit: React.PropTypes.func.isRequired,
+  providerType: React.PropTypes.string,
+  removeUnits: React.PropTypes.func.isRequired,
+  series: React.PropTypes.array,
+  services: React.PropTypes.object.isRequired,
+  units: React.PropTypes.object.isRequired,
+  updateMachineConstraints: React.PropTypes.func.isRequired,
+  updateMachineSeries: React.PropTypes.func.isRequired
+};
 
 YUI.add('machine-view', function() {
   juju.components.MachineView = ReactDnD.DragDropContext(
