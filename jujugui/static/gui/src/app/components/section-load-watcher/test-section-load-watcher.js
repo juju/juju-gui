@@ -25,21 +25,20 @@ chai.config.truncateThreshold = 0;
 
 describe('SectionLoadWatcher', () => {
   let SectionLoadWatcher; // eslint-disable-line no-unused-vars
-  let EmptyComponent, ErrorComponent, TestComponent;
+  class TestComponent extends React.Component {
+    render() { return <div className="test"></div>; }
+  };
+  class EmptyComponent extends React.Component {
+    render() { return <div className="empty"></div>; }
+  };
+  class ErrorComponent extends React.Component {
+    render() { return <div className="error"></div>; }
+  };
 
   beforeAll(done => YUI().use('section-load-watcher', () => { done(); }));
 
   beforeEach(() => {
     SectionLoadWatcher = juju.components.SectionLoadWatcher;
-    TestComponent = React.createClass({
-      render: function() { return <div className="test"></div>; }
-    });
-    EmptyComponent = React.createClass({
-      render: function() { return <div className="empty"></div>; }
-    });
-    ErrorComponent = React.createClass({
-      render: function() { return <div className="error"></div>; }
-    });
   });
 
   it('augments a child component', () => {
