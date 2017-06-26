@@ -154,7 +154,7 @@ describe('MachineViewScaleUp', function() {
           type: 'neutral'
         }]} />
       </form>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can disable controls when read only', function() {
@@ -221,7 +221,7 @@ describe('MachineViewScaleUp', function() {
           type: 'neutral'
         }]} />
       </form>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can scale services', function() {
