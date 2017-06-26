@@ -18,38 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileEntity = React.createClass({
-  displayName: 'UserProfileEntity',
-
-  propTypes: {
-    acl: React.PropTypes.object,
-    changeState: React.PropTypes.func,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    d3: React.PropTypes.object,
-    displayConfirmation: React.PropTypes.func,
-    entity: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    getDiagramURL: React.PropTypes.func,
-    getKpiMetrics: React.PropTypes.func,
-    permission: React.PropTypes.string,
-    switchModel: React.PropTypes.func,
-    type: React.PropTypes.string.isRequired
-  },
-
-  /**
-    Set initial state for KPI metrics
-  */
-  getInitialState: function() {
-    return {
+class UserProfileEntity extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       hasMetrics: false,
       kpiVisible: false,
       metrics: [],
       metricTypes: []
     };
-  },
+  }
 
   /**
     Calls to switch the env to the one the user clicked on.
@@ -61,9 +39,9 @@ const UserProfileEntity = React.createClass({
       - owner: the user owning the model, like "admin" or "who@external".
     @param {Object} evt The click event.
   */
-  _switchModel: function(model, evt) {
+  _switchModel(model, evt) {
     this.props.switchModel(model);
-  },
+  }
 
   /**
     Navigate to the entity details.
@@ -72,10 +50,10 @@ const UserProfileEntity = React.createClass({
     @param {String} id The entity id.
     @param {Object} evt The click event.
   */
-  _viewEntity: function(id, evt) {
+  _viewEntity(id, evt) {
     const url = window.jujulib.URL.fromLegacyString(id);
     this.props.changeState({profile: null, store: url.path()});
-  },
+  }
 
   /**
     Handle clicks on tags.
@@ -84,14 +62,14 @@ const UserProfileEntity = React.createClass({
     @param {Object} e The event.
     @param {String} tag The tag to view.
   */
-  _handleTagClick: function(tag, e) {
+  _handleTagClick(tag, e) {
     this.props.changeState({
       profile: null,
       search: {
         tags: tag
       }
     });
-  },
+  }
 
   /**
     Generate a list of tags.
@@ -99,7 +77,7 @@ const UserProfileEntity = React.createClass({
     @method _generateTags
     @returns {Object} A list of tag components.
   */
-  _generateTags: function() {
+  _generateTags() {
     const tags = [];
     const entity = this.props.entity;
     const tagList = entity.tags;
@@ -125,7 +103,7 @@ const UserProfileEntity = React.createClass({
           {tags}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Generate a list of commits.
@@ -133,7 +111,7 @@ const UserProfileEntity = React.createClass({
     @method _generateTags
     @returns {Object} A list of commits.
   */
-  _generateCommits: function() {
+  _generateCommits() {
     const commits = [];
     const entity = this.props.entity;
     const commitList = entity.commits;
@@ -168,7 +146,7 @@ const UserProfileEntity = React.createClass({
           {commits}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Generate the diagram for a bundle.
@@ -176,7 +154,7 @@ const UserProfileEntity = React.createClass({
     @method _generateDiagram
     @return {Object} The diagram.
   */
-  _generateDiagram: function() {
+  _generateDiagram() {
     if (this.props.type !== 'bundle') {
       return;
     }
@@ -186,7 +164,7 @@ const UserProfileEntity = React.createClass({
         <object type="image/svg+xml" data={url}
           className="entity-content__diagram-image" />
       </div>);
-  },
+  }
 
   /**
     Generate the description.
@@ -194,7 +172,7 @@ const UserProfileEntity = React.createClass({
     @method _generateDescription
     @return {Object} The description.
   */
-  _generateDescription: function() {
+  _generateDescription() {
     const description = this.props.entity.description;
     if (!description) {
       return;
@@ -208,7 +186,7 @@ const UserProfileEntity = React.createClass({
           {description}
         </div>
       </div>);
-  },
+  }
 
   /**
     Generate the series for a charm.
@@ -216,7 +194,7 @@ const UserProfileEntity = React.createClass({
     @method _generateSeries
     @return {Object} The series component.
   */
-  _generateSeries: function() {
+  _generateSeries() {
     if (this.props.type !== 'charm') {
       return;
     }
@@ -224,7 +202,7 @@ const UserProfileEntity = React.createClass({
       <div className="twelve-col last-col">
         Series: {this.props.entity.series.join(', ')}
       </div>);
-  },
+  }
 
   /**
     Generate the services for a bundle.
@@ -232,7 +210,7 @@ const UserProfileEntity = React.createClass({
     @method _generateServices
     @return {Object} The services component.
   */
-  _generateServices: function() {
+  _generateServices() {
     if (this.props.type !== 'bundle') {
       return;
     }
@@ -253,7 +231,7 @@ const UserProfileEntity = React.createClass({
           {services}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Generate the credentials for a model.
@@ -261,7 +239,7 @@ const UserProfileEntity = React.createClass({
     @method _generateCredentials
     @return {Object} The credential markup.
   */
-  _generateModelInfo: function() {
+  _generateModelInfo() {
     if (this.props.type !== 'model') {
       return null;
     }
@@ -297,7 +275,7 @@ const UserProfileEntity = React.createClass({
         </div>
       </div>
     );
-  },
+  }
 
   /**
     Generate and return the destroy button if the user is allowed to destroy
@@ -307,7 +285,7 @@ const UserProfileEntity = React.createClass({
       listModelsWithInfo API call.
     @return {Object} The react button node.
   */
-  _generateDestroyButton: function(model) {
+  _generateDestroyButton(model) {
     const props = this.props;
     if (model.isController) {
       // Do not allow destroying the controller model.
@@ -329,7 +307,7 @@ const UserProfileEntity = React.createClass({
         title="Destroy model"
       />
     );
-  },
+  }
 
   /**
     Retrieve metrics from the plans service.
@@ -337,7 +315,7 @@ const UserProfileEntity = React.createClass({
     @method _getMetrics
     @param {Object} filters Additional filters to add to the metrics query.
   */
-  _getMetrics: function(filters) {
+  _getMetrics(filters) {
     if (this.state.hasMetrics) {
       return;
     }
@@ -386,29 +364,29 @@ const UserProfileEntity = React.createClass({
           });
         }
       });
-  },
+  }
 
   /**
     Show the metrics component, gated on state.
 
     @return {Object} The KPI chart component
   */
-  _showMetrics: function() {
+  _showMetrics() {
     return (
       <juju.components.UserProfileEntityKPI
         d3={this.props.d3}
         metrics={this.state.metrics}
         metricTypes={this.state.metricTypes} />);
-  },
+  }
 
   /**
     Set state to make KPI metrics visible/not visible.
   */
-  _toggleKpiVisibility: function() {
+  _toggleKpiVisibility() {
     this.setState({
       kpiVisible: !this.state.kpiVisible
     });
-  },
+  }
 
   /**
     For charms, generate a button for showing/hiding the metrics component.
@@ -416,7 +394,7 @@ const UserProfileEntity = React.createClass({
     @return {Object} Depending on whether or not there are metrics, either
       a button which, when clicked, displays the KPI chart, or undefined.
   */
-  _generateMetrics: function() {
+  _generateMetrics() {
     if (!this.state.hasMetrics) {
       return;
     }
@@ -426,20 +404,20 @@ const UserProfileEntity = React.createClass({
           <juju.components.GenericButton
             title={this.state.kpiMetrics ?
               'Hide KPI Metrics' : 'Show KPI Metrics'}
-            action={this._toggleKpiVisibility} />
+            action={this._toggleKpiVisibility.bind(this)} />
           {this.state.kpiVisible ? this._showMetrics() : undefined}
         </div>
       );
     }
-  },
+  }
 
   componentDidMount() {
     if (this.props.type === 'charm') {
       this._getMetrics();
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     const entity = props.entity;
     const type = props.type;
@@ -521,7 +499,25 @@ const UserProfileEntity = React.createClass({
         </div>
       </juju.components.ExpandingRow>);
   }
-});
+};
+
+UserProfileEntity.propTypes = {
+  acl: React.PropTypes.object,
+  changeState: React.PropTypes.func,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  d3: React.PropTypes.object,
+  displayConfirmation: React.PropTypes.func,
+  entity: React.PropTypes.object.isRequired,
+  expanded: React.PropTypes.bool,
+  getDiagramURL: React.PropTypes.func,
+  getKpiMetrics: React.PropTypes.func,
+  permission: React.PropTypes.string,
+  switchModel: React.PropTypes.func,
+  type: React.PropTypes.string.isRequired
+};
 
 YUI.add('user-profile-entity', function() {
   juju.components.UserProfileEntity = UserProfileEntity;
