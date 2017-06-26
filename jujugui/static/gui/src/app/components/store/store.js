@@ -18,21 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Store = React.createClass({
-  displayName: 'Store',
-
-  propTypes: {
-    apiVersion: React.PropTypes.string.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    charmstoreURL: React.PropTypes.string.isRequired,
-    gisf: React.PropTypes.bool.isRequired,
-    setPageTitle: React.PropTypes.func.isRequired,
-    staticURL: React.PropTypes.string
-  },
-
-  componentDidMount: function() {
+class Store extends React.Component {
+  componentDidMount() {
     this.props.setPageTitle('Store');
-  },
+  }
 
   /**
     Generate the path for local images on the store page
@@ -41,11 +30,11 @@ const Store = React.createClass({
     @param {String} filename The name of the file
     @return {String} A path to the local asset
   */
-  _generateLocalImagePath: function(filename) {
+  _generateLocalImagePath(filename) {
     const staticURL = this.props.staticURL || '';
     const basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
     return basePath + filename;
-  },
+  }
 
   /**
     Generate the URL to a icon for a charm or bundle
@@ -54,11 +43,11 @@ const Store = React.createClass({
     @param {String} entityName The name of the charm or bundle
     @return {String} A URL to the entity icon
   */
-  _generateIconPath: function(entityName) {
+  _generateIconPath(entityName) {
     const charmstoreURL = this.props.charmstoreURL;
     const apiVersion = this.props.apiVersion;
     return `${charmstoreURL}${apiVersion}/${entityName}/icon.svg`;
-  },
+  }
 
   /**
     Generate the URL to a diagram for a bundle
@@ -67,11 +56,11 @@ const Store = React.createClass({
     @param {String} entityName The name of the bundle
     @return {String} A URL to the bundles diagram
   */
-  _generateDiagramPath: function(entityName) {
+  _generateDiagramPath(entityName) {
     const charmstoreURL = this.props.charmstoreURL;
     const apiVersion = this.props.apiVersion;
     return `${charmstoreURL}${apiVersion}/bundle/${entityName}/diagram.svg`;
-  },
+  }
 
   /**
     Generate the URL to a users page on the storefront
@@ -80,9 +69,9 @@ const Store = React.createClass({
     @param {String} username The name of the user
     @return {String} A URL to the users page on storefront
   */
-  _generateUserPath: function(username) {
+  _generateUserPath(username) {
     return `https://jujucharms.com/u/${username}`;
-  },
+  }
 
   /**
     Show the entity details when clicked.
@@ -91,7 +80,7 @@ const Store = React.createClass({
     @param {String} id The entity id.
     @param {Object} e The click event.
   */
-  _handleEntityClick: function(e) {
+  _handleEntityClick(e) {
     e.stopPropagation();
     var id = (e.target.dataset.entity ||
       e.target.closest('[data-entity]').dataset.entity);
@@ -99,7 +88,7 @@ const Store = React.createClass({
       root: null,
       store: id
     });
-  },
+  }
 
   /**
     Show the search results when clicked.
@@ -108,7 +97,7 @@ const Store = React.createClass({
     @param {String} query The search string.
     @param {Object} evt The click event.
   */
-  _handleSearchClick: function(evt) {
+  _handleSearchClick(evt) {
     evt.stopPropagation();
     const search = {
       text: this._getData(evt.currentTarget, 'query')
@@ -122,7 +111,7 @@ const Store = React.createClass({
       root: null,
       search: search
     });
-  },
+  }
 
   /**
     Stop events bubbling.
@@ -130,9 +119,9 @@ const Store = React.createClass({
     @method _stopPropagation
     @param {Object} evt The click event.
   */
-  _stopPropagation: function(evt) {
+  _stopPropagation(evt) {
     evt.stopPropagation();
-  },
+  }
 
   /**
     Get the data value for an element.
@@ -142,10 +131,10 @@ const Store = React.createClass({
     @param {String} key The key for the data value.
     @returns {String} The data value.
   */
-  _getData: function(target, key) {
+  _getData(target, key) {
     const node = target || target.closest(`[data-${key}]`);
     return node && node.dataset && node.dataset[key] || '';
-  },
+  }
 
   /**
     The content for the write you own section of the page
@@ -153,7 +142,7 @@ const Store = React.createClass({
     @method _writeOurOwnSection
     @return {Object} The contents of the section
   */
-  _writeOurOwnSection: function() {
+  _writeOurOwnSection() {
     const href =
       'https://www.jujucharms.com/docs/stable/authors-charm-writing';
     return (<div className="row row--write-your-own">
@@ -178,7 +167,7 @@ const Store = React.createClass({
         </div>
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the development tools section of the page
@@ -186,7 +175,7 @@ const Store = React.createClass({
     @method _developmentToolsSection
     @return {Object} The contents of the section
   */
-  _developmentToolsSection: function() {
+  _developmentToolsSection() {
     return (<div className="row row--border-bottom">
       <div className="inner-wrapper">
         <h2>Development tools</h2>
@@ -194,7 +183,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="gitlab"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('gitlab')}
                   alt=""
@@ -212,7 +201,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="jenkins"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('jenkins')}
                   alt=""
@@ -229,7 +218,7 @@ const Store = React.createClass({
         </ul>
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the featured charms and bundles section of the page
@@ -237,38 +226,38 @@ const Store = React.createClass({
     @method _featuredSection
     @return {Object} The contents of the section
   */
-  _featuredSection: function() {
+  _featuredSection() {
     let kubernetesButton = (<a target="_blank"
-      onClick={this._stopPropagation}
+      onClick={this._stopPropagation.bind(this)}
       href="https://jujucharms.com/kubernetes"
       className="button--inline-neutral">
           Find out more
     </a>);
     let openstackButton = (<a target="_blank"
-      onClick={this._stopPropagation}
+      onClick={this._stopPropagation.bind(this)}
       href="https://jujucharms.com/openstack"
       className="button--inline-neutral">
           Find out more
     </a>);
     let bigdataButton = (<a target="_blank"
-      onClick={this._stopPropagation}
+      onClick={this._stopPropagation.bind(this)}
       href="https://jujucharms.com/big-data"
       className="button--inline-neutral">
           Find out more
     </a>);
 
     if (!this.props.gisf) {
-      kubernetesButton = (<span onClick={this._handleSearchClick}
+      kubernetesButton = (<span onClick={this._handleSearchClick.bind(this)}
         data-query="kubernetes"
         className="button--inline-neutral">
         View
       </span>);
-      openstackButton = (<span onClick={this._handleSearchClick}
+      openstackButton = (<span onClick={this._handleSearchClick.bind(this)}
         data-query="openstack"
         className="button--inline-neutral">
           View
       </span>);
-      bigdataButton = (<span onClick={this._handleSearchClick}
+      bigdataButton = (<span onClick={this._handleSearchClick.bind(this)}
         data-query="hadoop"
         className="button--inline-neutral">
           View
@@ -276,7 +265,7 @@ const Store = React.createClass({
     }
 
     return (<div className="row equal-height">
-      <div onClick={this._handleSearchClick}
+      <div onClick={this._handleSearchClick.bind(this)}
         data-query="kubernetes"
         className="box box--kubernetes align-center four-col">
         <img src={this._generateLocalImagePath('k8-image.png')}
@@ -286,7 +275,7 @@ const Store = React.createClass({
           {kubernetesButton}
         </div>
       </div>
-      <div onClick={this._handleSearchClick}
+      <div onClick={this._handleSearchClick.bind(this)}
         data-query="openstack"
         className="box box--openstack align-center four-col">
         <img src={this._generateLocalImagePath('openstack-promo.png')}
@@ -296,7 +285,7 @@ const Store = React.createClass({
           {openstackButton}
         </div>
       </div>
-      <div onClick={this._handleSearchClick}
+      <div onClick={this._handleSearchClick.bind(this)}
         data-query="hadoop"
         className="box box--hadoop align-center four-col last-col">
         <div className="box--hadoop-container">
@@ -309,7 +298,7 @@ const Store = React.createClass({
         </div>
       </div>
     </div>);
-  },
+  }
 
   /**
     Generate contents of the tagged list
@@ -317,7 +306,7 @@ const Store = React.createClass({
     @method _tagsSection
     @return {Object} A generated section listing topics with counts
   */
-  _tagsSection: function() {
+  _tagsSection() {
     var topics = [
       {name: 'databases', count: 19},
       {name: 'app-servers', count: 19},
@@ -338,7 +327,7 @@ const Store = React.createClass({
       let key = `tagItem-${index}`;
       let comma = index === topics.length - 1 ? '' : ',';
       list.push(<li className="inline-list__item" key={key}>
-        <span onClick={this._handleSearchClick}
+        <span onClick={this._handleSearchClick.bind(this)}
           data-filterkey="tags"
           data-filtervalue={topic.name}
           className="link">
@@ -347,13 +336,13 @@ const Store = React.createClass({
         <span className="note">({topic.count})</span>
         {comma}
       </li>);
-    }, this);
+  }, this);
     return (<div className="eight-col prepend-two align-center">
       <ul className="no-bullets inline-list">
         {list}
       </ul>
     </div>);
-  },
+  }
 
   /**
     The content for the description of what a charm and bundle are section
@@ -362,7 +351,7 @@ const Store = React.createClass({
     @method _charmAndBundleSection
     @return {Object} The contents of the section
   */
-  _charmAndBundleSection: function() {
+  _charmAndBundleSection() {
     return (<div className="row row--charm-and-bundle row--border-bottom">
       <div className="inner-wrapper equal-height">
         <div className="six-col box">
@@ -375,7 +364,7 @@ const Store = React.createClass({
             <p>Charms are sets of scripts that simplify the
                   deployment and management tasks of a service. They
                   are regularly reviewed and updated.</p>
-            <span onClick={this._handleSearchClick}
+            <span onClick={this._handleSearchClick.bind(this)}
               data-filterkey="type"
               data-filtervalue="charm"
               className="button--inline-neutral">
@@ -393,7 +382,7 @@ const Store = React.createClass({
             <p>Bundles are collections of charms that link
                   applications together, so you can deploy whole
                   chunks of infrastructure in one go.</p>
-            <span onClick={this._handleSearchClick}
+            <span onClick={this._handleSearchClick.bind(this)}
               data-filterkey="type"
               data-filtervalue="bundle"
               className="button--inline-neutral">
@@ -404,7 +393,7 @@ const Store = React.createClass({
         {this._tagsSection()}
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the operations section of the page
@@ -412,7 +401,7 @@ const Store = React.createClass({
     @method _operationsSection
     @return {Object} The contents of the section
   */
-  _operationsSection: function() {
+  _operationsSection() {
     return (<div className="row">
       <div className="inner-wrapper">
         <h2>Operations</h2>
@@ -436,7 +425,7 @@ const Store = React.createClass({
                   that is related to it.</p>
             <span
               data-entity="nagios"
-              onClick={this._handleEntityClick}
+              onClick={this._handleEntityClick.bind(this)}
               className="button--inline-neutral">
                       View the charm
             </span>
@@ -447,7 +436,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="kibana"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('kibana')}
                   alt=""
@@ -465,7 +454,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="logstash"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('logstash')}
@@ -484,7 +473,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="elasticsearch"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('elasticsearch')}
@@ -503,7 +492,7 @@ const Store = React.createClass({
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="u/canonical-bootstack/prometheus"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath(
@@ -523,7 +512,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <a className="featured-entity__link link"
               data-entity="munin"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('munin')}
@@ -542,7 +531,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="rsyslog"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('rsyslog')}
@@ -560,7 +549,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="zabbix-server"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('zabbix-server')}
@@ -579,7 +568,7 @@ const Store = React.createClass({
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="u/ricardokirkner/sentry"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath(
                   '~ricardokirkner/sentry')}
@@ -598,7 +587,7 @@ const Store = React.createClass({
           </li>
         </ul>
         <p className="intro">
-          <span onClick={this._handleSearchClick}
+          <span onClick={this._handleSearchClick.bind(this)}
             data-filterkey="tags"
             data-filtervalue="ops"
             className="link">
@@ -607,7 +596,7 @@ const Store = React.createClass({
         </p>
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the bigdata section of the page
@@ -615,7 +604,7 @@ const Store = React.createClass({
     @method _bigDataSection
     @return {Object} The contents of the section
   */
-  _bigDataSection: function() {
+  _bigDataSection() {
     return (<div className="row row--containers">
       <div className="wrapper bigdata">
         <div className="inner-wrapper bigdata">
@@ -624,7 +613,7 @@ const Store = React.createClass({
             <p>Juju makes it easy to deploy container management solutions
             by provisioning, installing and configuring all the systems in
             the cluster.</p>
-            <p><span onClick={this._handleSearchClick}
+            <p><span onClick={this._handleSearchClick.bind(this)}
               data-query="containers"
               className="button--inline-neutral">
               View bundles
@@ -636,7 +625,7 @@ const Store = React.createClass({
         </div>
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the analytics section of the page
@@ -644,7 +633,7 @@ const Store = React.createClass({
     @method _analyticsSection
     @return {Object} The contents of the section
   */
-  _analyticsSection: function() {
+  _analyticsSection() {
     return (<div className="row row--border-bottom">
       <div className="inner-wrapper">
         <h2>Analytics</h2>
@@ -671,7 +660,7 @@ const Store = React.createClass({
                   components, it offers a repeatable and reliable way
                   to setup complex software across multiple
                   substrates.</p>
-            <span onClick={this._handleEntityClick}
+            <span onClick={this._handleEntityClick.bind(this)}
               data-entity="realtime-syslog-analytics"
               className="button--inline-neutral">
                       View the bundle
@@ -683,7 +672,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="hive"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('hive')}
                   alt=""
@@ -700,7 +689,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="spark"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('spark')}
@@ -719,7 +708,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="zeppelin"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('zeppelin')}
@@ -737,7 +726,7 @@ const Store = React.createClass({
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="elasticsearch-cluster"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <ul className="featured-entity__image-list one-col">
                 <li className="featured-entity__image-list-item">
                   <img
@@ -763,7 +752,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="u/containers/elk-stack"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <ul className="featured-entity__image-list one-col">
                 <li className="featured-entity__image-list-item">
                   <img src={this._generateIconPath('zulu8')}
@@ -800,7 +789,7 @@ const Store = React.createClass({
           </li>
         </ul>
         <p className="intro">
-          <span onClick={this._handleSearchClick}
+          <span onClick={this._handleSearchClick.bind(this)}
             data-filterkey="tags"
             data-filtervalue="analytics"
             className="link">
@@ -809,7 +798,7 @@ const Store = React.createClass({
         </p>
       </div>
     </div>);
-  },
+  }
 
   /**
     The content for the databases section of the page
@@ -817,7 +806,7 @@ const Store = React.createClass({
     @method _databasesSection
     @return {Object} The contents of the section
   */
-  _databasesSection: function() {
+  _databasesSection() {
     return (<div className="row row--border-bottom">
       <div className="inner-wrapper">
         <h2>Databases</h2>
@@ -838,7 +827,7 @@ const Store = React.createClass({
             <p>MySQL is a fast, stable and true multi-user,
                   multi-threaded SQL database server. Its main goals
                   are speed, robustness and ease of use.</p>
-            <span onClick={this._handleEntityClick}
+            <span onClick={this._handleEntityClick.bind(this)}
               data-entity="mysql"
               className="button--inline-neutral">
                       View the charm
@@ -850,7 +839,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="cassandra"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('cassandra')}
                   alt=""
@@ -867,7 +856,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="mariadb"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
                 <img
@@ -887,7 +876,7 @@ const Store = React.createClass({
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="mongodb"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('mongodb')}
                   alt=""
@@ -904,7 +893,7 @@ const Store = React.createClass({
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="redis"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath('redis')}
@@ -922,7 +911,7 @@ const Store = React.createClass({
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
               data-entity="postgresql"
-              onClick={this._handleEntityClick}>
+              onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
                 <img src={this._generateIconPath('postgresql')}
@@ -939,7 +928,7 @@ const Store = React.createClass({
           </li>
         </ul>
         <p className="intro">
-          <span onClick={this._handleSearchClick}
+          <span onClick={this._handleSearchClick.bind(this)}
             data-filterkey="tags"
             data-filtervalue="databases"
             className="link">
@@ -948,9 +937,9 @@ const Store = React.createClass({
         </p>
       </div>
     </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="store">
         {this._featuredSection()}
@@ -964,7 +953,16 @@ const Store = React.createClass({
       </div>
     );
   }
-});
+};
+
+Store.propTypes = {
+  apiVersion: React.PropTypes.string.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  charmstoreURL: React.PropTypes.string.isRequired,
+  gisf: React.PropTypes.bool.isRequired,
+  setPageTitle: React.PropTypes.func.isRequired,
+  staticURL: React.PropTypes.string
+};
 
 YUI.add('store', function() {
   juju.components.Store = Store;
