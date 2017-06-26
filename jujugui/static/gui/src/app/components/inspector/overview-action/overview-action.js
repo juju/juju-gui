@@ -18,22 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const OverviewAction = React.createClass({
-
-  propTypes: {
-    action: React.PropTypes.func.isRequired,
-    icon: React.PropTypes.string,
-    linkAction: React.PropTypes.func,
-    linkTitle: React.PropTypes.string,
-    title: React.PropTypes.string.isRequired,
-    value: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
-    ]),
-    valueType: React.PropTypes.string
-  },
-
-  baseClass: 'overview-action',
+class OverviewAction extends React.Component {
+  constructor() {
+    super();
+    this.baseClass = 'overview-action';
+  }
 
   /**
     Returns the supplied classes with the 'hidden' class applied if the
@@ -41,7 +30,7 @@ const OverviewAction = React.createClass({
     @method _valueClasses
     @returns {String} The collection of class names.
   */
-  _valueClasses: function() {
+  _valueClasses() {
     return classNames(
       this.baseClass + '__value',
       this.props.valueType ?
@@ -50,7 +39,7 @@ const OverviewAction = React.createClass({
         hidden: !this.props.value
       }
     );
-  },
+  }
 
   /**
     Returns the supplied classes with the 'hidden' class applied if the
@@ -58,14 +47,14 @@ const OverviewAction = React.createClass({
     @method _linkClasses
     @returns {String} The collection of class names.
   */
-  _linkClasses: function() {
+  _linkClasses() {
     return classNames(
       this.baseClass + '__link',
       {
         hidden: !this.props.linkAction
       }
     );
-  },
+  }
 
   /**
     Call the supplied link action
@@ -73,10 +62,10 @@ const OverviewAction = React.createClass({
     @method _handleLinkClick
     @param {Object} e The click event.
   */
-  _handleLinkClick: function(e) {
+  _handleLinkClick(e) {
     e.stopPropagation();
     this.props.linkAction();
-  },
+  }
 
   /**
     Call the supplied link action
@@ -84,7 +73,7 @@ const OverviewAction = React.createClass({
     @method _handleLinkClick
     @param {Object} e The click event.
   */
-  _generateIcon: function(e) {
+  _generateIcon(e) {
     var icon = this.props.icon;
     if (!icon) {
       return;
@@ -95,9 +84,9 @@ const OverviewAction = React.createClass({
           size="16" />
       </span>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var titleClass = this.baseClass + '__title';
     return (
       <li className={this.baseClass}
@@ -108,7 +97,7 @@ const OverviewAction = React.createClass({
           {this.props.title}
         </span>
         <span className={this._linkClasses()}
-          onClick={this._handleLinkClick}>
+          onClick={this._handleLinkClick.bind(this)}>
           {this.props.linkTitle}
         </span>
         <span className={this._valueClasses()}>
@@ -117,8 +106,20 @@ const OverviewAction = React.createClass({
       </li>
     );
   }
+};
 
-});
+OverviewAction.propTypes = {
+  action: React.PropTypes.func.isRequired,
+  icon: React.PropTypes.string,
+  linkAction: React.PropTypes.func,
+  linkTitle: React.PropTypes.string,
+  title: React.PropTypes.string.isRequired,
+  value: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.number
+  ]),
+  valueType: React.PropTypes.string
+};
 
 YUI.add('overview-action', function() {
   juju.components.OverviewAction = OverviewAction;
