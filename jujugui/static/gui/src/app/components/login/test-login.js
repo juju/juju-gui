@@ -102,7 +102,7 @@ describe('LoginComponent', function() {
         </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders but is hidden in gisf', function() {
@@ -172,7 +172,7 @@ describe('LoginComponent', function() {
         </div>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display a login error message', function() {
