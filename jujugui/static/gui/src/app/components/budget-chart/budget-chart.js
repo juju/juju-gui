@@ -39,7 +39,7 @@ class BudgetChart extends React.Component {
         // Set the width of the allocated bar to the percent of the limit.
         // If the limit is zero the percent will equal NaN, hence the || 0.
         width: ((allocated / limit * 100) || 0) + '%'
-    },
+      },
       new: {
         width: newWidth
       }

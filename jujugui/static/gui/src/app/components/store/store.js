@@ -336,7 +336,7 @@ class Store extends React.Component {
         <span className="note">({topic.count})</span>
         {comma}
       </li>);
-  }, this);
+    }, this);
     return (<div className="eight-col prepend-two align-center">
       <ul className="no-bullets inline-list">
         {list}
