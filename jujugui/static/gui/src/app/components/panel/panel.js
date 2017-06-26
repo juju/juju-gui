@@ -18,31 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Panel = React.createClass({
-  displayName: 'Panel',
-
-  propTypes: {
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    clickAction: React.PropTypes.func,
-    focus: React.PropTypes.bool,
-    instanceName: React.PropTypes.string.isRequired,
-    visible: React.PropTypes.bool.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {focus: true};
-  },
-
-  componentDidMount: function() {
+class Panel extends React.Component {
+  componentDidMount() {
     // Set the keyboard focus on the component so it can be scrolled with the
     // keyboard. Requires tabIndex to be set on the element.
     if (this.props.focus) {
       this.refs.content.focus();
     }
-  },
+  }
 
   /**
     Returns the supplied classes with the 'active' class applied if the
@@ -53,7 +36,7 @@ const Panel = React.createClass({
       active.
     @returns {String} The collection of class names.
   */
-  _genClasses: function(section) {
+  _genClasses(section) {
     return classNames(
       'panel-component',
       this.props.instanceName,
@@ -61,19 +44,19 @@ const Panel = React.createClass({
         hidden: !this.props.visible
       }
     );
-  },
+  }
 
   /**
     Call a click action if it exists.
 
     @method _handleClick
   */
-  _handleClick: function() {
+  _handleClick() {
     var clickAction = this.props.clickAction;
     if (clickAction) {
       clickAction();
     }
-  },
+  }
 
   /**
     Don't bubble the click event to the parent.
@@ -81,27 +64,41 @@ const Panel = React.createClass({
     @method _stopBubble
     @param {Object} The click event.
   */
-  _stopBubble: function(e) {
+  _stopBubble(e) {
     if (this.props.clickAction) {
       e.stopPropagation();
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className={this._genClasses()}
-        onClick={this._handleClick}
+        onClick={this._handleClick.bind(this)}
         ref="content"
         tabIndex="0">
         <div className="panel-component__inner"
-          onClick={this._stopBubble}>
+          onClick={this._stopBubble.bind(this)}>
           {this.props.children}
         </div>
       </div>
     );
   }
+};
 
-});
+Panel.propTypes = {
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  clickAction: React.PropTypes.func,
+  focus: React.PropTypes.bool,
+  instanceName: React.PropTypes.string.isRequired,
+  visible: React.PropTypes.bool.isRequired
+};
+
+Panel.defaultProps = {
+  focus: true
+};
 
 YUI.add('panel-component', function() {
   juju.components.Panel = Panel;

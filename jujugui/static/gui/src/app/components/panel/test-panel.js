@@ -48,7 +48,7 @@ describe('PanelComponent', function() {
           {undefined}
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('generates a hidden panel if visible flag is falsey', function() {
@@ -69,7 +69,7 @@ describe('PanelComponent', function() {
           {undefined}
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders provided children components', function() {
@@ -82,7 +82,7 @@ describe('PanelComponent', function() {
       </juju.components.Panel>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
+    const expected = (
       <div className="panel-component custom-instance-name"
         onClick={instance._handleClick}
         ref="content"
@@ -92,6 +92,7 @@ describe('PanelComponent', function() {
           <div>child</div>
         </div>
       </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can call a function on click if provided', function() {
