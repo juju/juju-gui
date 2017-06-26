@@ -18,23 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UnitDetails = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    destroyUnits: React.PropTypes.func.isRequired,
-    previousComponent: React.PropTypes.string,
-    service: React.PropTypes.object.isRequired,
-    unit: React.PropTypes.object.isRequired,
-    unitStatus: React.PropTypes.string
-  },
-
+class UnitDetails extends React.Component {
   /**
     Handle removing a unit if the button has been clicked.
 
     @method _handleRemoveUnit
   */
-  _handleRemoveUnit: function() {
+  _handleRemoveUnit() {
     this.props.destroyUnits([this.props.unit.id]);
     // Navigate to the unit list for the unit's service.
     this.props.changeState({
@@ -45,7 +35,7 @@ const UnitDetails = React.createClass({
           unitStatus: this.props.unitStatus,
           unit: null
         }}});
-  },
+  }
 
   /**
     Build a HTML list from an array of port ranges and an IP address.
@@ -60,7 +50,7 @@ const UnitDetails = React.createClass({
     @param {Boolean} clickabl Whether the addresses are clickable.
     @returns {String} HTML of list.
   */
-  _generateAddresses: function(address, portRanges, clickable) {
+  _generateAddresses(address, portRanges, clickable) {
     if (!address) {
       return;
     }
@@ -92,7 +82,7 @@ const UnitDetails = React.createClass({
       return createItem(label, '');
     });
     return <ul className="unit-details__list">{items}</ul>;
-  },
+  }
 
   /**
     Build a HTML block of statuses for the given unit.
@@ -100,7 +90,7 @@ const UnitDetails = React.createClass({
     @param {Object} unit The unit model instance.
     @returns {String} The node with the statuses.
   */
-  _generateStatuses: function(unit) {
+  _generateStatuses(unit) {
     if (!unit.agent_state) {
       return <p className="unit-details__property">Status: uncommitted</p>;
     }
@@ -131,15 +121,15 @@ const UnitDetails = React.createClass({
         {workload}
       </div>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     const unit = props.unit;
     const buttons = [{
       disabled: props.acl.isReadOnly(),
       title: 'Remove',
-      action: this._handleRemoveUnit
+      action: this._handleRemoveUnit.bind(this)
     }];
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
@@ -163,8 +153,17 @@ const UnitDetails = React.createClass({
       </div>
     );
   }
+};
 
-});
+UnitDetails.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  destroyUnits: React.PropTypes.func.isRequired,
+  previousComponent: React.PropTypes.string,
+  service: React.PropTypes.object.isRequired,
+  unit: React.PropTypes.object.isRequired,
+  unitStatus: React.PropTypes.string
+};
 
 YUI.add('unit-details', function() {
   juju.components.UnitDetails = UnitDetails;
