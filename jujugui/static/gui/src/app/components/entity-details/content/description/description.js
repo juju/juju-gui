@@ -48,7 +48,7 @@ class EntityContentDescription extends React.Component {
 };
 
 EntityContentDescription.propTypes = {
-  changeState: React.PropTypes.func,
+  changeState: React.PropTypes.func.isRequired,
   entityModel: React.PropTypes.object,
   includeHeading: React.PropTypes.bool,
   renderMarkdown: React.PropTypes.func.isRequired

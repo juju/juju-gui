@@ -35,6 +35,7 @@ describe('EntityContentDescription', function() {
     mockEntity.set('description', 'A simple [link](http://google.com/).');
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContentDescription
+        changeState={sinon.stub()}
         entityModel={mockEntity}
         renderMarkdown={marked} />);
     const markupObject = output.props.children[1]
@@ -56,6 +57,7 @@ describe('EntityContentDescription', function() {
       mockEntity.set('description', null);
       const output = jsTestUtils.shallowRender(
         <juju.components.EntityContentDescription
+          changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
 
@@ -66,6 +68,7 @@ describe('EntityContentDescription', function() {
 
       const output = jsTestUtils.shallowRender(
         <juju.components.EntityContentDescription
+          changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
 
@@ -91,6 +94,7 @@ describe('EntityContentDescription', function() {
       mockEntity.set('description', null);
       const output = jsTestUtils.shallowRender(
         <juju.components.EntityContentDescription
+          changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
 
@@ -101,6 +105,7 @@ describe('EntityContentDescription', function() {
 
       const output = jsTestUtils.shallowRender(
         <juju.components.EntityContentDescription
+          changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
 

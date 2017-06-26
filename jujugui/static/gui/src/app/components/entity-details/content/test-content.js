@@ -113,6 +113,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentDescription
+                changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
@@ -440,6 +441,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentDescription
+                changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
@@ -537,6 +539,7 @@ describe('EntityContent', function() {
           <div className="inner-wrapper">
             <div className="seven-col append-one">
               <juju.components.EntityContentDescription
+                changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />

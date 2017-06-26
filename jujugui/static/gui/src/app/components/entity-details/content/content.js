@@ -341,6 +341,7 @@ class EntityContent extends React.Component {
   */
   _generateDescription(entityModel) {
     return (<juju.components.EntityContentDescription
+      changeState={this.props.changeState}
       entityModel={entityModel}
       includeHeading={true}
       renderMarkdown={this.props.renderMarkdown} />);
