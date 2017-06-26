@@ -99,7 +99,7 @@ describe('ModelActions', function() {
           accept=".zip,.yaml,.yml"
           ref="file-input" />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can export the env', function() {
@@ -237,7 +237,7 @@ describe('ModelActions', function() {
           accept=".zip,.yaml,.yml"
           ref="file-input" />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('disables sharing when not connected', function() {
