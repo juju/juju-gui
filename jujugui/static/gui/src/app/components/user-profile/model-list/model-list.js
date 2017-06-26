@@ -18,53 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileModelList = React.createClass({
-  displayName: 'UserProfileModelList',
-
-  // broadcastStatus is necessary for communicating loading status back to
-  // the parent SectionLoadWatcher.
-  propTypes: {
-    acl: React.PropTypes.object,
-    addNotification: React.PropTypes.func.isRequired,
-    broadcastStatus: React.PropTypes.func,
-    changeState: React.PropTypes.func.isRequired,
-    currentModel: React.PropTypes.string,
-    destroyModels: React.PropTypes.func.isRequired,
-    facadesExist: React.PropTypes.bool.isRequired,
-    listModelsWithInfo: React.PropTypes.func.isRequired,
-    switchModel: React.PropTypes.func.isRequired,
-    // userInfo must have the following attributes:
-    // - external: the external user name to use for retrieving data, for
-    //   instance, from the charm store. Might be null if the user is being
-    //   displayed for the current user and they are not authenticated to
-    //   the charm store;
-    // - isCurrent: whether the profile is being displayed for the currently
-    //   authenticated user;
-    // - profile: the user name for whom profile details must be displayed.
-    userInfo: React.PropTypes.object.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class UserProfileModelList extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       destroyingModels: [],
       modelList: [],
       loadingModels: false
     };
-  },
+  }
 
-  getDefaultProps: function() {
-    // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-    // to it should not fail, so default to an empty function.
-    return {
-      broadcastStatus: function() {}
-    };
-  },
-
-  componentWillMount: function() {
+  componentWillMount() {
     this._fetchModels(this.props.facadesExist);
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const props = this.props;
     if (
       props.userInfo.profile !== nextProps.userInfo.profile ||
@@ -72,7 +40,7 @@ const UserProfileModelList = React.createClass({
     ) {
       this._fetchModels(nextProps.facadesExist);
     }
-  },
+  }
 
   /**
     Makes a request of the controller to fetch the user's availble models.
@@ -81,7 +49,7 @@ const UserProfileModelList = React.createClass({
     @param {Boolean} facadesExist - Whether the controller is
       connected or not.
   */
-  _fetchModels:  function(facadesExist) {
+  _fetchModels(facadesExist) {
     if (!facadesExist) {
       console.warn('Controller not connected, skipping fetching models.');
       return;
@@ -90,9 +58,9 @@ const UserProfileModelList = React.createClass({
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingModels: true}, () => {
-      this.props.listModelsWithInfo(this._fetchModelsCallback);
+      this.props.listModelsWithInfo(this._fetchModelsCallback.bind(this));
     });
-  },
+  }
 
   /**
     Callback for the controller list models call.
@@ -101,7 +69,7 @@ const UserProfileModelList = React.createClass({
     @param {String} err The error from the request, or null.
     @param {Array} modelList The list of models.
   */
-  _fetchModelsCallback: function(err, modelList) {
+  _fetchModelsCallback(err, modelList) {
     this.setState({loadingModels: false}, () => {
       const broadcastStatus = this.props.broadcastStatus;
       if (err) {
@@ -122,7 +90,7 @@ const UserProfileModelList = React.createClass({
       }
       this.setState({modelList: modelList});
     });
-  },
+  }
 
   /**
     Display the confirmation for destroying a model.
@@ -131,9 +99,9 @@ const UserProfileModelList = React.createClass({
     @param {Object} model the model to destroy. A model should at least have
                           a name and uuid.
   */
-  _displayConfirmation: function(model) {
+  _displayConfirmation(model) {
     this.setState({modelToBeDestroyed: model});
-  },
+  }
 
   /**
     Generate the confirmation for destroying a model.
@@ -141,7 +109,7 @@ const UserProfileModelList = React.createClass({
     @method _displayConfirmation
     @return {Object} the confirmation component.
   */
-  _generateConfirmation: function() {
+  _generateConfirmation() {
     const model = this.state.modelToBeDestroyed;
     const addNotification = this.props.addNotification;
     if (!model) {
@@ -161,7 +129,7 @@ const UserProfileModelList = React.createClass({
       type: 'inline-neutral'
     }, {
       title: 'Destroy',
-      action: this._destroyModel,
+      action: this._destroyModel.bind(this),
       type: 'destructive'
     }];
     const message = `Are you sure you want to destroy ${model.name}?`
@@ -173,14 +141,14 @@ const UserProfileModelList = React.createClass({
         title="Destroy model">
         <p>{message}</p>
       </juju.components.Popup>);
-  },
+  }
 
   /**
     Makes a request of the controller to delete a selected model.
 
     @method _destroyModel
   */
-  _destroyModel: function() {
+  _destroyModel() {
     const model = this.state.modelToBeDestroyed;
     const uuid = model.uuid;
     // Hide the confirmation popup.
@@ -195,7 +163,7 @@ const UserProfileModelList = React.createClass({
         this, uuid, model.name);
       this.props.destroyModels([uuid], callback);
     });
-  },
+  }
 
   /**
     Callback for the controller delete model call.
@@ -210,7 +178,7 @@ const UserProfileModelList = React.createClass({
     @param {Object} results The result for the model being deleted. The
       object is keyed to the model UUID.
   */
-  _destroyModelCallback: function(uuid, modelName, err, results) {
+  _destroyModelCallback(uuid, modelName, err, results) {
     const addNotification = this.props.addNotification;
     // Handle global errors or model-specific errors.
     const error = err || results[uuid];
@@ -244,7 +212,7 @@ const UserProfileModelList = React.createClass({
     this.setState({
       destroyingModels: destroyingModels
     });
-  },
+  }
 
   /**
     Generate the details for the provided model.
@@ -253,7 +221,7 @@ const UserProfileModelList = React.createClass({
     @param {Object} model A model object.
     @returns {Array} The markup for the row.
   */
-  _generateRow: function(model) {
+  _generateRow(model) {
     const props = this.props;
     const uuid = model.uuid;
     const isCurrent = uuid === props.currentModel;
@@ -332,7 +300,7 @@ const UserProfileModelList = React.createClass({
             relative={true} />
         </span>
       </juju.components.UserProfileEntity>);
-  },
+  }
 
   /**
     Generate the header for the models.
@@ -340,7 +308,7 @@ const UserProfileModelList = React.createClass({
     @method _generateHeader
     @returns {Array} The markup for the header.
   */
-  _generateHeader: function() {
+  _generateHeader() {
     return (
       <li className="user-profile__list-header twelve-col">
         <span className="user-profile__list-col two-col">
@@ -363,9 +331,9 @@ const UserProfileModelList = React.createClass({
           Last accessed
         </span>
       </li>);
-  },
+  }
 
-  render: function() {
+  render() {
     if (this.state.loadingModels) {
       return (
         <div className="user-profile__model-list twelve-col">
@@ -390,7 +358,7 @@ const UserProfileModelList = React.createClass({
     const list = this.state.modelList;
     let content;
     if (list && list.length > 0) {
-      const rows = list.map(this._generateRow);
+      const rows = list.map(this._generateRow.bind(this));
       content = (
         <ul className="user-profile__list twelve-col">
           {this._generateHeader()}
@@ -420,8 +388,36 @@ const UserProfileModelList = React.createClass({
       </div>
     );
   }
+};
 
-});
+// broadcastStatus is necessary for communicating loading status back to
+// the parent SectionLoadWatcher.
+UserProfileModelList.propTypes = {
+  acl: React.PropTypes.object,
+  addNotification: React.PropTypes.func.isRequired,
+  broadcastStatus: React.PropTypes.func,
+  changeState: React.PropTypes.func.isRequired,
+  currentModel: React.PropTypes.string,
+  destroyModels: React.PropTypes.func.isRequired,
+  facadesExist: React.PropTypes.bool.isRequired,
+  listModelsWithInfo: React.PropTypes.func.isRequired,
+  switchModel: React.PropTypes.func.isRequired,
+  // userInfo must have the following attributes:
+  // - external: the external user name to use for retrieving data, for
+  //   instance, from the charm store. Might be null if the user is being
+  //   displayed for the current user and they are not authenticated to
+  //   the charm store;
+  // - isCurrent: whether the profile is being displayed for the currently
+  //   authenticated user;
+  // - profile: the user name for whom profile details must be displayed.
+  userInfo: React.PropTypes.object.isRequired
+};
+
+// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+// to it should not fail, so default to an empty function.
+UserProfileModelList.defaultProps = {
+  broadcastStatus: function() {}
+};
 
 YUI.add('user-profile-model-list', function() {
   juju.components.UserProfileModelList = UserProfileModelList;
