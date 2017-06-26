@@ -34,13 +34,13 @@ describe('ModalGUISettings', function() {
 
   function visibleRender(
     hide = sinon.stub(),
-    handleChange = sinon.stub(),
+    _handleChange = sinon.stub(),
     state = {
       'disable-cookie': false,
       'force-containers': false,
       'disable-auto-place': false
     },
-    handleSave = sinon.stub()) {
+    _handleSave = sinon.stub()) {
     return (<div className="modal modal--narrow">
       <div className="twelve-col no-margin-bottom">
         <h2 className="bordered">Custom GUI Settings</h2>
@@ -55,7 +55,7 @@ describe('ModalGUISettings', function() {
           <label htmlFor="disable-cookie">
             <input type="checkbox" name="disable-cookie"
               id="disable-cookie"
-              onChange={handleChange}
+              onChange={_handleChange}
               defaultChecked={state['disable-cookie']} />&nbsp;
               Disable the EU cookie warning.
           </label>
@@ -64,7 +64,7 @@ describe('ModalGUISettings', function() {
           <label htmlFor="force-containers">
             <input type="checkbox" name="force-containers"
               id="force-containers"
-              onChange={handleChange}
+              onChange={_handleChange}
               defaultChecked={state['force-containers']} />&nbsp;
               Enable container control for this provider.
           </label>
@@ -73,7 +73,7 @@ describe('ModalGUISettings', function() {
           <label htmlFor="disable-auto-place">
             <input type="checkbox" name="disable-auto-place"
               id="disable-auto-place"
-              onChange={handleChange}
+              onChange={_handleChange}
               defaultChecked={state['disable-auto-place']} />&nbsp;
               Default to not automatically place units on commit.
           </label>
@@ -84,7 +84,7 @@ describe('ModalGUISettings', function() {
           </small>
         </p>
         <input type="button" className="button--positive"
-          name="save-settings" onClick={handleSave}
+          name="save-settings" onClick={_handleSave}
           id="save-settings" value="Save"/>
       </div>
     </div>);
@@ -112,7 +112,7 @@ describe('ModalGUISettings', function() {
       'disable-cookie': true,
       'disable-auto-place': null
     });
-    instance.handleSave();
+    instance._handleSave();
 
     assert.equal(_localStorage.setItem.callCount, 1);
     assert.equal(_localStorage.removeItem.callCount, 2);
