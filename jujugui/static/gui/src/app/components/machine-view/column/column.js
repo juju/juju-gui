@@ -68,41 +68,23 @@ MachineViewColumnGlobals.collect = function(connect, monitor) {
   };
 };
 
-const MachineViewColumn = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    activeMenuItem: React.PropTypes.string,
-    canDrop: React.PropTypes.bool.isRequired,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    connectDropTarget: React.PropTypes.func.isRequired,
-    dropUnit: React.PropTypes.func,
-    droppable: React.PropTypes.bool.isRequired,
-    isOver: React.PropTypes.bool.isRequired,
-    menuItems: React.PropTypes.array,
-    title: React.PropTypes.string.isRequired,
-    toggle: React.PropTypes.object,
-    type: React.PropTypes.string
-  },
-
+class MachineViewColumn extends React.Component {
   /**
     Generate the classes for the component.
 
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'machine-view__column', {
         'machine-view__column--droppable':
           this.props.droppable && this.props.canDrop,
         'machine-view__column--drop': this.props.isOver
       });
-  },
+  }
 
-  render: function() {
+  render() {
     var props = this.props;
     return this.props.connectDropTarget(
       <div className={this._generateClasses()}>
@@ -125,7 +107,25 @@ const MachineViewColumn = React.createClass({
       </div>
     );
   }
-});
+};
+
+MachineViewColumn.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  activeMenuItem: React.PropTypes.string,
+  canDrop: React.PropTypes.bool.isRequired,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  connectDropTarget: React.PropTypes.func.isRequired,
+  dropUnit: React.PropTypes.func,
+  droppable: React.PropTypes.bool.isRequired,
+  isOver: React.PropTypes.bool.isRequired,
+  menuItems: React.PropTypes.array,
+  title: React.PropTypes.string.isRequired,
+  toggle: React.PropTypes.object,
+  type: React.PropTypes.string
+};
 
 YUI.add('machine-view-column', function() {
   juju.components.MachineViewColumn = ReactDnD.DropTarget(
