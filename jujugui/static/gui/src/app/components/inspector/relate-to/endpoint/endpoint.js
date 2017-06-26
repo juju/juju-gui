@@ -15,31 +15,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorRelateToEndpoint = React.createClass({
-
-  propTypes: {
-    backState: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    createRelation: React.PropTypes.func.isRequired,
-    endpoints: React.PropTypes.array.isRequired
-  },
-
-  /**
-    Generate the initial state.
-
-    @method getInitialState
-    @returns {Object} The intial state.
-  */
-  getInitialState: function() {
-    return {activeCount: 0};
-  },
+class InspectorRelateToEndpoint extends React.Component {
+  constructor() {
+    super();
+    this.state = {activeCount: 0};
+  }
 
   /**
     Update the count of the number of active checkboxes.
 
     @method _updateActiveCount
   */
-  _updateActiveCount: function() {
+  _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
     Object.keys(refs).forEach((ref) => {
@@ -50,7 +37,7 @@ const InspectorRelateToEndpoint = React.createClass({
       }
     });
     this.setState({'activeCount': activeCount});
-  },
+  }
 
   /**
     Generate the relation list for the two application.
@@ -58,7 +45,7 @@ const InspectorRelateToEndpoint = React.createClass({
     @method _generateRelations
     @returns {Object} The relation components.
   */
-  _generateRelations: function() {
+  _generateRelations() {
     var relations = this.props.endpoints;
     if (relations.length === 0) {
       return (
@@ -71,16 +58,16 @@ const InspectorRelateToEndpoint = React.createClass({
         key={index}
         ref={`InspectorRelateToEndpoint-${index}`}
         label={`${relation[0].name} → ${relation[1].name}`}
-        whenChanged={this._updateActiveCount} />);
+        whenChanged={this._updateActiveCount.bind(this)} />);
     });
-  },
+  }
 
   /**
     Create the selected relations
 
     @method _handleCreateRelation
   */
-  _handleCreateRelation: function() {
+  _handleCreateRelation() {
     var refs = this.refs;
     var props = this.props;
     Object.keys(refs).forEach((ref) => {
@@ -102,7 +89,7 @@ const InspectorRelateToEndpoint = React.createClass({
       }
     });
     props.changeState(props.backState);
-  },
+  }
 
   /**
     Generate the relate button.
@@ -110,7 +97,7 @@ const InspectorRelateToEndpoint = React.createClass({
     @method _generateButtons
     @returns {Object} The button row component.
   */
-  _generateButtons: function() {
+  _generateButtons() {
     if (this.props.endpoints.length === 0) {
       return;
     }
@@ -119,15 +106,15 @@ const InspectorRelateToEndpoint = React.createClass({
     buttons.push({
       title: 'Relate',
       type: 'neutral',
-      action: this._handleCreateRelation,
+      action: this._handleCreateRelation.bind(this),
       disabled: disabled
     });
     return (
       <juju.components.ButtonRow
         buttons={buttons} />);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-relate-to-endpoint">
         <ul className="inspector-relate-to-endpoint__list">
@@ -137,8 +124,14 @@ const InspectorRelateToEndpoint = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorRelateToEndpoint.propTypes = {
+  backState: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  createRelation: React.PropTypes.func.isRequired,
+  endpoints: React.PropTypes.array.isRequired
+};
 
 YUI.add('inspector-relate-to-endpoint', function() {
   juju.components.InspectorRelateToEndpoint = InspectorRelateToEndpoint;
