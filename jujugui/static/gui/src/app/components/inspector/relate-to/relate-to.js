@@ -18,14 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorRelateTo = React.createClass({
-
-  propTypes: {
-    application: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    relatableApplications: React.PropTypes.array.isRequired
-  },
-
+class InspectorRelateTo extends React.Component {
   /**
     The callable to be passed to the relate to items for navigating to the
     relation type list.
@@ -33,7 +26,7 @@ const InspectorRelateTo = React.createClass({
     @method _relateToItemAction
     @param {Object} e The click event.
   */
-  _relateToItemAction: function(e) {
+  _relateToItemAction(e) {
     this.props.changeState({
       gui: {
         inspector: {
@@ -45,7 +38,7 @@ const InspectorRelateTo = React.createClass({
         }
       }
     });
-  },
+  }
 
   /**
     Generate the list items from a set of services
@@ -53,7 +46,7 @@ const InspectorRelateTo = React.createClass({
     @method generateItemList
     @returns {Function} A React component for the endpoints available.
   */
-  generateItemList: function() {
+  generateItemList() {
     var applications = this.props.relatableApplications;
     if (applications.length === 0) {
       return (
@@ -67,14 +60,16 @@ const InspectorRelateTo = React.createClass({
         <li className="inspector-view__list-item"
           data-id={data.id}
           key={data.id + index}
-          onClick={this._relateToItemAction} tabIndex="0" role="button">
+          onClick={this._relateToItemAction.bind(this)}
+          tabIndex="0"
+          role="button">
           <img src={data.icon} className="inspector-view__item-icon" />
           {data.name}
         </li>);
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
@@ -83,7 +78,13 @@ const InspectorRelateTo = React.createClass({
       </div>
     );
   }
-});
+};
+
+InspectorRelateTo.propTypes = {
+  application: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  relatableApplications: React.PropTypes.array.isRequired
+};
 
 YUI.add('inspector-relate-to', function() {
   juju.components.InspectorRelateTo = InspectorRelateTo;
