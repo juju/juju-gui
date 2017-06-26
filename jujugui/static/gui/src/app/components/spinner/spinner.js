@@ -18,17 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Spinner = React.createClass({
-  displayName: 'Spinner',
-
-  render: function() {
+class Spinner extends React.Component {
+  render() {
     return (
       <div className="spinner-container">
         <div className="spinner-loading">Loading...</div>
       </div>
     );
   }
-});
+};
 
 YUI.add('loading-spinner', function() {
   juju.components.Spinner = Spinner;
