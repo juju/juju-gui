@@ -363,6 +363,8 @@ const DeploymentFlow = React.createClass({
     );
     if (this.props.stats) {
       const flags = window.juju_config.flags;
+      // The ddeploy flag is set by the store front. Here we measure its
+      // effectiveness in a AB test exercise.
       const statName = 'deploy' + (flags.ddeploy ? '.direct' : '.target');
       this.props.stats.increase(statName);
     }

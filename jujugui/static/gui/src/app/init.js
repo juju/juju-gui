@@ -235,7 +235,11 @@ class GUIApp {
 
     this._setupRomulusServices(config, window.jujulib);
 
-    // Instantiate the statsd client if supported.
+    /**
+      A statsd client that can be used to send metrics to be consumed by
+      prometheus.
+      @type {Object or null}
+    */
     this.stats = null;
     if (config.statsURL) {
       this.stats = new window.jujugui.StatsClient(config.statsURL, 'gui');
