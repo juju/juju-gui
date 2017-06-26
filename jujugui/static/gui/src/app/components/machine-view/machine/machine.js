@@ -62,60 +62,35 @@ MachineViewMachineGlobals.collect = function(connect, monitor) {
   };
 };
 
-const MachineViewMachine = React.createClass({
-  displayName: 'MachineViewMachine',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    canDrop: React.PropTypes.bool.isRequired,
-    connectDropTarget: React.PropTypes.func.isRequired,
-    destroyMachines: React.PropTypes.func.isRequired,
-    dropUnit: React.PropTypes.func.isRequired,
-    generateMachineDetails: React.PropTypes.func,
-    isOver: React.PropTypes.bool.isRequired,
-    machine: React.PropTypes.object.isRequired,
-    machineModel: React.PropTypes.object,
-    parseConstraints: React.PropTypes.func,
-    providerType: React.PropTypes.string,
-    removeUnit: React.PropTypes.func,
-    selectMachine: React.PropTypes.func,
-    selected: React.PropTypes.bool,
-    series: React.PropTypes.array,
-    services: React.PropTypes.object.isRequired,
-    showConstraints: React.PropTypes.bool,
-    type: React.PropTypes.string.isRequired,
-    units: React.PropTypes.object.isRequired,
-    updateMachineConstraints: React.PropTypes.func,
-    updateMachineSeries: React.PropTypes.func
-  },
-
-  getInitialState: function() {
-    return {
+class MachineViewMachine extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       constraints: null,
       showForm: false
     };
-  },
+  }
 
   /**
     Toggle the display of the constraints form.
   */
-  _toggleForm: function() {
+  _toggleForm() {
     this.setState({showForm: !this.state.showForm});
-  },
+  }
 
   /**
     Update the state with the new constraints.
 
     @param constraints {Object} The new constraints.
   */
-  _updateConstraints: function(constraints) {
+  _updateConstraints(constraints) {
     this.setState({constraints: constraints});
-  },
+  }
 
   /**
     Set the new constraints on the machine.
   */
-  _setConstraints: function() {
+  _setConstraints() {
     const constraints = this.state.constraints;
     const series = constraints.series || null;
     // The series is updated separately from the constraints, so remove it
@@ -125,14 +100,14 @@ const MachineViewMachine = React.createClass({
     this.props.updateMachineConstraints(id, constraints);
     this.props.updateMachineSeries(id, series);
     this._toggleForm();
-  },
+  }
 
   /**
     Generate the constraints form.
 
     @returns {Object} the form JSX.
   */
-  _generateConstraintsForm: function() {
+  _generateConstraintsForm() {
     if (!this.state.showForm) {
       return null;
     }
@@ -142,11 +117,11 @@ const MachineViewMachine = React.createClass({
       machine.id, this.props.type === 'machine');
     const buttons = [{
       title: 'Cancel',
-      action: this._toggleForm,
+      action: this._toggleForm.bind(this),
       type: 'base'
     }, {
       title: 'Update',
-      action: this._setConstraints,
+      action: this._setConstraints.bind(this),
       type: 'neutral',
       disabled: disabled
     }];
@@ -162,12 +137,12 @@ const MachineViewMachine = React.createClass({
           hasUnit={!!units.length}
           providerType={this.props.providerType}
           series={this.props.series}
-          valuesChanged={this._updateConstraints} />
+          valuesChanged={this._updateConstraints.bind(this)} />
         <juju.components.ButtonRow
           buttons={buttons}
           key="buttons" />
       </div>);
-  },
+  }
 
   /**
     Generate the hardware for a machine.
@@ -175,7 +150,7 @@ const MachineViewMachine = React.createClass({
     @method _generateHardware
     @returns {Object} the machine hardware elements.
   */
-  _generateHardware: function() {
+  _generateHardware() {
     if (this.props.type === 'container' || !this.props.showConstraints ||
         this.state.showForm) {
       return;
@@ -184,7 +159,7 @@ const MachineViewMachine = React.createClass({
       <div className="machine-view__machine-hardware">
         {this.props.generateMachineDetails(this.props.machine)}
       </div>);
-  },
+  }
 
   /**
     Generate the unit icons for the machine.
@@ -192,7 +167,7 @@ const MachineViewMachine = React.createClass({
     @method _generateUnits
     @returns {Object} the unit elements.
   */
-  _generateUnits: function() {
+  _generateUnits() {
     if (this.state.showForm) {
       return null;
     }
@@ -222,28 +197,28 @@ const MachineViewMachine = React.createClass({
       <ul className="machine-view__machine-units">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Handle destroying a machine.
 
     @method _destroyMachine
   */
-  _destroyMachine: function() {
+  _destroyMachine() {
     this.props.destroyMachines([this.props.machine.id], true);
-  },
+  }
 
   /**
     Handle selecting a machine.
 
     @method _handleSelectMachine
   */
-  _handleSelectMachine: function() {
+  _handleSelectMachine() {
     var selectMachine = this.props.selectMachine;
     if (selectMachine) {
       selectMachine(this.props.machine.id);
     }
-  },
+  }
 
   /**
     Generate the classes for the machine.
@@ -251,7 +226,7 @@ const MachineViewMachine = React.createClass({
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var machine = this.props.machine;
     var classes = {
       'machine-view__machine--drop': this.props.isOver && this.props.canDrop,
@@ -265,25 +240,25 @@ const MachineViewMachine = React.createClass({
       'machine-view__machine',
       classes
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var machine = this.props.machine;
     var menuItems = [{
       label: 'Destroy',
-      action: !this.props.acl.isReadOnly() && this._destroyMachine
+      action: !this.props.acl.isReadOnly() && this._destroyMachine.bind(this)
     }];
     if (this.props.type === 'machine' &&
         machine.commitStatus === 'uncommitted') {
       menuItems.push({
         label: 'Update constraints',
-        action: !this.props.acl.isReadOnly() && this._toggleForm
+        action: !this.props.acl.isReadOnly() && this._toggleForm.bind(this)
       });
     }
     // Wrap the returned components in the drop target method.
     return this.props.connectDropTarget(
       <div className={this._generateClasses()}
-        onClick={this._handleSelectMachine}
+        onClick={this._handleSelectMachine.bind(this)}
         role="button"
         tabIndex="0">
         <juju.components.MoreMenu
@@ -302,7 +277,31 @@ const MachineViewMachine = React.createClass({
       </div>
     );
   }
-});
+};
+
+MachineViewMachine.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  canDrop: React.PropTypes.bool.isRequired,
+  connectDropTarget: React.PropTypes.func.isRequired,
+  destroyMachines: React.PropTypes.func.isRequired,
+  dropUnit: React.PropTypes.func.isRequired,
+  generateMachineDetails: React.PropTypes.func,
+  isOver: React.PropTypes.bool.isRequired,
+  machine: React.PropTypes.object.isRequired,
+  machineModel: React.PropTypes.object,
+  parseConstraints: React.PropTypes.func,
+  providerType: React.PropTypes.string,
+  removeUnit: React.PropTypes.func,
+  selectMachine: React.PropTypes.func,
+  selected: React.PropTypes.bool,
+  series: React.PropTypes.array,
+  services: React.PropTypes.object.isRequired,
+  showConstraints: React.PropTypes.bool,
+  type: React.PropTypes.string.isRequired,
+  units: React.PropTypes.object.isRequired,
+  updateMachineConstraints: React.PropTypes.func,
+  updateMachineSeries: React.PropTypes.func
+};
 
 YUI.add('machine-view-machine', function() {
   juju.components.MachineViewMachine = ReactDnD.DropTarget(
