@@ -18,15 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileEntityMetric = React.createClass({
-  displayName: 'UserProfileEntityMetric',
-
-  propTypes: {
-    d3: React.PropTypes.object.isRequired,
-    metric: React.PropTypes.array
-  },
-
-  _renderChart: function(el) {
+class UserProfileEntityMetric extends React.Component {
+  _renderChart(el) {
     const metric = this.props.metric;
     if (!metric || metric.length === 0) {
       return;
@@ -86,23 +79,27 @@ const UserProfileEntityMetric = React.createClass({
     chart.append('path')
       .classed('mean', true)
       .attr('d', line);
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     this._renderChart(this.div);
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this._renderChart(this.div);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="kpi-metric-chart"
         ref={div => this.div = div}></div>);
   }
+};
 
-});
+UserProfileEntityMetric.propTypes = {
+  d3: React.PropTypes.object.isRequired,
+  metric: React.PropTypes.array
+};
 
 YUI.add('user-profile-entity-metric', function() {
   juju.components.UserProfileEntityMetric = UserProfileEntityMetric;
