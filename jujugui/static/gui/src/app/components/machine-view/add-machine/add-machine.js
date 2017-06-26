@@ -18,36 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const MachineViewAddMachine = React.createClass({
-  displayName: 'MachineViewAddMachine',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    close: React.PropTypes.func.isRequired,
-    createMachine: React.PropTypes.func.isRequired,
-    machines: React.PropTypes.object,
-    parentId: React.PropTypes.string,
-    placeUnit: React.PropTypes.func,
-    providerType: React.PropTypes.string,
-    selectMachine: React.PropTypes.func,
-    series: React.PropTypes.array,
-    unit: React.PropTypes.object
-  },
-
-  /**
-    Generate the initial state for the component.
-
-    @method getInitialState
-    @returns {Object} The initial state.
-  */
-  getInitialState: function() {
-    return {
+class MachineViewAddMachine extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       constraints: null,
       selectedContainer: null,
       selectedMachine:
         !this.props.machines && !this.props.parentId ? 'new' : null
     };
-  },
+  }
 
   /**
     Update the state with the new constraints values.
@@ -55,16 +35,16 @@ const MachineViewAddMachine = React.createClass({
     @method _updateConstraints
     @param {Object} constraints The new constraints values.
   */
-  _updateConstraints: function(constraints) {
+  _updateConstraints(constraints) {
     this.setState({constraints: constraints});
-  },
+  }
 
   /**
     Create the machine.
 
     @method _submitForm
   */
-  _submitForm: function() {
+  _submitForm() {
     const props = this.props;
     const state = this.state;
     const machineId = this._getParentId();
@@ -100,27 +80,27 @@ const MachineViewAddMachine = React.createClass({
         props.unit, machine.id || selectedContainer || selectedMachine);
     }
     this.props.close();
-  },
+  }
 
   /**
     Get the parent id or selected machine.
 
     @method _getParentId
   */
-  _getParentId: function() {
+  _getParentId() {
     var selectedMachine = this.state.selectedMachine;
     if (selectedMachine === 'new') {
       return null;
     }
     return this.props.parentId || selectedMachine;
-  },
+  }
 
   /**
     Generate the constraints form.
 
     @method _generateConstraints
   */
-  _generateConstraints: function() {
+  _generateConstraints() {
     const props = this.props;
     return (
       <div className="add-machine__constraints" key='constraints'>
@@ -133,10 +113,10 @@ const MachineViewAddMachine = React.createClass({
           hasUnit={!!props.unit}
           providerType={props.providerType}
           series={props.series}
-          valuesChanged={this._updateConstraints}
+          valuesChanged={this._updateConstraints.bind(this)}
         />
       </div>);
-  },
+  }
 
   /**
     Update the state with the selected container type.
@@ -144,22 +124,22 @@ const MachineViewAddMachine = React.createClass({
     @method _updateSelectedContainer
     @param {Object} e The change event.
   */
-  _updateSelectedContainer: function(e) {
+  _updateSelectedContainer(e) {
     this.setState({selectedContainer: e.currentTarget.value});
-  },
+  }
 
   /**
     Generate the container type form.
 
     @method _generateSelectContainer
   */
-  _generateSelectContainer: function() {
+  _generateSelectContainer() {
     return (
       <select className="add-machine__container"
         defaultValue=""
         disabled={this.props.acl.isReadOnly()}
         key="containers"
-        onChange={this._updateSelectedContainer}>
+        onChange={this._updateSelectedContainer.bind(this)}>
         <option disabled={true} value="">
           Choose container type...
         </option>
@@ -167,7 +147,7 @@ const MachineViewAddMachine = React.createClass({
         <option value="lxd">LXD</option>
         <option value="kvm">KVM</option>
       </select>);
-  },
+  }
 
   /**
     Update the state with the selected machine.
@@ -175,22 +155,22 @@ const MachineViewAddMachine = React.createClass({
     @method _updateSelectedMachine
     @param {Object} e The change event.
   */
-  _updateSelectedMachine: function(e) {
+  _updateSelectedMachine(e) {
     this.setState({selectedMachine: e.currentTarget.value});
-  },
+  }
 
   /**
     Generate machine selection.
 
     @method _generateSelectContainer
   */
-  _generateSelectMachine: function() {
+  _generateSelectMachine() {
     return (
       <select
         defaultValue=""
         disabled={this.props.acl.isReadOnly()}
         key="machines"
-        onChange={this._updateSelectedMachine}>
+        onChange={this._updateSelectedMachine.bind(this)}>
         <option disabled={true} value="">
           Move to...
         </option>
@@ -199,7 +179,7 @@ const MachineViewAddMachine = React.createClass({
         </option>
         {this._generateMachineOptions()}
       </select>);
-  },
+  }
 
   /**
     Generate a list of machine options.
@@ -207,7 +187,7 @@ const MachineViewAddMachine = React.createClass({
     @method _generateMachineOptions
     @return {Array} A list of machine options.
   */
-  _generateMachineOptions: function() {
+  _generateMachineOptions() {
     var components = [];
     var machines = this.props.machines.filterByParent();
     machines.forEach((machine) => {
@@ -222,7 +202,7 @@ const MachineViewAddMachine = React.createClass({
         </option>);
     });
     return components;
-  },
+  }
 
   /**
     Generate a list of container options.
@@ -230,7 +210,7 @@ const MachineViewAddMachine = React.createClass({
     @method _generateContainerOptions
     @return {Array} A list of container options.
   */
-  _generateContainerOptions: function() {
+  _generateContainerOptions() {
     var machines = this.props.machines;
     if (!machines) {
       return;
@@ -256,7 +236,7 @@ const MachineViewAddMachine = React.createClass({
         </option>);
     });
     return components;
-  },
+  }
 
   /**
     Generate the buttons based on the state.
@@ -264,7 +244,7 @@ const MachineViewAddMachine = React.createClass({
     @method _generateButtons
     @return {Object} The buttons.
   */
-  _generateButtons: function() {
+  _generateButtons() {
     const props = this.props;
     const buttons = [{
       title: 'Cancel',
@@ -272,7 +252,7 @@ const MachineViewAddMachine = React.createClass({
       type: 'base'
     }, {
       title: props.unit ? 'Place' : 'Create',
-      action: this._submitForm,
+      action: this._submitForm.bind(this),
       type: 'neutral',
       // In the add-container mode disable the Create button until a container
       // type has been selected.
@@ -283,9 +263,9 @@ const MachineViewAddMachine = React.createClass({
       <juju.components.ButtonRow
         buttons={buttons}
         key="buttons" />);
-  },
+  }
 
-  render: function() {
+  render() {
     const components = [];
     const props = this.props;
     const state = this.state;
@@ -317,7 +297,20 @@ const MachineViewAddMachine = React.createClass({
     }
     return <div className="add-machine">{components}</div>;
   }
-});
+};
+
+MachineViewAddMachine.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  close: React.PropTypes.func.isRequired,
+  createMachine: React.PropTypes.func.isRequired,
+  machines: React.PropTypes.object,
+  parentId: React.PropTypes.string,
+  placeUnit: React.PropTypes.func,
+  providerType: React.PropTypes.string,
+  selectMachine: React.PropTypes.func,
+  series: React.PropTypes.array,
+  unit: React.PropTypes.object
+};
 
 YUI.add('machine-view-add-machine', function() {
   juju.components.MachineViewAddMachine = MachineViewAddMachine;
