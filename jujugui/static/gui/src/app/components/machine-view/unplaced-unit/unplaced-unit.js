@@ -58,47 +58,27 @@ MachineViewUnplacedUnitGlobals.collect = function(connect, monitor) {
   };
 };
 
-const MachineViewUnplacedUnit = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    connectDragSource: React.PropTypes.func.isRequired,
-    createMachine: React.PropTypes.func.isRequired,
-    icon: React.PropTypes.string.isRequired,
-    isDragging: React.PropTypes.bool.isRequired,
-    machines: React.PropTypes.object.isRequired,
-    placeUnit: React.PropTypes.func.isRequired,
-    providerType: React.PropTypes.string,
-    removeUnit: React.PropTypes.func.isRequired,
-    selectMachine: React.PropTypes.func.isRequired,
-    series: React.PropTypes.array,
-    unit: React.PropTypes.object.isRequired
-  },
-
-  /**
-    Generate the initial state for the component.
-
-    @method getInitialState
-    @returns {Object} The initial state.
-  */
-  getInitialState: function() {
-    return {showPlaceUnit: false};
-  },
+class MachineViewUnplacedUnit extends React.Component {
+  constructor() {
+    super();
+    this.state = {showPlaceUnit: false};
+  }
 
   /**
     Toggle the visibility of the unit placement form.
 
     @method _togglePlaceUnit
   */
-  _togglePlaceUnit: function() {
+  _togglePlaceUnit() {
     this.setState({showPlaceUnit: !this.state.showPlaceUnit});
-  },
+  }
 
   /**
     Generate the place unit form.
 
     @method _generatePlaceUnit
   */
-  _generatePlaceUnit: function() {
+  _generatePlaceUnit() {
     if (!this.state.showPlaceUnit) {
       return;
     }
@@ -106,7 +86,7 @@ const MachineViewUnplacedUnit = React.createClass({
     return (
       <juju.components.MachineViewAddMachine
         acl={props.acl}
-        close={this._togglePlaceUnit}
+        close={this._togglePlaceUnit.bind(this)}
         createMachine={props.createMachine}
         machines={props.machines}
         placeUnit={props.placeUnit}
@@ -116,7 +96,7 @@ const MachineViewUnplacedUnit = React.createClass({
         unit={props.unit}
       />
     );
-  },
+  }
 
   /**
     Generate the classes for the unit.
@@ -124,19 +104,19 @@ const MachineViewUnplacedUnit = React.createClass({
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'machine-view__unplaced-unit', {
         'machine-view__unplaced-unit--dragged': this.props.isDragging
       });
-  },
+  }
 
-  render: function() {
+  render() {
     var isReadOnly = this.props.acl.isReadOnly();
     var unit = this.props.unit;
     var menuItems = [{
       label: 'Deploy to...',
-      action: !isReadOnly && this._togglePlaceUnit
+      action: !isReadOnly && this._togglePlaceUnit.bind(this)
     }, {
       label: 'Destroy',
       action: !isReadOnly && this.props.removeUnit.bind(null, unit.id)
@@ -154,7 +134,22 @@ const MachineViewUnplacedUnit = React.createClass({
       </li>
     );
   }
-});
+};
+
+MachineViewUnplacedUnit.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  connectDragSource: React.PropTypes.func.isRequired,
+  createMachine: React.PropTypes.func.isRequired,
+  icon: React.PropTypes.string.isRequired,
+  isDragging: React.PropTypes.bool.isRequired,
+  machines: React.PropTypes.object.isRequired,
+  placeUnit: React.PropTypes.func.isRequired,
+  providerType: React.PropTypes.string,
+  removeUnit: React.PropTypes.func.isRequired,
+  selectMachine: React.PropTypes.func.isRequired,
+  series: React.PropTypes.array,
+  unit: React.PropTypes.object.isRequired
+};
 
 YUI.add('machine-view-unplaced-unit', function() {
   juju.components.MachineViewUnplacedUnit = ReactDnD.DragSource(
