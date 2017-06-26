@@ -18,64 +18,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Inspector = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addCharm: React.PropTypes.func.isRequired,
-    addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    appState: React.PropTypes.object.isRequired,
-    charm: React.PropTypes.object.isRequired,
-    clearState: React.PropTypes.func.isRequired,
-    createMachinesPlaceUnits: React.PropTypes.func.isRequired,
-    createRelation: React.PropTypes.func.isRequired,
-    destroyRelations: React.PropTypes.func.isRequired,
-    destroyService: React.PropTypes.func.isRequired,
-    destroyUnits: React.PropTypes.func.isRequired,
-    displayPlans: React.PropTypes.bool.isRequired,
-    envResolved: React.PropTypes.func.isRequired,
-    exposeService: React.PropTypes.func.isRequired,
-    getAvailableEndpoints: React.PropTypes.func.isRequired,
-    getAvailableVersions: React.PropTypes.func.isRequired,
-    getCharm: React.PropTypes.func.isRequired,
-    getServiceById: React.PropTypes.func.isRequired,
-    getServiceByName: React.PropTypes.func.isRequired,
-    getUnitStatusCounts: React.PropTypes.func.isRequired,
-    getYAMLConfig: React.PropTypes.func.isRequired,
-    linkify: React.PropTypes.func.isRequired,
-    modelUUID: React.PropTypes.string.isRequired,
-    providerType: React.PropTypes.string,
-    relatableApplications: React.PropTypes.array.isRequired,
-    service: React.PropTypes.object.isRequired,
-    serviceRelations: React.PropTypes.array.isRequired,
-    setCharm: React.PropTypes.func.isRequired,
-    setConfig: React.PropTypes.func.isRequired,
-    showActivePlan: React.PropTypes.func.isRequired,
-    showPlans: React.PropTypes.bool.isRequired,
-    unexposeService: React.PropTypes.func.isRequired,
-    unplaceServiceUnits: React.PropTypes.func.isRequired,
-    updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
-  },
-
-  /**
-    Get the current state of the inspector.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    // Setting a default state object.
-    return this.generateState(this.props);
-  },
+class Inspector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.generateState(this.props);
+  }
 
   /**
     Callback for when the header back is clicked.
 
     @method _backCallback
   */
-  _backCallback: function() {
+  _backCallback() {
     this.props.appState.changeState(this.state.activeChild.backState);
-  },
+  }
 
   /**
     Generates the state for the inspector based on the app state.
@@ -84,7 +40,7 @@ const Inspector = React.createClass({
     @param {Object} nextProps The props which were sent to the component.
     @return {Object} A generated state object which can be passed to setState.
   */
-  generateState: function(nextProps) {
+  generateState(nextProps) {
     const service = nextProps.service;
     const serviceId = service.get('id');
     const lastId = this.props.service.get('id');
@@ -413,17 +369,17 @@ const Inspector = React.createClass({
         break;
     }
     return state;
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState(this.generateState(nextProps));
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-view">
         <juju.components.InspectorHeader
-          backCallback={this._backCallback}
+          backCallback={this._backCallback.bind(this)}
           activeComponent={this.state.activeComponent}
           type={this.state.activeChild.headerType}
           title={this.state.activeChild.title}
@@ -434,8 +390,45 @@ const Inspector = React.createClass({
       </div>
     );
   }
+};
 
-});
+Inspector.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addCharm: React.PropTypes.func.isRequired,
+  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  appState: React.PropTypes.object.isRequired,
+  charm: React.PropTypes.object.isRequired,
+  clearState: React.PropTypes.func.isRequired,
+  createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+  createRelation: React.PropTypes.func.isRequired,
+  destroyRelations: React.PropTypes.func.isRequired,
+  destroyService: React.PropTypes.func.isRequired,
+  destroyUnits: React.PropTypes.func.isRequired,
+  displayPlans: React.PropTypes.bool.isRequired,
+  envResolved: React.PropTypes.func.isRequired,
+  exposeService: React.PropTypes.func.isRequired,
+  getAvailableEndpoints: React.PropTypes.func.isRequired,
+  getAvailableVersions: React.PropTypes.func.isRequired,
+  getCharm: React.PropTypes.func.isRequired,
+  getServiceById: React.PropTypes.func.isRequired,
+  getServiceByName: React.PropTypes.func.isRequired,
+  getUnitStatusCounts: React.PropTypes.func.isRequired,
+  getYAMLConfig: React.PropTypes.func.isRequired,
+  linkify: React.PropTypes.func.isRequired,
+  modelUUID: React.PropTypes.string.isRequired,
+  providerType: React.PropTypes.string,
+  relatableApplications: React.PropTypes.array.isRequired,
+  service: React.PropTypes.object.isRequired,
+  serviceRelations: React.PropTypes.array.isRequired,
+  setCharm: React.PropTypes.func.isRequired,
+  setConfig: React.PropTypes.func.isRequired,
+  showActivePlan: React.PropTypes.func.isRequired,
+  showPlans: React.PropTypes.bool.isRequired,
+  unexposeService: React.PropTypes.func.isRequired,
+  unplaceServiceUnits: React.PropTypes.func.isRequired,
+  updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
+};
 
 YUI.add('inspector-component', function() {
   juju.components.Inspector = Inspector;
