@@ -59,25 +59,14 @@ MachineViewMachineUnitGlobals.collect = function(connect, monitor) {
   };
 };
 
-const MachineViewMachineUnit = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    canDrag: React.PropTypes.bool.isRequired,
-    connectDragSource: React.PropTypes.func.isRequired,
-    isDragging: React.PropTypes.bool.isRequired,
-    machineType: React.PropTypes.string.isRequired,
-    removeUnit: React.PropTypes.func,
-    service: React.PropTypes.object.isRequired,
-    unit: React.PropTypes.object.isRequired
-  },
-
+class MachineViewMachineUnit extends React.Component {
   /**
     Generate the classes for the unit.
 
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var unit = this.props.unit;
     var agentState = unit.agent_state;
     var status = unit.deleted || !agentState ? 'uncommitted' : agentState;
@@ -89,9 +78,9 @@ const MachineViewMachineUnit = React.createClass({
     return classNames(
       'machine-view__machine-unit',
       classes);
-  },
+  }
 
-  render: function() {
+  render() {
     var menu;
     var title;
     var service = this.props.service;
@@ -122,7 +111,18 @@ const MachineViewMachineUnit = React.createClass({
       </li>
     );
   }
-});
+};
+
+MachineViewMachineUnit.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  canDrag: React.PropTypes.bool.isRequired,
+  connectDragSource: React.PropTypes.func.isRequired,
+  isDragging: React.PropTypes.bool.isRequired,
+  machineType: React.PropTypes.string.isRequired,
+  removeUnit: React.PropTypes.func,
+  service: React.PropTypes.object.isRequired,
+  unit: React.PropTypes.object.isRequired
+};
 
 YUI.add('machine-view-machine-unit', function() {
   juju.components.MachineViewMachineUnit = ReactDnD.DragSource(
