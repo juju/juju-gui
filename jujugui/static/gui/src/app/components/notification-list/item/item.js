@@ -18,21 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const NotificationListItem = React.createClass({
-
-  propTypes: {
-    message: React.PropTypes.string.isRequired,
-    removeNotification: React.PropTypes.func.isRequired,
-    timeout: React.PropTypes.number,
-    timestamp: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string
-  },
-
-  getInitialState: function() {
-    return {
+class NotificationListItem extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       visible: true
     };
-  },
+  }
 
   /**
     Generates the container classes based on the message type and visisible
@@ -40,7 +32,7 @@ const NotificationListItem = React.createClass({
 
     @method _generateClasses
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var type = this.props.type || 'info';
     var visible = this.state.visible;
     return classNames(
@@ -50,7 +42,7 @@ const NotificationListItem = React.createClass({
         'notification-list-item--visible': visible,
         'notification-list-item--hidden': !visible
       });
-  },
+  }
 
   /**
     Hides this component and remove it from its parent. The parent will
@@ -58,7 +50,7 @@ const NotificationListItem = React.createClass({
 
     @method hide
   */
-  hide: function() {
+  hide() {
     this.setState({visible: false});
     setTimeout(() => {
       // Wait before telling the parent to clean up so that the animation
@@ -67,22 +59,29 @@ const NotificationListItem = React.createClass({
       // without changing the other.
       this.props.removeNotification(this.props.timestamp);
     }, this.props.timeout || 750);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <li className={this._generateClasses()}>
         <span>{this.props.message}</span>
         <span tabIndex="0" role="button"
           className="notification-list-item__hide"
-          onClick={this.hide}>
+          onClick={this.hide.bind(this)}>
           <juju.components.SvgIcon name="close_16"
             size="16" />
         </span>
       </li>);
   }
+};
 
-});
+NotificationListItem.propTypes = {
+  message: React.PropTypes.string.isRequired,
+  removeNotification: React.PropTypes.func.isRequired,
+  timeout: React.PropTypes.number,
+  timestamp: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string
+};
 
 YUI.add('notification-list-item', function() {
   juju.components.NotificationListItem = NotificationListItem;
