@@ -714,7 +714,7 @@ class DeploymentFlow extends React.Component {
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.listClouds}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
-          setCloud={this._setCloud} />
+          setCloud={this._setCloud.bind(this)} />
       </juju.components.DeploymentSection>);
   }
 
@@ -748,9 +748,9 @@ class DeploymentFlow extends React.Component {
           getCloudCredentials={this.props.getCloudCredentials}
           getCloudCredentialNames={this.props.getCloudCredentialNames}
           region={this.state.region}
-          sendAnalytics={this.sendAnalytics}
-          setCredential={this._setCredential}
-          setRegion={this._setRegion}
+          sendAnalytics={this.sendAnalytics.bind(this)}
+          setCredential={this._setCredential.bind(this)}
+          setRegion={this._setRegion.bind(this)}
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.getUserName()}
           validateForm={this.props.validateForm} />
@@ -811,7 +811,7 @@ class DeploymentFlow extends React.Component {
             this.props.generateAllChangeDescriptions}
           groupedChanges={this.props.groupedChanges}
           listPlansForCharm={this.props.listPlansForCharm}
-          parseTermId={this._parseTermId}
+          parseTermId={this._parseTermId.bind(this)}
           servicesGetById={this.props.servicesGetById}
           showChangelogs={this.state.showChangelogs}
           showTerms={this.props.showTerms}
@@ -840,7 +840,7 @@ class DeploymentFlow extends React.Component {
         <juju.components.DeploymentBudget
           acl={this.props.acl}
           listBudgets={this.props.listBudgets}
-          setBudget={this._setBudget}
+          setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
       </juju.components.DeploymentSection>);
   }
@@ -872,7 +872,7 @@ class DeploymentFlow extends React.Component {
           getCountries={this.props.getCountries}
           getUser={this.props.getUser}
           paymentUser={this.state.paymentUser}
-          setPaymentUser={this._setPaymentUser}
+          setPaymentUser={this._setPaymentUser.bind(this)}
           username={this.props.profileUsername}
           validateForm={this.props.validateForm} />
       </juju.components.DeploymentSection>);
@@ -936,7 +936,7 @@ class DeploymentFlow extends React.Component {
     return (
       <div className={classes}>
         <input className="deployment-flow__deploy-checkbox"
-          onChange={this._handleTermsAgreement}
+          onChange={this._handleTermsAgreement.bind(this)}
           disabled={disabled}
           id="terms"
           type="checkbox" />
@@ -1024,7 +1024,7 @@ class DeploymentFlow extends React.Component {
       return (
         <juju.components.DeploymentPanel
           changeState={this.props.changeState}
-          sendAnalytics={this.sendAnalytics}
+          sendAnalytics={this.sendAnalytics.bind(this)}
           title={this.props.modelName}>
           {this._generateDirectDeploy()}
           {this._generateModelNameSection()}
@@ -1055,7 +1055,7 @@ class DeploymentFlow extends React.Component {
       return (
         <juju.components.DeploymentPanel
           changeState={this.props.changeState}
-          sendAnalytics={this.sendAnalytics}
+          sendAnalytics={this.sendAnalytics.bind(this)}
           title={this.props.modelName}>
           {this._generateDirectDeploy()}
           {this._generateLogin()}
