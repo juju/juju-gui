@@ -18,18 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorResourcesList = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    resources: React.PropTypes.array.isRequired
-  },
+class InspectorResourcesList extends React.Component {
   /**
     Generate a list of resources to display.
 
     @returns {Object} The resource list markup.
   */
-  _generateResources: function() {
+  _generateResources() {
     const resources = this.props.resources;
     const resourceList = resources.map((resource, i) => {
       return (
@@ -43,17 +38,21 @@ const InspectorResourcesList = React.createClass({
       <ul className="inspector-resources-list__list">
         {resourceList}
       </ul>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-resources-list">
         {this._generateResources()}
       </div>
     );
   }
+};
 
-});
+InspectorResourcesList.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  resources: React.PropTypes.array.isRequired
+};
 
 YUI.add('inspector-resources-list', function() {
   juju.components.InspectorResourcesList = InspectorResourcesList;
