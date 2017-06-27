@@ -95,7 +95,7 @@ describe('ChangesUtils', function() {
     addEntities(db);
     var tests = [{
       icon: 'django.svg',
-      msg: ' cs:trusty/django-1 has been added to the controller.',
+      msg: ' cs:trusty/django-1 will be added to the controller.',
       change: {
         command: {
           method: '_addCharm',
@@ -105,7 +105,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'django.svg',
-      msg: ' django resources added.',
+      msg: ' django resources will be added.',
       change: {
         command: {
           method: '_addPendingResources',
@@ -114,7 +114,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'django.svg',
-      msg: ' django has been added to the model.',
+      msg: ' django will be added to the model.',
       change: {
         command: {
           method: '_deploy',
@@ -125,7 +125,7 @@ describe('ChangesUtils', function() {
       time: '12:34 PM'
     }, {
       icon: 'changes-units-added',
-      msg: ' 1 django unit has been added.',
+      msg: ' 1 django unit will be added.',
       change: {
         command: {
           method: '_add_unit',
@@ -135,7 +135,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-units-removed',
-      msg: '1 unit has been removed from foo',
+      msg: '1 unit will be removed from foo',
       change: {
         command: {
           method: '_remove_units',
@@ -146,7 +146,7 @@ describe('ChangesUtils', function() {
       // Note that this case is never used in production code.
       // We always add a single unit to a service.
       icon: 'changes-units-added',
-      msg: ' 2 django units have been added.',
+      msg: ' 2 django units will be added.',
       change: {
         command: {
           method: '_add_unit',
@@ -156,7 +156,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-relation-added',
-      msg: 'bar relation added between foo and baz.',
+      msg: 'bar relation will be added between foo and baz.',
       change: {
         command: {
           method: '_add_relation',
@@ -168,7 +168,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-container-created',
-      msg: '1 container has been added.',
+      msg: '1 container will be added.',
       change: {
         command: {
           method: '_addMachines',
@@ -177,7 +177,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-container-created',
-      msg: '2 containers have been added.',
+      msg: '2 containers will be added.',
       change: {
         command: {
           method: '_addMachines',
@@ -186,7 +186,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-machine-created',
-      msg: '1 machine has been added.',
+      msg: '1 machine will be added.',
       change: {
         command: {
           method: '_addMachines',
@@ -195,7 +195,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-machine-created',
-      msg: '2 machines have been added.',
+      msg: '2 machines will be added.',
       change: {
         command: {
           method: '_addMachines',
@@ -204,7 +204,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-config-changed',
-      msg: 'Configuration values changed for django.',
+      msg: 'Configuration values will be changed for django.',
       change: {
         command: {
           method: '_set_config',
