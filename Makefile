@@ -3,10 +3,8 @@ PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
-SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
-SVG_SPRITE_FILE := $(SVG_SPRITE_DIR)/stack/svg/sprite.css.svg
+ASSETS_DIR := $(GUISRC)/app/assets
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
-SVG_FILES := $(shell find $(SVG_SPRITE_SOURCE_DIR) -name "*.svg")
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
@@ -19,6 +17,7 @@ FLAKE8 := bin/flake8
 PYRAMID := lib/python2.7/site-packages/pyramid
 PYTESTPKG := lib/python2.7/site-packages/pytest.py
 NODE_MODULES := node_modules
+SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
 MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
@@ -70,6 +69,7 @@ help:
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
 	@echo "start-karma - run Karma for development js testing"
+	@echo "svg-sprite - build the svg sprite"
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
@@ -188,27 +188,35 @@ $(STATIC_FONT_FILES): $(FONT_FILES)
 
 $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/css
-	bin/sassc -s compressed $(SCSS_FILE) $@
+	bin/sassc -I node_modules -s compressed $(SCSS_FILE) $@
 
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
-
-$(SVG_SPRITE_FILE): $(SVG_FILES) $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
+	mkdir -p $(GUIBUILD)/app/assets/stack/svg
+	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 $(FAVICON):
 	cp $(GUISRC)/app/favicon.ico $(GUIBUILD)/app/favicon.ico
 
+$(SVG_SPRITE_MODULE):
+	npm install svg-sprite@1.3.6
+
 .PHONY: images
-images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
+images: $(STATIC_IMAGES) $(FAVICON)
+
+.PHONY: svg-sprite
+svg-sprite: $(SVG_SPRITE_MODULE)
+	$(NODE_MODULES)/.bin/svg-sprite --dest=$(ASSETS_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
+	mkdir -p $(GUIBUILD)/app/assets/stack/svg
+	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
 	# Commented out as it's a hack for the new init to be built.
 	# $(NODE_MODULES)/.bin/browserify --no-builtins -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
 
