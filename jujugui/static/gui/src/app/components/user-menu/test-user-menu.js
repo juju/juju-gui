@@ -31,7 +31,8 @@ describe('UserMenu', () => {
   });
 
   const LogoutLink = (<div />);
-  function createEle(props, wrappedComponent) {
+
+  function createEle(props) {
     props = props || {};
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserMenu.prototype.wrappedComponent
@@ -48,47 +49,21 @@ describe('UserMenu', () => {
     };
   }
 
-  it('renders login text when user not authed', () => {
-    const userMenu = createEle();
-    const expected = <div className="header-menu">
-      <span className={'header-menu__button header-menu__button-with-text'}
-        onClick={userMenu.instance.toggleUserMenu}
-        role="button"
-        tabIndex="0"
-        aria-haspopup="true"
-        aria-owns="userMenu"
-        aria-controls="userMenu"
-        aria-expanded="false">
-        {{}}
-      </span>
-      {undefined}
-    </div>;
-    assert.deepEqual(userMenu.output, expected);
-  });
-
-  it('renders a user icon when user is authed', () => {
+  it('renders a user icon when user is authenticated', () => {
     const userMenu = createEle({
       LogoutLink: LogoutLink,
       controllerAPI: {
         userIsAuthenticated: sinon.stub().returns(true)
       }
     });
-    const expected = <div className="header-menu">
-      <span className={'header-menu__button'}
-        onClick={userMenu.instance.toggleUserMenu}
-        role="button"
-        tabIndex="0"
-        aria-haspopup="true"
-        aria-owns="userMenu"
-        aria-controls="userMenu"
-        aria-expanded="false">
-        <juju.components.SvgIcon name="user_16"
-          className="header-menu__icon"
-          size="16" />
-      </span>
-      {userMenu.instance._generateUserMenu()}
-    </div>;
-    assert.deepEqual(userMenu.output, expected);
+    const expected = (
+      <juju.components.SvgIcon name="user_16"
+        className="header-menu__icon" size="16"
+      />
+    );
+    const button = userMenu.output.props.children[0];
+    const icon = button.props.children;
+    expect(icon).toEqualJSX(expected);
   });
 
   describe('menu', () => {

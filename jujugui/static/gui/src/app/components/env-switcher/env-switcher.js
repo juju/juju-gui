@@ -126,7 +126,7 @@ class EnvSwitcher extends React.Component {
         acl={this.props.acl}
         user={this.props.user}
         changeState={this.props.changeState}
-        handleModelClick={this.handleModelClick}
+        handleModelClick={this.handleModelClick.bind(this)}
         humanizeTimestamp={this.props.humanizeTimestamp}
         environmentName={this.props.environmentName}
         envs={this.state.envList}
