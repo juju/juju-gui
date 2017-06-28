@@ -76,13 +76,15 @@ class UserMenu extends React.Component {
             header-menu__menu-list-item-with-link"
             role="menuitem" tabIndex="0">
             <a className="header-menu__menu-list-item-link"
-              role="button" onClick={this._handleProfileClick}>Profile</a>
+              role="button"
+              onClick={this._handleProfileClick.bind(this)}>Profile</a>
           </li>
           <li className="header-menu__menu-list-item
             header-menu__menu-list-item-with-link"
             role="menuitem" tabIndex="0">
             <a className="header-menu__menu-list-item-link"
-              role="button" onClick={this._handleAccountClick}>Account</a>
+              role="button"
+              onClick={this._handleAccountClick.bind(this)}>Account</a>
           </li>
           <li className="header-menu__menu-list-item
             header-menu__menu-list-item-with-link"
@@ -126,7 +128,7 @@ class UserMenu extends React.Component {
     return (
       <div className="header-menu">
         <span className={this._getClassNames(showLogin)}
-          onClick={this.toggleUserMenu}
+          onClick={this.toggleUserMenu.bind(this)}
           role="button"
           tabIndex="0"
           aria-haspopup="true"

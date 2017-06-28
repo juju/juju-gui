@@ -58,7 +58,8 @@ class DeploymentDirectDeploy extends React.Component {
       const entity = this.state.entityModel.toEntity();
       const description = <juju.components.EntityContentDescription
         entityModel={this.state.entityModel}
-        renderMarkdown={this.props.renderMarkdown} />;
+        renderMarkdown={this.props.renderMarkdown}
+      />;
       const title = (<h3
         className="deployment-direct-deploy__title">
         {entity.displayName}
