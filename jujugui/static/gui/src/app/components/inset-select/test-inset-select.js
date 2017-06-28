@@ -60,7 +60,7 @@ describe('InsetSelect', function() {
           </option>]}
         </select>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can return the field value', () => {
@@ -134,6 +134,6 @@ describe('InsetSelect', function() {
           </option>]}
         </select>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

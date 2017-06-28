@@ -18,38 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ServiceOverview = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    charm: React.PropTypes.object.isRequired,
-    clearState: React.PropTypes.func.isRequired,
-    destroyService: React.PropTypes.func.isRequired,
-    displayPlans: React.PropTypes.bool.isRequired,
-    getUnitStatusCounts: React.PropTypes.func.isRequired,
-    modelUUID: React.PropTypes.string.isRequired,
-    service: React.PropTypes.object.isRequired,
-    serviceRelations: React.PropTypes.array.isRequired,
-    showActivePlan: React.PropTypes.func.isRequired,
-    showPlans: React.PropTypes.bool.isRequired
-  },
-
-  /**
-    Get the current state of the inspector.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    // Setting a default state object.
-    return {
+class ServiceOverview extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       activePlan: null,
       plans: null
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     const props = this.props;
 
     if (!props.displayPlans) {
@@ -99,7 +77,7 @@ const ServiceOverview = React.createClass({
           }
         });
     }
-  },
+  }
 
   /**
     Fires changeState to update the UI based on the component clicked.
@@ -107,7 +85,7 @@ const ServiceOverview = React.createClass({
     @method _navigate
     @param {Object} e The click event.
   */
-  _navigate: function(e) {
+  _navigate(e) {
     const title = e.currentTarget.getAttribute('title');
     let activeAction;
     this.state.actions.some((action) => {
@@ -117,14 +95,14 @@ const ServiceOverview = React.createClass({
       }
     });
     this.props.changeState(activeAction.state);
-  },
+  }
 
   /**
     Returns the actions for the overview view.
     @method _generateActionList
     @returns {Array} The array of overview action components.
   */
-  _generateActionList: function(actions) {
+  _generateActionList(actions) {
     const items = [];
     actions.forEach(function(action) {
       items.push(
@@ -139,7 +117,7 @@ const ServiceOverview = React.createClass({
           linkTitle={action.linkTitle} />);
     });
     return items;
-  },
+  }
 
   /**
     create the actions based on the provded service.
@@ -147,7 +125,7 @@ const ServiceOverview = React.createClass({
     @param {Object} service The service object.
     @returns {Array} The array of actions.
   */
-  _generateActions: function(service) {
+  _generateActions(service) {
     const serviceId = service.get('id');
     const state = this.state;
     const actions = [];
@@ -178,7 +156,7 @@ const ServiceOverview = React.createClass({
           icon: status.icon,
           value: count,
           valueType: key,
-          action: this._navigate,
+          action: this._navigate.bind(this),
           state: {
             gui: {
               inspector: {
@@ -191,7 +169,7 @@ const ServiceOverview = React.createClass({
     actions.push({
       title: 'Configure',
       icon: 'configure',
-      action: this._navigate,
+      action: this._navigate.bind(this),
       state: {
         gui: {
           inspector: {
@@ -200,7 +178,7 @@ const ServiceOverview = React.createClass({
     actions.push({
       title: 'Relations',
       icon: 'relations',
-      action: this._navigate,
+      action: this._navigate.bind(this),
       state: {
         gui: {
           inspector: {
@@ -210,7 +188,7 @@ const ServiceOverview = React.createClass({
       title: 'Expose',
       value: service.get('exposed') ? 'On' : 'Off',
       icon: 'exposed_16',
-      action: this._navigate,
+      action: this._navigate.bind(this),
       state: {
         gui: {
           inspector: {
@@ -220,7 +198,7 @@ const ServiceOverview = React.createClass({
     if (Object.keys(resources).length > 0) {
       actions.push({
         title: 'Resources',
-        action: this._navigate,
+        action: this._navigate.bind(this),
         icon: 'resources_16',
         state: {
           gui: {
@@ -236,7 +214,7 @@ const ServiceOverview = React.createClass({
         linkAction: this._viewCharmDetails.bind(this, url),
         linkTitle: url.path(),
         icon: 'change-version',
-        action: this._navigate,
+        action: this._navigate.bind(this),
         state: {
           gui: {
             inspector: {
@@ -248,7 +226,7 @@ const ServiceOverview = React.createClass({
       actions.push({
         title: 'Plan',
         icon: 'plan',
-        action: this._navigate,
+        action: this._navigate.bind(this),
         state: {
           gui: {
             inspector: {
@@ -256,7 +234,7 @@ const ServiceOverview = React.createClass({
               activeComponent: 'plan'}}}});
     }
     this.state.actions = actions;
-  },
+  }
 
   /**
     The callable to view the charm details.
@@ -265,27 +243,27 @@ const ServiceOverview = React.createClass({
     @param {Object} url The charm URL as an instance of window.jujulib.URL.
     @param {Object} evt The click event.
   */
-  _viewCharmDetails: function(url, e) {
+  _viewCharmDetails(url, e) {
     this.props.changeState({store: url.path()});
-  },
+  }
 
   /**
     Handle destroying the service from the button click.
 
     @method _destroyService
   */
-  _destroyService: function() {
+  _destroyService() {
     // db, env, and service have already been bound to this function in
     // the app.js definition.
     this.props.destroyService();
-  },
+  }
 
-  _generateDelete: function(render, readOnly) {
+  _generateDelete(render, readOnly) {
     if (render) {
       const buttons = [{
         disabled: readOnly,
         title: 'Destroy',
-        action: this._destroyService
+        action: this._destroyService.bind(this)
       }];
       return (
         <div className="service-overview__delete">
@@ -294,9 +272,9 @@ const ServiceOverview = React.createClass({
         </div>
       );
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     this._generateActions(props.service);
     const isDeleted = props.service.get('deleted');
@@ -316,8 +294,22 @@ const ServiceOverview = React.createClass({
       </div>
     );
   }
+};
 
-});
+ServiceOverview.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  charm: React.PropTypes.object.isRequired,
+  clearState: React.PropTypes.func.isRequired,
+  destroyService: React.PropTypes.func.isRequired,
+  displayPlans: React.PropTypes.bool.isRequired,
+  getUnitStatusCounts: React.PropTypes.func.isRequired,
+  modelUUID: React.PropTypes.string.isRequired,
+  service: React.PropTypes.object.isRequired,
+  serviceRelations: React.PropTypes.array.isRequired,
+  showActivePlan: React.PropTypes.func.isRequired,
+  showPlans: React.PropTypes.bool.isRequired
+};
 
 YUI.add('service-overview', function() {
   juju.components.ServiceOverview = ServiceOverview;

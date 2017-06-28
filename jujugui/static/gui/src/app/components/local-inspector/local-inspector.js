@@ -18,33 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const LocalInspector = React.createClass({
+class LocalInspector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this._generateState(this.props);
+  }
 
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    file: React.PropTypes.object.isRequired,
-    localType: React.PropTypes.string.isRequired,
-    series: React.PropTypes.object.isRequired,
-    services: React.PropTypes.object.isRequired,
-    upgradeServiceUsingLocalCharm: React.PropTypes.func.isRequired,
-    uploadLocalCharm: React.PropTypes.func.isRequired
-  },
-
-  /**
-    Get the current state of the local inspector.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    // Setting a default state object.
-    return this.generateState(this.props);
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.setState(this.generateState(nextProps));
-  },
+  componentWillReceiveProps(nextProps) {
+    this.setState(this._generateState(nextProps));
+  }
 
   /**
     Change the state to reflect the chosen component.
@@ -52,25 +34,25 @@ const LocalInspector = React.createClass({
     @method _changeActiveComponent
     @param {String} newComponent The component to switch to.
   */
-  _changeActiveComponent: function(newComponent) {
+  _changeActiveComponent(newComponent) {
     var nextProps = this.state;
     nextProps.activeComponent = newComponent;
-    this.setState(this.generateState(nextProps));
-  },
+    this.setState(this._generateState(nextProps));
+  }
 
   /**
     Generates the state for the local inspector based on the app state.
 
-    @method generateState
+    @method _generateState
     @param {Object} nextProps The props which were sent to the component.
     @return {Object} A generated state object which can be passed to setState.
   */
-  generateState: function(nextProps) {
+  _generateState(nextProps) {
     return {
       activeComponent: nextProps.activeComponent || nextProps.localType ||
         this.props.localType
     };
-  },
+  }
 
   /**
     Generates the active component based on the state.
@@ -79,7 +61,7 @@ const LocalInspector = React.createClass({
     @param {Object} activeComponent The component to display.
     @return {Object} A generated component.
   */
-  _generateComponent: function(activeComponent) {
+  _generateComponent(activeComponent) {
     var component;
     switch (activeComponent) {
       case 'new':
@@ -110,14 +92,14 @@ const LocalInspector = React.createClass({
         break;
     }
     return component;
-  },
+  }
 
   /**
     Generate a list of services
 
     @method _generateServiceList
   */
-  _generateServiceList: function() {
+  _generateServiceList() {
     var props = this.props;
     var services = props.services.toArray();
     if (services.length === 0) {
@@ -138,35 +120,35 @@ const LocalInspector = React.createClass({
       );
     });
     return items;
-  },
+  }
 
   /**
     Handle closing the local inspector.
 
     @method _close
   */
-  _close: function() {
+  _close() {
     this.props.changeState({
       gui: {
         inspector: null
       }});
-  },
+  }
 
   /**
     Handle uploading the charm.
 
     @method _handleUpload
   */
-  _handleUpload: function() {
+  _handleUpload() {
     this.props.uploadLocalCharm(this.refs.series.value, this.props.file);
-  },
+  }
 
   /**
     Handle updating services.
 
     @method _handleUpdate
   */
-  _handleUpdate: function() {
+  _handleUpdate() {
     var refs = this.refs;
     var services = this.props.services;
     var selectedServices = Object.keys(refs).filter((ref) => {
@@ -183,28 +165,28 @@ const LocalInspector = React.createClass({
       this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
       this._close();
     }
-  },
+  }
 
-  render: function() {
+  render() {
     var isReadOnly = this.props.acl.isReadOnly();
     var localType = this.props.localType;
     var file = this.props.file;
     var size = (file.size / 1024).toFixed(2);
     var buttons = [{
       title: 'Cancel',
-      action: this._close,
+      action: this._close.bind(this),
       type: 'base'
     }, {
       title: 'Upload',
       action: this.state.activeComponent === 'new' ?
-        this._handleUpload : this._handleUpdate,
+        this._handleUpload.bind(this) : this._handleUpdate.bind(this),
       disabled: isReadOnly,
       type: 'neutral'
     }];
     return (
       <div className="inspector-view local-inspector">
         <juju.components.InspectorHeader
-          backCallback={this._close}
+          backCallback={this._close.bind(this)}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
@@ -239,8 +221,18 @@ const LocalInspector = React.createClass({
       </div>
     );
   }
+};
 
-});
+LocalInspector.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  file: React.PropTypes.object.isRequired,
+  localType: React.PropTypes.string.isRequired,
+  series: React.PropTypes.object.isRequired,
+  services: React.PropTypes.object.isRequired,
+  upgradeServiceUsingLocalCharm: React.PropTypes.func.isRequired,
+  uploadLocalCharm: React.PropTypes.func.isRequired
+};
 
 YUI.add('local-inspector', function() {
   juju.components.LocalInspector = LocalInspector;

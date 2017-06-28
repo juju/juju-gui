@@ -72,7 +72,7 @@ describe('MachineViewAddMachine', function() {
           buttons={buttons}
           key="buttons" />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can disable the controls when read only', function() {
@@ -115,7 +115,7 @@ describe('MachineViewAddMachine', function() {
           buttons={buttons}
           key="buttons" />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render for creating a container', function() {
@@ -144,7 +144,7 @@ describe('MachineViewAddMachine', function() {
           <option value="kvm">KVM</option>
         </select>
       ]}</div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render for selecting a machine', function() {
@@ -200,7 +200,7 @@ describe('MachineViewAddMachine', function() {
           </option>
         ]}
       </select>);
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
   });
 
   it('can call the cancel method', function() {

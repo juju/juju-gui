@@ -18,40 +18,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Constraints = React.createClass({
-  displayName: 'Constraints',
-
-  propTypes: {
-    constraints: React.PropTypes.object,
-    containerType: React.PropTypes.string,
-    currentSeries: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    hasUnit: React.PropTypes.bool,
-    providerType: React.PropTypes.string,
-    series: React.PropTypes.array,
-    valuesChanged: React.PropTypes.func.isRequired
-  },
-
-  getDefaultProps: () => {
-    return {disabled: false, hasUnit: false, providerType: '', series: []};
-  },
-
+class Constraints extends React.Component {
   /**
     Called when the component is first mounted.
 
     @method componentDidMount
   */
-  componentDidMount: function () {
+  componentDidMount() {
     // Pass the parent the initial data.
     this._handleValueChanged();
-  },
+  }
 
   /**
     Call the parent method with the new values of the constraints.
 
     @method _handleValueChanged
   */
-  _handleValueChanged: function() {
+  _handleValueChanged() {
     const refs = this.refs;
     const defaultRef = {value: null};
     const arch = refs.archConstraintSelect || defaultRef;
@@ -71,9 +54,9 @@ const Constraints = React.createClass({
       // extracted and handled separately in the API call.
       series: series.value
     });
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     const disabled = props.disabled;
     const constraints = props.constraints || {};
@@ -94,7 +77,7 @@ const Constraints = React.createClass({
           key="seriesConstraintSelect"
           id="series-constraint"
           name="series-constraint"
-          onChange={this._handleValueChanged}>
+          onChange={this._handleValueChanged.bind(this)}>
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
@@ -111,7 +94,7 @@ const Constraints = React.createClass({
         key="archConstraintSelect"
         id="arch-constraint"
         name="arch-constraint"
-        onChange={this._handleValueChanged}>
+        onChange={this._handleValueChanged.bind(this)}>
         <option key="default" value="">
           Optionally choose an architecture
         </option>
@@ -130,7 +113,7 @@ const Constraints = React.createClass({
           disabled={disabled}
           id="cpu-constraint"
           name="cpu-constraint"
-          onChange={this._handleValueChanged}
+          onChange={this._handleValueChanged.bind(this)}
           ref="cpuConstraintInput"
         />
       </div>
@@ -146,7 +129,7 @@ const Constraints = React.createClass({
           disabled={disabled}
           id="cores-constraint"
           name="cores-constraint"
-          onChange={this._handleValueChanged}
+          onChange={this._handleValueChanged.bind(this)}
           ref="coresConstraintInput"
         />
       </div>
@@ -162,7 +145,7 @@ const Constraints = React.createClass({
           disabled={disabled}
           id="mem-constraint"
           name="mem-constraint"
-          onChange={this._handleValueChanged}
+          onChange={this._handleValueChanged.bind(this)}
           ref="memConstraintInput"
         />
       </div>
@@ -178,7 +161,7 @@ const Constraints = React.createClass({
           disabled={disabled}
           id="disk-constraint"
           name="disk-constraint"
-          onChange={this._handleValueChanged}
+          onChange={this._handleValueChanged.bind(this)}
           ref="diskConstraintInput"
         />
       </div>
@@ -240,7 +223,25 @@ const Constraints = React.createClass({
       </div>
     );
   }
-});
+};
+
+Constraints.propTypes = {
+  constraints: React.PropTypes.object,
+  containerType: React.PropTypes.string,
+  currentSeries: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  hasUnit: React.PropTypes.bool,
+  providerType: React.PropTypes.string,
+  series: React.PropTypes.array,
+  valuesChanged: React.PropTypes.func.isRequired
+};
+
+Constraints.defaultProps = {
+  disabled: false,
+  hasUnit: false,
+  providerType: '',
+  series: []
+};
 
 YUI.add('constraints', function() {
   juju.components.Constraints = Constraints;

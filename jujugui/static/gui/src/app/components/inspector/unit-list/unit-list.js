@@ -18,27 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UnitList = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    destroyUnits: React.PropTypes.func.isRequired,
-    envResolved: React.PropTypes.func.isRequired,
-    service: React.PropTypes.object.isRequired,
-    unitStatus: React.PropTypes.string,
-    units: React.PropTypes.array.isRequired
-  },
-
-  /**
-    Generate the initial state.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
-    return {activeCount: 0};
-  },
+class UnitList extends React.Component {
+  constructor() {
+    super();
+    this.state = {activeCount: 0};
+  }
 
   /**
     Fires changeState to update the UI based on the component clicked.
@@ -46,14 +30,14 @@ const UnitList = React.createClass({
     @method _navigate
     @param {Object} e The click event.
   */
-  _navigate: function(e) {
+  _navigate(e) {
     this.props.changeState({
       gui: {
         inspector: {
           id: this.props.service.get('id'),
           activeComponent: 'scale'
         }}});
-  },
+  }
 
   /**
     Sets the selectAll state property based on the "select all" child
@@ -64,7 +48,7 @@ const UnitList = React.createClass({
     @param {Boolean} checked Whether the "select all" child component is
       checked.
   */
-  _selectAllUnits: function(group, checked) {
+  _selectAllUnits(group, checked) {
     var refs = this.refs;
     var setChecked = (key, groups) => {
       groups[key].units.forEach((unit) => {
@@ -92,7 +76,7 @@ const UnitList = React.createClass({
     } else {
       setChecked(group, groups);
     }
-  },
+  }
 
   /**
     The callable to be passed to the unit items for navigating to the unit
@@ -101,7 +85,7 @@ const UnitList = React.createClass({
     @method _unitItemAction
     @param {Object} e The click event.
   */
-  _unitItemAction: function(e) {
+  _unitItemAction(e) {
     var unitParts = e.currentTarget.getAttribute('data-id').split('/');
     this.props.changeState({
       gui: {
@@ -114,7 +98,7 @@ const UnitList = React.createClass({
         }
       }
     });
-  },
+  }
 
   /**
     Update the selected units with the supplied action.
@@ -122,7 +106,7 @@ const UnitList = React.createClass({
     @method _handleUpdateUnits
     @param {String} action The action to apply to the units.
   */
-  _handleUpdateUnits: function(action) {
+  _handleUpdateUnits(action) {
     let unitNames = [];
     const units = this.props.units;
     const refs = this.refs;
@@ -152,7 +136,7 @@ const UnitList = React.createClass({
       this.props.destroyUnits(unitNames);
     }
     this._selectAllUnits(null, false);
-  },
+  }
 
   /**
     Generates a list of unit components.
@@ -161,7 +145,7 @@ const UnitList = React.createClass({
     @param {Object} group A definition for a group of checkboxes .
     @returns {Array} Collection of unit components.
   */
-  _generateUnitList: function(group) {
+  _generateUnitList(group) {
     var key = group.key;
     var unitList = [
       <juju.components.CheckListItem
@@ -182,12 +166,12 @@ const UnitList = React.createClass({
           ref={ref}
           label={unit.displayName}
           extraInfo={unit.workloadStatusMessage}
-          action={this._unitItemAction}
+          action={this._unitItemAction.bind(this)}
           id={unit.id}
-          whenChanged={this._updateActiveCount} />);
+          whenChanged={this._updateActiveCount.bind(this)} />);
     });
     return unitList;
-  },
+  }
 
   /**
     Generate the groups of units for the service.
@@ -195,7 +179,7 @@ const UnitList = React.createClass({
     @method _generateGroups
     @returns {Object} The groups of units for the service.
   */
-  _generateGroups: function() {
+  _generateGroups() {
     var units = this.props.units;
     var groups = {};
     var unitStatus = this.props.unitStatus;
@@ -228,7 +212,7 @@ const UnitList = React.createClass({
       };
     }
     return groups;
-  },
+  }
 
   /**
     Generate the groups of units.
@@ -236,7 +220,7 @@ const UnitList = React.createClass({
     @method _generateListGroups
     @returns {Object} The list components
   */
-  _generateListGroups: function() {
+  _generateListGroups() {
     if (this.props.units.length === 0) {
       return (
         <div className="unit-list__message">
@@ -253,14 +237,14 @@ const UnitList = React.createClass({
       <ul className="unit-list__units">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Update the count of the number of active checkboxes.
 
     @method _updateActiveCount
   */
-  _updateActiveCount: function() {
+  _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
     Object.keys(refs).forEach((ref) => {
@@ -271,7 +255,7 @@ const UnitList = React.createClass({
       }
     });
     this.setState({'activeCount': activeCount});
-  },
+  }
 
   /**
     Generate the buttons for the status.
@@ -279,7 +263,7 @@ const UnitList = React.createClass({
     @method _generateButtons
     @returns {Array} The list of buttons
   */
-  _generateButtons: function() {
+  _generateButtons() {
     if (this.props.units.length === 0) {
       return;
     }
@@ -309,7 +293,7 @@ const UnitList = React.createClass({
     return (
       <juju.components.ButtonRow
         buttons={buttons} />);
-  },
+  }
 
   /**
     Generate the scale service action.
@@ -317,7 +301,7 @@ const UnitList = React.createClass({
     @method _generateScaleService
     @returns {Object} The scale service component.
   */
-  _generateScaleService: function() {
+  _generateScaleService() {
     // Don't show the scale service if we're viewing a status list (e.g.
     // errors) or if the service is a subordinate.
     if (this.props.unitStatus || this.props.service.get('subordinate')) {
@@ -326,13 +310,13 @@ const UnitList = React.createClass({
     return (
       <div className="unit-list__actions">
         <juju.components.OverviewAction
-          action={this._navigate}
+          action={this._navigate.bind(this)}
           icon="plus_box_16"
           title="Scale application" />
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="unit-list">
         {this._generateScaleService()}
@@ -341,8 +325,17 @@ const UnitList = React.createClass({
       </div>
     );
   }
+};
 
-});
+UnitList.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  destroyUnits: React.PropTypes.func.isRequired,
+  envResolved: React.PropTypes.func.isRequired,
+  service: React.PropTypes.object.isRequired,
+  unitStatus: React.PropTypes.string,
+  units: React.PropTypes.array.isRequired
+};
 
 YUI.add('unit-list', function() {
   juju.components.UnitList = UnitList;

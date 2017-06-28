@@ -80,7 +80,7 @@ describe('DeploymentSSHKey', function() {
         />
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('renders with azure', function() {
@@ -107,7 +107,7 @@ describe('DeploymentSSHKey', function() {
         />
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('stores the SSH key', function() {

@@ -66,7 +66,7 @@ describe('UnitList', () => {
         </div>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of unit components', () => {
@@ -93,34 +93,36 @@ describe('UnitList', () => {
       'CheckListItem-' + units[0].id,
       'CheckListItem-' + units[1].id
     ];
-    assert.deepEqual(children, [
-      <juju.components.CheckListItem
-        disabled={false}
-        ref="select-all"
-        key="select-all"
-        className="select-all"
-        label="Select all units"
-        aside="2"
-        whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.CheckListItem
-        disabled={false}
-        key={units[0].displayName}
-        ref={refs[0]}
-        label={units[0].displayName}
-        action={children[1].props.action}
-        extraInfo={undefined}
-        id="mysql/0"
-        whenChanged={instance._updateActiveCount} />,
-      <juju.components.CheckListItem
-        disabled={false}
-        key={units[1].displayName}
-        ref={refs[1]}
-        label={units[1].displayName}
-        action={children[2].props.action}
-        extraInfo={undefined}
-        id="mysql/1"
-        whenChanged={instance._updateActiveCount} />
-    ]);
+    const expected = (
+      <ul className="unit-list__units">
+        {[<juju.components.CheckListItem
+          disabled={false}
+          ref="select-all"
+          key="select-all"
+          className="select-all"
+          label="Select all units"
+          aside="2"
+          whenChanged={children[0].props.whenChanged}/>,
+        <juju.components.CheckListItem
+          disabled={false}
+          key={units[0].displayName}
+          ref={refs[0]}
+          label={units[0].displayName}
+          action={children[1].props.action}
+          extraInfo={undefined}
+          id="mysql/0"
+          whenChanged={instance._updateActiveCount} />,
+        <juju.components.CheckListItem
+          disabled={false}
+          key={units[1].displayName}
+          ref={refs[1]}
+          label={units[1].displayName}
+          action={children[2].props.action}
+          extraInfo={undefined}
+          id="mysql/1"
+          whenChanged={instance._updateActiveCount} />]}
+      </ul>);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('renders a grouped list of error unit components', () => {
@@ -150,42 +152,44 @@ describe('UnitList', () => {
       'CheckListItem-' + units[0].id,
       'CheckListItem-' + units[1].id
     ];
-    assert.deepEqual(children, [
-      <juju.components.CheckListItem
-        aside="1"
-        disabled={false}
-        ref="select-all-0"
-        key="select-all-0"
-        label="hook failed: install"
-        className="select-all"
-        whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.CheckListItem
-        disabled={false}
-        key={units[0].displayName}
-        ref={refs[0]}
-        label={units[0].displayName}
-        action={children[1].props.action}
-        extraInfo={undefined}
-        id="mysql/0"
-        whenChanged={instance._updateActiveCount} />,
-      <juju.components.CheckListItem
-        aside="1"
-        disabled={false}
-        ref="select-all-1"
-        key="select-all-1"
-        label="hook failed: config-changed"
-        className="select-all"
-        whenChanged={children[2].props.whenChanged}/>,
-      <juju.components.CheckListItem
-        disabled={false}
-        key={units[1].displayName}
-        ref={refs[1]}
-        label={units[1].displayName}
-        action={children[3].props.action}
-        extraInfo={undefined}
-        id="mysql/1"
-        whenChanged={instance._updateActiveCount} />
-    ]);
+    const expected = (
+      <ul className="unit-list__units">
+        {[<juju.components.CheckListItem
+          aside="1"
+          disabled={false}
+          ref="select-all-0"
+          key="select-all-0"
+          label="hook failed: install"
+          className="select-all"
+          whenChanged={children[0].props.whenChanged}/>,
+        <juju.components.CheckListItem
+          disabled={false}
+          key={units[0].displayName}
+          ref={refs[0]}
+          label={units[0].displayName}
+          action={children[1].props.action}
+          extraInfo={undefined}
+          id="mysql/0"
+          whenChanged={instance._updateActiveCount} />,
+        <juju.components.CheckListItem
+          aside="1"
+          disabled={false}
+          ref="select-all-1"
+          key="select-all-1"
+          label="hook failed: config-changed"
+          className="select-all"
+          whenChanged={children[2].props.whenChanged}/>,
+        <juju.components.CheckListItem
+          disabled={false}
+          key={units[1].displayName}
+          ref={refs[1]}
+          label={units[1].displayName}
+          action={children[3].props.action}
+          extraInfo={undefined}
+          id="mysql/1"
+          whenChanged={instance._updateActiveCount} />]}
+      </ul>);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('displays the provided count', function() {
@@ -214,11 +218,12 @@ describe('UnitList', () => {
         units={units}
         whenChanged={sinon.stub()} />);
     var child = output.props.children[0].props.children;
-    assert.deepEqual(child,
+    const expected = (
       <juju.components.OverviewAction
         action={child.props.action}
         icon="plus_box_16"
-        title="Scale application"/>);
+        title="Scale application" />);
+    expect(child).toEqualJSX(expected);
   });
 
   it('does not render the actions when viewing a status list', () => {
@@ -235,12 +240,13 @@ describe('UnitList', () => {
         unitStatus="pending"
         units={units}
         whenChanged={sinon.stub()} />);
-    assert.deepEqual(output,
+    const expected = (
       <div className="unit-list">
         {undefined}
         {output.props.children[1]}
         {output.props.children[2]}
       </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('does not render the actions when viewing a subordinate', () => {
@@ -264,12 +270,13 @@ describe('UnitList', () => {
         service={service}
         units={units}
         whenChanged={sinon.stub()} />);
-    assert.deepEqual(output,
+    const expected = (
       <div className="unit-list">
         {undefined}
         {output.props.children[1]}
         {output.props.children[2]}
       </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('propagates select-all to all children', () => {
@@ -392,10 +399,10 @@ describe('UnitList', () => {
       action: buttonItems[0].action,
       disabled: true
     }];
-    assert.deepEqual(output.props.children[2],
+    const expected = (
       <juju.components.ButtonRow
         buttons={buttons} />);
-    assert.equal(buttonItems.length, 1);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('displays Resolve and Retry buttons for an error list', function() {
@@ -429,10 +436,10 @@ describe('UnitList', () => {
       action: buttonItems[2].action,
       disabled: true
     }];
-    assert.deepEqual(output.props.children[2],
+    const expected = (
       <juju.components.ButtonRow
         buttons={buttons} />);
-    assert.equal(buttonItems.length, 3);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can remove the selected units', function() {
@@ -765,34 +772,36 @@ describe('UnitList', () => {
       'CheckListItem-' + units[0].id,
       'CheckListItem-' + units[1].id
     ];
-    assert.deepEqual(children, [
-      <juju.components.CheckListItem
-        disabled={true}
-        ref="select-all"
-        key="select-all"
-        className="select-all"
-        label="Select all units"
-        aside="2"
-        whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.CheckListItem
-        disabled={true}
-        key={units[0].displayName}
-        ref={refs[0]}
-        label={units[0].displayName}
-        action={children[1].props.action}
-        extraInfo={undefined}
-        id="mysql/0"
-        whenChanged={instance._updateActiveCount} />,
-      <juju.components.CheckListItem
-        disabled={true}
-        key={units[1].displayName}
-        ref={refs[1]}
-        label={units[1].displayName}
-        action={children[2].props.action}
-        extraInfo={undefined}
-        id="mysql/1"
-        whenChanged={instance._updateActiveCount} />
-    ]);
+    const list = (
+      <ul className="unit-list__units">
+        {[<juju.components.CheckListItem
+          disabled={true}
+          ref="select-all"
+          key="select-all"
+          className="select-all"
+          label="Select all units"
+          aside="2"
+          whenChanged={children[0].props.whenChanged}/>,
+        <juju.components.CheckListItem
+          disabled={true}
+          key={units[0].displayName}
+          ref={refs[0]}
+          label={units[0].displayName}
+          action={children[1].props.action}
+          extraInfo={undefined}
+          id="mysql/0"
+          whenChanged={instance._updateActiveCount} />,
+        <juju.components.CheckListItem
+          disabled={true}
+          key={units[1].displayName}
+          ref={refs[1]}
+          label={units[1].displayName}
+          action={children[2].props.action}
+          extraInfo={undefined}
+          id="mysql/1"
+          whenChanged={instance._updateActiveCount} />]}
+      </ul>);
+    expect(output.props.children[1]).toEqualJSX(list);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       disabled: true,
@@ -801,8 +810,9 @@ describe('UnitList', () => {
       action: buttonItems[0].action,
       disabled: true
     }];
-    assert.deepEqual(output.props.children[2],
+    const expected = (
       <juju.components.ButtonRow
         buttons={buttons} />);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 });

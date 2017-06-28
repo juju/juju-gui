@@ -18,44 +18,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ExpandingRow = React.createClass({
-  displayName: 'ExpandingRow',
-
-  propTypes: {
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    classes: React.PropTypes.object,
-    clickable: React.PropTypes.bool,
-    expanded: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {clickable: true};
-  },
-
-  /**
-    Generate the initial state for the component.
-
-    @method getInitialState
-  */
-  getInitialState: function() {
-    return {
+class ExpandingRow extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       expanded: false,
       styles: {
         height: '0px',
         opacity: 0
       }
     };
-  },
+  }
 
   /**
     Called once the component has initially mounted.
 
     @method componentDidMount
   */
-  componentDidMount: function() {
+  componentDidMount() {
     // If the component should initially be shown as expanded then animate it
     // open.
     if (this.props.expanded) {
@@ -67,18 +47,18 @@ const ExpandingRow = React.createClass({
       this._resize();
     });
     this.observer.observe(this.refs.inner, {childList: true, subtree: true});
-  },
+  }
 
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.props.expanded !== nextProps.expanded) {
       this._toggle();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     // Stop observing the child DOM.
     this.observer.disconnect();
-  },
+  }
 
   /**
     Generate the base class names for the component.
@@ -86,7 +66,7 @@ const ExpandingRow = React.createClass({
     @method _generateClasses
     @returns {Object} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var classes = this.props.classes || {};
     classes['expanding-row--expanded'] = this.state.expanded;
     classes['expanding-row--clickable'] = this.props.clickable;
@@ -94,36 +74,36 @@ const ExpandingRow = React.createClass({
       'expanding-row',
       'twelve-col',
       classes);
-  },
+  }
 
   /**
     Toggle between the expanded and closed states.
 
     @method _toggle
   */
-  _toggle: function() {
+  _toggle() {
     this.setState({expanded: !this.state.expanded}, () => {
       this._resize();
     });
-  },
+  }
 
   /**
     Resize the
 
     @method _resize
   */
-  _resize: function() {
+  _resize() {
     const expanded = this.state.expanded;
     this.setState({styles: {
       height: expanded ? this.refs.inner.offsetHeight + 'px' : '0px',
       opacity: expanded ? 1 : 0
     }});
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <li className={this._generateClasses()}
-        onClick={this.props.clickable ? this._toggle : undefined}>
+        onClick={this.props.clickable ? this._toggle.bind(this) : undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           {this.props.children[0]}
         </div>
@@ -136,7 +116,21 @@ const ExpandingRow = React.createClass({
         </div>
       </li>);
   }
-});
+};
+
+ExpandingRow.propTypes = {
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  classes: React.PropTypes.object,
+  clickable: React.PropTypes.bool,
+  expanded: React.PropTypes.bool
+};
+
+ExpandingRow.defaultProps = {
+  clickable: true
+};
 
 YUI.add('expanding-row', function() {
   juju.components.ExpandingRow = ExpandingRow;

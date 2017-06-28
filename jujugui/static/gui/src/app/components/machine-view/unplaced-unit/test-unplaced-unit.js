@@ -67,7 +67,7 @@ describe('MachineViewUnplacedUnit', function() {
         {undefined}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display in dragged mode', function() {
@@ -92,7 +92,7 @@ describe('MachineViewUnplacedUnit', function() {
         'machine-view__unplaced-unit--dragged'}>
         {output.props.children}
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can remove a unit', function() {
@@ -145,6 +145,6 @@ describe('MachineViewUnplacedUnit', function() {
           label: 'Destroy',
           action: false
         }]} />);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 });

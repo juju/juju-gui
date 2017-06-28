@@ -18,11 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const BudgetChart = React.createClass({
-  propTypes: {
-    budgets: React.PropTypes.object
-  },
-
+class BudgetChart extends React.Component {
   /**
     Generate the widths for the chart bars.
 
@@ -32,7 +28,7 @@ const BudgetChart = React.createClass({
     @param {Int} newAllocations The new amount to be allocated.
     @returns {Object} The element styles.
   */
-  _generateStyles: function(limit, allocated, newAllocations) {
+  _generateStyles(limit, allocated, newAllocations) {
     // Set the width of the new allocations bar to the percent of the limit.
     // If the limit is zero the percent will equal NaN, hence the || 0.
     var newWidth = ((newAllocations / limit * 100) || 0) + '%';
@@ -48,9 +44,9 @@ const BudgetChart = React.createClass({
         width: newWidth
       }
     };
-  },
+  }
 
-  render: function() {
+  render() {
     // If there is no budget data available then default everything to zero.
     var budgets = this.props.budgets || {
       total: {
@@ -98,8 +94,11 @@ const BudgetChart = React.createClass({
       </div>
     );
   }
+};
 
-});
+BudgetChart.propTypes = {
+  budgets: React.PropTypes.object
+};
 
 YUI.add('budget-chart', function() {
   juju.components.BudgetChart = BudgetChart;

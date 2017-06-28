@@ -18,15 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ModalGUISettings = React.createClass({
-  displayName: 'ModalGUISettings',
-
-  propTypes: {
-    closeModal: React.PropTypes.func.isRequired,
-    localStorage: React.PropTypes.object.isRequired
-  },
-
-  getInitialState: function() {
+class ModalGUISettings extends React.Component {
+  constructor(props) {
+    super(props);
     let state = {};
     const localStorage = this.props.localStorage;
     // We have to check for the 'true' string. Because localStorage is all
@@ -37,27 +31,27 @@ const ModalGUISettings = React.createClass({
       getItem('disable-auto-place') === 'true';
     state['force-containers'] = localStorage.
       getItem('force-containers') === 'true';
-    return state;
-  },
+    this.state = state;
+  }
 
   /**
     Update the state when an input is changed.
 
     @param {Object} evt the change event.
   */
-  handleChange: function(evt) {
+  _handleChange(evt) {
     const target = evt.target;
     const value = target.checked;
     const name = target.name;
     this.setState({
       [name]: value
     });
-  },
+  }
 
   /**
     When the save button is pressed, commit to localStorage.
   */
-  handleSave: function() {
+  _handleSave() {
     Object.keys(this.state).forEach(key => {
       if (key !== 'visible') {
         if (this.state[key] === true) {
@@ -69,9 +63,9 @@ const ModalGUISettings = React.createClass({
     });
 
     this.props.closeModal();
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
@@ -87,7 +81,7 @@ const ModalGUISettings = React.createClass({
             <label htmlFor="disable-cookie">
               <input type="checkbox" name="disable-cookie"
                 id="disable-cookie"
-                onChange={this.handleChange}
+                onChange={this._handleChange.bind(this)}
                 defaultChecked={this.state['disable-cookie']} />&nbsp;
                 Disable the EU cookie warning.
             </label>
@@ -96,7 +90,7 @@ const ModalGUISettings = React.createClass({
             <label htmlFor="force-containers">
               <input type="checkbox" name="force-containers"
                 id="force-containers"
-                onChange={this.handleChange}
+                onChange={this._handleChange.bind(this)}
                 defaultChecked={this.state['force-containers']} />&nbsp;
                 Enable container control for this provider.
             </label>
@@ -105,7 +99,7 @@ const ModalGUISettings = React.createClass({
             <label htmlFor="disable-auto-place">
               <input type="checkbox" name="disable-auto-place"
                 id="disable-auto-place"
-                onChange={this.handleChange}
+                onChange={this._handleChange.bind(this)}
                 defaultChecked={this.state['disable-auto-place']} />&nbsp;
                 Default to not automatically place units on commit.
             </label>
@@ -116,13 +110,18 @@ const ModalGUISettings = React.createClass({
             </small>
           </p>
           <input type="button" className="button--positive"
-            name="save-settings" onClick={this.handleSave}
+            name="save-settings" onClick={this._handleSave.bind(this)}
             id="save-settings" value="Save"/>
         </div>
       </div>
     );
   }
-});
+};
+
+ModalGUISettings.propTypes = {
+  closeModal: React.PropTypes.func.isRequired,
+  localStorage: React.PropTypes.object.isRequired
+};
 
 YUI.add('modal-gui-settings', function() {
   juju.components.ModalGUISettings = ModalGUISettings;

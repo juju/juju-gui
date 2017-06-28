@@ -18,43 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileAgreementList = React.createClass({
-  // broadcastStatus is necessary for communicating loading status back to
-  // the parent SectionLoadWatcher.
-  propTypes: {
-    broadcastStatus: React.PropTypes.func,
-    getAgreements: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getInitialState: function() {
+class UserProfileAgreementList extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-
-    return {
+    this.state = {
       agreementList: [],
       loadingAgreements: false
     };
-  },
+  }
 
-  getDefaultProps: function() {
-    // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-    // to it should not fail, so default to an empty function.
-    return {
-      broadcastStatus: function() {}
-    };
-  },
-
-  componentWillMount: function() {
+  componentWillMount() {
     this._getAgreements();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // If the user has changed then update the data.
     const props = this.props;
     const currentUser = props.user && props.user.user;
@@ -62,22 +46,23 @@ const UserProfileAgreementList = React.createClass({
     if (nextUser !== currentUser) {
       this._getAgreements();
     }
-  },
+  }
 
   /**
     Get the agreements for the authenticated user.
 
     @method _getAgreements
   */
-  _getAgreements: function() {
+  _getAgreements() {
     this.props.broadcastStatus('starting');
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingAgreements: true}, () => {
-      const xhr = this.props.getAgreements(this._getAgreementsCallback);
+      const xhr = this.props.getAgreements(
+        this._getAgreementsCallback.bind(this));
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Callback for the terms API call to get agreements.
@@ -86,7 +71,7 @@ const UserProfileAgreementList = React.createClass({
     @param {String} error The error from the request, or null.
     @param {Object} data The data from the request.
   */
-  _getAgreementsCallback: function(error, data) {
+  _getAgreementsCallback(error, data) {
     this.setState({loadingAgreements: false}, () => {
       const broadcastStatus = this.props.broadcastStatus;
       if (error) {
@@ -102,7 +87,7 @@ const UserProfileAgreementList = React.createClass({
       }
       this.setState({agreementList: data});
     });
-  },
+  }
 
   /**
     Generate the details for the provided agreement.
@@ -111,7 +96,7 @@ const UserProfileAgreementList = React.createClass({
     @param {Object} agreement A agreement object.
     @returns {Array} The markup for the row.
   */
-  _generateRow: function(agreement) {
+  _generateRow(agreement) {
     const term = agreement.term;
     return (
       <li className="user-profile__list-row twelve-col"
@@ -125,7 +110,7 @@ const UserProfileAgreementList = React.createClass({
             relative={true} />
         </span>
       </li>);
-  },
+  }
 
   /**
     Generate the header for the agreements.
@@ -133,7 +118,7 @@ const UserProfileAgreementList = React.createClass({
     @method _generateHeader
     @returns {Array} The markup for the header.
   */
-  _generateHeader: function() {
+  _generateHeader() {
     return (
       <li className="user-profile__list-header twelve-col">
         <span className="user-profile__list-col eight-col">
@@ -143,9 +128,9 @@ const UserProfileAgreementList = React.createClass({
           Date signed
         </span>
       </li>);
-  },
+  }
 
-  render: function() {
+  render() {
     if (this.state.loadingAgreements) {
       return (
         <div className="user-profile__agreement-list twelve-col">
@@ -157,7 +142,7 @@ const UserProfileAgreementList = React.createClass({
     if (!list || list.length === 0) {
       return null;
     }
-    const rows = list.map(this._generateRow);
+    const rows = list.map(this._generateRow.bind(this));
     return (
       <div className="user-profile__agreement-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
@@ -173,8 +158,21 @@ const UserProfileAgreementList = React.createClass({
       </div>
     );
   }
+};
 
-});
+// broadcastStatus is necessary for communicating loading status back to
+// the parent SectionLoadWatcher.
+UserProfileAgreementList.propTypes = {
+  broadcastStatus: React.PropTypes.func,
+  getAgreements: React.PropTypes.func.isRequired,
+  user: React.PropTypes.object
+};
+
+// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+// to it should not fail, so default to an empty function.
+UserProfileAgreementList.defaultProps = {
+  broadcastStatus: function() {}
+};
 
 YUI.add('user-profile-agreement-list', function() {
   juju.components.UserProfileAgreementList = UserProfileAgreementList;

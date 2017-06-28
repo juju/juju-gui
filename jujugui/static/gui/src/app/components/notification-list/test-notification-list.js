@@ -68,14 +68,14 @@ describe('NotificationList', function() {
         {items}
       </ul>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render with no notifications', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         notification={null}/>);
-    assert.deepEqual(output.props.children[0], undefined);
+    assert.strictEqual(output.props.children[0], undefined);
   });
 
   it('can render notifications after rendering none', () => {
@@ -83,7 +83,7 @@ describe('NotificationList', function() {
       <juju.components.NotificationList
         notification={null}/>, true);
     const output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0], undefined);
+    assert.strictEqual(output.props.children[0], undefined);
     const notification = {
       timestamp: '12345',
       message: 'notification message',

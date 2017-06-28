@@ -427,7 +427,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
       </juju.components.DeploymentSection>
     );
-    assert.deepEqual(output.props.children[5], expectedOutput);
+    expect(output.props.children[5]).toEqualJSX(expectedOutput);
   });
 
   it('can enable the budget section', function() {
@@ -487,7 +487,7 @@ describe('DeploymentFlow', function() {
           username="spinach"
           validateForm={validateForm} />
       </juju.components.DeploymentSection>);
-    assert.deepEqual(output.props.children[10], expected);
+    expect(output.props.children[10]).toEqualJSX(expected);
   });
 
   it('can hide the agreements section', function() {
@@ -537,7 +537,7 @@ describe('DeploymentFlow', function() {
           I agree to all terms.
         </label>
       </div>);
-    assert.deepEqual(agreements, expected);
+    expect(agreements).toEqualJSX(expected);
   });
 
   it('can disable the agreements section', function() {
@@ -1105,7 +1105,7 @@ describe('DeploymentFlow', function() {
       getAgreementsByTerms: sinon.stub().returns({abort: abort})
     });
     renderer.unmount();
-    assert.deepEqual(abort.callCount, 1);
+    assert.equal(abort.callCount, 1);
   });
 
   describe('_parseTermId', function() {

@@ -242,7 +242,7 @@ describe('ScaleService', function() {
           submit: true
         }]} />
       </form>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
 });

@@ -29,29 +29,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Define the Azure cloud type.
 const AZURE_CLOUD_TYPE = 'azure';
 
-const DeploymentSSHKey = React.createClass({
-  propTypes: {
-    cloud: React.PropTypes.object,
-    setSSHKey: React.PropTypes.func.isRequired
-  },
-
+class DeploymentSSHKey extends React.Component {
   /**
     Handle SSH key content changes.
 
     @method _onSSHKeyInputBlur
     @param {Object} evt The blur event.
   */
-  _onSSHKeyInputBlur: function(evt) {
+  _onSSHKeyInputBlur(evt) {
     const key = this.refs.sshKey.getValue();
     this.props.setSSHKey(key);
-  },
+  }
 
   /**
     Render the component.
 
     @method render
   */
-  render: function() {
+  render() {
     const cloud = this.props.cloud;
     if (!cloud) {
       return null;
@@ -85,7 +80,7 @@ const DeploymentSSHKey = React.createClass({
           key="sshKey"
           ref="sshKey"
           multiLine={true}
-          onBlur={this._onSSHKeyInputBlur}
+          onBlur={this._onSSHKeyInputBlur.bind(this)}
           required={isAzure}
           validate={isAzure ? [{
             regex: /\S+/,
@@ -95,8 +90,12 @@ const DeploymentSSHKey = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentSSHKey.propTypes = {
+  cloud: React.PropTypes.object,
+  setSSHKey: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-ssh-key', function() {
   juju.components.DeploymentSSHKey = DeploymentSSHKey;

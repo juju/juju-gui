@@ -59,6 +59,6 @@ describe('DeploymentChanges', function() {
             showTime={false} />]}
         </ul>
       </juju.components.ExpandingRow>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

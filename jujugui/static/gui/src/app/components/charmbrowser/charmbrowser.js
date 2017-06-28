@@ -18,58 +18,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Charmbrowser = React.createClass({
-  displayName: 'Charmbrowser',
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    apiUrl: React.PropTypes.string.isRequired,
-    apiVersion: React.PropTypes.string.isRequired,
-    appState: React.PropTypes.object.isRequired,
-    charmstoreSearch: React.PropTypes.func.isRequired,
-    charmstoreURL: React.PropTypes.string.isRequired,
-    deployService: React.PropTypes.func.isRequired,
-    deployTarget: React.PropTypes.func.isRequired,
-    getBundleYAML: React.PropTypes.func.isRequired,
-    getDiagramURL: React.PropTypes.func.isRequired,
-    getEntity: React.PropTypes.func.isRequired,
-    getFile: React.PropTypes.func.isRequired,
-    getModelName: React.PropTypes.func.isRequired,
-    gisf: React.PropTypes.bool.isRequired,
-    importBundleYAML: React.PropTypes.func.isRequired,
-    listPlansForCharm: React.PropTypes.func.isRequired,
-    makeEntityModel: React.PropTypes.func.isRequired,
-    renderMarkdown: React.PropTypes.func.isRequired,
-    series: React.PropTypes.object.isRequired,
-    setPageTitle: React.PropTypes.func.isRequired,
-    showTerms: React.PropTypes.func.isRequired,
-    staticURL: React.PropTypes.string,
-    urllib: React.PropTypes.func.isRequired,
-    utils: React.PropTypes.object.isRequired
-  },
-
+class Charmbrowser extends React.Component {
   /**
     Get the current state of the charmbrowser.
 
     @method getInitialState
     @returns {String} The current state.
   */
-  getInitialState: function() {
+  constructor(props) {
+    super(props);
     // Setting a default state object.
     var state = this.generateState(this.props);
     state.scrollPosition = 0;
-    return state;
-  },
+    this.state = state;
+  }
 
-  componentDidMount: function() {
-    this.refs.charmbrowser.addEventListener('scroll', this._onScroll);
-  },
+  componentDidMount() {
+    this.refs.charmbrowser.addEventListener(
+      'scroll', this._onScroll.bind(this));
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.refs.charmbrowser) {
-      this.refs.charmbrowser.removeEventListener('scroll', this._onScroll);
+      this.refs.charmbrowser.removeEventListener(
+        'scroll', this._onScroll.bind(this));
     }
-  },
+  }
 
   /**
     Scroll the charmbrowser to an element with an id that matches the
@@ -78,7 +52,7 @@ const Charmbrowser = React.createClass({
     @param container {Object} a DOM node that contains the element with the
       id to scroll to.
   */
-  _scrollCharmbrowser: function(container) {
+  _scrollCharmbrowser(container) {
     const hash = this.props.appState.current.hash;
     const target = container.querySelector(`#${hash}`);
     // The charmbrowser element does the scrolling.
@@ -89,7 +63,7 @@ const Charmbrowser = React.createClass({
       // account the sticky header size.
       charmbrowser.scrollTop += target.getBoundingClientRect().top - 200;
     }
-  },
+  }
 
   /**
     Set the scroll position state.
@@ -97,25 +71,25 @@ const Charmbrowser = React.createClass({
     @method _onScroll
     @param {Object} e The scroll event
   */
-  _onScroll: function(e) {
+  _onScroll(e) {
     if (this.state.activeComponent === 'entity-details') {
       this.setState({scrollPosition: e.target.scrollTop});
     }
-  },
+  }
 
   /**
     Closes the charmbrowser.
 
     @method _close
   */
-  _close: function() {
+  _close() {
     this.props.appState.changeState({
       hash: null,
       root: null,
       search: null,
       store: null
     });
-  },
+  }
 
   /**
     Generates the state for the charmbrowser based on the app state.
@@ -124,7 +98,7 @@ const Charmbrowser = React.createClass({
     @param {Object} nextProps The props which were sent to the component.
     @return {Object} A generated state object which can be passed to setState.
   */
-  generateState: function(nextProps) {
+  generateState(nextProps) {
     let state = {};
     let activeComponent = 'store';
     const currentState = nextProps.appState.current;
@@ -141,7 +115,7 @@ const Charmbrowser = React.createClass({
     }
     state.activeComponent = activeComponent;
     return state;
-  },
+  }
 
   /**
     Generate the content based on the state.
@@ -149,7 +123,7 @@ const Charmbrowser = React.createClass({
     @method _generateContent
     @return {Object} The child components for the content.
   */
-  _generateContent: function() {
+  _generateContent() {
     let activeChild;
     const utils = this.props.utils;
     const appState = this.props.appState;
@@ -217,7 +191,7 @@ const Charmbrowser = React.createClass({
             pluralize={utils.pluralize}
             listPlansForCharm={this.props.listPlansForCharm}
             makeEntityModel={this.props.makeEntityModel}
-            scrollCharmbrowser={this._scrollCharmbrowser}
+            scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
             urllib={this.props.urllib}
@@ -226,16 +200,16 @@ const Charmbrowser = React.createClass({
         break;
     }
     return activeChild;
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState(this.generateState(nextProps));
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Panel
-        clickAction={this._close}
+        clickAction={this._close.bind(this)}
         instanceName="white-box"
         focus={false}
         visible={true}>
@@ -246,8 +220,35 @@ const Charmbrowser = React.createClass({
       </juju.components.Panel>
     );
   }
+};
 
-});
+Charmbrowser.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  apiUrl: React.PropTypes.string.isRequired,
+  apiVersion: React.PropTypes.string.isRequired,
+  appState: React.PropTypes.object.isRequired,
+  charmstoreSearch: React.PropTypes.func.isRequired,
+  charmstoreURL: React.PropTypes.string.isRequired,
+  deployService: React.PropTypes.func.isRequired,
+  deployTarget: React.PropTypes.func.isRequired,
+  getBundleYAML: React.PropTypes.func.isRequired,
+  getDiagramURL: React.PropTypes.func.isRequired,
+  getEntity: React.PropTypes.func.isRequired,
+  getFile: React.PropTypes.func.isRequired,
+  getModelName: React.PropTypes.func.isRequired,
+  gisf: React.PropTypes.bool.isRequired,
+  importBundleYAML: React.PropTypes.func.isRequired,
+  listPlansForCharm: React.PropTypes.func.isRequired,
+  makeEntityModel: React.PropTypes.func.isRequired,
+  renderMarkdown: React.PropTypes.func.isRequired,
+  series: React.PropTypes.object.isRequired,
+  setPageTitle: React.PropTypes.func.isRequired,
+  showTerms: React.PropTypes.func.isRequired,
+  staticURL: React.PropTypes.string,
+  urllib: React.PropTypes.func.isRequired,
+  utils: React.PropTypes.object.isRequired
+};
 
 YUI.add('charmbrowser-component', function() {
   juju.components.Charmbrowser = Charmbrowser;

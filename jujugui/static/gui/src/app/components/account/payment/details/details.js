@@ -18,56 +18,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPaymentDetails = React.createClass({
-  displayName: 'AccountPaymentDetails',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addAddress: React.PropTypes.func.isRequired,
-    addBillingAddress: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    paymentUser: React.PropTypes.object.isRequired,
-    removeAddress: React.PropTypes.func.isRequired,
-    removeBillingAddress: React.PropTypes.func.isRequired,
-    updateAddress: React.PropTypes.func.isRequired,
-    updateBillingAddress: React.PropTypes.func.isRequired,
-    updateUser: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class AccountPaymentDetails extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       addressEdit: false,
       billingAddressEdit: false
     };
-  },
+  }
 
   /**
     Show the edit address form.
 
     @method _toggleAddressEdit
   */
-  _toggleAddressEdit: function() {
+  _toggleAddressEdit() {
     this.setState({addressEdit: !this.state.addressEdit});
-  },
+  }
 
   /**
     Show the edit address form.
 
     @method _toggleBillingAddressEdit
   */
-  _toggleBillingAddressEdit: function() {
+  _toggleBillingAddressEdit() {
     this.setState({billingAddressEdit: !this.state.billingAddressEdit});
-  },
+  }
 
   /**
     Generate the user's details.
 
     @method _generateDetails
   */
-  _generateDetails: function() {
+  _generateDetails() {
     const user = this.props.paymentUser;
     const business = user.business;
     const disabled = this.props.acl.isReadOnly();
@@ -97,7 +80,7 @@ const AccountPaymentDetails = React.createClass({
           Addresses
           {this.state.addressEdit ? null : (
             <juju.components.GenericButton
-              action={this._toggleAddressEdit}
+              action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
               type="inline-neutral"
               title="Edit" />)}
@@ -107,14 +90,14 @@ const AccountPaymentDetails = React.createClass({
           Billing addresses
           {this.state.billingAddressEdit ? null : (
             <juju.components.GenericButton
-              action={this._toggleBillingAddressEdit}
+              action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
               type="inline-neutral"
               title="Edit" />)}
         </h4>
         {this._generateAddresses(user.billingAddresses, true)}
       </div>);
-  },
+  }
 
   /**
     Generate the address fields.
@@ -124,7 +107,7 @@ const AccountPaymentDetails = React.createClass({
     @param {Boolean} billing Whether this is a billing address.
     @returns {Object} The markup for the addresses.
   */
-  _generateAddresses: function(addresses, billing=false) {
+  _generateAddresses(addresses, billing=false) {
     let list = addresses.map(address => {
       return (
         <juju.components.AccountPaymentDetailsAddress
@@ -154,9 +137,9 @@ const AccountPaymentDetails = React.createClass({
       <ul className="account__payment-details-addresses">
         {list}
       </ul>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="account__section">
         <h2 className="account__title twelve-col">
@@ -166,8 +149,23 @@ const AccountPaymentDetails = React.createClass({
       </div>
     );
   }
+};
 
-});
+AccountPaymentDetails.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addAddress: React.PropTypes.func.isRequired,
+  addBillingAddress: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  paymentUser: React.PropTypes.object.isRequired,
+  removeAddress: React.PropTypes.func.isRequired,
+  removeBillingAddress: React.PropTypes.func.isRequired,
+  updateAddress: React.PropTypes.func.isRequired,
+  updateBillingAddress: React.PropTypes.func.isRequired,
+  updateUser: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('account-payment-details', function() {
   juju.components.AccountPaymentDetails = AccountPaymentDetails;

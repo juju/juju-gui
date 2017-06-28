@@ -64,7 +64,7 @@ describe('DeploymentPanel', function() {
           </div>
         </div>
       </juju.components.Panel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can close', function() {

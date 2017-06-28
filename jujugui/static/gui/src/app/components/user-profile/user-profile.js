@@ -18,54 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfile = React.createClass({
-  displayName: 'UserProfile',
-
-  propTypes: {
-    acl: React.PropTypes.object,
-    addNotification: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    charmstore: React.PropTypes.object.isRequired,
-    currentModel: React.PropTypes.string,
-    d3: React.PropTypes.object,
-    destroyModels: React.PropTypes.func.isRequired,
-    facadesExist: React.PropTypes.bool.isRequired,
-    getAgreements: React.PropTypes.func.isRequired,
-    getDiagramURL: React.PropTypes.func.isRequired,
-    getKpiMetrics: React.PropTypes.func.isRequired,
-    interactiveLogin: React.PropTypes.bool,
-    listBudgets: React.PropTypes.func.isRequired,
-    listModelsWithInfo: React.PropTypes.func.isRequired,
-    pluralize: React.PropTypes.func.isRequired,
-    setPageTitle: React.PropTypes.func.isRequired,
-    staticURL: React.PropTypes.string,
-    storeUser: React.PropTypes.func.isRequired,
-    switchModel: React.PropTypes.func.isRequired,
-    // userInfo must have the following attributes:
-    // - external: the external user name to use for retrieving data, for
-    //   instance, from the charm store. Might be null if the user is being
-    //   displayed for the current user and they are not authenticated to
-    //   the charm store;
-    // - isCurrent: whether the profile is being displayed for the currently
-    //   authenticated user;
-    // - profile: the user name for whom profile details must be displayed.
-    userInfo: React.PropTypes.object.isRequired
-  },
-
-  componentDidMount: function() {
+class UserProfile extends React.Component {
+  componentDidMount() {
     this.props.setPageTitle(this.props.userInfo.profile);
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount () {
     this.props.setPageTitle();
-  },
+  }
 
   /**
     Calls the bakery to get a charm store macaroon.
 
     @method _interactiveLogin
   */
-  _interactiveLogin: function() {
+  _interactiveLogin() {
     const props = this.props;
     const handler = err => {
       if (err) {
@@ -83,7 +50,7 @@ const UserProfile = React.createClass({
     props.charmstore.getMacaroon((err, macaroon) => {
       handler(err);
     });
-  },
+  }
 
   /**
     Generate the content for the panel.
@@ -91,7 +58,7 @@ const UserProfile = React.createClass({
     @method _generateContent
     @returns {Array} The markup for the content.
   */
-  _generateContent: function() {
+  _generateContent() {
     const props = this.props;
     const emptyComponent = (
       <juju.components.EmptyUserProfile
@@ -163,9 +130,9 @@ const UserProfile = React.createClass({
           {componentsToRender}
         </juju.components.SectionLoadWatcher>
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     // XXX kadams54 2016-09-05: Will need to restore the header links and
     // counts functionality here.
     const links = [];
@@ -177,7 +144,7 @@ const UserProfile = React.createClass({
           <div className="inner-wrapper">
             <juju.components.UserProfileHeader
               avatar=""
-              interactiveLogin={this._interactiveLogin}
+              interactiveLogin={this._interactiveLogin.bind(this)}
               links={links}
               userInfo={this.props.userInfo}
             />
@@ -187,8 +154,38 @@ const UserProfile = React.createClass({
       </juju.components.Panel>
     );
   }
+};
 
-});
+UserProfile.propTypes = {
+  acl: React.PropTypes.object,
+  addNotification: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  charmstore: React.PropTypes.object.isRequired,
+  currentModel: React.PropTypes.string,
+  d3: React.PropTypes.object,
+  destroyModels: React.PropTypes.func.isRequired,
+  facadesExist: React.PropTypes.bool.isRequired,
+  getAgreements: React.PropTypes.func.isRequired,
+  getDiagramURL: React.PropTypes.func.isRequired,
+  getKpiMetrics: React.PropTypes.func.isRequired,
+  interactiveLogin: React.PropTypes.bool,
+  listBudgets: React.PropTypes.func.isRequired,
+  listModelsWithInfo: React.PropTypes.func.isRequired,
+  pluralize: React.PropTypes.func.isRequired,
+  setPageTitle: React.PropTypes.func.isRequired,
+  staticURL: React.PropTypes.string,
+  storeUser: React.PropTypes.func.isRequired,
+  switchModel: React.PropTypes.func.isRequired,
+  // userInfo must have the following attributes:
+  // - external: the external user name to use for retrieving data, for
+  //   instance, from the charm store. Might be null if the user is being
+  //   displayed for the current user and they are not authenticated to
+  //   the charm store;
+  // - isCurrent: whether the profile is being displayed for the currently
+  //   authenticated user;
+  // - profile: the user name for whom profile details must be displayed.
+  userInfo: React.PropTypes.object.isRequired
+};
 
 YUI.add('user-profile', function() {
   juju.components.UserProfile = UserProfile;

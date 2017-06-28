@@ -18,23 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const SearchResultsSelectFilter = React.createClass({
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    currentValue: React.PropTypes.string,
-    filter: React.PropTypes.string.isRequired,
-    items: React.PropTypes.array.isRequired,
-    label: React.PropTypes.string.isRequired
-  },
-
+class SearchResultsSelectFilter extends React.Component {
   /**
     Generate a list of items.
 
     @method _generateItems
     @returns {Object} The components.
   */
-  _generateItems: function() {
+  _generateItems() {
     var components = [];
     this.props.items.forEach(function(item) {
       components.push(
@@ -44,7 +35,7 @@ const SearchResultsSelectFilter = React.createClass({
         </option>);
     }, this);
     return components;
-  },
+  }
 
   /**
     Change the state when the value changes.
@@ -52,27 +43,35 @@ const SearchResultsSelectFilter = React.createClass({
     @method _handleChange
     @param {Object} e The change event.
   */
-  _handleChange: function(e) {
+  _handleChange(e) {
     const search = {};
     search[this.props.filter] = e.currentTarget.value;
     this.props.changeState({
       search: search
     });
-  },
+  }
 
-  render: function() {
+  render() {
     var className = 'list-block__' + this.props.filter;
     return (
       <div className={className}>
         {this.props.label}:
-        <select onChange={this._handleChange}
+        <select onChange={this._handleChange.bind(this)}
           defaultValue={this.props.currentValue}>
           {this._generateItems()}
         </select>
       </div>
     );
   }
-});
+};
+
+SearchResultsSelectFilter.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  currentValue: React.PropTypes.string,
+  filter: React.PropTypes.string.isRequired,
+  items: React.PropTypes.array.isRequired,
+  label: React.PropTypes.string.isRequired
+};
 
 YUI.add('search-results-select-filter', function(Y) {
   juju.components.SearchResultsSelectFilter = SearchResultsSelectFilter;

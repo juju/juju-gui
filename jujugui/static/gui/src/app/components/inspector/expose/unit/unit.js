@@ -18,22 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorExposeUnit = React.createClass({
-
-  propTypes: {
-    action: React.PropTypes.func.isRequired,
-    unit: React.PropTypes.object.isRequired
-  },
-
+class InspectorExposeUnit extends React.Component {
   /**
     Don't bubble the click event to the parent.
 
     @method _stopBubble
     @param {Object} The click event.
   */
-  _stopBubble: function(e) {
+  _stopBubble(e) {
     e.stopPropagation();
-  },
+  }
 
   /**
     Build a HTML list from an array of ports and an IP address.
@@ -43,7 +37,7 @@ const InspectorExposeUnit = React.createClass({
     @param {Array} portRanges A list of port ranges.
     @returns {String} HTML of list
   */
-  _getAddressList: function(address, portRanges) {
+  _getAddressList(address, portRanges) {
     if (!portRanges || !portRanges.length || !address) {
       return (
         <div className="inspector-expose__unit-detail">
@@ -58,7 +52,9 @@ const InspectorExposeUnit = React.createClass({
         const href = `${protocol}://${label}`;
         return (
           <li className="inspector-expose__item" key={href}>
-            <a href={href} onClick={this._stopBubble} target="_blank">
+            <a href={href}
+              onClick={this._stopBubble.bind(this)}
+              target="_blank">
               {label}
             </a>
           </li>
@@ -73,9 +69,9 @@ const InspectorExposeUnit = React.createClass({
       );
     });
     return <ul className="inspector-expose__unit-list">{items}</ul>;
-  },
+  }
 
-  render: function() {
+  render() {
     var unit = this.props.unit;
     var publicList = this._getAddressList(
       unit.public_address, unit.portRanges);
@@ -90,8 +86,12 @@ const InspectorExposeUnit = React.createClass({
       </li>
     );
   }
+};
 
-});
+InspectorExposeUnit.propTypes = {
+  action: React.PropTypes.func.isRequired,
+  unit: React.PropTypes.object.isRequired
+};
 
 YUI.add('inspector-expose-unit', function() {
   juju.components.InspectorExposeUnit = InspectorExposeUnit;

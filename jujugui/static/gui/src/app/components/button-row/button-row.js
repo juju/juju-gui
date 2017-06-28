@@ -18,19 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ButtonRow = React.createClass({
-  displayName: 'ButtonRow',
-
-  propTypes: {
-    buttons: React.PropTypes.array.isRequired
-  },
-
+class ButtonRow extends React.Component {
   /**
     Returns the classes for the footer based on the provided props.
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var classes = {};
     var buttonsLength = this.props.buttons.length;
     classes['button-row--multiple'] = buttonsLength > 0;
@@ -39,7 +33,7 @@ const ButtonRow = React.createClass({
       'button-row',
       classes
     );
-  },
+  }
 
   /**
     Creates the buttons based on the provided props.
@@ -47,7 +41,7 @@ const ButtonRow = React.createClass({
     @param {Array} buttons The properties of the buttons to generate.
     @returns {Array} Collection of buttons.
   */
-  _generateButtons: function(buttons) {
+  _generateButtons(buttons) {
     var components = [];
     buttons.forEach((button) => {
       components.push(
@@ -60,9 +54,9 @@ const ButtonRow = React.createClass({
           type={button.type} />);
     });
     return components;
-  },
+  }
 
-  render: function() {
+  render() {
     var buttons = this._generateButtons(this.props.buttons);
     return (
       <div className={this._generateClasses()}>
@@ -70,7 +64,11 @@ const ButtonRow = React.createClass({
       </div>
     );
   }
-});
+};
+
+ButtonRow.propTypes = {
+  buttons: React.PropTypes.array.isRequired
+};
 
 YUI.add('button-row', function() {
   juju.components.ButtonRow = ButtonRow;

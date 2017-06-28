@@ -18,23 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ScaleService = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    createMachinesPlaceUnits: React.PropTypes.func.isRequired,
-    providerType: React.PropTypes.string,
-    serviceId: React.PropTypes.string.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class ScaleService extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       constraints: null,
       constraintsVisibility: false
     };
-  },
+  }
 
   /**
     Update the state with the new constraints values.
@@ -42,9 +33,9 @@ const ScaleService = React.createClass({
     @method _updateConstraints
     @param {Object} constraints The new constraints values.
   */
-  _updateConstraints: function(constraints) {
+  _updateConstraints(constraints) {
     this.setState({constraints: constraints});
-  },
+  }
 
   /**
     Event handler for the radio button selection which should show or
@@ -53,24 +44,24 @@ const ScaleService = React.createClass({
     @method _toggleConstraints
     @param {Object} e The change event.
   */
-  _toggleConstraints: function(e) {
+  _toggleConstraints(e) {
     var id = e.currentTarget.id;
     this.setState({ constraintsVisibility: id === 'auto-place-units'});
-  },
+  }
 
   /**
     Generates the classes for each render for the constraints element.
 
     @method _generateClasses
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'scale-service--constraints',
       {
         hidden: !this.state.constraintsVisibility
       }
     );
-  },
+  }
 
   /**
     When an input element value is changed by the user we update state
@@ -79,12 +70,12 @@ const ScaleService = React.createClass({
     @method _udpateState
     @param {Object} e The change event.
   */
-  _updateState: function(e) {
+  _updateState(e) {
     var currentTarget = e.currentTarget;
     var state = {};
     state[currentTarget.name] = currentTarget.value;
     this.setState(state);
-  },
+  }
 
   /**
     Handles calling the appropriate methods to scale up the service.
@@ -92,7 +83,7 @@ const ScaleService = React.createClass({
     @method _scaleUpService
     @param {Object} e An event object.
   */
-  _scaleUpService: function(e) {
+  _scaleUpService(e) {
     if (e) {
       e.preventDefault();
     }
@@ -115,9 +106,9 @@ const ScaleService = React.createClass({
       this.props.createMachinesPlaceUnits(numUnits, constraints);
     }
     this.props.changeState(appState);
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     const disabled = props.acl.isReadOnly();
     const buttons = [{
@@ -128,7 +119,7 @@ const ScaleService = React.createClass({
 
     return (
       <form className="scale-service"
-        onSubmit={this._scaleUpService}>
+        onSubmit={this._scaleUpService.bind(this)}>
         <div className="scale-service--units">
           <input
             className="scale-service--units__input"
@@ -138,7 +129,7 @@ const ScaleService = React.createClass({
             step="1"
             autoComplete="off"
             name="num-units"
-            onChange={this._updateState}
+            onChange={this._updateState.bind(this)}
             ref="numUnitsInput"/>
           <span className="scale-service--units__span">units</span>
         </div>
@@ -148,7 +139,7 @@ const ScaleService = React.createClass({
               className="scale-service--selector__radio"
               disabled={disabled}
               name="placement" type="radio"
-              onChange={this._toggleConstraints}
+              onChange={this._toggleConstraints.bind(this)}
               id="auto-place-units"
               ref="autoPlaceUnitsToggle" />
             <label htmlFor="auto-place-units">1 unit per machine</label>
@@ -158,7 +149,7 @@ const ScaleService = React.createClass({
               className="scale-service--selector__radio"
               disabled={disabled}
               name="placement" type="radio"
-              onChange={this._toggleConstraints}
+              onChange={this._toggleConstraints.bind(this)}
               defaultChecked={true}
               id="manually-place-units" />
             <label htmlFor="manually-place-units">Manually place</label>
@@ -169,17 +160,26 @@ const ScaleService = React.createClass({
             disabled={disabled}
             hasUnit={true}
             providerType={props.providerType}
-            valuesChanged={this._updateConstraints} />
+            valuesChanged={this._updateConstraints.bind(this)} />
         </div>
         <juju.components.ButtonRow buttons={buttons} />
       </form>
     );
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.refs.numUnitsInput.focus();
   }
-});
+};
+
+ScaleService.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+  providerType: React.PropTypes.string,
+  serviceId: React.PropTypes.string.isRequired
+};
 
 YUI.add('scale-service', function() {
   juju.components.ScaleService = ScaleService;

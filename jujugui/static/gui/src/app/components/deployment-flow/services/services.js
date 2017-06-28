@@ -18,28 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentServices = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changesFilterByParent: React.PropTypes.func.isRequired,
-    charmsGetById: React.PropTypes.func.isRequired,
-    generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-    groupedChanges: React.PropTypes.object.isRequired,
-    listPlansForCharm: React.PropTypes.func.isRequired,
-    parseTermId: React.PropTypes.func.isRequired,
-    servicesGetById: React.PropTypes.func.isRequired,
-    showChangelogs: React.PropTypes.bool,
-    showTerms: React.PropTypes.func,
-    withPlans: React.PropTypes.bool
-  },
-
+class DeploymentServices extends React.Component {
   /**
     Create a list of services from the change set.
 
     @method _getServices
     @returns {Array} A list of services.
   */
-  _getServices: function() {
+  _getServices() {
     var addedServices = this.props.groupedChanges['_deploy'];
     if (!addedServices) {
       return [];
@@ -48,7 +34,7 @@ const DeploymentServices = React.createClass({
       return this.props.servicesGetById(
         addedServices[change].command.options.modelId);
     });
-  },
+  }
 
   /**
     Generate the list of extra info markup.
@@ -56,7 +42,7 @@ const DeploymentServices = React.createClass({
     @method _generateExtraInfo
     @returns {Array} A list of elements by service.
   */
-  _generateExtraInfo: function() {
+  _generateExtraInfo() {
     var addedServices = this.props.groupedChanges['_deploy'] || [];
     var infos = {};
     Object.keys(addedServices).forEach((change) => {
@@ -77,7 +63,7 @@ const DeploymentServices = React.createClass({
         </ul>);
     });
     return infos;
-  },
+  }
 
   /**
     Generate spend summary.
@@ -85,7 +71,7 @@ const DeploymentServices = React.createClass({
     @method _generateSpend
     @returns {Object} The spend markup.
   */
-  _generateSpend: function() {
+  _generateSpend() {
     if (!this.props.withPlans) {
       return;
     }
@@ -97,9 +83,9 @@ const DeploymentServices = React.createClass({
         </span>
       </div>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         <juju.components.BudgetTable
@@ -118,8 +104,21 @@ const DeploymentServices = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentServices.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changesFilterByParent: React.PropTypes.func.isRequired,
+  charmsGetById: React.PropTypes.func.isRequired,
+  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+  groupedChanges: React.PropTypes.object.isRequired,
+  listPlansForCharm: React.PropTypes.func.isRequired,
+  parseTermId: React.PropTypes.func.isRequired,
+  servicesGetById: React.PropTypes.func.isRequired,
+  showChangelogs: React.PropTypes.bool,
+  showTerms: React.PropTypes.func,
+  withPlans: React.PropTypes.bool
+};
 
 YUI.add('deployment-services', function() {
   juju.components.DeploymentServices = DeploymentServices;

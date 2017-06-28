@@ -18,31 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const SearchResultsItem = React.createClass({
-  displayName: 'SearchResultsItem',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    deployTarget: React.PropTypes.func.isRequired,
-    generatePath: React.PropTypes.func.isRequired,
-    item: React.PropTypes.object.isRequired
-  },
-
+class SearchResultsItem extends React.Component {
   /**
     Generate the element for the special flag.
 
     @method _generateSpecialFlag
     @returns {String} The generated elements.
   */
-  _generateSpecialFlag: function() {
+  _generateSpecialFlag() {
     if (!this.props.item.special) {
       return;
     }
     return (
       <span className="special-flag"></span>
     );
-  },
+  }
 
   /**
     Generate the elements for the tag list.
@@ -50,7 +40,7 @@ const SearchResultsItem = React.createClass({
     @method _generateTagList
     @returns {String} The generated elements.
   */
-  _generateTagList: function() {
+  _generateTagList() {
     var components = [];
     var tags = this.props.item.tags || [];
     if (tags.length === 0) {
@@ -69,7 +59,7 @@ const SearchResultsItem = React.createClass({
       );
     }, this);
     return components;
-  },
+  }
 
   /**
     Generate the elements for the icon list.
@@ -77,7 +67,7 @@ const SearchResultsItem = React.createClass({
     @method _generateIconList
     @returns {String} The generated elements.
   */
-  _generateIconList: function() {
+  _generateIconList() {
     var applications = this.props.item.applications || [this.props.item];
     var components = [];
     applications.forEach(function(service) {
@@ -102,7 +92,7 @@ const SearchResultsItem = React.createClass({
       );
     }, this);
     return components;
-  },
+  }
 
   /**
     Generate the elements for the series list.
@@ -110,7 +100,7 @@ const SearchResultsItem = React.createClass({
     @method _generateSeriesList
     @returns {String} The generated elements.
   */
-  _generateSeriesList: function() {
+  _generateSeriesList() {
     var item = this.props.item;
     var series = item.series;
     var components = [];
@@ -131,7 +121,7 @@ const SearchResultsItem = React.createClass({
       );
     }, this);
     return components;
-  },
+  }
 
   /**
     Generate the base classes from the props.
@@ -140,18 +130,18 @@ const SearchResultsItem = React.createClass({
     @param {Boolean} selected Whether the filter is selected.
     @returns {String} The collection of class names.
   */
-  _generateClasses: function(selected) {
+  _generateClasses(selected) {
     return classNames(
       {selected: selected}
     );
-  },
+  }
 
   /**
     Generate the store state for the item.
 
     @param {String} id The entity id.
   */
-  _generateStoreState: function(id) {
+  _generateStoreState(id) {
     // TODO frankban: it should be clear whether this id is legacy or not.
     let url;
     try {
@@ -164,16 +154,16 @@ const SearchResultsItem = React.createClass({
       search: null,
       store: url.path()
     };
-  },
+  }
 
   /**
     Generate the store URL for an entity.
 
     @param {String} id The entity id.
   */
-  _generateStoreURL: function(id) {
+  _generateStoreURL(id) {
     return this.props.generatePath(this._generateStoreState(id));
-  },
+  }
 
   /**
     Show the entity details when clicked.
@@ -182,10 +172,10 @@ const SearchResultsItem = React.createClass({
     @param {String} id The entity id.
     @param {Object} evt The click event.
   */
-  _handleItemClick: function(id, evt) {
+  _handleItemClick(id, evt) {
     evt.preventDefault();
     this.props.changeState(this._generateStoreState(id));
-  },
+  }
 
   /**
     Show search results for the given tag.
@@ -194,7 +184,7 @@ const SearchResultsItem = React.createClass({
     @param {String} tag The tag name.
     @param {Object} evt The click event.
   */
-  _handleTagClick: function(tag, evt) {
+  _handleTagClick(tag, evt) {
     evt.preventDefault();
     this.props.changeState({
       search: {
@@ -207,7 +197,7 @@ const SearchResultsItem = React.createClass({
         type: null
       }
     });
-  },
+  }
 
   /**
     Navigate to the profile page of the given owner.
@@ -216,17 +206,17 @@ const SearchResultsItem = React.createClass({
     @param {String} owner The owner's name.
     @param {Object} evt The click event.
   */
-  _handleOwnerClick: function(owner, evt) {
+  _handleOwnerClick(owner, evt) {
     evt.preventDefault();
     this.props.changeState({search: null, profile: owner});
-  },
+  }
 
   /**
     Deploy the entity.
 
     @param id {String} The id of the entity to deploy.
   */
-  _handleDeploy: function(id) {
+  _handleDeploy(id) {
     this.props.deployTarget(id);
     // Close the search results so that the deployed entity is visible on the
     // canvas.
@@ -234,7 +224,7 @@ const SearchResultsItem = React.createClass({
       search: null,
       profile: null
     });
-  },
+  }
 
   /**
     Generate the series list item class based on entity type
@@ -242,7 +232,7 @@ const SearchResultsItem = React.createClass({
     @method _generateSeriesClass
     @returns {String} The generated class name.
   */
-  _generateSeriesClass: function() {
+  _generateSeriesClass() {
     var item = this.props.item.type;
     return classNames(
       'series__column',
@@ -253,7 +243,7 @@ const SearchResultsItem = React.createClass({
         'four-col': item === 'charm'
       }
     );
-  },
+  }
 
   /**
     Generate the charms column class based on entity type
@@ -261,7 +251,7 @@ const SearchResultsItem = React.createClass({
     @method _generateCharmsClass
     @returns {String} The generated class name.
   */
-  _generateCharmsClass: function() {
+  _generateCharmsClass() {
     var item = this.props.item.type;
     return classNames(
       'charm-logos__column list-block__column',
@@ -272,9 +262,9 @@ const SearchResultsItem = React.createClass({
         'one-col': item === 'charm'
       }
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var item = this.props.item;
     return (
       <li className={'list-block__list--item ' + item.type}>
@@ -325,7 +315,15 @@ const SearchResultsItem = React.createClass({
       </li>
     );
   }
-});
+};
+
+SearchResultsItem.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  deployTarget: React.PropTypes.func.isRequired,
+  generatePath: React.PropTypes.func.isRequired,
+  item: React.PropTypes.object.isRequired
+};
 
 YUI.add('search-results-item', function(Y) {
   juju.components.SearchResultsItem = SearchResultsItem;

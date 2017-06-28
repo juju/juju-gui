@@ -140,7 +140,7 @@ describe('DeploymentSignup', function() {
           </div>
         </div>
       </juju.components.DeploymentPanel>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can navigate to the flow view', function() {

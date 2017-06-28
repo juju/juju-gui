@@ -18,51 +18,42 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPaymentCharges = React.createClass({
-  displayName: 'AccountPaymentCharges',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    getCharges: React.PropTypes.func.isRequired,
-    getReceipt: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired
-  },
-
-  getInitialState: function() {
+class AccountPaymentCharges extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       charges: null,
       loading: false,
       showPopup: ''
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getCharges();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Show or hide the receipt popup.
 
     @param chargeId {String|Null} The charge to display.
   */
-  _togglePopup: function(chargeId=null) {
+  _togglePopup(chargeId=null) {
     this.setState({showPopup: chargeId});
-  },
+  }
 
   /**
     Get the payment details for the user.
 
     @method _getCharges
   */
-  _getCharges: function() {
+  _getCharges() {
     this.setState({loading: true}, () => {
       const username = this.props.username;
       const xhr = this.props.getCharges(username, (error, response) => {
@@ -80,7 +71,7 @@ const AccountPaymentCharges = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Generate the line items for a charge.
@@ -88,7 +79,7 @@ const AccountPaymentCharges = React.createClass({
     @param lineItems {Array} The list of line items.
     @returns {Object} The markup for the line items.
   */
-  _generateLineItems: function(lineItems) {
+  _generateLineItems(lineItems) {
     if (!lineItems || !lineItems.length) {
       return (
         <div className="account-payment-charges__line-items">
@@ -134,14 +125,14 @@ const AccountPaymentCharges = React.createClass({
           {items}
         </ul>
       </div>);
-  },
+  }
 
   /**
     Generate the list of charges.
 
     @returns {Object} The markup for the list of charges.
   */
-  _generateCharges: function() {
+  _generateCharges() {
     if (this.state.loading) {
       return <juju.components.Spinner />;
     }
@@ -213,14 +204,14 @@ const AccountPaymentCharges = React.createClass({
         </li>
         {list}
       </ul>);
-  },
+  }
 
   /**
     Generate the receipt popup.
 
     @returns {Object} The terms popup markup.
   */
-  _generatePopup: function() {
+  _generatePopup() {
     const charge = this.state.showPopup;
     if (!charge) {
       return null;
@@ -231,9 +222,9 @@ const AccountPaymentCharges = React.createClass({
         close={this._togglePopup}
         chargeId={charge}
         getReceipt={this.props.getReceipt} />);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="account-payment-charges">
         <div className="account__section">
@@ -246,8 +237,15 @@ const AccountPaymentCharges = React.createClass({
       </div>
     );
   }
+};
 
-});
+AccountPaymentCharges.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  getCharges: React.PropTypes.func.isRequired,
+  getReceipt: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired
+};
 
 YUI.add('account-payment-charges', function() {
   juju.components.AccountPaymentCharges = AccountPaymentCharges;

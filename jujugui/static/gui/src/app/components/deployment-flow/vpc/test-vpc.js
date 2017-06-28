@@ -89,7 +89,7 @@ describe('DeploymentVPC', function() {
         set.
       </div>
     );
-    assert.deepEqual(comp.output, expectedOutput);
+    expect(comp.output).toEqualJSX(expectedOutput);
   });
 
   it('stores the VPC data', function() {

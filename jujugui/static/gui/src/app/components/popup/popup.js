@@ -22,48 +22,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   Popup provides a React component for modal confirmation of an
   action.
 */
-const Popup = React.createClass({
-  displayName: 'Popup',
-
-  propTypes: {
-    buttons: React.PropTypes.array,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    className: React.PropTypes.string,
-    close: React.PropTypes.func,
-    title: React.PropTypes.string,
-    type: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      type: 'narrow',
-      className: ''
-    };
-  },
-
+class Popup extends React.Component {
   /**
    Generate the buttons component if required.
 
    @method _generateButtons
   */
-  _generateButtons: function() {
+  _generateButtons() {
     const buttons = this.props.buttons;
     if (buttons) {
       return (
         <juju.components.ButtonRow
           buttons={buttons} />);
     }
-  },
+  }
 
   /**
    Generate the close component if required.
 
    @method _generateClose
   */
-  _generateClose: function() {
+  _generateClose() {
     const close = this.props.close;
     if (close) {
       return (
@@ -74,14 +53,14 @@ const Popup = React.createClass({
             icon="close_16" />
         </div>);
     }
-  },
+  }
 
   /**
    Generate the title if required.
 
    @method _generateTitle
   */
-  _generateTitle: function() {
+  _generateTitle() {
     const title = this.props.title;
     if (title) {
       return (
@@ -89,7 +68,7 @@ const Popup = React.createClass({
           {title}
         </h3>);
     }
-  },
+  }
 
   /**
     Generate the classes based on the props.
@@ -97,15 +76,15 @@ const Popup = React.createClass({
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'popup__panel',
       `popup__panel--${this.props.type}`,
       this.props.className
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Panel
         instanceName="popup"
@@ -119,8 +98,24 @@ const Popup = React.createClass({
       </juju.components.Panel>
     );
   }
+};
 
-});
+Popup.propTypes = {
+  buttons: React.PropTypes.array,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  className: React.PropTypes.string,
+  close: React.PropTypes.func,
+  title: React.PropTypes.string,
+  type: React.PropTypes.string
+};
+
+Popup.defaultProps = {
+  type: 'narrow',
+  className: ''
+};
 
 YUI.add('popup', function() {
   juju.components.Popup = Popup;

@@ -18,27 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorChangeVersionItem = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    buttonAction: React.PropTypes.func.isRequired,
-    downgrade: React.PropTypes.bool.isRequired,
-    itemAction: React.PropTypes.func.isRequired,
-    url: React.PropTypes.object.isRequired
-  },
-
+class InspectorChangeVersionItem extends React.Component {
   /**
     Generate the button label for a downgrade or upgrade.
 
     @method _generateButtonLabel
     @returns {String} The button label.
   */
-  _generateButtonLabel: function() {
+  _generateButtonLabel() {
     return this.props.downgrade ? 'Downgrade' : 'Upgrade';
-  },
+  }
 
-  render: function() {
+  render() {
     const path = this.props.url.path();
     const props = this.props;
     return (
@@ -57,8 +48,15 @@ const InspectorChangeVersionItem = React.createClass({
       </li>
     );
   }
+};
 
-});
+InspectorChangeVersionItem.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  buttonAction: React.PropTypes.func.isRequired,
+  downgrade: React.PropTypes.bool.isRequired,
+  itemAction: React.PropTypes.func.isRequired,
+  url: React.PropTypes.object.isRequired
+};
 
 YUI.add('inspector-change-version-item', function() {
   juju.components.InspectorChangeVersionItem = InspectorChangeVersionItem;

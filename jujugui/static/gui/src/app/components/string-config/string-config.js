@@ -18,62 +18,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const StringConfig = React.createClass({
-  displayName: 'StringConfig',
-
-  propTypes: {
-    config: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
-    ]),
-    disabled: React.PropTypes.bool,
-    onChange: React.PropTypes.func,
-    option: React.PropTypes.object.isRequired
-  },
-
-  getDefaultProps: () => {
-    return {
-      disabled: false
-    };
-  },
-
-  getInitialState: function() {
-    return { value: this.props.config };
-  },
+class StringConfig extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: this.props.config };
+  }
 
   /**
     Set the value of the field.
 
     @param value {String} The value to set.
   */
-  _setValue: function(value) {
+  _setValue(value) {
     this.setState({value: value}, () => {
       const onChange = this.props.onChange;
       if (onChange) {
         onChange();
       }
     });
-  },
+  }
 
   /**
     Get the option key.
 
     @returns {String} the option key.
   */
-  getKey: function() {
+  getKey() {
     return this.props.option.key;
-  },
+  }
 
   /**
     Get the value of the field.
 
     @method getValue
   */
-  getValue: function() {
+  getValue() {
     return this.state.value;
-  },
+  }
 
-  render: function() {
+  render() {
     var disabled = this.props.disabled;
     var type = this.props.option.type;
     var typeString = type ? ` (${type})` : '';
@@ -96,7 +79,7 @@ const StringConfig = React.createClass({
             config={this.props.config}
             disabled={disabled}
             ref="editableInput"
-            setValue={this._setValue} />
+            setValue={this._setValue.bind(this)} />
         </div>
         <span className="string-config--description"
           dangerouslySetInnerHTML={{__html: this.props.option.description}}>
@@ -104,7 +87,21 @@ const StringConfig = React.createClass({
       </div>
     );
   }
-});
+};
+
+StringConfig.propTypes = {
+  config: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.number
+  ]),
+  disabled: React.PropTypes.bool,
+  onChange: React.PropTypes.func,
+  option: React.PropTypes.object.isRequired
+};
+
+StringConfig.defaultProps = {
+  disabled: false
+};
 
 YUI.add('string-config', function() {
   juju.components.StringConfig = StringConfig;

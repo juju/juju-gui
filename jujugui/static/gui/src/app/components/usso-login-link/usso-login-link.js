@@ -18,21 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const USSOLoginLink = React.createClass({
-  displayName: 'USSOLoginLink',
-
-  propTypes: {
-    callback: React.PropTypes.func,
-    children: React.PropTypes.node,
-    displayType: React.PropTypes.string.isRequired,
-    gisf: React.PropTypes.bool,
-    loginToController: React.PropTypes.func.isRequired
-  },
-
+class USSOLoginLink extends React.Component {
   /**
     Handle the login form the user click.
   */
-  handleLogin: function(e) {
+  handleLogin(e) {
     if (e && e.preventDefault) {
       // Depending on the login link type there may or may not be a
       // preventDefault method.
@@ -48,7 +38,7 @@ const USSOLoginLink = React.createClass({
         callback(err);
       }
     });
-  },
+  }
 
   /**
     If the component has child elements, they are used as the content for the
@@ -57,41 +47,41 @@ const USSOLoginLink = React.createClass({
     @param {String} defaultContent The default content to use for the button
                                    or link.
   */
-  _generateContent: function(defaultContent) {
+  _generateContent(defaultContent) {
     if (this.props.children) {
       return this.props.children;
     } else {
       return defaultContent;
     }
-  },
+  }
 
   /**
     Returns the text login link.
   */
-  _renderTextLink: function() {
+  _renderTextLink() {
     return (
       <a className={'logout-link usso-login__action'}
-        onClick={this.handleLogin}
+        onClick={this.handleLogin.bind(this)}
         target="_blank">
         {this._generateContent('Login')}
       </a>);
-  },
+  }
 
   /**
     Returns the button login link.
   */
-  _renderButtonLink: function() {
+  _renderButtonLink() {
     return (
       <juju.components.GenericButton
-        action={this.handleLogin}
+        action={this.handleLogin.bind(this)}
         extraClasses="usso-login__action"
         type="positive">
         {this._generateContent('Sign up/Log in with USSO')}
       </juju.components.GenericButton>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     const notification = `If requested,
       in the address bar above, please allow popups
       from ${window.location.origin}.`;
@@ -109,8 +99,15 @@ const USSOLoginLink = React.createClass({
         </div>
       </div>);
   }
+};
 
-});
+USSOLoginLink.propTypes = {
+  callback: React.PropTypes.func,
+  children: React.PropTypes.node,
+  displayType: React.PropTypes.string.isRequired,
+  gisf: React.PropTypes.bool,
+  loginToController: React.PropTypes.func.isRequired
+};
 
 YUI.add('usso-login-link', function() {
   juju.components.USSOLoginLink = USSOLoginLink;

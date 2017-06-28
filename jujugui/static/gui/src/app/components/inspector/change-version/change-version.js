@@ -18,46 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorChangeVersion = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addCharm: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    charmId: React.PropTypes.string.isRequired,
-    getAvailableVersions: React.PropTypes.func.isRequired,
-    getCharm: React.PropTypes.func.isRequired,
-    service: React.PropTypes.object.isRequired,
-    setCharm: React.PropTypes.func.isRequired
-  },
-
-  versionsXhr: null,
-
-  /**
-    Get the current state.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    return {
+class InspectorChangeVersion extends React.Component {
+  constructor() {
+    super();
+    this.versionsXhr = null;
+    this.state = {
       loading: false,
       versionsList: null
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this._getVersions(this.props.charmId);
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this._getVersions(nextProps.charmId);
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.versionsXhr.abort();
-  },
+  }
 
   /**
     The callable to be passed to the version item to view the charm details.
@@ -66,9 +47,9 @@ const InspectorChangeVersion = React.createClass({
     @param {Object} url The charm url as a window.jujulib.URL instance.
     @param {Object} evt The click event.
   */
-  _viewCharmDetails: function(url, evt) {
+  _viewCharmDetails(url, evt) {
     this.props.changeState({store: url.path()});
-  },
+  }
 
   /**
     The callable to be passed to the version item to change versions.
@@ -77,12 +58,12 @@ const InspectorChangeVersion = React.createClass({
       @param {String} charmId The charm id.
       @param {Object} e The click event.
   */
-  _versionButtonAction: function(charmId, e) {
+  _versionButtonAction(charmId, e) {
     const callback = this._addCharmCallback.bind(this, charmId);
     // XXX hatch: the ecs doesn't yet support addCharm so we are going to
     // send the command to juju immediately.
     this.props.addCharm(charmId, callback, {immediate: true});
-  },
+  }
 
   /**
     Callback for handling the results of addCharm.
@@ -92,7 +73,7 @@ const InspectorChangeVersion = React.createClass({
     @param {Object} data The response object from the addCharm call in the
       format {err, url}.
   */
-  _addCharmCallback: function(charmId, data) {
+  _addCharmCallback(charmId, data) {
     var error = data.err;
     if (error) {
       this._addFailureNotification(charmId, error);
@@ -100,33 +81,33 @@ const InspectorChangeVersion = React.createClass({
     }
     this.props.setCharm(this.props.service.get('id'), charmId, false, false,
       this._setCharmCallback.bind(this, charmId));
-  },
+  }
 
   /**
     Callback for handling the results of setCharm.
 
     @method _setCharmCallback
   */
-  _setCharmCallback: function(charmId, data) {
+  _setCharmCallback(charmId, data) {
     if (data.err) {
       this._addFailureNotification(charmId, data.err);
       return;
     }
     this.props.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
-  },
+  }
 
   /**
     Callback for handling the results of getCharm.
 
     @method _getCharmCallback
   */
-  _getCharmCallback: function(charmId, data) {
+  _getCharmCallback(charmId, data) {
     if (data.err) {
       this._addFailureNotification(charmId, data.err);
       return;
     }
     this.props.service.set('charm', charmId);
-  },
+  }
 
   /**
     Add a notification for an upgrade failure.
@@ -135,13 +116,13 @@ const InspectorChangeVersion = React.createClass({
     @param {String} charmId The charm id.
     @param {Object} error The upgrade error.
   */
-  _addFailureNotification: function(charmId, error) {
+  _addFailureNotification(charmId, error) {
     this.props.addNotification({
       title: 'Charm upgrade failed',
       message: 'The charm ' + charmId + ' failed to upgrade:' + error,
       level: 'error'
     });
-  },
+  }
 
   /**
     Get a list of versions for the charm.
@@ -149,11 +130,11 @@ const InspectorChangeVersion = React.createClass({
     @method _getVersions
     @param {String} charmId The charm id.
   */
-  _getVersions: function(charmId) {
+  _getVersions(charmId) {
     this.setState({loading: true});
     this.versionsXhr = this.props.getAvailableVersions(
-      charmId, this._getVersionsCallback);
-  },
+      charmId, this._getVersionsCallback.bind(this));
+  }
 
   /**
     Update the state with the returned versions.
@@ -162,7 +143,7 @@ const InspectorChangeVersion = React.createClass({
     @param {String} error The error message, if any. Null if no error.
     @param {Array} versions The available versions.
   */
-  _getVersionsCallback: function(error, versions) {
+  _getVersionsCallback(error, versions) {
     if (error) {
       console.error(error);
       versions = null;
@@ -195,14 +176,14 @@ const InspectorChangeVersion = React.createClass({
     }
     this.setState({loading: false});
     this.setState({versionsList: components});
-  },
+  }
 
   /**
     Display the versions list or a spinner if it is loading.
 
     @method _displayVersionsList
   */
-  _displayVersionsList: function(loading, versionsList) {
+  _displayVersionsList(loading, versionsList) {
     if (loading) {
       return(
         <div className="inspector-spinner">
@@ -216,9 +197,9 @@ const InspectorChangeVersion = React.createClass({
         </ul>
       );
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
     return (
       <div className="inspector-change-version">
@@ -235,8 +216,19 @@ const InspectorChangeVersion = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorChangeVersion.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addCharm: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  charmId: React.PropTypes.string.isRequired,
+  getAvailableVersions: React.PropTypes.func.isRequired,
+  getCharm: React.PropTypes.func.isRequired,
+  service: React.PropTypes.object.isRequired,
+  setCharm: React.PropTypes.func.isRequired
+};
 
 YUI.add('inspector-change-version', function() {
   juju.components.InspectorChangeVersion = InspectorChangeVersion;

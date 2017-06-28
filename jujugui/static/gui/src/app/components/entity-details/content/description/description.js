@@ -18,18 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentDescription = React.createClass({
-  displayName: 'EntityContentDescription',
-
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    changeState: React.PropTypes.func,
-    entityModel: React.PropTypes.object,
-    includeHeading: React.PropTypes.bool,
-    renderMarkdown: React.PropTypes.func.isRequired
-  },
-
-  render: function() {
+class EntityContentDescription extends React.Component {
+  render() {
     const description = this.props.entityModel.get('description');
     if (!description) {
       return false;
@@ -55,7 +45,14 @@ const EntityContentDescription = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentDescription.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  entityModel: React.PropTypes.object,
+  includeHeading: React.PropTypes.bool,
+  renderMarkdown: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-content-description', function() {
   juju.components.EntityContentDescription = EntityContentDescription;

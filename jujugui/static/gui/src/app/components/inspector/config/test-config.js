@@ -799,7 +799,6 @@ describe('Configuration', function() {
     output.props.children[0].props.children[2].props.children.props.onChange();
     assert.equal(getYAMLConfig.callCount, 1);
     assert.equal(getYAMLConfig.args[0][0], 'apache2.yaml');
-    assert.equal(getYAMLConfig.args[0][1], instance._applyConfig);
     assert.equal(formReset.callCount, 1);
   });
 

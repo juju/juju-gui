@@ -18,38 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentReadme = React.createClass({
-  displayName: 'EntityContentReadme',
-  readmeXhr: null,
-
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    entityModel: React.PropTypes.object.isRequired,
-    getFile: React.PropTypes.func.isRequired,
-    hash: React.PropTypes.string,
-    renderMarkdown: React.PropTypes.func.isRequired,
-    scrollCharmbrowser: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class EntityContentReadme extends React.Component {
+  constructor() {
+    super();
+    this.readmeXhr = null;
+    this.state = {
       readme: null
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this._getReadme();
-  },
+  }
 
-  componentDidUpdate: function(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const hash = this.props.hash;
     if (hash && hash !== prevProps.hash) {
       this.props.scrollCharmbrowser(this._getContainer());
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.readmeXhr) {
       this.readmeXhr.abort();
     }
@@ -58,7 +47,7 @@ const EntityContentReadme = React.createClass({
       link => {
         ReactDOM.unmountComponentAtNode(link);
       });
-  },
+  }
 
   /**
     Get the container node for the component. There is a bug with using
@@ -66,9 +55,9 @@ const EntityContentReadme = React.createClass({
 
     @return {Object} The comonent's container node.
   */
-  _getContainer: function() {
+  _getContainer() {
     return ReactDOM.findDOMNode(this);
-  },
+  }
 
   /**
     Get the content for the readme.
@@ -76,7 +65,7 @@ const EntityContentReadme = React.createClass({
     @method _getReadme
     @return {Object} The readme content.
   */
-  _getReadme: function() {
+  _getReadme() {
     var entityModel = this.props.entityModel;
     var readmeFile = this._getReadmeFile(entityModel);
     if (!readmeFile) {
@@ -84,9 +73,9 @@ const EntityContentReadme = React.createClass({
     } else {
       var id = entityModel.get('id');
       this.readmeXhr = this.props.getFile(
-        id, readmeFile, this._getReadmeCallback);
+        id, readmeFile, this._getReadmeCallback.bind(this));
     }
-  },
+  }
 
   /**
     Get the filename for the readme.
@@ -95,7 +84,7 @@ const EntityContentReadme = React.createClass({
     @param {Object} entityModel The entity model.
     @return {Object} The readme filename.
   */
-  _getReadmeFile: function(entityModel) {
+  _getReadmeFile(entityModel) {
     var files = entityModel.get('files');
     var match;
     for (var i = 0, l = files.length; i < l; i++) {
@@ -106,7 +95,7 @@ const EntityContentReadme = React.createClass({
       }
     }
     return match;
-  },
+  }
 
   /**
     Update the readme with the retrieved markdown.
@@ -115,7 +104,7 @@ const EntityContentReadme = React.createClass({
     @param {String} error The error message from the charmstore, if any.
     @param {Object} data The returned data for the readme.
   */
-  _getReadmeCallback: function(error, data) {
+  _getReadmeCallback(error, data) {
     if (error) {
       console.error(error);
       this.setState({readme: 'No readme.'});
@@ -149,9 +138,9 @@ const EntityContentReadme = React.createClass({
               link);
           });
       });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="entity-content__readme">
         <h2 className="entity-content__header" id="readme">
@@ -165,7 +154,16 @@ const EntityContentReadme = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentReadme.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  entityModel: React.PropTypes.object.isRequired,
+  getFile: React.PropTypes.func.isRequired,
+  hash: React.PropTypes.string,
+  renderMarkdown: React.PropTypes.func.isRequired,
+  scrollCharmbrowser: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-content-readme', function() {
   juju.components.EntityContentReadme = EntityContentReadme;

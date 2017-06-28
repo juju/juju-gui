@@ -21,32 +21,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   This component can be used to add in-page links to ids e.g. it could be used
   within a readme heading to link to .../#readme.
  */
-const HashLink = React.createClass({
-  displayName: 'HashLink',
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    hash: React.PropTypes.string.isRequired
-  },
-
+class HashLink extends React.Component {
   /**
     Update the hash state.
   */
-  _handleClick: function() {
+  _handleClick() {
     this.props.changeState({hash: this.props.hash});
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="hash-link"
-        onClick={this._handleClick}>
+        onClick={this._handleClick.bind(this)}>
         <juju.components.SvgIcon
           name="anchor_16"
           size="16" />
       </div>
     );
   }
-});
+};
+
+HashLink.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  hash: React.PropTypes.string.isRequired
+};
 
 YUI.add('hash-link', function() {
   juju.components.HashLink = HashLink;

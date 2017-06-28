@@ -18,34 +18,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const HeaderSearch = React.createClass({
-
-  propTypes: {
-    appState: React.PropTypes.object.isRequired
-  },
-
-  /**
-    Get the current state of the header search.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    return {
+class HeaderSearch extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       query: this._getSearchQuery(),
       active: this._activeForComponent()
     };
-  },
+  }
 
   /**
     Grabs the metadata search query from the app state and returns it.
     @method _getSearchQuery
     @returns {String} The search query.
   */
-  _getSearchQuery: function() {
+  _getSearchQuery() {
     const current = this.props.appState.current;
     return current.search && current.search.text || '';
-  },
+  }
 
   /**
     Based on the current state this will return true or false
@@ -53,18 +43,18 @@ const HeaderSearch = React.createClass({
 
     @method _activeForComponent
   */
-  _activeForComponent: function() {
+  _activeForComponent() {
     const state = this.props.appState.current;
     return state.root === 'store' ||
             state.store !== undefined || state.search !== undefined;
-  },
+  }
 
   /**
     Update the state when the app state changes.
 
     @method componentWillReceiveProps
   */
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     // Need to check if there is a change to the state and if it has been
     // cleared (store/search results have been closed) then we also need
     // to deactivate the search box.
@@ -81,13 +71,13 @@ const HeaderSearch = React.createClass({
       this._closeSearch();
       this.setState({query: query});
     }
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     if (!this.state.active) {
       this.refs.searchInput.blur();
     }
-  },
+  }
 
   /**
     Generate the base classes based on the props.
@@ -95,12 +85,12 @@ const HeaderSearch = React.createClass({
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'header-search', {
         'header-search--active': this.state.active
       });
-  },
+  }
 
   /**
     Generate the close button classes based on the props.
@@ -108,19 +98,19 @@ const HeaderSearch = React.createClass({
     @method _closeClasses
     @returns {String} The collection of class names.
   */
-  _closeClasses: function() {
+  _closeClasses() {
     return classNames(
       'header-search__close', {
         hidden: !this.state.active
       });
-  },
+  }
 
   /**
     Handle the search input receiving focus.
 
     @method _handleSearchFocus
   */
-  _handleSearchFocus: function() {
+  _handleSearchFocus() {
     this._openSearch(true);
     if (!this.state.active && !this.state.query) {
       this.props.appState.changeState({
@@ -133,7 +123,7 @@ const HeaderSearch = React.createClass({
         }
       });
     }
-  },
+  }
 
   /**
     Open the search box.
@@ -141,22 +131,22 @@ const HeaderSearch = React.createClass({
     @method _openSearch
     @param {Boolean} inputOpen Whether the input should be open.
   */
-  _openSearch: function(inputOpen) {
+  _openSearch(inputOpen) {
     this.setState({active: true});
     this.refs.searchInput.focus();
-  },
+  }
 
   /**
     Close the search box.
 
     @method _closeSearch
   */
-  _closeSearch: function() {
+  _closeSearch() {
     this.setState({
       query: '',
       active: false
     });
-  },
+  }
 
   /**
     Make search when the search form is submitted.
@@ -164,7 +154,7 @@ const HeaderSearch = React.createClass({
     @method _handleSubmit
     @param {Object} evt The submit event
   */
-  _handleSubmit: function(evt) {
+  _handleSubmit(evt) {
     evt.preventDefault();
     // If the search box is not open then instead of submitting the form the
     // search box should be opened.
@@ -187,14 +177,14 @@ const HeaderSearch = React.createClass({
       },
       store: query === '' ? '' : null
     });
-  },
+  }
 
   /**
     Close the header and clear the state when the button is clicked.
 
     @method _handleClose
   */
-  _handleClose: function() {
+  _handleClose() {
     this._closeSearch();
     this.props.appState.changeState({
       hash: null,
@@ -202,7 +192,7 @@ const HeaderSearch = React.createClass({
       store: null,
       search: null
     });
-  },
+  }
 
   /**
     Update the state from the value of the query input.
@@ -210,9 +200,9 @@ const HeaderSearch = React.createClass({
     @method _handleQueryChange
     @param {Object} e The input change event
   */
-  _handleQueryChange: function(e) {
+  _handleQueryChange(e) {
     this.setState({query: e.currentTarget.value});
-  },
+  }
 
   /**
     Navigate to the store when the button is clicked.
@@ -220,19 +210,19 @@ const HeaderSearch = React.createClass({
     @method _handleStoreClick
     @param {Object} e The click event
   */
-  _handleStoreClick: function(e) {
+  _handleStoreClick(e) {
     this.setState({query: ''});
     this.props.appState.changeState({
       root: 'store'
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className={this._generateClasses()} ref="headerSearchContainer">
         <form className="header-search__form">
           <button type="submit"
-            onClick={this._handleSubmit}
+            onClick={this._handleSubmit.bind(this)}
             className="header-search__submit">
             <juju.components.SvgIcon name="search_16"
               size="16" />
@@ -241,13 +231,13 @@ const HeaderSearch = React.createClass({
             className="header-search__input"
             placeholder="Search the store"
             value={this.state.query}
-            onChange={this._handleQueryChange}
-            onFocus={this._handleSearchFocus}
+            onChange={this._handleQueryChange.bind(this)}
+            onFocus={this._handleSearchFocus.bind(this)}
             style={this.state.inputStyles}
             ref="searchInput"/>
         </form>
         <span tabIndex="0" role="button"
-          onClick={this._handleStoreClick}
+          onClick={this._handleStoreClick.bind(this)}
           className="header-search__search--mobile">
           <span className="header-search__store-icon">
             <juju.components.SvgIcon name="search_16"
@@ -256,14 +246,18 @@ const HeaderSearch = React.createClass({
         </span>
         <span tabIndex="0" role="button"
           className={this._closeClasses()}
-          onClick={this._handleClose}>
+          onClick={this._handleClose.bind(this)}>
           <juju.components.SvgIcon name="close_16"
             size="16" />
         </span>
       </div>
     );
   }
-});
+};
+
+HeaderSearch.propTypes = {
+  appState: React.PropTypes.object.isRequired
+};
 
 YUI.add('header-search', function() {
   juju.components.HeaderSearch = HeaderSearch;

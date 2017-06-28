@@ -18,43 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileBudgetList = React.createClass({
-  // broadcastStatus is necessary for communicating loading status back to
-  // the parent SectionLoadWatcher.
-  propTypes: {
-    broadcastStatus: React.PropTypes.func,
-    listBudgets: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getInitialState: function() {
+class UserProfileBudgetList extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-
-    return {
+    this.state = {
       budgetList: [],
       loadingBudgets: false
     };
-  },
+  }
 
-  getDefaultProps: function() {
-    // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-    // to it should not fail, so default to an empty function.
-    return {
-      broadcastStatus: function() {}
-    };
-  },
-
-  componentWillMount: function() {
+  componentWillMount() {
     this._getBudgets();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // If the user has changed then update the data.
     const props = this.props;
     const currentUser = props.user && props.user.user;
@@ -62,22 +46,22 @@ const UserProfileBudgetList = React.createClass({
     if (nextUser !== currentUser) {
       this._getBudgets();
     }
-  },
+  }
 
   /**
     Get the budgets for the authenticated user.
 
     @method _getBudgets
   */
-  _getBudgets: function() {
+  _getBudgets() {
     this.props.broadcastStatus('starting');
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingBudgets: true}, () => {
-      const xhr = this.props.listBudgets(this._getBudgetsCallback);
+      const xhr = this.props.listBudgets(this._getBudgetsCallback.bind(this));
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Callback for the plans API call to get budgets.
@@ -86,7 +70,7 @@ const UserProfileBudgetList = React.createClass({
     @param {String} error The error from the request, or null.
     @param {Object} data The data from the request.
   */
-  _getBudgetsCallback: function(error, data) {
+  _getBudgetsCallback(error, data) {
     this.setState({loadingBudgets: false}, () => {
       const broadcastStatus = this.props.broadcastStatus;
       if (error) {
@@ -109,7 +93,7 @@ const UserProfileBudgetList = React.createClass({
       }
       this.setState({budgetList: budgets});
     });
-  },
+  }
 
   /**
     Generate the details for the provided budget.
@@ -118,7 +102,7 @@ const UserProfileBudgetList = React.createClass({
     @param {Object} budget A budget object.
     @returns {Array} The markup for the row.
   */
-  _generateRow: function(budget) {
+  _generateRow(budget) {
     return (
       <li className="user-profile__list-row twelve-col"
         key={budget.budget}>
@@ -138,7 +122,7 @@ const UserProfileBudgetList = React.createClass({
             ${budget.consumed}
         </span>
       </li>);
-  },
+  }
 
   /**
     Generate the header for the agreements.
@@ -146,7 +130,7 @@ const UserProfileBudgetList = React.createClass({
     @method _generateHeader
     @returns {Array} The markup for the header.
   */
-  _generateHeader: function() {
+  _generateHeader() {
     return (
       <li className="user-profile__list-header twelve-col">
         <span className="user-profile__list-col three-col">
@@ -165,9 +149,9 @@ const UserProfileBudgetList = React.createClass({
           Spend
         </span>
       </li>);
-  },
+  }
 
-  render: function() {
+  render() {
     if (this.state.loadingBudgets) {
       return (
         <div className="user-profile__budget-list twelve-col">
@@ -179,7 +163,7 @@ const UserProfileBudgetList = React.createClass({
     if (!list || list.length === 0) {
       return null;
     }
-    const rows = list.map(this._generateRow);
+    const rows = list.map(this._generateRow.bind(this));
     return (
       <div className="user-profile__budget-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
@@ -195,8 +179,21 @@ const UserProfileBudgetList = React.createClass({
       </div>
     );
   }
+};
 
-});
+// broadcastStatus is necessary for communicating loading status back to
+// the parent SectionLoadWatcher.
+UserProfileBudgetList.propTypes = {
+  broadcastStatus: React.PropTypes.func,
+  listBudgets: React.PropTypes.func.isRequired,
+  user: React.PropTypes.object
+};
+
+// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+// to it should not fail, so default to an empty function.
+UserProfileBudgetList.defaultProps = {
+  broadcastStatus: function() {}
+};
 
 YUI.add('user-profile-budget-list', function() {
   juju.components.UserProfileBudgetList = UserProfileBudgetList;

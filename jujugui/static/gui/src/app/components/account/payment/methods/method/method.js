@@ -18,54 +18,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPaymentMethod = React.createClass({
-  displayName: 'AccountPaymentMethod',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    paymentMethod: React.PropTypes.object.isRequired,
-    removePaymentMethod: React.PropTypes.func.isRequired,
-    updatePaymentMethod: React.PropTypes.func.isRequired,
-    updateUser: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class AccountPaymentMethod extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       showForm: false
     };
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Generate a payment method.
 
     @method _generatePaymentMethod
   */
-  _generatePaymentMethod: function() {
+  _generatePaymentMethod() {
     return (
       <juju.components.AccountPaymentMethodCard
         addNotification={this.props.addNotification}
         card={this.props.paymentMethod}
         onPaymentMethodRemoved={this.props.updateUser}
         removePaymentMethod={this.props.removePaymentMethod}
-        updatePaymentMethod={this._toggleForm}
+        updatePaymentMethod={this._toggleForm.bind(this)}
         username={this.props.username} />);
-  },
+  }
 
   /**
     Update a payment method.
   */
-  _updatePaymentMethod: function() {
+  _updatePaymentMethod() {
     const valid = this.props.validateForm(
       ['expiry', 'cardAddress'], this.refs);
     if (!valid) {
@@ -91,21 +78,21 @@ const AccountPaymentMethod = React.createClass({
         this.props.updateUser();
       });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Show or hide the edit payment method form.
 
     @method _toggleForm
   */
-  _toggleForm: function() {
+  _toggleForm() {
     this.setState({showForm: !this.state.showForm});
-  },
+  }
 
   /**
     Generate the form for editing the payment method.
   */
-  _generateEditForm: function() {
+  _generateEditForm() {
     const paymentMethod = this.props.paymentMethod;
     // Zero pad the month if it is less than 10.
     const month = `0${paymentMethod.month}`.slice(-2);
@@ -137,18 +124,18 @@ const AccountPaymentMethod = React.createClass({
         </div>
         <div className="twelve-col account-payment-method__buttons">
           <juju.components.GenericButton
-            action={this._toggleForm}
+            action={this._toggleForm.bind(this)}
             type="inline-neutral"
             title="Cancel" />
           <juju.components.GenericButton
-            action={this._updatePaymentMethod}
+            action={this._updatePaymentMethod.bind(this)}
             type="inline-positive"
             title="update" />
         </div>
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     const content = this.state.showForm ?
       this._generateEditForm() : this._generatePaymentMethod();
     return (
@@ -166,8 +153,19 @@ const AccountPaymentMethod = React.createClass({
       </juju.components.ExpandingRow>
     );
   }
+};
 
-});
+AccountPaymentMethod.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  paymentMethod: React.PropTypes.object.isRequired,
+  removePaymentMethod: React.PropTypes.func.isRequired,
+  updatePaymentMethod: React.PropTypes.func.isRequired,
+  updateUser: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('account-payment-method', function() {
   juju.components.AccountPaymentMethod = AccountPaymentMethod;

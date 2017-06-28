@@ -18,39 +18,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Logout = React.createClass({
-
-  propTypes: {
-    charmstoreLogoutUrl: React.PropTypes.string.isRequired,
-    doCharmstoreLogout: React.PropTypes.func.isRequired,
-    locationAssign: React.PropTypes.func.isRequired,
-    logoutUrl: React.PropTypes.string.isRequired,
-    visible: React.PropTypes.bool.isRequired
-  },
-
+class Logout extends React.Component {
   /**
     Generate the classes based on the props.
 
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'logout-link',
       {
         'logout-link--hidden': !this.props.visible
       }
     );
-  },
+  }
 
-  handleClick: function() {
+  _handleClick() {
     const props = this.props;
     if (props.doCharmstoreLogout()) {
       props.locationAssign(props.logoutUrl);
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     let logoutUrl = props.logoutUrl;
     let target = '_self';
@@ -63,13 +54,20 @@ const Logout = React.createClass({
       <a className={this._generateClasses()}
         href={logoutUrl}
         target={target}
-        onClick={this.handleClick}>
+        onClick={this._handleClick.bind(this)}>
         Logout
       </a>
     );
   }
+};
 
-});
+Logout.propTypes = {
+  charmstoreLogoutUrl: React.PropTypes.string.isRequired,
+  doCharmstoreLogout: React.PropTypes.func.isRequired,
+  locationAssign: React.PropTypes.func.isRequired,
+  logoutUrl: React.PropTypes.string.isRequired,
+  visible: React.PropTypes.bool.isRequired
+};
 
 YUI.add('logout-component', function() {
   juju.components.Logout = Logout;

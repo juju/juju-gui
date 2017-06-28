@@ -18,24 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// Wrap the component to handle clicking outside.
-const MoreMenu = enhanceWithClickOutside(React.createClass({
-  displayName: 'MoreMenu',
-
-  propTypes: {
-    activeItem: React.PropTypes.string,
-    items: React.PropTypes.array.isRequired
-  },
-
-  /**
-    Get the intial state of the more menu.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
-    return {menuOpen: false};
-  },
+class MoreMenu extends React.Component {
+  constructor() {
+    super();
+    this.state = {menuOpen: false};
+  }
 
   /**
     Close the more menu when there is a click outside of the component.
@@ -44,18 +31,18 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
     @method handleClickOutside
     @param {Object} e The click event
   */
-  handleClickOutside: function(e) {
+  handleClickOutside(e) {
     this.setState({menuOpen: false});
-  },
+  }
 
   /**
     Toggle the menu open or closed.
 
     @method _handleToggleMenu
   */
-  _handleToggleMenu: function() {
+  _handleToggleMenu() {
     this.setState({menuOpen: !this.state.menuOpen});
-  },
+  }
 
   /**
     Call the supplied action when an item is clicked
@@ -63,12 +50,12 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
     @method _handleItemClick
     @param {Function} action The action to call
   */
-  _handleItemClick: function(action) {
+  _handleItemClick(action) {
     if (action) {
       action();
       this.setState({menuOpen: false});
     }
-  },
+  }
 
   /**
     Generate the classes for the menu item.
@@ -77,7 +64,7 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
     @param {Object} item The menu item.
     @returns {String} The collection of class names.
   */
-  _generateItemClasses: function(item) {
+  _generateItemClasses(item) {
     return classNames(
       'more-menu__menu-item', {
         'more-menu__menu-item--active':
@@ -85,7 +72,7 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
         'more-menu__menu-item--inactive': !item.action
       }
     );
-  },
+  }
 
   /**
     Generate the menu.
@@ -93,7 +80,7 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
     @method _generateMenu
     @returns {Object} The menu components.
   */
-  _generateMenu: function() {
+  _generateMenu() {
     if (!this.state.menuOpen) {
       return;
     }
@@ -112,7 +99,7 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
       <ul className="more-menu__menu">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Generate the classes for the menu.
@@ -120,19 +107,19 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
     @method _generateClasses
     @returns {Object} The collection of classes.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'more-menu', {
         'more-menu--active': this.state.menuOpen
       }
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className={this._generateClasses()}>
         <span className="more-menu__toggle"
-          onClick={this._handleToggleMenu}
+          onClick={this._handleToggleMenu.bind(this)}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon
@@ -143,10 +130,16 @@ const MoreMenu = enhanceWithClickOutside(React.createClass({
       </div>
     );
   }
-}));
+};
+
+MoreMenu.propTypes = {
+  activeItem: React.PropTypes.string,
+  items: React.PropTypes.array.isRequired
+};
 
 YUI.add('more-menu', function() {
-  juju.components.MoreMenu = MoreMenu;
+  // Wrap the component to handle clicking outside.
+  juju.components.MoreMenu = enhanceWithClickOutside(MoreMenu);
 }, '0.1.0', {
   requires: [
     'svg-icon'

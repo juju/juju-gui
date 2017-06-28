@@ -23,18 +23,14 @@ charms and bundles. You can only see this page is you have access.
 
 'use strict';
 
-const ISVProfile = React.createClass({
-  propTypes: {
-    d3: React.PropTypes.object.isRequired
-  },
-
+class ISVProfile extends React.Component {
   /**
     Placeholder function to get the data to render the plan usage chart
 
     @method getDataSet
     @returns {Array} Array of data points.
   */
-  getDataSet: function() {
+  getDataSet() {
     return [[
       {'date':new Date(2012,0,1), 'value': 300},
       {'date':new Date(2012,0,3), 'value': 200},
@@ -48,9 +44,9 @@ const ISVProfile = React.createClass({
       {'date':new Date(2012,0,21), 'value': 230},
       {'date':new Date(2012,0,30), 'value': 30}
     ]];
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Panel
         instanceName="isv-profile"
@@ -147,7 +143,11 @@ const ISVProfile = React.createClass({
       </juju.components.Panel>
     );
   }
-});
+};
+
+ISVProfile.propTypes = {
+  d3: React.PropTypes.object.isRequired
+};
 
 YUI.add('isv-profile', function() {
   juju.components.ISVProfile = ISVProfile;

@@ -18,13 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const SearchResultsTypeFilter = React.createClass({
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    currentType: React.PropTypes.string
-  },
-
+class SearchResultsTypeFilter extends React.Component {
   /**
     Generate the base classes from the props.
 
@@ -32,11 +26,11 @@ const SearchResultsTypeFilter = React.createClass({
     @param {Boolean} selected Whether the filter is selected.
     @returns {String} The collection of class names.
   */
-  _generateClasses: function(selected) {
+  _generateClasses(selected) {
     return classNames(
       {selected: selected}
     );
-  },
+  }
 
   /**
     Generate a list of filter items.
@@ -44,7 +38,7 @@ const SearchResultsTypeFilter = React.createClass({
     @method _generateFilterItems
     @returns {Object} The components.
   */
-  _generateFilterItems: function() {
+  _generateFilterItems() {
     var components = [];
     var currentType = this.props.currentType;
     var items = [{
@@ -70,7 +64,7 @@ const SearchResultsTypeFilter = React.createClass({
         </li>);
     }, this);
     return components;
-  },
+  }
 
   /**
     Filter the search results by the provided type.
@@ -78,15 +72,15 @@ const SearchResultsTypeFilter = React.createClass({
     @method _handleFilterClick
     @param {String} type The bound type.
   */
-  _handleFilterClick: function(type) {
+  _handleFilterClick(type) {
     this.props.changeState({
       search: {
         type: type
       }
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <nav className="six-col list-block__type">
         <ul>
@@ -95,7 +89,12 @@ const SearchResultsTypeFilter = React.createClass({
       </nav>
     );
   }
-});
+};
+
+SearchResultsTypeFilter.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  currentType: React.PropTypes.string
+};
 
 YUI.add('search-results-type-filter', function(Y) {
   juju.components.SearchResultsTypeFilter = SearchResultsTypeFilter;

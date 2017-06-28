@@ -22,27 +22,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const LOCAL_CLOUD = 'localhost';
 
 // List, add and remove cloud credentials in the account page.
-const AccountCredentials = React.createClass({
-  displayName: 'AccountCredentials',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    controllerIsReady: React.PropTypes.func.isRequired,
-    generateCloudCredentialName: React.PropTypes.func.isRequired,
-    getCloudCredentialNames: React.PropTypes.func.isRequired,
-    getCloudProviderDetails: React.PropTypes.func.isRequired,
-    listClouds: React.PropTypes.func.isRequired,
-    revokeCloudCredential: React.PropTypes.func.isRequired,
-    sendAnalytics: React.PropTypes.func.isRequired,
-    updateCloudCredential: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class AccountCredentials extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       cloud: null,
       clouds: [],
       credentials: [],
@@ -50,24 +34,24 @@ const AccountCredentials = React.createClass({
       removeCredential: null,
       showAdd: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getClouds();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Retrieve the list of clouds.
 
     @method _getClouds
   */
-  _getClouds: function() {
+  _getClouds() {
     this.setState({loading: true}, () => {
       const xhr = this.props.listClouds((error, clouds) => {
         if (error) {
@@ -84,7 +68,7 @@ const AccountCredentials = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Retrieve the list of credential names for the user.
@@ -92,7 +76,7 @@ const AccountCredentials = React.createClass({
     @method _getCloudCredentialNames
     @param {Array} clouds A list of cloud ids.
   */
-  _getCloudCredentialNames: function(clouds) {
+  _getCloudCredentialNames(clouds) {
     const pairs = Object.keys(clouds).map(cloud => {
       return [this.props.username, cloud];
     });
@@ -126,33 +110,33 @@ const AccountCredentials = React.createClass({
         });
       });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Handle deleting a credential.
 
     @param credential {String} A credential id.
   */
-  _handleDeleteCredential: function(credential=null) {
+  _handleDeleteCredential(credential=null) {
     this.setState({'removeCredential': credential});
-  },
+  }
 
   /**
     Handle deleting a credential.
 
     @param credential {String} A credential id.
   */
-  _generateDeleteCredential: function(credential) {
+  _generateDeleteCredential(credential) {
     if (!this.state.removeCredential) {
       return null;
     }
     const buttons = [{
       title: 'Cancel',
-      action: this._handleDeleteCredential,
+      action: this._handleDeleteCredential.bind(this),
       type: 'inline-neutral'
     }, {
       title: 'Continue',
-      action: this._deleteCredential,
+      action: this._deleteCredential.bind(this),
       type: 'destructive'
     }];
     return (
@@ -163,14 +147,14 @@ const AccountCredentials = React.createClass({
           Are you sure you want to remove these credentials?
         </p>
       </window.juju.components.Popup>);
-  },
+  }
 
   /**
     Handle deleting a credential.
 
     @method _deleteCredential
   */
-  _deleteCredential: function() {
+  _deleteCredential() {
     const credential = this.state.removeCredential;
     const xhr = this.props.revokeCloudCredential(credential, (error) => {
       if (error) {
@@ -194,14 +178,14 @@ const AccountCredentials = React.createClass({
         removeCredential: null});
     });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Generate a list of credentials.
 
     @method _generateCredentials
   */
-  _generateCredentials: function() {
+  _generateCredentials() {
     const credentials = this.state.credentials;
     if (this.state.loading) {
       return (
@@ -249,18 +233,18 @@ const AccountCredentials = React.createClass({
           No credentials available.
         </div>);
     }
-  },
+  }
 
   /**
     Show the add credentials form.
 
     @method _toggleAdd
   */
-  _toggleAdd: function() {
+  _toggleAdd() {
     // The cloud needs to be reset so that when the form is shown it doesn't
     // show the last selected cloud.
     this.setState({showAdd: !this.state.showAdd, cloud: null});
-  },
+  }
 
   /**
     Store the selected cloud in state.
@@ -268,9 +252,9 @@ const AccountCredentials = React.createClass({
     @method _setCloud
     @param {String} cloud The selected cloud.
   */
-  _setCloud: function(cloud) {
+  _setCloud(cloud) {
     this.setState({cloud: cloud});
-  },
+  }
 
   /**
     Store the selected credential in state.
@@ -278,16 +262,16 @@ const AccountCredentials = React.createClass({
     @method _setCredential
     @param {String} credential The selected credential.
   */
-  _setCredential: function(credential) {
+  _setCredential(credential) {
     this.setState({credential: credential});
-  },
+  }
 
   /**
     Generate a form to add credentials.
 
     @method _generateAddCredentials
   */
-  _generateAddCredentials: function() {
+  _generateAddCredentials() {
     let content = null;
     let addForm = null;
     let chooseCloud = null;
@@ -296,15 +280,15 @@ const AccountCredentials = React.createClass({
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          close={this._toggleAdd}
+          close={this._toggleAdd.bind(this)}
           cloud={this.state.cloud}
           credentials={this.state.credentials.map(credential =>
             credential.name)}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
-          getCredentials={this._getClouds}
+          getCredentials={this._getClouds.bind(this)}
           sendAnalytics={this.props.sendAnalytics}
-          setCredential={this._setCredential}
+          setCredential={this._setCredential.bind(this)}
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.username}
           validateForm={this.props.validateForm} />);
@@ -326,7 +310,7 @@ const AccountCredentials = React.createClass({
             controllerIsReady={this.props.controllerIsReady}
             listClouds={this.props.listClouds}
             getCloudProviderDetails={this.props.getCloudProviderDetails}
-            setCloud={this._setCloud} />
+            setCloud={this._setCloud.bind(this)} />
           {addForm}
         </div>);
     }
@@ -340,13 +324,13 @@ const AccountCredentials = React.createClass({
           {content}
         </div>
       </juju.components.ExpandingRow>);
-  },
+  }
 
-  render: function() {
+  render() {
     const clouds = this.state.clouds;
     let addButton = (
       <juju.components.GenericButton
-        action={this._toggleAdd}
+        action={this._toggleAdd.bind(this)}
         type="inline-neutral"
         title={this.state.showAdd ? 'Cancel' : 'Add'}
       />
@@ -370,8 +354,22 @@ const AccountCredentials = React.createClass({
       </div>
     );
   }
+};
 
-});
+AccountCredentials.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  controllerIsReady: React.PropTypes.func.isRequired,
+  generateCloudCredentialName: React.PropTypes.func.isRequired,
+  getCloudCredentialNames: React.PropTypes.func.isRequired,
+  getCloudProviderDetails: React.PropTypes.func.isRequired,
+  listClouds: React.PropTypes.func.isRequired,
+  revokeCloudCredential: React.PropTypes.func.isRequired,
+  sendAnalytics: React.PropTypes.func.isRequired,
+  updateCloudCredential: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('account-credentials', function() {
   juju.components.AccountCredentials = AccountCredentials;

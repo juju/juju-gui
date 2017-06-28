@@ -18,20 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorPlan = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    currentPlan: React.PropTypes.object
-  },
-
+class InspectorPlan extends React.Component {
   /**
     Generates the elements if the applicaton has a plan selected.
 
     @method _generatePlanDetails
     @return {Function} The React elements for the UI.
   */
-  _generatePlanDetails: function() {
+  _generatePlanDetails() {
     var currentPlan = this.props.currentPlan;
     return (
       <div className="inspector-plan__details">
@@ -41,7 +35,7 @@ const InspectorPlan = React.createClass({
           {currentPlan.description}
         </div>
       </div>);
-  },
+  }
 
   /**
     Generates the elements if the application does not have a plan selected.
@@ -49,14 +43,14 @@ const InspectorPlan = React.createClass({
     @method _generateNoPlans
     @return {Function} The React elements for the UI.
   */
-  _generateNoPlans: function() {
+  _generateNoPlans() {
     return (
       <div className="inspector-plan__no-plan">
         You have no active plan
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-plan">
         {this.props.currentPlan ?
@@ -64,8 +58,12 @@ const InspectorPlan = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorPlan.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  currentPlan: React.PropTypes.object
+};
 
 YUI.add('inspector-plan', function() {
   juju.components.InspectorPlan = InspectorPlan;

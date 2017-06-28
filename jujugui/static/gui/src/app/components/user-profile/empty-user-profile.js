@@ -19,23 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 // This component handles the empty user profile.
-const EmptyUserProfile = React.createClass({
-  displayName: 'EmptyUserProfile',
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    isCurrentUser: React.PropTypes.bool,
-    staticURL: React.PropTypes.string,
-    switchModel: React.PropTypes.func.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {
-      staticURL: ''
-    };
-  },
-
-  render: function() {
+class EmptyUserProfile extends React.Component {
+  render() {
     const props = this.props;
     const basePath = `${props.staticURL}/static/gui/build/app`;
     const isCurrentUser = props.isCurrentUser;
@@ -62,8 +47,18 @@ const EmptyUserProfile = React.createClass({
       </div>
     );
   }
+};
 
-});
+EmptyUserProfile.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  isCurrentUser: React.PropTypes.bool,
+  staticURL: React.PropTypes.string,
+  switchModel: React.PropTypes.func.isRequired
+};
+
+EmptyUserProfile.defaultProps = {
+  staticURL: ''
+};
 
 YUI.add('empty-user-profile', function() {
   juju.components.EmptyUserProfile = EmptyUserProfile;

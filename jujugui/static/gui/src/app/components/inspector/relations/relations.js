@@ -15,25 +15,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorRelations = React.createClass({
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    destroyRelations: React.PropTypes.func.isRequired,
-    service: React.PropTypes.object.isRequired,
-    serviceRelations: React.PropTypes.array.isRequired
-  },
-
-  /**
-    Generate the initial state.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
-    return {activeCount: 0};
-  },
+class InspectorRelations extends React.Component {
+  constructor() {
+    super();
+    this.state = {activeCount: 0};
+  }
 
   /**
     Fires changeState to update the UI based on the component clicked.
@@ -41,21 +27,21 @@ const InspectorRelations = React.createClass({
     @method _showCreateRelation
     @param {Object} e The click event.
   */
-  _showCreateRelation: function(e) {
+  _showCreateRelation(e) {
     this.props.changeState({
       gui: {
         inspector: {
           id: this.props.service.get('id'),
           activeComponent: 'relate-to'
         }}});
-  },
+  }
 
   /**
     Update the count of the number of active checkboxes.
 
     @method _updateActiveCount
   */
-  _updateActiveCount: function() {
+  _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
     Object.keys(refs).forEach((ref) => {
@@ -66,7 +52,7 @@ const InspectorRelations = React.createClass({
       }
     });
     this.setState({'activeCount': activeCount});
-  },
+  }
 
   /**
     Generate the relation label.
@@ -75,10 +61,10 @@ const InspectorRelations = React.createClass({
     @param {Object} The relation object.
     @returns {String} The relation label.
   */
-  _generateRelationLabel: function(relation) {
+  _generateRelationLabel(relation) {
     var endpoint = relation.far;
     return `${endpoint.serviceName}:${endpoint.name}`;
-  },
+  }
 
   /**
     Generate the relation list of components.
@@ -86,7 +72,7 @@ const InspectorRelations = React.createClass({
     @method _generateRelations
     @returns {Object} The relation components.
   */
-  _generateRelations: function() {
+  _generateRelations() {
     var relations = this.props.serviceRelations;
     var disabled = this.props.acl.isReadOnly();
     var activeRelations = [];
@@ -115,7 +101,7 @@ const InspectorRelations = React.createClass({
         key={ref+'1'}
         ref={ref}
         label='Select all relations'
-        whenChanged={this._selectAllRelations}/>
+        whenChanged={this._selectAllRelations.bind(this)}/>
     ];
 
     relations.forEach(function(relation, index) {
@@ -127,17 +113,17 @@ const InspectorRelations = React.createClass({
           key={relation.id}
           ref={ref}
           label={this._generateRelationLabel(relation)}
-          whenChanged={this._updateActiveCount} />);
+          whenChanged={this._updateActiveCount.bind(this)} />);
     }, this);
     return components;
-  },
+  }
 
   /**
     Handle navigating to a relation details when it is clicked.
 
     @method _handleRelationClick
   */
-  _handleRelationClick: function(index) {
+  _handleRelationClick(index) {
     // Cast to string to pass state null check
     index = index + '';
     this.props.changeState({
@@ -148,14 +134,14 @@ const InspectorRelations = React.createClass({
         }
       }
     });
-  },
+  }
 
   /**
     Remove the selected relations
 
     @method _handleRemoveRelation
   */
-  _handleRemoveRelation: function() {
+  _handleRemoveRelation() {
     var relations = [];
     var refs = this.refs;
     Object.keys(refs).forEach((ref) => {
@@ -167,7 +153,7 @@ const InspectorRelations = React.createClass({
     });
     this.props.destroyRelations(relations);
     this._selectAllRelations(false);
-  },
+  }
 
   /**
     Sets the selectAll state property based on the "select all" child
@@ -176,7 +162,7 @@ const InspectorRelations = React.createClass({
     @method _selectAllRelations
     @param {Boolean} checked Whether to check or uncheck the relations.
   */
-  _selectAllRelations: function(checked) {
+  _selectAllRelations(checked) {
     var refs = this.refs;
     Object.keys(refs).forEach((ref) => {
       if (ref.split('-')[0] === 'CheckListItem') {
@@ -189,7 +175,7 @@ const InspectorRelations = React.createClass({
         });
       }
     });
-  },
+  }
 
   /**
     Generate the remove button.
@@ -197,7 +183,7 @@ const InspectorRelations = React.createClass({
     @method _generateButtons
     @returns {Object} The button row component.
   */
-  _generateButtons: function() {
+  _generateButtons() {
     if (this.props.serviceRelations.length === 0) {
       return;
     }
@@ -207,13 +193,13 @@ const InspectorRelations = React.createClass({
     buttons.push({
       title: 'Remove',
       type: 'neutral',
-      action: this._handleRemoveRelation,
+      action: this._handleRemoveRelation.bind(this),
       disabled: disabled
     });
     return (
       <juju.components.ButtonRow
         buttons={buttons} />);
-  },
+  }
 
   /**
     Generate the build relation action.
@@ -221,17 +207,17 @@ const InspectorRelations = React.createClass({
     @method _generateButtons
     @returns {Object} The build relation component.
   */
-  _generateBuildRelation: function() {
+  _generateBuildRelation() {
     return (
       <div className="inspector-relations__actions">
         <juju.components.OverviewAction
-          action={this._showCreateRelation}
+          action={this._showCreateRelation.bind(this)}
           icon="plus_box_16"
           title="Build a relation" />
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-relations">
         {this._generateBuildRelation()}
@@ -242,8 +228,15 @@ const InspectorRelations = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorRelations.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  destroyRelations: React.PropTypes.func.isRequired,
+  service: React.PropTypes.object.isRequired,
+  serviceRelations: React.PropTypes.array.isRequired
+};
 
 YUI.add('inspector-relations', function() {
   juju.components.InspectorRelations = InspectorRelations;

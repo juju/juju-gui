@@ -18,13 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentRevisions = React.createClass({
-
-  propTypes: {
-    revisions: React.PropTypes.array.isRequired
-  },
-
-  render: function() {
+class EntityContentRevisions extends React.Component {
+  render() {
     const revisions = this.props.revisions;
     return (
       <div className="revisions section" id="revisions">
@@ -32,7 +27,11 @@ const EntityContentRevisions = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentRevisions.propTypes = {
+  revisions: React.PropTypes.array.isRequired
+};
 
 YUI.add('entity-content-revisions', function() {
   juju.components.EntityContentRevisions = EntityContentRevisions;
