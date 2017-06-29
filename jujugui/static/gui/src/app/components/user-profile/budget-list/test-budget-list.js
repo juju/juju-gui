@@ -38,6 +38,7 @@ describe('UserProfileBudgetList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -47,6 +48,7 @@ describe('UserProfileBudgetList', () => {
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -70,6 +72,7 @@ describe('UserProfileBudgetList', () => {
     var listBudgets = sinon.stub().callsArgWith(0, null, data);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -128,58 +131,25 @@ describe('UserProfileBudgetList', () => {
     var listBudgets = sinon.stub().returns({abort: listBudgetsAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     renderer.unmount();
     assert.equal(listBudgetsAbort.callCount, 1);
   });
 
-  it('broadcasts starting status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
-        broadcastStatus={broadcastStatus}
-        listBudgets={sinon.stub()}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[0][0], 'starting');
-  });
-
-  it('broadcasts ok status', function() {
-    var data = {budgets: [{
-      'owner': 'spinach',
-      'budget': 'my-budget',
-      'limit': '99',
-      'allocated': '77',
-      'unallocated': '22',
-      'available': '22',
-      'consumed': '55'
-    }]};
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
-        broadcastStatus={broadcastStatus}
-        listBudgets={sinon.stub().callsArgWith(0, null, data)}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'ok');
-  });
-
-  it('broadcasts empty status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
-        broadcastStatus={broadcastStatus}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'empty');
-  });
-
   it('broadcasts error status', function() {
-    var broadcastStatus = sinon.stub();
+    const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
-        broadcastStatus={broadcastStatus}
+        addNotification={addNotification}
         listBudgets={sinon.stub().callsArgWith(0, 'error', null)}
         user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'error');
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot retrieve budgets',
+      message: 'Cannot retrieve budgets: error',
+      level: 'error'
+    });
   });
 });
