@@ -54,7 +54,6 @@ class UserProfileBudgetList extends React.Component {
     @method _getBudgets
   */
   _getBudgets() {
-    this.props.broadcastStatus('starting');
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingBudgets: true}, () => {
@@ -72,25 +71,24 @@ class UserProfileBudgetList extends React.Component {
   */
   _getBudgetsCallback(error, data) {
     this.setState({loadingBudgets: false}, () => {
-      const broadcastStatus = this.props.broadcastStatus;
       if (error) {
-        broadcastStatus('error');
         // It's possible that the error is an XHR response object so there
         // won't be an indexOf
         if (error.indexOf && error.indexOf('not found') === -1) {
           // A "profile not found" error is expected, and it means the user
           // does not have a credit limit yet. Notify any other errors.
-          // TODO huwshimi: notify the user with the error.
           console.error('cannot retrieve budgets:', error);
+          const message = 'Cannot retrieve budgets';
+          console.error(message, error);
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
         }
         return;
       }
       const budgets = data && data.budgets;
-      if (!budgets || !budgets.length || budgets.length === 0) {
-        broadcastStatus('empty');
-      } else {
-        broadcastStatus('ok');
-      }
       this.setState({budgetList: budgets});
     });
   }
@@ -181,18 +179,10 @@ class UserProfileBudgetList extends React.Component {
   }
 };
 
-// broadcastStatus is necessary for communicating loading status back to
-// the parent SectionLoadWatcher.
 UserProfileBudgetList.propTypes = {
-  broadcastStatus: React.PropTypes.func,
+  addNotification: React.PropTypes.func.isRequired,
   listBudgets: React.PropTypes.func.isRequired,
   user: React.PropTypes.object
-};
-
-// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-// to it should not fail, so default to an empty function.
-UserProfileBudgetList.defaultProps = {
-  broadcastStatus: function() {}
 };
 
 YUI.add('user-profile-budget-list', function() {
