@@ -77,7 +77,6 @@ class UserProfileBudgetList extends React.Component {
         if (error.indexOf && error.indexOf('not found') === -1) {
           // A "profile not found" error is expected, and it means the user
           // does not have a credit limit yet. Notify any other errors.
-          console.error('cannot retrieve budgets:', error);
           const message = 'Cannot retrieve budgets';
           console.error(message, error);
           this.props.addNotification({

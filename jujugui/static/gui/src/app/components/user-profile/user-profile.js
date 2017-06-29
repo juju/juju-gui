@@ -86,6 +86,7 @@ class UserProfile extends React.Component {
       <juju.components.UserProfileEntityList
         key='bundleList'
         ref='bundleList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
         getDiagramURL={props.getDiagramURL}
@@ -95,6 +96,7 @@ class UserProfile extends React.Component {
       <juju.components.UserProfileEntityList
         key='charmList'
         ref='charmList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
         d3={props.d3}
