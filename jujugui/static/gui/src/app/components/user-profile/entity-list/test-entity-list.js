@@ -49,12 +49,12 @@ describe('UserProfileEntityList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user='who'
-      />, true);
+        user='who' />, true);
     var output = component.getRenderOutput();
     assert.equal(output, null);
   });
@@ -64,12 +64,12 @@ describe('UserProfileEntityList', () => {
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type={type}
-        user='who'
-      />, true);
+        user='who' />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(output, (
       <div className="user-profile__charm-list twelve-col">
@@ -84,14 +84,14 @@ describe('UserProfileEntityList', () => {
     const type = 'charm';
     let component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={changeState}
         charmstore={charmstore}
         d3={{}}
         getDiagramURL={sinon.stub()}
         getKpiMetrics={getKpiMetrics}
         type={type}
-        user='who'
-      />, true);
+        user='who' />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__charm-list">
@@ -154,12 +154,12 @@ describe('UserProfileEntityList', () => {
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={getDiagramURL}
         type='bundle'
-        user='who'
-      />, true);
+        user='who' />, true);
     var output = component.getRenderOutput();
     var expected = (
       <div className="user-profile__bundle-list">
@@ -223,12 +223,12 @@ describe('UserProfileEntityList', () => {
   it('requests charms and updates state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user='who'
-      />, true);
+        user='who' />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
       'charmstore list not called');
@@ -241,12 +241,12 @@ describe('UserProfileEntityList', () => {
   it('requests bundles and updates state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='bundle'
-        user='who'
-      />, true);
+        user='who' />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
       'charmstore list not called');
@@ -261,12 +261,12 @@ describe('UserProfileEntityList', () => {
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user='who'
-      />, true);
+        user='who' />, true);
     renderer.unmount();
     assert.equal(charmstoreAbort.callCount, 1);
   });
@@ -276,6 +276,7 @@ describe('UserProfileEntityList', () => {
     var charmstore = {list: list};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -284,6 +285,7 @@ describe('UserProfileEntityList', () => {
     assert.equal(list.callCount, 0);
     component.render(
       <juju.components.UserProfileEntityList
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -292,57 +294,41 @@ describe('UserProfileEntityList', () => {
     assert.equal(list.callCount, 1);
   });
 
-  it('broadcasts starting status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
-        broadcastStatus={broadcastStatus}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        getDiagramURL={sinon.stub()}
-        type='charm'
-        user='who' />);
-    assert.equal(broadcastStatus.args[0][0], 'starting');
-  });
-
-  it('broadcasts ok status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
-        broadcastStatus={broadcastStatus}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        getDiagramURL={sinon.stub()}
-        type='charm'
-        user='who' />);
-    assert.equal(broadcastStatus.args[1][0], 'ok');
-  });
-
-  it('broadcasts empty status', function() {
-    charmstore.list = sinon.stub().callsArgWith(1, null, []);
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
-        broadcastStatus={broadcastStatus}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        getDiagramURL={sinon.stub()}
-        type='charm'
-        user='who' />);
-    assert.equal(broadcastStatus.args[1][0], 'empty');
-  });
-
-  it('broadcasts error status', function() {
+  it('handles errors when getting charms', function() {
     charmstore.list = sinon.stub().callsArgWith(1, 'error', null);
-    var broadcastStatus = sinon.stub();
+    const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={broadcastStatus}
+        addNotification={addNotification}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
         user='who' />);
-    assert.equal(broadcastStatus.args[1][0], 'error');
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot retrieve charms',
+      message: 'Cannot retrieve charms: error',
+      level: 'error'
+    });
+  });
+
+  it('handles errors when getting bundles', function() {
+    charmstore.list = sinon.stub().callsArgWith(1, 'error', null);
+    const addNotification = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntityList
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        getDiagramURL={sinon.stub()}
+        type='bundle'
+        user='who' />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot retrieve bundles',
+      message: 'Cannot retrieve bundles: error',
+      level: 'error'
+    });
   });
 });

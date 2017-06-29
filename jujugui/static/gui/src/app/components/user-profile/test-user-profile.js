@@ -93,6 +93,7 @@ describe('UserProfile', () => {
         userInfo={userInfo}
       />,
       <juju.components.UserProfileEntityList
+        addNotification={addNotification}
         ref="bundleList"
         key="bundleList"
         changeState={changeState}
@@ -102,6 +103,7 @@ describe('UserProfile', () => {
         user={userInfo.external}
       />,
       <juju.components.UserProfileEntityList
+        addNotification={addNotification}
         ref="charmList"
         key="charmList"
         changeState={changeState}
