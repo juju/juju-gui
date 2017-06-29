@@ -54,7 +54,6 @@ class UserProfileAgreementList extends React.Component {
     @method _getAgreements
   */
   _getAgreements() {
-    this.props.broadcastStatus('starting');
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingAgreements: true}, () => {
@@ -73,17 +72,15 @@ class UserProfileAgreementList extends React.Component {
   */
   _getAgreementsCallback(error, data) {
     this.setState({loadingAgreements: false}, () => {
-      const broadcastStatus = this.props.broadcastStatus;
       if (error) {
-        broadcastStatus('error');
-        // TODO frankban: notify the user with the error.
-        console.error('cannot retrieve terms:', error);
+        const message = 'Cannot retrieve terms';
+        console.error(message, error);
+        this.props.addNotification({
+          title: message,
+          message: `${message}: ${error}`,
+          level: 'error'
+        });
         return;
-      }
-      if (!data || !data.length || data.length === 0) {
-        broadcastStatus('empty');
-      } else {
-        broadcastStatus('ok');
       }
       this.setState({agreementList: data});
     });
@@ -160,18 +157,10 @@ class UserProfileAgreementList extends React.Component {
   }
 };
 
-// broadcastStatus is necessary for communicating loading status back to
-// the parent SectionLoadWatcher.
 UserProfileAgreementList.propTypes = {
-  broadcastStatus: React.PropTypes.func,
+  addNotification: React.PropTypes.func.isRequired,
   getAgreements: React.PropTypes.func.isRequired,
   user: React.PropTypes.object
-};
-
-// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-// to it should not fail, so default to an empty function.
-UserProfileAgreementList.defaultProps = {
-  broadcastStatus: function() {}
 };
 
 YUI.add('user-profile-agreement-list', function() {
