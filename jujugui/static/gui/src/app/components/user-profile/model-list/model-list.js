@@ -388,12 +388,9 @@ class UserProfileModelList extends React.Component {
   }
 };
 
-// broadcastStatus is necessary for communicating loading status back to
-// the parent SectionLoadWatcher.
 UserProfileModelList.propTypes = {
   acl: React.PropTypes.object,
   addNotification: React.PropTypes.func.isRequired,
-  broadcastStatus: React.PropTypes.func,
   changeState: React.PropTypes.func.isRequired,
   currentModel: React.PropTypes.string,
   destroyModels: React.PropTypes.func.isRequired,
