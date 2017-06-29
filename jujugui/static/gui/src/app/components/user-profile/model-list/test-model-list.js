@@ -97,7 +97,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('does not show the create model button if not current user', () => {
@@ -136,7 +136,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays loading spinner when loading', () => {
@@ -152,11 +152,11 @@ describe('UserProfileModelList', () => {
         userInfo={userInfo}
       />, true);
     const output = component.getRenderOutput();
-    assert.deepEqual(output, (
+    const expected = (
       <div className="user-profile__model-list twelve-col">
         <juju.components.Spinner />
-      </div>
-    ));
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of models', () => {
@@ -463,7 +463,7 @@ describe('UserProfileModelList', () => {
           This action cannot be undone.
         </p>
       </juju.components.Popup>);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can destroy a model', () => {
@@ -648,73 +648,5 @@ describe('UserProfileModelList', () => {
       message: 'The controller model cannot be destroyed.',
       level: 'error'
     }, 'The notification does not match expected.');
-  });
-
-  it('broadcasts starting status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub()}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[0][0], 'starting');
-  });
-
-  it('broadcasts ok status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'ok');
-  });
-
-  it('broadcasts empty status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'empty');
-  });
-
-  it('broadcasts error status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'error');
   });
 });
