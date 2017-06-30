@@ -78,7 +78,8 @@ describe('UserProfile', () => {
           interactiveLogin={instance._interactiveLogin}
           links={links}
           userInfo={userInfo} />
-        <div>
+        {null}
+        <div className="">
           {[<juju.components.UserProfileModelList
             acl={acl}
             addNotification={addNotification}
@@ -169,6 +170,43 @@ describe('UserProfile', () => {
           isCurrentUser={true}
           staticURL={staticURL}
           switchModel={switchModel} />
+        <div className="user-profile__list--hidden">
+          {[<juju.components.UserProfileModelList
+            acl={acl}
+            addNotification={addNotification}
+            ref="modelList"
+            key="modelList"
+            changeState={changeState}
+            currentModel={undefined}
+            destroyModels={destroyModels}
+            facadesExist={true}
+            listModelsWithInfo={listModelsWithInfo}
+            setHasEntities={instance._setHasEntities}
+            switchModel={switchModel}
+            userInfo={userInfo} />,
+          <juju.components.UserProfileEntityList
+            addNotification={addNotification}
+            ref="bundleList"
+            key="bundleList"
+            changeState={changeState}
+            charmstore={charmstore}
+            getDiagramURL={getDiagramURL}
+            setHasEntities={instance._setHasEntities}
+            type='bundle'
+            user={userInfo.external} />,
+          <juju.components.UserProfileEntityList
+            addNotification={addNotification}
+            ref="charmList"
+            key="charmList"
+            changeState={changeState}
+            charmstore={charmstore}
+            d3={{}}
+            getDiagramURL={getDiagramURL}
+            getKpiMetrics={getKpiMetrics}
+            setHasEntities={instance._setHasEntities}
+            type='charm'
+            user={userInfo.external} />]}
+        </div>
       </div>);
     expect(content).toEqualJSX(expected);
   });
