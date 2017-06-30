@@ -86,6 +86,9 @@ class UserProfileModelList extends React.Component {
           return model.owner === extUser;
         });
       }
+      if (modelList && modelList.length > 0) {
+        this.props.setHasEntities(true);
+      }
       this.setState({modelList: modelList});
     });
   }
@@ -396,6 +399,7 @@ UserProfileModelList.propTypes = {
   destroyModels: React.PropTypes.func.isRequired,
   facadesExist: React.PropTypes.bool.isRequired,
   listModelsWithInfo: React.PropTypes.func.isRequired,
+  setHasEntities: React.PropTypes.func.isRequired,
   switchModel: React.PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for

@@ -50,6 +50,10 @@
     border-bottom: 1px solid $mid-grey;
     margin-bottom: 20px;
 
+    &--hidden {
+      display: none;
+    }
+
     &-row,
     &-header {
       margin: 0;
