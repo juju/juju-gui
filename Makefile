@@ -130,7 +130,7 @@ $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
 $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
-	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
+	$(PY) scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
 # fast-babel will be passed a list of all files which have been
@@ -363,7 +363,7 @@ dist: clean-all fast-dist
 
 .PHONY: fast-dist
 fast-dist: deps fast-babel gui test-deps collect-requirements version
-	python setup.py sdist --formats=bztar\
+	$(PY) setup.py sdist --formats=bztar\
 
 #######
 # CLEAN
