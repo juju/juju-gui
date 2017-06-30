@@ -86,6 +86,9 @@ class UserProfileEntityList extends React.Component {
         });
         return;
       }
+      if (data && data.length > 0) {
+        this.props.setHasEntities(true);
+      }
       this.setState({entityList: data});
     });
   }
@@ -338,6 +341,7 @@ UserProfileEntityList.propTypes = {
   d3: React.PropTypes.object,
   getDiagramURL: React.PropTypes.func.isRequired,
   getKpiMetrics: React.PropTypes.func,
+  setHasEntities: React.PropTypes.func.isRequired,
   type: React.PropTypes.string.isRequired,
   user: React.PropTypes.string
 };
