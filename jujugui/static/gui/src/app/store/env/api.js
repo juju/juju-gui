@@ -1353,20 +1353,15 @@ YUI.add('juju-env-api', function(Y) {
       const params = {
         application: args.applicationName,
         'charm-url': args.charmURL,
-        // In order to maintain backwards compatibility, the Juju API
-        // implemented a new param, configYAML, so that an empty configuration
-        // value does not 'unset' keys. This value is parsed by the Go yaml2
-        // package So as long as we pass a key/value JSON map it will be able
-        // to parse it as YAML.
-        // In the event that making this modification causes issues setting
-        // configuration values due to the JSON>YAML conversion and needs to be
-        // reverted the key can simply be changed to 'config'.
-        configYAML: stringifyObjectValues(args.config || {}),
-        'config-yaml': args.configRaw || '',
         constraints: constraints,
         'num-units': args.numUnits || 0,
         resources: args.resources || {}
       };
+      if (args.configRaw) {
+        params['config-yaml'] = args.configRaw;
+      } else if (args.config) {
+        params.config = stringifyObjectValues(args.config);
+      }
       if (args.series) {
         // If series is defined then set it, do not send an undefined series
         // field as Juju core will not successfully deploy the application.
