@@ -367,10 +367,9 @@ describe('DeploymentFlow', function() {
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
     assert.equal(instance.props.sendAnalytics.callCount, 1);
-    assert.deepEqual(instance.props.sendAnalytics.args[0],
-      ['Deployment Flow',
-        'Deployment started',
-        'is DD - is new model - doesn\'t have USSO']);
+    assert.deepEqual(instance.props.sendAnalytics.args[0], [
+      'Deployment Flow', 'Component mounted',
+      'is DD - is new model - doesn\'t have USSO']);
   });
 
   it('can enable the credential section', function() {
@@ -694,15 +693,12 @@ describe('DeploymentFlow', function() {
     assert.equal(props.setModelName.callCount, 1);
     assert.equal(props.setModelName.args[0][0], 'Lamington');
     assert.equal(props.sendAnalytics.callCount, 2);
-    assert.deepEqual(props.sendAnalytics.args[0],
-      ['Deployment Flow',
-        'Deployment started',
-        'is DD - is model update - doesn\'t have USSO']);
-    assert.deepEqual(props.sendAnalytics.args[1],
-      ['Deployment Flow',
-        'Button click',
-        'Deploy model - is DD' +
-        ' - is model update - doesn\'t have USSO']);
+    assert.deepEqual(props.sendAnalytics.args[0], [
+      'Deployment Flow', 'Component mounted',
+      'is DD - is model update - doesn\'t have USSO']);
+    assert.deepEqual(props.sendAnalytics.args[1], [
+      'Deployment Flow', 'Button click',
+      'Deploy model - is DD - is model update - doesn\'t have USSO']);
   });
 
   const checkStats = (statsName, flags) => {

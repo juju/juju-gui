@@ -53,6 +53,17 @@ class Account extends React.Component {
     }
   }
 
+  /**
+    Send account analytics.
+
+    @param {String} action Some identifiable action.
+    @param {String} label Name of the event.
+    @param {Object} value An optional single depth object for extra info.
+  */
+  sendAnalytics(action, label, value) {
+    this.props.sendAnalytics('Account', action, label, value);
+  }
+
   render() {
     const links = [{
       label: 'Primary account'
@@ -77,7 +88,7 @@ class Account extends React.Component {
               getCloudProviderDetails={this.props.getCloudProviderDetails}
               listClouds={this.props.listClouds}
               revokeCloudCredential={this.props.revokeCloudCredential}
-              sendAnalytics={this.props.sendAnalytics}
+              sendAnalytics={this.sendAnalytics.bind(this)}
               updateCloudCredential={this.props.updateCloudCredential}
               username={this.props.user}
               validateForm={this.props.validateForm} />
