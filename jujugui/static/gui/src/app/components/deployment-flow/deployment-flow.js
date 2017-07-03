@@ -53,7 +53,7 @@ class DeploymentFlow extends React.Component {
     if (this.state.loggedIn) {
       this._getAgreements();
     }
-    this.sendAnalytics('Deployment started');
+    this.sendAnalytics('Component mounted');
   }
 
   componentDidMount() {

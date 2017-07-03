@@ -48,14 +48,31 @@ describe('Analytics', () => {
 
   it('returns null when no dataLayer is set', () => {
     const sendAnalytics = sendAnalyticsFactory(null, null);
-    assert.isNull(sendAnalytics());
+    assert.isNull(sendAnalytics('category', 'action', 'label'));
   });
 
-  it('throws error when required arguments are missing', () => {
+  it('logs an error when required arguments are missing', () => {
     const sendAnalytics = sendAnalyticsFactory(controllerAPI, dataLayer);
-    assert.throws(function() {sendAnalytics();});
-    assert.throws(function() {sendAnalytics('category');});
-    assert.throws(function() {sendAnalytics('category', 'action');});
+    const original = console.error;
+    const check = (err, func) => {
+      const error = sinon.stub();
+      console.error = error;
+      func();
+      console.error = original;
+      assert.strictEqual(error.calledOnce, true, err);
+      const args = error.args[0];
+      assert.strictEqual(args.length, 1, err);
+      assert.strictEqual(args[0], err);
+    };
+    check('cannot send analytics: category required', () => {
+      sendAnalytics();
+    });
+    check('cannot send analytics: action required', () => {
+      sendAnalytics('category');
+    });
+    check('cannot send analytics: label required', () => {
+      sendAnalytics('category', 'action');
+    });
   });
 
   it('pushes to dataLayer when all arguments are present', () => {
