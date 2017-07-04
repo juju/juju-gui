@@ -4,11 +4,22 @@
 
 class ProfileNavigation extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      activeSection: 'models'
+      activeSection: this.props.activeSection || 'models'
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({activeSection: nextProps.activeSection});
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.activeSection !== nextProps.activeSection) {
+      return true;
+    }
+    return false;
   }
 
   _changeState(label) {
@@ -24,7 +35,7 @@ class ProfileNavigation extends React.Component {
     const links = ['Models', 'Bundles', 'Charms', 'Cloud Credentials']
       .map(label =>
         <li
-          className={this.state.activeSection === label.toLowerCase() ? 'active' : ''} // eslint-disable-line
+          className={this.state.activeSection === label.toLowerCase() ? 'active' : ''} // eslint-disable-line max-len
           key={label}
           onClick={this._changeState.bind(this, label)}>
           {label}
@@ -40,6 +51,7 @@ class ProfileNavigation extends React.Component {
 };
 
 ProfileNavigation.propTypes = {
+  activeSection: React.PropTypes.string,
   changeState: React.PropTypes.func.isRequired
 };
 
