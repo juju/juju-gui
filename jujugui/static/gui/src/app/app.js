@@ -1008,33 +1008,37 @@ YUI.add('juju-gui', function(Y) {
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
-      ReactDOM.render(
-        <window.juju.components.UserProfile
-          acl={this.acl}
-          addNotification=
-            {this.db.notifications.add.bind(this.db.notifications)}
-          charmstore={charmstore}
-          currentModel={currentModel}
-          d3={d3}
-          facadesExist={facadesExist}
-          listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModelsWithInfo={
-            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
-          getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
-          changeState={this.state.changeState.bind(this.state)}
-          destroyModels={
-            this.controllerAPI.destroyModels.bind(this.controllerAPI)}
-          getAgreements={this.terms.getAgreements.bind(this.terms)}
-          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          interactiveLogin={this.get('interactiveLogin')}
-          pluralize={utils.pluralize.bind(this)}
-          setPageTitle={this.setPageTitle}
-          staticURL={window.juju_config.staticURL}
-          storeUser={this.storeUser.bind(this)}
-          switchModel={utils.switchModel.bind(this, this.env)}
-          userInfo={this._getUserInfo(state)}
-        />,
-        document.getElementById('top-page-container'));
+      let profile = <window.juju.components.UserProfile
+        acl={this.acl}
+        addNotification=
+          {this.db.notifications.add.bind(this.db.notifications)}
+        charmstore={charmstore}
+        currentModel={currentModel}
+        d3={d3}
+        facadesExist={facadesExist}
+        listBudgets={this.plans.listBudgets.bind(this.plans)}
+        listModelsWithInfo={
+          this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
+        getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
+        changeState={this.state.changeState.bind(this.state)}
+        destroyModels={
+          this.controllerAPI.destroyModels.bind(this.controllerAPI)}
+        getAgreements={this.terms.getAgreements.bind(this.terms)}
+        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+        interactiveLogin={this.get('interactiveLogin')}
+        pluralize={utils.pluralize.bind(this)}
+        setPageTitle={this.setPageTitle}
+        staticURL={window.juju_config.staticURL}
+        storeUser={this.storeUser.bind(this)}
+        switchModel={utils.switchModel.bind(this, this.env)}
+        userInfo={this._getUserInfo(state)}
+      />;
+
+      if (window.juju_config.flags.profile) {
+        profile = <window.juju.components.Profile />;
+      }
+
+      ReactDOM.render(profile, document.getElementById('top-page-container'));
     },
 
     /**
@@ -3181,6 +3185,7 @@ YUI.add('juju-gui', function(Y) {
     'sharing',
     'svg-icon',
     'user-menu',
+    'profile',
     'user-profile',
     'zoom',
     // juju-views group
