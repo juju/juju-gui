@@ -54,7 +54,6 @@ class UserProfileModelList extends React.Component {
       console.warn('Controller not connected, skipping fetching models.');
       return;
     }
-    this.props.broadcastStatus('starting');
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingModels: true}, () => {
@@ -71,10 +70,14 @@ class UserProfileModelList extends React.Component {
   */
   _fetchModelsCallback(err, modelList) {
     this.setState({loadingModels: false}, () => {
-      const broadcastStatus = this.props.broadcastStatus;
       if (err) {
-        broadcastStatus('error');
-        console.error(err);
+        const message = 'Cannot load models';
+        console.error(message, err);
+        this.props.addNotification({
+          title: message,
+          message: `${message}: ${err}`,
+          level: 'error'
+        });
         return;
       }
       if (!this.props.userInfo.isCurrent) {
@@ -83,10 +86,8 @@ class UserProfileModelList extends React.Component {
           return model.owner === extUser;
         });
       }
-      if (modelList.length) {
-        broadcastStatus('ok');
-      } else {
-        broadcastStatus('empty');
+      if (modelList && modelList.length > 0) {
+        this.props.setHasEntities(true);
       }
       this.setState({modelList: modelList});
     });
@@ -390,17 +391,15 @@ class UserProfileModelList extends React.Component {
   }
 };
 
-// broadcastStatus is necessary for communicating loading status back to
-// the parent SectionLoadWatcher.
 UserProfileModelList.propTypes = {
   acl: React.PropTypes.object,
   addNotification: React.PropTypes.func.isRequired,
-  broadcastStatus: React.PropTypes.func,
   changeState: React.PropTypes.func.isRequired,
   currentModel: React.PropTypes.string,
   destroyModels: React.PropTypes.func.isRequired,
   facadesExist: React.PropTypes.bool.isRequired,
   listModelsWithInfo: React.PropTypes.func.isRequired,
+  setHasEntities: React.PropTypes.func.isRequired,
   switchModel: React.PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for
@@ -411,12 +410,6 @@ UserProfileModelList.propTypes = {
   //   authenticated user;
   // - profile: the user name for whom profile details must be displayed.
   userInfo: React.PropTypes.object.isRequired
-};
-
-// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-// to it should not fail, so default to an empty function.
-UserProfileModelList.defaultProps = {
-  broadcastStatus: function() {}
 };
 
 YUI.add('user-profile-model-list', function() {

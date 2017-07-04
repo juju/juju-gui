@@ -57,7 +57,6 @@ class UserProfileEntityList extends React.Component {
   _fetchEntities(props) {
     const charmstore = props.charmstore;
     if (charmstore && charmstore.list && props.user) {
-      this.props.broadcastStatus('starting');
       const callback = this._fetchEntitiesCallback.bind(this);
       // Delay the call until after the state change to prevent race
       // conditions.
@@ -77,16 +76,18 @@ class UserProfileEntityList extends React.Component {
   */
   _fetchEntitiesCallback(error, data) {
     this.setState({loadingEntities: false}, () => {
-      const broadcastStatus = this.props.broadcastStatus;
       if (error) {
-        broadcastStatus('error');
-        console.error('Can not retrieve entities: ', error);
+        const message = `Cannot retrieve ${this.props.type}s`;
+        console.error(message, error);
+        this.props.addNotification({
+          title: message,
+          message: `${message}: ${error}`,
+          level: 'error'
+        });
         return;
       }
-      if (!data || !data.length || data.length === 0) {
-        broadcastStatus('empty');
-      } else {
-        broadcastStatus('ok');
+      if (data && data.length > 0) {
+        this.props.setHasEntities(true);
       }
       this.setState({entityList: data});
     });
@@ -333,23 +334,16 @@ class UserProfileEntityList extends React.Component {
 
 };
 
-// broadcastStatus is necessary for communicating loading status back to
-// the parent SectionLoadWatcher.
 UserProfileEntityList.propTypes = {
-  broadcastStatus: React.PropTypes.func,
+  addNotification: React.PropTypes.func.isRequired,
   changeState: React.PropTypes.func.isRequired,
   charmstore: React.PropTypes.object.isRequired,
   d3: React.PropTypes.object,
   getDiagramURL: React.PropTypes.func.isRequired,
   getKpiMetrics: React.PropTypes.func,
+  setHasEntities: React.PropTypes.func.isRequired,
   type: React.PropTypes.string.isRequired,
   user: React.PropTypes.string
-};
-
-// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-// to it should not fail, so default to an empty function.
-UserProfileEntityList.defaultProps = {
-  broadcastStatus: function() {}
 };
 
 YUI.add('user-profile-entity-list', function() {

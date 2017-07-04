@@ -19,12 +19,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class UserProfile extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      hasEntities: false
+    };
+  }
+
   componentDidMount() {
     this.props.setPageTitle(this.props.userInfo.profile);
   }
 
   componentWillUnmount () {
     this.props.setPageTitle();
+  }
+
+  /**
+    Set whether the profile has entities.
+
+    @param hasEntities {Boolean} Whether there are entities.
+  */
+  _setHasEntities(hasEntities) {
+    this.setState({hasEntities: hasEntities});
   }
 
   /**
@@ -53,6 +69,24 @@ class UserProfile extends React.Component {
   }
 
   /**
+    Generate the empty state.
+
+    @method _generateContent
+    @returns {Array} The markup for the content.
+  */
+  _generateEmptyState() {
+    if (this.state.hasEntities) {
+      return null;
+    }
+    return (
+      <juju.components.EmptyUserProfile
+        changeState={this.props.changeState}
+        isCurrentUser={this.props.userInfo.isCurrent}
+        staticURL={this.props.staticURL}
+        switchModel={this.props.switchModel} />);
+  }
+
+  /**
     Generate the content for the panel.
 
     @method _generateContent
@@ -60,13 +94,6 @@ class UserProfile extends React.Component {
   */
   _generateContent() {
     const props = this.props;
-    const emptyComponent = (
-      <juju.components.EmptyUserProfile
-        changeState={props.changeState}
-        isCurrentUser={props.userInfo.isCurrent}
-        staticURL={props.staticURL}
-        switchModel={props.switchModel} />
-    );
     // All possible components, that can be rendered on the profile page;
     // these may be filtered down to a smaller list depending on the context.
     const lists = [
@@ -80,29 +107,31 @@ class UserProfile extends React.Component {
         facadesExist={props.facadesExist}
         destroyModels={props.destroyModels}
         listModelsWithInfo={props.listModelsWithInfo}
+        setHasEntities={this._setHasEntities.bind(this)}
         switchModel={props.switchModel}
-        userInfo={props.userInfo}
-      />,
+        userInfo={props.userInfo} />,
       <juju.components.UserProfileEntityList
         key='bundleList'
         ref='bundleList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
         getDiagramURL={props.getDiagramURL}
+        setHasEntities={this._setHasEntities.bind(this)}
         type='bundle'
-        user={props.userInfo.external}
-      />,
+        user={props.userInfo.external} />,
       <juju.components.UserProfileEntityList
         key='charmList'
         ref='charmList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
         d3={props.d3}
         getDiagramURL={props.getDiagramURL}
         getKpiMetrics={props.getKpiMetrics}
+        setHasEntities={this._setHasEntities.bind(this)}
         type='charm'
-        user={props.userInfo.external}
-      />
+        user={props.userInfo.external} />
     ];
     // The list of models is always included, even if the profile is not for
     // the current user, in which case we'll display only the models owned
@@ -122,13 +151,14 @@ class UserProfile extends React.Component {
     const componentsToRender = lists.filter(list => {
       return toRender.indexOf(list.key) >= 0;
     });
+    // Hide the list rather than not render the children as we need the children
+    // to do the XHR requests so that we know whether they have content to
+    // display.
+    const classes = classNames(
+      {'user-profile__list--hidden': !this.state.hasEntities});
     return (
-      <div>
-        <juju.components.SectionLoadWatcher
-          EmptyComponent={emptyComponent}
-          timeout={10}>
-          {componentsToRender}
-        </juju.components.SectionLoadWatcher>
+      <div className={classes}>
+        {componentsToRender}
       </div>);
   }
 
@@ -148,6 +178,7 @@ class UserProfile extends React.Component {
               links={links}
               userInfo={this.props.userInfo}
             />
+            {this._generateEmptyState()}
             {this._generateContent()}
           </div>
         </div>
@@ -195,7 +226,6 @@ YUI.add('user-profile', function() {
     'generic-input',
     'loading-spinner',
     'panel-component',
-    'section-load-watcher',
     'user-profile-agreement-list',
     'user-profile-budget-list',
     'user-profile-entity',
