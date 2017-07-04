@@ -4,8 +4,22 @@
 
 class ProfileNavigation extends React.Component {
 
+  constructor() {
+    super();
+    this.state = {
+      activeSection: 'Models'
+    };
+  }
+
   render() {
-    return (<div className="profile-navigation"></div>);
+    const links = ['Models', 'Bundles', 'Charms', 'Cloud Credentials']
+      .map(label => <li className={this.state.activeSection === label ? 'active' : ''}>{label}</li>); // eslint-disable-line
+    return (
+      <div className="profile-navigation">
+        <ul>
+          {links}
+        </ul>
+      </div>);
   }
 
 };
