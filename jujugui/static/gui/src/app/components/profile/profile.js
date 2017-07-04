@@ -6,7 +6,7 @@ class Profile extends React.Component {
 
   constructor(props) {
     super(props);
-    const activeSection = decodeURIComponent(this.props.activeSection || 'models'); // eslint-disable-line
+    const activeSection = this.props.activeSection || 'models';
     this.state = {activeSection};
   }
 
@@ -51,7 +51,8 @@ class Profile extends React.Component {
         <div className="inner-wrapper">
           <div className="three-col">
             <juju.components.ProfileNavigation
-              changeState={this.props.changeState}/>
+              changeState={this.props.changeState}
+              activeSection={this.state.activeSection}/>
           </div>
           <div className="six-col last-col">
             {this._generateContent()}
@@ -72,6 +73,7 @@ YUI.add('profile', function() {
   juju.components.Profile = Profile;
 }, '', {
   requires: [
+    'panel-component',
     'profile-navigation',
     'profile-header'
   ]
