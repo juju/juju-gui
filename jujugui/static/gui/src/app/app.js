@@ -1045,7 +1045,7 @@ YUI.add('juju-gui', function(Y) {
         profile =
           <window.juju.components.Profile
             changeState={this.bounded.changeState}
-            activeSection={state.hash}/>;
+            activeSection={decodeURIComponent(state.hash)}/>;
       }
 
       ReactDOM.render(profile, document.getElementById('top-page-container'));
