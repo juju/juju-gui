@@ -72,7 +72,9 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/analytics.js',
       'jujugui/static/gui/build/app/utils/test-analytics.js',
       'jujugui/static/gui/build/app/utils/statsd.js',
-      'jujugui/static/gui/build/app/utils/test-statsd.js'
+      'jujugui/static/gui/build/app/utils/test-statsd.js',
+      'jujugui/static/gui/build/app/utils/github-ssh-keys.js',
+      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js'
     ],
 
     // list of files to exclude
