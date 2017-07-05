@@ -11,26 +11,44 @@ describe('Profile Navigation', function() {
     YUI().use('profile-navigation', function() { done(); });
   });
 
+  const sectionsMap = new Map([
+    ['models', 'Models'],
+    ['charms', 'Charms'],
+    ['bundles', 'Bundles'],
+    ['credentials', 'Cloud Credentials']
+  ]);
+
+  function renderComponent(options) {
+    return jsTestUtils.shallowRender(
+      <juju.components.ProfileNavigation
+        activeSection="bundles"
+        changeState={options.changeState || sinon.stub()}
+        sectionsMap={sectionsMap}/>, true);
+  }
+
   it('can render', () => {
     const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <juju.components.ProfileNavigation
-        changeState={changeState}
-        activeSection="bundles"/>);
+    const output = renderComponent({
+      changeState
+    }).getRenderOutput();
     const list = output.props.children.props.children;
     const expected = (
       <div className="profile-navigation">
         <ul>
-          <li className="" key='Models' onClick={list[0].props.onClick}>
+          <li className="profile-navigation__list-item"
+            role="button" key='models' onClick={list[0].props.onClick}>
             Models
           </li>
-          <li className="active" key='Bundles' onClick={list[1].props.onClick}>
-            Bundles
-          </li>
-          <li className="" key='Charms' onClick={list[2].props.onClick}>
+          <li className="profile-navigation__list-item"
+            role="button" key='charms' onClick={list[1].props.onClick}>
             Charms
           </li>
-          <li className="" key='Cloud Credentials'
+          <li className="profile-navigation__list-item is-active"
+            role="button" key='bundles' onClick={list[2].props.onClick}>
+            Bundles
+          </li>
+          <li className="profile-navigation__list-item" key='credentials'
+            role="button"
             onClick={list[3].props.onClick}>
             Cloud Credentials
           </li>
@@ -42,35 +60,38 @@ describe('Profile Navigation', function() {
 
   it('calls changeState when nav item clicked', () => {
     const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <juju.components.ProfileNavigation
-        changeState={changeState}/>);
-    output.props.children.props.children[1].props.onClick();
+    const output = renderComponent({
+      changeState
+    }).getRenderOutput();
+    output.props.children.props.children[2].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {hash: 'bundles'});
   });
 
   it('updates the active nav item when re-rendered', () => {
     const changeState = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.ProfileNavigation
-        changeState={changeState}
-        activeSection="bundles"/>, true);
+    const renderer = renderComponent({
+      changeState
+    });
     const output = renderer.getRenderOutput();
     const list = output.props.children.props.children;
     const expected = (
       <div className="profile-navigation">
         <ul>
-          <li className="" key='Models' onClick={list[0].props.onClick}>
+          <li className="profile-navigation__list-item"
+            role="button" key='models' onClick={list[0].props.onClick}>
             Models
           </li>
-          <li className="active" key='Bundles' onClick={list[1].props.onClick}>
-            Bundles
-          </li>
-          <li className="" key='Charms' onClick={list[2].props.onClick}>
+          <li className="profile-navigation__list-item"
+            role="button" key='charms' onClick={list[1].props.onClick}>
             Charms
           </li>
-          <li className="" key='Cloud Credentials'
+          <li className="profile-navigation__list-item is-active"
+            role="button" key='bundles' onClick={list[2].props.onClick}>
+            Bundles
+          </li>
+          <li className="profile-navigation__list-item"
+            role="button" key='credentials'
             onClick={list[3].props.onClick}>
             Cloud Credentials
           </li>
@@ -81,22 +102,27 @@ describe('Profile Navigation', function() {
     renderer.render(
       <juju.components.ProfileNavigation
         changeState={changeState}
+        sectionsMap={sectionsMap}
         activeSection="charms"/>);
     const output2 = renderer.getRenderOutput();
     const list2 = output2.props.children.props.children;
     const expected2 = (
       <div className="profile-navigation">
         <ul>
-          <li className="" key='Models' onClick={list2[0].props.onClick}>
+          <li className="profile-navigation__list-item"
+            role="button" key='models' onClick={list2[0].props.onClick}>
             Models
           </li>
-          <li className="" key='Bundles' onClick={list2[1].props.onClick}>
-            Bundles
-          </li>
-          <li className="active" key='Charms' onClick={list2[2].props.onClick}>
+          <li className="profile-navigation__list-item is-active"
+            role="button" key='charms' onClick={list2[1].props.onClick}>
             Charms
           </li>
-          <li className="" key='Cloud Credentials'
+          <li className="profile-navigation__list-item"
+            role="button" key='bundles' onClick={list2[2].props.onClick}>
+            Bundles
+          </li>
+          <li className="profile-navigation__list-item"
+            key='credentials' role="button"
             onClick={list2[3].props.onClick}>
             Cloud Credentials
           </li>

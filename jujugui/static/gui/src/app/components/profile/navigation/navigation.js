@@ -2,6 +2,7 @@
 
 'use strict';
 
+/** Navigation React component for use in the Profile component. */
 class ProfileNavigation extends React.Component {
 
   constructor(props) {
@@ -16,30 +17,35 @@ class ProfileNavigation extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.activeSection !== nextProps.activeSection) {
-      return true;
-    }
-    return false;
+    return this.state.activeSection !== nextProps.activeSection;
   }
 
-  _changeState(label) {
+  _changeState(key) {
     this.props.changeState({
       // We're using a hash for the state for intra profile navigation because
       // of the ambiguous paths can not easily support yet another collision
       // case on top of model and entity names.
-      hash: encodeURIComponent(label.toLowerCase())
+      hash: encodeURIComponent(key)
     });
   }
 
   render() {
-    const links = ['Models', 'Bundles', 'Charms', 'Cloud Credentials']
-      .map(label =>
+    const links = [];
+    this.props.sectionsMap.forEach((label, key) => {
+      const classes = classNames(
+        'profile-navigation__list-item', {
+          'is-active': this.state.activeSection === key
+        });
+      links.push(
         <li
-          className={this.state.activeSection === label.toLowerCase() ? 'active' : ''} // eslint-disable-line max-len
-          key={label}
-          onClick={this._changeState.bind(this, label)}>
+          className={classes}
+          role="button"
+          key={key}
+          onClick={this._changeState.bind(this, key)}>
           {label}
         </li>);
+    });
+
     return (
       <div className="profile-navigation">
         <ul>
@@ -52,7 +58,8 @@ class ProfileNavigation extends React.Component {
 
 ProfileNavigation.propTypes = {
   activeSection: React.PropTypes.string,
-  changeState: React.PropTypes.func.isRequired
+  changeState: React.PropTypes.func.isRequired,
+  sectionsMap: React.PropTypes.instanceOf(Map).isRequired
 };
 
 YUI.add('profile-navigation', function() {
