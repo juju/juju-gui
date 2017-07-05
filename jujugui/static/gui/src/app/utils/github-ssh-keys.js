@@ -59,13 +59,13 @@ const githubSSHKeys = (handler, username, callback) => {
 
   // See https://developer.github.com/v3/users/keys/
   handler.sendGetRequest(
-      `https://api.github.com/users/${username}/keys`,
-      null,
-      null,
-      null,
-      false,
-      null,
-      wrap);
+    `https://api.github.com/users/${username}/keys`,
+    null,
+    null,
+    null,
+    false,
+    null,
+    wrap);
 
 };
 
