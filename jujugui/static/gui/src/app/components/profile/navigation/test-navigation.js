@@ -12,10 +12,22 @@ describe('Profile Navigation', function() {
   });
 
   const sectionsMap = new Map([
-    ['models', 'Models'],
-    ['charms', 'Charms'],
-    ['bundles', 'Bundles'],
-    ['credentials', 'Cloud Credentials']
+    ['models', {
+      label: 'Models',
+      component: 'Models'
+    }],
+    ['charms', {
+      label: 'Charms',
+      component: 'Charms'
+    }],
+    ['bundles', {
+      label: 'Bundles',
+      component: 'Bundles'
+    }],
+    ['credentials', {
+      label: 'Cloud Credentials',
+      component: 'Cloud Credentials'
+    }]
   ]);
 
   function renderComponent(options) {

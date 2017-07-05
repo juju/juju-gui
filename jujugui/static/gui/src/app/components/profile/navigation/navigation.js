@@ -7,17 +7,6 @@ class ProfileNavigation extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      activeSection: this.props.activeSection || 'models'
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({activeSection: nextProps.activeSection});
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.activeSection !== nextProps.activeSection;
   }
 
   _changeState(key) {
@@ -31,10 +20,10 @@ class ProfileNavigation extends React.Component {
 
   render() {
     const links = [];
-    this.props.sectionsMap.forEach((label, key) => {
+    this.props.sectionsMap.forEach((val, key) => {
       const classes = classNames(
         'profile-navigation__list-item', {
-          'is-active': this.state.activeSection === key
+          'is-active': this.props.activeSection === key
         });
       links.push(
         <li
@@ -42,7 +31,7 @@ class ProfileNavigation extends React.Component {
           role="button"
           key={key}
           onClick={this._changeState.bind(this, key)}>
-          {label}
+          {val.label}
         </li>);
     });
 
@@ -57,7 +46,7 @@ class ProfileNavigation extends React.Component {
 };
 
 ProfileNavigation.propTypes = {
-  activeSection: React.PropTypes.string,
+  activeSection: React.PropTypes.string.isRequired,
   changeState: React.PropTypes.func.isRequired,
   sectionsMap: React.PropTypes.instanceOf(Map).isRequired
 };

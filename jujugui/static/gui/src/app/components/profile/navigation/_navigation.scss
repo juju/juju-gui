@@ -1,10 +1,10 @@
 .profile-navigation {
 
-  li {
+  &__list-item {
     list-style: none;
     cursor: pointer;
 
-    &.active {
+    &.is-active {
       font-weight: 400;
     }
   }
