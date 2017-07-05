@@ -7,11 +7,11 @@
   working on the new system.
 
   index.html.mako
-    - Uncomment the init-pkg.js script tags lines 310, 318.
-    - Uncomment the initialization code lines 360, 361.
-    - Comment the old init code lines 359, 364.
+    - Uncomment the init-pkg.js script tags lines 300, 308.
+    - Uncomment the initialization code lines 353, 354.
+    - Comment the old init code lines 352, 357.
   Makefile
-    - Uncomment the hack to generate the init-pkg file Line 212.
+    - Uncomment the hack to generate the init-pkg file Line 221.
 
   Code to still move over from app.js
     - Y.juju.Cookies Line 50.
@@ -310,6 +310,17 @@ class GUIApp {
       document.addEventListener(
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
+
+    /**
+      As a minor performance boost and to avoid potential rerenderings
+      because of rebinding functions in the render methods. Any method that
+      requires binding and is passed into components should be bound here
+      and then used across components.
+      @type {Object}
+    */
+    this._bound = {
+      changeState: this.state.changeState.bind(this.state)
+    };
 
     /**
       Reference to the rendered topology.
