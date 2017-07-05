@@ -186,7 +186,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // NOTE: we need to clone this.get('users') below; passing in without
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
-    ReactDOM.render(
+    let profile = (
       <window.juju.components.UserProfile
         acl={this.acl}
         addNotification=
@@ -211,8 +211,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         storeUser={this.storeUser.bind(this)}
         switchModel={utils.switchModel.bind(this, this.modelAPI)}
         userInfo={this._getUserInfo(state)}
-      />,
-      document.getElementById('top-page-container'));
+      />);
+
+    if (this.applicationConfig.flags.profile) {
+      profile =
+        <window.juju.components.Profile
+          changeState={this._bound.changeState}
+          activeSection={state.hash}/>;
+    }
+
+    ReactDOM.render(profile, document.getElementById('top-page-container'));
   }
   /**
     The cleanup dispatcher for the user profile path.

@@ -1,0 +1,12 @@
+.profile-navigation {
+
+  &__list-item {
+    list-style: none;
+    cursor: pointer;
+
+    &.is-active {
+      font-weight: 400;
+    }
+  }
+
+}

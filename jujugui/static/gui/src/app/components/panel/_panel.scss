@@ -67,6 +67,7 @@
 
   &.account,
   &.isv-profile,
+  &.profile,
   &.user-profile {
     @extend %scroll-children;
     z-index: index($z-indexed-elements, top-page);
