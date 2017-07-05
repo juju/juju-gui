@@ -841,12 +841,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderLogin(err) {
     document.getElementById('loading-message').style.display = 'none';
-    // XXX j.c.sackett 2017-01-30 Right now USSO link is using
-    // loginToController, while loginToAPIs is used by the login form.
-    // We want to use loginToAPIs everywhere since it handles more.
-    const loginToController =
-      this.controllerAPI.loginWithMacaroon.bind(
-        this.controllerAPI, this.bakery);
+    const loginToController = () => {
+      this.loginToAPIs(null, true, [this.controllerAPI]);
+    };
     const controllerIsConnected = () => {
       return this.controllerAPI && this.controllerAPI.get('connected');
     };
