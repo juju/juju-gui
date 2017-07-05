@@ -16,7 +16,7 @@ describe('Profile Header', function() {
       <juju.components.ProfileHeader />);
     const expected = (
       <div className="profile-header">
-        <div className="content"></div>
+        <div className="profile-header__content"></div>
       </div>
     );
     expect(output).toEqualJSX(expected);
