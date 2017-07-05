@@ -562,7 +562,7 @@ YUI.add('juju-gui', function(Y) {
       // because of rebinding functions in the render methods. Any method that
       // requires binding and is passed into components should be bound here
       // and then used across components.
-      this.bounded = {
+      this._bound = {
         changeState: this.state.changeState.bind(this.state)
       };
       // In Juju >= 2 we connect to the controller and then to the model.
@@ -1044,8 +1044,8 @@ YUI.add('juju-gui', function(Y) {
       if (window.juju_config.flags.profile) {
         profile =
           <window.juju.components.Profile
-            changeState={this.bounded.changeState}
-            activeSection={decodeURIComponent(state.hash)}/>;
+            changeState={this._bound.changeState}
+            activeSection={state.hash}/>;
       }
 
       ReactDOM.render(profile, document.getElementById('top-page-container'));
