@@ -5,30 +5,15 @@
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('Profile Navigation', function() {
+  let sectionsMap;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('profile-navigation', function() { done(); });
+    YUI().use('profile', 'profile-navigation', function() {
+      sectionsMap = juju.components.Profile.sectionsMap;
+      done();
+    });
   });
-
-  const sectionsMap = new Map([
-    ['models', {
-      label: 'Models',
-      component: 'Models'
-    }],
-    ['charms', {
-      label: 'Charms',
-      component: 'Charms'
-    }],
-    ['bundles', {
-      label: 'Bundles',
-      component: 'Bundles'
-    }],
-    ['credentials', {
-      label: 'Cloud Credentials',
-      component: 'Cloud Credentials'
-    }]
-  ]);
 
   function renderComponent(options) {
     return jsTestUtils.shallowRender(

@@ -2,47 +2,21 @@
 
 'use strict';
 
+/** Profile React component used to display user details. */
 class Profile extends React.Component {
 
-  constructor(props) {
-    super(props);
-    const activeSection = this.props.activeSection || 'models';
-    this.state = {activeSection};
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({activeSection: nextProps.activeSection});
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.activeSection !== this.state.activeSection) {
-      return true;
-    }
-    return false;
-  }
-
-  _generateContent() {
-    switch(this.state.activeSection) {
-      case 'models':
-        return 'Models';
-        break;
-      case 'bundles':
-        return 'Bundles';
-        break;
-      case 'charms':
-        return 'Charms';
-        break;
-      case 'cloud credentials':
-        return 'Cloud Credentials';
-        break;
-      default:
-        // Render the default as the model list for now, but the Summary later.
-        return 'Models';
-        break;
-    }
-  }
-
   render() {
+    const sectionsMap = Profile.sectionsMap;
+    let section = sectionsMap.get(this.props.activeSection);
+    let mapEntry;
+    if (section === undefined) {
+      // Grab the first element in the sectionsMap if the provided
+      // activeSection does not exist.
+      mapEntry = sectionsMap.entries().next().value;
+      // The value of the Map entry.
+      section = mapEntry[1];
+    }
+
     return (
       <juju.components.Panel
         instanceName="profile"
@@ -51,11 +25,13 @@ class Profile extends React.Component {
         <div className="inner-wrapper">
           <div className="three-col">
             <juju.components.ProfileNavigation
+              // Use supplied activeSection or the key from the first map entry.
+              activeSection={this.props.activeSection || mapEntry[0]}
               changeState={this.props.changeState}
-              activeSection={this.state.activeSection}/>
+              sectionsMap={sectionsMap}/>
           </div>
           <div className="six-col last-col">
-            {this._generateContent()}
+            {section.component}
           </div>
         </div>
       </juju.components.Panel>
@@ -63,6 +39,25 @@ class Profile extends React.Component {
   }
 
 };
+
+Profile.sectionsMap = new Map([
+  ['models', {
+    label: 'Models',
+    component: 'Models'
+  }],
+  ['charms', {
+    label: 'Charms',
+    component: 'Charms'
+  }],
+  ['bundles', {
+    label: 'Bundles',
+    component: 'Bundles'
+  }],
+  ['credentials', {
+    label: 'Cloud Credentials',
+    component: 'Cloud Credentials'
+  }]
+]);
 
 Profile.propTypes = {
   activeSection: React.PropTypes.string,

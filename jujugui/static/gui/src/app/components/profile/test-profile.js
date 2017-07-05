@@ -5,16 +5,21 @@
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('Profile', function() {
+  let Profile;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('profile', function() { done(); });
+    YUI().use('profile', function() {
+      Profile = juju.components.Profile;
+      done();
+    });
   });
 
   it('can render', () => {
     const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <window.juju.components.Profile
+      <Profile
+        activeSection={undefined}
         changeState={changeState}/>, true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -26,8 +31,9 @@ describe('Profile', function() {
         <div className="inner-wrapper">
           <div className="three-col">
             <juju.components.ProfileNavigation
+              activeSection={Profile.sectionsMap.entries().next().value[0]}
               changeState={instance.props.changeState}
-              activeSection={instance.state.activeSection}/>
+              sectionsMap={Profile.sectionsMap} />
           </div>
           <div className="six-col last-col">
             Models
@@ -38,14 +44,17 @@ describe('Profile', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  ['Models', 'Bundles', 'Charms', 'Cloud Credentials']
-    .forEach(label => {
-      it(`can show the ${label} section`, () => {
+  it('can show all of the defined sections', () => {
+    Profile.sectionsMap
+      .forEach((val, key) => {
         const output = jsTestUtils.shallowRender(
-          <window.juju.components.Profile
-            changeState={sinon.stub()}
-            activeSection={label.toLowerCase()}/>);
-        assert.equal(output.props.children[1].props.children[1].props.children, label); //eslint-disable-line max-len
+          <Profile
+            activeSection={key}
+            changeState={sinon.stub()} />);
+        assert.equal(
+          output.props.children[1].props.children[1].props.children,
+          val.component);
       });
-    });
+  });
+
 });
