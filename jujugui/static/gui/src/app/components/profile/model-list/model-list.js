@@ -83,13 +83,14 @@ class ProfileModelList extends React.Component {
   */
   _generateMyModels() {
     const key = 'mymodels';
+    const headerLabel = 'My models';
     const labels = [
       'Name', 'Machines, Cloud/region', 'last accessed', 'action'];
-    const header = this._generateHeader(labels, key);
+    const tableHeader = this._generateTableHeader(labels, key);
     const state = this.state.models;
     const modelList = state && state.owned;
     if (!modelList || modelList.length === 0) {
-      return header;
+      return [this._generateHeader(headerLabel, 0, true), tableHeader];
     }
     const rowData = modelList.reduce((models, model) => {
       // Keep only the models that aren't currently in the destroy cycle.
@@ -105,7 +106,16 @@ class ProfileModelList extends React.Component {
       return models;
     }, []);
     const rows = this._generateRows(rowData, key);
-    return [header, ...rows];
+    return (
+      <div>
+        <ul className="profile-model-list__list">
+          {[
+            this._generateHeader(headerLabel, rowData.length, true),
+            tableHeader,
+            ...rows
+          ]}
+        </ul>
+      </div>);
   }
 
   /**
@@ -115,13 +125,14 @@ class ProfileModelList extends React.Component {
   */
   _generateSharedModels() {
     const key = 'sharedmodels';
+    const headerLabel = 'Models shared with me';
     const labels = [
       'Name', 'Machines, Cloud/region', 'Permissions', 'Owner'];
-    const header = this._generateHeader(labels, key);
+    const tableHeader = this._generateTableHeader(labels, key);
     const state = this.state.models;
     const modelList = state && state.shared;
     if (!modelList || modelList.length === 0) {
-      return header;
+      return [this._generateHeader(headerLabel, 0), tableHeader];
     }
     const rowData = modelList.reduce((models, model) => {
       // Keep only the models that aren't currently in the destroy cycle.
@@ -135,25 +146,55 @@ class ProfileModelList extends React.Component {
         model.name,
         `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
         modelUser.length && modelUser[0].access,
-        model.owner
+        model.owner.replace('@external', '')
       ]);
       return models;
     }, []);
     const rows = this._generateRows(rowData, key);
-    return [header, ...rows];
+    return (
+      <div>
+        <ul className="profile-model-list__list">
+          {[
+            this._generateHeader(headerLabel, rowData.length),
+            tableHeader,
+            ...rows
+          ]}
+        </ul>
+      </div>);
   }
 
   /**
     Generates the JSX markup for the model list header.
+    @param {String} label The content for the header
+    @param {Boolean} showCreate Whether it should show the "Create New" button.
+    @param {Integer} modelCount The number of rows in the model table.
+    @return {Object} The model list header as JSX markup.
+  */
+  _generateHeader(label, modelCount, showCreate=false) {
+    const props = this.props;
+    return (
+      <li className="profile-model-list__header">
+        <span className="profile-model-list__header-title">
+          {`${label} (${modelCount})`}
+        </span>
+        {showCreate ?
+          <juju.components.CreateModelButton
+            title="Start a new model"
+            changeState={props.changeState}
+            switchModel={props.switchModel} /> : null}
+      </li>);
+  }
+
+  /**
+    Generates the JSX markup for the model list table header.
     @param {Array} labels An array of labels required to generate the header.
     @param {String} key The key for react lists.
     @return {Object} The model list header as JSX markup.
   */
-  _generateHeader(labels, key) {
+  _generateTableHeader(labels, key) {
     return (
-      <li key={key}>
-        {labels.map(label =>
-          <span className="" key={label}>{label}</span>)}
+      <li className="profile-model-list__table-header" key={key}>
+        {labels.map(label => <span key={label}>{label}</span>)}
       </li>);
   }
 
@@ -173,7 +214,7 @@ class ProfileModelList extends React.Component {
 
     return (
       rows.map((row, idx) =>
-        <li key={`${key}-${idx}`}>
+        <li className="profile-model-list__row" key={`${key}-${idx}`}>
           {row.map((data, idx) =>
             <span key={`${key}-span-${idx}`}>{processData(data)}</span>)}
         </li>));
@@ -214,6 +255,7 @@ YUI.add('profile-model-list', function() {
   juju.components.ProfileModelList = ProfileModelList;
 }, '', {
   requires: [
+    'create-model-button',
     'date-display'
   ]
 });
