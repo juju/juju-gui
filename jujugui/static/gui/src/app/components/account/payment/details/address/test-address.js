@@ -98,13 +98,15 @@ describe('AccountPaymentDetailsAddress', () => {
             <juju.components.GenericButton
               action={close}
               disabled={false}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
             <juju.components.GenericButton
               action={instance._updateAddress}
               disabled={false}
-              type="inline-positive"
-              title="Update" />
+              type="inline-positive">
+              Update
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.ExpandingRow>);
