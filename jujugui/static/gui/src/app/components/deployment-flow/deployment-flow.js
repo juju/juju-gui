@@ -486,9 +486,9 @@ class DeploymentFlow extends React.Component {
         <juju.components.GenericButton
           action={this._toggleChangelogs.bind(this)}
           type="inline-neutral"
-          extraClasses="right"
-          title={this.state.showChangelogs ?
-            'Hide changelog' : 'Show changelog'} />
+          extraClasses="right">
+          {this.state.showChangelogs ? 'Hide changelog' : 'Show changelog'}
+        </juju.components.GenericButton>
       </span>);
   }
 
@@ -1046,8 +1046,9 @@ class DeploymentFlow extends React.Component {
                 <juju.components.GenericButton
                   action={this._handleDeploy.bind(this)}
                   disabled={!this._deploymentAllowed()}
-                  type="positive"
-                  title={deployTitle} />
+                  type="positive">
+                  {deployTitle}
+                </juju.components.GenericButton>
               </div>
             </div>
           </div>
