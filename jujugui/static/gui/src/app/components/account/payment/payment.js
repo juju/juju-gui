@@ -181,8 +181,9 @@ class AccountPayment extends React.Component {
           You are not set up to make payments.
           <juju.components.GenericButton
             action={this._toggleAdd.bind(this)}
-            type="inline-neutral"
-            title="Set up payments" />
+            type="inline-neutral">
+            Set up payments
+          </juju.components.GenericButton>
         </div>
       </div>);
   }
