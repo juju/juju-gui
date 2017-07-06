@@ -66,68 +66,121 @@ describe('UserProfile', () => {
         setPageTitle={sinon.stub()}
         staticURL={staticURL}
         storeUser={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
+    const bundles = [1];
+    const charms = [1, 2];
+    const models = [1, 2, 3];
+    instance._setEntities('bundles', bundles);
+    instance._setEntities('charms', charms);
+    instance._setEntities('models', models);
     const output = component.getRenderOutput();
     const content = output.props.children.props.children;
-    const emptyComponent = (
-      <juju.components.EmptyUserProfile
-        changeState={changeState}
-        isCurrentUser={true}
-        staticURL={staticURL}
-        switchModel={switchModel} />
-    );
-    const lists = [
-      <juju.components.UserProfileModelList
-        acl={acl}
-        addNotification={addNotification}
-        ref="modelList"
-        key="modelList"
-        changeState={changeState}
-        currentModel={undefined}
-        destroyModels={destroyModels}
-        facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
-        switchModel={switchModel}
-        userInfo={userInfo}
-      />,
-      <juju.components.UserProfileEntityList
-        ref="bundleList"
-        key="bundleList"
-        changeState={changeState}
-        charmstore={charmstore}
-        getDiagramURL={getDiagramURL}
-        type='bundle'
-        user={userInfo.external}
-      />,
-      <juju.components.UserProfileEntityList
-        ref="charmList"
-        key="charmList"
-        changeState={changeState}
-        charmstore={charmstore}
-        d3={{}}
-        getDiagramURL={getDiagramURL}
-        getKpiMetrics={getKpiMetrics}
-        type='charm'
-        user={userInfo.external}
-      />
-    ];
     const expected = (
       <div className="inner-wrapper">
         <juju.components.UserProfileHeader
           avatar=""
           interactiveLogin={instance._interactiveLogin}
           links={links}
-          userInfo={userInfo}
-        />
+          userInfo={userInfo} />
+        {null}
         <div>
-          <juju.components.SectionLoadWatcher
-            EmptyComponent={emptyComponent}
-            timeout={10}>
-            {lists}
-          </juju.components.SectionLoadWatcher>
+          {[<juju.components.UserProfileModelList
+            acl={acl}
+            addNotification={addNotification}
+            ref="modelList"
+            key="modelList"
+            changeState={changeState}
+            currentModel={undefined}
+            destroyModels={destroyModels}
+            models={models}
+            facadesExist={true}
+            listModelsWithInfo={listModelsWithInfo}
+            setEntities={instance._setEntities}
+            switchModel={switchModel}
+            userInfo={userInfo} />,
+          <juju.components.UserProfileEntityList
+            addNotification={addNotification}
+            ref="bundleList"
+            key="bundleList"
+            changeState={changeState}
+            charmstore={charmstore}
+            getDiagramURL={getDiagramURL}
+            entities={bundles}
+            setEntities={instance._setEntities}
+            type='bundle'
+            user={userInfo.external} />,
+          <juju.components.UserProfileEntityList
+            addNotification={addNotification}
+            ref="charmList"
+            key="charmList"
+            changeState={changeState}
+            charmstore={charmstore}
+            d3={{}}
+            getDiagramURL={getDiagramURL}
+            getKpiMetrics={getKpiMetrics}
+            entities={charms}
+            setEntities={instance._setEntities}
+            type='charm'
+            user={userInfo.external} />]}
         </div>
+      </div>);
+    expect(content).toEqualJSX(expected);
+  });
+
+  it('renders an empty user profile page', () => {
+    const acl = {};
+    const links = [];
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const getDiagramURL = sinon.stub();
+    const getKpiMetrics = sinon.stub();
+    const listBudgets = sinon.stub();
+    const listModelsWithInfo = sinon.stub();
+    const destroyModels = sinon.stub();
+    const switchModel = sinon.stub();
+    const getAgreements = sinon.stub();
+    const staticURL = 'test-url';
+    const charmstore = {};
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        acl={acl}
+        addNotification={addNotification}
+        charmstore={charmstore}
+        d3={{}}
+        destroyModels={destroyModels}
+        facadesExist={true}
+        getAgreements={getAgreements}
+        getDiagramURL={getDiagramURL}
+        getKpiMetrics={getKpiMetrics}
+        listBudgets={listBudgets}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={switchModel}
+        interactiveLogin={true}
+        changeState={changeState}
+        pluralize={sinon.stub()}
+        setPageTitle={sinon.stub()}
+        staticURL={staticURL}
+        storeUser={sinon.stub()}
+        userInfo={userInfo} />, true);
+    const instance = component.getMountedInstance();
+    instance._setEntities('bundles', []);
+    instance._setEntities('charms', []);
+    instance._setEntities('models', []);
+    const output = component.getRenderOutput();
+    const content = output.props.children.props.children;
+    const expected = (
+      <div className="inner-wrapper">
+        <juju.components.UserProfileHeader
+          avatar=""
+          interactiveLogin={instance._interactiveLogin}
+          links={links}
+          userInfo={userInfo} />
+        <juju.components.EmptyUserProfile
+          changeState={changeState}
+          isCurrentUser={true}
+          staticURL={staticURL}
+          switchModel={switchModel} />
       </div>);
     expect(content).toEqualJSX(expected);
   });
@@ -160,8 +213,7 @@ describe('UserProfile', () => {
         setPageTitle={sinon.stub()}
         storeUser={storeUser}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = renderer.getMountedInstance();
     instance._interactiveLogin();
     if (charmstore.getMacaroon.callCount > 0) {
@@ -194,8 +246,7 @@ describe('UserProfile', () => {
         setPageTitle={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={switchModel}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     assert.isUndefined(instance.refs.bundleList);
     assert.isUndefined(instance.refs.charmList);

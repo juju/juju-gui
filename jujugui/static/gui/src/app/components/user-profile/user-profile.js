@@ -19,12 +19,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class UserProfile extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      bundles: null,
+      charms: null,
+      models: null
+    };
+  }
+
   componentDidMount() {
     this.props.setPageTitle(this.props.userInfo.profile);
   }
 
   componentWillUnmount () {
     this.props.setPageTitle();
+  }
+
+  /**
+    Set the list of entities, used by the child component.
+
+    @param type {String} The entity type e.g. bundle, charm or model.
+    @param entities {Array} The list of entities.
+  */
+  _setEntities(type, entities) {
+    const state = {};
+    state[type] = entities;
+    this.setState(state);
   }
 
   /**
@@ -55,18 +76,22 @@ class UserProfile extends React.Component {
   /**
     Generate the content for the panel.
 
-    @method _generateContent
     @returns {Array} The markup for the content.
   */
   _generateContent() {
     const props = this.props;
-    const emptyComponent = (
-      <juju.components.EmptyUserProfile
-        changeState={props.changeState}
-        isCurrentUser={props.userInfo.isCurrent}
-        staticURL={props.staticURL}
-        switchModel={props.switchModel} />
-    );
+    const bundles = this.state.bundles;
+    const charms = this.state.charms;
+    const models = this.state.models;
+    if (bundles && bundles.length === 0 && charms && charms.length === 0 &&
+      models && models.length === 0) {
+      return (
+        <juju.components.EmptyUserProfile
+          changeState={props.changeState}
+          isCurrentUser={props.userInfo.isCurrent}
+          staticURL={props.staticURL}
+          switchModel={props.switchModel} />);
+    }
     // All possible components, that can be rendered on the profile page;
     // these may be filtered down to a smaller list depending on the context.
     const lists = [
@@ -80,29 +105,34 @@ class UserProfile extends React.Component {
         facadesExist={props.facadesExist}
         destroyModels={props.destroyModels}
         listModelsWithInfo={props.listModelsWithInfo}
+        models={this.state.models}
+        setEntities={this._setEntities.bind(this, 'models')}
         switchModel={props.switchModel}
-        userInfo={props.userInfo}
-      />,
+        userInfo={props.userInfo} />,
       <juju.components.UserProfileEntityList
         key='bundleList'
         ref='bundleList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
+        entities={this.state.bundles}
         getDiagramURL={props.getDiagramURL}
+        setEntities={this._setEntities.bind(this, 'bundles')}
         type='bundle'
-        user={props.userInfo.external}
-      />,
+        user={props.userInfo.external} />,
       <juju.components.UserProfileEntityList
         key='charmList'
         ref='charmList'
+        addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
         d3={props.d3}
+        entities={this.state.charms}
         getDiagramURL={props.getDiagramURL}
         getKpiMetrics={props.getKpiMetrics}
+        setEntities={this._setEntities.bind(this, 'charms')}
         type='charm'
-        user={props.userInfo.external}
-      />
+        user={props.userInfo.external} />
     ];
     // The list of models is always included, even if the profile is not for
     // the current user, in which case we'll display only the models owned
@@ -124,11 +154,7 @@ class UserProfile extends React.Component {
     });
     return (
       <div>
-        <juju.components.SectionLoadWatcher
-          EmptyComponent={emptyComponent}
-          timeout={10}>
-          {componentsToRender}
-        </juju.components.SectionLoadWatcher>
+        {componentsToRender}
       </div>);
   }
 
@@ -146,8 +172,7 @@ class UserProfile extends React.Component {
               avatar=""
               interactiveLogin={this._interactiveLogin.bind(this)}
               links={links}
-              userInfo={this.props.userInfo}
-            />
+              userInfo={this.props.userInfo} />
             {this._generateContent()}
           </div>
         </div>
@@ -195,7 +220,6 @@ YUI.add('user-profile', function() {
     'generic-input',
     'loading-spinner',
     'panel-component',
-    'section-load-watcher',
     'user-profile-agreement-list',
     'user-profile-budget-list',
     'user-profile-entity',
