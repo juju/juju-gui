@@ -140,8 +140,9 @@ describe('GenericButton', function() {
   it('sets the type class', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.GenericButton
-        title="My action"
-        type="neutral" />);
+        type="neutral">
+        My action
+      </juju.components.GenericButton>);
     const expected = (
       <button className="button--neutral"
         title={undefined}
@@ -155,8 +156,9 @@ describe('GenericButton', function() {
   it('sets the disabled class if disabled', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.GenericButton
-        title="My action"
-        disabled={true} />);
+        disabled={true}>
+        My action
+      </juju.components.GenericButton>);
     const expected = (
       <button className="button--neutral button--disabled"
         title={undefined}
