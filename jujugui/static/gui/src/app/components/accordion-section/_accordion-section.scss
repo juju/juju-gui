@@ -1,0 +1,13 @@
+.accordion-section {
+  margin-bottom: -1rem;
+
+  &--title {
+      padding: 0 1rem 1rem 0;
+      cursor: pointer;
+  }
+
+  &--content {
+    transition: max-height .3s ease;
+    overflow: hidden;
+  }
+}

@@ -84,14 +84,9 @@ const DeploymentVPC = React.createClass({
   */
   render: function() {
     return (
-      <div>
-        <p>
-          Optionally use a specific AWS VPC ID. When not specified, Juju
-          requires a default VPC or EC2-Classic features to be available for
-          the account/region.
-        </p>
+      <div className="six-col">
         <juju.components.GenericInput
-          label="VPC id"
+          label="VPC ID"
           key="vpcId"
           ref="vpcId"
           multiLine={false}
@@ -99,18 +94,18 @@ const DeploymentVPC = React.createClass({
           onKeyUp={this._onInputKeyUp}
           required={false}
         />
-        <input
-          type="checkbox"
-          id="vpcIdForce"
-          onChange={this._onCheckboxChange}
-          onClick={this._onCheckboxClick}
-          checked={this.state.force}
-          disabled={!this.state.forceEnabled}
-        />
-        &nbsp;
-        Force Juju to use the AWS VPC ID specified above, even when it fails
-        the minimum validation criteria. This is ignored if VPC ID is not
-        set.
+        <label>
+          <input
+            type="checkbox"
+            id="vpcIdForce"
+            onChange={this._onCheckboxChange}
+            onClick={this._onCheckboxClick}
+            checked={this.state.force}
+            disabled={!this.state.forceEnabled}
+          />
+          &nbsp;
+          Always use this ID
+        </label>
       </div>
     );
   }

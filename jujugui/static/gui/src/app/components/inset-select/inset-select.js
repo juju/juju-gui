@@ -110,6 +110,7 @@ const InsetSelect = React.createClass({
   _generateClasses: function() {
     return classNames(
       'inset-select',
+      `inset-select--${this.props.label.toLowerCase()}`,
       {
         'inset-select--disabled': this.props.disabled
       }

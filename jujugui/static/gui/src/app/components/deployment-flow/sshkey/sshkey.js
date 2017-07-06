@@ -30,6 +30,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const AZURE_CLOUD_TYPE = 'azure';
 
 const DeploymentSSHKey = React.createClass({
+  displayName: 'DeploymentSSHKey',
+
   propTypes: {
     cloud: React.PropTypes.object,
     setSSHKey: React.PropTypes.func.isRequired
@@ -38,7 +40,8 @@ const DeploymentSSHKey = React.createClass({
   getInitialState: function() {
     return {
       addSource: 'github',
-      SSHkeys: []
+      SSHkeys: [],
+      error: null
     };
   },
 
@@ -71,12 +74,19 @@ const DeploymentSSHKey = React.createClass({
     @param (String) sshkey
    */
   _splitKey: function(sshKey) {
+    const splitKey = sshKey.split(' ');
     return {
-      'body': sshKey.split(' ')[1],
+      'body': splitKey[1],
       'text': sshKey,
-      'type': sshKey.split(' ')[0],
+      'type': splitKey[0],
       'id': 0
     }
+  },
+
+  _keyExists: function(key) {
+    return this.state.SSHkeys.filter(knownKey => {
+      return knownKey.text === key.text;
+    }).length !== 0;
   },
 
   /**
@@ -92,19 +102,20 @@ const DeploymentSSHKey = React.createClass({
       const githubUsername = this.refs.githubUsername.getValue();
       window.jujugui.githubSSHKeys(githubUsername, (keys) => {
         keys.forEach(key => {
-         SSHkeys.push(key);
-        })
+          if (!this._keyExists(key)) {
+            SSHkeys.push(key);
+          }
+        });
         this.setState({SSHkeys: SSHkeys});
-        console.log(SSHkeys);
       });
     } else if (source === 'manual') {
       const maunalKey = this.refs.sshKey.getValue();
       const key = this._splitKey(maunalKey);
       let SSHkeys = this.state.SSHkeys;
-      SSHkeys.push(key);
+      if (!this._keyExists(key)) {
+        SSHkeys.push(key);
+      }
       this.setState({SSHkeys: SSHkeys});
-      console.log(SSHkeys);
-
     }
 
     return;
@@ -129,6 +140,7 @@ const DeploymentSSHKey = React.createClass({
   */
   _generateAddedKeys: function() {
     const SSHkeys = this.state.SSHkeys;
+    const stringLengths = 30;
 
     if (Object.keys(SSHkeys).length === 0) {
       return;
@@ -137,12 +149,16 @@ const DeploymentSSHKey = React.createClass({
     let listBody = [];
     SSHkeys.forEach((key, i) => {
       let uniqueKey = key.id + i;
+      const bodyStart = key.body.substring(0, stringLengths);
+      const bodyEnd = key.body.substring(key.body.length - stringLengths);
+      const body = `${bodyStart}...${bodyEnd}`;
       listBody.push(
          <li className="deployment-flow__row twelve-col" key={uniqueKey}>
           <div className="two-col">{key.type}</div>
-          <div className="ten-col last-col added-keys__key-value">
-            {key.body}
+          <div className="eight-col added-keys__key-value" title={key.body}>
+            {body}
           </div>
+          <div className="one-col last-col"></div>
         </li>
       );
     });
@@ -173,7 +189,7 @@ const DeploymentSSHKey = React.createClass({
 
     if (this.state.addSource === 'github') {
       return (
-        <div className="four-col">
+        <div className="three-col last-col">
           <juju.components.GenericInput
             label="GitHub username"
             key="githubUsername"
@@ -190,12 +206,12 @@ const DeploymentSSHKey = React.createClass({
       );
     } else if (this.state.addSource === 'manual') {
       return (
-        <div className="eight-col">
+        <div className="seven-col">
           <juju.components.GenericInput
             label="Enter your SSH key"
             key="sshKey"
             ref="sshKey"
-            multiLine={false}
+            multiLine={true}
             onBlur={this._onSSHKeyInputBlur}
             required={isAzure}
             validate={isAzure ? [{
@@ -206,6 +222,21 @@ const DeploymentSSHKey = React.createClass({
         </div>
       );
     }
+  },
+
+  /**
+    Create the added key button.
+
+    @method _generateAddKeyButton
+  */
+  _generateAddKeyButton: function() {
+    const title = this.state.addSource === 'github' ? 'Add Keys' : 'Add Key';
+    return (<div className="right">
+      <juju.components.GenericButton
+        action={this._handleAddMoreKeys}
+        type="positive"
+        title={title} />
+    </div>);
   },
 
   /**
@@ -226,6 +257,10 @@ const DeploymentSSHKey = React.createClass({
       ];
   },
 
+  _generateError: function() {
+
+  },
+
   /**
     Render the component.
 
@@ -240,14 +275,14 @@ const DeploymentSSHKey = React.createClass({
 
     let message = (
       <p>
-        Provide a SSH key to allow access to the machines provisioned on this
-        model.
+        This will allow you SSH access to the machines provisioned by Juju
+        for this model.
       </p>
     );
     if (isAzure) {
       message = (
         <p>
-          Provide the SSH key that will be used to provision machines on Azure.
+          This will allow you SSH access to the machines provisioned on Azure.
         </p>
       );
     }
@@ -257,8 +292,9 @@ const DeploymentSSHKey = React.createClass({
       <div className="deployment-ssh-key">
         {message}
         {this._generateAddedKeys()}
+        {this._generateError()}
         <div className="twelve-col no-margin-bottom">
-          <div className="four-col">
+          <div className="three-col">
             <juju.components.InsetSelect
               ref="sshSource"
               disabled={false}
@@ -266,14 +302,9 @@ const DeploymentSSHKey = React.createClass({
               onChange={this._handleSourceChange}
               options={this._generateSourceOptions()} />
           </div>
+          {this._generateAddKey()}
+          {this._generateAddKeyButton()}
         </div>
-        {this._generateAddKey()}
-        <div className="four-col last-col">
-          <juju.components.GenericButton
-            action={this._handleAddMoreKeys}
-            type="positive"
-            title="Add more keys" />
-          </div>
       </div>
     );
   }

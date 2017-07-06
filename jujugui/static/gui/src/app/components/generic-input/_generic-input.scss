@@ -1,21 +1,25 @@
 .generic-input {
+  $padding: 8px;
   position: relative;
 
   &__label {
     // Needs to be positioned to appear above the input.
     color: $dark-warm-grey;
-    left: 10px;
+    padding: 0;
+    left: 8px;
     position: absolute;
-    top: 17px;
+    top: 18px;
     transition: all .25s;
     user-select: none;
 
     &--focus,
     &--placeholder-present,
     &--value-present {
-      color: $cool-grey;
-      font-size: 12px;
-      top: 6px;
+      padding: $padding;
+      color: $dark-warm-grey;
+      font-size: 0.688em;
+      top: 0;
+      left: 0;
     }
   }
 
@@ -25,10 +29,10 @@
     @extend %input;
     width: calc(100% - 20px);
     margin-bottom: 20px;
-    padding-top: 25px;
-    padding-bottom: 7px;
+    padding: 25px 30px 8px 8px;
     box-sizing: content-box;
-    min-height: 18px;
+    min-height: 24px;
+    box-shadow: none;
 
     &[aria-invalid='true'] {
       border-color: $error;

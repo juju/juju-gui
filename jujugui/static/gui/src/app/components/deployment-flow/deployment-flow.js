@@ -580,13 +580,16 @@ const DeploymentFlow = React.createClass({
       return;
     }
     return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-vpc"
-        showCheck={false}>
+      <div className="deployment-vpc">
+      <h5 className="table--heading">Add AWS VPC ID <em>(optional)</em></h5>
+      <juju.components.AccordionSection
+        openHeight={116}
+        title="If not specified,
+        Juju will require a default VPC feature to be available.">
         <juju.components.DeploymentVPC setVPCId={this._setVPCId} />
-      </juju.components.DeploymentSection>);
+      </juju.components.AccordionSection>
+    </div>);
+
   },
 
   /**
@@ -600,17 +603,20 @@ const DeploymentFlow = React.createClass({
     if (!status.visible) {
       return;
     }
+    let sectionTitle = this.props.profileUsername ?
+      `You're logged in as ${this.props.profileUsername}` :
+      `Set your model name`;
     return (
       <juju.components.DeploymentSection
         completed={status.completed}
         instance="deployment-model-name"
         showCheck={true}
-        title="Set your model name">
+        title={sectionTitle}>
         <div className="six-col">
           <juju.components.GenericInput
             disabled={this.props.acl.isReadOnly()}
             key="modelName"
-            label="Model name"
+            label="Deploying"
             required={true}
             onBlur={this._updateModelName}
             ref="modelName"
@@ -807,6 +813,7 @@ const DeploymentFlow = React.createClass({
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.getUserName()}
           validateForm={this.props.validateForm} />
+        {this._generateVPCSection()}
       </juju.components.DeploymentSection>);
   },
 
@@ -1084,7 +1091,6 @@ const DeploymentFlow = React.createClass({
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
           {this._generateSSHKeySection()}
-          {this._generateVPCSection()}
           {this._generateMachinesSection()}
           {this._generateServicesSection()}
           {this._generateBudgetSection()}
@@ -1123,6 +1129,7 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = DeploymentFlow;
 }, '0.1.0', {
   requires: [
+    'accordion-section',
     'deployment-budget',
     'deployment-changes',
     'deployment-cloud',

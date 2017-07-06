@@ -357,6 +357,7 @@ const EntityContent = React.createClass({
   */
   _generateDescription: function(entityModel) {
     return (<juju.components.EntityContentDescription
+      changeState={this.props.changeState}
       entityModel={entityModel}
       includeHeading={true}
       renderMarkdown={this.props.renderMarkdown} />);

@@ -326,6 +326,7 @@ const DeploymentCredential = React.createClass({
         expanded={this.state.showAdd}>
         {this._generateSelect()}
         {this._generateAdd()}
+
       </juju.components.ExpandingRow>);
   },
 

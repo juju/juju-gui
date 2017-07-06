@@ -1,25 +1,14 @@
 .deployment-flow {
   &__row-header {
     font-weight: 400;
+    border-bottom: 1px solid $color-dark;
   }
 
-  &__row-header,
   &__row {
     border-bottom: 1px solid $light-mid-grey;
   }
 
   &-panel {
-    .deployment-model-name {
-      .generic-input {
-        &__label {
-          display: none;
-        }
-        &__field {
-          padding: 10px;
-        }
-      }
-    }
-
     .button--neutral {
       background-color: $white;
     }
@@ -103,6 +92,18 @@
     .usso-login {
       display: inline;
       margin-left: 0.5em;
+    }
+  }
+}
+
+.deployment-vpc {
+  .table--heading {
+    border-bottom: 1px solid $color-dark;
+    padding: 0 0 10px;
+
+    em {
+      font-style: normal;
+      color: $color-mid-dark;
     }
   }
 }
