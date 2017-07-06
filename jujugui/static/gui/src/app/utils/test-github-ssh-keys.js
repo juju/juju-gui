@@ -73,9 +73,11 @@ describe('GitHub SSH key fetching', () => {
       }
     });
     // Ensure the callback receives the errors.
-    assert.deepEqual(callback.args[0], ['Not Found', {
-      message: 'Not Found'
-    }]);
+    assert.deepEqual(callback.args[0], [
+      'cannot retrieve SSH keys from gihub: Not Found', {
+        message: 'Not Found'
+      }
+    ]);
   });
 
   it('handles invalid responses', () => {
@@ -92,6 +94,9 @@ describe('GitHub SSH key fetching', () => {
       }
     });
     // Ensure the callback receives the errors.
-    assert.deepEqual(callback.args[0], ['Could not parse response', null]);
+    assert.deepEqual(callback.args[0], [
+      'cannot retrieve SSH keys from gihub: invalid response: ' +
+      'SyntaxError: Unexpected token b in JSON at position 0',
+      null]);
   });
 });
