@@ -91,29 +91,34 @@ describe('GenericButton', function() {
   it('displays the provided title and tooltip', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.GenericButton
-        title="My action"
-        tooltip="My tooltip" />);
-    assert.deepEqual(output,
+        tooltip="My tooltip">
+        My action
+      </juju.components.GenericButton>);
+    const expected = (
       <button className="button--neutral"
         title="My tooltip"
         onClick={output.props.onClick}
         type="button">
         My action
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays a provided icon', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.GenericButton
-        icon="plus_1" />);
-    assert.deepEqual(output,
+      <juju.components.GenericButton>
+        <juju.components.SvgIcon name="plus_1"
+          size="16" />
+      </juju.components.GenericButton>);
+    const expected = (
       <button className="button--neutral"
-        title={undefined}
         onClick={output.props.onClick}
+        title={undefined}
         type="button">
         <juju.components.SvgIcon name="plus_1"
           size="16" />
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays provided children', function() {
@@ -122,13 +127,14 @@ describe('GenericButton', function() {
         Hello, world.
       </juju.components.GenericButton>
     );
-    assert.deepEqual(output,
+    const expected = (
       <button className="button--neutral"
         title={undefined}
         onClick={output.props.onClick}
         type="button">
         Hello, world.
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('sets the type class', function() {
@@ -136,13 +142,14 @@ describe('GenericButton', function() {
       <juju.components.GenericButton
         title="My action"
         type="neutral" />);
-    assert.deepEqual(output,
+    const expected = (
       <button className="button--neutral"
         title={undefined}
         onClick={output.props.onClick}
         type="button">
         My action
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('sets the disabled class if disabled', function() {
@@ -150,26 +157,29 @@ describe('GenericButton', function() {
       <juju.components.GenericButton
         title="My action"
         disabled={true} />);
-    assert.deepEqual(output,
+    const expected = (
       <button className="button--neutral button--disabled"
         title={undefined}
         onClick={output.props.onClick}
         type="button">
         My action
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('sets the extra classes if provided', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.GenericButton
-        title="My action"
-        extraClasses="button--large" />);
-    assert.deepEqual(output,
+        extraClasses="button--large">
+        My action
+      </juju.components.GenericButton>);
+    const expected = (
       <button className="button--neutral button--large"
         title={undefined}
         onClick={output.props.onClick}
         type="button">
         My action
       </button>);
+    expect(output).toEqualJSX(expected);
   });
 });

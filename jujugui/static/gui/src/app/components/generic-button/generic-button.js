@@ -92,9 +92,7 @@ GenericButton.propTypes = {
   children: React.PropTypes.node,
   disabled: React.PropTypes.bool,
   extraClasses: React.PropTypes.string,
-  icon: React.PropTypes.string,
   submit: React.PropTypes.bool,
-  title: React.PropTypes.string,
   tooltip: React.PropTypes.string,
   type: React.PropTypes.string
 };
