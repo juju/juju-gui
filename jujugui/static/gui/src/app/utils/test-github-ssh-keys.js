@@ -73,8 +73,30 @@ describe('GitHub SSH key fetching', () => {
       }
     });
     // Ensure the callback receives the errors.
-    assert.deepEqual(callback.args[0], ['Not Found', {
-      message: 'Not Found'
-    }]);
+    assert.deepEqual(callback.args[0], [
+      'cannot retrieve SSH keys from gihub: Not Found', {
+        message: 'Not Found'
+      }
+    ]);
+  });
+
+  it('handles invalid responses', () => {
+    window.jujugui.sshKeys.githubSSHKeys(
+      {sendGetRequest: sendGetRequest},
+      'bad-wolf',
+      callback);
+    const args = sendGetRequest.args[0];
+    // Call the wrapped callback with errors.
+    args[6]({
+      currentTarget: {
+        status: 404,
+        response: 'bad-wolf'
+      }
+    });
+    // Ensure the callback receives the errors.
+    assert.deepEqual(callback.args[0], [
+      'cannot retrieve SSH keys from gihub: invalid response: ' +
+      'SyntaxError: Unexpected token b in JSON at position 0',
+      null]);
   });
 });
