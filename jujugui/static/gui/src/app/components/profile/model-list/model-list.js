@@ -60,23 +60,124 @@ class ProfileModelList extends React.Component {
         });
         return;
       }
-      if (!this.props.userInfo.isCurrent) {
-        const extUser = this.props.userInfo.external + '@external';
-        modelList = modelList.filter(model => {
-          return model.owner === extUser;
-        });
-      }
-      this.setState({models: modelList || []});
+      // Split the models into ones owned by the active user and ones
+      // shared to the active user.
+      const models = {
+        owned: [],
+        shared: []
+      };
+      modelList.forEach(model => {
+        if (model.owner === `${this.props.userInfo.profile}@external`) {
+          models.owned.push(model);
+        } else {
+          models.shared.push(model);
+        }
+      });
+      this.setState({models});
     });
   }
 
-  _generateMyModels() {}
+  /**
+    Generates the list of models that are owned by the active user.
+    @return {Object} The model list as JSX.
+  */
+  _generateMyModels() {
+    const key = 'mymodels';
+    const labels = [
+      'Name', 'Machines, Cloud/region', 'last accessed', 'action'];
+    const header = this._generateHeader(labels, key);
+    const state = this.state.models;
+    const modelList = state && state.owned;
+    if (!modelList || modelList.length === 0) {
+      return header;
+    }
+    const rowData = modelList.reduce((models, model) => {
+      // Keep only the models that aren't currently in the destroy cycle.
+      if (!model.isAlive) {
+        return;
+      }
+      models.push([
+        model.name,
+        `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
+        model.lastConnection,
+        '-'
+      ]);
+      return models;
+    }, []);
+    const rows = this._generateRows(rowData, key);
+    return [header, ...rows];
+  }
 
-  _generateSharedModels() {}
+  /**
+    Generates the list of models that are owned by another user but shared
+    with the active user.
+    @return {Object} The model list as JSX.
+  */
+  _generateSharedModels() {
+    const key = 'sharedmodels';
+    const labels = [
+      'Name', 'Machines, Cloud/region', 'Permissions', 'Owner'];
+    const header = this._generateHeader(labels, key);
+    const state = this.state.models;
+    const modelList = state && state.shared;
+    if (!modelList || modelList.length === 0) {
+      return header;
+    }
+    const rowData = modelList.reduce((models, model) => {
+      // Keep only the models that aren't currently in the destroy cycle.
+      if (!model.isAlive) {
+        return;
+      }
+      // Get the model users permissions
+      const modelUser = model.users ? model.users.filter(user =>
+        user.displayName === this.props.userInfo.profile) : null;
+      models.push([
+        model.name,
+        `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
+        modelUser.length && modelUser[0].access,
+        model.owner
+      ]);
+      return models;
+    }, []);
+    const rows = this._generateRows(rowData, key);
+    return [header, ...rows];
+  }
 
-  _generateHeader() {}
+  /**
+    Generates the JSX markup for the model list header.
+    @param {Array} labels An array of labels required to generate the header.
+    @param {String} key The key for react lists.
+    @return {Object} The model list header as JSX markup.
+  */
+  _generateHeader(labels, key) {
+    return (
+      <li key={key}>
+        {labels.map(label =>
+          <span className="" key={label}>{label}</span>)}
+      </li>);
+  }
 
-  _generateRow() {}
+  /**
+    Generate the JSX markup for a row of model data.
+    @param {Map} rowData The data to display.
+    @param {String} key The key for react lists.
+    @return {Array} The model list rows as JSX markup.
+  */
+  _generateRows(rows, key) {
+    function processData(data) {
+      if (data instanceof Date) {
+        return <juju.components.DateDisplay date={data || '--'} relative={true} />; // eslint-disable-line max-len
+      }
+      return data;
+    }
+
+    return (
+      rows.map((row, idx) =>
+        <li key={`${key}-${idx}`}>
+          {row.map((data, idx) =>
+            <span key={`${key}-span-${idx}`}>{processData(data)}</span>)}
+        </li>));
+  }
 
   render() {
     return (
@@ -112,5 +213,7 @@ ProfileModelList.propTypes = {
 YUI.add('profile-model-list', function() {
   juju.components.ProfileModelList = ProfileModelList;
 }, '', {
-  requires: []
+  requires: [
+    'date-display'
+  ]
 });
