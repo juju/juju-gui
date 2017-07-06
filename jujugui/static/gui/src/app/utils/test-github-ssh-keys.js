@@ -77,4 +77,21 @@ describe('GitHub SSH key fetching', () => {
       message: 'Not Found'
     }]);
   });
+
+  it('handles invalid responses', () => {
+    window.jujugui.sshKeys.githubSSHKeys(
+      {sendGetRequest: sendGetRequest},
+      'bad-wolf',
+      callback);
+    const args = sendGetRequest.args[0];
+    // Call the wrapped callback with errors.
+    args[6]({
+      currentTarget: {
+        status: 404,
+        response: 'bad-wolf'
+      }
+    });
+    // Ensure the callback receives the errors.
+    assert.deepEqual(callback.args[0], ['Could not parse response', null]);
+  });
 });
