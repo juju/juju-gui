@@ -43,8 +43,9 @@ class InspectorChangeVersionItem extends React.Component {
           disabled={props.acl.isReadOnly()}
           key={path}
           type='inline-neutral'
-          title={this._generateButtonLabel()}
-          action={props.buttonAction} />
+          action={props.buttonAction}>
+          {this._generateButtonLabel()}
+        </juju.components.GenericButton>
       </li>
     );
   }

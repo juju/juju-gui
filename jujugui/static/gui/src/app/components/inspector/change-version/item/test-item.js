@@ -60,8 +60,9 @@ describe('InspectorChangeVersionItem', function() {
           disabled={false}
           key="django/xenial/5"
           type="inline-neutral"
-          title="Upgrade"
-          action={buttonAction} />
+          action={buttonAction}>
+          Upgrade
+        </juju.components.GenericButton>
       </li>);
   });
 
@@ -90,8 +91,9 @@ describe('InspectorChangeVersionItem', function() {
           disabled={false}
           key="django/trusty/42"
           type="inline-neutral"
-          title="Downgrade"
-          action={buttonAction} />
+          action={buttonAction}>
+          Downgrade
+        </juju.components.GenericButton>
       </li>);
   });
 
@@ -114,9 +116,9 @@ describe('InspectorChangeVersionItem', function() {
         disabled={true}
         key="django/47"
         type="inline-neutral"
-        title="Upgrade"
-        action={buttonAction}
-      />);
+        action={buttonAction}>
+        Upgrade
+      </juju.components.GenericButton>);
     assert.deepEqual(output.props.children[1], expected);
   });
 });
