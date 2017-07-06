@@ -1564,6 +1564,16 @@ describe('App', function() {
       app.checkUserCredentials({}, next);
       assert.equal(displayStub.callCount, 1);
     });
+
+    it('does not login if all apis are authenticated', () => {
+      app.controllerAPI.userIsAuthenticated = true;
+      app.env.userIsAuthenticated = true;
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+
   });
 
   describe('_disambiguateUserState', function() {
@@ -2112,7 +2122,7 @@ describe('App', function() {
     it('is ignored when enabled but navigating to the login page', done => {
       app.set('gisf', true);
       app.anonymousMode = true;
-      app.state = {current: {root: 'login'}};
+      app.state = {current: {root: 'login'}, changeState: () => {}};
       app.controllerAPI.after('connectedChange', evt => {
         assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
         assert.strictEqual(appIsVisible(), false, 'appIsVisible');
@@ -2124,19 +2134,26 @@ describe('App', function() {
     });
 
     it('is disabled after successful login', done => {
-      app.anonymousMode = true;
-      app.state = {current: {root: null}};
       const listener = evt => {
+        document.removeEventListener('login', listener);
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
         assert.strictEqual(
           app._renderUserMenu.called, true, '_renderUserMenu');
-        document.removeEventListener('login', listener);
+        assert.equal(app.state.changeState.called, true, 'changeState');
+        const args = app.state.changeState.args[0];
+        assert.equal(args.length, 1, 'changeState num args');
+        assert.deepEqual(args[0], {root: null}, 'changeState args');
         done();
       };
-      document.addEventListener('login', listener);
-      document.dispatchEvent(new CustomEvent('login', {
-        detail: {err: null}
-      }));
+      app.controllerAPI.after('connectedChange', evt => {
+        document.addEventListener('login', listener);
+        app.anonymousMode = true;
+        app.state = {current: {root: 'login'}, changeState: sinon.stub()};
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: null}
+        }));
+      });
+      app.controllerAPI.set('connected', true);
     });
 
     it('is disabled after failed login', done => {

@@ -630,7 +630,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.controllerLoginHandler = evt => {
         const state = this.state;
-        const current = this.state.current;
         this.anonymousMode = false;
         if (evt.detail && evt.detail.err) {
           this._renderLogin(evt.detail.err);
@@ -648,11 +647,11 @@ YUI.add('juju-gui', function(Y) {
         }
 
         // If state has a `next` property then that overrides all defaults.
-        const specialState = current.special;
+        const specialState = state.current.special;
         const next = specialState && specialState.next;
         const dd = specialState && specialState.dd;
-
         if (state.current.root === 'login') {
+          state.changeState({root: null});
           if (dd) {
             console.log('initiating direct deploy');
             this.maskVisibility(false);
@@ -664,12 +663,6 @@ YUI.add('juju-gui', function(Y) {
             console.log('redirecting to "next" state', next);
             const {error, state: newState} = state.generateState(next, false);
             if (error === null) {
-              // The root at this point will be 'login' and because the `next`
-              // url may not explicitly define a new root path we have to set it
-              // to null to clear 'login' from the url.
-              if (!newState.root) {
-                newState.root = null;
-              }
               newState.special = null;
               this.maskVisibility(false);
               state.changeState(newState);
@@ -685,6 +678,9 @@ YUI.add('juju-gui', function(Y) {
         if (this.env.get('modelUUID')) {
           return;
         }
+        // As we are not changing the state anymore, we can cache the current
+        // state at this point.
+        const current = state.current;
         const modelUUID = this._getModelUUID();
         if (modelUUID && !current.profile && current.root !== 'store') {
           // A model uuid was defined in the config so attempt to connect to it.
@@ -765,9 +761,7 @@ YUI.add('juju-gui', function(Y) {
         }
         // The traditional user/password authentication does not make sense if
         // the GUI is embedded in the storefront.
-        if (!gisf) {
-          this.loginToAPIs(null, false, [this.controllerAPI]);
-        }
+        this.loginToAPIs(null, gisf, [this.controllerAPI]);
       });
       controllerAPI.set('socket_url',
         this.createSocketURL(this.get('controllerSocketTemplate')));
@@ -826,9 +820,6 @@ YUI.add('juju-gui', function(Y) {
       @param {String} err The login error message, if any.
     */
     _apiLoginHandler: function(api, err) {
-      if (this.state.current.root === 'login') {
-        this.state.changeState({root: null});
-      }
       if (!err) {
         return;
       }
@@ -882,12 +873,9 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderLogin: function(err) {
       document.getElementById('loading-message').style.display = 'none';
-      // XXX j.c.sackett 2017-01-30 Right now USSO link is using
-      // loginToController, while loginToAPIs is used by the login form.
-      // We want to use loginToAPIs everywhere since it handles more.
-      const loginToController =
-        this.controllerAPI.loginWithMacaroon.bind(
-          this.controllerAPI, this.bakery);
+      const loginToController = () => {
+        this.loginToAPIs(null, true, [this.controllerAPI]);
+      };
       const controllerIsConnected = () => {
         return this.controllerAPI && this.controllerAPI.get('connected');
       };
@@ -1995,7 +1983,7 @@ YUI.add('juju-gui', function(Y) {
         this.get('charmstore').getEntity(
           legacyPath, (err, entityData) => {
             if (err) {
-              console.error(err);
+              console.log('model/charm store disambiguation:', err);
               reject(userState);
               return;
             }
@@ -2628,9 +2616,7 @@ YUI.add('juju-gui', function(Y) {
       this.set('loggedIn', false);
       const root = this.state.current.root;
       if (root !== 'login') {
-        this.state.changeState({
-          root: 'login'
-        });
+        this.state.changeState({root: 'login'});
       }
     },
 
@@ -2797,6 +2783,10 @@ YUI.add('juju-gui', function(Y) {
         this.env.loading = false;
         if (callback) {
           callback(this.env);
+        }
+        const current = this.state.current;
+        if (current.root === 'login') {
+          this.state.changeState({root: null});
         }
       };
       // Delay the callback until after the env login as everything should be
