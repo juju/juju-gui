@@ -209,8 +209,9 @@ class AccountCredentials extends React.Component {
               action={
                 this._handleDeleteCredential.bind(this, credential.id)}
               disabled={credential.cloud === LOCAL_CLOUD}
-              type="neutral"
-              title="Remove" />
+              type="neutral">
+              Remove
+            </juju.components.GenericButton>
           </span>
         </li>);
     });
@@ -296,8 +297,9 @@ class AccountCredentials extends React.Component {
         <div className="account__credentials-choose-cloud">
           <juju.components.GenericButton
             action={this._setCloud.bind(this, null)}
-            type="inline-neutral"
-            title="Change cloud" />
+            type="inline-neutral">
+            Change cloud
+          </juju.components.GenericButton>
         </div>);
     }
     if (this.state.showAdd) {
@@ -331,10 +333,9 @@ class AccountCredentials extends React.Component {
     let addButton = (
       <juju.components.GenericButton
         action={this._toggleAdd.bind(this)}
-        type="inline-neutral"
-        title={this.state.showAdd ? 'Cancel' : 'Add'}
-      />
-    );
+        type="inline-neutral">
+        {this.state.showAdd ? 'Cancel' : 'Add'}
+      </juju.components.GenericButton>);
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }

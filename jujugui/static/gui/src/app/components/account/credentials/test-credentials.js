@@ -75,8 +75,9 @@ describe('AccountCredentials', () => {
           <div className="right">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Add" />
+              type="inline-neutral">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
         <juju.components.ExpandingRow
@@ -157,8 +158,9 @@ describe('AccountCredentials', () => {
                     credentials[0].props.children[2].props.children
                       .props.action}
                   disabled={true}
-                  type="neutral"
-                  title="Remove" />
+                  type="neutral">
+                  Remove
+                </juju.components.GenericButton>
               </span>
             </li>
           ]}
@@ -194,8 +196,9 @@ describe('AccountCredentials', () => {
           <div className="right">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Add" />
+              type="inline-neutral">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
         <juju.components.ExpandingRow
@@ -232,8 +235,9 @@ describe('AccountCredentials', () => {
                     credentials[0].props.children[2].props.children
                       .props.action}
                   disabled={false}
-                  type="neutral"
-                  title="Remove" />
+                  type="neutral">
+                  Remove
+                </juju.components.GenericButton>
               </span>
             </li>,
             <li className="user-profile__list-row twelve-col"
@@ -251,8 +255,9 @@ describe('AccountCredentials', () => {
                     credentials[1].props.children[2].props.children
                       .props.action}
                   disabled={false}
-                  type="neutral"
-                  title="Remove" />
+                  type="neutral">
+                  Remove
+                </juju.components.GenericButton>
               </span>
             </li>]}
         </ul>
@@ -287,8 +292,9 @@ describe('AccountCredentials', () => {
           <div className="right">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Add" />
+              type="inline-neutral">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
         <juju.components.ExpandingRow
@@ -487,8 +493,9 @@ describe('AccountCredentials', () => {
           <div className="right">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Add" />
+              type="inline-neutral">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
         <juju.components.ExpandingRow
@@ -524,8 +531,9 @@ describe('AccountCredentials', () => {
                   credentials[0].props.children[2].props.children
                     .props.action}
                 disabled={false}
-                type="neutral"
-                title="Remove" />
+                type="neutral">
+                Remove
+              </juju.components.GenericButton>
             </span>
           </li>]}
         </ul>
@@ -583,8 +591,9 @@ describe('AccountCredentials', () => {
           <div className="right">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
           </div>
         </div>
         <juju.components.ExpandingRow
@@ -651,8 +660,9 @@ describe('AccountCredentials', () => {
                 action={
                   output.props.children[1].props.children[1].props.children
                     .props.children[0].props.children.props.action}
-                type="inline-neutral"
-                title="Change cloud" />
+                type="inline-neutral">
+                Change cloud
+              </juju.components.GenericButton>
             </div>
             <juju.components.DeploymentCloud
               acl={acl}
