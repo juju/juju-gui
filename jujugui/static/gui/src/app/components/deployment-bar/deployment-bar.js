@@ -88,7 +88,6 @@ class DeploymentBar extends React.Component {
   */
   _generateButton() {
     var changeCount = Object.keys(this.props.currentChangeSet).length;
-    var deployButton = this._getDeployButtonLabel();
     if (this.props.acl.isReadOnly()) {
       return (
         <div className="deployment-bar__read-only">
@@ -100,8 +99,9 @@ class DeploymentBar extends React.Component {
         <juju.components.GenericButton
           action={this._deployAction.bind(this)}
           type="inline-deployment"
-          disabled={changeCount === 0}
-          title={deployButton} />
+          disabled={changeCount === 0}>
+          {this._getDeployButtonLabel()}
+        </juju.components.GenericButton>
       </div>);
   }
 
