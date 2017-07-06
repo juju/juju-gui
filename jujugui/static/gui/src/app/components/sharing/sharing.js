@@ -189,8 +189,11 @@ class Sharing extends React.Component {
           <div className="sharing__user-revoke">
             <juju.components.GenericButton
               action={revokeUserAccess}
-              tooltip="Remove user"
-              icon="close_16" />
+              tooltip="Remove user">
+              <juju.components.SvgIcon
+                name="close_16"
+                size="16" />
+            </juju.components.GenericButton>
           </div>
         );
       }
@@ -282,11 +285,12 @@ class Sharing extends React.Component {
     if (this.state.sending) {
       return (<juju.components.GenericButton
         submit={true}
-        title="Add"
         tooltip="Add user"
         ref="grantButton"
         type="positive"
-        disabled={true} />);
+        disabled={true}>
+        Add
+      </juju.components.GenericButton>);
     } else if (this.state.sent) {
       // We want the button to transition back to it's resting state after a
       // set amount of time, so make a closure then trigger it after 1.5s.
@@ -298,19 +302,23 @@ class Sharing extends React.Component {
       setTimeout(sent, 1500);
       return (<juju.components.GenericButton
         submit={true}
-        icon="tick_16"
         tooltip="Add user"
         ref="grantButton"
         type="positive"
-        disabled={!this.state.canAdd} />);
+        disabled={!this.state.canAdd}>
+        <juju.components.SvgIcon
+          name="tick_16"
+          size="16" />
+      </juju.components.GenericButton>);
     } else {
       return (<juju.components.GenericButton
         submit={true}
-        title="Add"
         tooltip="Add user"
         ref="grantButton"
         type="positive"
-        disabled={!this.state.canAdd} />);
+        disabled={!this.state.canAdd}>
+        Add
+      </juju.components.GenericButton>);
     }
   }
 
@@ -333,11 +341,11 @@ class Sharing extends React.Component {
           {this._generateUsersWithAccess()}
         </div>
         <juju.components.GenericButton
-          title="Done"
           action={this.props.closeHandler}
           type="inline-neutral"
-          extraClasses="right"
-        />
+          extraClasses="right">
+          Done
+        </juju.components.GenericButton>
       </juju.components.Popup>
     );
   }
