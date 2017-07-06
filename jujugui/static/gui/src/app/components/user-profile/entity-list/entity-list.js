@@ -23,7 +23,6 @@ class UserProfileEntityList extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      entityList: [],
       loadingEntities: false
     };
   }
@@ -86,10 +85,7 @@ class UserProfileEntityList extends React.Component {
         });
         return;
       }
-      if (data && data.length > 0) {
-        this.props.setHasEntities(true);
-      }
-      this.setState({entityList: data});
+      this.props.setEntities(data || []);
     });
   }
 
@@ -299,7 +295,7 @@ class UserProfileEntityList extends React.Component {
         </div>
       );
     }
-    const list = this.state.entityList;
+    const list = this.props.entities;
     if (!list || list.length === 0) {
       return null;
     }
@@ -339,9 +335,10 @@ UserProfileEntityList.propTypes = {
   changeState: React.PropTypes.func.isRequired,
   charmstore: React.PropTypes.object.isRequired,
   d3: React.PropTypes.object,
+  entities: React.PropTypes.array,
   getDiagramURL: React.PropTypes.func.isRequired,
   getKpiMetrics: React.PropTypes.func,
-  setHasEntities: React.PropTypes.func.isRequired,
+  setEntities: React.PropTypes.func.isRequired,
   type: React.PropTypes.string.isRequired,
   user: React.PropTypes.string
 };

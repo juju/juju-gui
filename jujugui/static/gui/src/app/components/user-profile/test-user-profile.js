@@ -68,7 +68,12 @@ describe('UserProfile', () => {
         storeUser={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
-    instance._setHasEntities(true);
+    const bundles = [1];
+    const charms = [1, 2];
+    const models = [1, 2, 3];
+    instance._setEntities('bundles', bundles);
+    instance._setEntities('charms', charms);
+    instance._setEntities('models', models);
     const output = component.getRenderOutput();
     const content = output.props.children.props.children;
     const expected = (
@@ -79,7 +84,7 @@ describe('UserProfile', () => {
           links={links}
           userInfo={userInfo} />
         {null}
-        <div className="">
+        <div>
           {[<juju.components.UserProfileModelList
             acl={acl}
             addNotification={addNotification}
@@ -88,9 +93,10 @@ describe('UserProfile', () => {
             changeState={changeState}
             currentModel={undefined}
             destroyModels={destroyModels}
+            models={models}
             facadesExist={true}
             listModelsWithInfo={listModelsWithInfo}
-            setHasEntities={instance._setHasEntities}
+            setEntities={instance._setEntities}
             switchModel={switchModel}
             userInfo={userInfo} />,
           <juju.components.UserProfileEntityList
@@ -100,7 +106,8 @@ describe('UserProfile', () => {
             changeState={changeState}
             charmstore={charmstore}
             getDiagramURL={getDiagramURL}
-            setHasEntities={instance._setHasEntities}
+            entities={bundles}
+            setEntities={instance._setEntities}
             type='bundle'
             user={userInfo.external} />,
           <juju.components.UserProfileEntityList
@@ -112,7 +119,8 @@ describe('UserProfile', () => {
             d3={{}}
             getDiagramURL={getDiagramURL}
             getKpiMetrics={getKpiMetrics}
-            setHasEntities={instance._setHasEntities}
+            entities={charms}
+            setEntities={instance._setEntities}
             type='charm'
             user={userInfo.external} />]}
         </div>
@@ -156,6 +164,9 @@ describe('UserProfile', () => {
         storeUser={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
+    instance._setEntities('bundles', []);
+    instance._setEntities('charms', []);
+    instance._setEntities('models', []);
     const output = component.getRenderOutput();
     const content = output.props.children.props.children;
     const expected = (
@@ -170,43 +181,6 @@ describe('UserProfile', () => {
           isCurrentUser={true}
           staticURL={staticURL}
           switchModel={switchModel} />
-        <div className="user-profile__list--hidden">
-          {[<juju.components.UserProfileModelList
-            acl={acl}
-            addNotification={addNotification}
-            ref="modelList"
-            key="modelList"
-            changeState={changeState}
-            currentModel={undefined}
-            destroyModels={destroyModels}
-            facadesExist={true}
-            listModelsWithInfo={listModelsWithInfo}
-            setHasEntities={instance._setHasEntities}
-            switchModel={switchModel}
-            userInfo={userInfo} />,
-          <juju.components.UserProfileEntityList
-            addNotification={addNotification}
-            ref="bundleList"
-            key="bundleList"
-            changeState={changeState}
-            charmstore={charmstore}
-            getDiagramURL={getDiagramURL}
-            setHasEntities={instance._setHasEntities}
-            type='bundle'
-            user={userInfo.external} />,
-          <juju.components.UserProfileEntityList
-            addNotification={addNotification}
-            ref="charmList"
-            key="charmList"
-            changeState={changeState}
-            charmstore={charmstore}
-            d3={{}}
-            getDiagramURL={getDiagramURL}
-            getKpiMetrics={getKpiMetrics}
-            setHasEntities={instance._setHasEntities}
-            type='charm'
-            user={userInfo.external} />]}
-        </div>
       </div>);
     expect(content).toEqualJSX(expected);
   });

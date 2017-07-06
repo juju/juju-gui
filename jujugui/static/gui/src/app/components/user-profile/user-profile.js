@@ -22,7 +22,9 @@ class UserProfile extends React.Component {
   constructor() {
     super();
     this.state = {
-      hasEntities: false
+      bundles: null,
+      charms: null,
+      models: null
     };
   }
 
@@ -35,12 +37,15 @@ class UserProfile extends React.Component {
   }
 
   /**
-    Set whether the profile has entities.
+    Set the list of entities, used by the child component.
 
-    @param hasEntities {Boolean} Whether there are entities.
+    @param type {String} The entity type e.g. bundle, charm or model.
+    @param entities {Array} The list of entities.
   */
-  _setHasEntities(hasEntities) {
-    this.setState({hasEntities: hasEntities});
+  _setEntities(type, entities) {
+    const state = {};
+    state[type] = entities;
+    this.setState(state);
   }
 
   /**
@@ -69,31 +74,24 @@ class UserProfile extends React.Component {
   }
 
   /**
-    Generate the empty state.
-
-    @method _generateContent
-    @returns {Array} The markup for the content.
-  */
-  _generateEmptyState() {
-    if (this.state.hasEntities) {
-      return null;
-    }
-    return (
-      <juju.components.EmptyUserProfile
-        changeState={this.props.changeState}
-        isCurrentUser={this.props.userInfo.isCurrent}
-        staticURL={this.props.staticURL}
-        switchModel={this.props.switchModel} />);
-  }
-
-  /**
     Generate the content for the panel.
 
-    @method _generateContent
     @returns {Array} The markup for the content.
   */
   _generateContent() {
     const props = this.props;
+    const bundles = this.state.bundles;
+    const charms = this.state.charms;
+    const models = this.state.models;
+    if (bundles && bundles.length === 0 && charms && charms.length === 0 &&
+      models && models.length === 0) {
+      return (
+        <juju.components.EmptyUserProfile
+          changeState={props.changeState}
+          isCurrentUser={props.userInfo.isCurrent}
+          staticURL={props.staticURL}
+          switchModel={props.switchModel} />);
+    }
     // All possible components, that can be rendered on the profile page;
     // these may be filtered down to a smaller list depending on the context.
     const lists = [
@@ -107,7 +105,8 @@ class UserProfile extends React.Component {
         facadesExist={props.facadesExist}
         destroyModels={props.destroyModels}
         listModelsWithInfo={props.listModelsWithInfo}
-        setHasEntities={this._setHasEntities.bind(this)}
+        models={this.state.models}
+        setEntities={this._setEntities.bind(this, 'models')}
         switchModel={props.switchModel}
         userInfo={props.userInfo} />,
       <juju.components.UserProfileEntityList
@@ -116,8 +115,9 @@ class UserProfile extends React.Component {
         addNotification={props.addNotification}
         changeState={props.changeState}
         charmstore={props.charmstore}
+        entities={this.state.bundles}
         getDiagramURL={props.getDiagramURL}
-        setHasEntities={this._setHasEntities.bind(this)}
+        setEntities={this._setEntities.bind(this, 'bundles')}
         type='bundle'
         user={props.userInfo.external} />,
       <juju.components.UserProfileEntityList
@@ -127,9 +127,10 @@ class UserProfile extends React.Component {
         changeState={props.changeState}
         charmstore={props.charmstore}
         d3={props.d3}
+        entities={this.state.charms}
         getDiagramURL={props.getDiagramURL}
         getKpiMetrics={props.getKpiMetrics}
-        setHasEntities={this._setHasEntities.bind(this)}
+        setEntities={this._setEntities.bind(this, 'charms')}
         type='charm'
         user={props.userInfo.external} />
     ];
@@ -151,13 +152,8 @@ class UserProfile extends React.Component {
     const componentsToRender = lists.filter(list => {
       return toRender.indexOf(list.key) >= 0;
     });
-    // Hide the list rather than not render the children as we need the children
-    // to do the XHR requests so that we know whether they have content to
-    // display.
-    const classes = classNames(
-      {'user-profile__list--hidden': !this.state.hasEntities});
     return (
-      <div className={classes}>
+      <div>
         {componentsToRender}
       </div>);
   }
@@ -176,9 +172,7 @@ class UserProfile extends React.Component {
               avatar=""
               interactiveLogin={this._interactiveLogin.bind(this)}
               links={links}
-              userInfo={this.props.userInfo}
-            />
-            {this._generateEmptyState()}
+              userInfo={this.props.userInfo} />
             {this._generateContent()}
           </div>
         </div>

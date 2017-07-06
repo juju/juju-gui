@@ -23,7 +23,6 @@ class UserProfileModelList extends React.Component {
     super();
     this.state = {
       destroyingModels: [],
-      modelList: [],
       loadingModels: false
     };
   }
@@ -86,10 +85,7 @@ class UserProfileModelList extends React.Component {
           return model.owner === extUser;
         });
       }
-      if (modelList && modelList.length > 0) {
-        this.props.setHasEntities(true);
-      }
-      this.setState({modelList: modelList});
+      this.props.setEntities(modelList || []);
     });
   }
 
@@ -201,7 +197,7 @@ class UserProfileModelList extends React.Component {
       // eventually, once we re-write the model layer to move away from YUI,
       // this will hopefully change to become more React-friendly. Until then
       // this hack will do.
-      const destroyedModel = this.state.modelList.find(model => {
+      const destroyedModel = this.props.models.find(model => {
         return model.uuid === uuid;
       });
       destroyedModel.isAlive = false;
@@ -356,7 +352,7 @@ class UserProfileModelList extends React.Component {
       );
     }
     //}
-    const list = this.state.modelList;
+    const list = this.props.models || [];
     let content;
     if (list && list.length > 0) {
       const rows = list.map(this._generateRow.bind(this));
@@ -399,7 +395,8 @@ UserProfileModelList.propTypes = {
   destroyModels: React.PropTypes.func.isRequired,
   facadesExist: React.PropTypes.bool.isRequired,
   listModelsWithInfo: React.PropTypes.func.isRequired,
-  setHasEntities: React.PropTypes.func.isRequired,
+  models: React.PropTypes.array,
+  setEntities: React.PropTypes.func.isRequired,
   switchModel: React.PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for

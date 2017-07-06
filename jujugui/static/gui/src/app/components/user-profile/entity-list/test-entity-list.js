@@ -52,8 +52,9 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='charm'
         user='who' />, true);
     var output = component.getRenderOutput();
@@ -68,16 +69,17 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type={type}
         user='who' />, true);
     var output = component.getRenderOutput();
-    assert.deepEqual(output, (
+    const expected = (
       <div className="user-profile__charm-list twelve-col">
         <juju.components.Spinner />
-      </div>
-    ));
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of charms', () => {
@@ -90,9 +92,10 @@ describe('UserProfileEntityList', () => {
         changeState={changeState}
         charmstore={charmstore}
         d3={{}}
+        entities={charms}
         getDiagramURL={sinon.stub()}
         getKpiMetrics={getKpiMetrics}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type={type}
         user='who' />, true);
     const output = component.getRenderOutput();
@@ -149,7 +152,7 @@ describe('UserProfileEntityList', () => {
           </juju.components.UserProfileEntity>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of bundles', () => {
@@ -160,8 +163,9 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={changeState}
         charmstore={charmstore}
+        entities={bundles}
         getDiagramURL={getDiagramURL}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='bundle'
         user='who' />, true);
     var output = component.getRenderOutput();
@@ -221,45 +225,49 @@ describe('UserProfileEntityList', () => {
           </juju.components.UserProfileEntity>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('requests charms and updates state', () => {
-    var component = jsTestUtils.shallowRender(
+    const setEntities = sinon.stub();
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={setEntities}
         type='charm'
         user='who' />, true);
-    var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
       'charmstore list not called');
     assert.equal(charmstore.list.args[0][0], 'who',
       'username not passed to list request');
-    assert.deepEqual(instance.state.entityList, charms,
+    assert.equal(setEntities.callCount, 1);
+    assert.deepEqual(setEntities.args[0][0], charms,
       'callback does not properly set entity state');
   });
 
   it('requests bundles and updates state', () => {
-    var component = jsTestUtils.shallowRender(
+    const setEntities = sinon.stub();
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={bundles}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={setEntities}
         type='bundle'
         user='who' />, true);
-    var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
       'charmstore list not called');
     assert.equal(charmstore.list.args[0][0], 'who',
       'username not passed to list request');
-    assert.deepEqual(instance.state.entityList, bundles,
-      'callback does not properly set entity state');
+    assert.equal(setEntities.callCount, 1);
+    assert.deepEqual(setEntities.args[0][0], bundles,
+      'callback does not properly set entities');
   });
 
   it('will abort the requests when unmounting', function() {
@@ -270,8 +278,9 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='charm'
         user='who' />, true);
     renderer.unmount();
@@ -286,8 +295,9 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='charm'
         user={null} />, true);
     assert.equal(list.callCount, 0);
@@ -296,8 +306,9 @@ describe('UserProfileEntityList', () => {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='charm'
         user='who' />);
     assert.equal(list.callCount, 1);
@@ -311,8 +322,9 @@ describe('UserProfileEntityList', () => {
         addNotification={addNotification}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='charm'
         user='who' />);
     assert.equal(addNotification.callCount, 1);
@@ -331,8 +343,9 @@ describe('UserProfileEntityList', () => {
         addNotification={addNotification}
         changeState={sinon.stub()}
         charmstore={charmstore}
+        entities={[]}
         getDiagramURL={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        setEntities={sinon.stub()}
         type='bundle'
         user='who' />);
     assert.equal(addNotification.callCount, 1);

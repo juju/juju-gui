@@ -73,7 +73,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -115,7 +116,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
@@ -148,7 +150,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
@@ -174,7 +177,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -321,7 +325,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -333,7 +338,7 @@ describe('UserProfileModelList', () => {
           <div className="left">
             Models shared with you
             <span className="user-profile__size">
-              ({1})
+              ({2})
             </span>
           </div>
           <div className="right">
@@ -365,6 +370,36 @@ describe('UserProfileModelList', () => {
           {[<juju.components.UserProfileEntity
             acl={acl}
             displayConfirmation={content[1][0].props.displayConfirmation}
+            entity={models[0]}
+            expanded={false}
+            key="model1-uuid"
+            permission="write"
+            switchModel={instance.props.switchModel}
+            type="model">
+            <span className="user-profile__list-col two-col">
+              model1
+            </span>
+            <span className="user-profile__list-col two-col">
+              who
+            </span>
+            <span className="user-profile__list-col two-col">
+              42
+            </span>
+            <span className="user-profile__list-col two-col">
+              aws/gallifrey
+            </span>
+            <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
+              <juju.components.DateDisplay
+                date='2016-09-12T15:42:09Z'
+                relative={true}/>
+            </span>
+          </juju.components.UserProfileEntity>,
+          <juju.components.UserProfileEntity
+            acl={acl}
+            displayConfirmation={content[1][1].props.displayConfirmation}
             entity={models[1]}
             expanded={false}
             key="model2-uuid"
@@ -410,7 +445,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
@@ -429,7 +465,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         acl={acl}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
@@ -447,7 +484,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     let output = component.getRenderOutput();
@@ -481,7 +519,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -514,7 +553,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -545,7 +585,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -572,7 +613,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -603,7 +645,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -630,7 +673,8 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
@@ -660,7 +704,8 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
-        setHasEntities={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={userInfo} />);
     assert.equal(addNotification.callCount, 1);
