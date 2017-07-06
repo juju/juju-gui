@@ -82,12 +82,14 @@ describe('UserProfileEntity', () => {
               'six-col last-col no-margin-bottom'}>
               <juju.components.GenericButton
                 action={displayConfirmation}
-                type="inline-neutral"
-                title="Destroy model" />
+                type="inline-neutral">
+                Destroy model
+              </juju.components.GenericButton>
               <juju.components.GenericButton
                 action={button.props.action}
-                type="inline-neutral"
-                title="Manage" />
+                type="inline-neutral">
+                Manage
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -162,8 +164,9 @@ describe('UserProfileEntity', () => {
               'six-col last-col no-margin-bottom'}>
               <juju.components.GenericButton
                 action={button.props.action}
-                type="inline-neutral"
-                title="Manage" />
+                type="inline-neutral">
+                Manage
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -242,8 +245,9 @@ describe('UserProfileEntity', () => {
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
-                type="inline-neutral"
-                title="View" />
+                type="inline-neutral">
+                View
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -339,8 +343,9 @@ describe('UserProfileEntity', () => {
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
-                type="inline-neutral"
-                title="View" />
+                type="inline-neutral">
+                View
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -427,8 +432,9 @@ describe('UserProfileEntity', () => {
     const expectedButton = (
       <div>
         <juju.components.GenericButton
-          action={function noRefCheck() {}}
-          title="Show KPI Metrics" />
+          action={function noRefCheck() {}}>
+          Show KPI Metrics
+        </juju.components.GenericButton>
       </div>);
     expect(kpiDiv).toEqualJSX(expectedButton);
     instance.setState({kpiVisible: true});
@@ -437,8 +443,9 @@ describe('UserProfileEntity', () => {
     const expectedChart = (
       <div>
         <juju.components.GenericButton
-          action={function noRefCheck() {}}
-          title="Show KPI Metrics" />
+          action={function noRefCheck() {}}>
+          Show KPI Metrics
+        </juju.components.GenericButton>
         <juju.components.UserProfileEntityKPI
           d3={{}}
           metricTypes={['bad-wolf']}
@@ -487,8 +494,9 @@ describe('UserProfileEntity', () => {
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
-                type="inline-neutral"
-                title="View" />
+                type="inline-neutral">
+                View
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
