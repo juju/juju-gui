@@ -435,8 +435,9 @@ describe('BudgetTableRow', function() {
                   <juju.components.GenericButton
                     action={instance._toggle}
                     disabled={false}
-                    type="neutral"
-                    title="Change plan" />
+                    type="neutral">
+                    Change plan
+                  </juju.components.GenericButton>
                 </div>
               </div>
             </div>
@@ -475,8 +476,9 @@ describe('BudgetTableRow', function() {
                       <juju.components.GenericButton
                         action={instance._toggle}
                         disabled={false}
-                        type="neutral"
-                        title="Select plan" />
+                        type="neutral">
+                        Select plan
+                      </juju.components.GenericButton>
                     </div>
                   </li>,
                   <li className="budget-table__plan twelve-col" key={1}>
@@ -494,8 +496,9 @@ describe('BudgetTableRow', function() {
                       <juju.components.GenericButton
                         action={instance._toggle}
                         disabled={false}
-                        type="neutral"
-                        title="Select plan" />
+                        type="neutral">
+                        Select plan
+                      </juju.components.GenericButton>
                     </div>
                   </li>
                 ]}
@@ -562,8 +565,9 @@ describe('BudgetTableRow', function() {
                   <juju.components.GenericButton
                     action={instance._toggle}
                     disabled={true}
-                    type="neutral"
-                    title="Change plan" />
+                    type="neutral">
+                    Change plan
+                  </juju.components.GenericButton>
                 </div>
               </div>
             </div>
@@ -602,8 +606,9 @@ describe('BudgetTableRow', function() {
                       <juju.components.GenericButton
                         action={instance._toggle}
                         disabled={true}
-                        type="neutral"
-                        title="Select plan" />
+                        type="neutral">
+                        Select plan
+                      </juju.components.GenericButton>
                     </div>
                   </li>,
                   <li className="budget-table__plan twelve-col" key={1}>
@@ -621,8 +626,9 @@ describe('BudgetTableRow', function() {
                       <juju.components.GenericButton
                         action={instance._toggle}
                         disabled={true}
-                        type="neutral"
-                        title="Select plan" />
+                        type="neutral">
+                        Select plan
+                      </juju.components.GenericButton>
                     </div>
                   </li>
                 ]}
@@ -775,8 +781,9 @@ describe('BudgetTableRow', function() {
               'two-col prepend-five no-margin-bottom budget-table-row__link'}>
               <juju.components.GenericButton
                 action={instance._toggleTerms}
-                type="base"
-                title="Terms" />
+                type="base">
+                Terms
+              </juju.components.GenericButton>
             </div>
           </div>
           <div>
