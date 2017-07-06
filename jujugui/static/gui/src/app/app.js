@@ -671,6 +671,8 @@ YUI.add('juju-gui', function(Y) {
         if (this.env.get('modelUUID')) {
           return;
         }
+        // As we are not changing the state anymore, we can cache the current
+        // state at this point.
         const current = state.current;
         const modelUUID = this._getModelUUID();
         if (modelUUID && !current.profile && current.root !== 'store') {

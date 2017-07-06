@@ -807,6 +807,8 @@ class GUIApp {
     if (this.modelAPI.get('modelUUID')) {
       return;
     }
+    // As we are not changing the state anymore, we can cache the current
+    // state at this point.
     const current = state.current;
     const modelUUID = this.modelUUID;
     if (modelUUID && !current.profile && current.root !== 'store') {
