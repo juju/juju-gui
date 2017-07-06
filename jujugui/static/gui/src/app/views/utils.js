@@ -1410,7 +1410,7 @@ YUI.add('juju-view-utils', function(Y) {
     // the user.
     utils._hidePopup();
     // Reset the state of the GUI ready for displaying the new model.
-    const newState = {profile: null, gui: null, root: null};
+    const newState = {profile: null, gui: null, root: null, hash: null};
     let name = '';
     let uuid = '';
     if (model) {
