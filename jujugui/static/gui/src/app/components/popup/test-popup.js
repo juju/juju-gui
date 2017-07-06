@@ -45,8 +45,11 @@ describe('Popup', () => {
           <div className="popup__close">
             <juju.components.GenericButton
               action={close}
-              type="base"
-              icon="close_16" />
+              type="base">
+              <juju.components.SvgIcon
+                name="close_16"
+                size="16" />
+            </juju.components.GenericButton>
           </div>
           <h3 className="popup__title">
             A title

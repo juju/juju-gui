@@ -82,8 +82,9 @@ class AccountPaymentDetails extends React.Component {
             <juju.components.GenericButton
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
-              type="inline-neutral"
-              title="Edit" />)}
+              type="inline-neutral">
+              Edit
+            </juju.components.GenericButton>)}
         </h4>
         {this._generateAddresses(user.addresses)}
         <h4>
@@ -92,8 +93,9 @@ class AccountPaymentDetails extends React.Component {
             <juju.components.GenericButton
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
-              type="inline-neutral"
-              title="Edit" />)}
+              type="inline-neutral">
+              Edit
+            </juju.components.GenericButton>)}
         </h4>
         {this._generateAddresses(user.billingAddresses, true)}
       </div>);

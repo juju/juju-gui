@@ -344,8 +344,9 @@ class CreatePaymentUser extends React.Component {
             <juju.components.GenericButton
               action={this._handleAddUser.bind(this)}
               disabled={disabled}
-              type="inline-neutral"
-              title="Add payment details" />
+              type="inline-neutral">
+              Add payment details
+            </juju.components.GenericButton>
           </div>
         </form>
       </div>

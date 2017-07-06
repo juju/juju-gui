@@ -151,12 +151,14 @@ describe('AccountPaymentMethod', () => {
         <div className="twelve-col account-payment-method__buttons">
           <juju.components.GenericButton
             action={instance._toggleForm}
-            type="inline-neutral"
-            title="Cancel" />
+            type="inline-neutral">
+            Cancel
+          </juju.components.GenericButton>
           <juju.components.GenericButton
             action={instance._updatePaymentMethod}
-            type="inline-positive"
-            title="update" />
+            type="inline-positive">
+            Update
+          </juju.components.GenericButton>
         </div>
       </div>);
     expect(output.props.children[1].props.children).toEqualJSX(expected);

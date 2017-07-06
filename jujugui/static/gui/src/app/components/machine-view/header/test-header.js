@@ -141,8 +141,11 @@ describe('MachineViewHeader', function() {
         <juju.components.GenericButton
           action={action}
           disabled={false}
-          type="inline-positive"
-          icon="close_16_white" />
+          type="inline-positive">
+          <juju.components.SvgIcon
+            name="close_16_white"
+            size="16" />
+        </juju.components.GenericButton>
         <div className="machine-view__header-drop-target">
           <div className="machine-view__header-drop-message">
               Create new {'machine'}

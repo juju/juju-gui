@@ -235,8 +235,9 @@ describe('DeploymentFlow', function() {
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
                 type="inline-neutral"
-                extraClasses="right"
-                title="Show changelog" />
+                extraClasses="right">
+                Show changelog
+              </juju.components.GenericButton>
             </span>}>
           <juju.components.DeploymentServices
             acl={props.acl}
@@ -282,8 +283,9 @@ describe('DeploymentFlow', function() {
               <juju.components.GenericButton
                 action={instance._handleDeploy}
                 disabled={true}
-                type="positive"
-                title="Deploy" />
+                type="positive">
+                Deploy
+              </juju.components.GenericButton>
             </div>
           </div>
         </div>
@@ -964,7 +966,7 @@ describe('DeploymentFlow', function() {
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
-    assert.equal(deployButton.props.title, 'Deploying...');
+    assert.equal(deployButton.props.children, 'Deploying...');
   });
 
   it('can deploy without updating the model name', function() {

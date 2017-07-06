@@ -131,8 +131,9 @@ class Login extends React.Component {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={'Login'}
-              type={'positive'} />
+              type="positive">
+              Login
+            </juju.components.GenericButton>
             {this._generateUSSOLink()}
           </form>
         </div>
