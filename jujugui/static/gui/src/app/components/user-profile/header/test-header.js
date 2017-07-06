@@ -52,9 +52,10 @@ describe('UserProfileHeader', () => {
     const expected = (
       <div className="user-profile-header twelve-col">
         <juju.components.GenericButton
-          title="Log in to the charm store"
           type="inline-neutral"
-          action={interactiveLogin} />
+          action={interactiveLogin}>
+          Log in to the charm store
+        </juju.components.GenericButton>
         <img alt="who"
           className="user-profile-header__avatar"
           src="avatar.png" />
@@ -77,7 +78,7 @@ describe('UserProfileHeader', () => {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('hides the login button when authenticated to charm store', () => {
@@ -104,11 +105,12 @@ describe('UserProfileHeader', () => {
       />);
     const expected = (
       <juju.components.GenericButton
-        title="Log in to the charm store"
         type="inline-neutral"
-        action={interactiveLogin} />
+        action={interactiveLogin}>
+        Log in to the charm store
+      </juju.components.GenericButton>
     );
-    assert.deepEqual(output.props.children[0], expected);
+    expect(output.props.children[0]).toEqualJSX(expected);
   });
 
   it('can render with a default avatar', () => {
@@ -125,7 +127,7 @@ describe('UserProfileHeader', () => {
         'user-profile-header__avatar user-profile-header__avatar--default'}>
         <span className="avatar-overlay"></span>
       </span>);
-    assert.deepEqual(output.props.children[1], expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
 });
