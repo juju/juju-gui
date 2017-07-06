@@ -174,8 +174,9 @@ class AccountPaymentCharges extends React.Component {
               <juju.components.GenericButton
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                type="inline-neutral"
-                title="Show receipt" />
+                type="inline-neutral">
+                Show receipt
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className="twelve-col">
