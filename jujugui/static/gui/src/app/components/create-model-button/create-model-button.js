@@ -40,8 +40,9 @@ class CreateModelButton extends React.Component {
         <juju.components.GenericButton
           action={this._createNewModel.bind(this)}
           disabled={disabled}
-          type={this.props.type}
-          title={this.props.title} />
+          type={this.props.type}>
+          {this.props.title}
+        </juju.components.GenericButton>
       </div>
     );
   }
