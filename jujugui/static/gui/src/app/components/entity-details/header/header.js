@@ -257,7 +257,7 @@ class EntityHeader extends React.Component {
         target="_blank">
           <juju.components.SvgIcon
             name="help_16"
-            size="16"/>
+            size="16" />
         </a>
       </li>
     );
