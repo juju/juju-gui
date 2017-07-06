@@ -187,8 +187,9 @@ class MachineView extends React.Component {
           <juju.components.GenericButton
             action={props.autoPlaceUnits}
             disabled={props.acl.isReadOnly()}
-            type="inline-neutral"
-            title="Auto place" />
+            type="inline-neutral">
+            Auto place
+          </juju.components.GenericButton>
           <p>
             You can also drag and drop unplaced units to customise your
             deployment.
