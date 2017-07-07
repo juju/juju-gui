@@ -34,45 +34,7 @@ describe('DirectDeploy', function() {
     const id = 'cs:apache-21';
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
-        ddData={{id: id}}
-        generatePath={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub()}
-        makeEntityModel={sinon.stub()}
-        renderMarkdown={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <juju.components.DeploymentSection
-        completed={true}
-        instance="deployment-direct-deploy"
-        showCheck={true}
-        title="You are deploying:" />
-    );
-    expect(output).toEqualJSX(expected);
-
-    const finalRenderer = jsTestUtils.shallowRender(expected, true);
-    const finalOutput = finalRenderer.getRenderOutput();
-    const finalExpected = (
-      <div className="deployment-section
-        twelve-col
-        deployment-section--active
-        deployment-section--completed
-        deployment-direct-deploy">
-        <h3 className="deployment-section__title">
-          <juju.components.SvgIcon
-            className="deployment-section__title-checkmark"
-            name="complete"
-            size="24" />
-          You are deploying:
-        </h3>
-      </div>);
-    expect(finalOutput).toEqualJSX(finalExpected);
-  });
-
-  it('renders the Direct Deploy for a bundle', () => {
-    const id = 'cs:bundles/kubernetes-core-8';
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
+        changeState={sinon.stub()}
         ddData={{id: id}}
         generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -83,14 +45,69 @@ describe('DirectDeploy', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <juju.components.DeploymentSection
-        completed={true}
-        instance="deployment-direct-deploy"
-        showCheck={true}
-        title="You are deploying:">
-        <div className="six-col deployment-direct-deploy__image">
+        instance="deployment-direct-deploy">
+        <div className="six-col last-col deployment-direct-deploy__image">
+          {null}
+          <div className="deployment-direct-deploy__edit-model">
+            <juju.components.GenericButton
+              action={instance._handleClose}
+              type="inline-neutral">
+              Edit model
+            </juju.components.GenericButton>
+          </div>
+        </div>
+      </juju.components.DeploymentSection>);
+    expect(output).toEqualJSX(expected);
+
+    const finalRenderer = jsTestUtils.shallowRender(expected, true);
+    const finalOutput = finalRenderer.getRenderOutput();
+    const finalExpected = (
+      <div className="deployment-section
+        twelve-col
+        deployment-section--active
+        deployment-direct-deploy">
+        <h3 className="deployment-section__title" />
+        <div className="six-col last-col deployment-direct-deploy__image">
+          {null}
+          <div className="deployment-direct-deploy__edit-model">
+            <juju.components.GenericButton
+              action={instance._handleClose}
+              type="inline-neutral">
+              Edit model
+            </juju.components.GenericButton>
+          </div>
+        </div>
+      </div>);
+    expect(finalOutput).toEqualJSX(finalExpected);
+  });
+
+  it('renders the Direct Deploy for a bundle', () => {
+    const id = 'cs:bundles/kubernetes-core-8';
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentDirectDeploy
+        changeState={sinon.stub()}
+        ddData={{id: id}}
+        generatePath={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.stub()}
+        makeEntityModel={sinon.stub()}
+        renderMarkdown={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <juju.components.DeploymentSection
+        instance="deployment-direct-deploy">
+        <div className="six-col last-col deployment-direct-deploy__image">
           <juju.components.EntityContentDiagram
             getDiagramURL={instance.props.getDiagramURL}
             id={id} />
+          <div className="deployment-direct-deploy__edit-model">
+            <juju.components.GenericButton
+              action={instance._handleClose}
+              type="inline-neutral">
+              Edit model
+            </juju.components.GenericButton>
+          </div>
         </div>
       </juju.components.DeploymentSection>
     );
@@ -102,19 +119,19 @@ describe('DirectDeploy', function() {
       <div className="deployment-section
         twelve-col
         deployment-section--active
-        deployment-section--completed
         deployment-direct-deploy">
-        <h3 className="deployment-section__title">
-          <juju.components.SvgIcon
-            className="deployment-section__title-checkmark"
-            name="complete"
-            size="24" />
-          You are deploying:
-        </h3>
-        <div className="six-col deployment-direct-deploy__image">
+        <h3 className="deployment-section__title" />
+        <div className="six-col last-col deployment-direct-deploy__image">
           <juju.components.EntityContentDiagram
             getDiagramURL={instance.props.getDiagramURL}
             id={id} />
+          <div className="deployment-direct-deploy__edit-model">
+            <juju.components.GenericButton
+              action={instance._handleClose}
+              type="inline-neutral">
+              Edit model
+            </juju.components.GenericButton>
+          </div>
         </div>
       </div>
     );
