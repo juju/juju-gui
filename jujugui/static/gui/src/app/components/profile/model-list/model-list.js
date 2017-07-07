@@ -85,7 +85,7 @@ class ProfileModelList extends React.Component {
     const key = 'mymodels';
     const headerLabel = 'My models';
     const labels = [
-      'Name', 'Machines, Cloud/region', 'last accessed', 'action'];
+      'Name', 'Machines, Cloud/region', 'Last accessed', 'Action'];
     const tableHeader = this._generateTableHeader(labels, key);
     const state = this.state.models;
     const modelList = state && state.owned;
@@ -169,7 +169,7 @@ class ProfileModelList extends React.Component {
   _generateHeader(label, modelCount, showCreate=false) {
     const props = this.props;
     return (
-      <li className="profile-model-list__header">
+      <li className="profile-model-list__header" key={label}>
         <span className="profile-model-list__header-title">
           {`${label} (${modelCount})`}
         </span>
