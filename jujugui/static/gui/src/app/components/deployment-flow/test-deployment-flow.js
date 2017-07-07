@@ -294,10 +294,12 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders direct deploy when ddData is set', () => {
+    const changeState = sinon.stub();
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub();
     const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
+      changeState: changeState,
       ddData: {id: 'cs:bundles/kubernetes-core-8'},
       getEntity: getEntity,
       makeEntityModel: makeEntityModel,
@@ -308,6 +310,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     expect(output.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
+        changeState={changeState}
         ddData={{id: 'cs:bundles/kubernetes-core-8'}}
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}

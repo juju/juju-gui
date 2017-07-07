@@ -42,29 +42,27 @@ class DeploymentDirectDeploy extends React.Component {
     });
   }
 
+  _handleClose() {
+    this.props.changeState({
+      gui: {deploy: null},
+      profile: null,
+      special: {dd: null}
+    });
+  }
+
   render() {
     let diagram = null;
     let titleAndDescription = null;
     const ddEntityId = this.props.ddData.id;
     if (this.state.isBundle) {
-      diagram = (<div className="six-col deployment-direct-deploy__image">
+      diagram = (
         <juju.components.EntityContentDiagram
           getDiagramURL={this.props.getDiagramURL}
-          id={ddEntityId} />
-      </div>);
+          id={ddEntityId} />);
     }
 
     if (this.state.entityModel) {
       const entity = this.state.entityModel.toEntity();
-      const description = <juju.components.EntityContentDescription
-        entityModel={this.state.entityModel}
-        renderMarkdown={this.props.renderMarkdown}
-      />;
-      const title = (<h3
-        className="deployment-direct-deploy__title">
-        {entity.displayName}
-      </h3>);
-
       let url;
       let link;
       try {
@@ -77,41 +75,45 @@ class DeploymentDirectDeploy extends React.Component {
       });
 
       if (url) {
-        link = (<a href={`${url}`}
-          className="link" target="_blank">
+        link = (
+          <a href={`${url}`}
+            className="link" target="_blank">
             Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
-        </a>);
+          </a>);
       }
-
-      const wrapperClasses = classNames(
-        'deployment-direct-deploy__description',
-        {
-          'six-col last-col': this.state.isBundle,
-          'twelve-col': !this.state.isBundle
-        }
-      );
-
-      titleAndDescription = (<div
-        className={wrapperClasses}>
-        {title}
-        {description}
-        {link}
-      </div>);
+      titleAndDescription = (
+        <div className="deployment-direct-deploy__description six-col">
+          <h4>You are about to deploy:</h4>
+          <h2 className="deployment-direct-deploy__title">
+            {entity.displayName}
+          </h2>
+          <juju.components.EntityContentDescription
+            entityModel={this.state.entityModel}
+            renderMarkdown={this.props.renderMarkdown} />
+          {link}
+        </div>);
     }
 
     return (
       <juju.components.DeploymentSection
-        completed={true}
-        instance="deployment-direct-deploy"
-        showCheck={true}
-        title="You are deploying:">
-        {diagram}
+        instance="deployment-direct-deploy">
         {titleAndDescription}
+        <div className="six-col last-col deployment-direct-deploy__image">
+          {diagram}
+          <div className="deployment-direct-deploy__edit-model">
+            <juju.components.GenericButton
+              action={this._handleClose.bind(this)}
+              type="inline-neutral">
+              Edit model
+            </juju.components.GenericButton>
+          </div>
+        </div>
       </juju.components.DeploymentSection>);
   }
 };
 
 DeploymentDirectDeploy.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
   ddData: React.PropTypes.object.isRequired,
   generatePath: React.PropTypes.func.isRequired,
   getDiagramURL: React.PropTypes.func.isRequired,
@@ -124,6 +126,9 @@ YUI.add('deployment-direct-deploy', function() {
   juju.components.DeploymentDirectDeploy = DeploymentDirectDeploy;
 }, '0.1.0', {
   requires: [
-    'deployment-section'
+    'deployment-section',
+    'entity-content-diagram',
+    'entity-content-description',
+    'generic-button'
   ]
 });
