@@ -28,6 +28,7 @@ class Logout extends React.Component {
   _generateClasses() {
     return classNames(
       'logout-link',
+      'header-menu__menu-list-item-link',
       {
         'logout-link--hidden': !this.props.visible
       }
