@@ -15,12 +15,22 @@ describe('Profile', function() {
     });
   });
 
+  function renderComponent(options={}) {
+    return jsTestUtils.shallowRender(
+      <window.juju.components.Profile
+        acl={{}}
+        activeSection={options.activeSection || undefined}
+        addNotification={sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        facadesExist={true}
+        listModelsWithInfo={sinon.stub()}
+        destroyModels={sinon.stub()}
+        switchModel={sinon.stub()}
+        userInfo={{}} />, true);
+  }
+
   it('can render', () => {
-    const changeState = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Profile
-        activeSection={undefined}
-        changeState={changeState}/>, true);
+    const renderer = renderComponent();
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expected = (
@@ -28,16 +38,20 @@ describe('Profile', function() {
         instanceName="profile"
         visible={true}>
         <juju.components.ProfileHeader />
-        <div className="inner-wrapper">
-          <div className="three-col">
-            <juju.components.ProfileNavigation
-              activeSection={Profile.sectionsMap.entries().next().value[0]}
-              changeState={instance.props.changeState}
-              sectionsMap={Profile.sectionsMap} />
-          </div>
-          <div className="six-col last-col">
-            Models
-          </div>
+        <div className="profile__content">
+          <juju.components.ProfileNavigation
+            activeSection={Profile.sectionsMap.entries().next().value[0]}
+            changeState={instance.props.changeState}
+            sectionsMap={Profile.sectionsMap} />
+          <juju.components.ProfileModelList
+            acl={instance.props.acl}
+            addNotification={instance.props.addNotification}
+            changeState={instance.props.changeState}
+            facadesExist={instance.props.facadesExist}
+            destroyModels={instance.props.destroyModels}
+            listModelsWithInfo={instance.props.listModelsWithInfo}
+            switchModel={instance.props.switchModel}
+            userInfo={instance.props.userInfo} />
         </div>
       </juju.components.Panel>
     );
@@ -47,13 +61,13 @@ describe('Profile', function() {
   it('can show all of the defined sections', () => {
     Profile.sectionsMap
       .forEach((val, key) => {
-        const output = jsTestUtils.shallowRender(
-          <Profile
-            activeSection={key}
-            changeState={sinon.stub()} />);
-        assert.equal(
-          output.props.children[1].props.children[1].props.children,
-          val.component);
+        const renderer = renderComponent({
+          activeSection: key
+        });
+        const output = renderer.getRenderOutput();
+        const instance = renderer.getMountedInstance();
+        expect(output.props.children[1].props.children[1])
+          .toEqualJSX(val.getComponent(instance));
       });
   });
 

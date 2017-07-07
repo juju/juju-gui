@@ -45,7 +45,6 @@ Profile.sectionsMap = new Map([
           acl={context.props.acl}
           addNotification={context.props.addNotification}
           changeState={context.props.changeState}
-          currentModel={context.props.currentModel}
           facadesExist={context.props.facadesExist}
           destroyModels={context.props.destroyModels}
           listModelsWithInfo={context.props.listModelsWithInfo}
