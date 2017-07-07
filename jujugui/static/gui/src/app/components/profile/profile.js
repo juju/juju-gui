@@ -22,17 +22,13 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <juju.components.ProfileHeader />
-        <div className="inner-wrapper">
-          <div className="three-col">
-            <juju.components.ProfileNavigation
-              // Use supplied activeSection or the key from the first map entry.
-              activeSection={this.props.activeSection || mapEntry[0]}
-              changeState={this.props.changeState}
-              sectionsMap={sectionsMap}/>
-          </div>
-          <div className="six-col last-col">
-            {section.component}
-          </div>
+        <div className="profile__content">
+          <juju.components.ProfileNavigation
+            // Use supplied activeSection or the key from the first map entry.
+            activeSection={this.props.activeSection || mapEntry[0]}
+            changeState={this.props.changeState}
+            sectionsMap={sectionsMap}/>
+          {section.getComponent(this)}
         </div>
       </juju.components.Panel>
     );
@@ -43,25 +39,52 @@ class Profile extends React.Component {
 Profile.sectionsMap = new Map([
   ['models', {
     label: 'Models',
-    component: 'Models'
+    getComponent: context => {
+      return (
+        <juju.components.ProfileModelList
+          acl={context.props.acl}
+          addNotification={context.props.addNotification}
+          changeState={context.props.changeState}
+          currentModel={context.props.currentModel}
+          facadesExist={context.props.facadesExist}
+          destroyModels={context.props.destroyModels}
+          listModelsWithInfo={context.props.listModelsWithInfo}
+          switchModel={context.props.switchModel}
+          userInfo={context.props.userInfo} />);
+    }
   }],
   ['charms', {
     label: 'Charms',
-    component: 'Charms'
+    getComponent: context => 'Charms'
   }],
   ['bundles', {
     label: 'Bundles',
-    component: 'Bundles'
+    getComponent: context => 'Bundles'
   }],
   ['credentials', {
     label: 'Cloud Credentials',
-    component: 'Cloud Credentials'
+    getComponent: context => 'Cloud Credentials'
   }]
 ]);
 
 Profile.propTypes = {
+  acl: React.PropTypes.object,
   activeSection: React.PropTypes.string,
-  changeState: React.PropTypes.func.isRequired
+  addNotification: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  destroyModels: React.PropTypes.func.isRequired,
+  facadesExist: React.PropTypes.bool.isRequired,
+  listModelsWithInfo: React.PropTypes.func.isRequired,
+  switchModel: React.PropTypes.func.isRequired,
+  // userInfo must have the following attributes:
+  // - external: the external user name to use for retrieving data, for
+  //   instance, from the charm store. Might be null if the user is being
+  //   displayed for the current user and they are not authenticated to
+  //   the charm store;
+  // - isCurrent: whether the profile is being displayed for the currently
+  //   authenticated user;
+  // - profile: the user name for whom profile details must be displayed.
+  userInfo: React.PropTypes.object.isRequired
 };
 
 YUI.add('profile', function() {
@@ -70,6 +93,7 @@ YUI.add('profile', function() {
   requires: [
     'panel-component',
     'profile-navigation',
-    'profile-header'
+    'profile-header',
+    'profile-model-list'
   ]
 });
