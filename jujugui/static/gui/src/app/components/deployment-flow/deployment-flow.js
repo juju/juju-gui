@@ -958,6 +958,7 @@ class DeploymentFlow extends React.Component {
     if (props.ddData && props.ddData.id) {
       return (
         <juju.components.DeploymentDirectDeploy
+          changeState={props.changeState}
           ddData={props.ddData}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
