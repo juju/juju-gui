@@ -107,15 +107,13 @@ class ProfileModelList extends React.Component {
     }, []);
     const rows = this._generateRows(rowData, key);
     return (
-      <div>
-        <ul className="profile-model-list__list">
-          {[
-            this._generateHeader(headerLabel, rowData.length, true),
-            tableHeader,
-            ...rows
-          ]}
-        </ul>
-      </div>);
+      <ul className="profile-model-list__list">
+        {[
+          this._generateHeader(headerLabel, rowData.length, true),
+          tableHeader,
+          ...rows
+        ]}
+      </ul>);
   }
 
   /**
@@ -152,15 +150,13 @@ class ProfileModelList extends React.Component {
     }, []);
     const rows = this._generateRows(rowData, key);
     return (
-      <div>
-        <ul className="profile-model-list__list">
-          {[
-            this._generateHeader(headerLabel, rowData.length),
-            tableHeader,
-            ...rows
-          ]}
-        </ul>
-      </div>);
+      <ul className="profile-model-list__list">
+        {[
+          this._generateHeader(headerLabel, rowData.length),
+          tableHeader,
+          ...rows
+        ]}
+      </ul>);
   }
 
   /**
@@ -234,7 +230,6 @@ ProfileModelList.propTypes = {
   acl: React.PropTypes.object,
   addNotification: React.PropTypes.func.isRequired,
   changeState: React.PropTypes.func.isRequired,
-  currentModel: React.PropTypes.string,
   destroyModels: React.PropTypes.func.isRequired,
   facadesExist: React.PropTypes.bool.isRequired,
   listModelsWithInfo: React.PropTypes.func.isRequired,

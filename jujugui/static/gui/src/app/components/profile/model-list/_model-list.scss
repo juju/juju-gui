@@ -5,15 +5,20 @@
     text-align: right;
   }
 
+  &__list:first-of-type {
+    margin-top: 0px;
+  }
+
   &__list {
     @extend %list-style;
+    margin-top: 30px;
   }
 
   &__header {
     @extend %list-style;
     display: grid;
     grid-template-columns: repeat(2, 50%);
-    padding: 20px 0;
+    padding-bottom: 20px;
     border-bottom: 2px solid $mid-grey;
     margin-bottom: 25px;
 
