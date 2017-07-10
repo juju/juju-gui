@@ -319,7 +319,11 @@ class GUIApp {
       @type {Object}
     */
     this._bound = {
-      changeState: this.state.changeState.bind(this.state)
+      addNotification: this.db.notifications.add.bind(this.db.notifications),
+      changeState: this.state.changeState.bind(this.state),
+      destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
+      listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
+      switchModel: yui.juju.views.utils.switchModel.bind(this, this.env)
     };
 
     /**

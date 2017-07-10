@@ -933,6 +933,7 @@ describe('utilities', function() {
         profile: null,
         gui: null,
         root: null,
+        hash: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
       }]);
       assert.equal(env.set.callCount, 1, 'env.set');
@@ -952,6 +953,7 @@ describe('utilities', function() {
         profile: null,
         gui: null,
         root: 'new',
+        hash: null,
         model: null
       }]);
     });
@@ -966,6 +968,7 @@ describe('utilities', function() {
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: null,
+        hash: null,
         root: null,
         model: null
       }]);
@@ -1166,6 +1169,7 @@ describe('utilities', function() {
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: null,
+        hash: null,
         root: null,
         model: {
           path: 'foo/model-name',

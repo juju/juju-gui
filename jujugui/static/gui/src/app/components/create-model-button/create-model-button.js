@@ -26,7 +26,10 @@ class CreateModelButton extends React.Component {
     }
     // We want to explicitly close the profile when switching to a new
     // model to resolve a race condition with the new model setup.
-    props.changeState({profile: null});
+    props.changeState({
+      profile: null,
+      hash: null
+    });
     props.switchModel(null);
     if (this.props.action) {
       this.props.action();

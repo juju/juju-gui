@@ -563,7 +563,11 @@ YUI.add('juju-gui', function(Y) {
       // requires binding and is passed into components should be bound here
       // and then used across components.
       this._bound = {
-        changeState: this.state.changeState.bind(this.state)
+        addNotification: this.db.notifications.add.bind(this.db.notifications),
+        changeState: this.state.changeState.bind(this.state),
+        destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
+        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
+        switchModel: views.utils.switchModel.bind(this, this.env)
       };
       // In Juju >= 2 we connect to the controller and then to the model.
       this.state.bootstrap();
@@ -1032,8 +1036,15 @@ YUI.add('juju-gui', function(Y) {
       if (window.juju_config.flags.profile) {
         profile =
           <window.juju.components.Profile
+            acl={this.acl}
+            activeSection={state.hash}
+            addNotification={this._bound.addNotification}
             changeState={this._bound.changeState}
-            activeSection={state.hash}/>;
+            facadesExist={facadesExist}
+            listModelsWithInfo={this._bound.listModelsWithInfo}
+            destroyModels={this._bound.destroyModels}
+            switchModel={this._bound.switchModel}
+            userInfo={this._getUserInfo(state)} />;
       }
 
       ReactDOM.render(profile, document.getElementById('top-page-container'));
