@@ -44,7 +44,7 @@ class ProfileModelList extends React.Component {
   }
 
   /**
-    Callback for the controller listModels call.
+    Callback for the controller listModelsWithInfo call.
     @param {String} err The error from the request, or null.
     @param {Array} modelList The list of models.
   */

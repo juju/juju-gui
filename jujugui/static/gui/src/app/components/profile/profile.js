@@ -39,17 +39,17 @@ class Profile extends React.Component {
 Profile.sectionsMap = new Map([
   ['models', {
     label: 'Models',
-    getComponent: context => {
+    getComponent: component => {
       return (
         <juju.components.ProfileModelList
-          acl={context.props.acl}
-          addNotification={context.props.addNotification}
-          changeState={context.props.changeState}
-          facadesExist={context.props.facadesExist}
-          destroyModels={context.props.destroyModels}
-          listModelsWithInfo={context.props.listModelsWithInfo}
-          switchModel={context.props.switchModel}
-          userInfo={context.props.userInfo} />);
+          acl={component.props.acl}
+          addNotification={component.props.addNotification}
+          changeState={component.props.changeState}
+          facadesExist={component.props.facadesExist}
+          destroyModels={component.props.destroyModels}
+          listModelsWithInfo={component.props.listModelsWithInfo}
+          switchModel={component.props.switchModel}
+          userInfo={component.props.userInfo} />);
     }
   }],
   ['charms', {
