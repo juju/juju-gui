@@ -70,4 +70,11 @@ describe('StatsClient', () => {
     client.increase('awesome');
     assertXHRSent(url, 'gui.awesome:1|c');
   });
+
+  it('can add flags', () => {
+    const url = 'https://example.com/stats/';
+    const client = new window.jujugui.StatsClient(url, 'gui');
+    const name = client._addFlags('foo', ['test.bar', 'baz']);
+    assert.equal(name, 'foo,test.bar=true');
+  });
 });

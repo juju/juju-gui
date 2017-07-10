@@ -29,7 +29,26 @@ const StatsClient = class StatsClient {
     @param {Integer} count The increment amount.
   */
   increase(name, count=1) {
+    name = this._addFlags(name);
     this._send(`${name}:${count}|c`);
+  }
+
+  /**
+   Adds the active ab test flags to the stat name.
+
+   @param {Array} flags The flags to check for test tags. Used for testing.
+   @param {String} name The stats name.
+  */
+  _addFlags(name, flags=[]) {
+    if (flags === [] && window.juju_config && window.juju_config.flags) {
+      flags = Object.keys(window.juju_config.flags);
+    }
+    flags = flags.filter(key => key.indexOf('test') === 0);
+    flags = flags.map(val => `${val}=true`).join(',');
+    if (flags !== '') {
+      return `${name},${flags}`;
+    }
+    return name;
   }
 
   /**
