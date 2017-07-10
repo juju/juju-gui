@@ -18,42 +18,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorConfirm = React.createClass({
-  displayName: 'InspectorConfirm',
-
-  propTypes: {
-    buttons: React.PropTypes.array.isRequired,
-    message: React.PropTypes.string,
-    open: React.PropTypes.bool
-  },
-
-  /**
-    Get the current state of the confirmation.
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    // Setting a default state object.
-    return {
+class InspectorConfirm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       open: this.props.open
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState({open: nextProps.open});
-  },
+  }
 
   /**
     Returns the classes for the confirmation based on the provided props.
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'inspector-confirm',
       this.props.open ? 'inspector-confirm--open' : ''
     );
-  },
+  }
 
   /**
     Returns the classes for the message which will be hidden if there is
@@ -61,16 +48,16 @@ const InspectorConfirm = React.createClass({
     @method _messageClasses
     @returns {String} The collection of class names.
   */
-  _messageClasses: function() {
+  _messageClasses() {
     return classNames(
       'inspector-confirm__message',
       {
         hidden: !this.props.message
       }
     );
-  },
+  }
 
-  render: function() {
+  render() {
     // If there are no buttons, don't render a button row, which may have
     // CSS styles (e.g., min-height) that don't fly with an empty button
     // row.
@@ -91,7 +78,13 @@ const InspectorConfirm = React.createClass({
       </div>
     );
   }
-});
+};
+
+InspectorConfirm.propTypes = {
+  buttons: React.PropTypes.array.isRequired,
+  message: React.PropTypes.string,
+  open: React.PropTypes.bool
+};
 
 YUI.add('inspector-confirm', function() {
   juju.components.InspectorConfirm = InspectorConfirm;

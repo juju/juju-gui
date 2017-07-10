@@ -18,37 +18,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentBudget = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    listBudgets: React.PropTypes.func.isRequired,
-    setBudget: React.PropTypes.func.isRequired,
-    user: React.PropTypes.string
-  },
-
-  getInitialState: function() {
+class DeploymentBudget extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-
-    return {
+    this.state = {
       budgets: null,
       increaseExpanded: false,
       loadingBudgets: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     if (this.props.user) {
       this._getBudgets();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // If the user has changed then update the data.
     var props = this.props;
     var currentUser = props.user;
@@ -56,21 +49,21 @@ const DeploymentBudget = React.createClass({
     if (nextUser !== currentUser) {
       this._getBudgets();
     }
-  },
+  }
 
   /**
     Get the budgets for the authenticated user.
 
     @method _getBudgets
   */
-  _getBudgets: function() {
+  _getBudgets() {
     // Delay the call until after the state change to prevent race
     // conditions.
     this.setState({loadingBudgets: true}, () => {
-      var xhr = this.props.listBudgets(this._getBudgetsCallback);
+      var xhr = this.props.listBudgets(this._getBudgetsCallback.bind(this));
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Callback for the plans API call to get budgets.
@@ -79,7 +72,7 @@ const DeploymentBudget = React.createClass({
     @param {String} error The error from the request, or null.
     @param {Object} data The data from the request.
   */
-  _getBudgetsCallback: function(error, data) {
+  _getBudgetsCallback(error, data) {
     this.setState({loadingBudgets: false}, () => {
       if (error) {
         if (error.indexOf('not found') === -1) {
@@ -95,14 +88,14 @@ const DeploymentBudget = React.createClass({
         this.props.setBudget(data.budgets[0].budget);
       }
     });
-  },
+  }
 
   /**
     Generate select options for the available budgets.
 
     @method _generateBudgetOptions
   */
-  _generateBudgetOptions: function() {
+  _generateBudgetOptions() {
     var budgets = this.state.budgets;
     if (!budgets) {
       return [];
@@ -113,7 +106,7 @@ const DeploymentBudget = React.createClass({
         value: budget.budget
       };
     });
-  },
+  }
 
   /**
     Set the budget value.
@@ -121,20 +114,20 @@ const DeploymentBudget = React.createClass({
     @method _handleBudgetChange
     @param {String} The select value.
   */
-  _handleBudgetChange: function(value) {
+  _handleBudgetChange(value) {
     this.props.setBudget(value);
-  },
+  }
 
   /**
    Toggle the increase form expanded state.
 
    @method _toggleIncrease
   */
-  _toggleIncrease: function() {
+  _toggleIncrease() {
     this.setState({increaseExpanded: !this.state.increaseExpanded});
-  },
+  }
 
-  render: function() {
+  render() {
     if (this.state.loadingBudgets) {
       return (
         <div className="deployment-budget__loading">
@@ -156,13 +149,13 @@ const DeploymentBudget = React.createClass({
             <juju.components.InsetSelect
               disabled={disabled}
               label="Budget"
-              onChange={this._handleBudgetChange}
+              onChange={this._handleBudgetChange.bind(this)}
               options={this._generateBudgetOptions()} />
           </div>
           <div className="three-col">
             <span className="deployment-budget__increase-button">
               <juju.components.GenericButton
-                action={this._toggleIncrease}
+                action={this._toggleIncrease.bind(this)}
                 disabled={disabled}
                 type="base"
                 title="Increase budget" />
@@ -205,14 +198,14 @@ const DeploymentBudget = React.createClass({
               </div>
               <div className="two-col">
                 <juju.components.GenericButton
-                  action={this._toggleIncrease}
+                  action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
                   type="base"
                   title="Cancel" />
               </div>
               <div className="two-col last-col">
                 <juju.components.GenericButton
-                  action={this._toggleIncrease}
+                  action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
                   type="neutral"
                   title="Confirm" />
@@ -223,8 +216,14 @@ const DeploymentBudget = React.createClass({
       </juju.components.ExpandingRow>
     );
   }
+};
 
-});
+DeploymentBudget.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  listBudgets: React.PropTypes.func.isRequired,
+  setBudget: React.PropTypes.func.isRequired,
+  user: React.PropTypes.string
+};
 
 YUI.add('deployment-budget', function() {
   juju.components.DeploymentBudget = DeploymentBudget;

@@ -18,28 +18,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const SearchResults = React.createClass({
-  displayName: 'SearchResults',
+class SearchResults extends React.Component {
+  constructor(props) {
+    super(props);
+    this.searchXhr = null;
+    var state = this._generateState(this.props);
+    state.waitingForSearch = false;
+    this.state = state;
+  }
 
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    charmstoreSearch: React.PropTypes.func.isRequired,
-    deployTarget: React.PropTypes.func.isRequired,
-    generatePath: React.PropTypes.func.isRequired,
-    getName: React.PropTypes.func.isRequired,
-    makeEntityModel: React.PropTypes.func.isRequired,
-    owner: React.PropTypes.string,
-    provides: React.PropTypes.string,
-    query: React.PropTypes.string,
-    requires: React.PropTypes.string,
-    series: React.PropTypes.string,
-    seriesList: React.PropTypes.object.isRequired,
-    setPageTitle: React.PropTypes.func.isRequired,
-    sort: React.PropTypes.string,
-    tags: React.PropTypes.string,
-    type: React.PropTypes.string
-  },
+  componentDidMount() {
+    const query = this.props.query ? ` for: ${this.props.query}` : '';
+    this.props.setPageTitle(`Search results${query}`);
+    this._searchRequest(
+      this.props.query, this.props.tags, this.props.type,
+      this.props.sort, this.props.series, this.props.provides,
+      this.props.requires, this.props.owner);
+  }
+
+  componentWillUnmount() {
+    this.searchXhr.abort();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this._shouldSearch(nextProps)) {
+      this._searchRequest(nextProps.query, nextProps.tags, nextProps.type,
+        nextProps.sort, nextProps.series, nextProps.provides,
+        nextProps.requires, nextProps.owner);
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.activeComponent !== 'loading' ||
+        this._shouldSearch(nextProps) && !this.state.waitingForSearch;
+  }
 
   /**
     If it's the same charm but for different series, collapse into one
@@ -48,12 +60,12 @@ const SearchResults = React.createClass({
     add the series to the exist entity. Using an OrderedDict (versus a
     normal dict) is important to preserve sorting.
 
-    @method collapseSeries
+    @method _collapseSeries
     @param {Array} entities The entities in their uncollapsed state.
     @param {Function} getName The util for getting names from the charm ids.
     @returns {Array} The entities with collapsed series.
    */
-  collapseSeries: function(entities, getName) {
+  _collapseSeries(entities, getName) {
     function entityKey(entity, getName) {
       return [
         // Some ids include "cs:", so normalise the ids for comparison.
@@ -133,16 +145,16 @@ const SearchResults = React.createClass({
       returnedEntities.push(collapsedEntities[k]);
     }
     return returnedEntities;
-  },
+  }
 
   /**
     Handle successful searches by updating internal state with the results.
 
-    @method searchCallback
+    @method _searchCallback
     @param {String} error An error message, or null if no error.
     @param {Array} rawResults The entity models returned by the search.
   */
-  searchCallback: function(error, rawResults) {
+  _searchCallback(error, rawResults) {
     // Parse the raw results.
     if (error) {
       this._changeActiveComponent('error');
@@ -154,7 +166,7 @@ const SearchResults = React.createClass({
       return model.toEntity();
     }, this);
     var activeComponent;
-    results = this.collapseSeries(results, this.props.getName);
+    results = this._collapseSeries(results, this.props.getName);
     // Split the results into promulgated and normal.
     var promulgatedResults = [],
         communityResults = [];
@@ -196,18 +208,18 @@ const SearchResults = React.createClass({
     this.setState({waitingForSearch: false});
     this.setState({data: data});
     this._changeActiveComponent(activeComponent);
-  },
+  }
 
   /**
     Search the charmstore with the given filters.
 
-    @method searchRequest
+    @method _searchRequest
     @param {String} query The text to search for.
     @param {String} tags The tags to limit the search by.
     @param {String} sort The sort method.
     @param {String} series The series to filter by.
   */
-  searchRequest: function(query, tags, type, sort, series, provides,
+  _searchRequest(query, tags, type, sort, series, provides,
     requires, owner) {
     var filters = {text: query, tags: tags};
     // Don't add the type property unless required otherwise the API will
@@ -239,18 +251,18 @@ const SearchResults = React.createClass({
     }
     this.searchXhr = this.props.charmstoreSearch(
       filters,
-      this.searchCallback,
+      this._searchCallback.bind(this),
       150);
-  },
+  }
 
   /**
     Determines whether an API search request is actually needed. We only need
     to make a new search request if the query has changed since the last one.
 
-    @method shouldSearch
+    @method _shouldSearch
     @param {Object} nextProps The next set of properties.
   */
-  shouldSearch: function(nextProps) {
+  _shouldSearch(nextProps) {
     if (!this.state.data || !this.state.data.text) {
       return true;
     }
@@ -261,50 +273,16 @@ const SearchResults = React.createClass({
         nextProps.tags !== this.props.tags ||
         nextProps.series !== this.props.series ||
         nextProps.sort !== this.props.sort;
-  },
-
-  getInitialState: function() {
-    this.searchXhr = null;
-
-    var state = this.generateState(this.props);
-    state.waitingForSearch = false;
-    return state;
-  },
-
-  componentDidMount: function() {
-    const query = this.props.query ? ` for: ${this.props.query}` : '';
-    this.props.setPageTitle(`Search results${query}`);
-    this.searchRequest(
-      this.props.query, this.props.tags, this.props.type,
-      this.props.sort, this.props.series, this.props.provides,
-      this.props.requires, this.props.owner);
-  },
-
-  componentWillUnmount: function() {
-    this.searchXhr.abort();
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    if (this.shouldSearch(nextProps)) {
-      this.searchRequest(nextProps.query, nextProps.tags, nextProps.type,
-        nextProps.sort, nextProps.series, nextProps.provides,
-        nextProps.requires, nextProps.owner);
-    }
-  },
-
-  shouldComponentUpdate: function(nextProps, nextState) {
-    return this.state.activeComponent !== 'loading' ||
-        this.shouldSearch(nextProps) && !this.state.waitingForSearch;
-  },
+  }
 
   /**
     Generates the state for the search results.
 
-    @method generateState
+    @method _generateState
     @param {Object} nextProps The props which were sent to the component.
     @return {Object} A generated state object which can be passed to setState.
   */
-  generateState: function(nextProps) {
+  _generateState(nextProps) {
     var state = {
       activeComponent: nextProps.activeComponent || 'loading',
       showCommunity: nextProps.showCommunity || false
@@ -428,7 +406,7 @@ const SearchResults = React.createClass({
                 </a>
                 {' '}or go{' '}
                 <span className="link"
-                  onClick={this._handleBack}>
+                  onClick={this._handleBack.bind(this)}>
                   back
                 </span>.
               </p>
@@ -437,7 +415,7 @@ const SearchResults = React.createClass({
         break;
     }
     return state;
-  },
+  }
 
   /**
     Change the state to reflect the chosen component.
@@ -445,11 +423,11 @@ const SearchResults = React.createClass({
     @method _changeActiveComponent
     @param {String} newComponent The component to switch to.
   */
-  _changeActiveComponent: function(newComponent) {
+  _changeActiveComponent(newComponent) {
     var nextProps = this.state;
     nextProps.activeComponent = newComponent;
-    this.setState(this.generateState(nextProps));
-  },
+    this.setState(this._generateState(nextProps));
+  }
 
   /**
     Display a search results message if there is search text.
@@ -458,7 +436,7 @@ const SearchResults = React.createClass({
     @param {String} text The search text.
     @param {Integer} solutionsCount The number of search results.
   */
-  _generateResultsMessage: function(text, solutionsCount) {
+  _generateResultsMessage(text, solutionsCount) {
     if (text) {
       return (
         <div className="twelve-col list-block__title no-margin-bottom">
@@ -468,16 +446,16 @@ const SearchResults = React.createClass({
       );
     }
     return;
-  },
+  }
 
   /**
     Handle navigating back.
 
     @method _handleBack
   */
-  _handleBack: function() {
+  _handleBack() {
     window.history.back();
-  },
+  }
 
   /**
     Generate the promulgated search results list.
@@ -485,7 +463,7 @@ const SearchResults = React.createClass({
     @param {Array} promulgated The list of promulgated results.
     @return {Object} JSX div containing heading and list.
   */
-  _generatePromulgatedResults: function(promulgated) {
+  _generatePromulgatedResults(promulgated) {
     return (<div className="clearfix promulgated-results">
       <h4>Recommended <span className="count">
         ({promulgated.length})
@@ -501,16 +479,16 @@ const SearchResults = React.createClass({
             key={item.storeId + i} />)}
       </ul>
     </div>);
-  },
+  }
 
   /**
     Toggles the visibility of community results.
   */
-  _toggleCommunityResults: function() {
+  _toggleCommunityResults() {
     let state = this.state;
     state.showCommunity = !this.state.showCommunity;
-    this.setState(this.generateState(state));
-  },
+    this.setState(this._generateState(state));
+  }
 
   /**
     Generate community search results list.
@@ -519,7 +497,7 @@ const SearchResults = React.createClass({
     @param {Boolean} hasPromulgated Do promulgated results exist?
     @return {Object} JSX div containing toggle button, header and list.
   */
-  _generateCommunityResults: function(community, hasPromulgated) {
+  _generateCommunityResults(community, hasPromulgated) {
     const holderClasses = classNames(
       'clearfix',
       {
@@ -530,7 +508,7 @@ const SearchResults = React.createClass({
     const button = hasPromulgated ? (
       <div className="button-wrapper--ruled">
         <juju.components.GenericButton
-          action={this._toggleCommunityResults}
+          action={this._toggleCommunityResults.bind(this)}
           type="inline-neutral"
           extraClasses="show-community-button"
           title={buttonTitle} />
@@ -553,7 +531,7 @@ const SearchResults = React.createClass({
         </ul>
       </div>
     </div>);
-  },
+  }
 
   /**
     Generate the base classes from on the props.
@@ -564,7 +542,7 @@ const SearchResults = React.createClass({
     @param {Boolean} promulgated Whether to show a promulgated list.
     @returns {String} The collection of class names.
   */
-  _generateResultsList: function(promulgated, community) {
+  _generateResultsList(promulgated, community) {
     const hasPromulgated = promulgated.length > 0;
     const hasCommunity = community.length > 0;
     return (
@@ -574,16 +552,36 @@ const SearchResults = React.createClass({
         {hasCommunity ?
           this._generateCommunityResults(community, hasPromulgated) : null}
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="search-results">
         {this.state.activeChild.component}
       </div>
     );
   }
-});
+};
+
+SearchResults.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  charmstoreSearch: React.PropTypes.func.isRequired,
+  deployTarget: React.PropTypes.func.isRequired,
+  generatePath: React.PropTypes.func.isRequired,
+  getName: React.PropTypes.func.isRequired,
+  makeEntityModel: React.PropTypes.func.isRequired,
+  owner: React.PropTypes.string,
+  provides: React.PropTypes.string,
+  query: React.PropTypes.string,
+  requires: React.PropTypes.string,
+  series: React.PropTypes.string,
+  seriesList: React.PropTypes.object.isRequired,
+  setPageTitle: React.PropTypes.func.isRequired,
+  sort: React.PropTypes.string,
+  tags: React.PropTypes.string,
+  type: React.PropTypes.string
+};
 
 YUI.add('search-results', function(Y) {
   juju.components.SearchResults = SearchResults;

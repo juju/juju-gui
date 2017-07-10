@@ -18,21 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityFiles = React.createClass({
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    apiUrl: React.PropTypes.string.isRequired,
-    entityModel: React.PropTypes.object.isRequired,
-    pluralize: React.PropTypes.func.isRequired
-  },
-
+class EntityFiles extends React.Component {
   /**
     Expand a directory when clicked.
 
     @method _onDirectoryClick
     @param {Object} e the event object.
   */
-  _onDirectoryClick: function(e) {
+  _onDirectoryClick(e) {
     e.stopPropagation();
     var target = e.currentTarget;
     var isCollapsed = target.className.indexOf('collapsed') > 0;
@@ -40,7 +33,7 @@ const EntityFiles = React.createClass({
       'entity-files__directory',
       {'collapsed': !isCollapsed}
     );
-  },
+  }
 
   /**
     Recursively build a tree structure representing the entity's file.
@@ -49,7 +42,7 @@ const EntityFiles = React.createClass({
     @param {Array} files the list of file paths.
     @returns {Object} filetree the corresponding tree structure.
   */
-  _buildFiletree: function(files) {
+  _buildFiletree(files) {
     /**
       Recursive helper adds a single path to an existing file tree.
 
@@ -78,7 +71,7 @@ const EntityFiles = React.createClass({
       extendTree(filetree, file.split('/'));
     });
     return filetree;
-  },
+  }
 
   /**
     If able, generates a link to the entity's source code.
@@ -87,7 +80,7 @@ const EntityFiles = React.createClass({
     @param {Object} codeSource metadata about the entity's source code.
     @return {Object} The markup for the link to the code.
   */
-  _generateCodeLink: function(codeSource) {
+  _generateCodeLink(codeSource) {
     codeSource = codeSource || {};
     var codeUrl = codeSource.location;
     var codeLink;
@@ -107,7 +100,7 @@ const EntityFiles = React.createClass({
       codeLink = '';
     }
     return codeLink;
-  },
+  }
 
   /**
     Create a list of linked files.
@@ -117,7 +110,7 @@ const EntityFiles = React.createClass({
     @param {String} url The base URL for where the files are stored.
     @return {Array} The markup for the linked files.
   */
-  _generateFileItems: function(files, url) {
+  _generateFileItems(files, url) {
     var filetree = this._buildFiletree(files);
 
     /**
@@ -156,7 +149,7 @@ const EntityFiles = React.createClass({
             className="entity-files__directory collapsed"
             tabIndex="0"
             role="button"
-            onClick={this._onDirectoryClick}>
+            onClick={this._onDirectoryClick.bind(this)}>
             {'/' + fileName}
             <ul className="entity-files__listing">
               {childItems}
@@ -173,9 +166,9 @@ const EntityFiles = React.createClass({
       markup.push(buildList.call(this, file, filetree[file]));
     });
     return markup;
-  },
+  }
 
-  render: function() {
+  render() {
     const entityModel = this.props.entityModel;
     const files = entityModel.get('files');
     const url = window.jujulib.URL.fromLegacyString(entityModel.get('id'));
@@ -201,7 +194,13 @@ const EntityFiles = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityFiles.propTypes = {
+  apiUrl: React.PropTypes.string.isRequired,
+  entityModel: React.PropTypes.object.isRequired,
+  pluralize: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-files', function() {
   juju.components.EntityFiles = EntityFiles;

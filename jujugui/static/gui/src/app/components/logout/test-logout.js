@@ -37,7 +37,7 @@ describe('Logout', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.Logout
         charmstoreLogoutUrl={charmstoreLogoutUrl}
-        doCharmstoreLogout={doCharmstoreLogout} 
+        doCharmstoreLogout={doCharmstoreLogout}
         locationAssign={sinon.stub()}
         logoutUrl={logoutUrl}
         visible={true} />);
@@ -47,7 +47,7 @@ describe('Logout', () => {
         onClick={output.props.onClick}
         target="_self">Logout</a>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders properly for charmstore logout', () => {
@@ -57,7 +57,7 @@ describe('Logout', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.Logout
         charmstoreLogoutUrl={charmstoreLogoutUrl}
-        doCharmstoreLogout={doCharmstoreLogout} 
+        doCharmstoreLogout={doCharmstoreLogout}
         locationAssign={sinon.stub()}
         logoutUrl={logoutUrl}
         visible={true} />);
@@ -66,7 +66,7 @@ describe('Logout', () => {
         href={charmstoreLogoutUrl}
         onClick={output.props.onClick}
         target="_blank">Logout</a>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can be hidden', () => {
@@ -76,7 +76,7 @@ describe('Logout', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.Logout
         charmstoreLogoutUrl={charmstoreLogoutUrl}
-        doCharmstoreLogout={doCharmstoreLogout} 
+        doCharmstoreLogout={doCharmstoreLogout}
         locationAssign={sinon.stub()}
         logoutUrl={logoutUrl}
         visible={false} />);
@@ -85,7 +85,7 @@ describe('Logout', () => {
         href={logoutUrl}
         onClick={output.props.onClick}
         target="_self">Logout</a>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('does not redirect to logout onClick for regular logout', () => {
@@ -96,12 +96,12 @@ describe('Logout', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Logout
         charmstoreLogoutUrl={charmstoreLogoutUrl}
-        doCharmstoreLogout={doCharmstoreLogout} 
+        doCharmstoreLogout={doCharmstoreLogout}
         locationAssign={locationAssign}
         logoutUrl={logoutUrl}
         visible={false} />, true);
     const instance = renderer.getMountedInstance();
-    instance.handleClick();
+    instance._handleClick();
     assert.equal(locationAssign.callCount, 0);
   });
 
@@ -113,12 +113,12 @@ describe('Logout', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Logout
         charmstoreLogoutUrl={charmstoreLogoutUrl}
-        doCharmstoreLogout={doCharmstoreLogout} 
+        doCharmstoreLogout={doCharmstoreLogout}
         locationAssign={locationAssign}
         logoutUrl={logoutUrl}
         visible={false} />, true);
     const instance = renderer.getMountedInstance();
-    instance.handleClick();
+    instance._handleClick();
     assert.equal(locationAssign.callCount, 1);
     assert.equal(locationAssign.args[0][0], logoutUrl);
   });

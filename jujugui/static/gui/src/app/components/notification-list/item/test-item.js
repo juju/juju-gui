@@ -52,7 +52,7 @@ describe('NotificationListItem', function() {
             size="16" />
         </span>
       </li>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('adds the proper type class to the container', () => {

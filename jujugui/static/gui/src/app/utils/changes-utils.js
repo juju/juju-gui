@@ -136,7 +136,7 @@ YUI.add('changes-utils', function(Y) {
         case '_addCharm':
           var command = change.command;
           changeItem.description = ' ' + command.args[0] +
-            ' has been added to the controller.';
+            ' will be added to the controller.';
           // TODO frankban: retrieve the icon from the charm itself. We cannot
           // always pass applicationId as an option, and maybe we should never
           // do that, and just get what we need from the charm.
@@ -150,7 +150,8 @@ YUI.add('changes-utils', function(Y) {
           const applicationName = change.command.args[0].applicationName;
           const application = services.getServiceByName(applicationName);
           changeItem.icon = application.get('icon');
-          changeItem.description = ` ${applicationName} resources added.`;
+          changeItem.description = ` ${applicationName} resources will` +
+            ' be added.';
           break;
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
@@ -163,34 +164,28 @@ YUI.add('changes-utils', function(Y) {
             change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
           changeItem.description = ' ' + ghostService.get('name') +
-              ' has been added to the model.';
+              ' will be added to the model.';
           break;
         case '_destroyApplication':
           changeItem.icon = 'changes-service-destroyed';
           changeItem.description = ' ' + change.command.args[0] +
-              ' has been destroyed.';
+              ' will be destroyed.';
           break;
         case '_add_unit':
           var service = this.getServiceByUnitId(
             change.command.options.modelId, services, units);
           changeItem.icon = 'changes-units-added';
-          var units = change.command.args[1],
-              msg;
-          if (units !== 1) {
-            msg = 'units have been added.';
-          } else {
-            msg = 'unit has been added.';
-          }
-          changeItem.description = ' ' + units + ' ' +
-              service.get('name') + ' ' + msg;
+          var units = change.command.args[1];
+          changeItem.description = ` ${units} ${service.get('name')} ` +
+            `unit${units === 1 ? '' : 's'} will be added.`;
           break;
         case '_remove_units':
           changeItem.icon = 'changes-units-removed';
           /*jslint -W004*/
           var units = change.command.args[0];
           changeItem.description = units.length + ' unit' +
-              (units.length === 1 ? ' has' : 's have') +
-              ' been removed from ' + units[0].split('/')[0];
+              (units.length === 1 ? '' : 's') +
+              ' will be removed from ' + units[0].split('/')[0];
           break;
         case '_expose':
           var name = change.command.args[0];
@@ -199,24 +194,25 @@ YUI.add('changes-utils', function(Y) {
             name = ghostService.get('name');
           }
           changeItem.icon = 'exposed_16';
-          changeItem.description = name + ' exposed';
+          changeItem.description = name + ' will be exposed';
           break;
         case '_unexpose':
           changeItem.icon = 'exposed_16';
-          changeItem.description = change.command.args[0] + ' unexposed';
+          changeItem.description = change.command.args[0] +
+            ' will be unexposed';
           break;
         case '_add_relation':
           var serviceList = this.getRealRelationEndpointNames(
             change.command.args, services);
           changeItem.icon = 'changes-relation-added';
           changeItem.description = change.command.args[0][1].name +
-              ' relation added between ' +
+              ' relation will be added between ' +
               serviceList[0] + ' and ' + serviceList[1] + '.';
           break;
         case '_remove_relation':
           changeItem.icon = 'changes-relation-removed';
           changeItem.description = change.command.args[0][1].name +
-              ' relation removed between ' +
+              ' relation will be removed between ' +
               change.command.args[0][0] +
               ' and ' +
               change.command.args[1][0] + '.';
@@ -227,8 +223,8 @@ YUI.add('changes-utils', function(Y) {
           changeItem.icon = 'changes-' + machineType + '-created';
           changeItem.description = change.command.args[0].length +
               ' ' + machineType +
-              (change.command.args[0].length !== 1 ? 's have' : ' has') +
-              ' been added.';
+              (change.command.args[0].length !== 1 ? 's' : '') +
+              ' will be added.';
           break;
         case '_destroyMachines':
           var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
@@ -236,13 +232,13 @@ YUI.add('changes-utils', function(Y) {
           changeItem.icon = 'changes-' + machineType + '-destroyed';
           changeItem.description = change.command.args[0].length +
               ' ' + machineType +
-              (change.command.args[0].length !== 1 ? 's have' : ' has') +
-              ' been destroyed.';
+              (change.command.args[0].length !== 1 ? 's' : '') +
+              ' will be destroyed.';
           break;
         case '_set_config':
           var cfgServ = services.getById(change.command.args[0]);
           changeItem.icon = 'changes-config-changed';
-          changeItem.description = 'Configuration values changed for ' +
+          changeItem.description = 'Configuration values will be changed for ' +
               cfgServ.get('displayName').match(removeBrackets)[1] + '.';
           break;
         default:

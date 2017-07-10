@@ -22,21 +22,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   Provides a user menu to the header - shows Profile, Account and Logout links.
   If user is not logged in the user icon is replaced with a login button.
 */
-const UserMenu = enhanceWithClickOutside(React.createClass({
-
-  propTypes: {
-    LogoutLink: React.PropTypes.object,
-    USSOLoginLink: React.PropTypes.object,
-    controllerAPI: React.PropTypes.object,
-    navigateUserAccount: React.PropTypes.func.isRequired,
-    navigateUserProfile: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class UserMenu extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       showUserMenu: false
     };
-  },
+  }
 
   /**
     When the menu is shown, clicking anywhere but the menu will close
@@ -44,35 +36,35 @@ const UserMenu = enhanceWithClickOutside(React.createClass({
 
     @method handleClickOutside
   */
-  handleClickOutside: function() {
+  handleClickOutside() {
     this.setState({ showUserMenu: false });
-  },
+  }
 
   /**
     Clicking the help menu will toggle whether it's visibility.
 
     @method toggleUserMenu
   */
-  toggleUserMenu: function() {
+  toggleUserMenu() {
     this.setState({ showUserMenu: !this.state.showUserMenu });
-  },
+  }
 
-  _handleProfileClick: function() {
+  _handleProfileClick() {
     this.props.navigateUserProfile();
     this.toggleUserMenu();
-  },
+  }
 
-  _handleAccountClick: function() {
+  _handleAccountClick() {
     this.props.navigateUserAccount();
     this.toggleUserMenu();
-  },
+  }
 
   /**
     Generate menu based on whether the button has been clicked.
 
     @method generateUserMenu
   */
-  _generateUserMenu: function() {
+  _generateUserMenu() {
     if (!this.state.showUserMenu) {
       return '';
     }
@@ -84,13 +76,15 @@ const UserMenu = enhanceWithClickOutside(React.createClass({
             header-menu__menu-list-item-with-link"
             role="menuitem" tabIndex="0">
             <a className="header-menu__menu-list-item-link"
-              role="button" onClick={this._handleProfileClick}>Profile</a>
+              role="button"
+              onClick={this._handleProfileClick.bind(this)}>Profile</a>
           </li>
           <li className="header-menu__menu-list-item
             header-menu__menu-list-item-with-link"
             role="menuitem" tabIndex="0">
             <a className="header-menu__menu-list-item-link"
-              role="button" onClick={this._handleAccountClick}>Account</a>
+              role="button"
+              onClick={this._handleAccountClick.bind(this)}>Account</a>
           </li>
           <li className="header-menu__menu-list-item
             header-menu__menu-list-item-with-link"
@@ -100,23 +94,23 @@ const UserMenu = enhanceWithClickOutside(React.createClass({
         </ul>
       </juju.components.Panel>
     );
-  },
+  }
 
   /**
     Get class names based on whether the menu is shown.
 
     @method _getClassNames
   */
-  _getClassNames: function(isLogin) {
+  _getClassNames(isLogin) {
     return classNames(
       'header-menu__button',
       {
         'header-menu__button-with-text': isLogin,
         'header-menu__show-menu': this.state.showUserMenu
       });
-  },
+  }
 
-  render: function() {
+  render() {
     const controllerAPI = this.props.controllerAPI;
     const loginEle = this.props.USSOLoginLink;
     const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
@@ -134,7 +128,7 @@ const UserMenu = enhanceWithClickOutside(React.createClass({
     return (
       <div className="header-menu">
         <span className={this._getClassNames(showLogin)}
-          onClick={this.toggleUserMenu}
+          onClick={this.toggleUserMenu.bind(this)}
           role="button"
           tabIndex="0"
           aria-haspopup="true"
@@ -147,10 +141,18 @@ const UserMenu = enhanceWithClickOutside(React.createClass({
       </div>
     );
   }
-}));
+};
+
+UserMenu.propTypes = {
+  LogoutLink: React.PropTypes.object,
+  USSOLoginLink: React.PropTypes.object,
+  controllerAPI: React.PropTypes.object,
+  navigateUserAccount: React.PropTypes.func.isRequired,
+  navigateUserProfile: React.PropTypes.func.isRequired
+};
 
 YUI.add('user-menu', function() {
-  juju.components.UserMenu = UserMenu;
+  juju.components.UserMenu = enhanceWithClickOutside(UserMenu);
 }, '0.1.0', { requires: [
   'panel-component',
   'svg-icon'

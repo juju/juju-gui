@@ -18,41 +18,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPaymentDetailsAddress = React.createClass({
-  displayName: 'AccountPaymentDetailsAddress',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addAddress: React.PropTypes.func.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    address: React.PropTypes.object.isRequired,
-    close: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    removeAddress: React.PropTypes.func.isRequired,
-    showEdit: React.PropTypes.bool,
-    updateAddress: React.PropTypes.func.isRequired,
-    updated: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class AccountPaymentDetailsAddress extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {};
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Update an address.
 
     @method _updateAddress
   */
-  _updateAddress: function() {
+  _updateAddress() {
     const valid = this.props.validateForm(['addressForm'], this.refs);
     if (!valid) {
       return;
@@ -75,9 +58,9 @@ const AccountPaymentDetailsAddress = React.createClass({
         this.props.close();
       });
     this.xhrs.push(xhr);
-  },
+  }
 
-  render: function() {
+  render() {
     const disabled = this.props.acl.isReadOnly();
     return (
       <juju.components.ExpandingRow
@@ -107,7 +90,7 @@ const AccountPaymentDetailsAddress = React.createClass({
               type="inline-neutral"
               title="Cancel" />
             <juju.components.GenericButton
-              action={this._updateAddress}
+              action={this._updateAddress.bind(this)}
               disabled={disabled}
               type="inline-positive"
               title="Update" />
@@ -116,8 +99,23 @@ const AccountPaymentDetailsAddress = React.createClass({
       </juju.components.ExpandingRow>
     );
   }
+};
 
-});
+AccountPaymentDetailsAddress.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addAddress: React.PropTypes.func.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  address: React.PropTypes.object.isRequired,
+  close: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  removeAddress: React.PropTypes.func.isRequired,
+  showEdit: React.PropTypes.bool,
+  updateAddress: React.PropTypes.func.isRequired,
+  updated: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
+
 YUI.add('account-payment-details-address', function() {
   juju.components.AccountPaymentDetailsAddress = AccountPaymentDetailsAddress;
 }, '', {

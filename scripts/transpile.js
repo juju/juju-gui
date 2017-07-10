@@ -6,7 +6,7 @@ const path = require('path');
 const process = require('process');
 const os = require('os');
 
-const babel = require('babel-cli/node_modules/babel-core');
+const babel = require('babel-core');
 const mkdirp = require('mkdirp');
 // FILE_LIST will be a space delimited list of paths that need to be built.
 const fileList = process.env.FILE_LIST.split(' ');

@@ -42,7 +42,7 @@ describe('CopyToClipboard', function() {
 
   it('renders with a default value', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.CopyToClipboard/>);
+      <juju.components.CopyToClipboard />);
     var className = output.props.className;
     var expected = (
       <div className={className}>
@@ -59,7 +59,7 @@ describe('CopyToClipboard', function() {
         </button>
       </div>
     );
-    assert.deepEqual(output, expected, 'Did not render as expected');
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a user-provided value properly', function() {

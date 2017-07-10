@@ -18,27 +18,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const NotificationList = React.createClass({
-
-  propTypes: {
-    // This cannot be required because on initial render if you pass in
-    // undefined or null for a notification it throws an error
-    // https://github.com/facebook/react/issues/3163
-    notification: React.PropTypes.object,
-    timeout: React.PropTypes.number
-  },
-
-  getInitialState: function() {
+class NotificationList extends React.Component {
+  constructor(props) {
+    super(props);
     const notifications = {};
     const note = this.props.notification;
     if (note) {
       notifications[note.timestamp] = this._processNotification(note);
     }
     this.timeouts = [];
-    return {
+    this.state = {
       notifications: notifications
     };
-  },
+  }
 
   /**
     This simply maps the notification values to a simple object to avoid
@@ -48,7 +40,7 @@ const NotificationList = React.createClass({
     @method _processNotification
     @param {Object} notification The notification to show.
   */
-  _processNotification: function(notification) {
+  _processNotification(notification) {
     const structured = {
       message: notification.message,
       type: notification.level,
@@ -67,9 +59,9 @@ const NotificationList = React.createClass({
     }
 
     return structured;
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // This component will be re-rendered every time a notification is Added
     // so we only need to add the notification into state.
     const notification = nextProps.notification;
@@ -80,9 +72,9 @@ const NotificationList = React.createClass({
     notifications[notification.timestamp] =
       this._processNotification(notification);
     this.setState({notifications: notifications});
-  },
+  }
 
-  _startTimeout: function(key, notification) {
+  _startTimeout(key, notification) {
     if (notification.type !== 'error') {
       // If it's not an error message then it needs to auto destroy.
       this.timeouts.push(setTimeout(() => {
@@ -92,9 +84,9 @@ const NotificationList = React.createClass({
         }
       }, this.props.timeout || 3000));
     }
-  },
+  }
 
-  _generateNotifications: function() {
+  _generateNotifications() {
     const notifications = this.state.notifications;
     const elements = [];
     Object.keys(notifications).forEach(key => {
@@ -105,28 +97,28 @@ const NotificationList = React.createClass({
           key={key}
           timestamp={key}
           ref={'NotificationListItem' + key}
-          removeNotification={this._removeNotification}
+          removeNotification={this._removeNotification.bind(this)}
           message={notification.message}
           timeout={this.props.timeout}
           type={notification.type} />);
     });
     return elements;
-  },
+  }
 
-  _removeNotification: function(timestamp) {
+  _removeNotification(timestamp) {
     const notifications = this.state.notifications;
     delete notifications[timestamp];
     this.setState({notifications: notifications});
-  },
+  }
 
-  _clearTimeouts: function() {
+  _clearTimeouts() {
     this.timeouts.forEach(id => {
       clearTimeout(id);
     });
     this.timeouts = [];
-  },
+  }
 
-  _restartTimeouts: function() {
+  _restartTimeouts() {
     // Only restart if there are no timeouts active.
     if (this.timeouts.length > 0) {
       return;
@@ -135,18 +127,25 @@ const NotificationList = React.createClass({
     Object.keys(notifications).forEach(key => {
       this._startTimeout(key, notifications[key]);
     });
-  },
+  }
 
-  render: function() {
+  render() {
     return (
-      <ul onMouseOver={this._clearTimeouts}
-        onMouseOut={this._restartTimeouts}
+      <ul onMouseOver={this._clearTimeouts.bind(this)}
+        onMouseOut={this._restartTimeouts.bind(this)}
         className="notification-list">
         {this._generateNotifications()}
       </ul>);
   }
+};
 
-});
+NotificationList.propTypes = {
+  // This cannot be required because on initial render if you pass in
+  // undefined or null for a notification it throws an error
+  // https://github.com/facebook/react/issues/3163
+  notification: React.PropTypes.object,
+  timeout: React.PropTypes.number
+};
 
 YUI.add('notification-list', function() {
   juju.components.NotificationList = NotificationList;

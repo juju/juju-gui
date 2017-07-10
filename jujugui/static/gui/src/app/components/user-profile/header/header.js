@@ -18,31 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileHeader = React.createClass({
-  displayName: 'UserProfileHeader',
-
-  propTypes: {
-    avatar: React.PropTypes.string.isRequired,
-    interactiveLogin: React.PropTypes.func,
-    links: React.PropTypes.array.isRequired,
-    // userInfo must have the following attributes:
-    // - external: the external user name to use for retrieving data, for
-    //   instance, from the charm store. Might be null if the user is being
-    //   displayed for the current user and they are not authenticated to
-    //   the charm store;
-    // - isCurrent: whether the profile is being displayed for the currently
-    //   authenticated user;
-    // - profile: the user name for whom profile details must be displayed.
-    userInfo: React.PropTypes.object.isRequired
-  },
-
+class UserProfileHeader extends React.Component {
   /**
     Generate the login button if it should be shown.
 
     @method _generateLogin
     @returns {Object} The login component.
   */
-  _generateLogin: function() {
+  _generateLogin() {
     const props = this.props;
     if (props.userInfo.external) {
       return;
@@ -52,7 +35,7 @@ const UserProfileHeader = React.createClass({
         title="Log in to the charm store"
         type="inline-neutral"
         action={props.interactiveLogin} />);
-  },
+  }
 
   /**
     Generate the provided avatar or a default.
@@ -60,7 +43,7 @@ const UserProfileHeader = React.createClass({
     @method _generateAvatar
     @returns {Object} The avatar component.
   */
-  _generateAvatar: function() {
+  _generateAvatar() {
     var className = 'user-profile-header__avatar';
     if (!this.props.avatar) {
       return (
@@ -72,7 +55,7 @@ const UserProfileHeader = React.createClass({
       <img alt={this.props.userInfo.profile}
         className={className}
         src={this.props.avatar} />);
-  },
+  }
 
   /**
     Generate the list of links.
@@ -80,7 +63,7 @@ const UserProfileHeader = React.createClass({
     @method _generateLinks
     @returns {Object} The avatar component.
   */
-  _generateLinks: function() {
+  _generateLinks() {
     var links = [];
     this.props.links.forEach((link) => {
       var action = link.action;
@@ -113,9 +96,9 @@ const UserProfileHeader = React.createClass({
       <ul className="user-profile-header__links">
         {links}
       </ul>);
-  },
+  }
 
-  render: function () {
+  render () {
     return (
       <div className="user-profile-header twelve-col">
         {this._generateLogin()}
@@ -126,8 +109,22 @@ const UserProfileHeader = React.createClass({
         {this._generateLinks()}
       </div>);
   }
+};
 
-});
+UserProfileHeader.propTypes = {
+  avatar: React.PropTypes.string.isRequired,
+  interactiveLogin: React.PropTypes.func,
+  links: React.PropTypes.array.isRequired,
+  // userInfo must have the following attributes:
+  // - external: the external user name to use for retrieving data, for
+  //   instance, from the charm store. Might be null if the user is being
+  //   displayed for the current user and they are not authenticated to
+  //   the charm store;
+  // - isCurrent: whether the profile is being displayed for the currently
+  //   authenticated user;
+  // - profile: the user name for whom profile details must be displayed.
+  userInfo: React.PropTypes.object.isRequired
+};
 
 YUI.add('user-profile-header', function() {
   juju.components.UserProfileHeader = UserProfileHeader;

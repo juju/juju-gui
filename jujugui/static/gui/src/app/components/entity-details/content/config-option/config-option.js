@@ -18,13 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentConfigOption = React.createClass({
-
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    option: React.PropTypes.object.isRequired
-  },
-
+class EntityContentConfigOption extends React.Component {
   /**
     Create the markup for default value.
 
@@ -32,16 +26,16 @@ const EntityContentConfigOption = React.createClass({
     @param {String} defaultValue The option default.
     @return {Object} The generated markup.
   */
-  _generateDefault: function(defaultValue) {
+  _generateDefault(defaultValue) {
     if (defaultValue) {
       return <dd className="entity-content__config-default">
         {defaultValue}
       </dd>;
     }
     return;
-  },
+  }
 
-  render: function() {
+  render() {
     var option = this.props.option;
     return (
       <div className="entity-content__config-option">
@@ -62,7 +56,11 @@ const EntityContentConfigOption = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentConfigOption.propTypes = {
+  option: React.PropTypes.object.isRequired
+};
 
 YUI.add('entity-content-config-option', function() {
   juju.components.EntityContentConfigOption = EntityContentConfigOption;

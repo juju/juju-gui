@@ -721,6 +721,11 @@ describe('Controller API', function() {
         assert.strictEqual(result.series, 'trusty');
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-7a43-47d3-89dd-b02c923e');
+        assert.strictEqual(result.agentVersion, '42.47.0');
+        assert.strictEqual(result.sla, 'essential');
+        assert.strictEqual(result.slaOwner, 'rose');
+        assert.strictEqual(result.status, 'available');
+        assert.strictEqual(result.statusInfo, 'status info');
         assert.strictEqual(result.credential, 'aws_who@external_who');
         assert.strictEqual(result.credentialName, 'who');
         assert.strictEqual(result.region, 'gallifrey');
@@ -774,6 +779,9 @@ describe('Controller API', function() {
               name: 'admin',
               'provider-type': 'lxd',
               uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
+              'agent-version': '42.47.0',
+              sla: {level: 'essential', owner: 'rose'},
+              status: {status: 'available', info: 'status info'},
               'controller-uuid': '5bea955d-7a43-47d3-89dd',
               'cloud-credential-tag': 'cloudcred-aws_who@external_who',
               'cloud-region': 'gallifrey',
@@ -844,6 +852,11 @@ describe('Controller API', function() {
         assert.strictEqual(result1.series, 'trusty');
         assert.strictEqual(result1.provider, 'lxd');
         assert.strictEqual(result1.uuid, id1);
+        assert.strictEqual(result1.agentVersion, '');
+        assert.strictEqual(result1.sla, '');
+        assert.strictEqual(result1.slaOwner, '');
+        assert.strictEqual(result1.status, '');
+        assert.strictEqual(result1.statusInfo, '');
         assert.strictEqual(result1.controllerUUID, id1);
         assert.strictEqual(result1.credential, '');
         assert.strictEqual(result1.region, 'east');
@@ -861,6 +874,11 @@ describe('Controller API', function() {
         assert.strictEqual(result2.series, 'xenial');
         assert.strictEqual(result2.provider, 'aws');
         assert.strictEqual(result2.uuid, id2);
+        assert.strictEqual(result2.agentVersion, '');
+        assert.strictEqual(result2.sla, '');
+        assert.strictEqual(result2.slaOwner, '');
+        assert.strictEqual(result2.status, '');
+        assert.strictEqual(result2.statusInfo, '');
         assert.strictEqual(result2.controllerUUID, '5bea955d-7a43-c2');
         assert.strictEqual(result2.credential, 'dalek');
         assert.strictEqual(result2.region, null);
@@ -981,6 +999,11 @@ describe('Controller API', function() {
         assert.strictEqual(result.series, 'trusty');
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-1');
+        assert.strictEqual(result.agentVersion, '2.0.0');
+        assert.strictEqual(result.sla, 'advanced');
+        assert.strictEqual(result.slaOwner, 'cyberman');
+        assert.strictEqual(result.status, 'error');
+        assert.strictEqual(result.statusInfo, 'bad wolf');
         assert.strictEqual(result.controllerUUID, '5bea955d-c');
         assert.strictEqual(result.credential, 'aws_who@external_who');
         assert.strictEqual(result.credentialName, 'who');
@@ -1059,6 +1082,9 @@ describe('Controller API', function() {
               name: 'admin',
               'provider-type': 'lxd',
               uuid: '5bea955d-1',
+              'agent-version': '2.0.0',
+              sla: {level: 'advanced', owner: 'cyberman'},
+              status: {status: 'error', info: 'bad wolf'},
               'controller-uuid': '5bea955d-c',
               'cloud-credential-tag': 'cloudcred-aws_who@external_who',
               'cloud-region': 'gallifrey',

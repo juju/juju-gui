@@ -18,38 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentSection = React.createClass({
-  displayName: 'DeploymentSection',
-
-  propTypes: {
-    buttons: React.PropTypes.array,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.array,
-      React.PropTypes.object
-    ]),
-    completed: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    extra: React.PropTypes.oneOfType([
-      React.PropTypes.array,
-      React.PropTypes.object,
-      React.PropTypes.string
-    ]),
-    instance: React.PropTypes.string,
-    showCheck: React.PropTypes.bool,
-    title: React.PropTypes.oneOfType([
-      React.PropTypes.array,
-      React.PropTypes.object,
-      React.PropTypes.string
-    ])
-  },
-
+class DeploymentSection extends React.Component {
   /**
     Generate the actions.
 
     @method _generateCheck
     @returns {Object} The actions markup.
   */
-  _generateActions: function() {
+  _generateActions() {
     if (!this.props.buttons && !this.props.extra) {
       return;
     }
@@ -58,7 +34,7 @@ const DeploymentSection = React.createClass({
         {this._generateExtra()}
         {this._generateButtons()}
       </div>);
-  },
+  }
 
   /**
     Generate the buttons.
@@ -66,7 +42,7 @@ const DeploymentSection = React.createClass({
     @method _generateButtons
     @returns {Object} The buttons component.
   */
-  _generateButtons: function() {
+  _generateButtons() {
     var buttons = this.props.buttons;
     if (!buttons) {
       return;
@@ -74,7 +50,7 @@ const DeploymentSection = React.createClass({
     return (
       <juju.components.ButtonRow
         buttons={this.props.buttons} />);
-  },
+  }
 
   /**
     Generate the extra info.
@@ -82,7 +58,7 @@ const DeploymentSection = React.createClass({
     @method _generateExtra
     @returns {Object} The actions markup.
   */
-  _generateExtra: function() {
+  _generateExtra() {
     var extra = this.props.extra;
     if (!extra) {
       return;
@@ -91,7 +67,7 @@ const DeploymentSection = React.createClass({
       <div className="deployment-section__extra">
         {extra}
       </div>);
-  },
+  }
 
   /**
     Generate the check icon if it should be displayed.
@@ -99,7 +75,7 @@ const DeploymentSection = React.createClass({
     @method _generateCheck
     @returns {Object} The check markup.
   */
-  _generateCheck: function() {
+  _generateCheck() {
     if (!this.props.showCheck) {
       return;
     }
@@ -108,9 +84,9 @@ const DeploymentSection = React.createClass({
         className="deployment-section__title-checkmark"
         name="complete"
         size="24" />);
-  },
+  }
 
-  render: function() {
+  render() {
     var instance = this.props.instance;
     var extra = {
       'deployment-section--active': !this.props.disabled,
@@ -132,7 +108,29 @@ const DeploymentSection = React.createClass({
       </div>
     );
   }
-});
+};
+
+DeploymentSection.propTypes = {
+  buttons: React.PropTypes.array,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.array,
+    React.PropTypes.object
+  ]),
+  completed: React.PropTypes.bool,
+  disabled: React.PropTypes.bool,
+  extra: React.PropTypes.oneOfType([
+    React.PropTypes.array,
+    React.PropTypes.object,
+    React.PropTypes.string
+  ]),
+  instance: React.PropTypes.string,
+  showCheck: React.PropTypes.bool,
+  title: React.PropTypes.oneOfType([
+    React.PropTypes.array,
+    React.PropTypes.object,
+    React.PropTypes.string
+  ])
+};
 
 YUI.add('deployment-section', function() {
   juju.components.DeploymentSection = DeploymentSection;

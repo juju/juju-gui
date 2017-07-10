@@ -22,52 +22,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   Modal component for viewing which users have access to the model, as well
   as sharing access with other users.
 */
-const Sharing = React.createClass({
-  propTypes: {
-    addNotification: React.PropTypes.func,
-    canShareModel: React.PropTypes.bool,
-    closeHandler: React.PropTypes.func,
-    getModelUserInfo: React.PropTypes.func.isRequired,
-    grantModelAccess: React.PropTypes.func.isRequired,
-    humanizeTimestamp: React.PropTypes.func,
-    revokeModelAccess: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class Sharing extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-
-    return {
+    this.state = {
       canAdd: false,
       loadingUsers: false,
       usersWithAccess: []
     };
-  },
+  }
 
-  getDefaultProps: function() {
-    return {
-      addNotification: () => {
-        console.log('No addNotification specified.');
-      },
-      canShareModel: false,
-      closeHandler: () => {
-        console.log('No closeHandler specified.');
-      },
-      humanizeTimestamp: timestamp => {
-        // Least we can do.
-        return timestamp.toLocaleDateString();
-      }
-    };
-  },
-
-  componentWillMount: function() {
+  componentWillMount() {
     this._getModelUserInfo();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Fetch the a list, from the API, of user info for each user attached to
@@ -75,12 +49,13 @@ const Sharing = React.createClass({
 
     @method _getModelUserInfo
   */
-  _getModelUserInfo: function() {
+  _getModelUserInfo() {
     this.setState({loadingUsers: true}, () => {
-      const xhr = this.props.getModelUserInfo(this._getModelUserInfoCallback);
+      const xhr = this.props.getModelUserInfo(
+        this._getModelUserInfoCallback.bind(this));
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Handle the API-returned data about the model's users. When successful, it
@@ -88,7 +63,7 @@ const Sharing = React.createClass({
 
     @method _getModelUserCallback
   */
-  _getModelUserInfoCallback: function(error, data) {
+  _getModelUserInfoCallback(error, data) {
     this.setState({loadingUsers: false}, () => {
       if (error) {
         // Display the error message.
@@ -103,7 +78,7 @@ const Sharing = React.createClass({
       }
       this.setState({usersWithAccess: data});
     });
-  },
+  }
 
   /**
     Provides a callback for both revoke and grant actions. The callback
@@ -114,7 +89,7 @@ const Sharing = React.createClass({
     @param {String} error Any errors that occured while updating access.
     @return {Booolean} Successfully modified the model access.
   */
-  _modifyModelAccessCallback: function(error) {
+  _modifyModelAccessCallback(error) {
     let success = true;
     if (error) {
       this.setState({inviteError: error});
@@ -130,7 +105,7 @@ const Sharing = React.createClass({
     }
     this.setState({sending: false});
     return success;
-  },
+  }
 
   /**
     Grants access to the specified user.
@@ -138,7 +113,7 @@ const Sharing = React.createClass({
     @method _grantModelAccess
     @param {Object} evt The form submission event object.
   */
-  _grantModelAccess: function(evt) {
+  _grantModelAccess(evt) {
     if (evt) {
       evt.preventDefault();
     }
@@ -152,7 +127,7 @@ const Sharing = React.createClass({
         const success = this._modifyModelAccessCallback(error);
         this.setState({sent: success});
       }.bind(this));
-  },
+  }
 
   /**
     Revokes access to the specified user.
@@ -160,14 +135,14 @@ const Sharing = React.createClass({
     @method _revokeModelAccess
     @param {String} user The user who's access is being revoked.
   */
-  _revokeModelAccess: function(user) {
+  _revokeModelAccess(user) {
     // Juju's revoke access API doesn't actually revoke access, it just
     // downgrades it to the next level at the moment (as of 2.0). So if you
     // want a user to have no access, you have to specify 'read'. Because:
     // admin -> write -> read -> no access.
     this.props.revokeModelAccess(user.name, 'read',
-      this._modifyModelAccessCallback);
-  },
+      this._modifyModelAccessCallback.bind(this));
+  }
 
   /**
     Generate the list of users with access to the model.
@@ -175,7 +150,7 @@ const Sharing = React.createClass({
     @method _generateUsersWithAccess
     @returns {Array} An array of markup objects for each user.
   */
-  _generateUsersWithAccess: function() {
+  _generateUsersWithAccess() {
     if (this.state.loadingUsers) {
       return (
         <div className="sharing__loading">
@@ -239,7 +214,7 @@ const Sharing = React.createClass({
         </div>
       );
     });
-  },
+  }
 
   /**
     On key up, we want to check if the input is empty and change the state
@@ -247,11 +222,11 @@ const Sharing = React.createClass({
 
     @param {Object} evt The keyup event.
   */
-  _handleUsernameInputChange: function(evt) {
+  _handleUsernameInputChange(evt) {
     this.setState({canAdd: evt.target.value !== ''});
-  },
+  }
 
-  _generateInvite: function() {
+  _generateInvite() {
     if (!this.props.canShareModel) {
       return;
     }
@@ -273,14 +248,14 @@ const Sharing = React.createClass({
     return (
       <div className="sharing__invite">
         <div className="sharing__invite--header">Add a user</div>
-        <form onSubmit={this._grantModelAccess}>
+        <form onSubmit={this._grantModelAccess.bind(this)}>
           <div className="sharing__invite--username">
             <juju.components.GenericInput
               inlineErrorIcon={true}
               label="Username"
               placeholder="Username"
               ref="username"
-              onKeyUp={this._handleUsernameInputChange}
+              onKeyUp={this._handleUsernameInputChange.bind(this)}
               required={true} />
           </div>
           <div className="sharing__invite--access">
@@ -296,14 +271,14 @@ const Sharing = React.createClass({
         </form>
       </div>
     );
-  },
+  }
 
   /**
     Generate the invite 'add' button based on the current state
 
     @returns {Object} The generated button.
   */
-  generateAddButton: function() {
+  generateAddButton() {
     if (this.state.sending) {
       return (<juju.components.GenericButton
         submit={true}
@@ -337,13 +312,13 @@ const Sharing = React.createClass({
         type="positive"
         disabled={!this.state.canAdd} />);
     }
-  },
+  }
 
-  handleClose: function() {
+  handleClose() {
     return true;
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <juju.components.Popup
         className="sharing__popup"
@@ -366,8 +341,32 @@ const Sharing = React.createClass({
       </juju.components.Popup>
     );
   }
+};
 
-});
+
+Sharing.propTypes = {
+  addNotification: React.PropTypes.func,
+  canShareModel: React.PropTypes.bool,
+  closeHandler: React.PropTypes.func,
+  getModelUserInfo: React.PropTypes.func.isRequired,
+  grantModelAccess: React.PropTypes.func.isRequired,
+  humanizeTimestamp: React.PropTypes.func,
+  revokeModelAccess: React.PropTypes.func.isRequired
+};
+
+Sharing.defaultProps = {
+  addNotification: () => {
+    console.log('No addNotification specified.');
+  },
+  canShareModel: false,
+  closeHandler: () => {
+    console.log('No closeHandler specified.');
+  },
+  humanizeTimestamp: timestamp => {
+    // Least we can do.
+    return timestamp.toLocaleDateString();
+  }
+};
 
 YUI.add('sharing', function() {
   juju.components.Sharing = Sharing;

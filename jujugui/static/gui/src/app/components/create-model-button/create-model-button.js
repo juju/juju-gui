@@ -18,24 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const CreateModelButton = React.createClass({
-  propTypes: {
-    action: React.PropTypes.func,
-    changeState: React.PropTypes.func.isRequired,
-    disabled: React.PropTypes.bool,
-    switchModel: React.PropTypes.func.isRequired,
-    title: React.PropTypes.string,
-    type: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      type: 'inline-neutral',
-      title: 'Create new'
-    };
-  },
-
-  _createNewModel: function() {
+class CreateModelButton extends React.Component {
+  _createNewModel() {
     const props = this.props;
     if (props.disabled) {
       return;
@@ -47,21 +31,35 @@ const CreateModelButton = React.createClass({
     if (this.props.action) {
       this.props.action();
     }
-  },
+  }
 
-  render: function() {
+  render() {
     const disabled = this.props.disabled || false;
     return (
       <div className="create-new-model">
         <juju.components.GenericButton
-          action={this._createNewModel}
+          action={this._createNewModel.bind(this)}
           disabled={disabled}
           type={this.props.type}
           title={this.props.title} />
       </div>
     );
   }
-});
+};
+
+CreateModelButton.propTypes = {
+  action: React.PropTypes.func,
+  changeState: React.PropTypes.func.isRequired,
+  disabled: React.PropTypes.bool,
+  switchModel: React.PropTypes.func.isRequired,
+  title: React.PropTypes.string,
+  type: React.PropTypes.string
+};
+
+CreateModelButton.defaultProps = {
+  type: 'inline-neutral',
+  title: 'Create new'
+};
 
 YUI.add('create-model-button', function() {
   juju.components.CreateModelButton = CreateModelButton;

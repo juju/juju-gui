@@ -18,67 +18,62 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DateDisplay = React.createClass({
-  timer: null,
+class DateDisplay extends React.Component {
+  constructor() {
+    super();
+    this.timer = null;
+  }
 
-  propTypes: {
-    date: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.string
-    ]),
-    relative: React.PropTypes.bool
-  },
-
-  componentDidMount: function() {
+  componentDidMount() {
     if (this.props.relative) {
       this._startTimer();
     }
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     this._stopTimer();
     if (this.props.relative) {
       this._startTimer();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this._stopTimer();
-  },
+  }
 
   /**
     Rerender the component so that the relative dates update.
 
     @method _rerender
   */
-  _rerender: function() {
+  _rerender() {
     // Force the component to rerender even though the props or state haven't
     // been updated. This will make the component recalculate the relative
     // times.
     this.forceUpdate();
-  },
+  }
 
   /**
     Start the update timer.
 
     @method _startTimer
   */
-  _startTimer: function() {
+  _startTimer() {
     // Rerender relative times every minute.
-    this.timer = setInterval(this._rerender, 60000);
-  },
+    this.timer = setInterval(this._rerender.bind(this), 60000);
+  }
 
   /**
     Stop the update timer.
 
     @method _stopTimer
   */
-  _stopTimer: function() {
+  _stopTimer() {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
-  },
+  }
 
   /**
     Get the current time. This is done in a method so that it can be
@@ -87,9 +82,9 @@ const DateDisplay = React.createClass({
     @method _getNow
     @returns {Object} The current date.
   */
-  _getNow: function() {
+  _getNow() {
     return new Date();
-  },
+  }
 
   /**
     Get a date object from the supplied date.
@@ -97,9 +92,9 @@ const DateDisplay = React.createClass({
     @method _getParsedDate
     @returns {Object} The parsed date.
   */
-  _getParsedDate: function() {
+  _getParsedDate() {
     return new Date(Date.parse(this.props.date));
-  },
+  }
 
   /**
     Generate the date.
@@ -107,13 +102,13 @@ const DateDisplay = React.createClass({
     @method _generateDate
     @returns {String} The date.
   */
-  _generateDate: function() {
+  _generateDate() {
     var date = this._getParsedDate();
     var year = date.getUTCFullYear();
     var month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
     var day = ('0' + date.getUTCDate()).slice(-2);
     return `${day}/${month}/${year}`;
-  },
+  }
 
   /**
     Generate a relative date.
@@ -121,7 +116,7 @@ const DateDisplay = React.createClass({
     @method _generateRelativeDate
     @returns {String} The relative date.
   */
-  _generateRelativeDate: function() {
+  _generateRelativeDate() {
     // Get the diff in milliseconds.
     var date = this._getParsedDate();
     var diff = this._getNow().getTime() - date.getTime();
@@ -161,7 +156,7 @@ const DateDisplay = React.createClass({
     // through every component.
     var plural = time === 1 ? '' : 's';
     return `${time} ${unit}${plural} ago`;
-  },
+  }
 
   /**
     Generate the title when displaying a relative date.
@@ -169,12 +164,12 @@ const DateDisplay = React.createClass({
     @method _generateTitle
     @returns {String} The title.
   */
-  _generateTitle: function() {
+  _generateTitle() {
     var date = this._getParsedDate();
     var hour = ('0' + date.getUTCHours()).slice(-2);
     var minute = ('0' + date.getUTCMinutes()).slice(-2);
     return `${this._generateDate()} ${hour}:${minute}`;
-  },
+  }
 
   /**
     Generate the date or relative date.
@@ -182,14 +177,14 @@ const DateDisplay = React.createClass({
     @method _generateContent
     @returns {String} The date or relative date.
   */
-  _generateContent: function() {
+  _generateContent() {
     if (this.props.relative) {
       return this._generateRelativeDate();
     }
     return this._generateDate();
-  },
+  }
 
-  render: function() {
+  render() {
     // Validate that the string passed in is actually a date; if it isn't,
     // just return it without any date-parsing fun.
     if (!isNaN(Date.parse(this.props.date))) {
@@ -205,8 +200,15 @@ const DateDisplay = React.createClass({
       );
     }
   }
+};
 
-});
+DateDisplay.propTypes = {
+  date: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.string
+  ]),
+  relative: React.PropTypes.bool
+};
 
 YUI.add('date-display', function() {
   juju.components.DateDisplay = DateDisplay;

@@ -118,7 +118,7 @@ describe('LocalInspector', function() {
         <juju.components.ButtonRow
           buttons={buttons} />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display the update service view', function() {
@@ -217,7 +217,7 @@ describe('LocalInspector', function() {
         <juju.components.ButtonRow
           buttons={buttons} />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can switch between views', function() {
@@ -278,7 +278,7 @@ describe('LocalInspector', function() {
         </div>
         {output.props.children[2]}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can handle deploying a new charm', function() {
@@ -462,6 +462,6 @@ describe('LocalInspector', function() {
         <juju.components.ButtonRow
           buttons={buttons} />
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

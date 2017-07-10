@@ -18,27 +18,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const CheckListItem = React.createClass({
-  displayName: 'CheckListItem',
-
-  propTypes: {
-    action: React.PropTypes.func,
-    aside: React.PropTypes.string,
-    className: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    extraInfo: React.PropTypes.string,
-    id: React.PropTypes.string,
-    label: React.PropTypes.string.isRequired,
-    whenChanged: React.PropTypes.func.isRequired
-  },
-
+class CheckListItem extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      checked: false
+    };
+  }
   /**
     Returns the classes for the item based on the provided props.
 
     @method _valueClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     var className = this.props.className;
     return classNames(
       'check-list-item',
@@ -46,7 +39,7 @@ const CheckListItem = React.createClass({
       {'check-list-item--nav': this.props.action},
       {'check-list-item--extra-info': this.props.extraInfo}
     );
-  },
+  }
 
   /**
     Returns the id if the item is not a navigation element.
@@ -55,22 +48,9 @@ const CheckListItem = React.createClass({
     @param {String} id The id of the checkbox.
     @returns {String} The id of the element or a blank string.
   */
-  _generateId: function(id) {
+  _generateId(id) {
     return this.props.action ? '' : id;
-  },
-
-  /**
-    Get the current state of the inspector.
-
-    @method getInitialState
-    @returns {String} The current state.
-  */
-  getInitialState: function() {
-    // Setting a default state object.
-    return {
-      checked: false
-    };
-  },
+  }
 
   /**
     Handles the checkbox change action by either calling the parent supplied
@@ -79,7 +59,7 @@ const CheckListItem = React.createClass({
     @method _handleChange
     @param {Object} The change event from the checkbox.
   */
-  _handleChange: function(e) {
+  _handleChange(e) {
     var whenChanged = this.props.whenChanged;
     var checked = e.currentTarget.checked;
     this.setState({checked: checked}, () => {
@@ -90,14 +70,14 @@ const CheckListItem = React.createClass({
         whenChanged(checked);
       }
     });
-  },
+  }
 
   /**
     Toggle the checkbox when the hit area is clicked.
 
     @param evt {Object} The click event from the hit area.
   */
-  _hitAreaClick: function(evt) {
+  _hitAreaClick(evt) {
     // If there is no action to be triggered by clicking on the list item then
     // we don't need to capture and pass the event to the checkbox.
     if (!this.props.action) {
@@ -106,7 +86,7 @@ const CheckListItem = React.createClass({
     this._stopBubble(evt);
     // Simulate the click on the checkbox.
     this._handleChange({currentTarget: {checked: !this.state.checked}});
-  },
+  }
 
   /**
     Don't bubble the click event to the parent.
@@ -114,16 +94,16 @@ const CheckListItem = React.createClass({
     @method _stopBubble
     @param {Object} The click event from the checkbox.
   */
-  _stopBubble: function(e) {
+  _stopBubble(e) {
     e.stopPropagation();
-  },
+  }
 
   /**
     Display the aside if it is available.
 
     @method _generateAside
   */
-  _generateAside: function() {
+  _generateAside() {
     var aside = this.props.aside;
     if (aside) {
       return (
@@ -131,9 +111,9 @@ const CheckListItem = React.createClass({
           {aside}
         </span>);
     }
-  },
+  }
 
-  _generateExtraInfo: function(extraInfo) {
+  _generateExtraInfo(extraInfo) {
     if (!extraInfo || extraInfo === '') {
       return;
     }
@@ -142,9 +122,9 @@ const CheckListItem = React.createClass({
         title={this.props.extraInfo}>
         {this.props.extraInfo}
       </span>);
-  },
+  }
 
-  render: function() {
+  render() {
     var id = this.props.label + '-item';
     return (
       <li className={this._generateClasses()}
@@ -152,13 +132,13 @@ const CheckListItem = React.createClass({
         onClick={this.props.action} tabIndex="0" role="button">
         <label htmlFor={this._generateId(id)}>
           <div className="check-list-item__hit-area"
-            onClick={this._hitAreaClick}>
+            onClick={this._hitAreaClick.bind(this)}>
             <input
               disabled={this.props.disabled}
               type="checkbox"
               id={id}
-              onClick={this._stopBubble}
-              onChange={this._handleChange}
+              onClick={this._stopBubble.bind(this)}
+              onChange={this._handleChange.bind(this)}
               checked={this.state.checked} />
           </div>
           <span className="check-list-item__label">
@@ -170,8 +150,18 @@ const CheckListItem = React.createClass({
       </li>
     );
   }
+};
 
-});
+CheckListItem.propTypes = {
+  action: React.PropTypes.func,
+  aside: React.PropTypes.string,
+  className: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  extraInfo: React.PropTypes.string,
+  id: React.PropTypes.string,
+  label: React.PropTypes.string.isRequired,
+  whenChanged: React.PropTypes.func.isRequired
+};
 
 YUI.add('check-list-item', function() {
   juju.components.CheckListItem = CheckListItem;

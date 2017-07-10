@@ -89,7 +89,7 @@ describe('Sharing', () => {
         />
       </juju.components.Popup>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render with a spinner', () => {
@@ -109,7 +109,7 @@ describe('Sharing', () => {
         <juju.components.Spinner />
       </div>
     );
-    assert.deepEqual(spinner, expected);
+    expect(spinner).toEqualJSX(expected);
   });
 
   it('can render with users', () => {
@@ -124,56 +124,54 @@ describe('Sharing', () => {
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
-    const obtained = output.props.children[2].props.children;
-    const expected = [(
-      <div key="drwho@external" className="sharing__user">
-        <div className="sharing__user-details">
-          <div className="sharing__user-name">
-            drwho
+    const expected = (
+      <div className="sharing__users">
+        {[<div key="drwho@external" className="sharing__user">
+          <div className="sharing__user-details">
+            <div className="sharing__user-name">
+              drwho
+            </div>
+            <div className="sharing__user-display-name">
+              {'Ubuntu SSO'} user
+            </div>
+            <div className="sharing__user-last-connection">
+              last connection: 9 minutes ago
+            </div>
           </div>
-          <div className="sharing__user-display-name">
-            {'Ubuntu SSO'} user
+          <div className="sharing__user-access">
+            admin
           </div>
-          <div className="sharing__user-last-connection">
-            last connection: 9 minutes ago
+          {undefined}
+        </div>,
+        <div key="rose" className="sharing__user">
+          <div className="sharing__user-details">
+            <div className="sharing__user-name">
+              Rose
+            </div>
+            <div className="sharing__user-display-name">
+              {'local'} user
+            </div>
+            <div className="sharing__user-last-connection">
+              never connected
+            </div>
           </div>
-        </div>
-        <div className="sharing__user-access">
-          admin
-        </div>
-        {undefined}
-      </div>
-    ), (
-      <div key="rose" className="sharing__user">
-        <div className="sharing__user-details">
-          <div className="sharing__user-name">
-            Rose
+          <div className="sharing__user-access">
+            write
           </div>
-          <div className="sharing__user-display-name">
-            {'local'} user
+          {undefined}
+        </div>,
+        <div key="dalek" className="sharing__user">
+          <div className="sharing__user-details">
+            <div className="sharing__user-name">
+              Dalek
+            </div>
+            <div className="sharing__user-display-name">
+              exterminate!
+            </div>
           </div>
-          <div className="sharing__user-last-connection">
-            never connected
-          </div>
-        </div>
-        <div className="sharing__user-access">
-          write
-        </div>
-        {undefined}
-      </div>
-    ), (
-      <div key="dalek" className="sharing__user">
-        <div className="sharing__user-details">
-          <div className="sharing__user-name">
-            Dalek
-          </div>
-          <div className="sharing__user-display-name">
-            exterminate!
-          </div>
-        </div>
-      </div>
-    )];
-    assert.deepEqual(obtained, expected);
+        </div>]}
+      </div>);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can handle an API call error', () => {
@@ -294,7 +292,6 @@ describe('Sharing', () => {
         humanizeTimestamp={humanizeTimestamp}
         revokeModelAccess={revokeModelAccess} />, true);
     const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
     const user = output.props.children[2].props.children[0];
     // Validate that the markup is correct.
     const revokeMarkup = user.props.children[2];
@@ -307,17 +304,13 @@ describe('Sharing', () => {
           icon="close_16" />
       </div>
     );
-    assert.deepEqual(revokeMarkup, expectedMarkup,
-      'markup for revoke button is incorrect');
+    expect(revokeMarkup).toEqualJSX(expectedMarkup);
     // Verify that the button triggers the API call as expected.
     revokeAction();
     assert.equal(revokeModelAccess.called, true,
       'revokeModelAccess was not called');
-    assert.deepEqual(revokeModelAccess.args[0], [
-      'drwho@external',
-      'read',
-      instance._modifyModelAccessCallback
-    ], 'revokeModelAccess not called with the correct data');
+    assert.equal(revokeModelAccess.args[0][0], 'drwho@external');
+    assert.equal(revokeModelAccess.args[0][1], 'read');
   });
 
   it('handles revoke/grant errors', () => {
@@ -337,7 +330,7 @@ describe('Sharing', () => {
     const expectedMessage = (
       <div className="sharing__invite--error"><b>Error:</b>{' '}boom</div>
     );
-    assert.deepEqual(actualMessage, expectedMessage);
+    expect(actualMessage).toEqualJSX(expectedMessage);
   });
 
   describe('add button states', () => {
@@ -369,7 +362,7 @@ describe('Sharing', () => {
           disabled={true}
         />
       );
-      assert.deepEqual(makeSharingEle(), expected);
+      expect(makeSharingEle()).toEqualJSX(expected);
     });
 
     it('shows an active button with "add" text when enabled', () => {
@@ -385,7 +378,7 @@ describe('Sharing', () => {
           type="positive"
           disabled={false} />
       );
-      assert.deepEqual(output, expected);
+      expect(output).toEqualJSX(expected);
     });
 
     it('shows a disabled button with "add" text when sending', () => {
@@ -401,7 +394,7 @@ describe('Sharing', () => {
           type="positive"
           disabled={true} />
       );
-      assert.deepEqual(output, expected);
+      expect(output).toEqualJSX(expected);
     });
 
     it('shows a disabled button with tick icon when sent', () => {
@@ -417,7 +410,7 @@ describe('Sharing', () => {
           type="positive"
           disabled={true} />
       );
-      assert.deepEqual(output, expected);
+      expect(output).toEqualJSX(expected);
     });
   });
 });

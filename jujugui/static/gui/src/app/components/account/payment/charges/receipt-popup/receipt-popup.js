@@ -18,40 +18,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ReceiptPopup = React.createClass({
-  displayName: 'ReceiptPopup',
-
-  propTypes: {
-    addNotification: React.PropTypes.func.isRequired,
-    chargeId: React.PropTypes.string.isRequired,
-    close: React.PropTypes.func.isRequired,
-    getReceipt: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class ReceiptPopup extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       receipt: null,
       loading: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getReceipt();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Get a receipt.
 
     @method _getReceipt
   */
-  _getReceipt: function() {
+  _getReceipt() {
     this.setState({loading: true}, () => {
       const chargeId = this.props.chargeId;
       const xhr = this.props.getReceipt(chargeId, (error, response) => {
@@ -69,9 +61,9 @@ const ReceiptPopup = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
-  render: function() {
+  render() {
     let content;
     const receipt = this.state.receipt;
     if (this.state.loading) {
@@ -94,8 +86,14 @@ const ReceiptPopup = React.createClass({
         {content}
       </juju.components.Popup>);
   }
+};
 
-});
+ReceiptPopup.propTypes = {
+  addNotification: React.PropTypes.func.isRequired,
+  chargeId: React.PropTypes.string.isRequired,
+  close: React.PropTypes.func.isRequired,
+  getReceipt: React.PropTypes.func.isRequired
+};
 
 YUI.add('receipt-popup', function() {
   juju.components.ReceiptPopup = ReceiptPopup;

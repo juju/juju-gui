@@ -60,7 +60,7 @@ describe('Zoom', function() {
             size="12" />
         </li>
       </ul>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can zoom in', function() {

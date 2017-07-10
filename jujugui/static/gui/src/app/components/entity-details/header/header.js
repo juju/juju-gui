@@ -18,38 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityHeader = React.createClass({
-  displayName: 'EntityHeader',
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    deployService: React.PropTypes.func.isRequired,
-    entityModel: React.PropTypes.object.isRequired,
-    getBundleYAML: React.PropTypes.func.isRequired,
-    getModelName: React.PropTypes.func.isRequired,
-    hasPlans: React.PropTypes.bool.isRequired,
-    importBundleYAML: React.PropTypes.func.isRequired,
-    plans: React.PropTypes.array,
-    pluralize: React.PropTypes.func.isRequired,
-    scrollPosition: React.PropTypes.number.isRequired,
-    urllib: React.PropTypes.func.isRequired
-  },
+class EntityHeader extends React.Component {
+  constructor() {
+    super();
+    this.state = {headerHeight: 0};
+  }
 
-  /**
-    Generate the initial state of the component.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
-    return {headerHeight: 0};
-  },
-
-  componentDidMount: function() {
+  componentDidMount() {
     this.setState({headerHeight: this.refs.headerWrapper.clientHeight});
-  },
+  }
 
   /**
     Add a service for this charm to the canvas.
@@ -57,7 +34,7 @@ const EntityHeader = React.createClass({
     @method _handleDeployClick
     @param {Object} e The click event
   */
-  _handleDeployClick: function(e) {
+  _handleDeployClick(e) {
     var entityModel = this.props.entityModel;
     var entity = entityModel.toEntity();
     if (entity.type === 'charm') {
@@ -79,22 +56,22 @@ const EntityHeader = React.createClass({
       this.props.deployService(entityModel, undefined, plans, activePlan);
     } else {
       var id = entity.id.replace('cs:', '');
-      this.props.getBundleYAML(id, this._getBundleYAMLCallback);
+      this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
     }
     this._closeEntityDetails();
-  },
+  }
 
   /**
     Close the entity details
 
     @method _closeEntityDetails
   */
-  _closeEntityDetails: function() {
+  _closeEntityDetails() {
     this.props.changeState({
       hash: null,
       store: null
     });
-  },
+  }
 
   /**
     Callback for getting the bundle YAML.
@@ -103,7 +80,7 @@ const EntityHeader = React.createClass({
     @param {String} error The error, if any. Null if no error.
     @param {String} yaml The yaml for the bundle
   */
-  _getBundleYAMLCallback: function(error, yaml) {
+  _getBundleYAMLCallback(error, yaml) {
     if (error) {
       console.error(error);
       this.props.addNotification({
@@ -116,7 +93,7 @@ const EntityHeader = React.createClass({
     }
     this.props.importBundleYAML(yaml);
     this._closeEntityDetails();
-  },
+  }
 
   /**
     Builds a URL that links to the standalone Juju store, for sharing
@@ -125,7 +102,7 @@ const EntityHeader = React.createClass({
     @method _getStoreURL
     @param {Object} entity The entity being linked to
   */
-  _getStoreURL: function(entity) {
+  _getStoreURL(entity) {
     var url = ['https://jujucharms.com'];
     if (entity.id.indexOf('~') >= 0) {
       url.push('u');
@@ -135,28 +112,28 @@ const EntityHeader = React.createClass({
     url.push(entity.series);
     url.push(entity.revision);
     return encodeURIComponent(url.join('/'));
-  },
+  }
 
   /**
     Generate the styles for the header wrapper.
 
     @method _generateWrapperStyles
   */
-  _generateWrapperStyles: function() {
+  _generateWrapperStyles() {
     if (this.state.headerHeight > 0) {
       // Set the height of the wrapper so that it doesn't collapse when the
       // header becomes sticky.
       return {height: this.state.headerHeight + 'px'};
     }
     return {};
-  },
+  }
 
   /**
     Generate the classes for the component.
 
     @method _generateClasses
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'entity-header',
       {
@@ -164,7 +141,7 @@ const EntityHeader = React.createClass({
           this.props.scrollPosition > this.state.headerHeight
       }
     );
-  },
+  }
 
   /**
     Generate the deploy action or a notice if deployment is not supported.
@@ -173,7 +150,7 @@ const EntityHeader = React.createClass({
 
     @method _generateDeployAction
   */
-  _generateDeployAction: function() {
+  _generateDeployAction() {
     const entity = this.props.entityModel.toEntity();
     let deployAction;
     // If the entity is not a charm OR it is a charm and has the series set,
@@ -183,7 +160,7 @@ const EntityHeader = React.createClass({
       deployAction = (
         <juju.components.GenericButton
           ref="deployAction"
-          action={this._handleDeployClick}
+          action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
           type="positive"
           title={title} />
@@ -196,14 +173,14 @@ const EntityHeader = React.createClass({
       );
     }
     return deployAction;
-  },
+  }
 
   /**
     Generate the plan selector if there are plans.
 
     @method _generateSelectPlan
   */
-  _generateSelectPlan: function() {
+  _generateSelectPlan() {
     var props = this.props;
     if (props.entityModel.get('entityType') !== 'charm' ||
       !this.props.hasPlans) {
@@ -236,12 +213,12 @@ const EntityHeader = React.createClass({
         <option key="default">{defaultMessage}</option>
         {options}
       </select>);
-  },
+  }
 
   /**
     Generate the application, machine counts etc. for a bundle.
   */
-  _generateCounts: function() {
+  _generateCounts() {
     var entity = this.props.entityModel.toEntity();
     if (entity.type !== 'bundle') {
       return;
@@ -258,14 +235,14 @@ const EntityHeader = React.createClass({
         {unitCount} {this.props.pluralize('unit', unitCount)}
       </li>
     </ul>);
-  },
+  }
 
   /**
     Mark the charm as a subordinate if it is one.
 
     @return {Object} The JSX markup.
   */
-  _generateSubordinate: function() {
+  _generateSubordinate() {
     const isSubordinate = this.props.entityModel.get('is_subordinate');
     if (!isSubordinate) {
       return null;
@@ -283,7 +260,7 @@ const EntityHeader = React.createClass({
         </a>
       </li>
     );
-  },
+  }
 
   /**
     Generate a link to the latest revision of this entity in the case we are
@@ -291,7 +268,7 @@ const EntityHeader = React.createClass({
 
     @return {Object} A react "li" element for the revision link or null.
   */
-  _generateLatestRevision: function() {
+  _generateLatestRevision() {
     const props = this.props;
     const entity = props.entityModel;
     const revisions = entity.get('revisions');
@@ -308,33 +285,33 @@ const EntityHeader = React.createClass({
     const url = props.urllib.fromLegacyString(lastRevision);
     return (
       <li key={lastRevision} className="entity-header__series">
-        <span className="link" onClick={this._onLastRevisionClick}>
+        <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
             Latest revision ({url.revision})
         </span>
       </li>
     );
-  },
+  }
 
   /**
     Change the state to go to the last revision of this charm/bundle.
 
     @param {Object} evt The click event.
   */
-  _onLastRevisionClick: function(evt) {
+  _onLastRevisionClick(evt) {
     evt.preventDefault();
     evt.stopPropagation();
     const props = this.props;
     const revisions = props.entityModel.get('revisions');
     const url = props.urllib.fromLegacyString(revisions[0]);
     props.changeState({store: url.path()});
-  },
+  }
 
   /**
     Change the state to go to the charm/bundle owner.
 
     @param {Object} evt The click event.
   */
-  _onOwnerClick: function(evt) {
+  _onOwnerClick(evt) {
     evt.preventDefault();
     evt.stopPropagation();
     const props = this.props;
@@ -344,7 +321,7 @@ const EntityHeader = React.createClass({
       store: null,
       profile: entity.get('owner')
     });
-  },
+  }
 
   /**
     Generates the list of series. Supports bundles, multi-series and
@@ -352,7 +329,7 @@ const EntityHeader = React.createClass({
 
     @return {Object} A react "li" element for each series.
   */
-  _generateSeriesList: function() {
+  _generateSeriesList() {
     var series = this.props.entityModel.get('series');
     if (!series) {
       return null;
@@ -360,14 +337,14 @@ const EntityHeader = React.createClass({
     series = !Array.isArray(series) ? [series] : series;
     return series.map(series =>
       <li key={series} className="entity-header__series">{series}</li>);
-  },
+  }
 
   /**
     Generates the list of channels. Only currently active channels are shown.
 
     @return {Object} A react "li" element for each active channel.
   */
-  _generateChannelList: function() {
+  _generateChannelList() {
     const channels = this.props.entityModel.get('channels').filter(ch => {
       return ch.current;
     });
@@ -380,14 +357,14 @@ const EntityHeader = React.createClass({
       return name.charAt(0).toUpperCase() + name.slice(1);
     }).join(', ');
     return <li key={names} className="entity-header__channels">{names}</li>;
-  },
+  }
 
   /**
     If there's a bugUrl add the link.
 
     @return {Object} A react "ul" element.
   */
-  _generateActionsList: function() {
+  _generateActionsList() {
     const bugUrl = this.props.entityModel.getAttrs().bugUrl;
     if (bugUrl) {
       return (<ul className="entity-header__actions-list">
@@ -399,9 +376,9 @@ const EntityHeader = React.createClass({
       </ul>);
     }
     return;
-  },
+  }
 
-  render: function() {
+  render() {
     let icon;
     const entityModel = this.props.entityModel;
     const entity = entityModel.toEntity();
@@ -440,7 +417,8 @@ const EntityHeader = React.createClass({
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By&nbsp;
-                  <span className="link" onClick={this._onOwnerClick}>
+                  <span className="link"
+                    onClick={this._onOwnerClick.bind(this)}>
                     {entity.owner}
                   </span>
                 </li>
@@ -484,7 +462,23 @@ const EntityHeader = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityHeader.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  deployService: React.PropTypes.func.isRequired,
+  entityModel: React.PropTypes.object.isRequired,
+  getBundleYAML: React.PropTypes.func.isRequired,
+  getModelName: React.PropTypes.func.isRequired,
+  hasPlans: React.PropTypes.bool.isRequired,
+  importBundleYAML: React.PropTypes.func.isRequired,
+  plans: React.PropTypes.array,
+  pluralize: React.PropTypes.func.isRequired,
+  scrollPosition: React.PropTypes.number.isRequired,
+  urllib: React.PropTypes.func.isRequired
+};
 
 YUI.add('entity-header', function() {
   juju.components.EntityHeader = EntityHeader;

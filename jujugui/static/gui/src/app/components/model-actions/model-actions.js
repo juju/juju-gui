@@ -18,50 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ModelActions = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    appState: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    exportEnvironmentFile: React.PropTypes.func.isRequired,
-    hideDragOverNotification: React.PropTypes.func.isRequired,
-    importBundleFile: React.PropTypes.func.isRequired,
-    loadingModel: React.PropTypes.bool,
-    renderDragOverNotification: React.PropTypes.func.isRequired,
-    sharingVisibility: React.PropTypes.func.isRequired,
-    userIsAuthenticated: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {
-      sharingVisibility: () => {
-        console.log('No sharingVisibility function was provided.');
-      },
-      loadingModel: false,
-      userIsAuthenticated: false
-    };
-  },
-
+class ModelActions extends React.Component {
   /**
     Export the env when the button is clicked.
 
     @method _handleExport
   */
-  _handleExport: function() {
+  _handleExport() {
     this.props.exportEnvironmentFile();
-  },
+  }
 
   /**
     Open a file picker when the button is clicked.
 
     @method _handleImportClick
   */
-  _handleImportClick: function() {
+  _handleImportClick() {
     var input = this.refs['file-input'];
     if (input) {
       input.click();
     }
-  },
+  }
 
   /**
     When file is submitted the drag over animation is triggered and the file
@@ -69,7 +46,7 @@ const ModelActions = React.createClass({
 
     @method _handleImportFile
   */
-  _handleImportFile: function() {
+  _handleImportFile() {
     var inputFile = this.refs['file-input'].files[0];
     if (inputFile) {
       this.props.renderDragOverNotification(false);
@@ -77,14 +54,14 @@ const ModelActions = React.createClass({
       setTimeout(() => {
         this.props.hideDragOverNotification();}, 600);
     }
-  },
+  }
 
   /**
     Returns the classes for the button based on the provided props.
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     const props = this.props;
     const currentState = props.appState.current;
     const isDisabled = (
@@ -94,9 +71,9 @@ const ModelActions = React.createClass({
     );
     return classNames(
       'model-actions', {'model-actions--loading-model': isDisabled});
-  },
+  }
 
-  render: function() {
+  render() {
     const props = this.props;
     // Disable sharing if the user is anonymous or we're creating a new
     // model.
@@ -129,7 +106,7 @@ const ModelActions = React.createClass({
       <div className={this._generateClasses()}>
         <div className="model-actions__buttons">
           <span className="model-actions__export model-actions__button"
-            onClick={this._handleExport}
+            onClick={this._handleExport.bind(this)}
             role="button"
             tabIndex="0">
             <juju.components.SvgIcon name="export_16"
@@ -142,7 +119,7 @@ const ModelActions = React.createClass({
             </span>
           </span>
           <span className="model-actions__import model-actions__button"
-            onClick={!isReadOnly && this._handleImportClick}
+            onClick={!isReadOnly && this._handleImportClick.bind(this)}
             role="button"
             tabIndex="0">
             <juju.components.SvgIcon name="import_16"
@@ -158,14 +135,37 @@ const ModelActions = React.createClass({
         </div>
         <input className="model-actions__file"
           type="file"
-          onChange={isReadOnly ? null : this._handleImportFile}
+          onChange={isReadOnly ? null : this._handleImportFile.bind(this)}
           accept=".zip,.yaml,.yml"
           ref="file-input" />
       </div>
     );
   }
-});
+};
+
+ModelActions.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  appState: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  exportEnvironmentFile: React.PropTypes.func.isRequired,
+  hideDragOverNotification: React.PropTypes.func.isRequired,
+  importBundleFile: React.PropTypes.func.isRequired,
+  loadingModel: React.PropTypes.bool,
+  renderDragOverNotification: React.PropTypes.func.isRequired,
+  sharingVisibility: React.PropTypes.func.isRequired,
+  userIsAuthenticated: React.PropTypes.bool
+};
+
+ModelActions.defaultProps = {
+  sharingVisibility: () => {
+    console.log('No sharingVisibility function was provided.');
+  },
+  loadingModel: false,
+  userIsAuthenticated: false
+};
 
 YUI.add('model-actions', function() {
   juju.components.ModelActions = ModelActions;
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'svg-icon'
+]});

@@ -27,10 +27,12 @@ class TestUpdate(unittest.TestCase):
         'jujugui.controllerSocketTemplate': '/api',
         'jujugui.socketTemplate': '/model/$uuid/api',
         'jujugui.static_url': '',
+        'jujugui.stats_url': '',
         'jujugui.stripe_key': '',
         'jujugui.terms_url': options.DEFAULT_TERMS_URL,
         'jujugui.payment_url': options.DEFAULT_PAYMENT_URL,
         'jujugui.user': None,
+        'jujugui.flags': {},
     }
 
     def test_default_values(self):
@@ -58,10 +60,12 @@ class TestUpdate(unittest.TestCase):
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.static_url': '/horizon/juju',
+            'jujugui.stats_url': '/_stats',
             'jujugui.stripe_key': '123',
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
+            'jujugui.flags': {'foo': True}
         }
         settings = {
             'jujugui.auth': 'blob',
@@ -81,10 +85,12 @@ class TestUpdate(unittest.TestCase):
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.static_url': '/horizon/juju',
+            'jujugui.stats_url': '/_stats',
             'jujugui.stripe_key': '123',
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
+            'jujugui.flags': {'foo': True}
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)

@@ -18,29 +18,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const SectionLoadWatcher = React.createClass({
-
-  propTypes: {
-    // The eslint propType sorting requires that capital letters come
-    // before lower case.
-    EmptyComponent: React.PropTypes.object,
-    ErrorComponent: React.PropTypes.object,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
-    timeout: React.PropTypes.number
-  },
-
-  getInitialState: function() {
+class SectionLoadWatcher extends React.Component {
+  constructor() {
+    super();
     this._childrenStatuses = new Map();
-    return {
+    this._validStatuses = ['starting', 'ok', 'empty', 'error'];
+    this.state = {
       renderEmpty: false,
       renderError: false
     };
-  },
+  }
 
-  _validStatuses: ['starting', 'ok', 'empty', 'error'],
 
   /**
     When a child status has been updated we need to loop through all of
@@ -49,7 +37,7 @@ const SectionLoadWatcher = React.createClass({
 
     @method _checkChildrenStatuses
   */
-  _checkChildrenStatuses: function() {
+  _checkChildrenStatuses() {
     const total = React.Children.count(this.props.children);
     let statuses = {};
     this._childrenStatuses.forEach((status, ref) => {
@@ -64,7 +52,7 @@ const SectionLoadWatcher = React.createClass({
     if (statuses.error === total) {
       this.setState({renderError: true});
     }
-  },
+  }
 
   /**
     Sets the child status in the component and then checks all the statuses
@@ -74,13 +62,13 @@ const SectionLoadWatcher = React.createClass({
     @param {String} ref The ref of the child.
     @param {String} status The status of the child.
   */
-  _setChildStatus: function(ref, status) {
+  _setChildStatus(ref, status) {
     if (this._validStatuses.indexOf(status) === -1) {
       throw `Invalid status: "${status}" from ref: ${ref}`;
     }
     this._childrenStatuses.set(ref, status);
     this._checkChildrenStatuses();
-  },
+  }
 
   /**
     Checks the state of the component to determine whether it should
@@ -88,7 +76,7 @@ const SectionLoadWatcher = React.createClass({
 
     @method _renderContent
   */
-  _renderContent: function() {
+  _renderContent() {
     const props = this.props;
     let hasNewChildren = false;
     if (this._childrenStatuses) {
@@ -117,16 +105,27 @@ const SectionLoadWatcher = React.createClass({
 
       return children;
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         {this._renderContent()}
       </div>);
   }
+};
 
-});
+SectionLoadWatcher.propTypes = {
+  // The eslint propType sorting requires that capital letters come
+  // before lower case.
+  EmptyComponent: React.PropTypes.object,
+  ErrorComponent: React.PropTypes.object,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
+  timeout: React.PropTypes.number
+};
 
 YUI.add('section-load-watcher', function(Y) {
   juju.components.SectionLoadWatcher = SectionLoadWatcher;

@@ -18,15 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const TermsPopup = React.createClass({
-  displayName: 'TermsPopup',
-
-  propTypes: {
-    close: React.PropTypes.func.isRequired,
-    terms: React.PropTypes.array.isRequired
-  },
-
-  render: function() {
+class TermsPopup extends React.Component {
+  render() {
     let content;
     const terms = this.props.terms;
     if (terms.length === 0) {
@@ -53,8 +46,12 @@ const TermsPopup = React.createClass({
         {content}
       </juju.components.Popup>);
   }
+};
 
-});
+TermsPopup.propTypes = {
+  close: React.PropTypes.func.isRequired,
+  terms: React.PropTypes.array.isRequired
+};
 
 YUI.add('terms-popup', function() {
   juju.components.TermsPopup = TermsPopup;

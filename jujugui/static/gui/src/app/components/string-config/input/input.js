@@ -18,27 +18,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const StringConfigInput = React.createClass({
-  displayName: 'StringConfigInput',
-
-  propTypes: {
-    config: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
-    ]),
-    disabled: React.PropTypes.bool,
-    setValue: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class StringConfigInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       value: this.props.config
     };
-  },
+  }
 
-  shouldComponentUpdate: function(nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     return nextState.value !== this.refs.editableInput.innerText;
-  },
+  }
 
   /**
     When the value is updated in the input element then update the state
@@ -46,24 +36,33 @@ const StringConfigInput = React.createClass({
 
     @param {Object} evt The input or blur event objects.
   */
-  _updateValue: function(evt) {
+  _updateValue(evt) {
     const value = evt.currentTarget.innerText;
     this.props.setValue(value);
     this.setState({value:  value});
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="string-config-input"
         contentEditable={!this.props.disabled}
         dangerouslySetInnerHTML={{__html: this.state.value}}
-        onBlur={this._updateValue}
-        onInput={this._updateValue}
+        onBlur={this._updateValue.bind(this)}
+        onInput={this._updateValue.bind(this)}
         ref="editableInput">
       </div>
     );
   }
-});
+};
+
+StringConfigInput.propTypes = {
+  config: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.number
+  ]),
+  disabled: React.PropTypes.bool,
+  setValue: React.PropTypes.func.isRequired
+};
 
 YUI.add('string-config-input', function() {
   juju.components.StringConfigInput = StringConfigInput;

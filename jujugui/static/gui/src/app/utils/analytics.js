@@ -43,19 +43,20 @@ YUI.add('analytics', function(Y) {
         extra information.
     */
     return function(category, action, label, value) {
-      if (!dataLayer) {
-        return null;
-      }
-
       // We want to check for required params to provide good feedback for
-      // developers - this is a fail fast way to ensure required fields are set.
+      // developers - this is a fail fast way to ensure required fields are
+      // set. On the other hand, we don't want to block the execution in case
+      // of errors while sending analytics.
       const requiredArgs = ['category', 'action', 'label'];
       for (let i = 0, ii = requiredArgs.length; i < ii; i+= 1) {
         if (!arguments[i]) {
-          throw new Error(`cannot send analytics: ${requiredArgs[i]} required`);
+          console.error(`cannot send analytics: ${requiredArgs[i]} required`);
+          return;
         }
       }
-
+      if (!dataLayer) {
+        return null;
+      }
       let loggedIn = undefined;
       // Sometimes this doesn't get set...
       // Always decorate with whether the user is logged in
@@ -80,7 +81,7 @@ YUI.add('analytics', function(Y) {
 
       valueStr = valueArr.join('|');
 
-      // Emiting a google tag manager event registering the state change.
+      // Emit a google tag manager event registering the state change.
       dataLayer.push({
         'event': 'GAEvent',
         'eventCategory': category,

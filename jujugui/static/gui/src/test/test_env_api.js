@@ -1703,8 +1703,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         version: 7,
         params: {applications: [{
           application: 'mysql',
-          'config-yaml': '',
-          configYAML: {},
           constraints: {},
           'charm-url': 'precise/mysql',
           'num-units': 1,
@@ -1725,8 +1723,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {applications: [{
           application: 'wiki',
           // Configuration values are sent as strings.
-          configYAML: {debug: 'true', logo: 'example.com/mylogo.png'},
-          'config-yaml': '',
+          config: {debug: 'true', logo: 'example.com/mylogo.png'},
           constraints: {},
           'charm-url': 'precise/mediawiki',
           'num-units': 0,
@@ -1751,7 +1748,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         version: 7,
         params: {applications: [{
           application: 'mysql',
-          configYAML: {},
           constraints: {},
           'config-yaml': configRaw,
           'charm-url': 'precise/mysql',
@@ -1763,6 +1759,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy({
         charmURL: 'precise/mysql',
         applicationName: 'mysql',
+        configRaw: configRaw
+      }, null, {immediate: true});
+      msg = conn.last_message();
+      assert.deepEqual(expected, msg);
+    });
+
+    it('the raw config takes precedence over the config object', function() {
+      const config = {debug: true, logo: 'example.com/mylogo.png'};
+      const configRaw = 'tuning-level: \nexpert-mojo';
+      const expected = {
+        type: 'Application',
+        request: 'Deploy',
+        version: 7,
+        params: {applications: [{
+          application: 'wiki',
+          'config-yaml': configRaw,
+          constraints: {},
+          'charm-url': 'precise/mediawiki',
+          'num-units': 0,
+          resources: {}
+        }]},
+        'request-id': 1
+      };
+      env.deploy({
+        charmURL: 'precise/mediawiki',
+        applicationName: 'wiki',
+        config: config,
         configRaw: configRaw
       }, null, {immediate: true});
       msg = conn.last_message();
@@ -1803,9 +1826,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         version: 7,
         params: {applications: [{
           application: 'wiki',
-          // Configuration values are sent as strings.
-          configYAML: {},
-          'config-yaml': '',
           constraints: {},
           'charm-url': 'precise/mediawiki',
           'num-units': 7,

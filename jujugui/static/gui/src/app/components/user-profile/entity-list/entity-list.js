@@ -18,56 +18,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileEntityList = React.createClass({
-  // broadcastStatus is necessary for communicating loading status back to
-  // the parent SectionLoadWatcher.
-  propTypes: {
-    broadcastStatus: React.PropTypes.func,
-    changeState: React.PropTypes.func.isRequired,
-    charmstore: React.PropTypes.object.isRequired,
-    d3: React.PropTypes.object,
-    getDiagramURL: React.PropTypes.func.isRequired,
-    getKpiMetrics: React.PropTypes.func,
-    type: React.PropTypes.string.isRequired,
-    user: React.PropTypes.string
-  },
-
-  getInitialState: function() {
+class UserProfileEntityList extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-
-    return {
+    this.state = {
       entityList: [],
       loadingEntities: false
     };
-  },
+  }
 
-  getDefaultProps: function() {
-    // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
-    // to it should not fail, so default to an empty function.
-    return {
-      broadcastStatus: function() {}
-    };
-  },
-
-  componentWillMount: function() {
+  componentWillMount() {
     if (this.props.user) {
       this._fetchEntities(this.props);
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const props = this.props;
     // Compare next and previous charmstore users in a data-safe manner.
     if (props.user !== nextProps.user) {
       this._fetchEntities(nextProps);
     }
-  },
+  }
 
   /**
     Requests a list from charmstore of the user's entities.
@@ -75,11 +54,11 @@ const UserProfileEntityList = React.createClass({
     @method _fetchEntities
     @param {Object} props the component properties to use.
   */
-  _fetchEntities:  function(props) {
+  _fetchEntities(props) {
     const charmstore = props.charmstore;
     if (charmstore && charmstore.list && props.user) {
       this.props.broadcastStatus('starting');
-      const callback = this._fetchEntitiesCallback;
+      const callback = this._fetchEntitiesCallback.bind(this);
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingEntities: true}, () => {
@@ -87,7 +66,7 @@ const UserProfileEntityList = React.createClass({
         this.xhrs.push(xhr);
       });
     }
-  },
+  }
 
   /**
     Callback for the request to list a user's entities.
@@ -96,7 +75,7 @@ const UserProfileEntityList = React.createClass({
     @param {String} error The error from the request, or null.
     @param {Object} data The data from the request.
   */
-  _fetchEntitiesCallback: function(error, data) {
+  _fetchEntitiesCallback(error, data) {
     this.setState({loadingEntities: false}, () => {
       const broadcastStatus = this.props.broadcastStatus;
       if (error) {
@@ -111,7 +90,7 @@ const UserProfileEntityList = React.createClass({
       }
       this.setState({entityList: data});
     });
-  },
+  }
 
   /**
     Generate a list of tags.
@@ -121,7 +100,7 @@ const UserProfileEntityList = React.createClass({
     @param {String} id The id of the entity.
     @returns {Object} A list of tag components.
   */
-  _generateTags: function(tagList, id) {
+  _generateTags(tagList, id) {
     if (!tagList) {
       return;
     }
@@ -137,7 +116,7 @@ const UserProfileEntityList = React.createClass({
       <ul className="user-profile__list-tags">
         {tags}
       </ul>);
-  },
+  }
 
   /**
     Generate a list of series.
@@ -147,7 +126,7 @@ const UserProfileEntityList = React.createClass({
     @param {String} id The id of the entity.
     @returns {Object} A list of series components.
   */
-  _generateSeries: function(series, id) {
+  _generateSeries(series, id) {
     if (!series) {
       return;
     }
@@ -163,7 +142,7 @@ const UserProfileEntityList = React.createClass({
       <ul className="user-profile__list-series">
         {listItems}
       </ul>);
-  },
+  }
 
   /**
     Construct the URL for a service icon.
@@ -172,14 +151,14 @@ const UserProfileEntityList = React.createClass({
     @param {String} id The service ID.
     @returns {String} The icon URL.
   */
-  _getIcon: function(id) {
+  _getIcon(id) {
     if (!id) {
       return;
     }
     const cs = this.props.charmstore;
     const path = id.replace('cs:', '');
     return `${cs.url}/${path}/icon.svg`;
-  },
+  }
 
   /**
     Generate the details for the provided bundle.
@@ -188,7 +167,7 @@ const UserProfileEntityList = React.createClass({
     @param {Object} bundle A bundle object.
     @returns {Array} The markup for the row.
   */
-  _generateBundleRow: function(bundle) {
+  _generateBundleRow(bundle) {
     const id = bundle.id;
     const services = [];
     const applications = bundle.applications || bundle.services || {};
@@ -225,7 +204,7 @@ const UserProfileEntityList = React.createClass({
           {unitCount}
         </span>
       </juju.components.UserProfileEntity>);
-  },
+  }
 
   /**
     Generate the header for the bundles.
@@ -233,7 +212,7 @@ const UserProfileEntityList = React.createClass({
     @method _generateBundleHeader
     @returns {Array} The markup for the header.
   */
-  _generateBundleHeader: function() {
+  _generateBundleHeader() {
     return (
       <li className="user-profile__list-header twelve-col">
         <span className="user-profile__list-col five-col">
@@ -248,7 +227,7 @@ const UserProfileEntityList = React.createClass({
           Units
         </span>
       </li>);
-  },
+  }
 
   /**
     Generate the details for the provided charm.
@@ -257,7 +236,7 @@ const UserProfileEntityList = React.createClass({
     @param {Object} charm A charm object.
     @returns {Array} The markup for the row.
   */
-  _generateCharmRow: function(charm) {
+  _generateCharmRow(charm) {
     const id = charm.id;
     // Ensure the icon is set.
     charm.icon = charm.icon || this._getIcon(id);
@@ -285,7 +264,7 @@ const UserProfileEntityList = React.createClass({
           {this._generateSeries(charm.series, id)}
         </span>
       </juju.components.UserProfileEntity>);
-  },
+  }
 
   /**
     Generate the header for the charms.
@@ -293,7 +272,7 @@ const UserProfileEntityList = React.createClass({
     @method _generateCharmHeader
     @returns {Array} The markup for the header.
   */
-  _generateCharmHeader: function() {
+  _generateCharmHeader() {
     return (
       <li className="user-profile__list-header twelve-col">
         <span className="user-profile__list-col eight-col">
@@ -304,9 +283,9 @@ const UserProfileEntityList = React.createClass({
           Series
         </span>
       </li>);
-  },
+  }
 
-  render: function() {
+  render() {
     const type = this.props.type;
     const classes = classNames(
       `user-profile__${type}-list`,
@@ -327,11 +306,11 @@ const UserProfileEntityList = React.createClass({
         header,
         title;
     if (type === 'bundle') {
-      generateRow = this._generateBundleRow;
+      generateRow = this._generateBundleRow.bind(this);
       header = this._generateBundleHeader();
       title = 'Bundles';
     } else if (type === 'charm') {
-      generateRow = this._generateCharmRow;
+      generateRow = this._generateCharmRow.bind(this);
       header = this._generateCharmHeader();
       title = 'Charms';
     }
@@ -352,7 +331,26 @@ const UserProfileEntityList = React.createClass({
     );
   }
 
-});
+};
+
+// broadcastStatus is necessary for communicating loading status back to
+// the parent SectionLoadWatcher.
+UserProfileEntityList.propTypes = {
+  broadcastStatus: React.PropTypes.func,
+  changeState: React.PropTypes.func.isRequired,
+  charmstore: React.PropTypes.object.isRequired,
+  d3: React.PropTypes.object,
+  getDiagramURL: React.PropTypes.func.isRequired,
+  getKpiMetrics: React.PropTypes.func,
+  type: React.PropTypes.string.isRequired,
+  user: React.PropTypes.string
+};
+
+// Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+// to it should not fail, so default to an empty function.
+UserProfileEntityList.defaultProps = {
+  broadcastStatus: function() {}
+};
 
 YUI.add('user-profile-entity-list', function() {
   juju.components.UserProfileEntityList = UserProfileEntityList;

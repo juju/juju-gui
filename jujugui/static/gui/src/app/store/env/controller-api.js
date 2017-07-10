@@ -463,7 +463,6 @@ YUI.add('juju-controller-api', function(Y) {
       Return information about Juju models, such as their names, series, and
       provider types, by performing a ModelManager.ModelInfo Juju API request.
 
-      @method modelInfo
       @param {Array} ids The Juju unique identifiers of the models, each one
         being a string, for instance "5bea955d-7a43-47d3-89dd-b02c923e2447".
       @param {Function} callback A callable that must be called once the
@@ -477,6 +476,14 @@ YUI.add('juju-controller-api', function(Y) {
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier (usually the same as id);
+        - agentVersion: the version of the Juju agent managing the model;
+        - sla: the level of the SLA, "unsupported", "essential", standard" or
+          "advanced";
+        - slaOwner: the name of the user who set the SLA initially, or an empty
+          string if the current SLA is "unsupported";
+        - status: the status of the model as a string, for instance "available"
+          or "error";
+        - statusInfo: additional status information as a string if pertinent;
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - credential: the name of the credential used to create the model;
@@ -558,12 +565,19 @@ YUI.add('juju-controller-api', function(Y) {
           });
           const cloudTag = result['cloud-tag'];
           const cloud = cloudTag ? tags.parse(tags.CLOUD, cloudTag) : '';
+          const sla = result.sla || {};
+          const status = result.status || {};
           return {
             id: id,
             name: result.name,
             series: result['default-series'],
             provider: result['provider-type'],
             uuid: result.uuid,
+            agentVersion: result['agent-version'] || '',
+            sla: sla.level || '',
+            slaOwner: sla.owner || '',
+            status: status.status || '',
+            statusInfo: status.info || '',
             controllerUUID: result['controller-uuid'],
             owner: tags.parse(tags.USER, result['owner-tag']),
             credential: credential,
@@ -596,7 +610,6 @@ YUI.add('juju-controller-api', function(Y) {
       Under the hood, this call leverages the ModelManager ListModels and
       ModelInfo endpoints.
 
-      @method listModelsWithInfo
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two arguments, the first
         an error (null for no errors, a string describing the error otherwise),
@@ -607,6 +620,14 @@ YUI.add('juju-controller-api', function(Y) {
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier (usually the same as id);
+        - agentVersion: the version of the Juju agent managing the model;
+        - sla: the level of the SLA, "unsupported", "essential", standard" or
+          "advanced";
+        - slaOwner: the name of the user who set the SLA initially, or an empty
+          string if the current SLA is "unsupported";
+        - status: the status of the model as a string, for instance "available"
+          or "error";
+        - statusInfo: additional status information as a string if pertinent;
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - credential: the name of the credential used to create the model;
@@ -680,6 +701,11 @@ YUI.add('juju-controller-api', function(Y) {
               series: model.series,
               provider: model.provider,
               uuid: model.uuid,
+              agentVersion: model.agentVersion,
+              sla: model.sla,
+              slaOwner: model.slaOwner,
+              status: model.status,
+              statusInfo: model.statusInfo,
               controllerUUID: model.controllerUUID,
               owner: model.owner,
               credential: model.credential,

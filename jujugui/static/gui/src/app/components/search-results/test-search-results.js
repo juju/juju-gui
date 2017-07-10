@@ -117,7 +117,7 @@ describe('SearchResults', function() {
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
-      assert.deepEqual(output,
+      const expected = (
         <div className="search-results">
           <div className="twelve-col no-results-container last-col">
             <h1 className="row-title">
@@ -137,6 +137,7 @@ describe('SearchResults', function() {
             </p>
           </div>
         </div>);
+      expect(output).toEqualJSX(expected);
     });
 
     it('loads search results', function() {
@@ -475,7 +476,7 @@ describe('SearchResults', function() {
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
-      var actual = searchResults.collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities, getName),
           first = entities[0],
           last = entities[2];
       var expected = [{
@@ -509,7 +510,7 @@ describe('SearchResults', function() {
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
-      const actual = searchResults.collapseSeries(entities, getName);
+      const actual = searchResults._collapseSeries(entities, getName);
       assert.equal(actual.length, 2);
     });
 
@@ -523,7 +524,7 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'c1', owner: 'o2', type: 'c', series: 's3',
           downloads: 3}
       ];
-      var actual = searchResults.collapseSeries(entities, getName);
+      var actual = searchResults._collapseSeries(entities, getName);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
       assert.equal(actual[1].downloads, 3, 'downloads improperly aggregated');
     });
@@ -550,7 +551,7 @@ describe('SearchResults', function() {
         {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's5',
           downloads: 3}
       ];
-      var actual = searchResults.collapseSeries(entities, getName);
+      var actual = searchResults._collapseSeries(entities, getName);
       assert.equal(actual[0].name, 'foo1',
         'foo1 did not maintain sort position');
       assert.equal(actual[0].downloads, 10,
@@ -572,7 +573,7 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
-      var actual = searchResults.collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities, getName),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
@@ -588,7 +589,7 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'cs', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
-      var actual = searchResults.collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities, getName),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
@@ -635,9 +636,9 @@ describe('SearchResults', function() {
         communityResults: [results[1]],
         promulgatedResults: [results[0]]
       };
-      searchResults.collapseSeries = sinon.stub().returns(results);
+      searchResults._collapseSeries = sinon.stub().returns(results);
       searchResults.setState = sinon.spy();
-      searchResults.searchCallback(null, rawResults);
+      searchResults._searchCallback(null, rawResults);
       var spy = searchResults.setState;
       assert.deepEqual(spy.getCall(0).args[0], {waitingForSearch: false},
         'waitingForSearch flag still set');
@@ -652,7 +653,7 @@ describe('SearchResults', function() {
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
-      searchResults.searchRequest(query, 'ops');
+      searchResults._searchRequest(query, 'ops');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');
       assert.deepEqual(searchSpy.getCall(0).args[0],
@@ -666,7 +667,7 @@ describe('SearchResults', function() {
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
-      searchResults.searchRequest(query, 'ops', 'bundle', '-name');
+      searchResults._searchRequest(query, 'ops', 'bundle', '-name');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');
       assert.deepEqual(
@@ -678,9 +679,9 @@ describe('SearchResults', function() {
     it('decides to search when the query changes', function() {
       var query = 'spinach';
       searchResults.state = {data: {text: query}};
-      assert.isFalse(searchResults.shouldSearch({query: query}),
+      assert.isFalse(searchResults._shouldSearch({query: query}),
         'Unchanged query should not trigger search');
-      assert.isTrue(searchResults.shouldSearch({query: 'foo'}),
+      assert.isTrue(searchResults._shouldSearch({query: 'foo'}),
         'Changed query should trigger search');
     });
 
@@ -689,33 +690,33 @@ describe('SearchResults', function() {
         query: 'foobar',
         setPageTitle: sinon.stub()
       };
-      searchResults.searchRequest = sinon.spy();
+      searchResults._searchRequest = sinon.spy();
       searchResults.componentDidMount();
-      assert.isTrue(searchResults.searchRequest.calledOnce);
+      assert.isTrue(searchResults._searchRequest.calledOnce);
     });
 
     it('triggers a search request when the query changes', function() {
       var nextProps = {query: 'spinach'};
       searchResults.props = {query: 'broccoli'};
-      searchResults.searchRequest = sinon.spy();
-      var spy = searchResults.searchRequest;
+      searchResults._searchRequest = sinon.spy();
+      var spy = searchResults._searchRequest;
       searchResults.componentWillReceiveProps(nextProps);
       assert.equal(spy.getCall(0).args[0], nextProps.query);
     });
 
     it('re-renders only after a new search has finished', function() {
-      searchResults.shouldSearch = sinon.stub().returns(true);
+      searchResults._shouldSearch = sinon.stub().returns(true);
       searchResults.state = {waitingForSearch: false};
       assert.isTrue(searchResults.shouldComponentUpdate(),
         'Should re-render after new search finished');
-      searchResults.shouldSearch = sinon.stub().returns(false);
+      searchResults._shouldSearch = sinon.stub().returns(false);
       searchResults.state = {
         waitingForSearch: false,
         activeComponent: 'loading'
       };
       assert.isFalse(searchResults.shouldComponentUpdate(),
         'Should not re-render without a new search');
-      searchResults.shouldSearch = sinon.stub().returns(true);
+      searchResults._shouldSearch = sinon.stub().returns(true);
       searchResults.state = {
         waitingForSearch: true,
         activeComponent: 'loading'
@@ -809,10 +810,10 @@ describe('SearchResults', function() {
         m.toEntity = sinon.stub().returns(obj);
         return m;
       });
-      searchResults.collapseSeries = sinon.stub().returns(results);
+      searchResults._collapseSeries = sinon.stub().returns(results);
       var setState = sinon.stub();
       searchResults.setState = setState;
-      searchResults.searchCallback(null, rawResults);
+      searchResults._searchCallback(null, rawResults);
       var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
       assert.deepEqual(actualResults[0].storeId,
         'cs:~charmers/trusty/mysql-38');

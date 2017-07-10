@@ -18,72 +18,72 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('accordion-section', function() {
-  juju.components.AccordionSection = React.createClass({
-    displayName: 'AccordionSection',
+class AccordionSection extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: this.props.startOpen || !this.props.title
+    };
+  }
 
-    propTypes: {
-      openHeight: React.PropTypes.number,
-      startOpen: React.PropTypes.bool,
-      title: React.PropTypes.string
-    },
+  _toggle() {
+    this.setState({open: !this.state.open});
+  }
 
-    getInitialState: function() {
-      return {
-        open: this.props.startOpen || !this.props.title
-      };
-    },
-
-    _toggle: function() {
-      this.setState({open: !this.state.open});
-    },
-
-    _getHeight: function() {
-      if (!this.props.title ||
-        (typeof(this.props.openHeight) === 'undefined' && this.state.open)) {
-        return false;
-      }
-
-      if (this.props.openHeight && this.state.open) {
-        return this.props.openHeight;
-      }
-
-      return 0;
-    },
-
-    _generateTitle: function() {
-      if (!this.props.title) {
-        return null;
-      }
-      const chevron = this.state.open ? 'chevron_up_16' : 'chevron_down_16';
-      return (<div
-        className="accordion-section--title"
-        onClick={this._toggle}>{this.props.title}
-      <juju.components.SvgIcon
-        name={chevron}
-        size="16" className="right" /></div>);
-    },
-
-    _generateContent: function() {
-      const style = {'maxHeight': this._getHeight()};
-      return (<div className='accordion-section--content'
-          style={style}>
-          {this.props.children}
-        </div>);
-    },
-
-    render: function() {
-      return (
-        <div className="accordion-section">
-          {this._generateTitle()}
-          {this._generateContent()}
-        </div>
-      );
+  _getHeight() {
+    if (!this.props.title ||
+      (typeof(this.props.openHeight) === 'undefined' && this.state.open)) {
+      return false;
     }
 
-  });
+    if (this.props.openHeight && this.state.open) {
+      return this.props.openHeight;
+    }
+
+    return 0;
+  }
+
+  _generateTitle() {
+    if (!this.props.title) {
+      return null;
+    }
+    const chevron = this.state.open ? 'chevron_up_16' : 'chevron_down_16';
+    return (<div
+      className="accordion-section__title"
+      onClick={this._toggle}>{this.props.title}
+      <juju.components.SvgIcon
+        name={chevron}
+        size="16" className="right" />
+    </div>);
+  }
+
+  _generateContent() {
+    const style = {'maxHeight': this._getHeight()};
+    return (<div className='accordion-section__content'
+      style={style}>
+      {this.props.children}
+    </div>);
+  }
+
+  render() {
+    return (
+      <div className="accordion-section">
+        {this._generateTitle()}
+        {this._generateContent()}
+      </div>
+    );
+  }
+};
+
+AccordionSection.propTypes = {
+  children: React.PropTypes.children,
+  openHeight: React.PropTypes.number,
+  startOpen: React.PropTypes.bool,
+  title: React.PropTypes.object
+};
+
+YUI.add('accordion-section', function() {
+  juju.components.AccordionSection = AccordionSection;
 }, '0.1.0', {
-  requires: [
-    'svg-icon'
-  ]
+  requires: []
 });

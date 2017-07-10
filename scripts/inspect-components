@@ -25,24 +25,14 @@ _WHITELISTED_PROPS = {
 
 # Define global regular expressions.
 _definition_exp = re.compile(r"""
+    class\s+  # Class definition.
     ([\w\._]+)\s*  # Component name.
-    =\s*  # Assignment.
-    React\.createClass  # The create class statement.
-    [\s\S]*?  # Any character.
-    (?=  # Until the following happens.
-        propTypes\s*  # Properties are found.
-        :\s*  # Property definitions.
-        \{  # Brace opening.
-        ([\s\S]*?)  # Any character.
-        (?=  # Until the following happens.
-            \}  # A close brace is encountered.
-        )  # End of condition.
-    )  # End of condition.
-""", re.VERBOSE | re.MULTILINE)
+    extends\s+React.Component\s+\{  # Superclass definition.
+""", re.VERBOSE)
 _fields_exp = re.compile(r"""
     ([\w_]+)\s*  # Field name.
     =\s*  # Assignment.
-    [^>=]  # Not an arrow function or equality operator..
+    [^>=]  # Not an arrow function or equality operator.
 """, re.VERBOSE)
 
 # Define the number of workers.
@@ -179,14 +169,20 @@ def find_definitions(path, regexp=None, include_tests=False):
             content = fileobj.read()
         definitions = []
         for match in _definition_exp.finditer(content):
-            name, props = match.groups()
+            name = match.groups()[0]
             if regexp and not re.search(regexp, name):
                 continue
+            line = content[:match.start(1)].count('\n') + 1
+            exp = _prop_definitions_exp(name)
+            props = ()
+            match = exp.search(content)
+            if match is not None:
+                props = tuple(_parse_prop_definitions(match.groups()[0]))
             definitions.append(Definition(
                 name=name,
                 path=filepath,
-                line=content[:match.start(1)].count('\n') + 1,
-                props=tuple(_parse_prop_definitions(props)),
+                line=line,
+                props=props,
             ))
         return definitions
 
@@ -252,6 +248,21 @@ def _instantiation_exp(names):
             )  # End of condition.
         )  # End of condition.
     """.format('|'.join(names)), re.VERBOSE | re.MULTILINE)
+
+
+def _prop_definitions_exp(name):
+    """Return a compiled regexp for retrieving properties' definitions.
+
+    The given name is the name of the corresponding component.
+    """
+    return re.compile(name + r"""
+        \.propTypes\s+=\s+  # Properties assignation.
+        \{  # Brace opening.
+        ([\s\S]*?)  # Any character.
+        (?=  # Until the following happens.
+            \}  # A close brace is encountered.
+        )  # End of condition.
+    """, re.VERBOSE | re.MULTILINE)
 
 
 def _parse_prop_definitions(content):

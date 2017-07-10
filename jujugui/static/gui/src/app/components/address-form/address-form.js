@@ -18,51 +18,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AddressForm = React.createClass({
-  displayName: 'AddressForm',
-
-  propTypes: {
-    addNotification: React.PropTypes.func,
-    address: React.PropTypes.object,
-    disabled: React.PropTypes.bool,
-    getCountries: React.PropTypes.func,
-    showName: React.PropTypes.bool,
-    showPhone: React.PropTypes.bool,
-    validateForm: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      address: {},
-      showName: true,
-      showPhone: true
-    };
-  },
-
-  getInitialState: function() {
+class AddressForm extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       countries: [],
       loading: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getCountries();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Get a list of countries.
 
     @method _getCountries
   */
-  _getCountries: function() {
+  _getCountries() {
     this.setState({loading: true}, () => {
       const xhr = this.props.getCountries((error, countries) => {
         if (error) {
@@ -82,7 +63,7 @@ const AddressForm = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Validate the form.
@@ -90,7 +71,7 @@ const AddressForm = React.createClass({
     @method validate
     @returns {Boolean} Whether the form is valid.
   */
-  validate: function() {
+  validate() {
     let fields = [
       'line1',
       'line2',
@@ -106,14 +87,14 @@ const AddressForm = React.createClass({
       fields.push('phoneNumber');
     }
     return this.props.validateForm(fields, this.refs);
-  },
+  }
 
   /**
     Get address data.
 
     @method getValue
   */
-  getValue: function() {
+  getValue() {
     const refs = this.refs;
     return {
       name: this.props.showName ? refs.name.getValue() : null,
@@ -125,7 +106,7 @@ const AddressForm = React.createClass({
       country: refs.country.getValue(),
       phones: this.props.showPhone ? [refs.phoneNumber.getValue()] : null
     };
-  },
+  }
 
   /**
     Generate the country values for a select box.
@@ -133,21 +114,21 @@ const AddressForm = React.createClass({
     @method _generateCountryOptions
     @returns {Array} The list of country options.
   */
-  _generateCountryOptions: function() {
+  _generateCountryOptions() {
     return this.state.countries.map(country => {
       return {
         label: country.name,
         value: country.code
       };
     });
-  },
+  }
 
   /**
     Generate the name field.
 
     @returns {Object} The name field markup.
   */
-  _generateNameField: function() {
+  _generateNameField() {
     if (!this.props.showName) {
       return null;
     }
@@ -163,14 +144,14 @@ const AddressForm = React.createClass({
           error: 'This field is required.'
         }]}
         value={address.name} />);
-  },
+  }
 
   /**
     Generate the phone field.
 
     @returns {Object} The phone field markup.
   */
-  _generatePhoneField: function() {
+  _generatePhoneField() {
     if (!this.props.showPhone) {
       return null;
     }
@@ -188,9 +169,9 @@ const AddressForm = React.createClass({
           }]}
           value={(address.phones || []).join(', ')} />
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     const address = this.props.address;
     let content;
     if (this.state.loading) {
@@ -269,8 +250,23 @@ const AddressForm = React.createClass({
       </div>
     );
   }
+};
 
-});
+AddressForm.propTypes = {
+  addNotification: React.PropTypes.func,
+  address: React.PropTypes.object,
+  disabled: React.PropTypes.bool,
+  getCountries: React.PropTypes.func,
+  showName: React.PropTypes.bool,
+  showPhone: React.PropTypes.bool,
+  validateForm: React.PropTypes.func
+};
+
+AddressForm.defaultProps = {
+  address: {},
+  showName: true,
+  showPhone: true
+};
 
 YUI.add('address-form', function() {
   juju.components.AddressForm = AddressForm;

@@ -18,7 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const machineViewHeaderDropTarget = {
+const MachineViewHeaderGlobals = {};
+
+MachineViewHeaderGlobals.dropTarget = {
   /**
     Called when something is dropped on the header.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -54,37 +56,22 @@ const machineViewHeaderDropTarget = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-function collect(connect, monitor) {
+MachineViewHeaderGlobals.collect = function(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
     canDrop: monitor.canDrop(),
     isOver: monitor.isOver()
   };
-}
+};
 
-const MachineViewHeader = ReactDnD.DropTarget(
-  'unit', machineViewHeaderDropTarget, collect)(React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    activeMenuItem: React.PropTypes.string,
-    canDrop: React.PropTypes.bool.isRequired,
-    connectDropTarget: React.PropTypes.func.isRequired,
-    dropUnit: React.PropTypes.func,
-    droppable: React.PropTypes.bool.isRequired,
-    isOver: React.PropTypes.bool.isRequired,
-    menuItems: React.PropTypes.array,
-    title: React.PropTypes.string.isRequired,
-    toggle: React.PropTypes.object,
-    type: React.PropTypes.string
-  },
-
+class MachineViewHeader extends React.Component {
   /**
     Generate a menu for the supplied controls.
 
     @method _generateControl
     @returns {Object} A more menu component
   */
-  _generateControl: function() {
+  _generateControl() {
     var menuItems = this.props.menuItems;
     var toggle = this.props.toggle;
     if (menuItems) {
@@ -101,7 +88,7 @@ const MachineViewHeader = ReactDnD.DropTarget(
           type='inline-positive'
           icon={icon} />);
     }
-  },
+  }
 
   /**
     Generate the classes for the component.
@@ -109,16 +96,16 @@ const MachineViewHeader = ReactDnD.DropTarget(
     @method _generateClasses
     @returns {String} The collection of class names.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     return classNames(
       'machine-view__header', {
         'machine-view__header--droppable':
           this.props.droppable && this.props.canDrop,
         'machine-view__header--drop': this.props.isOver
       });
-  },
+  }
 
-  render: function() {
+  render() {
     return this.props.connectDropTarget(
       <div className={this._generateClasses()}>
         {this.props.title}
@@ -131,10 +118,26 @@ const MachineViewHeader = ReactDnD.DropTarget(
       </div>
     );
   }
-}));
+};
+
+MachineViewHeader.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  activeMenuItem: React.PropTypes.string,
+  canDrop: React.PropTypes.bool.isRequired,
+  connectDropTarget: React.PropTypes.func.isRequired,
+  dropUnit: React.PropTypes.func,
+  droppable: React.PropTypes.bool.isRequired,
+  isOver: React.PropTypes.bool.isRequired,
+  menuItems: React.PropTypes.array,
+  title: React.PropTypes.string.isRequired,
+  toggle: React.PropTypes.object,
+  type: React.PropTypes.string
+};
 
 YUI.add('machine-view-header', function() {
-  juju.components.MachineViewHeader = MachineViewHeader;
+  juju.components.MachineViewHeader = ReactDnD.DropTarget(
+    'unit', MachineViewHeaderGlobals.dropTarget,
+    MachineViewHeaderGlobals.collect)(MachineViewHeader);
 
 }, '0.1.0', {
   requires: [

@@ -263,11 +263,10 @@ describe('DeploymentCredentialAdd', function() {
         setCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     const buttons = output.props.children[3].props.children.props.buttons;
     assert.deepEqual(buttons, [{
-      action: instance._handleAddCredentials,
+      action: buttons[0].action,
       submit: true,
       title: 'Add cloud credential',
       type: 'inline-positive'

@@ -18,21 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const MachineViewScaleUp = React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-    services: React.PropTypes.object.isRequired,
-    toggleScaleUp: React.PropTypes.func.isRequired
-  },
-
+class MachineViewScaleUp extends React.Component {
   /**
     Display a list of services.
 
     @method _generateServices
     @returns {Object} A unit list or onboarding.
   */
-  _generateServices: function() {
+  _generateServices() {
     var components = [];
     var services = this.props.services.toArray();
     services.forEach((service) => {
@@ -63,7 +56,7 @@ const MachineViewScaleUp = React.createClass({
       <ul className="machine-view__scale-up-units">
         {components}
       </ul>);
-  },
+  }
 
   /**
     Add units to the services.
@@ -71,7 +64,7 @@ const MachineViewScaleUp = React.createClass({
     @method _handleAddUnits
     @param {Object} e An event object.
   */
-  _handleAddUnits: function(e) {
+  _handleAddUnits(e) {
     if (e) {
       e.preventDefault();
     }
@@ -84,28 +77,35 @@ const MachineViewScaleUp = React.createClass({
       }
     });
     this.props.toggleScaleUp();
-  },
+  }
 
-  render: function() {
+  render() {
     var buttons = [{
       action: this.props.toggleScaleUp,
       title: 'Cancel',
       type: 'base'
     }, {
-      action: this._handleAddUnits,
+      action: this._handleAddUnits.bind(this),
       disabled: this.props.acl.isReadOnly(),
       title: 'Add units',
       type: 'neutral'
     }];
     return (
       <form className="machine-view__scale-up"
-        onSubmit={this._handleAddUnits}>
+        onSubmit={this._handleAddUnits.bind(this)}>
         {this._generateServices()}
         <juju.components.ButtonRow buttons={buttons} />
       </form>
     );
   }
-});
+};
+
+MachineViewScaleUp.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+  services: React.PropTypes.object.isRequired,
+  toggleScaleUp: React.PropTypes.func.isRequired
+};
 
 YUI.add('machine-view-scale-up', function() {
   juju.components.MachineViewScaleUp = MachineViewScaleUp;

@@ -18,24 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AddedServicesList = React.createClass({
-
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    findRelatedServices: React.PropTypes.func.isRequired,
-    findUnrelatedServices: React.PropTypes.func.isRequired,
-    getUnitStatusCounts: React.PropTypes.func.isRequired,
-    hoverService: React.PropTypes.func.isRequired,
-    hoveredId: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.bool
-    ]),
-    panToService: React.PropTypes.func.isRequired,
-    services: React.PropTypes.object.isRequired,
-    updateUnitFlags: React.PropTypes.func.isRequired
-  },
-
-  generateItemList: function(services) {
+class AddedServicesList extends React.Component {
+  generateItemList(services) {
     var items = [];
     services.each((service) => {
       items.push(
@@ -55,9 +39,9 @@ const AddedServicesList = React.createClass({
           service={service} />);
     });
     return items;
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="inspector-view">
         <ul className="added-services-list inspector-view__list">
@@ -66,8 +50,22 @@ const AddedServicesList = React.createClass({
       </div>
     );
   }
+};
 
-});
+AddedServicesList.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  findRelatedServices: React.PropTypes.func.isRequired,
+  findUnrelatedServices: React.PropTypes.func.isRequired,
+  getUnitStatusCounts: React.PropTypes.func.isRequired,
+  hoverService: React.PropTypes.func.isRequired,
+  hoveredId: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.bool
+  ]),
+  panToService: React.PropTypes.func.isRequired,
+  services: React.PropTypes.object.isRequired,
+  updateUnitFlags: React.PropTypes.func.isRequired
+};
 
 YUI.add('added-services-list', function() {
   juju.components.AddedServicesList = AddedServicesList;

@@ -103,6 +103,7 @@ const createDeploymentFlow = (props = {}) => {
     setModelName: sinon.stub(),
     showPay: false,
     showTerms: sinon.stub(),
+    stats: null,
     updateCloudCredential: sinon.stub(),
     validateForm: sinon.stub(),
     withPlans: true
@@ -131,6 +132,7 @@ describe('DeploymentFlow', function() {
   });
 
   beforeEach(() => {
+    window.juju_config = {flags: {}};
     applications = [
       {get: sinon.stub().returns('service1')},
       {get: sinon.stub().returns('mysql')},
@@ -365,10 +367,9 @@ describe('DeploymentFlow', function() {
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
     assert.equal(instance.props.sendAnalytics.callCount, 1);
-    assert.deepEqual(instance.props.sendAnalytics.args[0],
-      ['Deployment Flow',
-        'Deployment started',
-        'is DD - is new model - doesn\'t have USSO']);
+    assert.deepEqual(instance.props.sendAnalytics.args[0], [
+      'Deployment Flow', 'Component mounted',
+      'is DD - is new model - doesn\'t have USSO']);
   });
 
   it('can enable the credential section', function() {
@@ -425,7 +426,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
       </juju.components.DeploymentSection>
     );
-    assert.deepEqual(output.props.children[5], expectedOutput);
+    expect(output.props.children[5]).toEqualJSX(expectedOutput);
   });
 
   it('can enable the budget section', function() {
@@ -485,7 +486,7 @@ describe('DeploymentFlow', function() {
           username="spinach"
           validateForm={validateForm} />
       </juju.components.DeploymentSection>);
-    assert.deepEqual(output.props.children[10], expected);
+    expect(output.props.children[10]).toEqualJSX(expected);
   });
 
   it('can hide the agreements section', function() {
@@ -535,7 +536,7 @@ describe('DeploymentFlow', function() {
           I agree to all terms.
         </label>
       </div>);
-    assert.deepEqual(agreements, expected);
+    expect(agreements).toEqualJSX(expected);
   });
 
   it('can disable the agreements section', function() {
@@ -676,8 +677,9 @@ describe('DeploymentFlow', function() {
     instance._updateModelName();
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
-      .props.action();
+    // Click to deploy.
+    const deploy = output.props.children[11].props.children.props.children[1];
+    deploy.props.children.props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
     assert.equal(props.deploy.args[0][2], 'Lamington');
@@ -691,15 +693,51 @@ describe('DeploymentFlow', function() {
     assert.equal(props.setModelName.callCount, 1);
     assert.equal(props.setModelName.args[0][0], 'Lamington');
     assert.equal(props.sendAnalytics.callCount, 2);
-    assert.deepEqual(props.sendAnalytics.args[0],
-      ['Deployment Flow',
-        'Deployment started',
-        'is DD - is model update - doesn\'t have USSO']);
-    assert.deepEqual(props.sendAnalytics.args[1],
-      ['Deployment Flow',
-        'Button click',
-        'Deploy model - is DD' +
-        ' - is model update - doesn\'t have USSO']);
+    assert.deepEqual(props.sendAnalytics.args[0], [
+      'Deployment Flow', 'Component mounted',
+      'is DD - is model update - doesn\'t have USSO']);
+    assert.deepEqual(props.sendAnalytics.args[1], [
+      'Deployment Flow', 'Button click',
+      'Deploy model - is DD - is model update - doesn\'t have USSO']);
+  });
+
+  const checkStats = (statsName, flags) => {
+    window.juju_config.flags = flags;
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const statsIncrease = sinon.stub();
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'cloud'},
+      credential: 'cred',
+      modelCommitted: true,
+      region: 'north',
+      stats: {increase: statsIncrease}
+    });
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      modelName: {
+        getValue: sinon.stub().returns('Lamington')
+      }
+    };
+    instance._updateModelName();
+    const output = renderer.getRenderOutput();
+    // Click to deploy.
+    const deploy = output.props.children[11].props.children.props.children[1];
+    deploy.props.children.props.action();
+    assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
+    const args = statsIncrease.args[0];
+    assert.equal(args.length, 1, 'statsIncrease args length');
+    assert.strictEqual(args[0], statsName);
+  };
+
+  it('increases stats when deploying (deploy target)', function() {
+    checkStats('deploy.target', {});
+  });
+
+  it('increases stats when deploying (direct deploy)', function() {
+    checkStats('deploy.direct', {ddeploy: true});
   });
 
   it('can agree to terms during deploy', function() {
@@ -1063,7 +1101,7 @@ describe('DeploymentFlow', function() {
       getAgreementsByTerms: sinon.stub().returns({abort: abort})
     });
     renderer.unmount();
-    assert.deepEqual(abort.callCount, 1);
+    assert.equal(abort.callCount, 1);
   });
 
   describe('_parseTermId', function() {

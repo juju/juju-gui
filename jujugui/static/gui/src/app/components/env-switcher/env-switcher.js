@@ -18,28 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// Wrap the component to handle clicking outside.
-const EnvSwitcher = enhanceWithClickOutside(React.createClass({
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    changeState: React.PropTypes.func.isRequired,
-    environmentName: React.PropTypes.string,
-    humanizeTimestamp: React.PropTypes.func.isRequired,
-    listModelsWithInfo: React.PropTypes.func,
-    switchModel: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object
-  },
-
-  getInitialState: function() {
-    return {
+class EnvSwitcher extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       showEnvList: false,
       envList: []
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.updateEnvList();
-  },
+  }
 
   /**
     Close the switcher when there is a click outside of the component.
@@ -48,18 +38,18 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
     @method handleClickOutside
     @param {Object} e The click event
   */
-  handleClickOutside: function(e) {
+  handleClickOutside(e) {
     this.setState({showEnvList: false});
-  },
+  }
 
   /**
     Calls to the environment to list the active environments.
 
     @method updateEnvList
   */
-  updateEnvList: function() {
-    this.props.listModelsWithInfo(this._updateModelListCallback);
-  },
+  updateEnvList() {
+    this.props.listModelsWithInfo(this._updateModelListCallback.bind(this));
+  }
 
   /**
     Sets the state with the supplied data from the
@@ -69,7 +59,7 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
     @param {String} err The possible error from the call, or null.
     @param {Array} models The list of models returned by the call.
   */
-  _updateModelListCallback: function(err, models) {
+  _updateModelListCallback(err, models) {
     if (err) {
       console.error(err);
       return;
@@ -78,34 +68,34 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
       return model.isAlive;
     });
     this.setState({envList: modelList});
-  },
+  }
 
   /**
     Sets the state of the 'showEnvList' property to the inverse of what
     it was.
 
-    @method toggleEnvList
+    @method _toggleEnvList
     @param {Object} e The click event.
   */
-  toggleEnvList: function(e) {
+  _toggleEnvList(e) {
     e.preventDefault();
     this.updateEnvList();
     this.setState({ showEnvList: !this.state.showEnvList });
-  },
+  }
 
   /**
     Sets the state of the 'showEnvList' property to the inverse of what
     it was when <Enter> or <Space> is clicked.
 
-    @method handleKeyToggle
+    @method _handleKeyToggle
   */
-  handleKeyToggle: function(e) {
+  _handleKeyToggle(e) {
     var key = e.which || e.keyCode || 0;
     // key === <Enter> or <Space>
     if (key === 13 || key === 32) {
-      this.toggleEnvList(e);
+      this._toggleEnvList(e);
     }
-  },
+  }
 
   /**
     Hides the model list and calls the switchModel method with the selected
@@ -117,11 +107,11 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
       - id: the model unique identifier;
       - owner: the user owning the model, like "admin" or "who@external".
   */
-  handleModelClick: function(model) {
+  handleModelClick(model) {
     const props = this.props;
     this.setState({showEnvList: false});
     props.switchModel(model);
-  },
+  }
 
   /**
     Returns the environment list components if the showEnvList state property
@@ -130,20 +120,20 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
     @method environmentList
     @return {Function} The EnvList component.
   */
-  environmentList: function() {
+  environmentList() {
     if (this.state.showEnvList) {
       return <juju.components.EnvList
         acl={this.props.acl}
         user={this.props.user}
         changeState={this.props.changeState}
-        handleModelClick={this.handleModelClick}
+        handleModelClick={this.handleModelClick.bind(this)}
         humanizeTimestamp={this.props.humanizeTimestamp}
         environmentName={this.props.environmentName}
         envs={this.state.envList}
         switchModel={this.props.switchModel}
       />;
     }
-  },
+  }
 
   /**
     Generate the toggle state classes based on the props.
@@ -151,24 +141,24 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
     @method _toggleClasses
     @return {String} The collection of class names.
   */
-  _toggleClasses: function() {
+  _toggleClasses() {
     return classNames(
       'env-switcher__toggle',
       {
         'is-active': this.state.showEnvList
       }
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="env-switcher"
         role="navigation"
         aria-label="Model switcher">
         <div
           className={this._toggleClasses()}
-          onClick={this.toggleEnvList}
-          onKeyPress={this.handleKeyToggle}
+          onClick={this._toggleEnvList.bind(this)}
+          onKeyPress={this._handleKeyToggle.bind(this)}
           id="environmentSwitcherToggle"
           role="button"
           tabIndex="0"
@@ -187,10 +177,21 @@ const EnvSwitcher = enhanceWithClickOutside(React.createClass({
       </div>
     );
   }
-}));
+};
+
+EnvSwitcher.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  changeState: React.PropTypes.func.isRequired,
+  environmentName: React.PropTypes.string,
+  humanizeTimestamp: React.PropTypes.func.isRequired,
+  listModelsWithInfo: React.PropTypes.func,
+  switchModel: React.PropTypes.func.isRequired,
+  user: React.PropTypes.object
+};
 
 YUI.add('env-switcher', function() {
-  juju.components.EnvSwitcher = EnvSwitcher;
+  // Wrap the component to handle clicking outside.
+  juju.components.EnvSwitcher = enhanceWithClickOutside(EnvSwitcher);
 }, '0.1.0', { requires: [
   'env-list',
   'svg-icon'

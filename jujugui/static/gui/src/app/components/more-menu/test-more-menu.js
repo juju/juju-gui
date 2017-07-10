@@ -54,7 +54,7 @@ describe('MoreMenu', function() {
         </span>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can be opened', function() {
@@ -98,7 +98,7 @@ describe('MoreMenu', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can call the action on an item', function() {

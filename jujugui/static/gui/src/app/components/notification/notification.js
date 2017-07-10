@@ -24,24 +24,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   dismissed if a 'dismiss' function is passed, otherwise just displays
   'content' in the desired style.
 */
-const Notification = React.createClass({
-  displayName: 'Notification',
-
-  propTypes: {
-    content: React.PropTypes.object.isRequired,
-    dismiss: React.PropTypes.func,
-    extraClasses: React.PropTypes.string,
-    isBlocking: React.PropTypes.bool,
-    // Types: positive, caution, negative
-    type: React.PropTypes.string
-  },
-
+class Notification extends React.Component {
   /**
     Generate classes based on 'type' and extra classes.
 
     @return {string} The class string.
   */
-  _generateClasses: function() {
+  _generateClasses() {
     let classes = 'p-notification';
     if (this.props.type) {
       classes = `${classes}--${this.props.type}`;
@@ -50,18 +39,18 @@ const Notification = React.createClass({
       classes = `${classes} ${this.props.extraClasses}`;
     }
     return classes;
-  },
+  }
 
   /**
     Dismiss the notification.
 
     @param evt {Object} The click event.
   */
-  _dismiss: function(evt) {
+  _dismiss(evt) {
     evt.stopPropagation();
     const dismiss = this.props.dismiss;
     dismiss && dismiss();
-  },
+  }
 
   /**
     Generates the dismiss button if a dismiss function is provided.
@@ -70,20 +59,20 @@ const Notification = React.createClass({
 
     @return {object} React Button node.
   */
-  _generateDismiss: function() {
+  _generateDismiss() {
     if (!this.props.dismiss) {
       return;
     }
     return (
       <button
         className="p-notification__action"
-        onClick={this._dismiss}>
+        onClick={this._dismiss.bind(this)}>
         <window.juju.components.SvgIcon
           name="close_16" size="16" />
       </button>);
-  },
+  }
 
-  render: function() {
+  render() {
     const content = (<div className={this._generateClasses()}>
       <p className="p-notification__response">
         {this.props.content}
@@ -105,7 +94,16 @@ const Notification = React.createClass({
     }
     return content;
   }
-});
+};
+
+Notification.propTypes = {
+  content: React.PropTypes.object.isRequired,
+  dismiss: React.PropTypes.func,
+  extraClasses: React.PropTypes.string,
+  isBlocking: React.PropTypes.bool,
+  // Types: positive, caution, negative
+  type: React.PropTypes.string
+};
 
 YUI.add('notification', function() {
   juju.components.Notification = Notification;

@@ -18,12 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const InspectorRelationDetails = React.createClass({
-  propTypes: {
-    relation: React.PropTypes.object.isRequired
-  },
-
-  render: function() {
+class InspectorRelationDetails extends React.Component {
+  render() {
     var relation = this.props.relation;
     return (
       <div className="inspector-relation-details">
@@ -44,8 +40,11 @@ const InspectorRelationDetails = React.createClass({
       </div>
     );
   }
+};
 
-});
+InspectorRelationDetails.propTypes = {
+  relation: React.PropTypes.object.isRequired
+};
 
 YUI.add('inspector-relation-details', function() {
   juju.components.InspectorRelationDetails = InspectorRelationDetails;

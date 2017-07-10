@@ -18,51 +18,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const AccountPaymentMethods = React.createClass({
-  displayName: 'AccountPaymentMethods',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    createCardElement: React.PropTypes.func.isRequired,
-    createPaymentMethod: React.PropTypes.func.isRequired,
-    createToken: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    paymentUser: React.PropTypes.object.isRequired,
-    removePaymentMethod: React.PropTypes.func.isRequired,
-    updatePaymentMethod: React.PropTypes.func.isRequired,
-    updateUser: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class AccountPaymentMethods extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       cardAddressSame: true,
       showAdd: false
     };
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Generate a list of payment method details.
 
     @method _generatePaymentMethods
   */
-  _generatePaymentMethods: function() {
+  _generatePaymentMethods() {
     const user = this.props.paymentUser;
     if (!user.paymentMethods.length) {
       return (
         <div className="account__payment-no-methods">
           You do not have a payment method.
           <juju.components.GenericButton
-            action={this._toggleAdd}
+            action={this._toggleAdd.bind(this)}
             type="inline-neutral"
             title="Add payment method" />
         </div>);
@@ -85,14 +69,14 @@ const AccountPaymentMethods = React.createClass({
       <ul className="user-profile__list twelve-col">
         {methods}
       </ul>);
-  },
+  }
 
   /**
     Handle creating the card and user.
 
     @method _createToken
   */
-  _createToken: function() {
+  _createToken() {
     let fields = ['cardForm'];
     if (!this.state.cardAddressSame) {
       fields.push('cardAddress');
@@ -129,7 +113,7 @@ const AccountPaymentMethods = React.createClass({
       this._createPaymentMethod(token.id);
     });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Create the payment method using the card token.
@@ -137,7 +121,7 @@ const AccountPaymentMethods = React.createClass({
     @method _createPaymentMethod
     @param token {String} A Stripe token.
   */
-  _createPaymentMethod: function(token) {
+  _createPaymentMethod(token) {
     const xhr = this.props.createPaymentMethod(
       this.props.username, token, null, (error, method) => {
         if (error) {
@@ -155,16 +139,16 @@ const AccountPaymentMethods = React.createClass({
         this.props.updateUser();
       });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Show or hide the add payment method form.
 
     @method _toggleAdd
   */
-  _toggleAdd: function() {
+  _toggleAdd() {
     this.setState({showAdd: !this.state.showAdd});
-  },
+  }
 
   /**
     Update the state when the card checkbox changes.
@@ -172,16 +156,16 @@ const AccountPaymentMethods = React.createClass({
     @method _handleCardSameChange
     @param evt {Object} The change event from the checkbox.
   */
-  _handleCardSameChange: function(evt) {
+  _handleCardSameChange(evt) {
     this.setState({cardAddressSame: evt.currentTarget.checked});
-  },
+  }
 
   /**
     Generate the fields for the card address.
 
     @method _generateCardAddressFields
   */
-  _generateCardAddressFields: function() {
+  _generateCardAddressFields() {
     if (this.state.cardAddressSame) {
       return null;
     }
@@ -194,14 +178,14 @@ const AccountPaymentMethods = React.createClass({
         showName={false}
         showPhone={false}
         validateForm={this.props.validateForm} />);
-  },
+  }
 
   /**
     Generate a form to add a payment method.
 
     @method _generateAddPaymentMethod
   */
-  _generateAddPaymentMethod: function() {
+  _generateAddPaymentMethod() {
     if (!this.state.showAdd) {
       return null;
     }
@@ -223,7 +207,7 @@ const AccountPaymentMethods = React.createClass({
                 className="account__payment-form-checkbox"
                 id="cardAddressSame"
                 name="cardAddressSame"
-                onChange={this._handleCardSameChange}
+                onChange={this._handleCardSameChange.bind(this)}
                 ref="cardAddressSame"
                 type="checkbox" />
               Credit or debit card address is the same as default address.
@@ -232,19 +216,19 @@ const AccountPaymentMethods = React.createClass({
           </div>
           <div className="twelve-col account__payment-form-buttons">
             <juju.components.GenericButton
-              action={this._toggleAdd}
+              action={this._toggleAdd.bind(this)}
               type="inline-neutral"
               title="Cancel" />
             <juju.components.GenericButton
-              action={this._createToken}
+              action={this._createToken.bind(this)}
               type="inline-positive"
               title="Add" />
           </div>
         </div>
       </juju.components.ExpandingRow>);
-  },
+  }
 
-  render: function() {
+  render() {
     const content = this.state.showAdd ?
       this._generateAddPaymentMethod() : this._generatePaymentMethods();
     return (
@@ -256,8 +240,22 @@ const AccountPaymentMethods = React.createClass({
       </div>
     );
   }
+};
 
-});
+AccountPaymentMethods.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  createCardElement: React.PropTypes.func.isRequired,
+  createPaymentMethod: React.PropTypes.func.isRequired,
+  createToken: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  paymentUser: React.PropTypes.object.isRequired,
+  removePaymentMethod: React.PropTypes.func.isRequired,
+  updatePaymentMethod: React.PropTypes.func.isRequired,
+  updateUser: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('account-payment-methods', function() {
   juju.components.AccountPaymentMethods = AccountPaymentMethods;

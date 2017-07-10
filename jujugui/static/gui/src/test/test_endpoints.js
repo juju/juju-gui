@@ -55,6 +55,7 @@ describe('Relation endpoints logic', function() {
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
+      flags: {},
       charmstoreURL: 'http://1.2.3.4/',
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
@@ -428,6 +429,7 @@ describe('Endpoints map handlers', function() {
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
+      flags: {},
       charmstoreURL: 'http://1.2.3.4/',
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'
@@ -621,6 +623,7 @@ describe('Application config handlers', function() {
     userClass.controller = {user: 'user', password: 'password'};
     jujuConfig = window.juju_config;
     window.juju_config = {
+      flags: {},
       charmstoreURL: 'http://1.2.3.4/',
       plansURL: 'http://plans.example.com/',
       termsURL: 'http://terms.example.com/'

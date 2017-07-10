@@ -18,23 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const CardForm = React.createClass({
-  displayName: 'CardForm',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    createCardElement: React.PropTypes.func.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  componentDidMount: function() {
+class CardForm extends React.Component {
+  componentDidMount() {
     this.props.createCardElement(card => {
       this.card = card;
       if (this.refs.cardNode) {
         this.card.mount('.card-form__card');
       }
     });
-  },
+  }
 
   /**
     Validate the form.
@@ -42,26 +34,26 @@ const CardForm = React.createClass({
     @method validate
     @returns {Boolean} Whether the form is valid.
   */
-  validate: function() {
+  validate() {
     const fields = [
       'name'
     ];
     return this.props.validateForm(fields, this.refs);
-  },
+  }
 
   /**
     Get card data.
 
     @method getValue
   */
-  getValue: function() {
+  getValue() {
     return {
       card: this.card,
       name: this.refs.name.getValue()
     };
-  },
+  }
 
-  render: function() {
+  render() {
     const disabled = this.props.acl.isReadOnly();
     const required = {
       regex: /\S+/,
@@ -80,8 +72,13 @@ const CardForm = React.createClass({
       </div>
     );
   }
+};
 
-});
+CardForm.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  createCardElement: React.PropTypes.func.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('card-form', function() {
   juju.components.CardForm = CardForm;

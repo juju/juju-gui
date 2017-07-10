@@ -18,20 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ModalShortcuts = React.createClass({
-  displayName: 'ModalShortcuts',
-
-  propTypes: {
-    closeModal: React.PropTypes.func.isRequired,
-    guiVersion: React.PropTypes.string.isRequired,
-    keybindings: React.PropTypes.object.isRequired
-  },
-
+class ModalShortcuts extends React.Component {
   /**
-
   @return {Array} An array of the bindings to create ul.
   */
-  _generateBindings: function() {
+  _generateBindings() {
     let bindings = [];
     Object.keys(this.props.keybindings).forEach(key => {
       const binding = this.props.keybindings[key];
@@ -46,14 +37,14 @@ const ModalShortcuts = React.createClass({
     });
 
     return bindings;
-  },
+  }
 
   /**
     Generate list of keybindings for help modal
 
     @return {Array} An array of React li elements.
   */
-  _generateList: function() {
+  _generateList() {
     const bindings = this._generateBindings();
     const components = bindings.map(binding => {
       return(
@@ -67,9 +58,9 @@ const ModalShortcuts = React.createClass({
         </div>);
     });
     return components;
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="modal">
         <div className="twelve-col no-margin-bottom">
@@ -93,7 +84,13 @@ const ModalShortcuts = React.createClass({
       </div>
     );
   }
-});
+};
+
+ModalShortcuts.propTypes = {
+  closeModal: React.PropTypes.func.isRequired,
+  guiVersion: React.PropTypes.string.isRequired,
+  keybindings: React.PropTypes.object.isRequired
+};
 
 YUI.add('modal-shortcuts', function() {
   juju.components.ModalShortcuts = ModalShortcuts;

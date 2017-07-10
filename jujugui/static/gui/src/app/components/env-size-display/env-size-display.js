@@ -18,15 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EnvSizeDisplay = React.createClass({
-
-  propTypes: {
-    appState: React.PropTypes.object.isRequired,
-    machineCount: React.PropTypes.number.isRequired,
-    pluralize: React.PropTypes.func.isRequired,
-    serviceCount: React.PropTypes.number.isRequired
-  },
-
+class EnvSizeDisplay extends React.Component {
   /**
     Click handler for the service | machine links which calls the changeState
     event emitter with the clicked link.
@@ -34,7 +26,7 @@ const EnvSizeDisplay = React.createClass({
     @method _changeEnvironmentView
     @param {Object} e The click event handler
   */
-  _changeEnvironmentView: function(e) {
+  _changeEnvironmentView(e) {
     const activeComponent =
       (e.currentTarget.dataset.view === 'machine') ? '' : null;
     this.props.appState.changeState({
@@ -43,7 +35,7 @@ const EnvSizeDisplay = React.createClass({
       }
     });
     this.setState({activeComponent});
-  },
+  }
 
   /**
     Returns the supplied classes with the 'active' class applied if the
@@ -54,7 +46,7 @@ const EnvSizeDisplay = React.createClass({
       active.
     @returns {String} The collection of class names.
   */
-  _genClasses: function(section) {
+  _genClasses(section) {
     const guiState = this.props.appState.current.gui;
     return classNames(
       'env-size-display__list-item',
@@ -62,9 +54,9 @@ const EnvSizeDisplay = React.createClass({
         'is-active': guiState && guiState[section]
       }
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var props = this.props;
     var serviceCount = props.serviceCount;
     var machineCount = props.machineCount;
@@ -74,7 +66,7 @@ const EnvSizeDisplay = React.createClass({
         <ul className="env-size-display__list">
           <li className={this._genClasses('application')}>
             <a data-view="application"
-              onClick={this._changeEnvironmentView}
+              onClick={this._changeEnvironmentView.bind(this)}
               className="env-size-display__link">
               <juju.components.SvgIcon name="relations"
                 className="env-size-display__icon" size="16" />
@@ -83,7 +75,8 @@ const EnvSizeDisplay = React.createClass({
             </a>
           </li>
           <li className={this._genClasses('machine')}>
-            <a data-view="machine" onClick={this._changeEnvironmentView}
+            <a data-view="machine"
+              onClick={this._changeEnvironmentView.bind(this)}
               className="env-size-display__link">
               <juju.components.SvgIcon name="changes-machine-created"
                 className="env-size-display__icon" size="16" />
@@ -95,7 +88,14 @@ const EnvSizeDisplay = React.createClass({
       </div>
     );
   }
-});
+};
+
+EnvSizeDisplay.propTypes = {
+  appState: React.PropTypes.object.isRequired,
+  machineCount: React.PropTypes.number.isRequired,
+  pluralize: React.PropTypes.func.isRequired,
+  serviceCount: React.PropTypes.number.isRequired
+};
 
 YUI.add('env-size-display', function() {
   juju.components.EnvSizeDisplay = EnvSizeDisplay;

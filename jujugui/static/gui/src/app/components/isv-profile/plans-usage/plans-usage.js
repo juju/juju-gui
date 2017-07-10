@@ -23,19 +23,9 @@ charms and bundles. You can only see this page is you have access.
 
 'use strict';
 
-const PlansUsage = React.createClass({
-  propTypes: {
-    d3: React.PropTypes.object.isRequired,
-    dataset: React.PropTypes.array.isRequired
-  },
-
-  /**
-    Get the initial state.
-
-    @method getInitialState
-    @returns {String} The intial state.
-  */
-  getInitialState: function() {
+class PlansUsage extends React.Component {
+  constructor() {
+    super();
     // The parent node for the SVG chart
     this.svg = [];
     // Margins to add framing to the charts
@@ -50,19 +40,19 @@ const PlansUsage = React.createClass({
     // The xScale of the chart
     this.xScale = [];
 
-    return {
+    this.state = {
       d3Rendered: false
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.renderChart();
     this.setState({d3Rendered: true});
-  },
+  }
 
-  shouldComponentUpdate: function() {
+  shouldComponentUpdate() {
     return !this.state.d3Rendered;
-  },
+  }
 
   /**
     Plot a line on the graph
@@ -70,7 +60,7 @@ const PlansUsage = React.createClass({
     @method plotLine
     @param {Array} The line data
   */
-  plotLine: function(data) {
+  plotLine(data) {
     const d3 = this.props.d3;
     const lineGen = d3.svg.line()
       .x(d => this.xScale(d.date))
@@ -80,14 +70,14 @@ const PlansUsage = React.createClass({
       .attr('d', lineGen(data))
       .attr('stroke', 'teal')
       .classed('line', true);
-  },
+  }
 
   /**
     Render the base chart, including the axises.
 
     @method renderChart
   */
-  renderChart: function() {
+  renderChart() {
     const dataset = this.props.dataset;
     const d3 = this.props.d3;
     const w = 700;
@@ -150,16 +140,21 @@ const PlansUsage = React.createClass({
 
     // Loop through dataset to plot each line
     dataset.forEach(this.plotLine);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="twelve-col isv-profile__plan-usage">
         <h4>Plan usage</h4>
         <div className="d3-chart-wrapper"></div>
       </div>);
   }
-});
+};
+
+PlansUsage.propTypes = {
+  d3: React.PropTypes.object.isRequired,
+  dataset: React.PropTypes.array.isRequired
+};
 
 YUI.add('plans-usage', function() {
   juju.components.PlansUsage = PlansUsage;

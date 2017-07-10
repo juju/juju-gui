@@ -18,17 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const Login = React.createClass({
-
-  propTypes: {
-    controllerIsConnected: React.PropTypes.func.isRequired,
-    errorMessage: React.PropTypes.string,
-    gisf: React.PropTypes.bool.isRequired,
-    loginToAPIs: React.PropTypes.func.isRequired,
-    loginToController: React.PropTypes.func.isRequired
-  },
-
-  componentDidMount: function () {
+class Login extends React.Component {
+  componentDidMount() {
     if (this.props.gisf) {
       const bounce = (startTime) => {
         if (this.props.controllerIsConnected()) {
@@ -47,7 +38,7 @@ const Login = React.createClass({
     } else {
       this.refs.username.focus();
     }
-  },
+  }
 
   /**
     Handle the form submit in the case traditional user/password credentials
@@ -57,7 +48,7 @@ const Login = React.createClass({
     @method _handleLoginSubmit
     @param {Object} evt The submit event.
   */
-  _handleLoginSubmit: function(evt) {
+  _handleLoginSubmit(evt) {
     if (evt && evt.preventDefault) {
       evt.preventDefault();
     }
@@ -65,19 +56,19 @@ const Login = React.createClass({
       user: this.refs.username.value,
       password: this.refs.password.value
     }, false);
-  },
+  }
 
   /**
     Display a message if the login failed.
 
     @method _generateErrorMessage
   */
-  _generateErrorMessage: function() {
+  _generateErrorMessage() {
     var msg = this.props.errorMessage;
     if (msg) {
       return <div className="login__failure-message">{msg}</div>;
     }
-  },
+  }
 
   /**
     Generates the login help message based on if we're in legacy Juju or not.
@@ -85,27 +76,27 @@ const Login = React.createClass({
     @method _generateHelpMessage
     @return {Object} The message.
   */
-  _generateHelpMessage: function() {
+  _generateHelpMessage() {
     return (
       <p>
         Find your username and password with<br />
         <code>juju show-controller --show-password</code>
       </p>);
-  },
+  }
 
-  _generateUSSOLink: function () {
+  _generateUSSOLink () {
     return (
       <juju.components.USSOLoginLink
         displayType="button"
         loginToController={this.props.loginToController}
         ref="USSOLoginLink" />);
-  },
+  }
 
-  _generateClassnames: function() {
+  _generateClassnames() {
     return classNames('login', {'hidden': this.props.gisf});
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className={this._generateClassnames()}>
         <div className="login__logo">
@@ -119,7 +110,7 @@ const Login = React.createClass({
           <form
             className="login__form"
             ref="form"
-            onSubmit={this._handleLoginSubmit}>
+            onSubmit={this._handleLoginSubmit.bind(this)}>
             <label
               className="login__label">
               Username
@@ -156,7 +147,15 @@ const Login = React.createClass({
       </div>
     );
   }
-});
+};
+
+Login.propTypes = {
+  controllerIsConnected: React.PropTypes.func.isRequired,
+  errorMessage: React.PropTypes.string,
+  gisf: React.PropTypes.bool.isRequired,
+  loginToAPIs: React.PropTypes.func.isRequired,
+  loginToController: React.PropTypes.func.isRequired
+};
 
 YUI.add('login-component', function() {
   juju.components.Login = Login;

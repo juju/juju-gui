@@ -18,20 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const UserProfileEntityKPI = React.createClass({
-  displayName: 'UserProfileEntityKPI',
-
-  propTypes: {
-    d3: React.PropTypes.object.isRequired,
-    metricTypes: React.PropTypes.array.isRequired,
-    metrics: React.PropTypes.array.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class UserProfileEntityKPI extends React.Component {
+  constructor() {
+    super();
+    this.state = {
       currentMetric: []
     };
-  },
+  }
 
   /**
     Tell the metric component to render a graph of a specific metric.
@@ -39,7 +32,7 @@ const UserProfileEntityKPI = React.createClass({
     @method _showMetric
     @param {String} metric The metric to show (selected from metricTypes)
   */
-  _showMetric: function(metric) {
+  _showMetric(metric) {
     // TODO:
     // the ability to select a metric does not work properly, and we don't
     // know enough about the eventual metrics of charms to guess how; for
@@ -50,25 +43,25 @@ const UserProfileEntityKPI = React.createClass({
     this.setState({
       currentMetric: this.props.metrics.filter(d => d.metric === metric)
     });
-  },
+  }
 
   /**
     Show the metric when the component has mounted
   */
-  componentDidMount: function() {
+  componentDidMount() {
     // TODO:
     // the select isn't working; this should be the on-change callback
     // but for now just call it
     // Makyo 2017-04-03
     this._showMetric('bad-wolf');
-  },
+  }
 
   /**
      Render a metric into the entity
      TODO: in the future, this will include an instance of inset-select
      to choose which metric.
   */
-  render: function() {
+  render() {
     return (
       <div className="twelve-col last-col">
         <juju.components.UserProfileEntityMetric
@@ -76,8 +69,13 @@ const UserProfileEntityKPI = React.createClass({
           metric={this.state.currentMetric} />
       </div>);
   }
+};
 
-});
+UserProfileEntityKPI.propTypes = {
+  d3: React.PropTypes.object.isRequired,
+  metricTypes: React.PropTypes.array.isRequired,
+  metrics: React.PropTypes.array.isRequired
+};
 
 YUI.add('user-profile-entity-kpi', function() {
   juju.components.UserProfileEntityKPI = UserProfileEntityKPI;

@@ -134,6 +134,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual(
             options.DEFAULT_CHARMSTORE_URL, config['charmstoreURL'])
         self.assertEqual(options.DEFAULT_PLANS_URL, config['plansURL'])
+        self.assertEqual('', config['statsURL'])
         self.assertEqual(options.DEFAULT_TERMS_URL, config['termsURL'])
         self.assertFalse(config['GTM_enabled'])
         # Note that here we are testing that the value is actually True or
@@ -158,6 +159,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.insecure': 'true',
             'jujugui.password': 'secret',
             'jujugui.plans_url': 'http://1.2.3.4/plans-api/',
+            'jujugui.stats_url': '/_stats',
             'jujugui.terms_url': 'http://1.2.3.4/terms-api',
             'jujugui.user': 'who',
         })
@@ -166,6 +168,7 @@ class ConfigTests(ViewTestCase):
         config = self.check_response(response)
         self.assertEqual('http://1.2.3.4/cs-api/', config['charmstoreURL'])
         self.assertEqual('http://1.2.3.4/plans-api/', config['plansURL'])
+        self.assertEqual('/_stats', config['statsURL'])
         self.assertEqual('http://1.2.3.4/terms-api/', config['termsURL'])
         self.assertTrue(config['GTM_enabled'])
         self.assertEqual('blob', config['auth'])

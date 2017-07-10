@@ -88,6 +88,7 @@ def config(request):
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
+        'flags': settings['jujugui.flags'],
         'serverRouting': False,
         'container': '#main',
         'viewContainer': '#main',
@@ -102,6 +103,7 @@ def config(request):
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'plansURL': settings['jujugui.plans_url'],
         'paymentURL': settings['jujugui.payment_url'],
+        'statsURL': settings['jujugui.stats_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
         'dischargeToken': discharge_token,
@@ -129,9 +131,6 @@ def config(request):
         'staticURL': settings['jujugui.static_url'],
         'gisfLogout': gisfLogout,
         'stripeKey': settings['jujugui.stripe_key'],
-        'shareFlag': False,
-        'payFlag': False,
-        'plansFlag': False
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

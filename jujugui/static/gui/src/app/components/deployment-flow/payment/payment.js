@@ -18,46 +18,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentPayment = React.createClass({
-  displayName: 'DeploymentPayment',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    createCardElement: React.PropTypes.func,
-    createToken: React.PropTypes.func,
-    createUser: React.PropTypes.func,
-    getCountries: React.PropTypes.func,
-    getUser: React.PropTypes.func,
-    paymentUser: React.PropTypes.object,
-    setPaymentUser: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class DeploymentPayment extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       loading: false
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this._getUser();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Get the payment details for the user.
 
     @method _getUser
   */
-  _getUser: function() {
+  _getUser() {
     this.setState({loading: true}, () => {
       const xhr = this.props.getUser(this.props.username, (error, user) => {
         // If the user is not found we don't want to display the error, but
@@ -78,14 +63,14 @@ const DeploymentPayment = React.createClass({
       });
       this.xhrs.push(xhr);
     });
-  },
+  }
 
   /**
     Generate the details for the payment method.
 
     @method _generatePaymentMethods
   */
-  _generatePaymentMethods: function() {
+  _generatePaymentMethods() {
     const methods = this.props.paymentUser.paymentMethods.map((method, i) => {
       return (
         <li className="deployment-payment__method"
@@ -98,14 +83,14 @@ const DeploymentPayment = React.createClass({
       <ul className="deployment-payment__methods twelve-col">
         {methods}
       </ul>);
-  },
+  }
 
   /**
     Generate the details for the payment method.
 
     @method _generatePaymentForm
   */
-  _generatePaymentForm: function() {
+  _generatePaymentForm() {
     return (
       <juju.components.CreatePaymentUser
         acl={this.props.acl}
@@ -114,12 +99,12 @@ const DeploymentPayment = React.createClass({
         createToken={this.props.createToken}
         createUser={this.props.createUser}
         getCountries={this.props.getCountries}
-        onUserCreated={this._getUser}
+        onUserCreated={this._getUser.bind(this)}
         username={this.props.username}
         validateForm={this.props.validateForm} />);
-  },
+  }
 
-  render: function() {
+  render() {
     let content;
     if (this.state.loading) {
       content = (
@@ -135,8 +120,21 @@ const DeploymentPayment = React.createClass({
       </div>
     );
   }
+};
 
-});
+DeploymentPayment.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  createCardElement: React.PropTypes.func,
+  createToken: React.PropTypes.func,
+  createUser: React.PropTypes.func,
+  getCountries: React.PropTypes.func,
+  getUser: React.PropTypes.func,
+  paymentUser: React.PropTypes.object,
+  setPaymentUser: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-payment', function() {
   juju.components.DeploymentPayment = DeploymentPayment;

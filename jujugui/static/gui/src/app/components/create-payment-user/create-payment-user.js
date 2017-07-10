@@ -18,36 +18,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const CreatePaymentUser = React.createClass({
-  displayName: 'CreatePaymentUser',
-
-  propTypes: {
-    acl: React.PropTypes.object.isRequired,
-    addNotification: React.PropTypes.func.isRequired,
-    createCardElement: React.PropTypes.func.isRequired,
-    createToken: React.PropTypes.func.isRequired,
-    createUser: React.PropTypes.func.isRequired,
-    getCountries: React.PropTypes.func.isRequired,
-    onUserCreated: React.PropTypes.func.isRequired,
-    username: React.PropTypes.string.isRequired,
-    validateForm: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
+class CreatePaymentUser extends React.Component {
+  constructor() {
+    super();
     this.xhrs = [];
-    return {
+    this.state = {
       billingAddressSame: true,
       business: false,
       cardAddressSame: true,
       loading: false
     };
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
     });
-  },
+  }
 
   /**
     Validate the form.
@@ -55,7 +42,7 @@ const CreatePaymentUser = React.createClass({
     @method _validateForm
     @returns {Boolean} Whether the form is valid.
   */
-  _validateForm: function() {
+  _validateForm() {
     let fields = [
       'emailAddress',
       'userAddress',
@@ -74,14 +61,14 @@ const CreatePaymentUser = React.createClass({
       fields.push('cardAddress');
     }
     return this.props.validateForm(fields, this.refs);
-  },
+  }
 
   /**
     Handle creating the card and user.
 
     @method _handleAddUser
   */
-  _handleAddUser: function() {
+  _handleAddUser() {
     const valid = this._validateForm();
     if (!valid) {
       return;
@@ -113,7 +100,7 @@ const CreatePaymentUser = React.createClass({
       this._createUser(token.id);
     });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Create a payment user.
@@ -121,7 +108,7 @@ const CreatePaymentUser = React.createClass({
     @method _createUser
     @param token {String} A Stripe token.
   */
-  _createUser: function(token) {
+  _createUser(token) {
     const refs = this.refs;
     const business = this.state.business;
     const address = this.refs.userAddress.getValue();
@@ -157,7 +144,7 @@ const CreatePaymentUser = React.createClass({
       this.props.onUserCreated();
     });
     this.xhrs.push(xhr);
-  },
+  }
 
   /**
     Update the state when the billing checkbox changes.
@@ -165,9 +152,9 @@ const CreatePaymentUser = React.createClass({
     @method _handleBillingSameChange
     @param evt {Object} The change event from the checkbox.
   */
-  _handleBillingSameChange: function(evt) {
+  _handleBillingSameChange(evt) {
     this.setState({billingAddressSame: evt.currentTarget.checked});
-  },
+  }
 
   /**
     Update the state when the card checkbox changes.
@@ -175,16 +162,16 @@ const CreatePaymentUser = React.createClass({
     @method _handleCardSameChange
     @param evt {Object} The change event from the checkbox.
   */
-  _handleCardSameChange: function(evt) {
+  _handleCardSameChange(evt) {
     this.setState({cardAddressSame: evt.currentTarget.checked});
-  },
+  }
 
   /**
     Generate the fields for the card address.
 
     @method _generateCardAddressFields
   */
-  _generateCardAddressFields: function() {
+  _generateCardAddressFields() {
     if (this.state.cardAddressSame) {
       return null;
     }
@@ -200,14 +187,14 @@ const CreatePaymentUser = React.createClass({
           ref="cardAddress"
           validateForm={this.props.validateForm} />
       </div>);
-  },
+  }
 
   /**
     Generate the fields for the billing address.
 
     @method _generateBillingAddressFields
   */
-  _generateBillingAddressFields: function() {
+  _generateBillingAddressFields() {
     if (this.state.billingAddressSame) {
       return null;
     }
@@ -223,14 +210,14 @@ const CreatePaymentUser = React.createClass({
           ref="billingAddress"
           validateForm={this.props.validateForm} />
       </div>);
-  },
+  }
 
   /**
     Generate the VAT field if required.
 
     @method _generateVATField
   */
-  _generateVATField: function() {
+  _generateVATField() {
     if (!this.state.business) {
       return null;
     }
@@ -242,14 +229,14 @@ const CreatePaymentUser = React.createClass({
           ref="VATNumber"
           required={false} />
       </div>);
-  },
+  }
 
   /**
     Generate the business name field if required.
 
     @method _generateBusinessNameField
   */
-  _generateBusinessNameField: function() {
+  _generateBusinessNameField() {
     if (!this.state.business) {
       return null;
     }
@@ -263,7 +250,7 @@ const CreatePaymentUser = React.createClass({
           regex: /\S+/,
           error: 'This field is required.'
         }]} />);
-  },
+  }
 
   /**
     Update the state with the form type.
@@ -271,11 +258,11 @@ const CreatePaymentUser = React.createClass({
     @method _setFormType
     @param {Boolean} Whether the form is for a business.
   */
-  _setFormType: function(business) {
+  _setFormType(business) {
     this.setState({business: business});
-  },
+  }
 
-  render: function() {
+  render() {
     const disabled = this.props.acl.isReadOnly();
     const required = {
       regex: /\S+/,
@@ -336,7 +323,7 @@ const CreatePaymentUser = React.createClass({
               <input checked={this.state.cardAddressSame}
                 id="cardAddressSame"
                 name="cardAddressSame"
-                onChange={this._handleCardSameChange}
+                onChange={this._handleCardSameChange.bind(this)}
                 ref="cardAddressSame"
                 type="checkbox" />
               Credit or debit card address is the same as above
@@ -345,7 +332,7 @@ const CreatePaymentUser = React.createClass({
               <input checked={this.state.billingAddressSame}
                 id="billingAddressSame"
                 name="billingAddressSame"
-                onChange={this._handleBillingSameChange}
+                onChange={this._handleBillingSameChange.bind(this)}
                 ref="billingAddressSame"
                 type="checkbox" />
               Billing address is the same as above
@@ -355,7 +342,7 @@ const CreatePaymentUser = React.createClass({
           </div>
           <div className="create-payment-user__add">
             <juju.components.GenericButton
-              action={this._handleAddUser}
+              action={this._handleAddUser.bind(this)}
               disabled={disabled}
               type="inline-neutral"
               title="Add payment details" />
@@ -364,8 +351,19 @@ const CreatePaymentUser = React.createClass({
       </div>
     );
   }
+};
 
-});
+CreatePaymentUser.propTypes = {
+  acl: React.PropTypes.object.isRequired,
+  addNotification: React.PropTypes.func.isRequired,
+  createCardElement: React.PropTypes.func.isRequired,
+  createToken: React.PropTypes.func.isRequired,
+  createUser: React.PropTypes.func.isRequired,
+  getCountries: React.PropTypes.func.isRequired,
+  onUserCreated: React.PropTypes.func.isRequired,
+  username: React.PropTypes.string.isRequired,
+  validateForm: React.PropTypes.func.isRequired
+};
 
 YUI.add('create-payment-user', function() {
   juju.components.CreatePaymentUser = CreatePaymentUser;

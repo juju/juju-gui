@@ -18,26 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const DeploymentDirectDeploy = React.createClass({
-  displayName: 'DeploymentDirectDeploy',
-
-  propTypes: {
-    ddData: React.PropTypes.object.isRequired,
-    generatePath: React.PropTypes.func.isRequired,
-    getDiagramURL: React.PropTypes.func.isRequired,
-    getEntity: React.PropTypes.func.isRequired,
-    makeEntityModel: React.PropTypes.func.isRequired,
-    renderMarkdown: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+class DeploymentDirectDeploy extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       entityModel: false,
       isBundle: this.props.ddData.id.indexOf('bundle') !== -1
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.props.getEntity(this.props.ddData.id, (error, data) => {
       if (error) {
         console.error('cannot fetch the entity:' + error);
@@ -50,9 +40,9 @@ const DeploymentDirectDeploy = React.createClass({
         });
       }
     });
-  },
+  }
 
-  render: function() {
+  render() {
     let diagram = null;
     let titleAndDescription = null;
     const ddEntityId = this.props.ddData.id;
@@ -68,7 +58,8 @@ const DeploymentDirectDeploy = React.createClass({
       const entity = this.state.entityModel.toEntity();
       const description = <juju.components.EntityContentDescription
         entityModel={this.state.entityModel}
-        renderMarkdown={this.props.renderMarkdown} />;
+        renderMarkdown={this.props.renderMarkdown}
+      />;
       const title = (<h3
         className="deployment-direct-deploy__title">
         {entity.displayName}
@@ -118,8 +109,16 @@ const DeploymentDirectDeploy = React.createClass({
         {titleAndDescription}
       </juju.components.DeploymentSection>);
   }
+};
 
-});
+DeploymentDirectDeploy.propTypes = {
+  ddData: React.PropTypes.object.isRequired,
+  generatePath: React.PropTypes.func.isRequired,
+  getDiagramURL: React.PropTypes.func.isRequired,
+  getEntity: React.PropTypes.func.isRequired,
+  makeEntityModel: React.PropTypes.func.isRequired,
+  renderMarkdown: React.PropTypes.func.isRequired
+};
 
 YUI.add('deployment-direct-deploy', function() {
   juju.components.DeploymentDirectDeploy = DeploymentDirectDeploy;

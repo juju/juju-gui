@@ -18,13 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityContentRelations = React.createClass({
-  /* Define and validate the properites available on this component. */
-  propTypes: {
-    changeState: React.PropTypes.func.isRequired,
-    relations: React.PropTypes.object.isRequired
-  },
-
+class EntityContentRelations extends React.Component {
   /**
     Handle clicks on tags.
 
@@ -32,7 +26,7 @@ const EntityContentRelations = React.createClass({
     @param {String} type The requirement type.
     @param {String} name The requirement interface.
   */
-  _handleRelationClick: function(type, name) {
+  _handleRelationClick(type, name) {
     const search = {
       text: ''
     };
@@ -41,14 +35,14 @@ const EntityContentRelations = React.createClass({
       search: search,
       store: null
     });
-  },
+  }
   /**
     Generate the list of relations.
 
     @method _generateRelations
     @return {Object} The relation markup.
   */
-  _generateRelations: function() {
+  _generateRelations() {
     var components = [];
     var relations = this.props.relations;
     var requires = [];
@@ -78,9 +72,9 @@ const EntityContentRelations = React.createClass({
       );
     }, this);
     return components;
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="section entity-relations" id="relations">
         <h3 className="section__title">
@@ -92,7 +86,12 @@ const EntityContentRelations = React.createClass({
       </div>
     );
   }
-});
+};
+
+EntityContentRelations.propTypes = {
+  changeState: React.PropTypes.func.isRequired,
+  relations: React.PropTypes.object.isRequired
+};
 
 YUI.add('entity-content-relations', function() {
   juju.components.EntityContentRelations = EntityContentRelations;

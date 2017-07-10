@@ -18,23 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const EntityResources = React.createClass({
-
-  propTypes: {
-    apiUrl: React.PropTypes.string.isRequired,
-    entityId: React.PropTypes.string.isRequired,
-    pluralize: React.PropTypes.func.isRequired,
-    resources: React.PropTypes.array
-  },
-
-  getInitialState: function() {
-    const props = this.props;
-    const url = window.jujulib.URL.fromLegacyString(props.entityId);
+class EntityResources extends React.Component {
+  constructor(props) {
+    super(props);
+    const url = window.jujulib.URL.fromLegacyString(this.props.entityId);
     const entityPath = url.legacyPath();
-    return {
-      baseUrl: `${props.apiUrl}/${entityPath}/resource`
+    this.state = {
+      baseUrl: `${this.props.apiUrl}/${entityPath}/resource`
     };
-  },
+  }
 
   /**
     Generate a single resource to display.
@@ -42,7 +34,7 @@ const EntityResources = React.createClass({
     @param {Object} resource the resource being displayed.
     @returns {Object} The resource markup.
   */
-  _generateResource: function(resource) {
+  _generateResource(resource) {
     const revision = resource.Revision;
     const name = resource.Name;
     // Get the file extension.
@@ -68,14 +60,14 @@ const EntityResources = React.createClass({
       );
     }
     return itemContent;
-  },
+  }
 
   /**
     Generate a list of resources to display.
 
     @returns {Object} The resource list markup.
   */
-  _generateResources: function() {
+  _generateResources() {
     const props = this.props;
     const resources = props.resources;
     if (!resources || resources.length === 0) {
@@ -98,17 +90,23 @@ const EntityResources = React.createClass({
           {resourceList}
         </ul>
       </div>);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         {this._generateResources()}
       </div>
     );
   }
+};
 
-});
+EntityResources.propTypes = {
+  apiUrl: React.PropTypes.string.isRequired,
+  entityId: React.PropTypes.string.isRequired,
+  pluralize: React.PropTypes.func.isRequired,
+  resources: React.PropTypes.array
+};
 
 YUI.add('entity-resources', function() {
   juju.components.EntityResources = EntityResources;
