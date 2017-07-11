@@ -285,7 +285,7 @@ GenericInput.propTypes = {
 GenericInput.defaultProps = {
   autocomplete: true,
   required: false,
-  type: 'text',
+  type: 'text'
 };
 
 YUI.add('generic-input', function() {

@@ -97,7 +97,8 @@ describe('DeploymentSSHKey', function() {
               autocomplete
               key="githubUsername"
               label="GitHub username"
-              onKeyUp={comp.instance._onGithubUsernameInputKey.bind(comp.instance)}
+              onKeyUp={comp.instance._onGithubUsernameInputKey.
+                bind(comp.instance)}
               type="text"
               validate={undefined} />
           </div>
@@ -145,7 +146,8 @@ describe('DeploymentSSHKey', function() {
               ref="githubUsername"
               autocomplete
               label="GitHub username"
-              onKeyUp={comp.instance._onGithubUsernameInputKey.bind(comp.instance)}
+              onKeyUp={comp.instance._onGithubUsernameInputKey.
+                bind(comp.instance)}
               required
               type="text"
               validate={[
@@ -244,7 +246,8 @@ describe('DeploymentSSHKey', function() {
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
       expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).toEqual('ssh-rsa thekey');
+      expect(comp.instance.props.setSSHKey.args[0][0]).
+        toEqual('ssh-rsa thekey');
     });
   });
 
@@ -274,7 +277,8 @@ describe('DeploymentSSHKey', function() {
     it('stores the SSH key', function() {
       comp.instance._handleAddMoreKeys.call(comp.instance);
       expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).toEqual('ssh-rsa thekey');
+      expect(comp.instance.props.setSSHKey.args[0][0]).
+        toEqual('ssh-rsa thekey');
     });
 
     it ('shows a table if keys present', () => {

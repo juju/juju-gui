@@ -42,7 +42,46 @@ describe('AccordionSection', () => {
       true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    expect(renderer.getRenderOutput()).toEqualJSX(
+    expect(output).toEqualJSX(
+      <div className="accordion-section">
+        <div className="accordion-section__title"
+          onClick={instance._toggle.bind(instance)}>
+          My title!
+          <juju.components.SvgIcon className="right" name="chevron_down_16"
+            size="16" />
+        </div>
+        <div className="accordion-section__content"
+          style={{maxHeight: 0}}><span>Hello</span></div>
+      </div>);
+  });
+
+  it('toggles open and closed when the heading is clicked', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.AccordionSection
+        openHeight={100}
+        startOpen={false}
+        title="My title!">
+        <span>Hello</span>
+      </juju.components.AccordionSection>,
+      true);
+    const instance = renderer.getMountedInstance();
+    instance._toggle();
+    let output = renderer.getRenderOutput();
+    expect(output).toEqualJSX(
+      <div className="accordion-section">
+        <div className="accordion-section__title"
+          onClick={instance._toggle.bind(instance)}>
+          My title!
+          <juju.components.SvgIcon className="right" name="chevron_up_16"
+            size="16" />
+        </div>
+        <div className="accordion-section__content"
+          style={{maxHeight: 100}}><span>Hello</span></div>
+      </div>);
+
+    instance._toggle();
+    output = renderer.getRenderOutput();
+    expect(output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
           onClick={instance._toggle.bind(instance)}>

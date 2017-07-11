@@ -746,6 +746,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
+        githubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
         isLoggedIn={isLoggedIn}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
