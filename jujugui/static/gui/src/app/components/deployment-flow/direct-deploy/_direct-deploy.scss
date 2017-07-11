@@ -3,12 +3,28 @@
     background-color: $white;
 
     &__image {
-      margin-bottom: 0;
+      margin-bottom: 20px;
+      background-color: $light-grey;
+      border: 1px solid $color-mid-light;
+      text-align: center;
+
+      &-block {
+        $size: 96px + 80px;
+        display: inline-block;
+        width: $size;
+        height: $size;
+        margin: 40px;
+        padding: 40px;
+        border: 1px solid $warm-grey;
+        border-radius: $size / 2;
+
+        &-icon {
+          border-radius: 48px;
+        }
+      }
 
       .entity-content__diagram {
-        margin-bottom: 20px;
-        background-color: $light-grey;
-        border: 1px solid $color-mid-light;
+        border-bottom: none;
 
         &-image {
           width: 100%;
