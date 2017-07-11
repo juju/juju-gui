@@ -151,6 +151,7 @@
         background-size: 200px;
 
         .box__image {
+          margin: calc(-195px/5*3) 0 0 calc(-195px/2);
           max-width: 195px
         }
       }

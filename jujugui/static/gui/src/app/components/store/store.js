@@ -263,11 +263,14 @@ class Store extends React.Component {
           View
       </span>);
     }
-
-    return (<div className="row equal-height">
+    
+    const kubernetes = (
       <div onClick={this._handleSearchClick.bind(this)}
         data-query="kubernetes"
-        className="box box--kubernetes align-center four-col">
+        className={
+          `box box--kubernetes align-center ${
+            this.props.gisf ? 'six-col' : 'four-col'
+          }`}>
         <img src={this._generateLocalImagePath('k8-image.png')}
           alt="Kubernetes" className="box__image" />
         <div className="align-bottom">
@@ -275,6 +278,8 @@ class Store extends React.Component {
           {kubernetesButton}
         </div>
       </div>
+    );
+    const openstack = this.props.gisf ? null : (
       <div onClick={this._handleSearchClick.bind(this)}
         data-query="openstack"
         className="box box--openstack align-center four-col">
@@ -285,9 +290,14 @@ class Store extends React.Component {
           {openstackButton}
         </div>
       </div>
+    );
+    const bigdata = (
       <div onClick={this._handleSearchClick.bind(this)}
         data-query="hadoop"
-        className="box box--hadoop align-center four-col last-col">
+        className={
+          `box box--kubernetes align-center ${
+            this.props.gisf ? 'six-col' : 'four-col'
+          } last-col`}>
         <div className="box--hadoop-container">
           <img src={this._generateLocalImagePath('hadoop-elephant.png')}
             alt="Hadoop" className="box__image" />
@@ -297,6 +307,12 @@ class Store extends React.Component {
           </div>
         </div>
       </div>
+    );
+
+    return (<div className="row equal-height">
+      {kubernetes}
+      {openstack}
+      {bigdata}
     </div>);
   }
 
