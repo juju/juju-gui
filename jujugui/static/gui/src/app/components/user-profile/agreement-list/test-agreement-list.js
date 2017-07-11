@@ -38,6 +38,7 @@ describe('UserProfileAgreementList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
+        addNotification={sinon.stub()}
         getAgreements={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -47,14 +48,15 @@ describe('UserProfileAgreementList', () => {
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
+        addNotification={sinon.stub()}
         getAgreements={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
-    assert.deepEqual(output, (
+    const expected = (
       <div className="user-profile__agreement-list twelve-col">
         <juju.components.Spinner />
-      </div>
-    ));
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of agreements', () => {
@@ -67,6 +69,7 @@ describe('UserProfileAgreementList', () => {
     var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
+        addNotification={sinon.stub()}
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -101,7 +104,7 @@ describe('UserProfileAgreementList', () => {
         </ul>
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('will abort the requests when unmounting', function() {
@@ -109,55 +112,37 @@ describe('UserProfileAgreementList', () => {
     var getAgreements = sinon.stub().returns({abort: getAgreementsAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
+        addNotification={sinon.stub()}
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     renderer.unmount();
     assert.equal(getAgreementsAbort.callCount, 1);
   });
 
-  it('broadcasts starting status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
+  it('displays the empty state', function() {
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={broadcastStatus}
-        getAgreements={sinon.stub()}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[0][0], 'starting');
-  });
-
-  it('broadcasts ok status', function() {
-    var agreements = [{
-      user: 'spinach',
-      term: 'One fancy term',
-      revision: 47,
-      createdAt: new Date(1465510044000)
-    }];
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileAgreementList
-        broadcastStatus={broadcastStatus}
-        getAgreements={sinon.stub().callsArgWith(0, null, agreements)}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'ok');
-  });
-
-  it('broadcasts empty status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileAgreementList
-        broadcastStatus={broadcastStatus}
+        addNotification={sinon.stub()}
         getAgreements={sinon.stub().callsArgWith(0, null, [])}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'empty');
+        user={users.charmstore} />, true);
+    const output = renderer.getRenderOutput();
+    assert.strictEqual(output, null);
   });
 
-  it('broadcasts error status', function() {
-    var broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
+  it('handles errors when getting agreements', function() {
+    const addNotification = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={broadcastStatus}
+        addNotification={addNotification}
         getAgreements={sinon.stub().callsArgWith(0, 'error', null)}
-        user={users.charmstore} />);
-    assert.equal(broadcastStatus.args[1][0], 'error');
+        user={users.charmstore} />, true);
+    const output = renderer.getRenderOutput();
+    assert.strictEqual(output, null);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot retrieve terms',
+      message: 'Cannot retrieve terms: error',
+      level: 'error'
+    });
   });
 });

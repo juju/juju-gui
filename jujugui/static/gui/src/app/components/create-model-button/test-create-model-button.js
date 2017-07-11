@@ -38,8 +38,9 @@ describe('CreateModelButton', () => {
         <juju.components.GenericButton
           action={output.props.children.props.action}
           disabled={false}
-          type="inline-neutral"
-          title="Create new" />
+          type="inline-neutral">
+          Create new
+        </juju.components.GenericButton>
       </div>
     );
     assert.deepEqual(output, expected);
@@ -60,8 +61,9 @@ describe('CreateModelButton', () => {
         <juju.components.GenericButton
           action={output.props.children.props.action}
           disabled={false}
-          type="positive"
-          title="test" />
+          type="positive">
+          test
+        </juju.components.GenericButton>
       </div>
     );
     jsTestUtils.specificDeepEqual(output, expected);
@@ -82,8 +84,9 @@ describe('CreateModelButton', () => {
         <juju.components.GenericButton
           action={output.props.children.props.action}
           disabled={true}
-          type="positive"
-          title="test" />
+          type="positive">
+          test
+        </juju.components.GenericButton>
       </div>
     );
     assert.deepEqual(output, expected);
@@ -132,7 +135,7 @@ describe('CreateModelButton', () => {
     // Call the action passed to the GenericButton
     output.props.children.props.action();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0], [{profile: null}]);
+    assert.deepEqual(changeState.args[0], [{profile: null, hash: null}]);
     assert.equal(switchModel.callCount, 1);
     assert.deepEqual(switchModel.args[0], [null]);
   });

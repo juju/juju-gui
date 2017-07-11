@@ -23,6 +23,7 @@ var module = module;
     'xenial',
     'yakkety',
     'zesty',
+    'artful',
     // Windows.
     'win2012hvr2',
     'win2012hv',

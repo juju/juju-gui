@@ -87,13 +87,15 @@ class AccountPaymentDetailsAddress extends React.Component {
             <juju.components.GenericButton
               action={this.props.close}
               disabled={disabled}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
             <juju.components.GenericButton
               action={this._updateAddress.bind(this)}
               disabled={disabled}
-              type="inline-positive"
-              title="Update" />
+              type="inline-positive">
+              Update
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.ExpandingRow>

@@ -162,8 +162,9 @@ class EntityHeader extends React.Component {
           ref="deployAction"
           action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
-          type="positive"
-          title={title} />
+          type="positive">
+          {title}
+        </juju.components.GenericButton>
       );
     } else {
       deployAction = (
@@ -256,7 +257,7 @@ class EntityHeader extends React.Component {
         target="_blank">
           <juju.components.SvgIcon
             name="help_16"
-            size="16"/>
+            size="16" />
         </a>
       </li>
     );

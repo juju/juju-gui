@@ -54,7 +54,7 @@ describe('CopyToClipboard', function() {
         <button className={className + '__btn'}
           ref="btn">
           <juju.components.SvgIcon
-            name="get-link-url_16"
+            name="copy-to-clipboard-16"
             size="16"/>
         </button>
       </div>

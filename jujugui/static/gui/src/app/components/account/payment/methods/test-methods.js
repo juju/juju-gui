@@ -119,8 +119,9 @@ describe('AccountPaymentMethods', () => {
           You do not have a payment method.
           <juju.components.GenericButton
             action={instance._toggleAdd}
-            type="inline-neutral"
-            title="Add payment method" />
+            type="inline-neutral">
+            Add payment method
+          </juju.components.GenericButton>
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -209,12 +210,14 @@ describe('AccountPaymentMethods', () => {
           <div className="twelve-col account__payment-form-buttons">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
             <juju.components.GenericButton
               action={instance._createToken}
-              type="inline-positive"
-              title="Add" />
+              type="inline-positive">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.ExpandingRow>);
@@ -286,12 +289,14 @@ describe('AccountPaymentMethods', () => {
           <div className="twelve-col account__payment-form-buttons">
             <juju.components.GenericButton
               action={instance._toggleAdd}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
             <juju.components.GenericButton
               action={instance._createToken}
-              type="inline-positive"
-              title="Add" />
+              type="inline-positive">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.ExpandingRow>);

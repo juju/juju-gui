@@ -37,10 +37,18 @@ if (typeof this.jujugui.sshKeys === 'undefined') {
 const githubSSHKeys = (handler, username, callback) => {
   // On load, call the callback with munged data.
   const wrap = (response) => {
-    let data = JSON.parse(response.currentTarget.response);
+    let data = null;
+    try {
+      data = JSON.parse(response.currentTarget.response);
+    } catch(e) {
+      callback(`cannot retrieve SSH keys from gihub: invalid response: ${e}`,
+        null);
+      return;
+    }
 
     // If there's an error, set it to the message from GitHub
-    const error = response.currentTarget.status !== 200 ? data.message : null;
+    const error = response.currentTarget.status !== 200 ? 
+      `cannot retrieve SSH keys from gihub: ${data.message}` : null;
 
     // If there's no error, pull the key into its respective parts for use by
     // the callback.

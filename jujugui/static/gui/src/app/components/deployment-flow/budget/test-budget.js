@@ -87,8 +87,9 @@ describe('DeploymentBudget', function() {
               <juju.components.GenericButton
                 action={instance._toggleIncrease}
                 disabled={false}
-                type="base"
-                title="Increase budget" />
+                type="base">
+                Increase budget
+              </juju.components.GenericButton>
             </span>
           </div>
           <juju.components.BudgetChart
@@ -130,15 +131,17 @@ describe('DeploymentBudget', function() {
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={false}
-                  type="base"
-                  title="Cancel" />
+                  type="base">
+                  Cancel
+                </juju.components.GenericButton>
               </div>
               <div className="two-col last-col">
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={false}
-                  type="neutral"
-                  title="Confirm" />
+                  type="neutral">
+                  Confirm
+                </juju.components.GenericButton>
               </div>
             </div>
           </div>
@@ -181,8 +184,9 @@ describe('DeploymentBudget', function() {
               <juju.components.GenericButton
                 action={instance._toggleIncrease}
                 disabled={true}
-                type="base"
-                title="Increase budget" />
+                type="base">
+                Increase budget
+              </juju.components.GenericButton>
             </span>
           </div>
           <juju.components.BudgetChart
@@ -224,15 +228,17 @@ describe('DeploymentBudget', function() {
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={true}
-                  type="base"
-                  title="Cancel" />
+                  type="base">
+                  Cancel
+                </juju.components.GenericButton>
               </div>
               <div className="two-col last-col">
                 <juju.components.GenericButton
                   action={instance._toggleIncrease}
                   disabled={true}
-                  type="neutral"
-                  title="Confirm" />
+                  type="neutral">
+                  Confirm
+                </juju.components.GenericButton>
               </div>
             </div>
           </div>

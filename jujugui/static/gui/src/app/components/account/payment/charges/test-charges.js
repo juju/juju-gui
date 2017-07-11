@@ -128,8 +128,9 @@ describe('AccountPaymentCharges', function() {
                         .props.children[1][0].props.children[0]
                         .props.children[5].props.children.props.action}
                     disabled={false}
-                    type="inline-neutral"
-                    title="Show receipt" />
+                    type="inline-neutral">
+                    Show receipt
+                  </juju.components.GenericButton>
                 </div>
               </div>
               <div className="twelve-col">
@@ -275,8 +276,9 @@ describe('AccountPaymentCharges', function() {
                         .props.children[1][0].props.children[0]
                         .props.children[5].props.children.props.action}
                     disabled={false}
-                    type="inline-neutral"
-                    title="Show receipt" />
+                    type="inline-neutral">
+                    Show receipt
+                  </juju.components.GenericButton>
                 </div>
               </div>
               <div className="twelve-col">

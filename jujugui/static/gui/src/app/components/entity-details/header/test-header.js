@@ -137,8 +137,9 @@ describe('EntityHeader', function() {
                 ref="deployAction"
                 action={instance._handleDeployClick}
                 disabled={false}
-                type="positive"
-                title="Add to model" />
+                type="positive">
+                Add to model
+              </juju.components.GenericButton>
             </div>
           </div>
         </header>
@@ -347,7 +348,7 @@ describe('EntityHeader', function() {
       />);
     const deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
-    assert.equal(deployAction.props.title, 'Add to model');
+    assert.equal(deployAction.props.children, 'Add to model');
   });
 
   it('displays the model name in the add to model button if provided', () => {
@@ -368,7 +369,7 @@ describe('EntityHeader', function() {
       />);
     const deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
-    assert.equal(deployAction.props.title, 'Add to porkchop');
+    assert.equal(deployAction.props.children, 'Add to porkchop');
   });
 
   it('displays an unsupported message for multi-series charms', function() {
@@ -676,8 +677,9 @@ describe('EntityHeader', function() {
         ref="deployAction"
         action={instance._handleDeployClick}
         disabled={true}
-        type="positive"
-        title="Add to model" />);
+        type="positive">
+        Add to model
+      </juju.components.GenericButton>);
     expect(
       output.props.children.props.children.props.children[1].props.children[2]
     ).toEqualJSX(expectedOutput);

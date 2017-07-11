@@ -442,7 +442,8 @@ YUI.add('juju-gui', function(Y) {
       this.stats = null;
       const statsURL = window.juju_config.statsURL;
       if (statsURL) {
-        this.stats = new window.jujugui.StatsClient(statsURL, 'gui');
+        this.stats = new window.jujugui.StatsClient(
+          statsURL, 'gui', window.juju_config.flags);
       }
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
@@ -558,6 +559,17 @@ YUI.add('juju-gui', function(Y) {
         document.addEventListener(
           eventName, this._boundAppDragOverHandler);
       });
+      // As a minor performance boost and to avoid potential rerenderings
+      // because of rebinding functions in the render methods. Any method that
+      // requires binding and is passed into components should be bound here
+      // and then used across components.
+      this._bound = {
+        addNotification: this.db.notifications.add.bind(this.db.notifications),
+        changeState: this.state.changeState.bind(this.state),
+        destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
+        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
+        switchModel: views.utils.switchModel.bind(this, this.env)
+      };
       // In Juju >= 2 we connect to the controller and then to the model.
       this.state.bootstrap();
     },
@@ -623,7 +635,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.controllerLoginHandler = evt => {
         const state = this.state;
-        const current = this.state.current;
         this.anonymousMode = false;
         if (evt.detail && evt.detail.err) {
           this._renderLogin(evt.detail.err);
@@ -641,11 +652,11 @@ YUI.add('juju-gui', function(Y) {
         }
 
         // If state has a `next` property then that overrides all defaults.
-        const specialState = current.special;
+        const specialState = state.current.special;
         const next = specialState && specialState.next;
         const dd = specialState && specialState.dd;
-
         if (state.current.root === 'login') {
+          state.changeState({root: null});
           if (dd) {
             console.log('initiating direct deploy');
             this.maskVisibility(false);
@@ -657,12 +668,6 @@ YUI.add('juju-gui', function(Y) {
             console.log('redirecting to "next" state', next);
             const {error, state: newState} = state.generateState(next, false);
             if (error === null) {
-              // The root at this point will be 'login' and because the `next`
-              // url may not explicitly define a new root path we have to set it
-              // to null to clear 'login' from the url.
-              if (!newState.root) {
-                newState.root = null;
-              }
               newState.special = null;
               this.maskVisibility(false);
               state.changeState(newState);
@@ -678,6 +683,9 @@ YUI.add('juju-gui', function(Y) {
         if (this.env.get('modelUUID')) {
           return;
         }
+        // As we are not changing the state anymore, we can cache the current
+        // state at this point.
+        const current = state.current;
         const modelUUID = this._getModelUUID();
         if (modelUUID && !current.profile && current.root !== 'store') {
           // A model uuid was defined in the config so attempt to connect to it.
@@ -758,9 +766,7 @@ YUI.add('juju-gui', function(Y) {
         }
         // The traditional user/password authentication does not make sense if
         // the GUI is embedded in the storefront.
-        if (!gisf) {
-          this.loginToAPIs(null, false, [this.controllerAPI]);
-        }
+        this.loginToAPIs(null, gisf, [this.controllerAPI]);
       });
       controllerAPI.set('socket_url',
         this.createSocketURL(this.get('controllerSocketTemplate')));
@@ -819,9 +825,6 @@ YUI.add('juju-gui', function(Y) {
       @param {String} err The login error message, if any.
     */
     _apiLoginHandler: function(api, err) {
-      if (this.state.current.root === 'login') {
-        this.state.changeState({root: null});
-      }
       if (!err) {
         return;
       }
@@ -875,12 +878,9 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderLogin: function(err) {
       document.getElementById('loading-message').style.display = 'none';
-      // XXX j.c.sackett 2017-01-30 Right now USSO link is using
-      // loginToController, while loginToAPIs is used by the login form.
-      // We want to use loginToAPIs everywhere since it handles more.
-      const loginToController =
-        this.controllerAPI.loginWithMacaroon.bind(
-          this.controllerAPI, this.bakery);
+      const loginToController = () => {
+        this.loginToAPIs(null, true, [this.controllerAPI]);
+      };
       const controllerIsConnected = () => {
         return this.controllerAPI && this.controllerAPI.get('connected');
       };
@@ -1008,33 +1008,47 @@ YUI.add('juju-gui', function(Y) {
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
-      ReactDOM.render(
-        <window.juju.components.UserProfile
-          acl={this.acl}
-          addNotification=
-            {this.db.notifications.add.bind(this.db.notifications)}
-          charmstore={charmstore}
-          currentModel={currentModel}
-          d3={d3}
-          facadesExist={facadesExist}
-          listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModelsWithInfo={
-            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
-          getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
-          changeState={this.state.changeState.bind(this.state)}
-          destroyModels={
-            this.controllerAPI.destroyModels.bind(this.controllerAPI)}
-          getAgreements={this.terms.getAgreements.bind(this.terms)}
-          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          interactiveLogin={this.get('interactiveLogin')}
-          pluralize={utils.pluralize.bind(this)}
-          setPageTitle={this.setPageTitle}
-          staticURL={window.juju_config.staticURL}
-          storeUser={this.storeUser.bind(this)}
-          switchModel={utils.switchModel.bind(this, this.env)}
-          userInfo={this._getUserInfo(state)}
-        />,
-        document.getElementById('top-page-container'));
+      let profile = <window.juju.components.UserProfile
+        acl={this.acl}
+        addNotification=
+          {this.db.notifications.add.bind(this.db.notifications)}
+        charmstore={charmstore}
+        currentModel={currentModel}
+        d3={d3}
+        facadesExist={facadesExist}
+        listBudgets={this.plans.listBudgets.bind(this.plans)}
+        listModelsWithInfo={
+          this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
+        getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
+        changeState={this.state.changeState.bind(this.state)}
+        destroyModels={
+          this.controllerAPI.destroyModels.bind(this.controllerAPI)}
+        getAgreements={this.terms.getAgreements.bind(this.terms)}
+        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+        interactiveLogin={this.get('interactiveLogin')}
+        pluralize={utils.pluralize.bind(this)}
+        setPageTitle={this.setPageTitle}
+        staticURL={window.juju_config.staticURL}
+        storeUser={this.storeUser.bind(this)}
+        switchModel={utils.switchModel.bind(this, this.env)}
+        userInfo={this._getUserInfo(state)}
+      />;
+
+      if (window.juju_config.flags.profile) {
+        profile =
+          <window.juju.components.Profile
+            acl={this.acl}
+            activeSection={state.hash}
+            addNotification={this._bound.addNotification}
+            changeState={this._bound.changeState}
+            facadesExist={facadesExist}
+            listModelsWithInfo={this._bound.listModelsWithInfo}
+            destroyModels={this._bound.destroyModels}
+            switchModel={this._bound.switchModel}
+            userInfo={this._getUserInfo(state)} />;
+      }
+
+      ReactDOM.render(profile, document.getElementById('top-page-container'));
     },
 
     /**
@@ -1982,7 +1996,7 @@ YUI.add('juju-gui', function(Y) {
         this.get('charmstore').getEntity(
           legacyPath, (err, entityData) => {
             if (err) {
-              console.error(err);
+              console.log('model/charm store disambiguation:', err);
               reject(userState);
               return;
             }
@@ -2615,9 +2629,7 @@ YUI.add('juju-gui', function(Y) {
       this.set('loggedIn', false);
       const root = this.state.current.root;
       if (root !== 'login') {
-        this.state.changeState({
-          root: 'login'
-        });
+        this.state.changeState({root: 'login'});
       }
     },
 
@@ -2784,6 +2796,10 @@ YUI.add('juju-gui', function(Y) {
         this.env.loading = false;
         if (callback) {
           callback(this.env);
+        }
+        const current = this.state.current;
+        if (current.root === 'login') {
+          this.state.changeState({root: null});
         }
       };
       // Delay the callback until after the env login as everything should be
@@ -3182,6 +3198,7 @@ YUI.add('juju-gui', function(Y) {
     'sharing',
     'svg-icon',
     'user-menu',
+    'profile',
     'user-profile',
     'zoom',
     // juju-views group

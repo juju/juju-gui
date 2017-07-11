@@ -157,8 +157,9 @@ class DeploymentBudget extends React.Component {
               <juju.components.GenericButton
                 action={this._toggleIncrease.bind(this)}
                 disabled={disabled}
-                type="base"
-                title="Increase budget" />
+                type="base">
+                Increase budget
+              </juju.components.GenericButton>
             </span>
           </div>
           <juju.components.BudgetChart
@@ -200,15 +201,17 @@ class DeploymentBudget extends React.Component {
                 <juju.components.GenericButton
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
-                  type="base"
-                  title="Cancel" />
+                  type="base">
+                  Cancel
+                </juju.components.GenericButton>
               </div>
               <div className="two-col last-col">
                 <juju.components.GenericButton
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
-                  type="neutral"
-                  title="Confirm" />
+                  type="neutral">
+                  Confirm
+                </juju.components.GenericButton>
               </div>
             </div>
           </div>

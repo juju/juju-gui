@@ -67,8 +67,9 @@ describe('DeploymentBar', function() {
             <juju.components.GenericButton
               action={instance._deployAction}
               type="inline-deployment"
-              disabled={false}
-              title="Deploy changes (2)" />
+              disabled={false}>
+              Deploy changes (2)
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.Panel>);
@@ -124,7 +125,7 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children.props.children[1].props.children.props.title,
+      output.props.children.props.children[1].props.children.props.children,
       'Commit changes (0)');
   });
 

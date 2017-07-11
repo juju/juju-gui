@@ -47,8 +47,9 @@ class AccountPaymentMethods extends React.Component {
           You do not have a payment method.
           <juju.components.GenericButton
             action={this._toggleAdd.bind(this)}
-            type="inline-neutral"
-            title="Add payment method" />
+            type="inline-neutral">
+            Add payment method
+          </juju.components.GenericButton>
         </div>);
     }
     const methods = user.paymentMethods.map(method => {
@@ -217,12 +218,14 @@ class AccountPaymentMethods extends React.Component {
           <div className="twelve-col account__payment-form-buttons">
             <juju.components.GenericButton
               action={this._toggleAdd.bind(this)}
-              type="inline-neutral"
-              title="Cancel" />
+              type="inline-neutral">
+              Cancel
+            </juju.components.GenericButton>
             <juju.components.GenericButton
               action={this._createToken.bind(this)}
-              type="inline-positive"
-              title="Add" />
+              type="inline-positive">
+              Add
+            </juju.components.GenericButton>
           </div>
         </div>
       </juju.components.ExpandingRow>);

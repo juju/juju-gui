@@ -303,9 +303,9 @@ class UserProfileEntity extends React.Component {
     return (
       <juju.components.GenericButton
         action={props.displayConfirmation}
-        type="inline-neutral"
-        title="Destroy model"
-      />
+        type="inline-neutral">
+        Destroy model
+      </juju.components.GenericButton>
     );
   }
 
@@ -402,9 +402,9 @@ class UserProfileEntity extends React.Component {
       return (
         <div>
           <juju.components.GenericButton
-            title={this.state.kpiMetrics ?
-              'Hide KPI Metrics' : 'Show KPI Metrics'}
-            action={this._toggleKpiVisibility.bind(this)} />
+            action={this._toggleKpiVisibility.bind(this)}>
+            {this.state.kpiMetrics ? 'Hide KPI Metrics' : 'Show KPI Metrics'}
+          </juju.components.GenericButton>
           {this.state.kpiVisible ? this._showMetrics() : undefined}
         </div>
       );
@@ -481,8 +481,9 @@ class UserProfileEntity extends React.Component {
               {destroyButton}
               <juju.components.GenericButton
                 action={buttonAction}
-                type="inline-neutral"
-                title={isModel ? 'Manage' : 'View'} />
+                type="inline-neutral">
+                {isModel ? 'Manage' : 'View'}
+              </juju.components.GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +

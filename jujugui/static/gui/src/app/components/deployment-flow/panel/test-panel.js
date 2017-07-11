@@ -48,8 +48,9 @@ describe('DeploymentPanel', function() {
             <div className="deployment-panel__close">
               <juju.components.GenericButton
                 action={instance._handleClose}
-                type="neutral"
-                title="Back to canvas" />
+                type="neutral">
+                Back to canvas
+              </juju.components.GenericButton>
             </div>
             <div className="deployment-panel__header-name">
               Lamington

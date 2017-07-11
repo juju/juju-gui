@@ -510,8 +510,9 @@ class SearchResults extends React.Component {
         <juju.components.GenericButton
           action={this._toggleCommunityResults.bind(this)}
           type="inline-neutral"
-          extraClasses="show-community-button"
-          title={buttonTitle} />
+          extraClasses="show-community-button">
+          {buttonTitle}
+        </juju.components.GenericButton>
       </div>) : null;
     return (<div className="clearfix community-results">
       {button}
