@@ -17,9 +17,26 @@ const StatsClient = class StatsClient {
     @param {String} url The URL of the statsd endpoint where to send metrics.
     @param {String} prefix The stats prefix for all calls.
   */
-  constructor(url, prefix='') {
+  constructor(url, prefix='', flags={}) {
     this.url = url.replace(/\/?$/, '/');
+    this.flags = flags;
     this._prefix = prefix;
+  }
+
+  /**
+   Adds the active ab test flags to the stat name.
+
+   @param {String} name The stats name.
+   @returns {String} name The name with active test flags added as statsd tags.
+   */
+  _addFlags(name) {
+    let flags = Object.keys(this.flags);
+    flags = flags.filter(key => key.indexOf('test') === 0)
+      .map(val => `${val}=true`).join(',');
+    if (flags !== '') {
+      return `${name},${flags}`;
+    }
+    return name;
   }
 
   /**
@@ -31,24 +48,6 @@ const StatsClient = class StatsClient {
   increase(name, count=1) {
     name = this._addFlags(name);
     this._send(`${name}:${count}|c`);
-  }
-
-  /**
-   Adds the active ab test flags to the stat name.
-
-   @param {Array} flags The flags to check for test tags. Used for testing.
-   @param {String} name The stats name.
-  */
-  _addFlags(name, flags=[]) {
-    if (flags.length === 0 && window.juju_config && window.juju_config.flags) {
-      flags = Object.keys(window.juju_config.flags);
-    }
-    flags = flags.filter(key => key.indexOf('test') === 0);
-    flags = flags.map(val => `${val}=true`).join(',');
-    if (flags !== '') {
-      return `${name},${flags}`;
-    }
-    return name;
   }
 
   /**

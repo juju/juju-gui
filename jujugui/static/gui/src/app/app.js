@@ -442,7 +442,8 @@ YUI.add('juju-gui', function(Y) {
       this.stats = null;
       const statsURL = window.juju_config.statsURL;
       if (statsURL) {
-        this.stats = new window.jujugui.StatsClient(statsURL, 'gui');
+        this.stats = new window.jujugui.StatsClient(
+          statsURL, 'gui', window.juju_config.flags);
       }
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
