@@ -339,9 +339,10 @@ describe('SearchResults', function() {
                     <juju.components.GenericButton
                       action={sinon.stub()}
                       extraClasses="show-community-button"
-                      title={(showCommunity ? 'Hide' : `Show ${2}`) +
+                      type="inline-neutral">
+                      {(showCommunity ? 'Hide' : `Show ${2}`) +
                         ' community results'}
-                      type="inline-neutral" />
+                    </juju.components.GenericButton>
                   </div>
                   <div
                     className={'clearfix' + (showCommunity ? '' : ' hidden')}>

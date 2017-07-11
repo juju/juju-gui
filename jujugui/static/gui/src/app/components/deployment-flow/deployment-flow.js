@@ -307,11 +307,7 @@ class DeploymentFlow extends React.Component {
       'Deploy model'
     );
     if (this.props.stats) {
-      const flags = window.juju_config.flags;
-      // The ddeploy flag is set by the store front. Here we measure its
-      // effectiveness in a AB test exercise.
-      const statName = 'deploy' + (flags.ddeploy ? '.direct' : '.target');
-      this.props.stats.increase(statName);
+      this.props.stats.increase('deploy');
     }
 
     const args = {
@@ -490,9 +486,9 @@ class DeploymentFlow extends React.Component {
         <juju.components.GenericButton
           action={this._toggleChangelogs.bind(this)}
           type="inline-neutral"
-          extraClasses="right"
-          title={this.state.showChangelogs ?
-            'Hide changelog' : 'Show changelog'} />
+          extraClasses="right">
+          {this.state.showChangelogs ? 'Hide changelog' : 'Show changelog'}
+        </juju.components.GenericButton>
       </span>);
   }
 
@@ -969,6 +965,7 @@ class DeploymentFlow extends React.Component {
     if (props.ddData && props.ddData.id) {
       return (
         <juju.components.DeploymentDirectDeploy
+          changeState={props.changeState}
           ddData={props.ddData}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
@@ -1056,8 +1053,9 @@ class DeploymentFlow extends React.Component {
                 <juju.components.GenericButton
                   action={this._handleDeploy.bind(this)}
                   disabled={!this._deploymentAllowed()}
-                  type="positive"
-                  title={deployTitle} />
+                  type="positive">
+                  {deployTitle}
+                </juju.components.GenericButton>
               </div>
             </div>
           </div>

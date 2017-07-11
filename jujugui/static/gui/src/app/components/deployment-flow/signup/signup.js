@@ -99,8 +99,9 @@ class DeploymentSignup extends React.Component {
                 Continue to the&nbsp;
                 <juju.components.GenericButton
                   action={this._displayFlow.bind(this)}
-                  type="inline-neutral"
-                  title="Deployment demo of Juju" />
+                  type="inline-neutral">
+                  Deployment demo of Juju
+                </juju.components.GenericButton>
               </p>
             </div>
             <div className="prepend-one four-col last-col">

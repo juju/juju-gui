@@ -7,11 +7,11 @@
   working on the new system.
 
   index.html.mako
-    - Uncomment the init-pkg.js script tags lines 310, 318.
-    - Uncomment the initialization code lines 360, 361.
-    - Comment the old init code lines 359, 364.
+    - Uncomment the init-pkg.js script tags lines 300, 308.
+    - Uncomment the initialization code lines 353, 354.
+    - Comment the old init code lines 352, 357.
   Makefile
-    - Uncomment the hack to generate the init-pkg file Line 212.
+    - Uncomment the hack to generate the init-pkg file Line 221.
 
   Code to still move over from app.js
     - Y.juju.Cookies Line 50.
@@ -310,6 +310,21 @@ class GUIApp {
       document.addEventListener(
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
+
+    /**
+      As a minor performance boost and to avoid potential rerenderings
+      because of rebinding functions in the render methods. Any method that
+      requires binding and is passed into components should be bound here
+      and then used across components.
+      @type {Object}
+    */
+    this._bound = {
+      addNotification: this.db.notifications.add.bind(this.db.notifications),
+      changeState: this.state.changeState.bind(this.state),
+      destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
+      listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
+      switchModel: yui.juju.views.utils.switchModel.bind(this, this.env)
+    };
 
     /**
       Reference to the rendered topology.
@@ -705,7 +720,7 @@ class GUIApp {
       this.charmstore.getEntity(
         legacyPath, (err, entityData) => {
           if (err) {
-            console.error(err);
+            console.log('model/charm store disambiguation:', err);
             reject(userState);
             return;
           }
@@ -758,7 +773,6 @@ class GUIApp {
 
   _controllerLoginHandler(entityPromise, evt) {
     const state = this.state;
-    const current = this.state.current;
     this.anonymousMode = false;
     if (evt.detail && evt.detail.err) {
       this._renderLogin(evt.detail.err);
@@ -776,11 +790,12 @@ class GUIApp {
     }
 
     // If state has a `next` property then that overrides all defaults.
-    const specialState = current.special;
+    const specialState = state.current.special;
     const next = specialState && specialState.next;
     const dd = specialState && specialState.dd;
 
     if (state.current.root === 'login') {
+      state.changeState({root: null});
       if (dd) {
         console.log('initiating direct deploy');
         this.maskVisibility(false);
@@ -792,12 +807,6 @@ class GUIApp {
         console.log('redirecting to "next" state', next);
         const {error, state: newState} = state.generateState(next, false);
         if (error === null) {
-          // The root at this point will be 'login' and because the `next`
-          // url may not explicitly define a new root path we have to set it
-          // to null to clear 'login' from the url.
-          if (!newState.root) {
-            newState.root = null;
-          }
           newState.special = null;
           this.maskVisibility(false);
           state.changeState(newState);
@@ -813,6 +822,9 @@ class GUIApp {
     if (this.modelAPI.get('modelUUID')) {
       return;
     }
+    // As we are not changing the state anymore, we can cache the current
+    // state at this point.
+    const current = state.current;
     const modelUUID = this.modelUUID;
     if (modelUUID && !current.profile && current.root !== 'store') {
       // A model uuid was defined in the config so attempt to connect to it.
@@ -892,9 +904,7 @@ class GUIApp {
     }
     // The traditional user/password authentication does not make sense if
     // the GUI is embedded in the storefront.
-    if (!gisf) {
-      this.loginToAPIs(null, false, [this.controllerAPI]);
-    }
+    this.loginToAPIs(null, gisf, [this.controllerAPI]);
   }
 
   /**
@@ -1033,9 +1043,7 @@ class GUIApp {
   _displayLogin() {
     const root = this.state.current.root;
     if (root !== 'login') {
-      this.state.changeState({
-        root: 'login'
-      });
+      this.state.changeState({root: 'login'});
     }
   }
 
@@ -1089,9 +1097,6 @@ class GUIApp {
     @param {String} err The login error message, if any.
   */
   _apiLoginHandler(api, err) {
-    if (this.state.current.root === 'login') {
-      this.state.changeState({root: null});
-    }
     if (!err) {
       return;
     }
@@ -1177,6 +1182,10 @@ class GUIApp {
       this.modelAPI.loading = false;
       if (callback) {
         callback(this.modelAPI);
+      }
+      const current = this.state.current;
+      if (current.root === 'login') {
+        this.state.changeState({root: null});
       }
     };
     // Delay the callback until after the env login as everything should be

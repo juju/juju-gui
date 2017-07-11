@@ -73,9 +73,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
@@ -97,7 +98,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('does not show the create model button if not current user', () => {
@@ -115,9 +116,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__model-list">
@@ -136,7 +138,7 @@ describe('UserProfileModelList', () => {
         {undefined}
       </div>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('displays loading spinner when loading', () => {
@@ -148,15 +150,16 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
-    assert.deepEqual(output, (
+    const expected = (
       <div className="user-profile__model-list twelve-col">
         <juju.components.Spinner />
-      </div>
-    ));
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders a list of models', () => {
@@ -174,9 +177,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children;
@@ -321,9 +325,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children;
@@ -333,7 +338,7 @@ describe('UserProfileModelList', () => {
           <div className="left">
             Models shared with you
             <span className="user-profile__size">
-              ({1})
+              ({2})
             </span>
           </div>
           <div className="right">
@@ -365,6 +370,36 @@ describe('UserProfileModelList', () => {
           {[<juju.components.UserProfileEntity
             acl={acl}
             displayConfirmation={content[1][0].props.displayConfirmation}
+            entity={models[0]}
+            expanded={false}
+            key="model1-uuid"
+            permission="write"
+            switchModel={instance.props.switchModel}
+            type="model">
+            <span className="user-profile__list-col two-col">
+              model1
+            </span>
+            <span className="user-profile__list-col two-col">
+              who
+            </span>
+            <span className="user-profile__list-col two-col">
+              42
+            </span>
+            <span className="user-profile__list-col two-col">
+              aws/gallifrey
+            </span>
+            <span className="user-profile__list-col two-col">
+              write
+            </span>
+            <span className="user-profile__list-col two-col last-col">
+              <juju.components.DateDisplay
+                date='2016-09-12T15:42:09Z'
+                relative={true}/>
+            </span>
+          </juju.components.UserProfileEntity>,
+          <juju.components.UserProfileEntity
+            acl={acl}
+            displayConfirmation={content[1][1].props.displayConfirmation}
             entity={models[1]}
             expanded={false}
             key="model2-uuid"
@@ -410,9 +445,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children[1][0];
     assert.isNull(content);
@@ -429,9 +465,10 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         acl={acl}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     assert.isUndefined(output.props.children[0].props.children[2]);
   });
@@ -447,9 +484,10 @@ describe('UserProfileModelList', () => {
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     let output = component.getRenderOutput();
     output.props.children[1].props.children[1][0].props.displayConfirmation();
     output = component.getRenderOutput();
@@ -463,7 +501,7 @@ describe('UserProfileModelList', () => {
           This action cannot be undone.
         </p>
       </juju.components.Popup>);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can destroy a model', () => {
@@ -481,9 +519,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     instance._displayConfirmation(model);
     let output = component.getRenderOutput();
@@ -514,9 +553,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={models}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     instance._displayConfirmation(model);
     let output = component.getRenderOutput();
@@ -545,9 +585,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     instance._displayConfirmation({name: modelName});
     let output = component.getRenderOutput();
@@ -572,9 +613,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
     instance._displayConfirmation(model);
@@ -603,9 +645,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
     instance._displayConfirmation(model);
@@ -630,9 +673,10 @@ describe('UserProfileModelList', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
+        userInfo={userInfo} />, true);
     const instance = component.getMountedInstance();
     component.getRenderOutput();
     const model = {
@@ -650,71 +694,25 @@ describe('UserProfileModelList', () => {
     }, 'The notification does not match expected.');
   });
 
-  it('broadcasts starting status', function() {
-    const broadcastStatus = sinon.stub();
+  it('handles errors when getting ', function() {
+    const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub()}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[0][0], 'starting');
-  });
-
-  it('broadcasts ok status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'ok');
-  });
-
-  it('broadcasts empty status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
-        currentModel={'model1'}
-        destroyModels={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
-        switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'empty');
-  });
-
-  it('broadcasts error status', function() {
-    const broadcastStatus = sinon.stub();
-    jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        broadcastStatus={broadcastStatus}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
+        models={[]}
+        setEntities={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={userInfo}
-      />, true);
-    assert.equal(broadcastStatus.args[1][0], 'error');
+        userInfo={userInfo} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot load models',
+      message: 'Cannot load models: bad wolf',
+      level: 'error'
+    });
   });
 });

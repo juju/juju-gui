@@ -82,11 +82,11 @@ describe('Sharing', () => {
           {undefined}
         </div>
         <juju.components.GenericButton
-          title="Done"
           action={closeHandler}
           type="inline-neutral"
-          extraClasses="right"
-        />
+          extraClasses="right">
+          Done
+        </juju.components.GenericButton>
       </juju.components.Popup>
     );
     expect(output).toEqualJSX(expected);
@@ -239,11 +239,12 @@ describe('Sharing', () => {
           <div className="sharing__invite--grant-button">
             <juju.components.GenericButton
               submit={true}
-              title="Add"
               tooltip="Add user"
               ref="grantButton"
               type="positive"
-              disabled={true} />
+              disabled={true}>
+              Add
+            </juju.components.GenericButton>
           </div>
           {undefined}
         </form>
@@ -300,8 +301,11 @@ describe('Sharing', () => {
       <div className="sharing__user-revoke">
         <juju.components.GenericButton
           action={revokeAction}
-          tooltip="Remove user"
-          icon="close_16" />
+          tooltip="Remove user">
+          <juju.components.SvgIcon
+            name="close_16"
+            size="16" />
+        </juju.components.GenericButton>
       </div>
     );
     expect(revokeMarkup).toEqualJSX(expectedMarkup);
@@ -355,12 +359,12 @@ describe('Sharing', () => {
       const expected = (
         <juju.components.GenericButton
           submit={true}
-          title="Add"
           tooltip="Add user"
           ref="grantButton"
           type="positive"
-          disabled={true}
-        />
+          disabled={true}>
+          Add
+        </juju.components.GenericButton>
       );
       expect(makeSharingEle()).toEqualJSX(expected);
     });
@@ -372,11 +376,12 @@ describe('Sharing', () => {
       const expected = (
         <juju.components.GenericButton
           submit={true}
-          title="Add"
           tooltip="Add user"
           ref="grantButton"
           type="positive"
-          disabled={false} />
+          disabled={false}>
+          Add
+        </juju.components.GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });
@@ -388,11 +393,12 @@ describe('Sharing', () => {
       const expected = (
         <juju.components.GenericButton
           submit={true}
-          title="Add"
           tooltip="Add user"
           ref="grantButton"
           type="positive"
-          disabled={true} />
+          disabled={true}>
+          Add
+        </juju.components.GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });
@@ -404,11 +410,14 @@ describe('Sharing', () => {
       const expected = (
         <juju.components.GenericButton
           submit={true}
-          icon="tick_16"
           tooltip="Add user"
           ref="grantButton"
           type="positive"
-          disabled={true} />
+          disabled={true}>
+          <juju.components.SvgIcon
+            name="tick_16"
+            size="16" />
+        </juju.components.GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });

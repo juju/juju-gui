@@ -38,11 +38,22 @@ describe('Store', function() {
       <juju.components.Store
         changeState={changeState}
         charmstoreURL={charmstoreURL}
-        gisf={true}
+        gisf={false}
         apiVersion={apiVersion}
         setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.children[0].props.children.length, 3);
+  });
+
+  it('can skip openstack feature in gisf', () => {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.Store
+        apiVersion="v5"
+        changeState={sinon.stub()}
+        charmstoreURL="http://1.2.3.4/"
+        gisf={true}
+        setPageTitle={sinon.stub()} />);
+    assert.equal(output.props.children[0].props.children[1], null);
   });
 
   it('can render big data feature in the correct place', function() {

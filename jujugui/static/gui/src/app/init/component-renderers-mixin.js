@@ -186,7 +186,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // NOTE: we need to clone this.get('users') below; passing in without
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
-    ReactDOM.render(
+    let profile = (
       <window.juju.components.UserProfile
         acl={this.acl}
         addNotification=
@@ -211,8 +211,23 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         storeUser={this.storeUser.bind(this)}
         switchModel={utils.switchModel.bind(this, this.modelAPI)}
         userInfo={this._getUserInfo(state)}
-      />,
-      document.getElementById('top-page-container'));
+      />);
+
+    if (this.applicationConfig.flags.profile) {
+      profile =
+        <window.juju.components.Profile
+          acl={this.acl}
+          activeSection={state.hash}
+          addNotification={this._bound.addNotification}
+          changeState={this._bound.changeState}
+          facadesExist={facadesExist}
+          listModelsWithInfo={this._bound.listModelsWithInfo}
+          destroyModels={this._bound.destroyModels}
+          switchModel={this._bound.switchModel}
+          userInfo={this._getUserInfo(state)} />;
+    }
+
+    ReactDOM.render(profile, document.getElementById('top-page-container'));
   }
   /**
     The cleanup dispatcher for the user profile path.
@@ -842,12 +857,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderLogin(err) {
     document.getElementById('loading-message').style.display = 'none';
-    // XXX j.c.sackett 2017-01-30 Right now USSO link is using
-    // loginToController, while loginToAPIs is used by the login form.
-    // We want to use loginToAPIs everywhere since it handles more.
-    const loginToController =
-      this.controllerAPI.loginWithMacaroon.bind(
-        this.controllerAPI, this.bakery);
+    const loginToController = () => {
+      this.loginToAPIs(null, true, [this.controllerAPI]);
+    };
     const controllerIsConnected = () => {
       return this.controllerAPI && this.controllerAPI.get('connected');
     };

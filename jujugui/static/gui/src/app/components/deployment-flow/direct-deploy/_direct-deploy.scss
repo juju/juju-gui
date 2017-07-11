@@ -1,17 +1,25 @@
 .deployment-flow-panel {
   .deployment-direct-deploy {
+    background-color: $white;
+
     &__image {
       margin-bottom: 0;
 
       .entity-content__diagram {
-        background: $white;
+        margin-bottom: 20px;
+        background-color: $light-grey;
         border: 1px solid $color-mid-light;
 
         &-image {
           width: 100%;
           height: auto;
+          max-height: 210px;
         }
       }
+    }
+
+    &__edit-model {
+      float: right;
     }
 
     &__title {

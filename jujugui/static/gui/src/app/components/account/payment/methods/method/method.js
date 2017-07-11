@@ -125,12 +125,14 @@ class AccountPaymentMethod extends React.Component {
         <div className="twelve-col account-payment-method__buttons">
           <juju.components.GenericButton
             action={this._toggleForm.bind(this)}
-            type="inline-neutral"
-            title="Cancel" />
+            type="inline-neutral">
+            Cancel
+          </juju.components.GenericButton>
           <juju.components.GenericButton
             action={this._updatePaymentMethod.bind(this)}
-            type="inline-positive"
-            title="update" />
+            type="inline-positive">
+            Update
+          </juju.components.GenericButton>
         </div>
       </div>);
   }

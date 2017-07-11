@@ -42,12 +42,13 @@ describe('ButtonRow', function() {
         buttons={buttons} />);
     assert.deepEqual(output.props.children, [
       <juju.components.GenericButton
-        title="My button"
         key="My button"
         action={callbackStub}
         disabled={undefined}
         submit={undefined}
-        type="submit" />]);
+        type="submit">
+        My button
+      </juju.components.GenericButton>]);
   });
 
   it('sets a class when generating multiple buttons', function() {
@@ -66,19 +67,21 @@ describe('ButtonRow', function() {
         buttons={buttons} />);
     var children = [
       <juju.components.GenericButton
-        title="My button"
         key="My button"
         action={callbackStub}
         disabled={undefined}
         submit={undefined}
-        type="submit" />,
+        type="submit">
+        My button
+      </juju.components.GenericButton>,
       <juju.components.GenericButton
-        title="Another button"
         key="Another button"
         action={callbackStub}
         disabled={undefined}
         submit={undefined}
-        type="submit" />
+        type="submit">
+        Another button
+      </juju.components.GenericButton>
     ];
     assert.deepEqual(output,
       <div className="button-row button-row--multiple button-row--count-2">

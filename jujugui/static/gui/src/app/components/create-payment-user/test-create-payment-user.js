@@ -160,8 +160,9 @@ describe('CreatePaymentUser', function() {
             <juju.components.GenericButton
               action={instance._handleAddUser}
               disabled={false}
-              type="inline-neutral"
-              title="Add payment details" />
+              type="inline-neutral">
+              Add payment details
+            </juju.components.GenericButton>
           </div>
         </form>
       </div>);
@@ -285,8 +286,9 @@ describe('CreatePaymentUser', function() {
             <juju.components.GenericButton
               action={instance._handleAddUser}
               disabled={false}
-              type="inline-neutral"
-              title="Add payment details" />
+              type="inline-neutral">
+              Add payment details
+            </juju.components.GenericButton>
           </div>
         </form>
       </div>);

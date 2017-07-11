@@ -53,35 +53,13 @@ class GenericButton extends React.Component {
     }
   }
 
-  /**
-    Generate the label or icon.
-
-    @method _generateContent
-  */
-  _generateContent() {
-    // If children are present, the title and icon props are ignored.
-    if (this.props.children) {
-      return this.props.children;
-    } else {
-      var title = this.props.title;
-      var icon = this.props.icon;
-      if (title) {
-        return title;
-      } else if (icon) {
-        return (
-          <juju.components.SvgIcon name={icon}
-            size="16" />);
-      }
-    }
-  }
-
   render() {
     return (
       <button className={this._generateClasses()}
         title={this.props.tooltip}
         onClick={this._handleClick.bind(this)}
         type={this.props.submit ? 'submit' : 'button'}>
-        {this._generateContent()}
+        {this.props.children}
       </button>
     );
   }
@@ -92,9 +70,7 @@ GenericButton.propTypes = {
   children: React.PropTypes.node,
   disabled: React.PropTypes.bool,
   extraClasses: React.PropTypes.string,
-  icon: React.PropTypes.string,
   submit: React.PropTypes.bool,
-  title: React.PropTypes.string,
   tooltip: React.PropTypes.string,
   type: React.PropTypes.string
 };

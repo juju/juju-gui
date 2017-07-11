@@ -26,7 +26,10 @@ class CreateModelButton extends React.Component {
     }
     // We want to explicitly close the profile when switching to a new
     // model to resolve a race condition with the new model setup.
-    props.changeState({profile: null});
+    props.changeState({
+      profile: null,
+      hash: null
+    });
     props.switchModel(null);
     if (this.props.action) {
       this.props.action();
@@ -40,8 +43,9 @@ class CreateModelButton extends React.Component {
         <juju.components.GenericButton
           action={this._createNewModel.bind(this)}
           disabled={disabled}
-          type={this.props.type}
-          title={this.props.title} />
+          type={this.props.type}>
+          {this.props.title}
+        </juju.components.GenericButton>
       </div>
     );
   }

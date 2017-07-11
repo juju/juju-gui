@@ -655,8 +655,9 @@ describe('MachineView', function() {
       <juju.components.GenericButton
         action={autoPlaceUnits}
         disabled={true}
-        type="inline-neutral"
-        title="Auto place" />);
+        type="inline-neutral">
+        Auto place
+      </juju.components.GenericButton>);
     expect(
       output.props.children.props.children[0].props.children[1].props
         .children[0].props.children[0]).toEqualJSX(expected);

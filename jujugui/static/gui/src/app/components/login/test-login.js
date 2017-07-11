@@ -81,8 +81,9 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={'Login'}
-              type={'positive'} />
+              type="positive">
+              Login
+            </juju.components.GenericButton>
             <juju.components.USSOLoginLink
               displayType="button"
               loginToController={loginToControllerStub}
@@ -151,8 +152,9 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               submit={true}
-              title={'Login'}
-              type={'positive'} />
+              type="positive">
+              Login
+            </juju.components.GenericButton>
             <juju.components.USSOLoginLink
               displayType="button"
               loginToController={loginToControllerStub}

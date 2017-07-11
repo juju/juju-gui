@@ -47,11 +47,12 @@ class ButtonRow extends React.Component {
       components.push(
         <juju.components.GenericButton
           key={button.title}
-          title={button.title}
           action={button.action}
           disabled={button.disabled}
           submit={button.submit}
-          type={button.type} />);
+          type={button.type}>
+          {button.title}
+        </juju.components.GenericButton>);
     });
     return components;
   }

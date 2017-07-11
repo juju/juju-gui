@@ -238,8 +238,9 @@ describe('DeploymentFlow', function() {
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
                 type="inline-neutral"
-                extraClasses="right"
-                title="Show changelog" />
+                extraClasses="right">
+                Show changelog
+              </juju.components.GenericButton>
             </span>}>
           <juju.components.DeploymentServices
             acl={props.acl}
@@ -285,8 +286,9 @@ describe('DeploymentFlow', function() {
               <juju.components.GenericButton
                 action={instance._handleDeploy}
                 disabled={true}
-                type="positive"
-                title="Deploy" />
+                type="positive">
+                Deploy
+              </juju.components.GenericButton>
             </div>
           </div>
         </div>
@@ -295,10 +297,12 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders direct deploy when ddData is set', () => {
+    const changeState = sinon.stub();
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub();
     const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
+      changeState: changeState,
       ddData: {id: 'cs:bundles/kubernetes-core-8'},
       getEntity: getEntity,
       makeEntityModel: makeEntityModel,
@@ -309,6 +313,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     expect(output.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
+        changeState={changeState}
         ddData={{id: 'cs:bundles/kubernetes-core-8'}}
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
@@ -687,8 +692,7 @@ describe('DeploymentFlow', function() {
       'Deploy model - is DD - is model update - doesn\'t have USSO']);
   });
 
-  const checkStats = (statsName, flags) => {
-    window.juju_config.flags = flags;
+  it('increases stats when deploying', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
     });
@@ -715,15 +719,7 @@ describe('DeploymentFlow', function() {
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
     assert.equal(args.length, 1, 'statsIncrease args length');
-    assert.strictEqual(args[0], statsName);
-  };
-
-  it('increases stats when deploying (deploy target)', function() {
-    checkStats('deploy.target', {});
-  });
-
-  it('increases stats when deploying (direct deploy)', function() {
-    checkStats('deploy.direct', {ddeploy: true});
+    assert.strictEqual(args[0], 'deploy');
   });
 
   it('can agree to terms during deploy', function() {
@@ -950,7 +946,7 @@ describe('DeploymentFlow', function() {
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
-    assert.equal(deployButton.props.title, 'Deploying...');
+    assert.equal(deployButton.props.children, 'Deploying...');
   });
 
   it('can deploy without updating the model name', function() {

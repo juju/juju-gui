@@ -85,8 +85,11 @@ class MachineViewHeader extends React.Component {
         <juju.components.GenericButton
           action={toggle.action}
           disabled={toggle.disabled}
-          type='inline-positive'
-          icon={icon} />);
+          type='inline-positive'>
+          <juju.components.SvgIcon
+            name={icon}
+            size="16" />
+        </juju.components.GenericButton>);
     }
   }
 

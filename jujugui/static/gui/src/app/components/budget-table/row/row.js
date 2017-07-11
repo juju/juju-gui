@@ -131,8 +131,9 @@ class BudgetTableRow extends React.Component {
             <juju.components.GenericButton
               action={this._toggle.bind(this)}
               disabled={disabled}
-              type="neutral"
-              title="Select plan" />
+              type="neutral">
+              Select plan
+            </juju.components.GenericButton>
           </div>
         </li>);
     });
@@ -183,8 +184,9 @@ class BudgetTableRow extends React.Component {
           <juju.components.GenericButton
             action={this._toggle.bind(this)}
             disabled={disabled}
-            type="neutral"
-            title="Change plan" />
+            type="neutral">
+            Change plan
+          </juju.components.GenericButton>
         </div>
       </div>);
   }
@@ -327,8 +329,9 @@ class BudgetTableRow extends React.Component {
           'two-col prepend-five no-margin-bottom budget-table-row__link'}>
           <juju.components.GenericButton
             action={this._toggleTerms.bind(this)}
-            type="base"
-            title="Terms" />
+            type="base">
+            Terms
+          </juju.components.GenericButton>
         </div>);
     }
   }

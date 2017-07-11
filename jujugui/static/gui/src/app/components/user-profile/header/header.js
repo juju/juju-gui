@@ -32,9 +32,10 @@ class UserProfileHeader extends React.Component {
     }
     return (
       <juju.components.GenericButton
-        title="Log in to the charm store"
         type="inline-neutral"
-        action={props.interactiveLogin} />);
+        action={props.interactiveLogin}>
+        Log in to the charm store
+      </juju.components.GenericButton>);
   }
 
   /**

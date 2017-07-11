@@ -49,8 +49,11 @@ class Popup extends React.Component {
         <div className="popup__close">
           <juju.components.GenericButton
             action={close}
-            type="base"
-            icon="close_16" />
+            type="base">
+            <juju.components.SvgIcon
+              name="close_16"
+              size="16" />
+          </juju.components.GenericButton>
         </div>);
     }
   }
