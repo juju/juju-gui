@@ -706,8 +706,7 @@ describe('DeploymentFlow', function() {
       'Deploy model - is DD - is model update - doesn\'t have USSO']);
   });
 
-  const checkStats = (statsName, flags) => {
-    window.juju_config.flags = flags;
+  it('increases stats when deploying', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
     });
@@ -734,15 +733,7 @@ describe('DeploymentFlow', function() {
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
     assert.equal(args.length, 1, 'statsIncrease args length');
-    assert.strictEqual(args[0], statsName);
-  };
-
-  it('increases stats when deploying (deploy target)', function() {
-    checkStats('deploy.target', {});
-  });
-
-  it('increases stats when deploying (direct deploy)', function() {
-    checkStats('deploy.direct', {ddeploy: true});
+    assert.strictEqual(args[0], 'deploy');
   });
 
   it('can agree to terms during deploy', function() {

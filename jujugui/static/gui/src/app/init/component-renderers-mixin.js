@@ -457,7 +457,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this.payment && this.payment.removeAddress.bind(this.payment)}
         removeBillingAddress={
           this.payment && this.payment.removeBillingAddress.bind(
-          this.payment)}
+            this.payment)}
         removePaymentMethod={
           this.payment && this.payment.removePaymentMethod.bind(this.payment)}
         revokeCloudCredential={
@@ -470,7 +470,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this.payment && this.payment.updateAddress.bind(this.payment)}
         updateBillingAddress={
           this.payment && this.payment.updateBillingAddress.bind(
-          this.payment)}
+            this.payment)}
         updatePaymentMethod={
           this.payment && this.payment.updatePaymentMethod.bind(this.payment)}
         user={this.user.controller.user}
