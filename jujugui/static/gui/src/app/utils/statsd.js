@@ -19,7 +19,7 @@ const StatsClient = class StatsClient {
   */
   constructor(url, prefix='', flags={}) {
     this.url = url.replace(/\/?$/, '/');
-    this.flags = flags;
+    this._flags = flags || {};
     this._prefix = prefix;
   }
 
@@ -27,16 +27,17 @@ const StatsClient = class StatsClient {
    Adds the active ab test flags to the stat name.
 
    @param {String} name The stats name.
-   @returns {String} name The name with active test flags added as statsd tags.
+   @returns {String} The name with active test flags added as statsd tags.
    */
   _addFlags(name) {
-    let flags = Object.keys(this.flags);
-    flags = flags.filter(key => key.indexOf('test') === 0)
-      .map(val => `${val}=true`).join(',');
-    if (flags !== '') {
-      return `${name},${flags}`;
+    const flags = Object.keys(this._flags).filter(
+      key => this._flags[key] && key.indexOf('test') === 0);
+    if (!flags.length) {
+      return name;
     }
-    return name;
+    flags.sort();
+    const flagStr = flags.map(val => `${val}=true`).join(',');
+    return `${name},${flagStr}`;
   }
 
   /**
