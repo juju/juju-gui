@@ -1,0 +1,41 @@
+.deployment-login {
+  &__intro {
+    margin-top: 20px;
+  }
+
+  &__features {
+    margin-top: 20px;
+  }
+
+  &__feature {
+    margin-bottom: 20px;
+  }
+
+  &__signup {
+    margin-top: 20px;
+    text-align: center;
+
+    .usso-login {
+      display: inline;
+      margin-left: 0.5em;
+    }
+  }
+
+  &__tick {
+    margin-right: 1em;
+  }
+}
+
+.deployment-direct-deploy .deployment-section__content {
+  background: transparent;
+}
+
+.deployment-model-login-features {
+  margin-bottom: 0;
+  background-color: $dark-background;
+  color: $white;
+
+  .deployment-section__content {
+    background: transparent;
+  }
+}

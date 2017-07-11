@@ -642,58 +642,11 @@ class DeploymentFlow extends React.Component {
       }
     };
     return (
-      <juju.components.DeploymentSection
-        instance="deployment-model-login"
-        showCheck={true}
-        title="You're almost ready to deploy!">
-        <div className="twelve-col">
-          <p className="deployment-login__intro">
-            You will need to sign in with an Ubuntu One account to deploy
-            your model with Juju-as-a-Service.
-          </p>
-          <div className="deployment-login__features">
-            <div className="six-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Deploy to all major clouds directly from your browser.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Identity management across all models.
-              </div>
-            </div>
-            <div className="six-col last-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Hosted and managed juju controllers.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Reusable shareable models with unlimited users.
-              </div>
-            </div>
-          </div>
-          <div className="deployment-login__login">
-            <juju.components.USSOLoginLink
-              gisf={this.props.gisf}
-              callback={callback}
-              displayType={'button'}
-              loginToController={this.props.loginToController}>
-              Login
-            </juju.components.USSOLoginLink>
-          </div>
-          <div className="deployment-login__signup">
-            Do not have an account?
-            <juju.components.USSOLoginLink
-              gisf={this.props.gisf}
-              callback={callback}
-              displayType="text"
-              loginToController={this.props.loginToController}>
-              Sign up
-            </juju.components.USSOLoginLink>
-          </div>
-        </div>
-      </juju.components.DeploymentSection>);
+      <juju.components.DeploymentLogin
+        callback={callback}
+        gisf={this.props.gisf}
+        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        loginToController={this.props.loginToController} />);
   }
 
   /**
@@ -968,7 +921,7 @@ class DeploymentFlow extends React.Component {
     const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
     return (
       <div className="twelve-col">
-        <div className="deployment-flow__deploy">
+        <div className="inner-wrapper deployment-flow__deploy">
           {this._generateAgreementsSection()}
           <div className="deployment-flow__deploy-action">
             <juju.components.GenericButton
@@ -1147,6 +1100,7 @@ YUI.add('deployment-flow', function() {
     'deployment-cloud',
     'deployment-credential',
     'deployment-direct-deploy',
+    'deployment-login',
     'deployment-machines',
     'deployment-panel',
     'deployment-payment',

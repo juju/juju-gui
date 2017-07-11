@@ -79,11 +79,7 @@ class DeploymentPanel extends React.Component {
         <div className="deployment-panel">
           {this._generateHeader()}
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                {this.props.children}
-              </div>
-            </div>
+            {this.props.children}
           </div>
         </div>
       </juju.components.Panel>
