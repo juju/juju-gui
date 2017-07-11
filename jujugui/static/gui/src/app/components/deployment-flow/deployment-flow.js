@@ -209,7 +209,6 @@ class DeploymentFlow extends React.Component {
     @param {String} key The SSH key.
   */
   _setSSHKey(key) {
-    console.log(key);
     this.setState({sshKey: key});
   }
 
