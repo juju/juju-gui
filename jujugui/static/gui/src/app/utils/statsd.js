@@ -40,7 +40,7 @@ const StatsClient = class StatsClient {
    @param {String} name The stats name.
   */
   _addFlags(name, flags=[]) {
-    if (flags === [] && window.juju_config && window.juju_config.flags) {
+    if (flags.length === 0 && window.juju_config && window.juju_config.flags) {
       flags = Object.keys(window.juju_config.flags);
     }
     flags = flags.filter(key => key.indexOf('test') === 0);
