@@ -415,23 +415,6 @@ describe('DeploymentFlow', function() {
     assert.strictEqual(output.props.children[6].props.disabled, false);
   });
 
-  // it('displays the VPC section in new AWS models', function() {
-  //   const renderer = createDeploymentFlow({modelCommitted: false});
-  //   const instance = renderer.getMountedInstance();
-  //   instance._setCloud({name: 'aws'});
-  //   const output = renderer.getRenderOutput();
-  //   const expectedOutput = (
-  //     <juju.components.DeploymentSection
-  //       completed={false}
-  //       disabled={false}
-  //       instance="deployment-vpc"
-  //       showCheck={false}>
-  //       <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
-  //     </juju.components.DeploymentSection>
-  //   );
-  //   expect(output.props.children[5]).toEqualJSX(expectedOutput);
-  // });
-
   it('can enable the budget section', function() {
     const renderer = createDeploymentFlow({
       cloud: {name: 'cloud'},

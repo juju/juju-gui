@@ -76,14 +76,22 @@ class AccordionSection extends React.Component {
 };
 
 AccordionSection.propTypes = {
-  children: React.PropTypes.children,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.object
+  ]),
   openHeight: React.PropTypes.number,
   startOpen: React.PropTypes.bool,
-  title: React.PropTypes.object
+  title: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.object
+  ])
 };
 
 YUI.add('accordion-section', function() {
   juju.components.AccordionSection = AccordionSection;
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'svg-icon'
+  ]
 });

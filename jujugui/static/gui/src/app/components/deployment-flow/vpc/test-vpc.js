@@ -97,12 +97,10 @@ describe('DeploymentVPC', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
-  fit('stores the VPC data', function() {
+  it('stores the VPC data', function() {
     const comp = render();
     const children = comp.output.props.children;
-    const input = children[2].props.children;
-
-    expect(children[2]).toEqualJSX(<div />);
+    const input = children[2].props.children[0];
     // Simulate returning a value from the id value field.
     comp.instance.refs = {vpcId: {getValue: () => 'my-id'}};
     input.props.onBlur();
@@ -113,11 +111,12 @@ describe('DeploymentVPC', function() {
   it('forces the VPC data', function() {
     const comp = render();
     const children = comp.output.props.children;
-    const input = children[2].props.children;
-    const checkbox = children[3].props.children;
+    const input = children[2].props.children[0];
+    const checkbox = children[2].props.children[1].props.children[0];
+
     // Simulate forcing a value from the id value field.
     comp.instance.refs = {vpcId: {getValue: () => 'forced-id'}};
-    checkbox.props.onChange({target: {checked: true}});
+    checkbox.props.onChange.call(comp.instance, {target: {checked: true}});
     input.props.onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(2, 'forced-id', true);
@@ -127,7 +126,7 @@ describe('DeploymentVPC', function() {
     const comp = render();
     const children = comp.output.props.children;
     const instance = comp.instance;
-    const input = children[2].props.children;
+    const input = children[2].props.children[0];
     // Check that the force check box is initially disabled.
     assert.strictEqual(instance.state.forceEnabled, false, 'initial');
     // Simulate returning a value from the id value field.
