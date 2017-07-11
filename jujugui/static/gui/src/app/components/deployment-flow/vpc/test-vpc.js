@@ -86,7 +86,7 @@ describe('DeploymentVPC', function() {
               onChange={comp.instance._onCheckboxChange}
               onClick={comp.instance._onCheckboxClick}
               checked={false}
-              disabled={false}
+              disabled={true}
             />
             &nbsp;
             Always use this ID
@@ -97,10 +97,12 @@ describe('DeploymentVPC', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
-  it('stores the VPC data', function() {
+  fit('stores the VPC data', function() {
     const comp = render();
-    const children = comp.output.props.children.props.children;
+    const children = comp.output.props.children;
     const input = children[2].props.children;
+
+    expect(children[2]).toEqualJSX(<div />);
     // Simulate returning a value from the id value field.
     comp.instance.refs = {vpcId: {getValue: () => 'my-id'}};
     input.props.onBlur();
@@ -110,7 +112,7 @@ describe('DeploymentVPC', function() {
 
   it('forces the VPC data', function() {
     const comp = render();
-    const children = comp.output.props.children.props.children;
+    const children = comp.output.props.children;
     const input = children[2].props.children;
     const checkbox = children[3].props.children;
     // Simulate forcing a value from the id value field.

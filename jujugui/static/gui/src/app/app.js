@@ -1347,6 +1347,7 @@ YUI.add('juju-gui', function(Y) {
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
           gisf={this.get('gisf')}
+          githubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}

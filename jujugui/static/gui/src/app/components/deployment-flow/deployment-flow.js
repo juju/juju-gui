@@ -518,6 +518,7 @@ class DeploymentFlow extends React.Component {
         title="Add SSH keys">
         <juju.components.DeploymentSSHKey
           cloud={cloud}
+          githubSSHKeys={this.props.githubSSHKeys}
           setSSHKey={this._setSSHKey.bind(this)}
         />
       </juju.components.DeploymentSection>);
@@ -1111,6 +1112,7 @@ DeploymentFlow.propTypes = {
   getUser: React.PropTypes.func,
   getUserName: React.PropTypes.func.isRequired,
   gisf: React.PropTypes.bool,
+  githubSSHKeys: React.PropTypes.func.isRequired,
   groupedChanges: React.PropTypes.object.isRequired,
   isLoggedIn: React.PropTypes.func.isRequired,
   listBudgets: React.PropTypes.func.isRequired,

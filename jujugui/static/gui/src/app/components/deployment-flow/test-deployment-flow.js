@@ -88,6 +88,7 @@ const createDeploymentFlow = (props = {}) => {
     getDiagramURL:sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
+    githubSSHKeys: sinon.stub(),
     groupedChanges: groupedChanges,
     isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
@@ -164,12 +165,12 @@ describe('DeploymentFlow', function() {
           completed={true}
           instance="deployment-model-name"
           showCheck={true}
-          title="Set your model name">
-          <div className="six-col">
+          title="You're logged in as Spinach">
+          <div className="six-col no-margin-bottom">
             <juju.components.GenericInput
               disabled={false}
               key="modelName"
-              label="Model name"
+              label="Deploying"
               required={true}
               onBlur={instance._updateModelName}
               ref="modelName"
@@ -204,9 +205,11 @@ describe('DeploymentFlow', function() {
           completed={false}
           disabled={true}
           instance="deployment-ssh-key"
-          showCheck={false}>
+          showCheck={true}
+          title="Add SSH keys">
           <juju.components.DeploymentSSHKey
             cloud={null}
+            githubSSHKeys={props.githubSSHKeys}
             setSSHKey={instance._setSSHKey}
           />
         </juju.components.DeploymentSection>
@@ -412,22 +415,22 @@ describe('DeploymentFlow', function() {
     assert.strictEqual(output.props.children[6].props.disabled, false);
   });
 
-  it('displays the VPC section in new AWS models', function() {
-    const renderer = createDeploymentFlow({modelCommitted: false});
-    const instance = renderer.getMountedInstance();
-    instance._setCloud({name: 'aws'});
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-vpc"
-        showCheck={false}>
-        <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
-      </juju.components.DeploymentSection>
-    );
-    expect(output.props.children[5]).toEqualJSX(expectedOutput);
-  });
+  // it('displays the VPC section in new AWS models', function() {
+  //   const renderer = createDeploymentFlow({modelCommitted: false});
+  //   const instance = renderer.getMountedInstance();
+  //   instance._setCloud({name: 'aws'});
+  //   const output = renderer.getRenderOutput();
+  //   const expectedOutput = (
+  //     <juju.components.DeploymentSection
+  //       completed={false}
+  //       disabled={false}
+  //       instance="deployment-vpc"
+  //       showCheck={false}>
+  //       <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
+  //     </juju.components.DeploymentSection>
+  //   );
+  //   expect(output.props.children[5]).toEqualJSX(expectedOutput);
+  // });
 
   it('can enable the budget section', function() {
     const renderer = createDeploymentFlow({
@@ -486,7 +489,7 @@ describe('DeploymentFlow', function() {
           username="spinach"
           validateForm={validateForm} />
       </juju.components.DeploymentSection>);
-    expect(output.props.children[10]).toEqualJSX(expected);
+    expect(output.props.children[9]).toEqualJSX(expected);
   });
 
   it('can hide the agreements section', function() {
@@ -495,7 +498,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[11].props.children.props.children[0]);
+      output.props.children[10].props.children.props.children[0]);
   });
 
   it('can handle the agreements when there are no added apps', function() {
@@ -507,7 +510,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[11].props.children.props.children[0]);
+      output.props.children[10].props.children.props.children[0]);
   });
 
   it('can display the agreements section', function() {
@@ -522,7 +525,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const agreements = output.props.children[11].props.children
+    const agreements = output.props.children[10].props.children
       .props.children[0];
     const expected = (
       <div className="deployment-flow__deploy-option">
@@ -544,7 +547,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: false
     });
     const output = renderer.getRenderOutput();
-    const agreements = output.props.children[11].props.children
+    const agreements = output.props.children[10].props.children
       .props.children[0];
     const className = agreements.props.className;
     const expectedClass = 'deployment-flow__deploy-option--disabled';
@@ -678,7 +681,7 @@ describe('DeploymentFlow', function() {
     const props = instance.props;
     const output = renderer.getRenderOutput();
     // Click to deploy.
-    const deploy = output.props.children[11].props.children.props.children[1];
+    const deploy = output.props.children[10].props.children.props.children[1];
     deploy.props.children.props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
@@ -724,7 +727,7 @@ describe('DeploymentFlow', function() {
     instance._updateModelName();
     const output = renderer.getRenderOutput();
     // Click to deploy.
-    const deploy = output.props.children[11].props.children.props.children[1];
+    const deploy = output.props.children[10].props.children.props.children[1];
     deploy.props.children.props.action();
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
@@ -757,7 +760,7 @@ describe('DeploymentFlow', function() {
     instance._handleTermsAgreement({target: {checked: true}});
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[10].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 0,
       'The deploy function should not be called');
@@ -954,13 +957,13 @@ describe('DeploymentFlow', function() {
       }
     };
     let output = renderer.getRenderOutput();
-    let deployButton = output.props.children[11].props.children.props
+    let deployButton = output.props.children[10].props.children.props
       .children[1].props.children;
     deployButton.props.action();
 
     // .action() rerenders the component so we need to get it again
     output = renderer.getRenderOutput();
-    deployButton = output.props.children[11].props.children.props
+    deployButton = output.props.children[10].props.children.props
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
@@ -981,7 +984,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {};
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[10].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -1011,7 +1014,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setSSHKey('my SSH key');
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[10].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -1041,7 +1044,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id');
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[10].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -1071,7 +1074,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id', true);
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[10].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);

@@ -125,5 +125,7 @@ DeploymentVPC.propTypes = {
 YUI.add('deployment-vpc', function() {
   juju.components.DeploymentVPC = DeploymentVPC;
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'generic-input'
+  ]
 });

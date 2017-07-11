@@ -72,7 +72,7 @@ class DeploymentSSHKey extends React.Component {
     Split a Manual Key into its parts
 
     @method _splitKey
-    @param (String) sshkey
+    @param {String} sshkey
    */
   _splitKey(sshKey) {
     const splitKey = sshKey.split(' ');
@@ -84,10 +84,44 @@ class DeploymentSSHKey extends React.Component {
     };
   }
 
+  /**
+    Check if an sshkey exists to avoid duplication.
+
+    @method _keyExists
+    @param {Object} key The key object to check.
+    @return {Boolean}
+  */
   _keyExists(key) {
     return this.state.SSHkeys.filter(knownKey => {
       return knownKey.body === key.body;
     }).length !== 0;
+  }
+
+  _handleAddGithubKeys(error, keys) {
+    if (error) {
+      console.error(error);
+      this.setState({error: error});
+      return;
+    }
+
+    if (keys.length === 0) {
+      this.setState({error:
+        (<span>No keys found. <a className="link"
+          href="https://github.com/settings/keys" target="_blank">
+          Create an SSH Key</a>.</span>)});
+      return;
+    }
+
+    let SSHkeys = this.state.SSHkeys;
+    keys.forEach(key => {
+      if (!this._keyExists(key)) {
+        SSHkeys.push(key);
+      }
+    });
+    this.props.setSSHKey(SSHkeys[0].text);
+    this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
+    this.refs.githubUsername.setValue(null);
+    this.refs.githubUsername.focus();
   }
 
   /**
@@ -100,39 +134,13 @@ class DeploymentSSHKey extends React.Component {
       return;
     }
     const source = this.refs.sshSource.getValue();
-    let SSHkeys = this.state.SSHkeys;
     this.setState({error: null});
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
-      window.jujugui.sshKeys.githubSSHKeys(
+      this.props.githubSSHKeys(
         new juju.environments.web.WebHandler,
         githubUsername,
-        (error, keys) => {
-          console.log(keys);
-          if (error) {
-            console.error(error);
-            this.setState({error: error});
-            return;
-          }
-
-          if (keys.length === 0) {
-            this.setState({error:
-              (<span>No keys found. <a className="link"
-                href="https://github.com/settings/keys" target="_blank">
-                Create an SSH Key</a>.</span>)});
-            return;
-          }
-
-          keys.forEach(key => {
-            if (!this._keyExists(key)) {
-              SSHkeys.push(key);
-            }
-          });
-          this.props.setSSHKey(SSHkeys[0].text);
-          this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
-          this.refs.githubUsername.setValue(null);
-          this.refs.githubUsername.focus();
-        }
+        this._handleAddGithubKeys
       );
     } else if (source === 'manual') {
       const manualKey = this.refs.sshKey.getValue();
@@ -379,6 +387,7 @@ class DeploymentSSHKey extends React.Component {
 
 DeploymentSSHKey.propTypes = {
   cloud: React.PropTypes.object,
+  githubSSHKeys: React.PropTypes.func.isRequired,
   setSSHKey: React.PropTypes.func.isRequired
 };
 
