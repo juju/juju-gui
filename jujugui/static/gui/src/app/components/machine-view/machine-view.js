@@ -175,7 +175,7 @@ class MachineView extends React.Component {
           placeUnit={props.placeUnit}
           providerType={props.providerType}
           removeUnit={this._removeUnit.bind(this)}
-          selectMachine={this.selectMachine}
+          selectMachine={this.selectMachine.bind(this)}
           series={props.series}
           unit={unit}
         />
@@ -284,7 +284,7 @@ class MachineView extends React.Component {
           parseConstraints={this.props.parseConstraints}
           providerType={this.props.providerType}
           selected={selectedMachine === machine.id}
-          selectMachine={this.selectMachine}
+          selectMachine={this.selectMachine.bind(this)}
           series={this.props.series}
           services={this.props.services}
           showConstraints={
@@ -386,7 +386,7 @@ class MachineView extends React.Component {
         createMachine={props.createMachine}
         placeUnit={props.placeUnit}
         providerType={props.providerType}
-        selectMachine={this.selectMachine}
+        selectMachine={this.selectMachine.bind(this)}
         series={props.series}
         unit={this.state.placingUnit}
       />
