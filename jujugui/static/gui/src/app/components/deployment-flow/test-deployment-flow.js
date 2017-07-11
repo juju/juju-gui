@@ -148,6 +148,7 @@ describe('DeploymentFlow', function() {
       formatConstraints: formatConstraints,
       generateMachineDetails: generateMachineDetails,
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
+      isLoggedIn: sinon.stub().returns(true),
       modelCommitted: false,
       validateForm: validateForm,
       withPlans: true
@@ -158,6 +159,8 @@ describe('DeploymentFlow', function() {
     const expected = (
       <juju.components.DeploymentPanel
         changeState={props.changeState}
+        isDirectDeploy={false}
+        loggedIn={true}
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
         <juju.components.DeploymentSection
@@ -289,6 +292,7 @@ describe('DeploymentFlow', function() {
             </div>
           </div>
         </div>
+        {null}
       </juju.components.DeploymentPanel>);
     expect(output).toEqualJSX(expected);
   });
@@ -565,7 +569,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const loginLink = output.props.children[1].props.children.props.children[2]
+    const loginLink = output.props.children[12].props.children.props.children[2]
       .props.children;
     const expected = (
       <juju.components.DeploymentSection
@@ -621,7 +625,7 @@ describe('DeploymentFlow', function() {
         </div>
       </juju.components.DeploymentSection>
     );
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(output.props.children[12]).toEqualJSX(expected);
   });
 
   // Click log in and pass the given error string to the login callback used by
@@ -640,7 +644,7 @@ describe('DeploymentFlow', function() {
       }
     };
     const output = renderer.getRenderOutput();
-    const loginSection = output.props.children[1].props.children;
+    const loginSection = output.props.children[12].props.children;
     const loginButton = loginSection.props.children[2].props.children;
     const loginToController = instance.props.loginToController;
     // Call the supplied callback function which is called after the user

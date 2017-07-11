@@ -8,10 +8,18 @@
     padding: 10px 20px;
     border-bottom: 1px solid $light-mid-grey;
 
+    &--dark {
+      background-color: $dark-header;
+    }
+
     &-name {
       display: inline-block;
       margin-left: 40px;
       font-weight: 400;
+    }
+
+    &-logo {
+      padding: 1px 0;
     }
   }
 

@@ -42,9 +42,12 @@ class HeaderLogo extends React.Component {
     @return {Object} The SvgIcon component of the Juju logo.
   */
   _svg() {
-    return (<juju.components.SvgIcon name="juju-logo"
-      className="svg-icon"
-      width="90" height="35" />);
+    return (
+      <juju.components.SvgIcon
+        className="svg-icon"
+        height="35"
+        name="juju-logo"
+        width="90" />);
   }
 
   render() {
