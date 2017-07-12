@@ -40,7 +40,7 @@ class DeploymentLogin extends React.Component {
   _generateLogin() {
     return (
       <juju.components.DeploymentSection
-        instance="deployment-model-login"
+        instance="deployment-login"
         showCheck={true}
         title="You're almost ready to deploy!">
         <div className="twelve-col">
@@ -74,7 +74,7 @@ class DeploymentLogin extends React.Component {
             <juju.components.USSOLoginLink
               gisf={this.props.gisf}
               callback={this.props.callback}
-              displayType={'button'}
+              displayType="button"
               loginToController={this.props.loginToController}>
               Login
             </juju.components.USSOLoginLink>
@@ -102,8 +102,10 @@ class DeploymentLogin extends React.Component {
     return (
       <div>
         <juju.components.DeploymentSection
-          instance="deployment-model-login">
-          Sign up to start deploying to your favourite cloud
+          instance="deployment-login-signup">
+          <span className="deployment-login-signup__message">
+              Sign up to start deploying to your favourite cloud
+          </span>
           <juju.components.USSOLoginLink
             gisf={this.props.gisf}
             callback={this.props.callback}
@@ -111,7 +113,7 @@ class DeploymentLogin extends React.Component {
             loginToController={this.props.loginToController}>
             Sign up
           </juju.components.USSOLoginLink>
-          or
+          or&nbsp;
           <juju.components.USSOLoginLink
             gisf={this.props.gisf}
             callback={this.props.callback}
@@ -119,13 +121,13 @@ class DeploymentLogin extends React.Component {
             loginToController={this.props.loginToController}>
             log in
           </juju.components.USSOLoginLink>
-          to get started with
+          to get started with&nbsp;
           <a href="http://jujucharms.com/jaas">
             JAAS
           </a>
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
-          instance="deployment-model-login-features">
+          instance="deployment-login-features">
           <div className="six-col">
             <h3>JAAS gives you Juju, as a service</h3>
             <p>
@@ -140,53 +142,55 @@ class DeploymentLogin extends React.Component {
               </a>
             </p>
           </div>
-          <div className="six-col">
-            <h4>
-              {this._generateTick()}
-              Hosted Juju controllers
-            </h4>
-            <ul>
-              <li>Managed by Canonical, the company behind Ubuntu</li>
-              <li>Highly-available, secure, multi-region infrastructure</li>
-              <li>24/7 monitoring and alerting</li>
-            </ul>
-            <h4>
-              {this._generateTick()}
-              Share and collaborate
-            </h4>
-            <ul>
-              <li>Identity management across all models</li>
-              <li>Read only mode available</li>
-            </ul>
-            <h4>
-              {this._generateTick()}
-              Deploy to public clouds
-            </h4>
-            <ul>
-              <li>Use your existing credentials to deploy to any cloud</li>
-            </ul>
-          </div>
-          <div className="six-col last-col">
-            <h4>
-              {this._generateTick()}
-              Pre-configured open source software
-            </h4>
-            <ul>
-              <li>
-                All the ops knowledge required to automate the behaviour of your
-                application
-              </li>
-              <li>Reusable and repeatable workloads</li>
-              <li>Portable solutions across clouds</li>
-            </ul>
-            <h4>
-              {this._generateTick()}
-              One view of all clouds and models
-            </h4>
-            <ul>
-              <li>All models shared and owned by you in one place</li>
-              <li>Monitor the status of your models at a glance</li>
-            </ul>
+          <div className="deployment-login-features__items twelve-col">
+            <div className="six-col no-margin-bottom">
+              <h5 className="deployment-login-features__items-heading">
+                {this._generateTick()}
+                Hosted Juju controllers
+              </h5>
+              <ul className="deployment-login-features__items-list">
+                <li>Managed by Canonical, the company behind Ubuntu</li>
+                <li>Highly-available, secure, multi-region infrastructure</li>
+                <li>24/7 monitoring and alerting</li>
+              </ul>
+              <h5 className="deployment-login-features__items-heading">
+                {this._generateTick()}
+                Share and collaborate
+              </h5>
+              <ul className="deployment-login-features__items-list">
+                <li>Identity management across all models</li>
+                <li>Read only mode available</li>
+              </ul>
+              <h5 className="deployment-login-features__items-heading">
+                {this._generateTick()}
+                Deploy to public clouds
+              </h5>
+              <ul className="deployment-login-features__items-list">
+                <li>Use your existing credentials to deploy to any cloud</li>
+              </ul>
+            </div>
+            <div className="six-col last-col no-margin-bottom">
+              <h5 className="deployment-login-features__items-heading">
+                {this._generateTick()}
+                Pre-configured open source software
+              </h5>
+              <ul className="deployment-login-features__items-list">
+                <li>
+                  All the ops knowledge required to automate the behaviour of
+                  your application
+                </li>
+                <li>Reusable and repeatable workloads</li>
+                <li>Portable solutions across clouds</li>
+              </ul>
+              <h5 className="deployment-login-features__items-heading">
+                {this._generateTick()}
+                One view of all clouds and models
+              </h5>
+              <ul className="deployment-login-features__items-list">
+                <li>All models shared and owned by you in one place</li>
+                <li>Monitor the status of your models at a glance</li>
+              </ul>
+            </div>
           </div>
         </juju.components.DeploymentSection>
       </div>);

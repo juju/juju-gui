@@ -24,18 +24,72 @@
   &__tick {
     margin-right: 1em;
   }
-}
 
-.deployment-direct-deploy .deployment-section__content {
-  background: transparent;
-}
+  &-signup {
+    a {
+      color: $link-blue;
+    }
 
-.deployment-model-login-features {
-  margin-bottom: 0;
-  background-color: $dark-background;
-  color: $white;
+    .deployment-section__content {
+      background-color: transparent;
+    }
 
-  .deployment-section__content {
-    background: transparent;
+    .usso-login,
+    .usso-login__action {
+      display: inline-block;
+    }
+
+    .usso-login {
+      margin-right: 10px;
+    }
+
+    .usso-login__action {
+      width: auto;
+    }
+
+    &__message {
+      margin-right: 20px;
+      font-size: 20px;
+    }
+  }
+
+  &-features {
+    margin-bottom: 0;
+    background-color: $dark-header;
+    color: $white;
+
+    &__items {
+      margin: 20px 0 60px 0;
+      padding: 30px;
+      border: 1px solid $dark-warm-grey;
+      border-radius: $border-radius;
+
+      &-heading {
+        padding-top: 10px;
+        font-weight: 400;
+
+        &:first-child {
+          padding-top: 0;
+        }
+      }
+
+      &-list {
+        margin: 0;
+        padding-left: 40px;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+
+    .deployment-section__title {
+      display: none;
+    }
+
+    .deployment-section__content {
+      background: transparent;
+      padding-top: 60px;
+    }
   }
 }

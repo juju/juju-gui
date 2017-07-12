@@ -2,6 +2,10 @@
   .deployment-direct-deploy {
     background-color: $white;
 
+    .deployment-section__content {
+      background: transparent;
+    }
+
     &__image {
       margin-bottom: 20px;
       background-color: $light-grey;
