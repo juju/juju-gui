@@ -99,8 +99,7 @@ describe('DeploymentSSHKey', function() {
               label="GitHub username"
               onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
-              type="text"
-              validate={undefined} />
+              type="text" />
           </div>
           <div className="right">
             <juju.components.GenericButton
@@ -120,6 +119,7 @@ describe('DeploymentSSHKey', function() {
       <div className="deployment-ssh-key">
         <p>
           Keys will allow you SSH access to the machines provisioned on Azure.
+          <br /><em>An SSH key is required for Azure</em>.
         </p>
         {false}
         {false}
@@ -147,14 +147,7 @@ describe('DeploymentSSHKey', function() {
               label="GitHub username"
               onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
-              required
-              type="text"
-              validate={[
-                {
-                  error: 'This field is required.',
-                  regex: {}
-                }
-              ]} />
+              type="text" />
           </div>
           <div className="right">
             <juju.components.GenericButton

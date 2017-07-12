@@ -104,8 +104,8 @@ class DeploymentVPC extends React.Component {
             <input
               type="checkbox"
               id="vpcIdForce"
-              onChange={this._onCheckboxChange}
-              onClick={this._onCheckboxClick}
+              onChange={this._onCheckboxChange.bind(this)}
+              onClick={this._onCheckboxClick.bind(this)}
               checked={this.state.force}
               disabled={!this.state.forceEnabled}
             />

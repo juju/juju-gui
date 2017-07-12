@@ -228,7 +228,6 @@ class DeploymentSSHKey extends React.Component {
     if (!cloud) {
       return false;
     }
-    const isAzure = cloud.cloudType === AZURE_CLOUD_TYPE;
 
     if (this.state.addSource === 'github') {
       return (
@@ -239,11 +238,6 @@ class DeploymentSSHKey extends React.Component {
             ref="githubUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
-            required={isAzure}
-            validate={isAzure ? [{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }] : undefined}
           />
         </div>
       );
@@ -256,11 +250,6 @@ class DeploymentSSHKey extends React.Component {
             ref="sshKey"
             multiLine={true}
             onKeyUp={this._onKeyUp.bind(this)}
-            required={isAzure}
-            validate={isAzure ? [{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }] : undefined}
           />
         </div>
       );
@@ -335,6 +324,7 @@ class DeploymentSSHKey extends React.Component {
       message = (
         <p>
           Keys will allow you SSH access to the machines provisioned on Azure.
+          <br /><em>An SSH key is required for Azure</em>.
         </p>
       );
     }
