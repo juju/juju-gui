@@ -18,7 +18,7 @@
   &__title {
     margin-top: 10px;
     margin-bottom: 20px;
-    
+
     .svg-icon {
       margin-right: 10px;
       vertical-align: text-top;
@@ -26,6 +26,11 @@
 
     &-checkmark {
       fill: $dark-warm-grey;
+    }
+
+    em {
+      color: #666;
+      font-style: normal;
     }
   }
 

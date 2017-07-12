@@ -119,7 +119,6 @@ describe('DeploymentSSHKey', function() {
       <div className="deployment-ssh-key">
         <p>
           Keys will allow you SSH access to the machines provisioned on Azure.
-          <br /><em>An SSH key is required for Azure</em>.
         </p>
         {false}
         {false}

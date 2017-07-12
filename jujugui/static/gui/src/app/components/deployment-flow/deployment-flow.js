@@ -504,13 +504,18 @@ class DeploymentFlow extends React.Component {
       return;
     }
     const cloud = this.state.cloud;
+    const isAzure = cloud && cloud.cloudType === 'azure';
+    let title = <span>Add public SSH keys <em>(optional)</em></span>;
+    if (isAzure) {
+      title = <span>Add public SSH keys</span>;
+    }
     return (
       <juju.components.DeploymentSection
         completed={status.completed}
         disabled={status.disabled}
         instance="deployment-ssh-key"
         showCheck={true}
-        title="Add SSH keys">
+        title={title}>
         <juju.components.DeploymentSSHKey
           cloud={cloud}
           githubSSHKeys={this.props.githubSSHKeys}
