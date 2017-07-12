@@ -99,6 +99,9 @@ class DeploymentLogin extends React.Component {
    @return {Object} The login markup.
   */
   _generateDirectDeployLogin() {
+    const awsScale = 1.3;
+    const gceScale = 1.7;
+    const azureScale = 1;
     return (
       <div>
         <juju.components.DeploymentSection
@@ -141,6 +144,26 @@ class DeploymentLogin extends React.Component {
                 JAAS &rsaquo;
               </a>
             </p>
+          </div>
+          <div className="six-col last-col">
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={Math.round(48 * awsScale)}
+                name="aws-light"
+                width={Math.round(120 * awsScale)} />
+            </div>
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={Math.round(23 * gceScale)}
+                name="google-light"
+                width={Math.round(256 * gceScale)} />
+            </div>
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={Math.round(24 * azureScale)}
+                name="azure"
+                width={Math.round(204 * azureScale)} />
+            </div>
           </div>
           <div className="deployment-login-features__items twelve-col">
             <div className="six-col no-margin-bottom">

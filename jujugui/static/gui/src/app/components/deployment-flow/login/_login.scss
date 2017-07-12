@@ -58,6 +58,11 @@
     background-color: $dark-header;
     color: $white;
 
+    &__logo {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
     &__items {
       margin: 20px 0 60px 0;
       padding: 30px;

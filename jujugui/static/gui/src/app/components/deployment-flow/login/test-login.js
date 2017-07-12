@@ -161,6 +161,26 @@ describe('DeploymentLogin', function() {
               </a>
             </p>
           </div>
+          <div className="six-col last-col">
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={62}
+                name="aws-light"
+                width={156} />
+            </div>
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={39}
+                name="google-light"
+                width={435} />
+            </div>
+            <div className="deployment-login-features__logo">
+              <juju.components.SvgIcon
+                height={24}
+                name="azure"
+                width={204} />
+            </div>
+          </div>
           <div className="deployment-login-features__items twelve-col">
             <div className="six-col no-margin-bottom">
               <h5 className="deployment-login-features__items-heading">
