@@ -125,8 +125,8 @@ class DeploymentFlow extends React.Component {
       case 'vpc':
         completed = false;
         disabled = !hasCloud;
-        visible = (
-          loggedIn && willCreateModel && hasCloud && this.state.cloud.name === 'aws');
+        visible = loggedIn && willCreateModel && hasCloud &&
+          this.state.cloud.name === 'aws';
         break;
       case 'machines':
         const addMachines = groupedChanges._addMachines;
