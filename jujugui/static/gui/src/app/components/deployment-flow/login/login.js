@@ -216,5 +216,8 @@ YUI.add('deployment-login', function() {
   juju.components.DeploymentLogin = DeploymentLogin;
 }, '0.1.0', {
   requires: [
+    'deployment-section',
+    'svg-icon',
+    'usso-login-link'
   ]
 });

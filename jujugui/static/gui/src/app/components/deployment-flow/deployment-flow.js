@@ -1110,7 +1110,6 @@ YUI.add('deployment-flow', function() {
     'deployment-vpc',
     'entity-content-diagram',
     'generic-button',
-    'generic-input',
-    'usso-login-link'
+    'generic-input'
   ]
 });

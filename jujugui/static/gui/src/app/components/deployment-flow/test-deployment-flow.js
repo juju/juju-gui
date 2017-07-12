@@ -280,7 +280,7 @@ describe('DeploymentFlow', function() {
         </juju.components.DeploymentSection>
         {null}
         <div className="twelve-col">
-          <div className="deployment-flow__deploy">
+          <div className="inner-wrapper deployment-flow__deploy">
             {undefined}
             <div className="deployment-flow__deploy-action">
               <juju.components.GenericButton
@@ -562,108 +562,21 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders the login when necessary', function() {
+    const loginToController = sinon.stub();
     const renderer = createDeploymentFlow({
+      gisf: true,
       isLoggedIn: sinon.stub().returns(false),
-      loginToController: sinon.stub(),
+      loginToController: loginToController,
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    const loginLink = output.props.children[12].props.children.props.children[2]
-      .props.children;
     const expected = (
-      <juju.components.DeploymentSection
-        instance="deployment-model-login"
-        showCheck={true}
-        title="You're almost ready to deploy!">
-        <div className="twelve-col">
-          <p className="deployment-login__intro">
-            You will need to sign in with an Ubuntu One account to deploy your
-            model with Juju-as-a-Service.
-          </p>
-          <div className="deployment-login__features">
-            <div className="six-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Deploy to all major clouds directly from your browser.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Identity management across all models.
-              </div>
-            </div>
-            <div className="six-col last-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Hosted and managed juju controllers.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Reusable shareable models with unlimited users.
-              </div>
-            </div>
-          </div>
-          <div className="deployment-login__login">
-            <juju.components.USSOLoginLink
-              gisf={instance.props.gisf}
-              callback={loginLink.props.callback}
-              displayType={'button'}
-              loginToController={instance.props.loginToController}>
-              Login
-            </juju.components.USSOLoginLink>
-          </div>
-          <div className="deployment-login__signup">
-            Do not have an account?
-            <juju.components.USSOLoginLink
-              gisf={instance.props.gisf}
-              callback={loginLink.props.callback}
-              displayType={'text'}
-              loginToController={instance.props.loginToController}>
-              Sign up
-            </juju.components.USSOLoginLink>
-          </div>
-        </div>
-      </juju.components.DeploymentSection>
-    );
+      <juju.components.DeploymentLogin
+        callback={output.props.children[12].props.callback}
+        gisf={true}
+        isDirectDeploy={false}
+        loginToController={loginToController} />);
     expect(output.props.children[12]).toEqualJSX(expected);
-  });
-
-  // Click log in and pass the given error string to the login callback used by
-  // the component. Return the component instance.
-  const login = function(err) {
-    const renderer = createDeploymentFlow({
-      isLoggedIn: sinon.stub().returns(false),
-      loginToController: sinon.stub(),
-      modelCommitted: true
-    });
-    const instance = renderer.getMountedInstance();
-    assert.strictEqual(instance.state.loggedIn, false);
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('Lamington')
-      }
-    };
-    const output = renderer.getRenderOutput();
-    const loginSection = output.props.children[12].props.children;
-    const loginButton = loginSection.props.children[2].props.children;
-    const loginToController = instance.props.loginToController;
-    // Call the supplied callback function which is called after the user
-    // logs in.
-    loginButton.props.loginToController(loginButton.props.callback);
-    assert.strictEqual(loginToController.callCount, 1);
-    const cb = loginToController.args[0][0];
-    cb(err);
-    return instance;
-  };
-
-  it('can login (success)', function() {
-    const instance = login(null);
-    assert.strictEqual(instance.state.loggedIn, true);
-  });
-
-  it('can login (failure)', function() {
-    const instance = login('bad wolf');
-    assert.strictEqual(instance.state.loggedIn, false);
   });
 
   it('can deploy', function() {

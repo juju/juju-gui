@@ -57,11 +57,7 @@ describe('DeploymentPanel', function() {
             </div>
           </div>
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <span>content</span>
-              </div>
-            </div>
+            <span>content</span>
           </div>
         </div>
       </juju.components.Panel>);
@@ -94,11 +90,7 @@ describe('DeploymentPanel', function() {
             </div>
           </div>
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <span>content</span>
-              </div>
-            </div>
+            <span>content</span>
           </div>
         </div>
       </juju.components.Panel>);
@@ -130,11 +122,7 @@ describe('DeploymentPanel', function() {
             </div>
           </div>
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <span>content</span>
-              </div>
-            </div>
+            <span>content</span>
           </div>
         </div>
       </juju.components.Panel>);
