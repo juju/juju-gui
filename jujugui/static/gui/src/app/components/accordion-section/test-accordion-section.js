@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -31,21 +15,34 @@ describe('AccordionSection', () => {
     });
   });
 
-  it('can render', () => {
+  function render(props) {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccordionSection
-        openHeight={100}
-        startOpen={false}
-        title="My title!">
-        <span>Hello</span>
-      </juju.components.AccordionSection>,
-      true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    expect(output).toEqualJSX(
+        openHeight={props.openHeight}
+        startOpen={props.startOpen}
+        title={props.title}>
+        {props.children}
+      </juju.components.AccordionSection>
+      , true);
+
+    return {
+      renderer: renderer,
+      output: renderer.getRenderOutput(),
+      instance: renderer.getMountedInstance()
+    };
+  }
+
+  it('can render', () => {
+    const comp = render({
+      openHeight: 100,
+      startOpen: false,
+      title: 'My title!',
+      children: <span>Hello</span>
+    });
+    expect(comp.output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
-          onClick={instance._toggle.bind(instance)}>
+          onClick={comp.instance._toggle.bind(comp.instance)}>
           My title!
           <juju.components.SvgIcon className="right" name="chevron_down_16"
             size="16" />
@@ -56,17 +53,15 @@ describe('AccordionSection', () => {
   });
 
   it('toggles open and closed when the heading is clicked', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccordionSection
-        openHeight={100}
-        startOpen={false}
-        title="My title!">
-        <span>Hello</span>
-      </juju.components.AccordionSection>,
-      true);
-    const instance = renderer.getMountedInstance();
+    const comp = render({
+      openHeight:100,
+      startOpen: false,
+      title: 'My title!',
+      children: <span>Hello</span>
+    });
+    const instance = comp.renderer.getMountedInstance();
     instance._toggle();
-    let output = renderer.getRenderOutput();
+    let output = comp.renderer.getRenderOutput();
     expect(output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
@@ -80,7 +75,7 @@ describe('AccordionSection', () => {
       </div>);
 
     instance._toggle();
-    output = renderer.getRenderOutput();
+    output = comp.renderer.getRenderOutput();
     expect(output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"

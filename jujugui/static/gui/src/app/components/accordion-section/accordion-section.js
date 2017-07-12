@@ -1,23 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
+/**
+  A single accordion section, with clickable header and collapsable content.
+  Providing a height will animate the opening and closing.
+
+  XXX: I'd like to remove the requirement for height when animating, but I
+  ran out of time when building this. Luke 12-07-2017.
+*/
 class AccordionSection extends React.Component {
   constructor(props) {
     super(props);
@@ -26,13 +17,24 @@ class AccordionSection extends React.Component {
     };
   }
 
+  /**
+    Toggles the collapsable content section.
+  */
   _toggle() {
     this.setState({open: !this.state.open});
   }
 
+  /**
+    Get's the height based on some rules.
+
+    @return {Number|Boolean} The height, or false to clear the style property.
+  */
   _getHeight() {
+    // If there isn't a title, there's nothing to click so remove the ability.
+    // If openHeight isn't defined and we want it to be open, we remove the
+    // style (setting to 'auto' does not work).
     if (!this.props.title ||
-      (typeof(this.props.openHeight) === 'undefined' && this.state.open)) {
+      (this.props.openHeight === undefined && this.state.open)) {
       return false;
     }
 
@@ -40,9 +42,15 @@ class AccordionSection extends React.Component {
       return this.props.openHeight;
     }
 
+    // If none of the above, it should be closed.
     return 0;
   }
 
+  /**
+    Generates the clickable title element.
+
+    @return {Object} The React div element.
+  */
   _generateTitle() {
     if (!this.props.title) {
       return null;
@@ -50,13 +58,18 @@ class AccordionSection extends React.Component {
     const chevron = this.state.open ? 'chevron_up_16' : 'chevron_down_16';
     return (<div
       className="accordion-section__title"
-      onClick={this._toggle}>{this.props.title}
+      onClick={this._toggle.bind(this)}>{this.props.title}
       <juju.components.SvgIcon
         name={chevron}
         size="16" className="right" />
     </div>);
   }
 
+  /**
+    Generates the content from the components children.
+
+    @return {Object} The React div element.
+  */
   _generateContent() {
     const style = {'maxHeight': this._getHeight()};
     return (<div className='accordion-section__content'

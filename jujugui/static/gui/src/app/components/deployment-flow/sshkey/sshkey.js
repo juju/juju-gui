@@ -1,21 +1,6 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
+/* Copyright (C) 2017 Canonical Ltd. */
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/*global yui:true*/
 'use strict';
 
 /**
@@ -40,64 +25,62 @@ class DeploymentSSHKey extends React.Component {
     };
   }
 
-  /** Handle keyboard input to listen for return.
+  /**
+    Handle keyboard input to listen for return key.
 
-    @method _onSSHKeyInputKey
     @param {Object} evt The keyboard event.
   */
-  _onSSHKeyInputKey(evt) {
+  _onKeyUp(evt) {
     if (evt.which === 13) {
       this._handleAddMoreKeys(null);
     }
+    const hasValue = (this.refs.sshKey && this.refs.sshKey.getValue()) ||
+      (this.refs.githubUsername && this.refs.githubUsername.getValue());
     this.setState({
-      buttonDisabled: this.refs.sshKey.getValue() ? false : true
-    });
-  }
-
-  /** Handle keyboard input to listen for return.
-
-    @method _onSSHKeyInputKey
-    @param {Object} evt The keyboard event.
-  */
-  _onGithubUsernameInputKey(evt) {
-    if (evt.which === 13) {
-      this._handleAddMoreKeys(null);
-    }
-    this.setState({
-      buttonDisabled: this.refs.githubUsername.getValue() ? false : true
+      buttonDisabled: hasValue ? false : true
     });
   }
 
   /**
-    Split a Manual Key into its parts
+    Split a Manual Key into its parts.
 
-    @method _splitKey
     @param {String} sshkey
    */
   _splitKey(sshKey) {
-    const splitKey = sshKey.split(' ');
-    return {
-      'body': splitKey[1],
-      'text': sshKey,
-      'type': splitKey[0],
-      'id': 0
-    };
+    if (sshKey.indexOf(' ') > -1) {
+      const splitKey = sshKey.split(' ');
+      if (splitKey.length >= 2) {
+        return {
+          'body': splitKey[1],
+          'text': sshKey,
+          'type': splitKey[0],
+          'id': 0 // To conform to the schema of the github api
+        };
+      }
+    }
+    this.setState({error: (<span>Key is invalid. Please
+    ensure you have copied the key correctly.</span>)});
+    return false;
   }
 
   /**
     Check if an sshkey exists to avoid duplication.
 
-    @method _keyExists
     @param {Object} key The key object to check.
     @return {Boolean}
   */
   _keyExists(key) {
-    return this.state.SSHkeys.filter(knownKey => {
-      return knownKey.body === key.body;
-    }).length !== 0;
+    return this.state.SSHkeys.
+      findIndex(knownKey => knownKey.body === key.body) !== -1;
   }
 
-  _handleAddGithubKeys(error, keys) {
+  /**
+    Handle adding github username.
+
+    @param {String} error The error returned.
+    @param {Array} keys The returned keys.
+  */
+  _addGithubKeysCallback(error, keys) {
     if (error) {
       console.error(error);
       this.setState({error: error});
@@ -126,8 +109,6 @@ class DeploymentSSHKey extends React.Component {
 
   /**
     Handle clicking AddMoreKeys.
-
-    @method _handleAddMoreKeys
   */
   _handleAddMoreKeys() {
     if (this.state.buttonDisabled) {
@@ -138,41 +119,37 @@ class DeploymentSSHKey extends React.Component {
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
       this.props.githubSSHKeys(
-        new juju.environments.web.WebHandler,
+        new yui.juju.environments.web.WebHandler,
         githubUsername,
-        this._handleAddGithubKeys
+        this._addGithubKeysCallback.bind(this)
       );
     } else if (source === 'manual') {
       const manualKey = this.refs.sshKey.getValue();
-      this.props.setSSHKey(manualKey);
       const key = this._splitKey(manualKey);
-      let SSHkeys = this.state.SSHkeys;
-      if (!this._keyExists(key)) {
-        SSHkeys.push(key);
+      if (key) {
+        this.props.setSSHKey(manualKey);
+        let SSHkeys = this.state.SSHkeys;
+        if (!this._keyExists(key)) {
+          SSHkeys.push(key);
+        }
+        this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
+        this.refs.sshKey.setValue(null);
+        this.refs.sshKey.focus();
       }
-      this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
-      this.refs.sshKey.setValue(null);
-      this.refs.sshKey.focus();
     }
-
-    return;
   }
 
   /**
     Handle source change.
-
-    @method _handleSourceChange
   */
   _handleSourceChange() {
     const source = this.refs.sshSource.getValue();
     this.setState({addSource: source, buttonDisabled: true});
-    return;
   }
 
   /**
     Remove key from table.
 
-    @method _removeKey
     @param {Number} keyId The key's ID.
   */
   _removeKey(keyId) {
@@ -192,7 +169,7 @@ class DeploymentSSHKey extends React.Component {
   /**
     Create the added keys section.
 
-    @method _generateAddedKeys
+    @return {Object} The React list of keys.
   */
   _generateAddedKeys() {
     const SSHkeys = this.state.SSHkeys;
@@ -205,9 +182,13 @@ class DeploymentSSHKey extends React.Component {
     let listBody = [];
     SSHkeys.forEach((key, i) => {
       let uniqueKey = key.id + i;
-      const bodyStart = key.body.substring(0, stringLengths);
-      const bodyEnd = key.body.substring(key.body.length - stringLengths);
-      const body = `${bodyStart}...${bodyEnd}`;
+      let body = key.body;
+
+      if (body.length >= stringLengths * 2) {
+        const bodyStart = key.body.substring(0, stringLengths);
+        const bodyEnd = key.body.substring(key.body.length - stringLengths);
+        body = `${bodyStart}...${bodyEnd}`;
+      }
       listBody.push(
         <li className="deployment-flow__row twelve-col" key={uniqueKey}>
           <div className="two-col">{key.type}</div>
@@ -240,7 +221,7 @@ class DeploymentSSHKey extends React.Component {
   /**
     Create the added keys section.
 
-    @method _generateAddKey
+    @return {Object} The React input for either github or manual keys.
   */
   _generateAddKey() {
     const cloud = this.props.cloud;
@@ -257,7 +238,7 @@ class DeploymentSSHKey extends React.Component {
             key="githubUsername"
             ref="githubUsername"
             multiLine={false}
-            onKeyUp={this._onGithubUsernameInputKey.bind(this)}
+            onKeyUp={this._onKeyUp.bind(this)}
             required={isAzure}
             validate={isAzure ? [{
               regex: /\S+/,
@@ -274,7 +255,7 @@ class DeploymentSSHKey extends React.Component {
             key="sshKey"
             ref="sshKey"
             multiLine={true}
-            onKeyUp={this._onSSHKeyInputKey.bind(this)}
+            onKeyUp={this._onKeyUp.bind(this)}
             required={isAzure}
             validate={isAzure ? [{
               regex: /\S+/,
@@ -289,7 +270,7 @@ class DeploymentSSHKey extends React.Component {
   /**
     Create the added key button.
 
-    @method _generateAddKeyButton
+    @return {Object} The React button element.
   */
   _generateAddKeyButton() {
     const title = this.state.addSource === 'github' ? 'Add Keys' : 'Add Key';
@@ -298,15 +279,16 @@ class DeploymentSSHKey extends React.Component {
       <juju.components.GenericButton
         action={this._handleAddMoreKeys.bind(this)}
         disabled={disabled}
-        type="positive"
-        title={title} />
+        type="positive">
+        {title}
+      </juju.components.GenericButton>
     </div>);
   }
 
   /**
     Generate select options for the available sources.
 
-    @method _generateSourcesOptions
+    @return {Array} The sshkey source options.
   */
   _generateSourceOptions() {
     return [
@@ -324,7 +306,7 @@ class DeploymentSSHKey extends React.Component {
   /**
     If an error occurs, generate it.
 
-    @method _generateError
+    @return {Object} Notification component.
   */
   _generateError() {
     if (this.state.error) {
@@ -336,11 +318,6 @@ class DeploymentSSHKey extends React.Component {
     return false;
   }
 
-  /**
-    Render the component.
-
-    @method render
-  */
   render() {
     const cloud = this.props.cloud;
     if (!cloud) {

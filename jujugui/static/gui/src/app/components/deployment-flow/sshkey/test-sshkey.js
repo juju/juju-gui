@@ -97,17 +97,16 @@ describe('DeploymentSSHKey', function() {
               autocomplete
               key="githubUsername"
               label="GitHub username"
-              onKeyUp={comp.instance._onGithubUsernameInputKey.
+              onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
               type="text"
               validate={undefined} />
           </div>
           <div className="right">
             <juju.components.GenericButton
-              action={comp.instance._onSSHKeyInputKey.bind(comp.instance)}
+              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              title="Add Keys"
-              type="positive" />
+              type="positive">Add Keys</juju.components.GenericButton>
           </div>
         </div>
       </div>
@@ -146,7 +145,7 @@ describe('DeploymentSSHKey', function() {
               ref="githubUsername"
               autocomplete
               label="GitHub username"
-              onKeyUp={comp.instance._onGithubUsernameInputKey.
+              onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
               required
               type="text"
@@ -159,10 +158,9 @@ describe('DeploymentSSHKey', function() {
           </div>
           <div className="right">
             <juju.components.GenericButton
-              action={comp.instance._onSSHKeyInputKey.bind(comp.instance)}
+              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              title="Add Keys"
-              type="positive" />
+              type="positive">Add Keys</juju.components.GenericButton>
           </div>
         </div>
       </div>
@@ -173,7 +171,7 @@ describe('DeploymentSSHKey', function() {
   describe('github', () => {
     it('shows an error if no keys found', () => {
       const comp = render('aws');
-      comp.instance._handleAddGithubKeys(null, []);
+      comp.instance._addGithubKeysCallback(null, []);
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[2]).toEqualJSX(
         <juju.components.Notification
@@ -188,7 +186,7 @@ describe('DeploymentSSHKey', function() {
 
     it('shows an error if user not found', () => {
       const comp = render('aws');
-      comp.instance._handleAddGithubKeys('Not Found', {
+      comp.instance._addGithubKeysCallback('Not Found', {
         message: 'Not Found'
       });
       const output = comp.renderer.getRenderOutput();
@@ -206,7 +204,7 @@ describe('DeploymentSSHKey', function() {
           setValue: sinon.stub()
         }
       };
-      comp.instance._handleAddGithubKeys(null, [
+      comp.instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
       const output = comp.renderer.getRenderOutput();
@@ -219,7 +217,7 @@ describe('DeploymentSSHKey', function() {
           <li className="deployment-flow__row twelve-col">
             <div className="two-col">ssh-rsa</div>
             <div className="nine-col added-keys__key-value" title="thekey">
-              thekey...thekey
+              thekey
             </div>
             <div className="one-col last-col">
               <span className="added-keys__key-remove right"
@@ -242,7 +240,7 @@ describe('DeploymentSSHKey', function() {
           setValue: sinon.stub()
         }
       };
-      comp.instance._handleAddGithubKeys(null, [
+      comp.instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
       expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
@@ -293,7 +291,7 @@ describe('DeploymentSSHKey', function() {
           <li className="deployment-flow__row twelve-col">
             <div className="two-col">ssh-rsa</div>
             <div className="nine-col added-keys__key-value" title="thekey">
-              thekey...thekey
+              thekey
             </div>
             <div className="one-col last-col">
               <span className="added-keys__key-remove right"
