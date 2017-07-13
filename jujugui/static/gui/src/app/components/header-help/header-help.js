@@ -58,7 +58,7 @@ class HeaderHelp extends React.Component {
   _generateIssuesLink() {
     let label = 'File Issue';
     let link = 'https://github.com/juju/juju-gui/issues';
-    if (this.props.gisf && this.props.user) {
+    if (this.props.user) {
       label = 'Get Support';
       link = 'https://jujucharms.com/support';
     }
