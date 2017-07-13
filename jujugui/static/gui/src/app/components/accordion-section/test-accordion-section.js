@@ -18,7 +18,6 @@ describe('AccordionSection', () => {
   function render(props) {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.AccordionSection
-        openHeight={props.openHeight}
         startOpen={props.startOpen}
         title={props.title}>
         {props.children}
@@ -34,7 +33,6 @@ describe('AccordionSection', () => {
 
   it('can render', () => {
     const comp = render({
-      openHeight: 100,
       startOpen: false,
       title: 'My title!',
       children: <span>Hello</span>
@@ -47,19 +45,19 @@ describe('AccordionSection', () => {
           <juju.components.SvgIcon className="right" name="chevron_down_16"
             size="16" />
         </div>
-        <div className="accordion-section__content"
+        <div className="accordion-section__content" ref={sinon.stub()}
           style={{maxHeight: 0}}><span>Hello</span></div>
       </div>);
   });
 
   it('toggles open and closed when the heading is clicked', () => {
     const comp = render({
-      openHeight:100,
       startOpen: false,
       title: 'My title!',
       children: <span>Hello</span>
     });
     const instance = comp.renderer.getMountedInstance();
+    instance['accordion-section-content'] = {scrollHeight: 100};
     instance._toggle();
     let output = comp.renderer.getRenderOutput();
     expect(output).toEqualJSX(
@@ -70,22 +68,8 @@ describe('AccordionSection', () => {
           <juju.components.SvgIcon className="right" name="chevron_up_16"
             size="16" />
         </div>
-        <div className="accordion-section__content"
+        <div className="accordion-section__content" ref={sinon.stub()}
           style={{maxHeight: 100}}><span>Hello</span></div>
-      </div>);
-
-    instance._toggle();
-    output = comp.renderer.getRenderOutput();
-    expect(output).toEqualJSX(
-      <div className="accordion-section">
-        <div className="accordion-section__title"
-          onClick={instance._toggle.bind(instance)}>
-          My title!
-          <juju.components.SvgIcon className="right" name="chevron_down_16"
-            size="16" />
-        </div>
-        <div className="accordion-section__content"
-          style={{maxHeight: 0}}><span>Hello</span></div>
       </div>);
   });
 });

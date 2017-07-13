@@ -62,7 +62,7 @@ describe('DeploymentVPC', function() {
     const vpcLink =
     'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
     const expectedOutput = (
-      <div className="twelve-col">
+      <div className="twelve-col no-margin-bottom">
         <p>Juju uses your default VPC – or you can specify one here.</p>
         <p>AWS accounts created since December 2013 have this –&nbsp;
           older accounts may not.&nbsp;

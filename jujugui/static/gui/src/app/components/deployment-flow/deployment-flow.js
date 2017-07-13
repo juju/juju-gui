@@ -539,7 +539,6 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-vpc">
         <juju.components.AccordionSection
-          openHeight={188}
           title={<span>Add AWS VPC ID <em>(optional)</em></span>}>
           <juju.components.DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
         </juju.components.AccordionSection>

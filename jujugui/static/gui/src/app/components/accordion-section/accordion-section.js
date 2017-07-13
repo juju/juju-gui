@@ -5,15 +5,12 @@
 /**
   A single accordion section, with clickable header and collapsable content.
   Providing a height will animate the opening and closing.
-
-  XXX: I'd like to remove the requirement for height when animating, but I
-  ran out of time when building this. Luke 12-07-2017.
 */
 class AccordionSection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: this.props.startOpen || !this.props.title
+      open: this.props.startOpen
     };
   }
 
@@ -25,25 +22,15 @@ class AccordionSection extends React.Component {
   }
 
   /**
-    Get's the height based on some rules.
+    Get's the content style based on some rules.
 
-    @return {Number|Boolean} The height, or false to clear the style property.
+    @return {Object} Object of CSS styles.
   */
-  _getHeight() {
-    // If there isn't a title, there's nothing to click so remove the ability.
-    // If openHeight isn't defined and we want it to be open, we remove the
-    // style (setting to 'auto' does not work).
-    if (!this.props.title ||
-      (this.props.openHeight === undefined && this.state.open)) {
-      return false;
-    }
-
-    if (this.props.openHeight && this.state.open) {
-      return this.props.openHeight;
-    }
-
-    // If none of the above, it should be closed.
-    return 0;
+  _getStyle() {
+    return {
+      maxHeight: this.state.open ?
+        this['accordion-section-content'].scrollHeight : 0
+    };
   }
 
   /**
@@ -71,9 +58,9 @@ class AccordionSection extends React.Component {
     @return {Object} The React div element.
   */
   _generateContent() {
-    const style = {'maxHeight': this._getHeight()};
-    return (<div className='accordion-section__content'
-      style={style}>
+    return (<div className="accordion-section__content"
+      ref={(div) => { this['accordion-section-content'] = div; }}
+      style={this._getStyle()}>
       {this.props.children}
     </div>);
   }
@@ -93,7 +80,6 @@ AccordionSection.propTypes = {
     React.PropTypes.string,
     React.PropTypes.object
   ]),
-  openHeight: React.PropTypes.number,
   startOpen: React.PropTypes.bool,
   title: React.PropTypes.oneOfType([
     React.PropTypes.string,
