@@ -58,9 +58,17 @@
     background-color: $dark-header;
     color: $white;
 
+    &__link {
+      font-weight: normal;
+    }
+
     &__logo {
       margin-bottom: 20px;
       text-align: center;
+
+      &:first-child {
+        margin-top: -1em;
+      }
     }
 
     &__items {

@@ -74,12 +74,9 @@ class DeploymentDirectDeploy extends React.Component {
     url = this.props.generatePath({
       store: url.path()
     });
-    if (!url) {
-      return null;
-    }
     return (
       <a className="link"
-        href={`${url}`}
+        href={url}
         target="_blank">
         Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
       </a>);
@@ -108,6 +105,18 @@ class DeploymentDirectDeploy extends React.Component {
     }
   }
 
+  /**
+    Navigate to the store state.
+  */
+  _handleStoreClick() {
+    this.props.changeState({
+      gui: {deploy: null},
+      profile: null,
+      root: 'store',
+      special: {dd: null}
+    });
+  }
+
   render() {
     let content = null;
     if (this.state.loading) {
@@ -116,6 +125,14 @@ class DeploymentDirectDeploy extends React.Component {
       content = (
         <div>
           This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
+          Visit the&nbsp;
+          <span className="link"
+            onClick={this._handleStoreClick.bind(this)}
+            role="button"
+            tabIndex="0">
+            store
+          </span>&nbsp;
+          to find more charms and bundles.
         </div>);
     } else {
       const entity = this.state.entityModel.toEntity();

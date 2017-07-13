@@ -65,6 +65,14 @@ describe('DirectDeploy', function() {
         instance="deployment-direct-deploy">
         <div>
           This {'bundle'} could not be found.
+          Visit the&nbsp;
+          <span className="link"
+            onClick={output.props.children.props.children[3].props.onClick}
+            role="button"
+            tabIndex="0">
+            store
+          </span>&nbsp;
+          to find more charms and bundles.
         </div>
       </juju.components.DeploymentSection>);
     expect(output).toEqualJSX(expected);
@@ -86,6 +94,14 @@ describe('DirectDeploy', function() {
         instance="deployment-direct-deploy">
         <div>
           This {'charm'} could not be found.
+          Visit the&nbsp;
+          <span className="link"
+            onClick={output.props.children.props.children[3].props.onClick}
+            role="button"
+            tabIndex="0">
+            store
+          </span>&nbsp;
+          to find more charms and bundles.
         </div>
       </juju.components.DeploymentSection>);
     expect(output).toEqualJSX(expected);
@@ -103,7 +119,7 @@ describe('DirectDeploy', function() {
       <juju.components.DeploymentDirectDeploy
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
-        generatePath={sinon.stub()}
+        generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub().callsArgWith(1, null, [charm])}
         makeEntityModel={sinon.stub().returns(charm)}
@@ -128,7 +144,11 @@ describe('DirectDeploy', function() {
                 machine{''} in your cloud.
               </li>
             </ul>
-            {null}
+            <a className="link"
+              href="http://example.com/"
+              target="_blank">
+              Learn more about this {'charm'}.
+            </a>
           </div>
           <div className="six-col last-col no-margin-bottom">
             <div className="deployment-direct-deploy__image">
@@ -165,7 +185,7 @@ describe('DirectDeploy', function() {
       <juju.components.DeploymentDirectDeploy
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
-        generatePath={sinon.stub()}
+        generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={getDiagramURL}
         getEntity={sinon.stub().callsArgWith(1, null, [bundle])}
         makeEntityModel={sinon.stub().returns(bundle)}
@@ -190,7 +210,11 @@ describe('DirectDeploy', function() {
                 machine{'s'} in your cloud.
               </li>
             </ul>
-            {null}
+            <a className="link"
+              href="http://example.com/"
+              target="_blank">
+              Learn more about this {'bundle'}.
+            </a>
           </div>
           <div className="six-col last-col no-margin-bottom">
             <div className="deployment-direct-deploy__image">

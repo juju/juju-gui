@@ -28,7 +28,8 @@
       }
 
       .entity-content__diagram {
-        border-bottom: none;
+        // Needs to have !imporant as the base style also has !important.
+        border-bottom: none !important;
 
         &-image {
           width: 100%;
