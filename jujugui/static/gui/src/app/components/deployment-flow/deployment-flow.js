@@ -518,8 +518,9 @@ class DeploymentFlow extends React.Component {
         title={title}>
         <juju.components.DeploymentSSHKey
           cloud={cloud}
-          githubSSHKeys={this.props.githubSSHKeys}
+          getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKey={this._setSSHKey.bind(this)}
+          WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
   }
@@ -1081,6 +1082,7 @@ class DeploymentFlow extends React.Component {
 };
 
 DeploymentFlow.propTypes = {
+  WebHandler: React.PropTypes.func.isRequired,
   acl: React.PropTypes.object.isRequired,
   addAgreement: React.PropTypes.func.isRequired,
   addNotification: React.PropTypes.func.isRequired,
@@ -1111,10 +1113,10 @@ DeploymentFlow.propTypes = {
   getCurrentChangeSet: React.PropTypes.func.isRequired,
   getDiagramURL: React.PropTypes.func,
   getEntity: React.PropTypes.func,
+  getGithubSSHKeys: React.PropTypes.func.isRequired,
   getUser: React.PropTypes.func,
   getUserName: React.PropTypes.func.isRequired,
   gisf: React.PropTypes.bool,
-  githubSSHKeys: React.PropTypes.func.isRequired,
   groupedChanges: React.PropTypes.object.isRequired,
   isLoggedIn: React.PropTypes.func.isRequired,
   listBudgets: React.PropTypes.func.isRequired,

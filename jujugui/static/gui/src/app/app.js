@@ -1361,7 +1361,7 @@ YUI.add('juju-gui', function(Y) {
           getUser={this.payment && this.payment.getUser.bind(this.payment)}
           getUserName={getUserName}
           gisf={this.get('gisf')}
-          githubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
+          getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
@@ -1381,6 +1381,7 @@ YUI.add('juju-gui', function(Y) {
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
           validateForm={utils.validateForm.bind(utils)}
+          WebHandler={Y.juju.environments.web.WebHandler}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },

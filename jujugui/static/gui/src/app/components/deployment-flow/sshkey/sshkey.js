@@ -1,6 +1,5 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 
-/*global yui:true*/
 'use strict';
 
 /**
@@ -44,9 +43,9 @@ class DeploymentSSHKey extends React.Component {
   /**
     Split a Manual Key into its parts.
 
-    @param {String} sshkey
+    @param {String} sshkey In the format `{type} {key}` eg. `ssh-rsa ad122...`
    */
-  _splitKey(sshKey) {
+  _validateAndSplitKey(sshKey) {
     if (sshKey.indexOf(' ') > -1) {
       const splitKey = sshKey.split(' ');
       if (splitKey.length >= 2) {
@@ -59,7 +58,10 @@ class DeploymentSSHKey extends React.Component {
       }
     }
     this.setState({error: (<span>Key is invalid. Please
-    ensure you have copied the key correctly.</span>)});
+    ensure you have copied the key correctly.
+      <br />The key should be in the format&nbsp;
+      <code>ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvvy/8OHTchL2XhNxE0Fu5...</code>
+    </span>)});
     return false;
   }
 
@@ -101,6 +103,8 @@ class DeploymentSSHKey extends React.Component {
         SSHkeys.push(key);
       }
     });
+    // XXX: Mayko is taking a look at adding all the keys. When done this
+    // should just be this.props.setSSHKey(SSHKeys); Luke 12-07-2017
     this.props.setSSHKey(SSHkeys[0].text);
     this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
     this.refs.githubUsername.setValue(null);
@@ -118,14 +122,14 @@ class DeploymentSSHKey extends React.Component {
     this.setState({error: null});
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
-      this.props.githubSSHKeys(
-        new yui.juju.environments.web.WebHandler,
+      this.props.getGithubSSHKeys(
+        new this.props.WebHandler,
         githubUsername,
         this._addGithubKeysCallback.bind(this)
       );
     } else if (source === 'manual') {
       const manualKey = this.refs.sshKey.getValue();
-      const key = this._splitKey(manualKey);
+      const key = this._validateAndSplitKey(manualKey);
       if (key) {
         this.props.setSSHKey(manualKey);
         let SSHkeys = this.state.SSHkeys;
@@ -352,8 +356,9 @@ class DeploymentSSHKey extends React.Component {
 };
 
 DeploymentSSHKey.propTypes = {
+  WebHandler: React.PropTypes.func.isRequired,
   cloud: React.PropTypes.object,
-  githubSSHKeys: React.PropTypes.func.isRequired,
+  getGithubSSHKeys: React.PropTypes.func.isRequired,
   setSSHKey: React.PropTypes.func.isRequired
 };
 

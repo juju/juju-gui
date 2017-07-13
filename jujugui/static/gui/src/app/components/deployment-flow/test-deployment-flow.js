@@ -60,6 +60,7 @@ const createDeploymentFlow = (props = {}) => {
   };
   // Note that the defaults are *only* set for required DeploymentFlow props.
   const defaults = {
+    WebHandler: sinon.stub(),
     acl: {isReadOnly: sinon.stub().returns(false)},
     addAgreement: sinon.stub(),
     addNotification: sinon.stub(),
@@ -88,7 +89,7 @@ const createDeploymentFlow = (props = {}) => {
     getDiagramURL:sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
-    githubSSHKeys: sinon.stub(),
+    getGithubSSHKeys: sinon.stub(),
     groupedChanges: groupedChanges,
     isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
@@ -208,8 +209,9 @@ describe('DeploymentFlow', function() {
           showCheck={true}
           title={<span>Add public SSH keys<em>(optional)</em></span>}>
           <juju.components.DeploymentSSHKey
+            WebHandler={props.WebHandler}
             cloud={null}
-            githubSSHKeys={props.githubSSHKeys}
+            getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKey={instance._setSSHKey}
           />
         </juju.components.DeploymentSection>

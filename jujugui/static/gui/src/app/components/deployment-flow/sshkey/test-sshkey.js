@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 describe('DeploymentSSHKey', function() {
   let setSSHKey;
-  let githubSSHKeys;
+  let getGithubSSHKeys;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -36,19 +36,20 @@ describe('DeploymentSSHKey', function() {
 
   beforeEach(() => {
     setSSHKey = sinon.stub();
-    githubSSHKeys = sinon.stub();
+    getGithubSSHKeys = sinon.stub();
   });
 
   // Render the component and return the instance and the output.
-  const render = (cloudType, _githubSSHKeys) => {
+  const render = (cloudType, _getGithubSSHKeys) => {
     let cloud = null;
     if (cloudType) {
       cloud = {cloudType: cloudType};
     }
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSSHKey
+        WebHandler={sinon.stub()}
         cloud={cloud}
-        githubSSHKeys={_githubSSHKeys || githubSSHKeys}
+        getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKey={setSSHKey}
       />, true);
     return {
