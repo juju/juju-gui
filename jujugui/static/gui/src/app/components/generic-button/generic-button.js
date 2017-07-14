@@ -75,6 +75,8 @@ GenericButton.propTypes = {
   type: React.PropTypes.string
 };
 
+GenericButton.displayName = 'GenericButton';
+
 YUI.add('generic-button', function() {
   juju.components.GenericButton = GenericButton;
 }, '0.1.0', { requires: [

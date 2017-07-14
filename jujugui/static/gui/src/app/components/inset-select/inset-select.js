@@ -97,9 +97,12 @@ class InsetSelect extends React.Component {
     @returns {String} The list classes.
   */
   _generateClasses() {
+    const label = this.props.label ?
+      this.props.label.replace(/\W/g, '').toLowerCase() : null;
     return classNames(
       'inset-select',
       {
+        [`inset-select--${label}`]: this.props.label,
         'inset-select--disabled': this.props.disabled
       }
     );

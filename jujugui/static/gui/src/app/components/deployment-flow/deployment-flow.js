@@ -92,6 +92,7 @@ class DeploymentFlow extends React.Component {
     let disabled;
     let visible;
     const hasCloud = !!this.state.cloud;
+    const hasSSHkey = !!this.state.sshKey;
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
@@ -117,15 +118,19 @@ class DeploymentFlow extends React.Component {
         visible = loggedIn && willCreateModel && hasCloud;
         break;
       case 'ssh-key':
-        completed = false;
+        completed = hasSSHkey;
         disabled = !hasCloud;
         visible = loggedIn && willCreateModel;
         break;
       case 'vpc':
         completed = false;
         disabled = !hasCloud;
-        visible = loggedIn && willCreateModel && hasCloud &&
-          this.state.cloud.name === 'aws';
+        visible = (
+          loggedIn &&
+          willCreateModel &&
+          hasCloud &&
+          hasCredential &&
+          this.state.cloud.name === 'aws');
         break;
       case 'machines':
         const addMachines = groupedChanges._addMachines;
@@ -506,15 +511,23 @@ class DeploymentFlow extends React.Component {
       return;
     }
     const cloud = this.state.cloud;
+    const isAzure = cloud && cloud.cloudType === 'azure';
+    let title = <span>Add public SSH keys <em>(optional)</em></span>;
+    if (isAzure) {
+      title = <span>Add public SSH keys</span>;
+    }
     return (
       <juju.components.DeploymentSection
         completed={status.completed}
         disabled={status.disabled}
         instance="deployment-ssh-key"
-        showCheck={false}>
+        showCheck={true}
+        title={title}>
         <juju.components.DeploymentSSHKey
           cloud={cloud}
+          getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKey={this._setSSHKey.bind(this)}
+          WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
   }
@@ -531,13 +544,13 @@ class DeploymentFlow extends React.Component {
       return;
     }
     return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-vpc"
-        showCheck={false}>
-        <juju.components.DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
-      </juju.components.DeploymentSection>);
+      <div className="deployment-vpc">
+        <juju.components.AccordionSection
+          title={<span>Add AWS VPC ID <em>(optional)</em></span>}>
+          <juju.components.DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
+        </juju.components.AccordionSection>
+      </div>);
+
   }
 
   /**
@@ -551,17 +564,20 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
+    let sectionTitle = this.props.profileUsername ?
+      `You're logged in as ${this.props.profileUsername}` :
+      'Set your model name';
     return (
       <juju.components.DeploymentSection
         completed={status.completed}
         instance="deployment-model-name"
         showCheck={true}
-        title="Set your model name">
-        <div className="six-col">
+        title={sectionTitle}>
+        <div className="six-col no-margin-bottom">
           <juju.components.GenericInput
             disabled={this.props.acl.isReadOnly()}
             key="modelName"
-            label="Model name"
+            label="Deploying"
             required={true}
             onBlur={this._updateModelName.bind(this)}
             ref="modelName"
@@ -713,6 +729,7 @@ class DeploymentFlow extends React.Component {
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.getUserName()}
           validateForm={this.props.validateForm} />
+        {this._generateVPCSection()}
       </juju.components.DeploymentSection>);
   }
 
@@ -1018,7 +1035,6 @@ class DeploymentFlow extends React.Component {
         {this._generateCloudSection()}
         {this._generateCredentialSection()}
         {this._generateSSHKeySection()}
-        {this._generateVPCSection()}
         {this._generateMachinesSection()}
         {this._generateServicesSection()}
         {this._generateBudgetSection()}
@@ -1032,6 +1048,7 @@ class DeploymentFlow extends React.Component {
 };
 
 DeploymentFlow.propTypes = {
+  WebHandler: React.PropTypes.func.isRequired,
   acl: React.PropTypes.object.isRequired,
   addAgreement: React.PropTypes.func.isRequired,
   addNotification: React.PropTypes.func.isRequired,
@@ -1062,6 +1079,7 @@ DeploymentFlow.propTypes = {
   getCurrentChangeSet: React.PropTypes.func.isRequired,
   getDiagramURL: React.PropTypes.func,
   getEntity: React.PropTypes.func,
+  getGithubSSHKeys: React.PropTypes.func.isRequired,
   getUser: React.PropTypes.func,
   getUserName: React.PropTypes.func.isRequired,
   gisf: React.PropTypes.bool,
@@ -1093,6 +1111,7 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = DeploymentFlow;
 }, '0.1.0', {
   requires: [
+    'accordion-section',
     'deployment-budget',
     'deployment-changes',
     'deployment-cloud',

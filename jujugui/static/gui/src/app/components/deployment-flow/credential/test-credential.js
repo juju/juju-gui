@@ -65,7 +65,7 @@ describe('DeploymentCredential', function() {
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
+      <div className="clearfix">
         <div className="deployment-credential__loading">
           <juju.components.Spinner />
         </div>
@@ -102,9 +102,9 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     const props = instance.props;
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}
@@ -156,9 +156,9 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
@@ -224,9 +224,9 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     const props = instance.props;
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}
@@ -274,9 +274,9 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
@@ -396,9 +396,9 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
@@ -503,9 +503,9 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     const props = instance.props;
     var expected = (
-      <div>
+      <div className="clearfix">
         <juju.components.ExpandingRow
-          classes={{'twelve-col': true}}
+          classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}

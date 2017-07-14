@@ -761,6 +761,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
+        getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
         isLoggedIn={isLoggedIn}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -795,6 +796,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         validateForm={utils.validateForm.bind(utils)}
+        WebHandler={yui.juju.environments.web.WebHandler}
         withPlans={false} />,
       document.getElementById('deployment-container'));
   }

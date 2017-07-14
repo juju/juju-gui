@@ -300,17 +300,18 @@ class DeploymentCredential extends React.Component {
     }
     return (
       <juju.components.ExpandingRow
-        classes={{'twelve-col': true}}
+        classes={{'twelve-col': true, 'no-margin-bottom': true}}
         clickable={false}
         expanded={this.state.showAdd}>
         {this._generateSelect()}
         {this._generateAdd()}
+
       </juju.components.ExpandingRow>);
   }
 
   render() {
     return (
-      <div>
+      <div className="clearfix">
         {this._generateContent()}
       </div>
     );

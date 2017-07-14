@@ -1,25 +1,14 @@
 .deployment-flow {
   &__row-header {
     font-weight: 400;
+    border-bottom: 1px solid $color-dark;
   }
 
-  &__row-header,
   &__row {
     border-bottom: 1px solid $light-mid-grey;
   }
 
   &-panel {
-    .deployment-model-name {
-      .generic-input {
-        &__label {
-          display: none;
-        }
-        &__field {
-          padding: 10px;
-        }
-      }
-    }
-
     .button--neutral {
       background-color: $white;
     }

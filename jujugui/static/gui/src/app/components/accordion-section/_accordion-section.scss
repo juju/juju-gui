@@ -1,0 +1,20 @@
+.accordion-section {
+  border: 1px solid $color-mid-light;
+  border-left: 0;
+  border-right: 0;
+
+  &__title {
+    padding: 1rem 1rem 1rem 0;
+    cursor: pointer;
+
+    em {
+      font-style: normal;
+      color: $color-mid-dark;
+    }
+  }
+
+  &__content {
+    transition: max-height .333s ease;
+    overflow: hidden;
+  }
+}

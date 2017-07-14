@@ -25,6 +25,7 @@ chai.config.truncateThreshold = 0;
 
 describe('DeploymentSSHKey', function() {
   let setSSHKey;
+  let getGithubSSHKeys;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -35,22 +36,26 @@ describe('DeploymentSSHKey', function() {
 
   beforeEach(() => {
     setSSHKey = sinon.stub();
+    getGithubSSHKeys = sinon.stub();
   });
 
   // Render the component and return the instance and the output.
-  const render = cloudType => {
+  const render = (cloudType, _getGithubSSHKeys) => {
     let cloud = null;
     if (cloudType) {
       cloud = {cloudType: cloudType};
     }
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSSHKey
+        WebHandler={sinon.stub()}
         cloud={cloud}
+        getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKey={setSSHKey}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput()
+      output: renderer.getRenderOutput(),
+      renderer: renderer
     };
   };
 
@@ -64,20 +69,46 @@ describe('DeploymentSSHKey', function() {
     const expectedOutput = (
       <div className="deployment-ssh-key">
         <p>
-          Optionally provide a SSH key (e.g. ~/.ssh/id_rsa.pub) to allow
-          accessing machines provisioned on this model via "juju ssh".
-          <br/> SSH keys can be added at any time using "juju add-ssh-key" or
-          "juju import-ssh-key".
+          Keys will allow you SSH access to the machines
+          provisioned by Juju for this model.
         </p>
-        <juju.components.GenericInput
-          label="SSH key"
-          key="sshKey"
-          ref="sshKey"
-          multiLine={true}
-          onBlur={comp.instance._onSSHKeyInputBlur}
-          required={false}
-          validate={undefined}
-        />
+        {false}
+        {false}
+        <div className="twelve-col no-margin-bottom">
+          <div className="three-col no-margin-bottom">
+            <juju.components.InsetSelect
+              disabled={false}
+              ref="sshSource"
+              label="Source"
+              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
+              options={[
+                {
+                  label: 'GitHub',
+                  value: 'github'
+                },
+                {
+                  label: 'Manual',
+                  value: 'manual'
+                }
+              ]} />
+          </div>
+          <div className="three-col last-col no-margin-bottom">
+            <juju.components.GenericInput
+              ref="githubUsername"
+              autocomplete
+              key="githubUsername"
+              label="GitHub username"
+              onKeyUp={comp.instance._onKeyUp.
+                bind(comp.instance)}
+              type="text" />
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+              disabled
+              type="positive">Add Keys</juju.components.GenericButton>
+          </div>
+        </div>
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
@@ -88,39 +119,185 @@ describe('DeploymentSSHKey', function() {
     const expectedOutput = (
       <div className="deployment-ssh-key">
         <p>
-          Provide the SSH key (e.g. ~/.ssh/id_rsa.pub) that will be used to
-          provision machines on Azure.
-          <br/> Additional keys can be added at any time using
-          "juju add-ssh-key" or "juju import-ssh-key".
+          Keys will allow you SSH access to the machines provisioned on Azure.
         </p>
-        <juju.components.GenericInput
-          label="SSH key"
-          key="sshKey"
-          ref="sshKey"
-          multiLine={true}
-          onBlur={comp.instance._onSSHKeyInputBlur}
-          required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }]}
-        />
+        {false}
+        {false}
+        <div className="twelve-col no-margin-bottom">
+          <div className="three-col no-margin-bottom">
+            <juju.components.InsetSelect
+              ref="sshSource"
+              label="Source"
+              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
+              options={[
+                {
+                  label: 'GitHub',
+                  value: 'github'
+                },
+                {
+                  label: 'Manual',
+                  value: 'manual'
+                }
+              ]} />
+          </div>
+          <div className="three-col last-col no-margin-bottom">
+            <juju.components.GenericInput
+              ref="githubUsername"
+              autocomplete
+              label="GitHub username"
+              onKeyUp={comp.instance._onKeyUp.
+                bind(comp.instance)}
+              type="text" />
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+              disabled
+              type="positive">Add Keys</juju.components.GenericButton>
+          </div>
+        </div>
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
-  it('stores the SSH key', function() {
-    const comp = render('gce');
-    const input = comp.output.props.children[1];
-    // Simulate returning a value from a blur event.
-    comp.instance.refs = {sshKey: {getValue: () => 'my SSH key'}};
-    input.props.onBlur();
-    // The SSH key has been stored.
-    assert.strictEqual(setSSHKey.callCount, 1);
-    const args = setSSHKey.args[0];
-    assert.strictEqual(args.length, 1);
-    assert.equal(args[0], 'my SSH key');
+  describe('github', () => {
+    it('shows an error if no keys found', () => {
+      const comp = render('aws');
+      comp.instance._addGithubKeysCallback(null, []);
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[2]).toEqualJSX(
+        <juju.components.Notification
+          content={<span><b>Error:</b>
+            <span>No keys found.
+              <a className="link" href="https://github.com/settings/keys"
+                target="_blank">Create an SSH Key</a>.
+            </span>
+          </span>}
+          type="negative" />);
+    });
+
+    it('shows an error if user not found', () => {
+      const comp = render('aws');
+      comp.instance._addGithubKeysCallback('Not Found', {
+        message: 'Not Found'
+      });
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[2]).toEqualJSX(
+        <juju.components.Notification
+          content={(<span><b>Error:</b> Not Found</span>)}
+          type="negative" />);
+    });
+
+    it ('creates a table if keys present', () => {
+      const comp = render('aws');
+      comp.instance.refs = {
+        githubUsername: {
+          focus: sinon.stub(),
+          setValue: sinon.stub()
+        }
+      };
+      comp.instance._addGithubKeysCallback(null, [
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+      ]);
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[1]).toEqualJSX(
+        <ul className="deployment-machines__list clearfix">
+          <li className="deployment-flow__row-header twelve-col">
+            <div className="two-col">Type</div>
+            <div className="ten-col last-col">Key</div>
+          </li>
+          <li className="deployment-flow__row twelve-col">
+            <div className="two-col">ssh-rsa</div>
+            <div className="nine-col added-keys__key-value" title="thekey">
+              thekey
+            </div>
+            <div className="one-col last-col">
+              <span className="added-keys__key-remove right"
+                onClick={comp.instance._removeKey.bind(comp.instance)}
+                role="button"
+                title="Remove key">
+                <juju.components.SvgIcon name="close_16" size="16" />
+              </span>
+            </div>
+          </li>
+        </ul>
+      );
+    });
+
+    it('stores the first SSH key', function() {
+      const comp = render('gce');
+      comp.instance.refs = {
+        githubUsername: {
+          focus: sinon.stub(),
+          setValue: sinon.stub()
+        }
+      };
+      comp.instance._addGithubKeysCallback(null, [
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+      ]);
+      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
+      expect(comp.instance.props.setSSHKey.args[0][0]).
+        toEqual('ssh-rsa thekey');
+    });
+  });
+
+  it('changes source and disables the button', function() {
+    const comp = render('aws');
+    comp.instance.refs = {sshSource: {getValue: () => 'manual'}};
+    comp.instance._handleSourceChange();
+    expect(comp.instance.state.addSource).toEqual('manual');
+    expect(comp.instance.state.buttonDisabled).toEqual(true);
+  });
+
+  describe('manual', () => {
+    let comp;
+    beforeEach(() => {
+      comp = render('gce');
+      comp.instance.refs = {
+        sshSource: {getValue: () => 'manual'},
+        sshKey: {
+          setValue: () => sinon.stub(),
+          focus: () => sinon.stub(),
+          getValue: () => 'ssh-rsa thekey'
+        }
+      };
+      comp.instance.setState({buttonDisabled: false});
+    });
+
+    it('stores the SSH key', function() {
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
+      expect(comp.instance.props.setSSHKey.args[0][0]).
+        toEqual('ssh-rsa thekey');
+    });
+
+    it ('shows a table if keys present', () => {
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[1]).toEqualJSX(
+        <ul className="deployment-machines__list clearfix">
+          <li className="deployment-flow__row-header twelve-col">
+            <div className="two-col">Type</div>
+            <div className="ten-col last-col">Key</div>
+          </li>
+          <li className="deployment-flow__row twelve-col">
+            <div className="two-col">ssh-rsa</div>
+            <div className="nine-col added-keys__key-value" title="thekey">
+              thekey
+            </div>
+            <div className="one-col last-col">
+              <span className="added-keys__key-remove right"
+                onClick={comp.instance._removeKey.bind(comp.instance)}
+                role="button"
+                title="Remove key">
+                <juju.components.SvgIcon name="close_16" size="16" />
+              </span>
+            </div>
+          </li>
+        </ul>
+      );
+    });
   });
 
 });

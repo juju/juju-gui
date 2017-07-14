@@ -32,6 +32,11 @@
     &-checkmark {
       fill: $dark-warm-grey;
     }
+
+    em {
+      color: #666;
+      font-style: normal;
+    }
   }
 
   &__actions {

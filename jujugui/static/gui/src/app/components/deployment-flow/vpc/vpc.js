@@ -80,34 +80,39 @@ class DeploymentVPC extends React.Component {
     Render the component.
   */
   render() {
+    const vpcLink =
+    'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
     return (
-      <div>
-        <p>
-          Optionally use a specific AWS VPC ID. When not specified, Juju
-          requires a default VPC or EC2-Classic features to be available for
-          the account/region.
+      <div className="twelve-col no-margin-bottom">
+        <p>Juju uses your default VPC – or you can specify one here.</p>
+        <p>AWS accounts created since December 2013 have this –&nbsp;
+          older accounts may not.&nbsp;
+          <a className="link"
+            target="_blank" href={vpcLink}>Default VPC basics.</a>
         </p>
-        <juju.components.GenericInput
-          label="VPC id"
-          key="vpcId"
-          ref="vpcId"
-          multiLine={false}
-          onBlur={this._onInputBlur.bind(this)}
-          onKeyUp={this._onInputKeyUp.bind(this)}
-          required={false}
-        />
-        <input
-          type="checkbox"
-          id="vpcIdForce"
-          onChange={this._onCheckboxChange.bind(this)}
-          onClick={this._onCheckboxClick.bind(this)}
-          checked={this.state.force}
-          disabled={!this.state.forceEnabled}
-        />
-        &nbsp;
-        Force Juju to use the AWS VPC ID specified above, even when it fails
-        the minimum validation criteria. This is ignored if VPC ID is not
-        set.
+        <div className="six-col">
+          <juju.components.GenericInput
+            label="VPC ID"
+            key="vpcId"
+            ref="vpcId"
+            multiLine={false}
+            onBlur={this._onInputBlur.bind(this)}
+            onKeyUp={this._onInputKeyUp.bind(this)}
+            required={false}
+          />
+          <label>
+            <input
+              type="checkbox"
+              id="vpcIdForce"
+              onChange={this._onCheckboxChange.bind(this)}
+              onClick={this._onCheckboxClick.bind(this)}
+              checked={this.state.force}
+              disabled={!this.state.forceEnabled}
+            />
+            &nbsp;
+            Always use this ID
+          </label>
+        </div>
       </div>
     );
   }
@@ -120,5 +125,7 @@ DeploymentVPC.propTypes = {
 YUI.add('deployment-vpc', function() {
   juju.components.DeploymentVPC = DeploymentVPC;
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'generic-input'
+  ]
 });

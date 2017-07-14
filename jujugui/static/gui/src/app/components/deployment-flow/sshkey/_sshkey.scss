@@ -2,4 +2,42 @@
   *[contenteditable] {
     word-wrap: break-word;
   }
+
+  .button--positive {
+    height: 58px;
+  }
+
+  .inset-select--source {
+    width: 100%;
+  }
+
+  .generic-input__label {
+    pointer-events: none;
+    top: 20px;
+
+    &--focus,
+    &--placeholder-present,
+    &--value-present {
+      top: 0;
+    }
+  }
+
+  .generic-input__multiline-field,
+  .generic-input__field[type=text],
+  .generic-input__field[type=password] {
+    margin-bottom: 0;
+  }
+}
+
+.added-keys {
+
+  &__key-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  &__key-remove {
+    cursor: pointer;
+    margin-right: 1rem;
+  }
 }
