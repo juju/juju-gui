@@ -37,8 +37,8 @@ describe('DeploymentPanel', function() {
         title="Lamington">
         <span>content</span>
       </juju.components.DeploymentPanel>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.Panel
         instanceName="deployment-flow-panel"
@@ -57,11 +57,72 @@ describe('DeploymentPanel', function() {
             </div>
           </div>
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <span>content</span>
-              </div>
+            <span>content</span>
+          </div>
+        </div>
+      </juju.components.Panel>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render for direct deploy', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentPanel
+        changeState={sinon.stub()}
+        isDirectDeploy={true}
+        loggedIn={false}
+        title="Lamington">
+        <span>content</span>
+      </juju.components.DeploymentPanel>, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.Panel
+        instanceName="deployment-flow-panel"
+        visible={true}>
+        <div className="deployment-panel">
+          <div className={
+            'deployment-panel__header deployment-panel__header--dark'}>
+            <div className="deployment-panel__header-logo">
+              <juju.components.SvgIcon
+                className="svg-icon"
+                height="35"
+                name="juju-logo-light"
+                width="90" />
             </div>
+          </div>
+          <div className="deployment-panel__content">
+            <span>content</span>
+          </div>
+        </div>
+      </juju.components.Panel>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render for logged in direct deploy', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentPanel
+        changeState={sinon.stub()}
+        isDirectDeploy={true}
+        loggedIn={true}
+        title="Lamington">
+        <span>content</span>
+      </juju.components.DeploymentPanel>, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.Panel
+        instanceName="deployment-flow-panel"
+        visible={true}>
+        <div className="deployment-panel">
+          <div className="deployment-panel__header">
+            <div className="deployment-panel__header-logo">
+              <juju.components.SvgIcon
+                className="svg-icon"
+                height="35"
+                name="juju-logo"
+                width="90" />
+            </div>
+          </div>
+          <div className="deployment-panel__content">
+            <span>content</span>
           </div>
         </div>
       </juju.components.Panel>);

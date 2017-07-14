@@ -1,0 +1,108 @@
+.deployment-login {
+  &__intro {
+    margin-top: 20px;
+  }
+
+  &__features {
+    margin-top: 20px;
+  }
+
+  &__feature {
+    margin-bottom: 20px;
+  }
+
+  &__signup {
+    margin-top: 20px;
+    text-align: center;
+
+    .usso-login {
+      display: inline;
+      margin-left: 0.5em;
+    }
+  }
+
+  &__tick {
+    margin-right: 1em;
+  }
+
+  &-signup {
+    a {
+      color: $link-blue;
+    }
+
+    .deployment-section__content {
+      background-color: transparent;
+    }
+
+    .usso-login,
+    .usso-login__action {
+      display: inline-block;
+    }
+
+    .usso-login {
+      margin-right: 10px;
+    }
+
+    .usso-login__action {
+      width: auto;
+    }
+
+    &__message {
+      margin-right: 20px;
+      font-size: 20px;
+    }
+  }
+
+  &-features {
+    margin-bottom: 0;
+    background-color: $dark-header;
+    color: $white;
+
+    &__link {
+      font-weight: normal;
+    }
+
+    &__logo {
+      margin-bottom: 20px;
+      text-align: center;
+
+      &:first-child {
+        margin-top: -1em;
+      }
+    }
+
+    &__items {
+      margin: 20px 0 60px 0;
+      padding: 30px;
+      border: 1px solid $dark-warm-grey;
+      border-radius: $border-radius;
+
+      &-heading {
+        padding-top: 10px;
+        font-weight: 400;
+
+        &:first-child {
+          padding-top: 0;
+        }
+      }
+
+      &-list {
+        margin: 0;
+        padding-left: 40px;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+
+    .deployment-section__title {
+      display: none;
+    }
+
+    .deployment-section__content {
+      background: transparent;
+      padding-top: 60px;
+    }
+  }
+}

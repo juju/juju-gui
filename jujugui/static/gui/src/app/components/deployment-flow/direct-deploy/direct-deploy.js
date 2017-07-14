@@ -23,25 +23,33 @@ class DeploymentDirectDeploy extends React.Component {
     super(props);
     this.state = {
       entityModel: false,
-      isBundle: this.props.ddData.id.indexOf('bundle') !== -1
+      isBundle: this.props.ddData.id.indexOf('bundle') !== -1,
+      loading: false
     };
   }
 
-  componentDidMount() {
-    this.props.getEntity(this.props.ddData.id, (error, data) => {
-      if (error) {
-        console.error('cannot fetch the entity:' + error);
-        return;
-      }
-      if (data.length > 0) {
-        data = data[0];
-        this.setState({
-          entityModel: this.props.makeEntityModel(data)
+  componentWillMount() {
+    this.setState({loading: true}, () => {
+      this.props.getEntity(this.props.ddData.id, (error, data) => {
+        this.setState({loading: false}, () => {
+          if (error) {
+            console.error('cannot fetch the entity:' + error);
+            return;
+          }
+          if (data && data.length > 0) {
+            data = data[0];
+            this.setState({
+              entityModel: this.props.makeEntityModel(data)
+            });
+          }
         });
-      }
+      });
     });
   }
 
+  /**
+    Change the state to close the deployment flow.
+  */
   _handleClose() {
     this.props.changeState({
       gui: {deploy: null},
@@ -50,64 +58,121 @@ class DeploymentDirectDeploy extends React.Component {
     });
   }
 
-  render() {
-    let diagram = null;
-    let titleAndDescription = null;
+  /**
+    Generate the entity link.
+
+    @returns {Object} The link markup or null.
+  */
+  _generateLink() {
     const ddEntityId = this.props.ddData.id;
+    let url;
+    try {
+      url = window.jujulib.URL.fromLegacyString(ddEntityId);
+    } catch(_) {
+      url = window.jujulib.URL.fromString(ddEntityId);
+    }
+    url = this.props.generatePath({
+      store: url.path()
+    });
+    return (
+      <a className="link"
+        href={url}
+        target="_blank">
+        Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
+      </a>);
+  }
+
+  /**
+    Generate the entity diagram or icon.
+
+    @returns {Object} The markup.
+  */
+  _generateImage() {
     if (this.state.isBundle) {
-      diagram = (
+      return (
         <juju.components.EntityContentDiagram
           getDiagramURL={this.props.getDiagramURL}
-          id={ddEntityId} />);
-    }
-
-    if (this.state.entityModel) {
+          id={this.props.ddData.id} />);
+    } else {
       const entity = this.state.entityModel.toEntity();
-      let url;
-      let link;
-      try {
-        url = window.jujulib.URL.fromLegacyString(ddEntityId);
-      } catch(_) {
-        url = window.jujulib.URL.fromString(ddEntityId);
-      }
-      url = this.props.generatePath({
-        store: url.path()
-      });
-
-      if (url) {
-        link = (
-          <a href={`${url}`}
-            className="link" target="_blank">
-            Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
-          </a>);
-      }
-      titleAndDescription = (
-        <div className="deployment-direct-deploy__description six-col">
-          <h4>You are about to deploy:</h4>
-          <h2 className="deployment-direct-deploy__title">
-            {entity.displayName}
-          </h2>
-          <juju.components.EntityContentDescription
-            entityModel={this.state.entityModel}
-            renderMarkdown={this.props.renderMarkdown} />
-          {link}
+      return (
+        <div className="deployment-direct-deploy__image-block">
+          <img alt={entity.displayName}
+            className="deployment-direct-deploy__image-block-icon"
+            src={entity.iconPath}
+            width="96" />
         </div>);
     }
+  }
 
+  /**
+    Navigate to the store state.
+  */
+  _handleStoreClick() {
+    this.props.changeState({
+      gui: {deploy: null},
+      profile: null,
+      root: 'store',
+      special: {dd: null}
+    });
+  }
+
+  render() {
+    let content = null;
+    if (this.state.loading) {
+      content = (<juju.components.Spinner />);
+    } else if (!this.state.entityModel) {
+      content = (
+        <div>
+          This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
+          Visit the&nbsp;
+          <span className="link"
+            onClick={this._handleStoreClick.bind(this)}
+            role="button"
+            tabIndex="0">
+            store
+          </span>&nbsp;
+          to find more charms and bundles.
+        </div>);
+    } else {
+      const entity = this.state.entityModel.toEntity();
+      const machineNumber = this.state.isBundle ? entity.machineCount : 1;
+      content = (
+        <div>
+          <div className="deployment-direct-deploy__description six-col">
+            <h4>You are about to deploy:</h4>
+            <h2 className="deployment-direct-deploy__title">
+              {entity.displayName}
+            </h2>
+            <juju.components.EntityContentDescription
+              entityModel={this.state.entityModel}
+              renderMarkdown={this.props.renderMarkdown} />
+            <ul>
+              <li>
+                It will run on {machineNumber}&nbsp;
+                machine{machineNumber === 1 ? '' : 's'} in your cloud.
+              </li>
+            </ul>
+            {this._generateLink()}
+          </div>
+          <div className="six-col last-col no-margin-bottom">
+            <div className="deployment-direct-deploy__image">
+              {this._generateImage()}
+            </div>
+            <div className="deployment-direct-deploy__edit-model">
+              <juju.components.GenericButton
+                action={this._handleClose.bind(this)}
+                type="inline-neutral">
+                Edit model
+              </juju.components.GenericButton>
+            </div>
+          </div>
+        </div>);
+    }
     return (
       <juju.components.DeploymentSection
         instance="deployment-direct-deploy">
-        {titleAndDescription}
-        <div className="six-col last-col deployment-direct-deploy__image">
-          {diagram}
-          <div className="deployment-direct-deploy__edit-model">
-            <juju.components.GenericButton
-              action={this._handleClose.bind(this)}
-              type="inline-neutral">
-              Edit model
-            </juju.components.GenericButton>
-          </div>
-        </div>
+        {content}
       </juju.components.DeploymentSection>);
   }
 };
@@ -129,6 +194,7 @@ YUI.add('deployment-direct-deploy', function() {
     'deployment-section',
     'entity-content-diagram',
     'entity-content-description',
-    'generic-button'
+    'generic-button',
+    'loading-spinner'
   ]
 });

@@ -40,14 +40,18 @@ describe('DeploymentSection', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-section twelve-col deployment-section--active">
-        {undefined}
-        <h3 className="deployment-section__title">
-          {undefined}
-          Applications to be deployed
-        </h3>
-        <span>content</span>
+        <div className="inner-wrapper">
+          <div className="twelve-col deployment-section__content">
+            {undefined}
+            <h3 className="deployment-section__title">
+              {undefined}
+              Applications to be deployed
+            </h3>
+            <span>content</span>
+          </div>
+        </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render with extra props', function() {
@@ -72,22 +76,26 @@ describe('DeploymentSection', function() {
       <div className={
         'deployment-section twelve-col deployment-section--completed ' +
         'section-instance'}>
-        <div className="deployment-section__actions">
-          <div className="deployment-section__extra">
-            <span>extra</span>
+        <div className="inner-wrapper">
+          <div className="twelve-col deployment-section__content">
+            <div className="deployment-section__actions">
+              <div className="deployment-section__extra">
+                <span>extra</span>
+              </div>
+              <juju.components.ButtonRow
+                buttons={buttons} />
+            </div>
+            <h3 className="deployment-section__title">
+              <juju.components.SvgIcon
+                className="deployment-section__title-checkmark"
+                name="complete"
+                size="24" />
+              Applications to be deployed
+            </h3>
+            <span>content</span>
           </div>
-          <juju.components.ButtonRow
-            buttons={buttons} />
         </div>
-        <h3 className="deployment-section__title">
-          <juju.components.SvgIcon
-            className="deployment-section__title-checkmark"
-            name="complete"
-            size="24" />
-          Applications to be deployed
-        </h3>
-        <span>content</span>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

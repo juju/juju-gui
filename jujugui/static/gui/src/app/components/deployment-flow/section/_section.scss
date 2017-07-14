@@ -1,9 +1,14 @@
 .deployment-section {
-  background-color: $light-grey;
   display: none;
   margin-bottom: 40px;
-  padding: 20px;
   position: relative;
+
+  &__content {
+    background-color: $light-grey;
+    margin-bottom: 0;
+    padding: 20px;
+
+  }
 
   &--completed {
     .deployment-section__title-checkmark {
@@ -18,7 +23,7 @@
   &__title {
     margin-top: 10px;
     margin-bottom: 20px;
-    
+
     .svg-icon {
       margin-right: 10px;
       vertical-align: text-top;
