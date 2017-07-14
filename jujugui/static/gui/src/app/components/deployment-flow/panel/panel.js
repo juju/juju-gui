@@ -36,30 +36,50 @@ class DeploymentPanel extends React.Component {
     });
   }
 
+  /**
+    Generate the header content based on the app state.
+  */
+  _generateHeader() {
+    if (this.props.isDirectDeploy) {
+      const classes = classNames(
+        'deployment-panel__header',
+        {'deployment-panel__header--dark': !this.props.loggedIn});
+      return (
+        <div className={classes}>
+          <div className="deployment-panel__header-logo">
+            <juju.components.SvgIcon
+              className="svg-icon"
+              height="35"
+              name={this.props.loggedIn ? 'juju-logo' : 'juju-logo-light'}
+              width="90" />
+          </div>
+        </div>);
+    } else {
+      return (
+        <div className="deployment-panel__header">
+          <div className="deployment-panel__close">
+            <juju.components.GenericButton
+              action={this._handleClose.bind(this)}
+              type="neutral">
+              Back to canvas
+            </juju.components.GenericButton>
+          </div>
+          <div className="deployment-panel__header-name">
+            {this.props.title}
+          </div>
+        </div>);
+    }
+  }
+
   render() {
     return (
       <juju.components.Panel
         instanceName="deployment-flow-panel"
         visible={true}>
         <div className="deployment-panel">
-          <div className="deployment-panel__header">
-            <div className="deployment-panel__close">
-              <juju.components.GenericButton
-                action={this._handleClose.bind(this)}
-                type="neutral">
-                Back to canvas
-              </juju.components.GenericButton>
-            </div>
-            <div className="deployment-panel__header-name">
-              {this.props.title}
-            </div>
-          </div>
+          {this._generateHeader()}
           <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                {this.props.children}
-              </div>
-            </div>
+            {this.props.children}
           </div>
         </div>
       </juju.components.Panel>
@@ -73,6 +93,8 @@ DeploymentPanel.propTypes = {
     React.PropTypes.object,
     React.PropTypes.array
   ]),
+  isDirectDeploy: React.PropTypes.bool,
+  loggedIn: React.PropTypes.bool,
   sendAnalytics: React.PropTypes.func,
   title: React.PropTypes.string
 };

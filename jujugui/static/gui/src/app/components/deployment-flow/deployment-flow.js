@@ -97,6 +97,7 @@ class DeploymentFlow extends React.Component {
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
+    const loggedIn = this.state.loggedIn;
     switch (section) {
       case 'model-name':
         completed = this.props.acl.isReadOnly() ||
@@ -105,64 +106,71 @@ class DeploymentFlow extends React.Component {
             && this.state.modelName !== ''
           );
         disabled = false;
-        visible = willCreateModel;
+        visible = loggedIn && willCreateModel;
         break;
       case 'cloud':
         completed = hasCloud && hasCredential;
         disabled = !this.state.loggedIn;
-        visible = this.state.loggedIn && (willCreateModel || !completed);
+        visible = loggedIn && (willCreateModel || !completed);
         break;
       case 'credential':
         completed = false;
         disabled = !hasCloud;
-        visible = willCreateModel && hasCloud;
+        visible = loggedIn && willCreateModel && hasCloud;
         break;
       case 'ssh-key':
         completed = hasSSHkey;
         disabled = !hasCloud;
-        visible = willCreateModel;
+        visible = loggedIn && willCreateModel;
         break;
       case 'vpc':
         completed = false;
         disabled = !hasCloud;
         visible = (
+          loggedIn &&
           willCreateModel &&
           hasCloud &&
-          this.state.cloud.name === 'aws' &&
-          hasCredential);
+          hasCredential &&
+          this.state.cloud.name === 'aws');
         break;
       case 'machines':
         const addMachines = groupedChanges._addMachines;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = addMachines && Object.keys(addMachines).length > 0;
+        visible = loggedIn && addMachines &&
+          Object.keys(addMachines).length > 0;
         break;
       case 'services':
         const deploys = groupedChanges._deploy;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = deploys && Object.keys(deploys).length > 0;
+        visible = loggedIn && deploys && Object.keys(deploys).length > 0;
         break;
       case 'budget':
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = this.props.withPlans;
+        visible = loggedIn && this.props.withPlans;
         break;
       case 'payment':
         completed = !!this.state.paymentUser;
         disabled = false;
-        visible = this.props.showPay;
+        visible = loggedIn && this.props.showPay;
         break;
       case 'changes':
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = true;
+        visible = loggedIn;
         break;
       case 'agreements':
         const newTerms = this.state.newTerms;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = newTerms && newTerms.length > 0;
+        visible = loggedIn && newTerms && newTerms.length > 0;
+        break;
+      case 'deploy':
+        completed = false;
+        disabled = false;
+        visible = loggedIn;
         break;
     }
     return {
@@ -640,6 +648,9 @@ class DeploymentFlow extends React.Component {
     @returns {Object} The markup.
   */
   _generateLogin() {
+    if (this.state.loggedIn) {
+      return null;
+    }
     const callback = err => {
       if (!err) {
         this.setState({loggedIn: true});
@@ -647,58 +658,11 @@ class DeploymentFlow extends React.Component {
       }
     };
     return (
-      <juju.components.DeploymentSection
-        instance="deployment-model-login"
-        showCheck={true}
-        title="You're almost ready to deploy!">
-        <div className="twelve-col">
-          <p className="deployment-login__intro">
-            You will need to sign in with an Ubuntu One account to deploy
-            your model with Juju-as-a-Service.
-          </p>
-          <div className="deployment-login__features">
-            <div className="six-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Deploy to all major clouds directly from your browser.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Identity management across all models.
-              </div>
-            </div>
-            <div className="six-col last-col">
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Hosted and managed juju controllers.
-              </div>
-              <div className="deployment-login__feature">
-                <juju.components.SvgIcon name="task-done_16" size="16" />
-                Reusable shareable models with unlimited users.
-              </div>
-            </div>
-          </div>
-          <div className="deployment-login__login">
-            <juju.components.USSOLoginLink
-              gisf={this.props.gisf}
-              callback={callback}
-              displayType={'button'}
-              loginToController={this.props.loginToController}>
-              Login
-            </juju.components.USSOLoginLink>
-          </div>
-          <div className="deployment-login__signup">
-            Do not have an account?
-            <juju.components.USSOLoginLink
-              gisf={this.props.gisf}
-              callback={callback}
-              displayType="text"
-              loginToController={this.props.loginToController}>
-              Sign up
-            </juju.components.USSOLoginLink>
-          </div>
-        </div>
-      </juju.components.DeploymentSection>);
+      <juju.components.DeploymentLogin
+        callback={callback}
+        gisf={this.props.gisf}
+        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        loginToController={this.props.loginToController} />);
   }
 
   /**
@@ -962,6 +926,33 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Generate the deploy section.
+
+    @returns {Object} The markup.
+  */
+  _generateDeploySection() {
+    const status = this._getSectionStatus('deploy');
+    if (!status.visible) {
+      return;
+    }
+    const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
+    return (
+      <div className="twelve-col">
+        <div className="inner-wrapper deployment-flow__deploy">
+          {this._generateAgreementsSection()}
+          <div className="deployment-flow__deploy-action">
+            <juju.components.GenericButton
+              action={this._handleDeploy.bind(this)}
+              disabled={!this._deploymentAllowed()}
+              type="positive">
+              {deployTitle}
+            </juju.components.GenericButton>
+          </div>
+        </div>
+      </div>);
+  }
+
+  /**
     Generates the Direct Deploy component if necessary.
     @returns {Object} The React elements.
   */
@@ -1034,49 +1025,27 @@ class DeploymentFlow extends React.Component {
   }
 
   render() {
-    const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
-    if (this.state.loggedIn) {
-      return (
-        <juju.components.DeploymentPanel
-          changeState={this.props.changeState}
-          sendAnalytics={this.sendAnalytics.bind(this)}
-          title={this.props.modelName}>
-          {this._generateDirectDeploy()}
-          {this._generateModelNameSection()}
-          {this._generateCloudSection()}
-          {this._generateCredentialSection()}
-          {this._generateSSHKeySection()}
-          {this._generateMachinesSection()}
-          {this._generateServicesSection()}
-          {this._generateBudgetSection()}
-          {this._generateChangeSection()}
-          {this._generatePaymentSection()}
-          <div className="twelve-col">
-            <div className="deployment-flow__deploy">
-              {this._generateAgreementsSection()}
-              <div className="deployment-flow__deploy-action">
-                <juju.components.GenericButton
-                  action={this._handleDeploy.bind(this)}
-                  disabled={!this._deploymentAllowed()}
-                  type="positive">
-                  {deployTitle}
-                </juju.components.GenericButton>
-              </div>
-            </div>
-          </div>
-        </juju.components.DeploymentPanel>
-      );
-    } else {
-      return (
-        <juju.components.DeploymentPanel
-          changeState={this.props.changeState}
-          sendAnalytics={this.sendAnalytics.bind(this)}
-          title={this.props.modelName}>
-          {this._generateDirectDeploy()}
-          {this._generateLogin()}
-        </juju.components.DeploymentPanel>
-      );
-    }
+    return (
+      <juju.components.DeploymentPanel
+        changeState={this.props.changeState}
+        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        loggedIn={this.state.loggedIn}
+        sendAnalytics={this.sendAnalytics.bind(this)}
+        title={this.props.modelName}>
+        {this._generateDirectDeploy()}
+        {this._generateModelNameSection()}
+        {this._generateCloudSection()}
+        {this._generateCredentialSection()}
+        {this._generateSSHKeySection()}
+        {this._generateMachinesSection()}
+        {this._generateServicesSection()}
+        {this._generateBudgetSection()}
+        {this._generateChangeSection()}
+        {this._generatePaymentSection()}
+        {this._generateDeploySection()}
+        {this._generateLogin()}
+      </juju.components.DeploymentPanel>
+    );
   }
 };
 
@@ -1150,6 +1119,7 @@ YUI.add('deployment-flow', function() {
     'deployment-cloud',
     'deployment-credential',
     'deployment-direct-deploy',
+    'deployment-login',
     'deployment-machines',
     'deployment-panel',
     'deployment-payment',
@@ -1159,7 +1129,6 @@ YUI.add('deployment-flow', function() {
     'deployment-vpc',
     'entity-content-diagram',
     'generic-button',
-    'generic-input',
-    'usso-login-link'
+    'generic-input'
   ]
 });

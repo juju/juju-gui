@@ -1774,8 +1774,8 @@ YUI.add('juju-view-utils', function(Y) {
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
         'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
+        svgHeight: 44,
+        svgWidth: 117,
         title: 'Amazon Web Services',
         forms: {
           'access-key': [{

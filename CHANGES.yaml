@@ -1,3 +1,14 @@
+- 2.7.5:
+
+  - AddKeys and ImportKeys api calls added to JS API for upcoming SSH key functionality.
+  - ModelInfo calls now request missing status and owner information.
+  - Initial work on a new profile UI.
+  - Added "Artful" Ubuntu series.
+  - (Fix) Modifying configuration of applications deployed from bundles now applies the config correctly.
+  - (Fix) Update tense of the changelog outputs.
+  - (Fix) Correctly authenticate if not all sessions have expired.
+  - (Fix) When logged in, no longer rarely keep the logged out state.
+
 - 2.7.4:
 
    - GUI dist size reduced by 68%.

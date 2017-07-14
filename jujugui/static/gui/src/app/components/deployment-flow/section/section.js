@@ -99,12 +99,16 @@ class DeploymentSection extends React.Component {
       extra);
     return (
       <div className={classes}>
-        {this._generateActions()}
-        <h3 className="deployment-section__title">
-          {this._generateCheck()}
-          {this.props.title}
-        </h3>
-        {this.props.children}
+        <div className="inner-wrapper">
+          <div className="twelve-col deployment-section__content">
+            {this._generateActions()}
+            <h3 className="deployment-section__title">
+              {this._generateCheck()}
+              {this.props.title}
+            </h3>
+            {this.props.children}
+          </div>
+        </div>
       </div>
     );
   }
