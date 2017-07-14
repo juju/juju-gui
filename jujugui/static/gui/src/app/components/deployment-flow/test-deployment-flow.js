@@ -560,11 +560,11 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentLogin
-        callback={output.props.children[12].props.callback}
+        callback={output.props.children[11].props.callback}
         gisf={true}
         isDirectDeploy={false}
         loginToController={loginToController} />);
-    expect(output.props.children[12]).toEqualJSX(expected);
+    expect(output.props.children[11]).toEqualJSX(expected);
   });
 
   it('can deploy', function() {
