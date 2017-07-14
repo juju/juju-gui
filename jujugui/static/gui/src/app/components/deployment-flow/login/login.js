@@ -99,7 +99,7 @@ class DeploymentLogin extends React.Component {
    @return {Object} The login markup.
   */
   _generateDirectDeployLogin() {
-    const awsScale = 1.3;
+    const awsScale = 1.2;
     const gceScale = 1.7;
     const azureScale = 1;
     return (
@@ -149,9 +149,9 @@ class DeploymentLogin extends React.Component {
           <div className="six-col last-col">
             <div className="deployment-login-features__logo">
               <juju.components.SvgIcon
-                height={Math.round(48 * awsScale)}
+                height={Math.round(44 * awsScale)}
                 name="aws-light"
-                width={Math.round(120 * awsScale)} />
+                width={Math.round(117 * awsScale)} />
             </div>
             <div className="deployment-login-features__logo">
               <juju.components.SvgIcon
