@@ -33,7 +33,6 @@ class DeploymentFlow extends React.Component {
       deploying: false,
       credential: this.props.credential,
       loadingTerms: false,
-      loggedIn: this.props.isLoggedIn(),
       modelName: this.props.modelName,
       newTerms: [],
       paymentUser: null,
@@ -50,7 +49,7 @@ class DeploymentFlow extends React.Component {
   }
 
   componentWillMount() {
-    if (this.state.loggedIn) {
+    if (this.props.isLoggedIn()) {
       this._getAgreements();
     }
     this.sendAnalytics('Component mounted');
@@ -96,7 +95,7 @@ class DeploymentFlow extends React.Component {
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
-    const loggedIn = this.state.loggedIn;
+    const loggedIn = this.props.isLoggedIn();
     switch (section) {
       case 'model-name':
         completed = this.props.acl.isReadOnly() ||
@@ -109,7 +108,7 @@ class DeploymentFlow extends React.Component {
         break;
       case 'cloud':
         completed = hasCloud && hasCredential;
-        disabled = !this.state.loggedIn;
+        disabled = !loggedIn;
         visible = loggedIn && (willCreateModel || !completed);
         break;
       case 'credential':
@@ -632,12 +631,11 @@ class DeploymentFlow extends React.Component {
     @returns {Object} The markup.
   */
   _generateLogin() {
-    if (this.state.loggedIn) {
+    if (this.props.isLoggedIn()) {
       return null;
     }
     const callback = err => {
       if (!err) {
-        this.setState({loggedIn: true});
         this._getAgreements();
       }
     };
@@ -1012,7 +1010,7 @@ class DeploymentFlow extends React.Component {
       <juju.components.DeploymentPanel
         changeState={this.props.changeState}
         isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
-        loggedIn={this.state.loggedIn}
+        loggedIn={this.props.isLoggedIn()}
         sendAnalytics={this.sendAnalytics.bind(this)}
         title={this.props.modelName}>
         {this._generateDirectDeploy()}
