@@ -5,4 +5,8 @@
   .button-row {
     min-height: 60px;
   }
+
+  a, a:hover, a:active, a:visited {
+    color: $link-blue;
+  }
 }
