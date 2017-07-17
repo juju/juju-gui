@@ -81,7 +81,7 @@ class DeploymentMachines extends React.Component {
     let chargeMessage = '';
     const cloudName = this.props.cloud ? this.props.cloud.name : 'the cloud';
     if (cloudName !== 'localhost') {
-      chargeMessage = 'You will incur a charge from your cloud provider.';
+      chargeMessage = 'You may incur charges from your cloud provider.';
     }
     return (
       <div>
