@@ -97,7 +97,7 @@ YUI.add('changes-utils', function(Y) {
     @param {Object} changeSet The current Environment Change Set.
     @returns {Object} The changes grouped by applications.
   */
-  ChangesUtils.groupChangesByApplication = changeSet => {
+  ChangesUtils.groupChangesByApplication = (getServiceById, changeSet) => {
     const methodBlacklist = ['_addCharm', '_addMachines', '_deploy'];
     const changes = {};
     for (let key in changeSet) {
@@ -107,11 +107,15 @@ YUI.add('changes-utils', function(Y) {
         // We do not want to show these in the changelog in the deployment flow.
         continue;
       }
-      const application = command.args[0];
-      if (!changes[application]) {
-        changes[application] = [];
+      let appId = command.args[0];
+      if (appId.includes('$')) {
+        // This is an ID and we need the name of the application.
+        appId = getServiceById(appId).get('name');
       }
-      changes[application].push(record);
+      if (!changes[appId]) {
+        changes[appId] = [];
+      }
+      changes[appId].push(record);
     }
     return changes;
   };
