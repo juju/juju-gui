@@ -348,6 +348,23 @@ class EntityContent extends React.Component {
   }
 
   /**
+  Generate the diagram markup for a bundle.
+
+  @method _generateDiagram
+  @param {Object} entityModel The entity model.
+  @return {Object} The diagram markup.
+  */
+  _generateDiagram(entityModel) {
+    if (entityModel.get('entityType') !== 'bundle') {
+      return;
+    }
+    return <juju.components.EntityContentDiagram
+      getDiagramURL={this.props.getDiagramURL}
+      id={entityModel.get('id')}
+      isRow={false} />;
+  }
+
+  /**
     Generate tags and terms.
 
     @method _generateTagsAndTerms
@@ -593,8 +610,9 @@ class EntityContent extends React.Component {
         {this._generatePlans()}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               {this._generateDescription(entityModel)}
+              {this._generateDiagram(entityModel)}
               <juju.components.EntityContentReadme
                 changeState={this.props.changeState}
                 entityModel={entityModel}
@@ -603,7 +621,7 @@ class EntityContent extends React.Component {
                 renderMarkdown={this.props.renderMarkdown}
                 scrollCharmbrowser={this.props.scrollCharmbrowser} />
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               {this._generateActions()}
               {this._generateResources()}
               {this._showEntityRelations()}
@@ -629,6 +647,7 @@ EntityContent.propTypes = {
   apiUrl: React.PropTypes.string.isRequired,
   changeState: React.PropTypes.func.isRequired,
   entityModel: React.PropTypes.object.isRequired,
+  getDiagramURL: React.PropTypes.func.isRequired,
   getFile: React.PropTypes.func.isRequired,
   hasPlans: React.PropTypes.bool.isRequired,
   hash: React.PropTypes.string,

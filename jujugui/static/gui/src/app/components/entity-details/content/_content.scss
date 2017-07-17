@@ -2,8 +2,6 @@
   clear: both;
 
   &__header {
-    margin: 0 0 1.4rem;
-
     .hash-link {
       display: none;
     }
@@ -23,12 +21,9 @@
 
   &__description {
     margin-bottom: 2rem;
-  }
 
-  &__diagram + .entity-content {
-    .entity-content__description {
-      margin-top: 10px;
-      background: $white;
+    h2 {
+      font-size: 1.4375rem;
     }
   }
 
@@ -90,38 +85,40 @@
     }
   }
 
-  &__readme-content {
+  &__readme {
+    margin-top: 2rem;
+
     h1,
     h2,
     h3 {
-      margin: 1.6em 0;
+      margin: 1.6rem 0 1rem;
     }
 
     h4,
     h5,
     h6 {
-      margin: .8em 0;
+      margin: .8rem 0;
     }
 
     h1 {
-      font-size: 1.4em;
+      font-size: 1.4375rem;
     }
 
     h2 {
-      font-size: 1.3em;
+      font-size: 1.4375rem;
     }
 
     h3 {
-      font-size: 1.2em;
+      font-size: 1.2rem;
     }
 
     h4 {
-      font-size: 1.1em;
+      font-size: 1.1rem;
     }
 
     h5,
     h6 {
-      font-size: 1em;
+      font-size: 1rem;
     }
 
     .readme-link {
@@ -149,15 +146,21 @@
 
     pre {
       padding: 10px 15px;
-      background-color: $cool-grey;
-      border: 0;
+      background-color: $color-light;
+      border: 1px solid $color-mid-light;
       border-radius: 2px;
-      color: $mid-grey;
+      margin: 2rem 0;
+    }
 
-      code {
-        margin-bottom: 0;
-        color: $mid-grey;
-      }
+    code {
+      margin-bottom: 0;
+      font-size: 1.05rem;
+    }
+
+    blockquote {
+      border-left: 3px solid $color-mid-light;
+      padding-left: 1rem;
+      margin: 2rem 0;
     }
   }
 

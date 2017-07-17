@@ -94,11 +94,11 @@ class EntityDetails extends React.Component {
               scrollPosition={this.props.scrollPosition}
               urllib={this.props.urllib}
             />
-            {this._generateDiagram(entityModel)}
             <juju.components.EntityContent
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              getDiagramURL={this.props.getDiagramURL}
               getFile={this.props.getFile}
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
@@ -201,23 +201,6 @@ class EntityDetails extends React.Component {
     } else {
       this.setState({plans: plans});
     }
-  }
-
-  /**
-  Generate the diagram markup for a bundle.
-
-  @method _generateDiagram
-  @param {Object} entityModel The entity model.
-  @return {Object} The diagram markup.
-  */
-  _generateDiagram(entityModel) {
-    if (entityModel.get('entityType') !== 'bundle') {
-      return;
-    }
-    return <juju.components.EntityContentDiagram
-      getDiagramURL={this.props.getDiagramURL}
-      id={entityModel.get('id')}
-      isRow={true} />;
   }
 
   /**

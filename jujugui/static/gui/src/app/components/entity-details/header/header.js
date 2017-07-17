@@ -360,25 +360,6 @@ class EntityHeader extends React.Component {
     return <li key={names} className="entity-header__channels">{names}</li>;
   }
 
-  /**
-    If there's a bugUrl add the link.
-
-    @return {Object} A react "ul" element.
-  */
-  _generateActionsList() {
-    const bugUrl = this.props.entityModel.getAttrs().bugUrl;
-    if (bugUrl) {
-      return (<ul className="entity-header__actions-list">
-        <li className="actions-list__item">
-          <a href={bugUrl} className="link" target="_blank">
-            Submit a bug
-          </a>
-        </li>
-      </ul>);
-    }
-    return;
-  }
-
   render() {
     let icon;
     const entityModel = this.props.entityModel;
@@ -449,7 +430,6 @@ class EntityHeader extends React.Component {
                   </a>
                 </li>
               </ul>
-              {this._generateActionsList()}
             </div>
             <div className={
               'entity-header__right four-col last-col no-margin-bottom'}>

@@ -4,10 +4,11 @@
   $icon-size: 96px;
 
   margin-bottom: 0;
-  padding: 32px 0;
+  padding: 60px 0;
   background-color: $white;
   color: $cool-grey;
   overflow: hidden;
+  border-bottom: 1px solid $color-mid-light;
 
   @keyframes slideIn {
     0% {
@@ -213,6 +214,10 @@
   }
 
   &__right {
+    .copy-to-clipboard[type="text"] {
+      box-shadow: none;
+    }
+
     @media screen and (max-width: 768px) {
       margin-top: 20px;
     }

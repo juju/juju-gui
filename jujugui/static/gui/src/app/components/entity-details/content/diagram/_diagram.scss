@@ -1,13 +1,10 @@
 .entity-content__diagram {
   clear: both;
   padding: 32px;
-  background-color: $canvas-background;
-  // Unfortunately this needs to use !important to override the .row and
-  // .row--grey styles.
-  // scss-lint:disable ImportantRule
-  border-bottom: 1px solid $mid-grey !important;
-  // scss-lint:enable ImportantRule
   text-align: center;
+  background: $color-light;
+  border-radius: 2px;
+  border: 1px solid $color-mid-light;
 
   &-image {
     height: 350px;
