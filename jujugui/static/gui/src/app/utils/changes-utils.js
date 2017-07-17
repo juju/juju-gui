@@ -93,6 +93,30 @@ YUI.add('changes-utils', function(Y) {
   };
 
   /**
+    Group the ECS changeSet values by application.
+    @param {Object} changeSet The current Environment Change Set.
+    @returns {Object} The changes grouped by applications.
+  */
+  ChangesUtils.groupChangesByApplication = changeSet => {
+    const methodBlacklist = ['_addCharm', '_addMachines', '_deploy'];
+    const changes = {};
+    for (let key in changeSet) {
+      const record = changeSet[key];
+      const command = record.command;
+      if (methodBlacklist.includes(command.method)) {
+        // We do not want to show these in the changelog in the deployment flow.
+        continue;
+      }
+      const application = command.args[0];
+      if (!changes[application]) {
+        changes[application] = [];
+      }
+      changes[application].push(record);
+    }
+    return changes;
+  };
+
+  /**
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
