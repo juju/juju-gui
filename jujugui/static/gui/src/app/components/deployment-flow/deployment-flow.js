@@ -154,11 +154,6 @@ class DeploymentFlow extends React.Component {
         disabled = false;
         visible = loggedIn && this.props.showPay;
         break;
-      case 'changes':
-        completed = false;
-        disabled = !hasCloud || !hasCredential;
-        visible = loggedIn;
-        break;
       case 'agreements':
         const newTerms = this.state.newTerms;
         completed = false;
@@ -855,34 +850,6 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
-    Generate the changes section.
-
-    @method _generateChangeSection
-    @returns {Object} The markup.
-  */
-  _generateChangeSection() {
-    var status = this._getSectionStatus('changes');
-    // Do not show the changes if we're performing a Direct Deploy.
-    const ddData = this.props.ddData;
-    const inDD = !!(ddData && Object.keys(ddData).length);
-    if (!status.visible || inDD) {
-      return;
-    }
-    return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-changes"
-        showCheck={false}
-        title="Model changes">
-        <juju.components.DeploymentChanges
-          getCurrentChangeSet={this.props.getCurrentChangeSet}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions} />
-      </juju.components.DeploymentSection>);
-  }
-
-  /**
     Handles checking on the "I agree to the terms" checkbox.
 
     @method _handleTermAgreement
@@ -1038,7 +1005,6 @@ class DeploymentFlow extends React.Component {
         {this._generateMachinesSection()}
         {this._generateServicesSection()}
         {this._generateBudgetSection()}
-        {this._generateChangeSection()}
         {this._generatePaymentSection()}
         {this._generateDeploySection()}
         {this._generateLogin()}
@@ -1115,7 +1081,6 @@ YUI.add('deployment-flow', function() {
   requires: [
     'accordion-section',
     'deployment-budget',
-    'deployment-changes',
     'deployment-cloud',
     'deployment-credential',
     'deployment-direct-deploy',
