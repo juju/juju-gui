@@ -140,10 +140,9 @@ class DeploymentFlow extends React.Component {
           Object.keys(addMachines).length > 0;
         break;
       case 'services':
-        const deploys = groupedChanges._deploy;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && deploys && Object.keys(deploys).length > 0;
+        visible = loggedIn;
         break;
       case 'budget':
         completed = false;
@@ -489,12 +488,12 @@ class DeploymentFlow extends React.Component {
   _generateChangelogTitle() {
     return (
       <span className="deployment-flow__service-title">
-        Applications to be deployed
+        Model changes
         <juju.components.GenericButton
           action={this._toggleChangelogs.bind(this)}
           type="inline-neutral"
           extraClasses="right">
-          {this.state.showChangelogs ? 'Hide changelog' : 'Show changelog'}
+          {this.state.showChangelogs ? 'Hide details' : 'Show details'}
         </juju.components.GenericButton>
       </span>);
   }
@@ -751,7 +750,7 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-machines"
         showCheck={false}
-        title="Machines to be deployed">
+        title="Machines to be provisioned">
         <juju.components.DeploymentMachines
           acl={this.props.acl}
           cloud={cloud}
@@ -785,10 +784,11 @@ class DeploymentFlow extends React.Component {
           charmsGetById={this.props.charmsGetById}
           generateAllChangeDescriptions={
             this.props.generateAllChangeDescriptions}
-          groupedChanges={this.props.groupedChanges}
+          groupedChanges={this.props.applicationGroupedChanges}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this._parseTermId.bind(this)}
           servicesGetById={this.props.servicesGetById}
+          getServiceByName={this.props.getServiceByName}
           showChangelogs={this.state.showChangelogs}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />
@@ -1052,6 +1052,7 @@ DeploymentFlow.propTypes = {
   acl: React.PropTypes.object.isRequired,
   addAgreement: React.PropTypes.func.isRequired,
   addNotification: React.PropTypes.func.isRequired,
+  applicationGroupedChanges: React.PropTypes.object.isRequired,
   applications: React.PropTypes.array.isRequired,
   changeState: React.PropTypes.func.isRequired,
   changes: React.PropTypes.object.isRequired,
@@ -1080,6 +1081,7 @@ DeploymentFlow.propTypes = {
   getDiagramURL: React.PropTypes.func,
   getEntity: React.PropTypes.func,
   getGithubSSHKeys: React.PropTypes.func.isRequired,
+  getServiceByName: React.PropTypes.func.isRequired,
   getUser: React.PropTypes.func,
   getUserName: React.PropTypes.func.isRequired,
   gisf: React.PropTypes.bool,
