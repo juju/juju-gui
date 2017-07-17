@@ -19,22 +19,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class DeploymentServices extends React.Component {
-  /**
-    Create a list of services from the change set.
-
-    @method _getServices
-    @returns {Array} A list of services.
-  */
-  _getServices() {
-    var addedServices = this.props.groupedChanges['_deploy'];
-    if (!addedServices) {
-      return [];
-    }
-    return Object.keys(addedServices).map((change) => {
-      return this.props.servicesGetById(
-        addedServices[change].command.options.modelId);
-    });
-  }
 
   /**
     Generate the list of extra info markup.
@@ -43,25 +27,23 @@ class DeploymentServices extends React.Component {
     @returns {Array} A list of elements by service.
   */
   _generateExtraInfo() {
-    var addedServices = this.props.groupedChanges['_deploy'] || [];
-    var infos = {};
-    Object.keys(addedServices).forEach((change) => {
-      var serviceId = addedServices[change].command.options.modelId;
-      var changeId = addedServices[change].id;
-      var changes = this.props.changesFilterByParent(changeId);
-      var descriptions = this.props.generateAllChangeDescriptions(changes);
-      var items = descriptions.map(change => {
-        return (
-          <juju.components.DeploymentChangeItem
-            change={change}
-            key={change.id}
-            showTime={false} />);
-      });
-      infos[serviceId] = (
+    const props = this.props;
+    const changes = props.groupedChanges;
+    const infos = {};
+    for (let key in changes) {
+      const items =
+        props
+          .generateAllChangeDescriptions(changes[key])
+          .map(change =>
+            <juju.components.DeploymentChangeItem
+              change={change}
+              key={change.id}
+              showTime={false} />);
+      infos[key] =
         <ul className="deployment-services__changes">
           {items}
-        </ul>);
-    });
+        </ul>;
+    }
     return infos;
   }
 
@@ -96,7 +78,10 @@ class DeploymentServices extends React.Component {
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={true}
-          services={this._getServices()}
+          services={
+            Object
+              .keys(this.props.groupedChanges)
+              .map(this.props.getServiceByName)}
           showExtra={this.props.showChangelogs}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />
@@ -111,6 +96,7 @@ DeploymentServices.propTypes = {
   changesFilterByParent: React.PropTypes.func.isRequired,
   charmsGetById: React.PropTypes.func.isRequired,
   generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+  getServiceByName: React.PropTypes.func.isRequired,
   groupedChanges: React.PropTypes.object.isRequired,
   listPlansForCharm: React.PropTypes.func.isRequired,
   parseTermId: React.PropTypes.func.isRequired,
