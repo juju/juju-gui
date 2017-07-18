@@ -39,7 +39,6 @@ class BudgetTable extends React.Component {
           parseTermId={this.props.parseTermId}
           plansEditable={this.props.plansEditable}
           service={service}
-          showExtra={this.props.showExtra}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />);
     });
@@ -101,7 +100,6 @@ BudgetTable.propTypes = {
   parseTermId: React.PropTypes.func,
   plansEditable: React.PropTypes.bool,
   services: React.PropTypes.array.isRequired,
-  showExtra: React.PropTypes.bool,
   showTerms: React.PropTypes.func.isRequired,
   withPlans: React.PropTypes.bool
 };

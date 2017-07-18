@@ -261,22 +261,6 @@ class BudgetTableRow extends React.Component {
   }
 
   /**
-    Generate the extra info section.
-
-    @method _generateExtra
-    @returns {Object} The extra info markup.
-  */
-  _generateExtra() {
-    if (!this.props.showExtra) {
-      return;
-    }
-    return (
-      <div className="twelve-col no-margin-bottom">
-        {this.props.extraInfo}
-      </div>);
-  }
-
-  /**
     Get the list of terms for the application, updating the state with these
     terms.
 
@@ -409,7 +393,9 @@ class BudgetTableRow extends React.Component {
           <div>
             {this._generateSharedFields()}
             {this._generatePlanCols()}
-            {this._generateExtra()}
+            <div className="twelve-col no-margin-bottom">
+              {this.props.extraInfo}
+            </div>
             {this._generateTermsLink()}
           </div>
           <div>
@@ -431,7 +417,6 @@ BudgetTableRow.propTypes = {
   parseTermId: React.PropTypes.func,
   plansEditable: React.PropTypes.bool,
   service: React.PropTypes.object.isRequired,
-  showExtra: React.PropTypes.bool,
   showTerms: React.PropTypes.func,
   withPlans: React.PropTypes.bool
 };

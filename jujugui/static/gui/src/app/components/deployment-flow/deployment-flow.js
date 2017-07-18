@@ -37,7 +37,6 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
-      showChangelogs: false,
       sshKey: null,
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
@@ -248,15 +247,6 @@ class DeploymentFlow extends React.Component {
   */
   _setPaymentUser(user) {
     this.setState({paymentUser: user});
-  }
-
-  /**
-    Toggle the visibility of the changelogs.
-
-    @method _toggleChangelogs
-  */
-  _toggleChangelogs() {
-    this.setState({showChangelogs: !this.state.showChangelogs});
   }
 
   /**
@@ -472,25 +462,6 @@ class DeploymentFlow extends React.Component {
       title: 'Change cloud',
       type: 'neutral'
     }];
-  }
-
-  /**
-    Generate a button to toggle the visibility of the changelogs.
-
-    @method _generateChangelogTitle
-    @returns {Array} The action.
-  */
-  _generateChangelogTitle() {
-    return (
-      <span className="deployment-flow__service-title">
-        Model changes
-        <juju.components.GenericButton
-          action={this._toggleChangelogs.bind(this)}
-          type="inline-neutral"
-          extraClasses="right">
-          {this.state.showChangelogs ? 'Hide details' : 'Show details'}
-        </juju.components.GenericButton>
-      </span>);
   }
 
   /**
@@ -767,27 +738,26 @@ class DeploymentFlow extends React.Component {
       return;
     }
     return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-services"
-        showCheck={true}
-        title={this._generateChangelogTitle()}>
-        <juju.components.DeploymentServices
-          acl={this.props.acl}
-          changesFilterByParent={this.props.changesFilterByParent}
-          charmsGetById={this.props.charmsGetById}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions}
-          groupedChanges={this.props.applicationGroupedChanges}
-          listPlansForCharm={this.props.listPlansForCharm}
-          parseTermId={this._parseTermId.bind(this)}
-          servicesGetById={this.props.servicesGetById}
-          getServiceByName={this.props.getServiceByName}
-          showChangelogs={this.state.showChangelogs}
-          showTerms={this.props.showTerms}
-          withPlans={this.props.withPlans} />
-      </juju.components.DeploymentSection>);
+      <div className="deployment-services">
+        <juju.components.AccordionSection
+          title="Model changes">
+          <juju.components.DeploymentServices
+            acl={this.props.acl}
+            changesFilterByParent={this.props.changesFilterByParent}
+            charmsGetById={this.props.charmsGetById}
+            getCurrentChangeSet={this.props.getCurrentChangeSet}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions}
+            sortDescriptionsByApplication={
+              this.props.sortDescriptionsByApplication}
+            listPlansForCharm={this.props.listPlansForCharm}
+            parseTermId={this._parseTermId.bind(this)}
+            servicesGetById={this.props.servicesGetById}
+            getServiceByName={this.props.getServiceByName}
+            showTerms={this.props.showTerms}
+            withPlans={this.props.withPlans} />
+        </juju.components.AccordionSection>
+      </div>);
   }
 
   /**
@@ -1018,7 +988,6 @@ DeploymentFlow.propTypes = {
   acl: React.PropTypes.object.isRequired,
   addAgreement: React.PropTypes.func.isRequired,
   addNotification: React.PropTypes.func.isRequired,
-  applicationGroupedChanges: React.PropTypes.object.isRequired,
   applications: React.PropTypes.array.isRequired,
   changeState: React.PropTypes.func.isRequired,
   changes: React.PropTypes.object.isRequired,
@@ -1068,6 +1037,7 @@ DeploymentFlow.propTypes = {
   setModelName: React.PropTypes.func.isRequired,
   showPay: React.PropTypes.bool,
   showTerms: React.PropTypes.func.isRequired,
+  sortDescriptionsByApplication: React.PropTypes.func.isRequired,
   stats: React.PropTypes.object,
   updateCloudCredential: React.PropTypes.func,
   updateModelName: React.PropTypes.func,
