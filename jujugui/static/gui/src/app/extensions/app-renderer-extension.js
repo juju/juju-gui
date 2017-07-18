@@ -74,8 +74,10 @@ YUI.add('app-renderer-extension', function(Y) {
           changeState={this.state.changeState.bind(this.state)}
           humanizeTimestamp={views.humanizeTimestamp}
           listModelsWithInfo={listModelsWithInfo}
+          modelCommitted={env.get('connected')}
           modelName={this.db.environment.get('name')}
           modelOwner={env.get('modelOwner')}
+          setModelName={env.set.bind(env, 'environmentName')}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),

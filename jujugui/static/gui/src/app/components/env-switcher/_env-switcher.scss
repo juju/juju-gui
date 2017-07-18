@@ -3,7 +3,6 @@
     border: 1px solid $color-mid-light;
     border-radius: 2px;
     color: $cool-grey;
-    cursor: pointer;
     margin-left: 3px;
     padding: 4px 36px 4px 9px;
     background-color: $canvas-background;
@@ -12,8 +11,17 @@
     height: 40px;
 
     &:hover,
+    &.editing,
     &.is-active {
       background-color: $white;
+    }
+
+    &.editable .env-switcher__name {
+      cursor: text;
+    }
+
+    &.editing .env-switcher__name {
+      max-width: none;
     }
   }
 
@@ -26,14 +34,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 300px;
+    cursor: default;
   }
 
   &__chevron {
     fill: currentColor;
-    margin-left: 20px;
-    position: relative;
+    position: absolute;
     top: 12px;
     right: 10px;
-    position: absolute;
+    margin-left: 20px;
+    cursor: pointer;
   }
 }

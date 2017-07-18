@@ -22,8 +22,9 @@ class EnvSwitcher extends React.Component {
   constructor() {
     super();
     this.state = {
-      showEnvList: false,
-      envList: []
+      envList: [],
+      hasFocus: false,
+      showEnvList: false
     };
   }
 
@@ -151,9 +152,46 @@ class EnvSwitcher extends React.Component {
     return classNames(
       'env-switcher__toggle',
       {
+        'editable': !this.props.modelCommitted,
+        'editing': this.state.hasFocus,
         'is-active': this.state.showEnvList
       }
     );
+  }
+
+  /**
+    Handle the model name input receiving focus.
+  */
+  _handleInputFocus() {
+    this.setState({hasFocus: true});
+  }
+
+  /**
+    Handle the model name input losing focus.
+  */
+  _handleInputBlur() {
+    this.props.setModelName(this.refs.name.innerText.split(' ').join('-'));
+    this.setState({hasFocus: false});
+  }
+
+  /**
+    Generate the model name.
+  */
+  _generateName() {
+    if (this.props.modelCommitted) {
+      return (
+        <span className="env-switcher__name">
+          {this.props.environmentName}
+        </span>);
+    }
+    // If the model is not committed then allow the name to be changed.
+    return (
+      <span className="env-switcher__name"
+        contentEditable={true}
+        dangerouslySetInnerHTML={{__html: this.props.environmentName}}
+        onBlur={this._handleInputBlur.bind(this)}
+        onFocus={this._handleInputFocus.bind(this)}
+        ref="name" />);
   }
 
   render() {
@@ -161,23 +199,22 @@ class EnvSwitcher extends React.Component {
       <div className="env-switcher"
         role="navigation"
         aria-label="Model switcher">
-        <div
-          className={this._toggleClasses()}
-          onClick={this._toggleEnvList.bind(this)}
-          onKeyPress={this._handleKeyToggle.bind(this)}
-          id="environmentSwitcherToggle"
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="environmentSwitcherMenu"
-          aria-controls="environmentSwitcherMenu"
-          aria-expanded="false">
-          <span className="env-switcher__name">
-            {this.props.environmentName}
-          </span>
-          <juju.components.SvgIcon name="chevron_down_16"
-            className="env-switcher__chevron"
-            size="16" />
+        <div className={this._toggleClasses()}>
+          {this._generateName()}
+          <div className="env-switcher__chevron"
+            onClick={this._toggleEnvList.bind(this)}
+            onKeyPress={this._handleKeyToggle.bind(this)}
+            id="environmentSwitcherToggle"
+            role="button"
+            tabIndex="0"
+            aria-haspopup="true"
+            aria-owns="environmentSwitcherMenu"
+            aria-controls="environmentSwitcherMenu"
+            aria-expanded="false">
+            <juju.components.SvgIcon
+              name="chevron_down_16"
+              size="16" />
+          </div>
         </div>
         {this.environmentList()}
       </div>
@@ -192,6 +229,8 @@ EnvSwitcher.propTypes = {
   environmentName: PropTypes.string,
   humanizeTimestamp: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
+  modelCommitted: PropTypes.bool,
+  setModelName: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   user: PropTypes.object
 };
