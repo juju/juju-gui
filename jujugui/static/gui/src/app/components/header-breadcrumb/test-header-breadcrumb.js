@@ -61,7 +61,9 @@ describe('HeaderBreadcrumb', () => {
         loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
         modelName={attrs.modelName}
+        modelCommitted={attrs.modelCommitted}
         modelOwner={attrs.modelOwner}
+        setModelName={attrs.setModelName || sinon.stub()}
         showEnvSwitcher={attrs.showEnvSwitcher}
         showProfile={showProfile}
         switchModel={switchModel} />, true);
@@ -79,10 +81,13 @@ describe('HeaderBreadcrumb', () => {
   };
 
   it('renders properly with the current user', () => {
+    const setModelName = sinon.stub();
     const comp = render({
       user: {username: 'who@external', displayName: 'who'},
+      modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: '',
+      setModelName: setModelName,
       showEnvSwitcher: true
     });
     const expectedOutput = (
@@ -106,6 +111,8 @@ describe('HeaderBreadcrumb', () => {
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
+              modelCommitted={true}
+              setModelName={setModelName}
               switchModel={switchModel} />
           </li>
         </ul>
@@ -115,10 +122,13 @@ describe('HeaderBreadcrumb', () => {
   });
 
   it('renders properly with the model owner', () => {
+    const setModelName = sinon.stub();
     const comp = render({
       user: {username: 'dalek@external', displayName: 'dalek'},
+      modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: 'rose',
+      setModelName: setModelName,
       showEnvSwitcher: true
     });
     const expectedOutput = (
@@ -142,6 +152,8 @@ describe('HeaderBreadcrumb', () => {
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
+              modelCommitted={true}
+              setModelName={setModelName}
               switchModel={switchModel} />
           </li>
         </ul>
