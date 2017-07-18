@@ -1362,9 +1362,9 @@ YUI.add('juju-gui', function(Y) {
           getUserName={getUserName}
           gisf={this.get('gisf')}
           getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
-          applicationGroupedChanges={
-            changesUtils.groupChangesByApplication(
-              services.getById.bind(services), currentChangeSet)}
+          sortDescriptionsByApplication={
+            changesUtils.sortDescriptionsByApplication.bind(null,
+              services.getById.bind(services))}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}

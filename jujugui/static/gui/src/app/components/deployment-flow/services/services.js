@@ -24,21 +24,17 @@ class DeploymentServices extends React.Component {
     Generate the list of extra info markup.
 
     @method _generateExtraInfo
-    @returns {Array} A list of elements by service.
+    @param {Object} changes The sorted changes by application.
+    @returns {Array} A list of elements by application.
   */
-  _generateExtraInfo() {
-    const props = this.props;
-    const changes = props.groupedChanges;
+  _generateExtraInfo(changes) {
     const infos = {};
     for (let key in changes) {
-      const items =
-        props
-          .generateAllChangeDescriptions(changes[key])
-          .map(change =>
-            <juju.components.DeploymentChangeItem
-              change={change}
-              key={change.id}
-              showTime={false} />);
+      const items = changes[key].map(change =>
+        <juju.components.DeploymentChangeItem
+          change={change}
+          key={change.id}
+          showTime={false} />);
       infos[key] =
         <ul className="deployment-services__changes">
           {items}
@@ -68,21 +64,25 @@ class DeploymentServices extends React.Component {
   }
 
   render() {
+    const props = this.props;
+    const currentChangeSet = props.getCurrentChangeSet();
+    const changes = props.sortDescriptionsByApplication(
+      currentChangeSet,
+      props.generateAllChangeDescriptions(currentChangeSet));
     return (
       <div>
         <juju.components.BudgetTable
           acl={this.props.acl}
           allocationEditable={true}
           charmsGetById={this.props.charmsGetById}
-          extraInfo={this._generateExtraInfo()}
+          extraInfo={this._generateExtraInfo(changes)}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={true}
           services={
             Object
-              .keys(this.props.groupedChanges)
+              .keys(changes)
               .map(this.props.getServiceByName)}
-          showExtra={this.props.showChangelogs}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />
         {this._generateSpend()}
@@ -95,14 +95,13 @@ DeploymentServices.propTypes = {
   acl: React.PropTypes.object.isRequired,
   changesFilterByParent: React.PropTypes.func.isRequired,
   charmsGetById: React.PropTypes.func.isRequired,
-  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+  getCurrentChangeSet: React.PropTypes.func.isRequired,
   getServiceByName: React.PropTypes.func.isRequired,
-  groupedChanges: React.PropTypes.object.isRequired,
   listPlansForCharm: React.PropTypes.func.isRequired,
   parseTermId: React.PropTypes.func.isRequired,
   servicesGetById: React.PropTypes.func.isRequired,
-  showChangelogs: React.PropTypes.bool,
   showTerms: React.PropTypes.func,
+  sortDescriptionsByApplication: React.PropTypes.func.isRequired,
   withPlans: React.PropTypes.bool
 };
 
