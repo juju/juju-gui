@@ -762,6 +762,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
         getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
+        sortDescriptionsByApplication={
+          changesUtils.sortDescriptionsByApplication.bind(null,
+            services.getById.bind(services))}
         isLoggedIn={isLoggedIn}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -790,6 +793,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         region={modelAPI.get('region')}
         renderMarkdown={marked}
         servicesGetById={services.getById.bind(services)}
+        getServiceByName={services.getServiceByName.bind(services)}
         showPay={this.applicationConfig.flags.pay || false}
         showTerms={this.terms.showTerms.bind(this.terms)}
         stats={this.stats}
