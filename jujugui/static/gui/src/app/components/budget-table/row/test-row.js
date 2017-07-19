@@ -133,7 +133,7 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -175,7 +175,7 @@ describe('BudgetTableRow', function() {
                 {4}
               </div>
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
             {undefined}
           </div>
@@ -316,7 +316,7 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -374,7 +374,7 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -441,7 +441,7 @@ describe('BudgetTableRow', function() {
                 </div>
               </div>
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -571,7 +571,7 @@ describe('BudgetTableRow', function() {
                 </div>
               </div>
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -711,7 +711,7 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             {undefined}
           </div>
           <div>
@@ -776,7 +776,7 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            {undefined}
+            <div className="twelve-col no-margin-bottom" />
             <div className={
               'two-col prepend-five no-margin-bottom budget-table-row__link'}>
               <juju.components.GenericButton

@@ -54,8 +54,8 @@ describe('BudgetTable', function() {
           <div className="three-col">
             Name
           </div>
-          <div className="one-col">
-            Units
+          <div className="two-col">
+            New units
           </div>
           <div>
             <div className="three-col">
@@ -82,7 +82,6 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={false}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={true} />,
         <juju.components.BudgetTableRow
@@ -95,11 +94,10 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={false}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={true} />]}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without plans', function() {
@@ -121,8 +119,8 @@ describe('BudgetTable', function() {
           <div className="three-col">
             Name
           </div>
-          <div className="one-col">
-            Units
+          <div className="two-col">
+            New units
           </div>
           {undefined}
         </div>
@@ -136,7 +134,6 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={false}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={false} />,
         <juju.components.BudgetTableRow
@@ -149,11 +146,10 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={false}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={false} />]}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display editable plans', function() {
@@ -175,8 +171,8 @@ describe('BudgetTable', function() {
           <div className="three-col">
             Name
           </div>
-          <div className="one-col">
-            Units
+          <div className="two-col">
+            New units
           </div>
           <div>
             <div className="three-col">
@@ -203,7 +199,6 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={true}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={true} />,
         <juju.components.BudgetTableRow
@@ -216,10 +211,9 @@ describe('BudgetTable', function() {
           parseTermId={undefined}
           plansEditable={true}
           service={{}}
-          showExtra={undefined}
           showTerms={showTerms}
           withPlans={true} />]}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });
