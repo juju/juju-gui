@@ -24,7 +24,8 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentServices', function() {
-  var acl, groupedChanges, servicesGetById;
+  let acl, sortDescriptionsByApplication;
+  let getServiceByName = key => ({name: key});
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,15 +34,9 @@ describe('DeploymentServices', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    groupedChanges = {
-      '_deploy': {
-        'add1': {command: {options: {modelId: 'apache2'}}},
-        'add2': {command: {options: {modelId: 'mysql'}}}
-      }
-    };
-    servicesGetById = (id) => {
-      return {service: id};
-    };
+    sortDescriptionsByApplication = sinon.stub().returns(
+      JSON.parse('{"kibana":[{"id":"service-131","icon":"https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg","description":" kibana will be added to the model.","time":"1:28 pm"},{"id":"addUnits-655","icon":"changes-units-added","description":" 1 kibana unit will be added.","time":"1:28 pm"}],"elasticsearch":[{"id":"setConfig-169","icon":"changes-config-changed","description":"Configuration values will be changed for elasticsearch.","time":"1:28 pm"}]}') // eslint-disable-line max-len
+    );
   });
 
   it('can render', function() {
@@ -54,13 +49,13 @@ describe('DeploymentServices', function() {
         acl={acl}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
-        generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
-        groupedChanges={groupedChanges}
+        generateAllChangeDescriptions={sinon.stub()}
+        getCurrentChangeSet={sinon.stub()}
+        getServiceByName={getServiceByName}
         listPlansForCharm={listPlansForCharm}
         parseTermId={parseTermId}
-        servicesGetById={servicesGetById}
-        showChangelogs={false}
         showTerms={showTerms}
+        sortDescriptionsByApplication={sortDescriptionsByApplication}
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -70,26 +65,41 @@ describe('DeploymentServices', function() {
           allocationEditable={true}
           charmsGetById={charmsGetById}
           extraInfo={{
-            'apache2': (
-              <ul className="deployment-services__changes">
-                {[<juju.components.DeploymentChangeItem
-                  change={{id: 'change1'}}
-                  key="change1"
-                  showTime={false} />]}
+            elasticsearch:
+              (<ul className="deployment-services__changes">
+                <DeploymentChangeItem
+                  change={{
+                    description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
+                    icon: 'changes-config-changed',
+                    id: 'setConfig-169',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
               </ul>),
-            'mysql': (
+            kibana:
               <ul className="deployment-services__changes">
-                {[<juju.components.DeploymentChangeItem
-                  change={{id: 'change1'}}
-                  key="change1"
-                  showTime={false} />]}
-              </ul>)
+                <DeploymentChangeItem
+                  change={{
+                    description: ' kibana will be added to the model.',
+                    icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
+                    id: 'service-131',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
+                <DeploymentChangeItem
+                  change={{
+                    description: ' 1 kibana unit will be added.',
+                    icon: 'changes-units-added',
+                    id: 'addUnits-655',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
+              </ul>
           }}
           listPlansForCharm={listPlansForCharm}
           parseTermId={parseTermId}
           plansEditable={true}
-          services={[{service: 'apache2'}, {service: 'mysql'}]}
-          showExtra={false}
+          services={[{name: 'kibana'}, {name: 'elasticsearch'}]}
           showTerms={showTerms}
           withPlans={true} />
         <div className="prepend-seven">
@@ -99,7 +109,7 @@ describe('DeploymentServices', function() {
           </span>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render without plans', function() {
@@ -112,13 +122,14 @@ describe('DeploymentServices', function() {
         acl={acl}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
-        generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
-        groupedChanges={groupedChanges}
+        generateAllChangeDescriptions={sinon.stub()}
+        getCurrentChangeSet={sinon.stub()}
+        getServiceByName={getServiceByName}
         listPlansForCharm={listPlansForCharm}
         parseTermId={parseTermId}
-        servicesGetById={servicesGetById}
         showChangelogs={false}
         showTerms={showTerms}
+        sortDescriptionsByApplication={sortDescriptionsByApplication}
         withPlans={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -128,30 +139,45 @@ describe('DeploymentServices', function() {
           allocationEditable={true}
           charmsGetById={charmsGetById}
           extraInfo={{
-            'apache2': (
-              <ul className="deployment-services__changes">
-                {[<juju.components.DeploymentChangeItem
-                  change={{id: 'change1'}}
-                  key="change1"
-                  showTime={false} />]}
+            elasticsearch:
+              (<ul className="deployment-services__changes">
+                <DeploymentChangeItem
+                  change={{
+                    description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
+                    icon: 'changes-config-changed',
+                    id: 'setConfig-169',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
               </ul>),
-            'mysql': (
+            kibana:
               <ul className="deployment-services__changes">
-                {[<juju.components.DeploymentChangeItem
-                  change={{id: 'change1'}}
-                  key="change1"
-                  showTime={false} />]}
-              </ul>)
+                <DeploymentChangeItem
+                  change={{
+                    description: ' kibana will be added to the model.',
+                    icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
+                    id: 'service-131',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
+                <DeploymentChangeItem
+                  change={{
+                    description: ' 1 kibana unit will be added.',
+                    icon: 'changes-units-added',
+                    id: 'addUnits-655',
+                    time: '1:28 pm'
+                  }}
+                  showTime={false}/>
+              </ul>
           }}
           listPlansForCharm={listPlansForCharm}
           parseTermId={parseTermId}
           plansEditable={true}
-          services={[{service: 'apache2'}, {service: 'mysql'}]}
-          showExtra={false}
+          services={[{name: 'kibana'}, {name: 'elasticsearch'}]}
           showTerms={showTerms}
           withPlans={false} />
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

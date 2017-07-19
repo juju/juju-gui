@@ -792,7 +792,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         profileUsername={this._getUserInfo(state).profile}
         region={modelAPI.get('region')}
         renderMarkdown={marked}
-        servicesGetById={services.getById.bind(services)}
         getServiceByName={services.getServiceByName.bind(services)}
         showPay={this.applicationConfig.flags.pay || false}
         showTerms={this.terms.showTerms.bind(this.terms)}

@@ -95,11 +95,11 @@ DeploymentServices.propTypes = {
   acl: React.PropTypes.object.isRequired,
   changesFilterByParent: React.PropTypes.func.isRequired,
   charmsGetById: React.PropTypes.func.isRequired,
+  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
   getCurrentChangeSet: React.PropTypes.func.isRequired,
   getServiceByName: React.PropTypes.func.isRequired,
   listPlansForCharm: React.PropTypes.func.isRequired,
   parseTermId: React.PropTypes.func.isRequired,
-  servicesGetById: React.PropTypes.func.isRequired,
   showTerms: React.PropTypes.func,
   sortDescriptionsByApplication: React.PropTypes.func.isRequired,
   withPlans: React.PropTypes.bool

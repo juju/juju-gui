@@ -102,7 +102,6 @@ const createDeploymentFlow = (props = {}) => {
     profileUsername: 'Spinach',
     renderMarkdown: sinon.stub(),
     sendAnalytics: sinon.stub(),
-    servicesGetById: sinon.stub(),
     setModelName: sinon.stub(),
     showPay: false,
     showTerms: sinon.stub(),
@@ -245,7 +244,6 @@ describe('DeploymentFlow', function() {
               getServiceByName={props.getServiceByName}
               listPlansForCharm={props.listPlansForCharm}
               parseTermId={instance._parseTermId}
-              servicesGetById={props.servicesGetById}
               showTerms={props.showTerms}
               sortDescriptionsByApplication={props.sortDescriptionsByApplication}
               withPlans={true}

@@ -752,7 +752,6 @@ class DeploymentFlow extends React.Component {
               this.props.sortDescriptionsByApplication}
             listPlansForCharm={this.props.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
-            servicesGetById={this.props.servicesGetById}
             getServiceByName={this.props.getServiceByName}
             showTerms={this.props.showTerms}
             withPlans={this.props.withPlans} />
@@ -1033,7 +1032,6 @@ DeploymentFlow.propTypes = {
   region: React.PropTypes.string,
   renderMarkdown: React.PropTypes.func.isRequired,
   sendAnalytics: React.PropTypes.func.isRequired,
-  servicesGetById: React.PropTypes.func.isRequired,
   setModelName: React.PropTypes.func.isRequired,
   showPay: React.PropTypes.bool,
   showTerms: React.PropTypes.func.isRequired,

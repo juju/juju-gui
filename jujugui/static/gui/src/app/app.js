@@ -1377,7 +1377,6 @@ YUI.add('juju-gui', function(Y) {
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
           renderMarkdown={marked}
-          servicesGetById={services.getById.bind(services)}
           getServiceByName={services.getServiceByName.bind(services)}
           showPay={window.juju_config.flags.pay || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
