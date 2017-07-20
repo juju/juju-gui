@@ -555,9 +555,10 @@ class EntityContent extends React.Component {
     const entity = entityModel.toEntity();
     const storeId = entity.type === 'charm' ?
       entity.storeId : entity.id.split('cs:').join('');
+    const dataDD = this.props.flags.ddeploy ? 'data-dd' : '';
     const script = '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
-    '<div class="juju-card" data-id="' + storeId +'"></div>';
+    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
+    `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
 
     return (
       <div className="entity-content__card section clearfix">
@@ -624,11 +625,16 @@ class EntityContent extends React.Component {
   }
 };
 
+EntityContent.defaultProps = {
+  flags: {}
+};
+
 EntityContent.propTypes = {
   addNotification: PropTypes.func.isRequired,
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   entityModel: PropTypes.object.isRequired,
+  flags: PropTypes.object,
   getFile: PropTypes.func.isRequired,
   hasPlans: PropTypes.bool.isRequired,
   hash: PropTypes.string,
