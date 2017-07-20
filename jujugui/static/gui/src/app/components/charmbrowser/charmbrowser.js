@@ -174,6 +174,7 @@ class Charmbrowser extends React.Component {
             apiUrl={this.props.apiUrl}
             changeState={changeState}
             importBundleYAML={this.props.importBundleYAML}
+            flags={this.props.flags}
             getBundleYAML={this.props.getBundleYAML}
             getEntity={this.props.getEntity}
             deployService={this.props.deployService}
@@ -232,6 +233,7 @@ Charmbrowser.propTypes = {
   charmstoreURL: PropTypes.string.isRequired,
   deployService: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
+  flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
   getEntity: PropTypes.func.isRequired,
