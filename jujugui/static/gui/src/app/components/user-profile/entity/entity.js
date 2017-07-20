@@ -503,21 +503,21 @@ class UserProfileEntity extends React.Component {
 };
 
 UserProfileEntity.propTypes = {
-  acl: React.PropTypes.object,
-  changeState: React.PropTypes.func,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  acl: PropTypes.object,
+  changeState: PropTypes.func,
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  d3: React.PropTypes.object,
-  displayConfirmation: React.PropTypes.func,
-  entity: React.PropTypes.object.isRequired,
-  expanded: React.PropTypes.bool,
-  getDiagramURL: React.PropTypes.func,
-  getKpiMetrics: React.PropTypes.func,
-  permission: React.PropTypes.string,
-  switchModel: React.PropTypes.func,
-  type: React.PropTypes.string.isRequired
+  d3: PropTypes.object,
+  displayConfirmation: PropTypes.func,
+  entity: PropTypes.object.isRequired,
+  expanded: PropTypes.bool,
+  getDiagramURL: PropTypes.func,
+  getKpiMetrics: PropTypes.func,
+  permission: PropTypes.string,
+  switchModel: PropTypes.func,
+  type: PropTypes.string.isRequired
 };
 
 YUI.add('user-profile-entity', function() {

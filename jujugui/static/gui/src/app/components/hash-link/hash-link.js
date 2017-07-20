@@ -42,8 +42,8 @@ class HashLink extends React.Component {
 };
 
 HashLink.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  hash: React.PropTypes.string.isRequired
+  changeState: PropTypes.func.isRequired,
+  hash: PropTypes.string.isRequired
 };
 
 YUI.add('hash-link', function() {

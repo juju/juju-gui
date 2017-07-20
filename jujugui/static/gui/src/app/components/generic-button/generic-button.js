@@ -66,13 +66,13 @@ class GenericButton extends React.Component {
 };
 
 GenericButton.propTypes = {
-  action: React.PropTypes.func,
-  children: React.PropTypes.node,
-  disabled: React.PropTypes.bool,
-  extraClasses: React.PropTypes.string,
-  submit: React.PropTypes.bool,
-  tooltip: React.PropTypes.string,
-  type: React.PropTypes.string
+  action: PropTypes.func,
+  children: PropTypes.node,
+  disabled: PropTypes.bool,
+  extraClasses: PropTypes.string,
+  submit: PropTypes.bool,
+  tooltip: PropTypes.string,
+  type: PropTypes.string
 };
 
 GenericButton.displayName = 'GenericButton';

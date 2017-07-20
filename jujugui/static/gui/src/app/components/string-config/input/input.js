@@ -56,12 +56,12 @@ class StringConfigInput extends React.Component {
 };
 
 StringConfigInput.propTypes = {
-  config: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  config: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ]),
-  disabled: React.PropTypes.bool,
-  setValue: React.PropTypes.func.isRequired
+  disabled: PropTypes.bool,
+  setValue: PropTypes.func.isRequired
 };
 
 YUI.add('string-config-input', function() {

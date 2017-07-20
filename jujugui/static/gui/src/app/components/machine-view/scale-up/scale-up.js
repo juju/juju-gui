@@ -101,10 +101,10 @@ class MachineViewScaleUp extends React.Component {
 };
 
 MachineViewScaleUp.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-  services: React.PropTypes.object.isRequired,
-  toggleScaleUp: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addGhostAndEcsUnits: PropTypes.func.isRequired,
+  services: PropTypes.object.isRequired,
+  toggleScaleUp: PropTypes.func.isRequired
 };
 
 YUI.add('machine-view-scale-up', function() {

@@ -203,11 +203,11 @@ class DateDisplay extends React.Component {
 };
 
 DateDisplay.propTypes = {
-  date: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.string
+  date: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string
   ]),
-  relative: React.PropTypes.bool
+  relative: PropTypes.bool
 };
 
 YUI.add('date-display', function() {

@@ -358,18 +358,18 @@ class AccountCredentials extends React.Component {
 };
 
 AccountCredentials.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  controllerIsReady: React.PropTypes.func.isRequired,
-  generateCloudCredentialName: React.PropTypes.func.isRequired,
-  getCloudCredentialNames: React.PropTypes.func.isRequired,
-  getCloudProviderDetails: React.PropTypes.func.isRequired,
-  listClouds: React.PropTypes.func.isRequired,
-  revokeCloudCredential: React.PropTypes.func.isRequired,
-  sendAnalytics: React.PropTypes.func.isRequired,
-  updateCloudCredential: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  controllerIsReady: PropTypes.func.isRequired,
+  generateCloudCredentialName: PropTypes.func.isRequired,
+  getCloudCredentialNames: PropTypes.func.isRequired,
+  getCloudProviderDetails: PropTypes.func.isRequired,
+  listClouds: PropTypes.func.isRequired,
+  revokeCloudCredential: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
+  updateCloudCredential: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('account-credentials', function() {

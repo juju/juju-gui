@@ -88,15 +88,15 @@ class DeploymentPanel extends React.Component {
 };
 
 DeploymentPanel.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  changeState: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  isDirectDeploy: React.PropTypes.bool,
-  loggedIn: React.PropTypes.bool,
-  sendAnalytics: React.PropTypes.func,
-  title: React.PropTypes.string
+  isDirectDeploy: PropTypes.bool,
+  loggedIn: PropTypes.bool,
+  sendAnalytics: PropTypes.func,
+  title: PropTypes.string
 };
 
 YUI.add('deployment-panel', function() {

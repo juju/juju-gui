@@ -70,8 +70,8 @@ class Zoom extends React.Component {
 };
 
 Zoom.propTypes = {
-  scaleJump: React.PropTypes.number,
-  topo: React.PropTypes.object.isRequired
+  scaleJump: PropTypes.number,
+  topo: PropTypes.object.isRequired
 };
 
 Zoom.defaultProps = {

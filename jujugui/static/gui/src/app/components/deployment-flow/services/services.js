@@ -92,17 +92,17 @@ class DeploymentServices extends React.Component {
 };
 
 DeploymentServices.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changesFilterByParent: React.PropTypes.func.isRequired,
-  charmsGetById: React.PropTypes.func.isRequired,
-  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-  getCurrentChangeSet: React.PropTypes.func.isRequired,
-  getServiceByName: React.PropTypes.func.isRequired,
-  listPlansForCharm: React.PropTypes.func.isRequired,
-  parseTermId: React.PropTypes.func.isRequired,
-  showTerms: React.PropTypes.func,
-  sortDescriptionsByApplication: React.PropTypes.func.isRequired,
-  withPlans: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  changesFilterByParent: PropTypes.func.isRequired,
+  charmsGetById: PropTypes.func.isRequired,
+  generateAllChangeDescriptions: PropTypes.func.isRequired,
+  getCurrentChangeSet: PropTypes.func.isRequired,
+  getServiceByName: PropTypes.func.isRequired,
+  listPlansForCharm: PropTypes.func.isRequired,
+  parseTermId: PropTypes.func.isRequired,
+  showTerms: PropTypes.func,
+  sortDescriptionsByApplication: PropTypes.func.isRequired,
+  withPlans: PropTypes.bool
 };
 
 YUI.add('deployment-services', function() {

@@ -97,7 +97,7 @@ class BudgetChart extends React.Component {
 };
 
 BudgetChart.propTypes = {
-  budgets: React.PropTypes.object
+  budgets: PropTypes.object
 };
 
 YUI.add('budget-chart', function() {

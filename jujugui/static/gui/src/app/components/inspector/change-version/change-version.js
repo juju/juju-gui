@@ -219,15 +219,15 @@ class InspectorChangeVersion extends React.Component {
 };
 
 InspectorChangeVersion.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addCharm: React.PropTypes.func.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charmId: React.PropTypes.string.isRequired,
-  getAvailableVersions: React.PropTypes.func.isRequired,
-  getCharm: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired,
-  setCharm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addCharm: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charmId: PropTypes.string.isRequired,
+  getAvailableVersions: PropTypes.func.isRequired,
+  getCharm: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired,
+  setCharm: PropTypes.func.isRequired
 };
 
 YUI.add('inspector-change-version', function() {

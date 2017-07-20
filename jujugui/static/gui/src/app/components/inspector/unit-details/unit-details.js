@@ -156,13 +156,13 @@ class UnitDetails extends React.Component {
 };
 
 UnitDetails.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  destroyUnits: React.PropTypes.func.isRequired,
-  previousComponent: React.PropTypes.string,
-  service: React.PropTypes.object.isRequired,
-  unit: React.PropTypes.object.isRequired,
-  unitStatus: React.PropTypes.string
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  destroyUnits: PropTypes.func.isRequired,
+  previousComponent: PropTypes.string,
+  service: PropTypes.object.isRequired,
+  unit: PropTypes.object.isRequired,
+  unitStatus: PropTypes.string
 };
 
 YUI.add('unit-details', function() {

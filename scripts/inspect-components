@@ -267,7 +267,7 @@ def _prop_definitions_exp(name):
 
 def _parse_prop_definitions(content):
     """Generate Property named tuples based on the given string content."""
-    prefix = 'React.PropTypes.'
+    prefix = 'PropTypes.'
     prefix_len = len(prefix)
 
     def createProperty(name, type_):

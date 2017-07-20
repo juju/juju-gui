@@ -734,24 +734,24 @@ class MachineView extends React.Component {
 };
 
 MachineView.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-  autoPlaceUnits: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  createMachine: React.PropTypes.func.isRequired,
-  destroyMachines: React.PropTypes.func.isRequired,
-  environmentName: React.PropTypes.string.isRequired,
-  generateMachineDetails: React.PropTypes.func.isRequired,
-  machines: React.PropTypes.object.isRequired,
-  parseConstraints: React.PropTypes.func.isRequired,
-  placeUnit: React.PropTypes.func.isRequired,
-  providerType: React.PropTypes.string,
-  removeUnits: React.PropTypes.func.isRequired,
-  series: React.PropTypes.array,
-  services: React.PropTypes.object.isRequired,
-  units: React.PropTypes.object.isRequired,
-  updateMachineConstraints: React.PropTypes.func.isRequired,
-  updateMachineSeries: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addGhostAndEcsUnits: PropTypes.func.isRequired,
+  autoPlaceUnits: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  createMachine: PropTypes.func.isRequired,
+  destroyMachines: PropTypes.func.isRequired,
+  environmentName: PropTypes.string.isRequired,
+  generateMachineDetails: PropTypes.func.isRequired,
+  machines: PropTypes.object.isRequired,
+  parseConstraints: PropTypes.func.isRequired,
+  placeUnit: PropTypes.func.isRequired,
+  providerType: PropTypes.string,
+  removeUnits: PropTypes.func.isRequired,
+  series: PropTypes.array,
+  services: PropTypes.object.isRequired,
+  units: PropTypes.object.isRequired,
+  updateMachineConstraints: PropTypes.func.isRequired,
+  updateMachineSeries: PropTypes.func.isRequired
 };
 
 YUI.add('machine-view', function() {

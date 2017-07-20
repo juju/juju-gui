@@ -92,8 +92,8 @@ class SearchResultsTypeFilter extends React.Component {
 };
 
 SearchResultsTypeFilter.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  currentType: React.PropTypes.string
+  changeState: PropTypes.func.isRequired,
+  currentType: PropTypes.string
 };
 
 YUI.add('search-results-type-filter', function(Y) {

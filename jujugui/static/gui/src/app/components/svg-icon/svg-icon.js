@@ -91,19 +91,19 @@ class SvgIcon extends React.Component {
 };
 
 SvgIcon.propTypes = {
-  className: React.PropTypes.string,
-  height: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  className: PropTypes.string,
+  height: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ]),
-  name: React.PropTypes.string.isRequired,
-  size: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  name: PropTypes.string.isRequired,
+  size: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ]),
-  width: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  width: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ])
 };
 

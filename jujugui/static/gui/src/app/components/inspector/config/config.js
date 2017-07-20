@@ -429,18 +429,18 @@ class Configuration extends React.Component {
 };
 
 Configuration.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charm: React.PropTypes.object.isRequired,
-  getServiceByName: React.PropTypes.func.isRequired,
-  getYAMLConfig: React.PropTypes.func.isRequired,
-  linkify: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired,
-  serviceRelations: React.PropTypes.array.isRequired,
-  setConfig: React.PropTypes.func.isRequired,
-  unplaceServiceUnits: React.PropTypes.func.isRequired,
-  updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charm: PropTypes.object.isRequired,
+  getServiceByName: PropTypes.func.isRequired,
+  getYAMLConfig: PropTypes.func.isRequired,
+  linkify: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired,
+  serviceRelations: PropTypes.array.isRequired,
+  setConfig: PropTypes.func.isRequired,
+  unplaceServiceUnits: PropTypes.func.isRequired,
+  updateServiceUnitsDisplayname: PropTypes.func.isRequired
 };
 
 YUI.add('inspector-config', function() {

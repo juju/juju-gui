@@ -59,7 +59,7 @@ class EntityContentConfigOption extends React.Component {
 };
 
 EntityContentConfigOption.propTypes = {
-  option: React.PropTypes.object.isRequired
+  option: PropTypes.object.isRequired
 };
 
 YUI.add('entity-content-config-option', function() {

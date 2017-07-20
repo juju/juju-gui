@@ -972,12 +972,12 @@ class Store extends React.Component {
 };
 
 Store.propTypes = {
-  apiVersion: React.PropTypes.string.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charmstoreURL: React.PropTypes.string.isRequired,
-  gisf: React.PropTypes.bool.isRequired,
-  setPageTitle: React.PropTypes.func.isRequired,
-  staticURL: React.PropTypes.string
+  apiVersion: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charmstoreURL: PropTypes.string.isRequired,
+  gisf: PropTypes.bool.isRequired,
+  setPageTitle: PropTypes.func.isRequired,
+  staticURL: PropTypes.string
 };
 
 YUI.add('store', function() {

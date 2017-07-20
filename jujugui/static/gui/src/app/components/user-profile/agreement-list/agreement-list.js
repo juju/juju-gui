@@ -158,9 +158,9 @@ class UserProfileAgreementList extends React.Component {
 };
 
 UserProfileAgreementList.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  getAgreements: React.PropTypes.func.isRequired,
-  user: React.PropTypes.object
+  addNotification: PropTypes.func.isRequired,
+  getAgreements: PropTypes.func.isRequired,
+  user: PropTypes.object
 };
 
 YUI.add('user-profile-agreement-list', function() {

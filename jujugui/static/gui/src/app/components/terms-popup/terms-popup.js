@@ -49,8 +49,8 @@ class TermsPopup extends React.Component {
 };
 
 TermsPopup.propTypes = {
-  close: React.PropTypes.func.isRequired,
-  terms: React.PropTypes.array.isRequired
+  close: PropTypes.func.isRequired,
+  terms: PropTypes.array.isRequired
 };
 
 YUI.add('terms-popup', function() {

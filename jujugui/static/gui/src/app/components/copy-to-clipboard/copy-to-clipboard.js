@@ -58,8 +58,8 @@ class CopyToClipboard extends React.Component {
 };
 
 CopyToClipboard.propTypes = {
-  className: React.PropTypes.string,
-  value: React.PropTypes.string.isRequired
+  className: PropTypes.string,
+  value: PropTypes.string.isRequired
 };
 
 CopyToClipboard.defaultProps = {

@@ -171,10 +171,10 @@ class DeploymentSignup extends React.Component {
 };
 
 DeploymentSignup.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  exportEnvironmentFile: React.PropTypes.func.isRequired,
-  modelName: React.PropTypes.string.isRequired,
-  staticURL: React.PropTypes.string
+  changeState: PropTypes.func.isRequired,
+  exportEnvironmentFile: PropTypes.func.isRequired,
+  modelName: PropTypes.string.isRequired,
+  staticURL: PropTypes.string
 };
 
 YUI.add('deployment-signup', function() {

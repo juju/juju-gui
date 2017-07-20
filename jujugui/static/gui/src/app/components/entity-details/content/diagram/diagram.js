@@ -35,9 +35,9 @@ class EntityContentDiagram extends React.Component {
 };
 
 EntityContentDiagram.propTypes = {
-  getDiagramURL: React.PropTypes.func.isRequired,
-  id: React.PropTypes.string.isRequired,
-  isRow: React.PropTypes.bool
+  getDiagramURL: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
+  isRow: PropTypes.bool
 };
 
 YUI.add('entity-content-diagram', function() {

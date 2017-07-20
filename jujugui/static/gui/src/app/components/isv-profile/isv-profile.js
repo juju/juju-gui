@@ -146,7 +146,7 @@ class ISVProfile extends React.Component {
 };
 
 ISVProfile.propTypes = {
-  d3: React.PropTypes.object.isRequired
+  d3: PropTypes.object.isRequired
 };
 
 YUI.add('isv-profile', function() {

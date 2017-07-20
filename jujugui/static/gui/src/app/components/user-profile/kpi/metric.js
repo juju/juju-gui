@@ -97,8 +97,8 @@ class UserProfileEntityMetric extends React.Component {
 };
 
 UserProfileEntityMetric.propTypes = {
-  d3: React.PropTypes.object.isRequired,
-  metric: React.PropTypes.array
+  d3: PropTypes.object.isRequired,
+  metric: PropTypes.array
 };
 
 YUI.add('user-profile-entity-metric', function() {

@@ -409,16 +409,16 @@ class BudgetTableRow extends React.Component {
 };
 
 BudgetTableRow.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  allocationEditable: React.PropTypes.bool,
-  charmsGetById: React.PropTypes.func,
-  extraInfo: React.PropTypes.object,
-  listPlansForCharm: React.PropTypes.func,
-  parseTermId: React.PropTypes.func,
-  plansEditable: React.PropTypes.bool,
-  service: React.PropTypes.object.isRequired,
-  showTerms: React.PropTypes.func,
-  withPlans: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  allocationEditable: PropTypes.bool,
+  charmsGetById: PropTypes.func,
+  extraInfo: PropTypes.object,
+  listPlansForCharm: PropTypes.func,
+  parseTermId: PropTypes.func,
+  plansEditable: PropTypes.bool,
+  service: PropTypes.object.isRequired,
+  showTerms: PropTypes.func,
+  withPlans: PropTypes.bool
 };
 
 YUI.add('budget-table-row', function() {

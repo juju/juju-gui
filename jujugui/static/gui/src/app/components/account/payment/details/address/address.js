@@ -104,18 +104,18 @@ class AccountPaymentDetailsAddress extends React.Component {
 };
 
 AccountPaymentDetailsAddress.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addAddress: React.PropTypes.func.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  address: React.PropTypes.object.isRequired,
-  close: React.PropTypes.func.isRequired,
-  getCountries: React.PropTypes.func.isRequired,
-  removeAddress: React.PropTypes.func.isRequired,
-  showEdit: React.PropTypes.bool,
-  updateAddress: React.PropTypes.func.isRequired,
-  updated: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addAddress: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  address: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired,
+  getCountries: PropTypes.func.isRequired,
+  removeAddress: PropTypes.func.isRequired,
+  showEdit: PropTypes.bool,
+  updateAddress: PropTypes.func.isRequired,
+  updated: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('account-payment-details-address', function() {

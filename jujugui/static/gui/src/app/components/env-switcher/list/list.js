@@ -173,14 +173,14 @@ class EnvList extends React.Component {
 };
 
 EnvList.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  environmentName: React.PropTypes.string,
-  envs: React.PropTypes.array.isRequired,
-  handleModelClick: React.PropTypes.func.isRequired,
-  humanizeTimestamp: React.PropTypes.func.isRequired,
-  switchModel: React.PropTypes.func.isRequired,
-  user: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  environmentName: PropTypes.string,
+  envs: PropTypes.array.isRequired,
+  handleModelClick: PropTypes.func.isRequired,
+  humanizeTimestamp: PropTypes.func.isRequired,
+  switchModel: PropTypes.func.isRequired,
+  user: PropTypes.object
 };
 
 YUI.add('env-list', function() {

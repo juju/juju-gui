@@ -61,8 +61,8 @@ class InspectorPlan extends React.Component {
 };
 
 InspectorPlan.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  currentPlan: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  currentPlan: PropTypes.object
 };
 
 YUI.add('inspector-plan', function() {

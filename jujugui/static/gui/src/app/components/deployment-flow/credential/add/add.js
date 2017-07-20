@@ -304,20 +304,20 @@ class DeploymentCredentialAdd extends React.Component {
 };
 
 DeploymentCredentialAdd.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  close: React.PropTypes.func.isRequired,
-  cloud: React.PropTypes.object,
-  credentials: React.PropTypes.array.isRequired,
-  generateCloudCredentialName: React.PropTypes.func.isRequired,
-  getCloudProviderDetails: React.PropTypes.func.isRequired,
-  getCredentials: React.PropTypes.func.isRequired,
-  hideCancel: React.PropTypes.bool,
-  sendAnalytics: React.PropTypes.func.isRequired,
-  setCredential: React.PropTypes.func.isRequired,
-  updateCloudCredential: React.PropTypes.func.isRequired,
-  user: React.PropTypes.string,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
+  cloud: PropTypes.object,
+  credentials: PropTypes.array.isRequired,
+  generateCloudCredentialName: PropTypes.func.isRequired,
+  getCloudProviderDetails: PropTypes.func.isRequired,
+  getCredentials: PropTypes.func.isRequired,
+  hideCancel: PropTypes.bool,
+  sendAnalytics: PropTypes.func.isRequired,
+  setCredential: PropTypes.func.isRequired,
+  updateCloudCredential: PropTypes.func.isRequired,
+  user: PropTypes.string,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-credential-add', function() {

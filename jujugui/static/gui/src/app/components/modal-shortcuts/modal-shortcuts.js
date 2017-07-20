@@ -87,9 +87,9 @@ class ModalShortcuts extends React.Component {
 };
 
 ModalShortcuts.propTypes = {
-  closeModal: React.PropTypes.func.isRequired,
-  guiVersion: React.PropTypes.string.isRequired,
-  keybindings: React.PropTypes.object.isRequired
+  closeModal: PropTypes.func.isRequired,
+  guiVersion: PropTypes.string.isRequired,
+  keybindings: PropTypes.object.isRequired
 };
 
 YUI.add('modal-shortcuts', function() {

@@ -50,10 +50,10 @@ class EmptyUserProfile extends React.Component {
 };
 
 EmptyUserProfile.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  isCurrentUser: React.PropTypes.bool,
-  staticURL: React.PropTypes.string,
-  switchModel: React.PropTypes.func.isRequired
+  changeState: PropTypes.func.isRequired,
+  isCurrentUser: PropTypes.bool,
+  staticURL: PropTypes.string,
+  switchModel: PropTypes.func.isRequired
 };
 
 EmptyUserProfile.defaultProps = {

@@ -180,13 +180,13 @@ class EnvSwitcher extends React.Component {
 };
 
 EnvSwitcher.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  environmentName: React.PropTypes.string,
-  humanizeTimestamp: React.PropTypes.func.isRequired,
-  listModelsWithInfo: React.PropTypes.func,
-  switchModel: React.PropTypes.func.isRequired,
-  user: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  environmentName: PropTypes.string,
+  humanizeTimestamp: PropTypes.func.isRequired,
+  listModelsWithInfo: PropTypes.func,
+  switchModel: PropTypes.func.isRequired,
+  user: PropTypes.object
 };
 
 YUI.add('env-switcher', function() {

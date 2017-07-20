@@ -144,16 +144,16 @@ class ModelActions extends React.Component {
 };
 
 ModelActions.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  appState: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  exportEnvironmentFile: React.PropTypes.func.isRequired,
-  hideDragOverNotification: React.PropTypes.func.isRequired,
-  importBundleFile: React.PropTypes.func.isRequired,
-  loadingModel: React.PropTypes.bool,
-  renderDragOverNotification: React.PropTypes.func.isRequired,
-  sharingVisibility: React.PropTypes.func.isRequired,
-  userIsAuthenticated: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  appState: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  exportEnvironmentFile: PropTypes.func.isRequired,
+  hideDragOverNotification: PropTypes.func.isRequired,
+  importBundleFile: PropTypes.func.isRequired,
+  loadingModel: PropTypes.bool,
+  renderDragOverNotification: PropTypes.func.isRequired,
+  sharingVisibility: PropTypes.func.isRequired,
+  userIsAuthenticated: PropTypes.bool
 };
 
 ModelActions.defaultProps = {

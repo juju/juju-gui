@@ -76,11 +76,11 @@ class NotificationListItem extends React.Component {
 };
 
 NotificationListItem.propTypes = {
-  message: React.PropTypes.string.isRequired,
-  removeNotification: React.PropTypes.func.isRequired,
-  timeout: React.PropTypes.number,
-  timestamp: React.PropTypes.string.isRequired,
-  type: React.PropTypes.string
+  message: PropTypes.string.isRequired,
+  removeNotification: PropTypes.func.isRequired,
+  timeout: PropTypes.number,
+  timestamp: PropTypes.string.isRequired,
+  type: PropTypes.string
 };
 
 YUI.add('notification-list-item', function() {

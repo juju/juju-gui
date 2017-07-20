@@ -318,11 +318,11 @@ class SearchResultsItem extends React.Component {
 };
 
 SearchResultsItem.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  deployTarget: React.PropTypes.func.isRequired,
-  generatePath: React.PropTypes.func.isRequired,
-  item: React.PropTypes.object.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  deployTarget: PropTypes.func.isRequired,
+  generatePath: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired
 };
 
 YUI.add('search-results-item', function(Y) {

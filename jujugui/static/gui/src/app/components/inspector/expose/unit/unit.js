@@ -89,8 +89,8 @@ class InspectorExposeUnit extends React.Component {
 };
 
 InspectorExposeUnit.propTypes = {
-  action: React.PropTypes.func.isRequired,
-  unit: React.PropTypes.object.isRequired
+  action: PropTypes.func.isRequired,
+  unit: PropTypes.object.isRequired
 };
 
 YUI.add('inspector-expose-unit', function() {

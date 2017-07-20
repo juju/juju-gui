@@ -319,23 +319,23 @@ class DeploymentCredential extends React.Component {
 };
 
 DeploymentCredential.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  cloud: React.PropTypes.object,
-  controllerIsReady: React.PropTypes.func.isRequired,
-  credential: React.PropTypes.string,
-  editable: React.PropTypes.bool,
-  generateCloudCredentialName: React.PropTypes.func.isRequired,
-  getCloudCredentialNames: React.PropTypes.func.isRequired,
-  getCloudCredentials: React.PropTypes.func.isRequired,
-  getCloudProviderDetails: React.PropTypes.func.isRequired,
-  region: React.PropTypes.string,
-  sendAnalytics: React.PropTypes.func.isRequired,
-  setCredential: React.PropTypes.func.isRequired,
-  setRegion: React.PropTypes.func.isRequired,
-  updateCloudCredential: React.PropTypes.func.isRequired,
-  user: React.PropTypes.string,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  cloud: PropTypes.object,
+  controllerIsReady: PropTypes.func.isRequired,
+  credential: PropTypes.string,
+  editable: PropTypes.bool,
+  generateCloudCredentialName: PropTypes.func.isRequired,
+  getCloudCredentialNames: PropTypes.func.isRequired,
+  getCloudCredentials: PropTypes.func.isRequired,
+  getCloudProviderDetails: PropTypes.func.isRequired,
+  region: PropTypes.string,
+  sendAnalytics: PropTypes.func.isRequired,
+  setCredential: PropTypes.func.isRequired,
+  setRegion: PropTypes.func.isRequired,
+  updateCloudCredential: PropTypes.func.isRequired,
+  user: PropTypes.string,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-credential', function() {

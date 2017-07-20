@@ -300,16 +300,16 @@ class MachineViewAddMachine extends React.Component {
 };
 
 MachineViewAddMachine.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  close: React.PropTypes.func.isRequired,
-  createMachine: React.PropTypes.func.isRequired,
-  machines: React.PropTypes.object,
-  parentId: React.PropTypes.string,
-  placeUnit: React.PropTypes.func,
-  providerType: React.PropTypes.string,
-  selectMachine: React.PropTypes.func,
-  series: React.PropTypes.array,
-  unit: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired,
+  createMachine: PropTypes.func.isRequired,
+  machines: PropTypes.object,
+  parentId: PropTypes.string,
+  placeUnit: PropTypes.func,
+  providerType: PropTypes.string,
+  selectMachine: PropTypes.func,
+  series: PropTypes.array,
+  unit: PropTypes.object
 };
 
 YUI.add('machine-view-add-machine', function() {

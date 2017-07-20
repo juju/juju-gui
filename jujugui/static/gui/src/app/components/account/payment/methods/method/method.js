@@ -158,15 +158,15 @@ class AccountPaymentMethod extends React.Component {
 };
 
 AccountPaymentMethod.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  getCountries: React.PropTypes.func.isRequired,
-  paymentMethod: React.PropTypes.object.isRequired,
-  removePaymentMethod: React.PropTypes.func.isRequired,
-  updatePaymentMethod: React.PropTypes.func.isRequired,
-  updateUser: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  getCountries: PropTypes.func.isRequired,
+  paymentMethod: PropTypes.object.isRequired,
+  removePaymentMethod: PropTypes.func.isRequired,
+  updatePaymentMethod: PropTypes.func.isRequired,
+  updateUser: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('account-payment-method', function() {

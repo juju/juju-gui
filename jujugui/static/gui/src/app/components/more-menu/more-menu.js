@@ -133,8 +133,8 @@ class MoreMenu extends React.Component {
 };
 
 MoreMenu.propTypes = {
-  activeItem: React.PropTypes.string,
-  items: React.PropTypes.array.isRequired
+  activeItem: PropTypes.string,
+  items: PropTypes.array.isRequired
 };
 
 YUI.add('more-menu', function() {

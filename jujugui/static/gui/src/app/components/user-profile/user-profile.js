@@ -182,25 +182,25 @@ class UserProfile extends React.Component {
 };
 
 UserProfile.propTypes = {
-  acl: React.PropTypes.object,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charmstore: React.PropTypes.object.isRequired,
-  currentModel: React.PropTypes.string,
-  d3: React.PropTypes.object,
-  destroyModels: React.PropTypes.func.isRequired,
-  facadesExist: React.PropTypes.bool.isRequired,
-  getAgreements: React.PropTypes.func.isRequired,
-  getDiagramURL: React.PropTypes.func.isRequired,
-  getKpiMetrics: React.PropTypes.func.isRequired,
-  interactiveLogin: React.PropTypes.bool,
-  listBudgets: React.PropTypes.func.isRequired,
-  listModelsWithInfo: React.PropTypes.func.isRequired,
-  pluralize: React.PropTypes.func.isRequired,
-  setPageTitle: React.PropTypes.func.isRequired,
-  staticURL: React.PropTypes.string,
-  storeUser: React.PropTypes.func.isRequired,
-  switchModel: React.PropTypes.func.isRequired,
+  acl: PropTypes.object,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charmstore: PropTypes.object.isRequired,
+  currentModel: PropTypes.string,
+  d3: PropTypes.object,
+  destroyModels: PropTypes.func.isRequired,
+  facadesExist: PropTypes.bool.isRequired,
+  getAgreements: PropTypes.func.isRequired,
+  getDiagramURL: PropTypes.func.isRequired,
+  getKpiMetrics: PropTypes.func.isRequired,
+  interactiveLogin: PropTypes.bool,
+  listBudgets: PropTypes.func.isRequired,
+  listModelsWithInfo: PropTypes.func.isRequired,
+  pluralize: PropTypes.func.isRequired,
+  setPageTitle: PropTypes.func.isRequired,
+  staticURL: PropTypes.string,
+  storeUser: PropTypes.func.isRequired,
+  switchModel: PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for
   //   instance, from the charm store. Might be null if the user is being
@@ -209,7 +209,7 @@ UserProfile.propTypes = {
   // - isCurrent: whether the profile is being displayed for the currently
   //   authenticated user;
   // - profile: the user name for whom profile details must be displayed.
-  userInfo: React.PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired
 };
 
 YUI.add('user-profile', function() {
