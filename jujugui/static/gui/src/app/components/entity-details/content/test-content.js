@@ -38,7 +38,7 @@ function generateScript(isBundle) {
   }
 
   return '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
+    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
     '<div class="juju-card" data-id="'+id+'"></div>';
 }
 
