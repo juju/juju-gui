@@ -2086,7 +2086,7 @@ YUI.add('juju-view-utils', function(Y) {
     hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
     if (!hardwareDetails) {
       if (machine.commitStatus === 'uncommitted') {
-        hardwareDetails = 'no constraints set';
+        hardwareDetails = 'default constraints';
       } else {
         hardwareDetails = 'hardware details not available';
       }

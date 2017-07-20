@@ -37,7 +37,6 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
-      showChangelogs: false,
       sshKey: null,
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
@@ -140,10 +139,9 @@ class DeploymentFlow extends React.Component {
           Object.keys(addMachines).length > 0;
         break;
       case 'services':
-        const deploys = groupedChanges._deploy;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && deploys && Object.keys(deploys).length > 0;
+        visible = loggedIn;
         break;
       case 'budget':
         completed = false;
@@ -154,11 +152,6 @@ class DeploymentFlow extends React.Component {
         completed = !!this.state.paymentUser;
         disabled = false;
         visible = loggedIn && this.props.showPay;
-        break;
-      case 'changes':
-        completed = false;
-        disabled = !hasCloud || !hasCredential;
-        visible = loggedIn;
         break;
       case 'agreements':
         const newTerms = this.state.newTerms;
@@ -254,15 +247,6 @@ class DeploymentFlow extends React.Component {
   */
   _setPaymentUser(user) {
     this.setState({paymentUser: user});
-  }
-
-  /**
-    Toggle the visibility of the changelogs.
-
-    @method _toggleChangelogs
-  */
-  _toggleChangelogs() {
-    this.setState({showChangelogs: !this.state.showChangelogs});
   }
 
   /**
@@ -478,25 +462,6 @@ class DeploymentFlow extends React.Component {
       title: 'Change cloud',
       type: 'neutral'
     }];
-  }
-
-  /**
-    Generate a button to toggle the visibility of the changelogs.
-
-    @method _generateChangelogTitle
-    @returns {Array} The action.
-  */
-  _generateChangelogTitle() {
-    return (
-      <span className="deployment-flow__service-title">
-        Applications to be deployed
-        <juju.components.GenericButton
-          action={this._toggleChangelogs.bind(this)}
-          type="inline-neutral"
-          extraClasses="right">
-          {this.state.showChangelogs ? 'Hide changelog' : 'Show changelog'}
-        </juju.components.GenericButton>
-      </span>);
   }
 
   /**
@@ -751,7 +716,7 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-machines"
         showCheck={false}
-        title="Machines to be deployed">
+        title="Machines to be provisioned">
         <juju.components.DeploymentMachines
           acl={this.props.acl}
           cloud={cloud}
@@ -773,26 +738,25 @@ class DeploymentFlow extends React.Component {
       return;
     }
     return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-services"
-        showCheck={true}
-        title={this._generateChangelogTitle()}>
-        <juju.components.DeploymentServices
-          acl={this.props.acl}
-          changesFilterByParent={this.props.changesFilterByParent}
-          charmsGetById={this.props.charmsGetById}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions}
-          groupedChanges={this.props.groupedChanges}
-          listPlansForCharm={this.props.listPlansForCharm}
-          parseTermId={this._parseTermId.bind(this)}
-          servicesGetById={this.props.servicesGetById}
-          showChangelogs={this.state.showChangelogs}
-          showTerms={this.props.showTerms}
-          withPlans={this.props.withPlans} />
-      </juju.components.DeploymentSection>);
+      <div className="deployment-services">
+        <juju.components.AccordionSection
+          title="Model changes">
+          <juju.components.DeploymentServices
+            acl={this.props.acl}
+            changesFilterByParent={this.props.changesFilterByParent}
+            charmsGetById={this.props.charmsGetById}
+            getCurrentChangeSet={this.props.getCurrentChangeSet}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions}
+            sortDescriptionsByApplication={
+              this.props.sortDescriptionsByApplication}
+            listPlansForCharm={this.props.listPlansForCharm}
+            parseTermId={this._parseTermId.bind(this)}
+            getServiceByName={this.props.getServiceByName}
+            showTerms={this.props.showTerms}
+            withPlans={this.props.withPlans} />
+        </juju.components.AccordionSection>
+      </div>);
   }
 
   /**
@@ -851,34 +815,6 @@ class DeploymentFlow extends React.Component {
           setPaymentUser={this._setPaymentUser.bind(this)}
           username={this.props.profileUsername}
           validateForm={this.props.validateForm} />
-      </juju.components.DeploymentSection>);
-  }
-
-  /**
-    Generate the changes section.
-
-    @method _generateChangeSection
-    @returns {Object} The markup.
-  */
-  _generateChangeSection() {
-    var status = this._getSectionStatus('changes');
-    // Do not show the changes if we're performing a Direct Deploy.
-    const ddData = this.props.ddData;
-    const inDD = !!(ddData && Object.keys(ddData).length);
-    if (!status.visible || inDD) {
-      return;
-    }
-    return (
-      <juju.components.DeploymentSection
-        completed={status.completed}
-        disabled={status.disabled}
-        instance="deployment-changes"
-        showCheck={false}
-        title="Model changes">
-        <juju.components.DeploymentChanges
-          getCurrentChangeSet={this.props.getCurrentChangeSet}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions} />
       </juju.components.DeploymentSection>);
   }
 
@@ -1038,7 +974,6 @@ class DeploymentFlow extends React.Component {
         {this._generateMachinesSection()}
         {this._generateServicesSection()}
         {this._generateBudgetSection()}
-        {this._generateChangeSection()}
         {this._generatePaymentSection()}
         {this._generateDeploySection()}
         {this._generateLogin()}
@@ -1080,6 +1015,7 @@ DeploymentFlow.propTypes = {
   getDiagramURL: React.PropTypes.func,
   getEntity: React.PropTypes.func,
   getGithubSSHKeys: React.PropTypes.func.isRequired,
+  getServiceByName: React.PropTypes.func.isRequired,
   getUser: React.PropTypes.func,
   getUserName: React.PropTypes.func.isRequired,
   gisf: React.PropTypes.bool,
@@ -1096,10 +1032,10 @@ DeploymentFlow.propTypes = {
   region: React.PropTypes.string,
   renderMarkdown: React.PropTypes.func.isRequired,
   sendAnalytics: React.PropTypes.func.isRequired,
-  servicesGetById: React.PropTypes.func.isRequired,
   setModelName: React.PropTypes.func.isRequired,
   showPay: React.PropTypes.bool,
   showTerms: React.PropTypes.func.isRequired,
+  sortDescriptionsByApplication: React.PropTypes.func.isRequired,
   stats: React.PropTypes.object,
   updateCloudCredential: React.PropTypes.func,
   updateModelName: React.PropTypes.func,
@@ -1113,7 +1049,6 @@ YUI.add('deployment-flow', function() {
   requires: [
     'accordion-section',
     'deployment-budget',
-    'deployment-changes',
     'deployment-cloud',
     'deployment-credential',
     'deployment-direct-deploy',

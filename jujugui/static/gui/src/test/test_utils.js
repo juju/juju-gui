@@ -1640,7 +1640,7 @@ describe('utilities', function() {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, no constraints set');
+        '3 units, wily, default constraints');
     });
 
     it('can generate details with no series', () => {

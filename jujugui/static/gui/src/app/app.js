@@ -1362,6 +1362,9 @@ YUI.add('juju-gui', function(Y) {
           getUserName={getUserName}
           gisf={this.get('gisf')}
           getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
+          sortDescriptionsByApplication={
+            changesUtils.sortDescriptionsByApplication.bind(null,
+              services.getById.bind(services))}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
@@ -1374,7 +1377,7 @@ YUI.add('juju-gui', function(Y) {
           profileUsername={this._getUserInfo(state).profile}
           region={env.get('region')}
           renderMarkdown={marked}
-          servicesGetById={services.getById.bind(services)}
+          getServiceByName={services.getServiceByName.bind(services)}
           showPay={window.juju_config.flags.pay || false}
           showTerms={this.terms.showTerms.bind(this.terms)}
           stats={this.stats}
