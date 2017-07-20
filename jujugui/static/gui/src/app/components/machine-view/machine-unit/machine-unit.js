@@ -114,14 +114,14 @@ class MachineViewMachineUnit extends React.Component {
 };
 
 MachineViewMachineUnit.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  canDrag: React.PropTypes.bool.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
-  isDragging: React.PropTypes.bool.isRequired,
-  machineType: React.PropTypes.string.isRequired,
-  removeUnit: React.PropTypes.func,
-  service: React.PropTypes.object.isRequired,
-  unit: React.PropTypes.object.isRequired
+  acl: PropTypes.object.isRequired,
+  canDrag: PropTypes.bool.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  machineType: PropTypes.string.isRequired,
+  removeUnit: PropTypes.func,
+  service: PropTypes.object.isRequired,
+  unit: PropTypes.object.isRequired
 };
 
 YUI.add('machine-view-machine-unit', function() {

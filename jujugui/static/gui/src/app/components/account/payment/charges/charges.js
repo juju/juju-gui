@@ -241,11 +241,11 @@ class AccountPaymentCharges extends React.Component {
 };
 
 AccountPaymentCharges.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  getCharges: React.PropTypes.func.isRequired,
-  getReceipt: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  getCharges: PropTypes.func.isRequired,
+  getReceipt: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired
 };
 
 YUI.add('account-payment-charges', function() {

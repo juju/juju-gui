@@ -115,24 +115,24 @@ class DeploymentSection extends React.Component {
 };
 
 DeploymentSection.propTypes = {
-  buttons: React.PropTypes.array,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.object
+  buttons: PropTypes.array,
+  children: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object
   ]),
-  completed: React.PropTypes.bool,
-  disabled: React.PropTypes.bool,
-  extra: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.object,
-    React.PropTypes.string
+  completed: PropTypes.bool,
+  disabled: PropTypes.bool,
+  extra: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+    PropTypes.string
   ]),
-  instance: React.PropTypes.string,
-  showCheck: React.PropTypes.bool,
-  title: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.object,
-    React.PropTypes.string
+  instance: PropTypes.string,
+  showCheck: PropTypes.bool,
+  title: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+    PropTypes.string
   ])
 };
 

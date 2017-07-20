@@ -466,19 +466,19 @@ class EntityHeader extends React.Component {
 };
 
 EntityHeader.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  deployService: React.PropTypes.func.isRequired,
-  entityModel: React.PropTypes.object.isRequired,
-  getBundleYAML: React.PropTypes.func.isRequired,
-  getModelName: React.PropTypes.func.isRequired,
-  hasPlans: React.PropTypes.bool.isRequired,
-  importBundleYAML: React.PropTypes.func.isRequired,
-  plans: React.PropTypes.array,
-  pluralize: React.PropTypes.func.isRequired,
-  scrollPosition: React.PropTypes.number.isRequired,
-  urllib: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  deployService: PropTypes.func.isRequired,
+  entityModel: PropTypes.object.isRequired,
+  getBundleYAML: PropTypes.func.isRequired,
+  getModelName: PropTypes.func.isRequired,
+  hasPlans: PropTypes.bool.isRequired,
+  importBundleYAML: PropTypes.func.isRequired,
+  plans: PropTypes.array,
+  pluralize: PropTypes.func.isRequired,
+  scrollPosition: PropTypes.number.isRequired,
+  urllib: PropTypes.func.isRequired
 };
 
 YUI.add('entity-header', function() {

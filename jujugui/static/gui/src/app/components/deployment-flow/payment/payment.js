@@ -123,17 +123,17 @@ class DeploymentPayment extends React.Component {
 };
 
 DeploymentPayment.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  createCardElement: React.PropTypes.func,
-  createToken: React.PropTypes.func,
-  createUser: React.PropTypes.func,
-  getCountries: React.PropTypes.func,
-  getUser: React.PropTypes.func,
-  paymentUser: React.PropTypes.object,
-  setPaymentUser: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  createCardElement: PropTypes.func,
+  createToken: PropTypes.func,
+  createUser: PropTypes.func,
+  getCountries: PropTypes.func,
+  getUser: PropTypes.func,
+  paymentUser: PropTypes.object,
+  setPaymentUser: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-payment', function() {

@@ -152,8 +152,8 @@ class PlansUsage extends React.Component {
 };
 
 PlansUsage.propTypes = {
-  d3: React.PropTypes.object.isRequired,
-  dataset: React.PropTypes.array.isRequired
+  d3: PropTypes.object.isRequired,
+  dataset: PropTypes.array.isRequired
 };
 
 YUI.add('plans-usage', function() {

@@ -328,13 +328,13 @@ class UnitList extends React.Component {
 };
 
 UnitList.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  destroyUnits: React.PropTypes.func.isRequired,
-  envResolved: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired,
-  unitStatus: React.PropTypes.string,
-  units: React.PropTypes.array.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  destroyUnits: PropTypes.func.isRequired,
+  envResolved: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired,
+  unitStatus: PropTypes.string,
+  units: PropTypes.array.isRequired
 };
 
 YUI.add('unit-list', function() {

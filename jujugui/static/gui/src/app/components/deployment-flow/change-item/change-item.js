@@ -71,8 +71,8 @@ class DeploymentChangeItem extends React.Component {
 };
 
 DeploymentChangeItem.propTypes = {
-  change: React.PropTypes.object.isRequired,
-  showTime: React.PropTypes.bool
+  change: PropTypes.object.isRequired,
+  showTime: PropTypes.bool
 };
 
 DeploymentChangeItem.defaultProps = {

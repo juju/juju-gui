@@ -96,11 +96,11 @@ class DeploymentMachines extends React.Component {
 };
 
 DeploymentMachines.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  cloud: React.PropTypes.object,
-  formatConstraints: React.PropTypes.func.isRequired,
-  generateMachineDetails: React.PropTypes.func.isRequired,
-  machines: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  cloud: PropTypes.object,
+  formatConstraints: PropTypes.func.isRequired,
+  generateMachineDetails: PropTypes.func.isRequired,
+  machines: PropTypes.object
 };
 
 YUI.add('deployment-machines', function() {

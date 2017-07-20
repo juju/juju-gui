@@ -110,21 +110,21 @@ class MachineViewColumn extends React.Component {
 };
 
 MachineViewColumn.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  activeMenuItem: React.PropTypes.string,
-  canDrop: React.PropTypes.bool.isRequired,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  acl: PropTypes.object.isRequired,
+  activeMenuItem: PropTypes.string,
+  canDrop: PropTypes.bool.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  connectDropTarget: React.PropTypes.func.isRequired,
-  dropUnit: React.PropTypes.func,
-  droppable: React.PropTypes.bool.isRequired,
-  isOver: React.PropTypes.bool.isRequired,
-  menuItems: React.PropTypes.array,
-  title: React.PropTypes.string.isRequired,
-  toggle: React.PropTypes.object,
-  type: React.PropTypes.string
+  connectDropTarget: PropTypes.func.isRequired,
+  dropUnit: PropTypes.func,
+  droppable: PropTypes.bool.isRequired,
+  isOver: PropTypes.bool.isRequired,
+  menuItems: PropTypes.array,
+  title: PropTypes.string.isRequired,
+  toggle: PropTypes.object,
+  type: PropTypes.string
 };
 
 YUI.add('machine-view-column', function() {

@@ -59,6 +59,7 @@ globals:
   marked: true
   nacl: true
   Prism: true
+  PropTypes: true
   queryComponentSelector: true
   React: true
   ReactDnD: true

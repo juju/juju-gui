@@ -124,17 +124,17 @@ class MachineViewHeader extends React.Component {
 };
 
 MachineViewHeader.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  activeMenuItem: React.PropTypes.string,
-  canDrop: React.PropTypes.bool.isRequired,
-  connectDropTarget: React.PropTypes.func.isRequired,
-  dropUnit: React.PropTypes.func,
-  droppable: React.PropTypes.bool.isRequired,
-  isOver: React.PropTypes.bool.isRequired,
-  menuItems: React.PropTypes.array,
-  title: React.PropTypes.string.isRequired,
-  toggle: React.PropTypes.object,
-  type: React.PropTypes.string
+  acl: PropTypes.object.isRequired,
+  activeMenuItem: PropTypes.string,
+  canDrop: PropTypes.bool.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
+  dropUnit: PropTypes.func,
+  droppable: PropTypes.bool.isRequired,
+  isOver: PropTypes.bool.isRequired,
+  menuItems: PropTypes.array,
+  title: PropTypes.string.isRequired,
+  toggle: PropTypes.object,
+  type: PropTypes.string
 };
 
 YUI.add('machine-view-header', function() {

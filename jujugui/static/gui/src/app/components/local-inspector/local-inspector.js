@@ -224,14 +224,14 @@ class LocalInspector extends React.Component {
 };
 
 LocalInspector.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  file: React.PropTypes.object.isRequired,
-  localType: React.PropTypes.string.isRequired,
-  series: React.PropTypes.object.isRequired,
-  services: React.PropTypes.object.isRequired,
-  upgradeServiceUsingLocalCharm: React.PropTypes.func.isRequired,
-  uploadLocalCharm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  file: PropTypes.object.isRequired,
+  localType: PropTypes.string.isRequired,
+  series: PropTypes.object.isRequired,
+  services: PropTypes.object.isRequired,
+  upgradeServiceUsingLocalCharm: PropTypes.func.isRequired,
+  uploadLocalCharm: PropTypes.func.isRequired
 };
 
 YUI.add('local-inspector', function() {

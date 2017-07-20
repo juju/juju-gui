@@ -331,16 +331,16 @@ class UserProfileEntityList extends React.Component {
 };
 
 UserProfileEntityList.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charmstore: React.PropTypes.object.isRequired,
-  d3: React.PropTypes.object,
-  entities: React.PropTypes.array,
-  getDiagramURL: React.PropTypes.func.isRequired,
-  getKpiMetrics: React.PropTypes.func,
-  setEntities: React.PropTypes.func.isRequired,
-  type: React.PropTypes.string.isRequired,
-  user: React.PropTypes.string
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charmstore: PropTypes.object.isRequired,
+  d3: PropTypes.object,
+  entities: PropTypes.array,
+  getDiagramURL: PropTypes.func.isRequired,
+  getKpiMetrics: PropTypes.func,
+  setEntities: PropTypes.func.isRequired,
+  type: PropTypes.string.isRequired,
+  user: PropTypes.string
 };
 
 YUI.add('user-profile-entity-list', function() {

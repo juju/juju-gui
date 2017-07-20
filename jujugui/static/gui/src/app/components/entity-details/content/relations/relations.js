@@ -89,8 +89,8 @@ class EntityContentRelations extends React.Component {
 };
 
 EntityContentRelations.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  relations: React.PropTypes.object.isRequired
+  changeState: PropTypes.func.isRequired,
+  relations: PropTypes.object.isRequired
 };
 
 YUI.add('entity-content-relations', function() {

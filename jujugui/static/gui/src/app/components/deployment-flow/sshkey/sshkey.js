@@ -356,10 +356,10 @@ class DeploymentSSHKey extends React.Component {
 };
 
 DeploymentSSHKey.propTypes = {
-  WebHandler: React.PropTypes.func.isRequired,
-  cloud: React.PropTypes.object,
-  getGithubSSHKeys: React.PropTypes.func.isRequired,
-  setSSHKey: React.PropTypes.func.isRequired
+  WebHandler: PropTypes.func.isRequired,
+  cloud: PropTypes.object,
+  getGithubSSHKeys: PropTypes.func.isRequired,
+  setSSHKey: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-ssh-key', function() {

@@ -147,12 +147,12 @@ class DeploymentCloud extends React.Component {
 };
 
 DeploymentCloud.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  cloud: React.PropTypes.object,
-  controllerIsReady: React.PropTypes.func.isRequired,
-  getCloudProviderDetails: React.PropTypes.func.isRequired,
-  listClouds: React.PropTypes.func.isRequired,
-  setCloud: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  cloud: PropTypes.object,
+  controllerIsReady: PropTypes.func.isRequired,
+  getCloudProviderDetails: PropTypes.func.isRequired,
+  listClouds: PropTypes.func.isRequired,
+  setCloud: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-cloud', function() {

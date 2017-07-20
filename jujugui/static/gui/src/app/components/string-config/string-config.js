@@ -90,13 +90,13 @@ class StringConfig extends React.Component {
 };
 
 StringConfig.propTypes = {
-  config: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  config: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ]),
-  disabled: React.PropTypes.bool,
-  onChange: React.PropTypes.func,
-  option: React.PropTypes.object.isRequired
+  disabled: PropTypes.bool,
+  onChange: PropTypes.func,
+  option: PropTypes.object.isRequired
 };
 
 StringConfig.defaultProps = {

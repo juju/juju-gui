@@ -256,7 +256,7 @@ class HeaderSearch extends React.Component {
 };
 
 HeaderSearch.propTypes = {
-  appState: React.PropTypes.object.isRequired
+  appState: PropTypes.object.isRequired
 };
 
 YUI.add('header-search', function() {

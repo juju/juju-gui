@@ -121,13 +121,13 @@ class DeploymentBar extends React.Component {
 };
 
 DeploymentBar.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  currentChangeSet: React.PropTypes.object.isRequired,
-  generateChangeDescription: React.PropTypes.func.isRequired,
-  hasEntities: React.PropTypes.bool.isRequired,
-  modelCommitted: React.PropTypes.bool.isRequired,
-  sendAnalytics: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  currentChangeSet: PropTypes.object.isRequired,
+  generateChangeDescription: PropTypes.func.isRequired,
+  hasEntities: PropTypes.bool.isRequired,
+  modelCommitted: PropTypes.bool.isRequired,
+  sendAnalytics: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-bar', function() {

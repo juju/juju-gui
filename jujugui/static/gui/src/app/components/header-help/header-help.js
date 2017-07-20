@@ -168,10 +168,10 @@ class HeaderHelp extends React.Component {
 };
 
 HeaderHelp.propTypes = {
-  appState: React.PropTypes.object.isRequired,
-  displayShortcutsModal: React.PropTypes.func.isRequired,
-  gisf: React.PropTypes.bool.isRequired,
-  user: React.PropTypes.object
+  appState: PropTypes.object.isRequired,
+  displayShortcutsModal: PropTypes.func.isRequired,
+  gisf: PropTypes.bool.isRequired,
+  user: PropTypes.object
 };
 
 YUI.add('header-help', function() {

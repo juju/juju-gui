@@ -222,10 +222,10 @@ class DeploymentBudget extends React.Component {
 };
 
 DeploymentBudget.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  listBudgets: React.PropTypes.func.isRequired,
-  setBudget: React.PropTypes.func.isRequired,
-  user: React.PropTypes.string
+  acl: PropTypes.object.isRequired,
+  listBudgets: PropTypes.func.isRequired,
+  setBudget: PropTypes.func.isRequired,
+  user: PropTypes.string
 };
 
 YUI.add('deployment-budget', function() {

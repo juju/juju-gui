@@ -143,15 +143,15 @@ class AddedServicesListItem extends React.Component {
 };
 
 AddedServicesListItem.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  getUnitStatusCounts: React.PropTypes.func.isRequired,
-  hoverService: React.PropTypes.func.isRequired,
-  hovered: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.bool
+  changeState: PropTypes.func.isRequired,
+  getUnitStatusCounts: PropTypes.func.isRequired,
+  hoverService: PropTypes.func.isRequired,
+  hovered: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
   ]),
-  panToService: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired
+  panToService: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired
 };
 
 YUI.add('added-services-list-item', function() {

@@ -179,9 +179,9 @@ class UserProfileBudgetList extends React.Component {
 };
 
 UserProfileBudgetList.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  listBudgets: React.PropTypes.func.isRequired,
-  user: React.PropTypes.object
+  addNotification: PropTypes.func.isRequired,
+  listBudgets: PropTypes.func.isRequired,
+  user: PropTypes.object
 };
 
 YUI.add('user-profile-budget-list', function() {

@@ -280,27 +280,27 @@ class MachineViewMachine extends React.Component {
 };
 
 MachineViewMachine.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  canDrop: React.PropTypes.bool.isRequired,
-  connectDropTarget: React.PropTypes.func.isRequired,
-  destroyMachines: React.PropTypes.func.isRequired,
-  dropUnit: React.PropTypes.func.isRequired,
-  generateMachineDetails: React.PropTypes.func,
-  isOver: React.PropTypes.bool.isRequired,
-  machine: React.PropTypes.object.isRequired,
-  machineModel: React.PropTypes.object,
-  parseConstraints: React.PropTypes.func,
-  providerType: React.PropTypes.string,
-  removeUnit: React.PropTypes.func,
-  selectMachine: React.PropTypes.func,
-  selected: React.PropTypes.bool,
-  series: React.PropTypes.array,
-  services: React.PropTypes.object.isRequired,
-  showConstraints: React.PropTypes.bool,
-  type: React.PropTypes.string.isRequired,
-  units: React.PropTypes.object.isRequired,
-  updateMachineConstraints: React.PropTypes.func,
-  updateMachineSeries: React.PropTypes.func
+  acl: PropTypes.object.isRequired,
+  canDrop: PropTypes.bool.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
+  destroyMachines: PropTypes.func.isRequired,
+  dropUnit: PropTypes.func.isRequired,
+  generateMachineDetails: PropTypes.func,
+  isOver: PropTypes.bool.isRequired,
+  machine: PropTypes.object.isRequired,
+  machineModel: PropTypes.object,
+  parseConstraints: PropTypes.func,
+  providerType: PropTypes.string,
+  removeUnit: PropTypes.func,
+  selectMachine: PropTypes.func,
+  selected: PropTypes.bool,
+  series: PropTypes.array,
+  services: PropTypes.object.isRequired,
+  showConstraints: PropTypes.bool,
+  type: PropTypes.string.isRequired,
+  units: PropTypes.object.isRequired,
+  updateMachineConstraints: PropTypes.func,
+  updateMachineSeries: PropTypes.func
 };
 
 YUI.add('machine-view-machine', function() {

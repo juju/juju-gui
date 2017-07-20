@@ -72,9 +72,9 @@ class UserProfileEntityKPI extends React.Component {
 };
 
 UserProfileEntityKPI.propTypes = {
-  d3: React.PropTypes.object.isRequired,
-  metricTypes: React.PropTypes.array.isRequired,
-  metrics: React.PropTypes.array.isRequired
+  d3: PropTypes.object.isRequired,
+  metricTypes: PropTypes.array.isRequired,
+  metrics: PropTypes.array.isRequired
 };
 
 YUI.add('user-profile-entity-kpi', function() {

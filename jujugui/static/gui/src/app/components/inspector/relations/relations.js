@@ -231,11 +231,11 @@ class InspectorRelations extends React.Component {
 };
 
 InspectorRelations.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  destroyRelations: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired,
-  serviceRelations: React.PropTypes.array.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  destroyRelations: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired,
+  serviceRelations: PropTypes.array.isRequired
 };
 
 YUI.add('inspector-relations', function() {

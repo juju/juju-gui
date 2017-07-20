@@ -143,8 +143,8 @@ NotificationList.propTypes = {
   // This cannot be required because on initial render if you pass in
   // undefined or null for a notification it throws an error
   // https://github.com/facebook/react/issues/3163
-  notification: React.PropTypes.object,
-  timeout: React.PropTypes.number
+  notification: PropTypes.object,
+  timeout: PropTypes.number
 };
 
 YUI.add('notification-list', function() {

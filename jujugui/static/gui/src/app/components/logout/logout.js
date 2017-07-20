@@ -63,11 +63,11 @@ class Logout extends React.Component {
 };
 
 Logout.propTypes = {
-  charmstoreLogoutUrl: React.PropTypes.string.isRequired,
-  doCharmstoreLogout: React.PropTypes.func.isRequired,
-  locationAssign: React.PropTypes.func.isRequired,
-  logoutUrl: React.PropTypes.string.isRequired,
-  visible: React.PropTypes.bool.isRequired
+  charmstoreLogoutUrl: PropTypes.string.isRequired,
+  doCharmstoreLogout: PropTypes.func.isRequired,
+  locationAssign: PropTypes.func.isRequired,
+  logoutUrl: PropTypes.string.isRequired,
+  visible: PropTypes.bool.isRequired
 };
 
 YUI.add('logout-component', function() {

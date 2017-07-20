@@ -62,9 +62,9 @@ class HeaderLogo extends React.Component {
 };
 
 HeaderLogo.propTypes = {
-  gisf: React.PropTypes.bool.isRequired,
-  homePath: React.PropTypes.string,
-  showProfile: React.PropTypes.func
+  gisf: PropTypes.bool.isRequired,
+  homePath: PropTypes.string,
+  showProfile: PropTypes.func
 };
 
 YUI.add('header-logo', function() {

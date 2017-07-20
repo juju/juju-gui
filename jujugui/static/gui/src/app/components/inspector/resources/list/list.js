@@ -50,8 +50,8 @@ class InspectorResourcesList extends React.Component {
 };
 
 InspectorResourcesList.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  resources: React.PropTypes.array.isRequired
+  acl: PropTypes.object.isRequired,
+  resources: PropTypes.array.isRequired
 };
 
 YUI.add('inspector-resources-list', function() {

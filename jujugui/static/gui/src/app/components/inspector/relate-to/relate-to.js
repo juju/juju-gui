@@ -81,9 +81,9 @@ class InspectorRelateTo extends React.Component {
 };
 
 InspectorRelateTo.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  relatableApplications: React.PropTypes.array.isRequired
+  application: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  relatableApplications: PropTypes.array.isRequired
 };
 
 YUI.add('inspector-relate-to', function() {

@@ -164,10 +164,10 @@ class FileField extends React.Component {
 };
 
 FileField.propTypes = {
-  accept: React.PropTypes.string,
-  disabled: React.PropTypes.bool,
-  label: React.PropTypes.string.isRequired,
-  required: React.PropTypes.bool
+  accept: PropTypes.string,
+  disabled: PropTypes.bool,
+  label: PropTypes.string.isRequired,
+  required: PropTypes.bool
 };
 
 FileField.defaultProps = {

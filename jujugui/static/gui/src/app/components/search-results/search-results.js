@@ -565,23 +565,23 @@ class SearchResults extends React.Component {
 };
 
 SearchResults.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charmstoreSearch: React.PropTypes.func.isRequired,
-  deployTarget: React.PropTypes.func.isRequired,
-  generatePath: React.PropTypes.func.isRequired,
-  getName: React.PropTypes.func.isRequired,
-  makeEntityModel: React.PropTypes.func.isRequired,
-  owner: React.PropTypes.string,
-  provides: React.PropTypes.string,
-  query: React.PropTypes.string,
-  requires: React.PropTypes.string,
-  series: React.PropTypes.string,
-  seriesList: React.PropTypes.object.isRequired,
-  setPageTitle: React.PropTypes.func.isRequired,
-  sort: React.PropTypes.string,
-  tags: React.PropTypes.string,
-  type: React.PropTypes.string
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charmstoreSearch: PropTypes.func.isRequired,
+  deployTarget: PropTypes.func.isRequired,
+  generatePath: PropTypes.func.isRequired,
+  getName: PropTypes.func.isRequired,
+  makeEntityModel: PropTypes.func.isRequired,
+  owner: PropTypes.string,
+  provides: PropTypes.string,
+  query: PropTypes.string,
+  requires: PropTypes.string,
+  series: PropTypes.string,
+  seriesList: PropTypes.object.isRequired,
+  setPageTitle: PropTypes.func.isRequired,
+  sort: PropTypes.string,
+  tags: PropTypes.string,
+  type: PropTypes.string
 };
 
 YUI.add('search-results', function(Y) {

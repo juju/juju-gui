@@ -230,10 +230,10 @@ class DeploymentLogin extends React.Component {
 };
 
 DeploymentLogin.propTypes = {
-  callback: React.PropTypes.func.isRequired,
-  gisf: React.PropTypes.bool,
-  isDirectDeploy: React.PropTypes.bool,
-  loginToController: React.PropTypes.func.isRequired
+  callback: PropTypes.func.isRequired,
+  gisf: PropTypes.bool,
+  isDirectDeploy: PropTypes.bool,
+  loginToController: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-login', function() {

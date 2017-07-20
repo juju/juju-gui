@@ -99,7 +99,7 @@ class DeploymentBarNotification extends React.Component {
 };
 
 DeploymentBarNotification.propTypes = {
-  change: React.PropTypes.object
+  change: PropTypes.object
 };
 
 YUI.add('deployment-bar-notification', function() {

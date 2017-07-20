@@ -30,7 +30,7 @@ class EntityContentRevisions extends React.Component {
 };
 
 EntityContentRevisions.propTypes = {
-  revisions: React.PropTypes.array.isRequired
+  revisions: PropTypes.array.isRequired
 };
 
 YUI.add('entity-content-revisions', function() {

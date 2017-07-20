@@ -104,15 +104,15 @@ class Popup extends React.Component {
 };
 
 Popup.propTypes = {
-  buttons: React.PropTypes.array,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  buttons: PropTypes.array,
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  className: React.PropTypes.string,
-  close: React.PropTypes.func,
-  title: React.PropTypes.string,
-  type: React.PropTypes.string
+  className: PropTypes.string,
+  close: PropTypes.func,
+  title: PropTypes.string,
+  type: PropTypes.string
 };
 
 Popup.defaultProps = {

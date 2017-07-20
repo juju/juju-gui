@@ -226,14 +226,14 @@ class Constraints extends React.Component {
 };
 
 Constraints.propTypes = {
-  constraints: React.PropTypes.object,
-  containerType: React.PropTypes.string,
-  currentSeries: React.PropTypes.string,
-  disabled: React.PropTypes.bool,
-  hasUnit: React.PropTypes.bool,
-  providerType: React.PropTypes.string,
-  series: React.PropTypes.array,
-  valuesChanged: React.PropTypes.func.isRequired
+  constraints: PropTypes.object,
+  containerType: PropTypes.string,
+  currentSeries: PropTypes.string,
+  disabled: PropTypes.bool,
+  hasUnit: PropTypes.bool,
+  providerType: PropTypes.string,
+  series: PropTypes.array,
+  valuesChanged: PropTypes.func.isRequired
 };
 
 Constraints.defaultProps = {

@@ -119,8 +119,8 @@ class ModalGUISettings extends React.Component {
 };
 
 ModalGUISettings.propTypes = {
-  closeModal: React.PropTypes.func.isRequired,
-  localStorage: React.PropTypes.object.isRequired
+  closeModal: PropTypes.func.isRequired,
+  localStorage: PropTypes.object.isRequired
 };
 
 YUI.add('modal-gui-settings', function() {

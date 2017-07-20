@@ -97,12 +97,12 @@ class Notification extends React.Component {
 };
 
 Notification.propTypes = {
-  content: React.PropTypes.object.isRequired,
-  dismiss: React.PropTypes.func,
-  extraClasses: React.PropTypes.string,
-  isBlocking: React.PropTypes.bool,
+  content: PropTypes.object.isRequired,
+  dismiss: PropTypes.func,
+  extraClasses: PropTypes.string,
+  isBlocking: PropTypes.bool,
   // Types: positive, caution, negative
-  type: React.PropTypes.string
+  type: PropTypes.string
 };
 
 YUI.add('notification', function() {

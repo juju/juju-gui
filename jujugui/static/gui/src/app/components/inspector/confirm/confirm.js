@@ -81,9 +81,9 @@ class InspectorConfirm extends React.Component {
 };
 
 InspectorConfirm.propTypes = {
-  buttons: React.PropTypes.array.isRequired,
-  message: React.PropTypes.string,
-  open: React.PropTypes.bool
+  buttons: PropTypes.array.isRequired,
+  message: PropTypes.string,
+  open: PropTypes.bool
 };
 
 YUI.add('inspector-confirm', function() {

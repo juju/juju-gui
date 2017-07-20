@@ -76,14 +76,14 @@ class AccordionSection extends React.Component {
 };
 
 AccordionSection.propTypes = {
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.object
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
   ]),
-  startOpen: React.PropTypes.bool,
-  title: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.object
+  startOpen: PropTypes.bool,
+  title: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
   ])
 };
 

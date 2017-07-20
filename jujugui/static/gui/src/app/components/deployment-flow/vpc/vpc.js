@@ -119,7 +119,7 @@ class DeploymentVPC extends React.Component {
 };
 
 DeploymentVPC.propTypes = {
-  setVPCId: React.PropTypes.func.isRequired
+  setVPCId: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-vpc', function() {

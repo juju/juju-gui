@@ -355,15 +355,15 @@ class CreatePaymentUser extends React.Component {
 };
 
 CreatePaymentUser.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  createCardElement: React.PropTypes.func.isRequired,
-  createToken: React.PropTypes.func.isRequired,
-  createUser: React.PropTypes.func.isRequired,
-  getCountries: React.PropTypes.func.isRequired,
-  onUserCreated: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  createCardElement: PropTypes.func.isRequired,
+  createToken: PropTypes.func.isRequired,
+  createUser: PropTypes.func.isRequired,
+  getCountries: PropTypes.func.isRequired,
+  onUserCreated: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('create-payment-user', function() {

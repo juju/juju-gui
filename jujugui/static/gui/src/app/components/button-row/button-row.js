@@ -68,7 +68,7 @@ class ButtonRow extends React.Component {
 };
 
 ButtonRow.propTypes = {
-  buttons: React.PropTypes.array.isRequired
+  buttons: PropTypes.array.isRequired
 };
 
 YUI.add('button-row', function() {

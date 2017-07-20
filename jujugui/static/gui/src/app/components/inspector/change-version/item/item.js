@@ -52,11 +52,11 @@ class InspectorChangeVersionItem extends React.Component {
 };
 
 InspectorChangeVersionItem.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  buttonAction: React.PropTypes.func.isRequired,
-  downgrade: React.PropTypes.bool.isRequired,
-  itemAction: React.PropTypes.func.isRequired,
-  url: React.PropTypes.object.isRequired
+  acl: PropTypes.object.isRequired,
+  buttonAction: PropTypes.func.isRequired,
+  downgrade: PropTypes.bool.isRequired,
+  itemAction: PropTypes.func.isRequired,
+  url: PropTypes.object.isRequired
 };
 
 YUI.add('inspector-change-version-item', function() {

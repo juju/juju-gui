@@ -66,11 +66,11 @@ class SearchResultsSelectFilter extends React.Component {
 };
 
 SearchResultsSelectFilter.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  currentValue: React.PropTypes.string,
-  filter: React.PropTypes.string.isRequired,
-  items: React.PropTypes.array.isRequired,
-  label: React.PropTypes.string.isRequired
+  changeState: PropTypes.func.isRequired,
+  currentValue: PropTypes.string,
+  filter: PropTypes.string.isRequired,
+  items: PropTypes.array.isRequired,
+  label: PropTypes.string.isRequired
 };
 
 YUI.add('search-results-select-filter', function(Y) {

@@ -67,14 +67,14 @@ Profile.sectionsMap = new Map([
 ]);
 
 Profile.propTypes = {
-  acl: React.PropTypes.object,
-  activeSection: React.PropTypes.string,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  destroyModels: React.PropTypes.func.isRequired,
-  facadesExist: React.PropTypes.bool.isRequired,
-  listModelsWithInfo: React.PropTypes.func.isRequired,
-  switchModel: React.PropTypes.func.isRequired,
+  acl: PropTypes.object,
+  activeSection: PropTypes.string,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  destroyModels: PropTypes.func.isRequired,
+  facadesExist: PropTypes.bool.isRequired,
+  listModelsWithInfo: PropTypes.func.isRequired,
+  switchModel: PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for
   //   instance, from the charm store. Might be null if the user is being
@@ -83,7 +83,7 @@ Profile.propTypes = {
   // - isCurrent: whether the profile is being displayed for the currently
   //   authenticated user;
   // - profile: the user name for whom profile details must be displayed.
-  userInfo: React.PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired
 };
 
 YUI.add('profile', function() {

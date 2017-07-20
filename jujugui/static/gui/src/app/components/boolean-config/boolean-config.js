@@ -123,11 +123,11 @@ class BooleanConfig extends React.Component {
 };
 
 BooleanConfig.propTypes = {
-  config: React.PropTypes.any.isRequired,
-  disabled: React.PropTypes.bool,
-  label: React.PropTypes.string.isRequired,
-  onChange: React.PropTypes.func,
-  option: React.PropTypes.object.isRequired
+  config: PropTypes.any.isRequired,
+  disabled: PropTypes.bool,
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  option: PropTypes.object.isRequired
 };
 
 BooleanConfig.defaultProps = {

@@ -625,18 +625,18 @@ class EntityContent extends React.Component {
 };
 
 EntityContent.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  apiUrl: React.PropTypes.string.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  entityModel: React.PropTypes.object.isRequired,
-  getFile: React.PropTypes.func.isRequired,
-  hasPlans: React.PropTypes.bool.isRequired,
-  hash: React.PropTypes.string,
-  plans: React.PropTypes.array,
-  pluralize: React.PropTypes.func.isRequired,
-  renderMarkdown: React.PropTypes.func.isRequired,
-  scrollCharmbrowser: React.PropTypes.func.isRequired,
-  showTerms: React.PropTypes.func.isRequired
+  addNotification: PropTypes.func.isRequired,
+  apiUrl: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  entityModel: PropTypes.object.isRequired,
+  getFile: PropTypes.func.isRequired,
+  hasPlans: PropTypes.bool.isRequired,
+  hash: PropTypes.string,
+  plans: PropTypes.array,
+  pluralize: PropTypes.func.isRequired,
+  renderMarkdown: PropTypes.func.isRequired,
+  scrollCharmbrowser: PropTypes.func.isRequired,
+  showTerms: PropTypes.func.isRequired
 };
 
 YUI.add('entity-content', function() {

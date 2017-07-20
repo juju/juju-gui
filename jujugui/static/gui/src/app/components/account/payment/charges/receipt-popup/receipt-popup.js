@@ -89,10 +89,10 @@ class ReceiptPopup extends React.Component {
 };
 
 ReceiptPopup.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  chargeId: React.PropTypes.string.isRequired,
-  close: React.PropTypes.func.isRequired,
-  getReceipt: React.PropTypes.func.isRequired
+  addNotification: PropTypes.func.isRequired,
+  chargeId: PropTypes.string.isRequired,
+  close: PropTypes.func.isRequired,
+  getReceipt: PropTypes.func.isRequired
 };
 
 YUI.add('receipt-popup', function() {
