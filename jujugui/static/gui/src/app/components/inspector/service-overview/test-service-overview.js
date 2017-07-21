@@ -86,6 +86,7 @@ describe('ServiceOverview', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
         clearState={sinon.stub()}
@@ -127,6 +128,7 @@ describe('ServiceOverview', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
         clearState={sinon.stub()}
@@ -150,6 +152,50 @@ describe('ServiceOverview', function() {
     assert.deepEqual(setStub.args[0], ['activePlan', activePlan]);
     assert.equal(instance.state.plans, plans);
     assert.equal(instance.state.activePlan, activePlan);
+  });
+
+  it('handles errors getting the active plan', function() {
+    const addNotification = sinon.stub();
+    const setStub = sinon.stub();
+    const getStub = sinon.stub();
+    getStub.withArgs('activePlan').returns(undefined);
+    getStub.withArgs('charm').returns('cs:django');
+    getStub.withArgs('name').returns('servicename');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    const charmGetStub = sinon.stub();
+    charmGetStub.withArgs('plans').returns(undefined);
+    const service = {
+      set: setStub,
+      get: getStub
+    };
+    const charm = {
+      get: charmGetStub,
+      hasMetrics: sinon.stub().returns(true)
+    };
+    const showActivePlan = sinon.stub().callsArgWith(2, 'Uh oh!', null, null);
+    jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={true}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={showActivePlan}
+        showPlans={true} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'fetching plan failed',
+      message: 'fetching plan failed: Uh oh!',
+      level: 'error'
+    });
   });
 
   it('uses plans stored on a charm', function() {
@@ -177,6 +223,7 @@ describe('ServiceOverview', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
         clearState={sinon.stub()}
@@ -199,6 +246,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -226,6 +274,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -263,6 +312,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         clearState={sinon.stub()}
         charm={fakeCharm}
         destroyService={sinon.stub()}
@@ -302,6 +352,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -332,6 +383,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -362,6 +414,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -389,6 +442,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -425,6 +479,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -463,6 +518,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -502,6 +558,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -546,6 +603,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
         clearState={sinon.stub()}
@@ -575,6 +633,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -615,6 +674,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         clearState={sinon.stub()}
         charm={fakeCharm}
         destroyService={sinon.stub()}
@@ -647,6 +707,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -686,6 +747,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
         clearState={sinon.stub()}
@@ -708,6 +770,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -734,6 +797,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -760,6 +824,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -779,6 +844,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -803,6 +869,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
@@ -830,6 +897,7 @@ describe('ServiceOverview', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={sinon.stub()}
         charm={fakeCharm}
         destroyService={destroyService}
         clearState={clearState}

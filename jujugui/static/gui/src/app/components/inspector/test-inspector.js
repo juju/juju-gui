@@ -54,6 +54,7 @@ describe('Inspector', function() {
   });
 
   it('displays the service overview for the "inspector" state', function() {
+    const addNotification = sinon.stub();
     var getStub = sinon.stub();
     var icon = 'foo.png';
     var title = 'demo';
@@ -73,7 +74,7 @@ describe('Inspector', function() {
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         appState={appState}
         charm={{}}
         clearState={clearState}
@@ -121,6 +122,7 @@ describe('Inspector', function() {
     var expectedOverview = (
       <juju.components.ServiceOverview
         acl={acl}
+        addNotification={addNotification}
         changeState={overview.props.changeState}
         charm={{}}
         clearState={clearState}
