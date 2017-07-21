@@ -929,6 +929,8 @@ YUI.add('juju-gui', function(Y) {
       const bakery = this.bakery;
       const USSOLoginLink = (
         <window.juju.components.USSOLoginLink
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           displayType={'text'}
           loginToController={controllerAPI.loginWithMacaroon.bind(
             controllerAPI, bakery)} />);

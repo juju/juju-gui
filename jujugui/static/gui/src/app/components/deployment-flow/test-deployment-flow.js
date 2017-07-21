@@ -545,8 +545,10 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders the login when necessary', function() {
+    const addNotification = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       gisf: true,
       isLoggedIn: sinon.stub().returns(false),
       loginToController: loginToController,
@@ -555,6 +557,7 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentLogin
+        addNotification={addNotification}
         callback={output.props.children[10].props.callback}
         gisf={true}
         isDirectDeploy={false}

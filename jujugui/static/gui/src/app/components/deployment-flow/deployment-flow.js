@@ -668,6 +668,7 @@ class DeploymentFlow extends React.Component {
     };
     return (
       <juju.components.DeploymentLogin
+        addNotification={this.props.addNotification}
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}

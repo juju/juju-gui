@@ -36,11 +36,12 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
+    const addNotification = sinon.stub();
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         controllerIsConnected={controllerIsConnected}
         gisf={false}
         loginToAPIs={sinon.stub()}
@@ -86,6 +87,7 @@ describe('LoginComponent', function() {
               Login
             </juju.components.GenericButton>
             <juju.components.USSOLoginLink
+              addNotification={addNotification}
               displayType="button"
               loginToController={loginToControllerStub}
               ref="USSOLoginLink" />
@@ -108,11 +110,12 @@ describe('LoginComponent', function() {
   });
 
   it('renders but is hidden in gisf', function() {
+    const addNotification = sinon.stub();
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
         loginToAPIs={sinon.stub()}
@@ -158,6 +161,7 @@ describe('LoginComponent', function() {
               Login
             </juju.components.GenericButton>
             <juju.components.USSOLoginLink
+              addNotification={addNotification}
               displayType="button"
               loginToController={loginToControllerStub}
               ref="USSOLoginLink" />

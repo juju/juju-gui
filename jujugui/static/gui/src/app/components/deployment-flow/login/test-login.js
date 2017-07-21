@@ -31,10 +31,12 @@ describe('DeploymentLogin', function() {
   });
 
   it('can render', function() {
+    const addNotification = sinon.stub();
     const callback = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentLogin
+        addNotification={addNotification}
         callback={callback}
         gisf={true}
         isDirectDeploy={false}
@@ -87,6 +89,7 @@ describe('DeploymentLogin', function() {
           </div>
           <div className="deployment-login__login">
             <juju.components.USSOLoginLink
+              addNotification={addNotification}
               gisf={true}
               callback={callback}
               displayType="button"
@@ -97,6 +100,7 @@ describe('DeploymentLogin', function() {
           <div className="deployment-login__signup">
             Do not have an account?
             <juju.components.USSOLoginLink
+              addNotification={addNotification}
               gisf={true}
               callback={callback}
               displayType="text"
@@ -110,10 +114,12 @@ describe('DeploymentLogin', function() {
   });
 
   it('can render for the direct deploy flow', function() {
+    const addNotification = sinon.stub();
     const callback = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentLogin
+        addNotification={addNotification}
         callback={callback}
         gisf={true}
         isDirectDeploy={true}
@@ -128,6 +134,7 @@ describe('DeploymentLogin', function() {
               Sign up to start deploying to your favourite cloud
           </span>
           <juju.components.USSOLoginLink
+            addNotification={addNotification}
             gisf={true}
             callback={callback}
             displayType="button"
@@ -136,6 +143,7 @@ describe('DeploymentLogin', function() {
           </juju.components.USSOLoginLink>
           or&nbsp;
           <juju.components.USSOLoginLink
+            addNotification={addNotification}
             gisf={true}
             callback={callback}
             displayType="text"

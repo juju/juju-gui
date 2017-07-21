@@ -72,6 +72,7 @@ class DeploymentLogin extends React.Component {
           </div>
           <div className="deployment-login__login">
             <juju.components.USSOLoginLink
+              addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="button"
@@ -82,6 +83,7 @@ class DeploymentLogin extends React.Component {
           <div className="deployment-login__signup">
             Do not have an account?
             <juju.components.USSOLoginLink
+              addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="text"
@@ -104,6 +106,7 @@ class DeploymentLogin extends React.Component {
             Sign up to start deploying to your favourite cloud
         </span>
         <juju.components.USSOLoginLink
+          addNotification={this.props.addNotification}
           gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="button"
@@ -112,6 +115,7 @@ class DeploymentLogin extends React.Component {
         </juju.components.USSOLoginLink>
         or&nbsp;
         <juju.components.USSOLoginLink
+          addNotification={this.props.addNotification}
           gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="text"
@@ -238,6 +242,7 @@ class DeploymentLogin extends React.Component {
 };
 
 DeploymentLogin.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   callback: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   isDirectDeploy: PropTypes.bool,

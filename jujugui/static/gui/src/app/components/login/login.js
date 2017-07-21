@@ -93,6 +93,7 @@ class Login extends React.Component {
   _generateUSSOLink () {
     return (
       <juju.components.USSOLoginLink
+        addNotification={this.props.addNotification}
         displayType="button"
         loginToController={this.props.loginToController}
         ref="USSOLoginLink" />);
