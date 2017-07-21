@@ -40,6 +40,7 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={false}
         loginToAPIs={sinon.stub()}
@@ -111,6 +112,7 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
         loginToAPIs={sinon.stub()}
@@ -180,6 +182,7 @@ describe('LoginComponent', function() {
   it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
         loginToController={sinon.stub()}
@@ -193,6 +196,7 @@ describe('LoginComponent', function() {
     var loginToAPIs = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
         loginToController={sinon.stub()}
@@ -214,6 +218,7 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub().returns(true);
     testUtils.renderIntoDocument(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
         loginToAPIs={sinon.stub()}
@@ -227,6 +232,7 @@ describe('LoginComponent', function() {
     var controllerIsConnected = sinon.stub().returns(false);
     testUtils.renderIntoDocument(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
         loginToAPIs={sinon.stub()}
@@ -239,6 +245,7 @@ describe('LoginComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
         loginToController={sinon.stub()}

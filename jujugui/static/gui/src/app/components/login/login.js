@@ -31,7 +31,13 @@ class Login extends React.Component {
             'controller not yet connected, attempting retry.');
           setTimeout(bounce, 150, performance.now());
         } else {
-          console.error('controller never connected');
+          const message = 'controller never connected';
+          this.props.addNotification({
+            title: message,
+            message: message,
+            level: 'error'
+          });
+          console.error(message);
         }
       };
       bounce(performance.now());
@@ -151,6 +157,7 @@ class Login extends React.Component {
 };
 
 Login.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   controllerIsConnected: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   gisf: PropTypes.bool.isRequired,

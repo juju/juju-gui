@@ -904,6 +904,8 @@ YUI.add('juju-gui', function(Y) {
       };
       ReactDOM.render(
         <window.juju.components.Login
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
           gisf={this.get('gisf')}
