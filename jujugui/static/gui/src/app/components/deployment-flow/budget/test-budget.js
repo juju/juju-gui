@@ -43,6 +43,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub()}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
@@ -58,6 +59,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
@@ -155,6 +157,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
@@ -252,6 +255,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
         user={null} />, true);
@@ -264,6 +268,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
         user={null} />, true);
@@ -272,6 +277,7 @@ describe('DeploymentBudget', function() {
     renderer.render(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
@@ -284,6 +290,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
         user="user-admin" />, true);
@@ -296,6 +303,7 @@ describe('DeploymentBudget', function() {
     jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={setBudget}
         user="user-admin" />);
@@ -308,6 +316,7 @@ describe('DeploymentBudget', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
         acl={acl}
+        addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={setBudget}
         user="user-admin" />, true);
@@ -316,5 +325,22 @@ describe('DeploymentBudget', function() {
       'new-budget');
     assert.equal(setBudget.callCount, 2);
     assert.equal(setBudget.args[1][0], 'new-budget');
+  });
+
+  it('can render', function() {
+    const addNotification = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        addNotification={addNotification}
+        listBudgets={sinon.stub().callsArgWith(0, 'Uh oh!', null)}
+        setBudget={sinon.stub()}
+        user="user-admin" />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'cannot retrieve budgets',
+      message: 'cannot retrieve budgets: Uh oh!',
+      level: 'error'
+    });
   });
 });

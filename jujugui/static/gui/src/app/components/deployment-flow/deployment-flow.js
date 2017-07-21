@@ -826,6 +826,7 @@ class DeploymentFlow extends React.Component {
         title="Confirm budget">
         <juju.components.DeploymentBudget
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           listBudgets={this.props.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />

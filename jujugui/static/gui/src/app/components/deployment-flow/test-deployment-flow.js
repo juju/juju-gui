@@ -260,6 +260,7 @@ describe('DeploymentFlow', function() {
           title="Confirm budget">
           <juju.components.DeploymentBudget
             acl={props.acl}
+            addNotification={props.addNotification}
             listBudgets={props.listBudgets}
             setBudget={instance._setBudget}
             user="dalek" />
