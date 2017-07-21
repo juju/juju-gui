@@ -78,6 +78,9 @@ describe('App Renderer Extension', function() {
       environment: {
         set: sinon.stub(),
         get: sinon.stub().returns('test-model')
+      },
+      notifications: {
+        add: sinon.stub()
       }
     };
     renderer.changeState = sinon.stub();

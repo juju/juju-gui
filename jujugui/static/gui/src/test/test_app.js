@@ -692,6 +692,7 @@ describe('App', function() {
       app.db = {
         // Mock out notifications, so the application can start normally.
         notifications: {
+          add: noop,
           addTarget: noop,
           after: noop,
           filter: noop,
