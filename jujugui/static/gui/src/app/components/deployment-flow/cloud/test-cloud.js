@@ -217,7 +217,7 @@ describe('DeploymentCloud', function() {
     });
   });
 
-  it('can render', function() {
+  it('can handle errors getting clouds', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud

@@ -71,7 +71,13 @@ class DeploymentCredential extends React.Component {
   */
   _getCloudCredentialNamesCallback(credential, error, names) {
     if (error) {
-      console.error('unable to get names for credentials:', error);
+      const message = 'unable to get names for credentials';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       return;
     }
     // The resulting array of names will be in the order that the cloud/user
@@ -94,7 +100,13 @@ class DeploymentCredential extends React.Component {
   */
   _getCredentialsCallback(credential, error, credentials) {
     if (error) {
-      console.error('Unable to get credentials', error);
+      const message = 'Unable to get credentials';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       return;
     }
     const credentialList = Object.keys(credentials).map(credential => {
