@@ -156,6 +156,7 @@ class DeploymentDirectDeploy extends React.Component {
 };
 
 DeploymentDirectDeploy.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   ddData: PropTypes.object.isRequired,
   entityModel: PropTypes.object,

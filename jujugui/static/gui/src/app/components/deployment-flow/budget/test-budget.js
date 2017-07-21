@@ -327,7 +327,7 @@ describe('DeploymentBudget', function() {
     assert.equal(setBudget.args[1][0], 'new-budget');
   });
 
-  it('can render', function() {
+  it('can handle errors when getting budgets', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget

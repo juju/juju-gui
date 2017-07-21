@@ -286,6 +286,7 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders direct deploy when ddData is set', () => {
+    const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
     const entityModel = {id: entityId};
@@ -294,6 +295,7 @@ describe('DeploymentFlow', function() {
     const makeEntityModel = sinon.stub().returns(entityModel);
     const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
       getEntity: getEntity,
@@ -311,6 +313,7 @@ describe('DeploymentFlow', function() {
     const output2 = renderer.getRenderOutput();
     expect(output2.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
+        addNotification={addNotification}
         changeState={changeState}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub()}

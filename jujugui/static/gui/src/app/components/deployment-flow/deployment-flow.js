@@ -954,6 +954,7 @@ class DeploymentFlow extends React.Component {
       // render.
       return (
         <juju.components.DeploymentDirectDeploy
+          addNotification={props.addNotification}
           changeState={props.changeState}
           ddData={props.ddData}
           entityModel={state.ddEntity}
