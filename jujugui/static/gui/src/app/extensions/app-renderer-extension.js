@@ -67,6 +67,8 @@ YUI.add('app-renderer-extension', function(Y) {
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
           acl={this.acl}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           appState={this.state}
           user={this.user}
           changeState={this.state.changeState.bind(this.state)}
