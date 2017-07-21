@@ -144,10 +144,12 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    const addNotification = sinon.stub();
     const formatConstraints = sinon.stub();
     const generateMachineDetails = sinon.stub();
     const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       formatConstraints: formatConstraints,
       generateMachineDetails: generateMachineDetails,
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
@@ -234,9 +236,10 @@ describe('DeploymentFlow', function() {
             machines={props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>
         <div className="deployment-services">
-          <AccordionSection title="Model changes">
-            <DeploymentServices
+          <juju.components.AccordionSection title="Model changes">
+            <juju.components.DeploymentServices
               acl={props.acl}
+              addNotification={props.addNotification}
               changesFilterByParent={props.changesFilterByParent}
               charmsGetById={props.charmsGetById}
               generateAllChangeDescriptions={props.generateAllChangeDescriptions}
@@ -246,9 +249,8 @@ describe('DeploymentFlow', function() {
               parseTermId={instance._parseTermId}
               showTerms={props.showTerms}
               sortDescriptionsByApplication={props.sortDescriptionsByApplication}
-              withPlans={true}
-            />
-          </AccordionSection>
+              withPlans={true} />
+          </juju.components.AccordionSection>
         </div>
         <juju.components.DeploymentSection
           completed={false}

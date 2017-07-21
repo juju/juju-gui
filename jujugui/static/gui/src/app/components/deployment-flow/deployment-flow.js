@@ -789,6 +789,7 @@ class DeploymentFlow extends React.Component {
           title="Model changes">
           <juju.components.DeploymentServices
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             changesFilterByParent={this.props.changesFilterByParent}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}

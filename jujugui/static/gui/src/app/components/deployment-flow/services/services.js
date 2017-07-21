@@ -73,6 +73,7 @@ class DeploymentServices extends React.Component {
       <div>
         <juju.components.BudgetTable
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           allocationEditable={true}
           charmsGetById={this.props.charmsGetById}
           extraInfo={this._generateExtraInfo(changes)}
@@ -93,6 +94,7 @@ class DeploymentServices extends React.Component {
 
 DeploymentServices.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   changesFilterByParent: PropTypes.func.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,

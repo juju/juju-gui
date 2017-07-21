@@ -40,13 +40,15 @@ describe('DeploymentServices', function() {
   });
 
   it('can render', function() {
-    var listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
     const charmsGetById = sinon.stub();
     const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
+        addNotification={addNotification}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub()}
@@ -62,6 +64,7 @@ describe('DeploymentServices', function() {
       <div>
         <juju.components.BudgetTable
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={true}
           charmsGetById={charmsGetById}
           extraInfo={{
@@ -113,13 +116,15 @@ describe('DeploymentServices', function() {
   });
 
   it('can render without plans', function() {
-    var listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
     const charmsGetById = sinon.stub();
     const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
+        addNotification={addNotification}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub()}
@@ -136,6 +141,7 @@ describe('DeploymentServices', function() {
       <div>
         <juju.components.BudgetTable
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={true}
           charmsGetById={charmsGetById}
           extraInfo={{
