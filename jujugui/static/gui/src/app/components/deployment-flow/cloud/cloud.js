@@ -37,7 +37,13 @@ class DeploymentCloud extends React.Component {
       }
       this.props.listClouds((error, clouds) => {
         if (error) {
-          console.error('unable to list clouds:', error);
+          const message = 'unable to list clouds';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
           return;
         }
         let cloudList = [];
@@ -148,6 +154,7 @@ class DeploymentCloud extends React.Component {
 
 DeploymentCloud.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   controllerIsReady: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,

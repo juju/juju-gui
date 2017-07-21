@@ -564,10 +564,11 @@ describe('AccountCredentials', () => {
 
   it('can show the add credentials form', () => {
     getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.AccountCredentials
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         controllerIsReady={controllerIsReady}
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentialNames={getCloudCredentialNames}
@@ -606,6 +607,7 @@ describe('AccountCredentials', () => {
               {null}
               <juju.components.DeploymentCloud
                 acl={acl}
+                addNotification={addNotification}
                 cloud={null}
                 controllerIsReady={controllerIsReady}
                 listClouds={listClouds}
@@ -666,6 +668,7 @@ describe('AccountCredentials', () => {
             </div>
             <juju.components.DeploymentCloud
               acl={acl}
+              addNotification={addNotification}
               cloud={{title: 'aws'}}
               controllerIsReady={controllerIsReady}
               listClouds={listClouds}

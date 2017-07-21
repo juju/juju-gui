@@ -696,6 +696,7 @@ class DeploymentFlow extends React.Component {
         title="Choose cloud to deploy to">
         <juju.components.DeploymentCloud
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.listClouds}

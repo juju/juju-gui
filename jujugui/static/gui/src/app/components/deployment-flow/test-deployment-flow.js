@@ -202,6 +202,7 @@ describe('DeploymentFlow', function() {
           title="Choose cloud to deploy to">
           <juju.components.DeploymentCloud
             acl={props.acl}
+            addNotification={props.addNotification}
             cloud={null}
             controllerIsReady={props.controllerIsReady}
             listClouds={props.listClouds}
