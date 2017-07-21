@@ -1789,6 +1789,7 @@ YUI.add('juju-gui', function(Y) {
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
             this.bundleImporter)}
+          flags={window.juju_config.flags}
           getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
           getEntity={getEntity}
           getFile={charmstore.getFile.bind(charmstore)}

@@ -99,6 +99,7 @@ class EntityDetails extends React.Component {
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              flags={this.props.flags}
               getFile={this.props.getFile}
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
@@ -264,6 +265,7 @@ EntityDetails.propTypes = {
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   deployService: PropTypes.func.isRequired,
+  flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
   getEntity: PropTypes.func.isRequired,
