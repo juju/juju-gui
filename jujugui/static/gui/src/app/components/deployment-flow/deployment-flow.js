@@ -517,6 +517,7 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title={title}>
         <juju.components.DeploymentSSHKey
+          addNotification={this.props.addNotification}
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKey={this._setSSHKey.bind(this)}

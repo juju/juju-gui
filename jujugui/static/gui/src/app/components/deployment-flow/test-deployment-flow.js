@@ -217,6 +217,7 @@ describe('DeploymentFlow', function() {
           title={<span>Add public SSH keys <em>(optional)</em></span>}>
           <juju.components.DeploymentSSHKey
             WebHandler={props.WebHandler}
+            addNotification={props.addNotification}
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKey={instance._setSSHKey}
