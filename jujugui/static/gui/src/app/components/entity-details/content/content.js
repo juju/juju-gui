@@ -555,10 +555,15 @@ class EntityContent extends React.Component {
     const entity = entityModel.toEntity();
     const storeId = entity.type === 'charm' ?
       entity.storeId : entity.id.split('cs:').join('');
-    const dataDD = this.props.flags.ddeploy ? 'data-dd' : '';
+    const ddeploy = this.props.flags.ddeploy;
+    const dataDD = ddeploy ? 'data-dd' : '';
     const script = '<script ' +
     'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
     `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
+    let cardElement = <div className="juju-card" data-id={storeId}></div>;
+    if (ddeploy) {
+      cardElement = <div className="juju-card" data-dd data-id={storeId}></div>;
+    }
 
     return (
       <div className="entity-content__card section clearfix">
@@ -576,7 +581,7 @@ class EntityContent extends React.Component {
           rows="2" cols="70" readOnly="readonly" wrap="off"
           className="twelve-col" defaultValue={script}></textarea>
         <h4>Preview</h4>
-        <div className="juju-card" data-id={storeId}></div>
+        {cardElement}
       </div>);
   }
 

@@ -196,6 +196,28 @@ describe('EntityContent', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can display a direct deploy card', function() {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        flags={{ddeploy: true}}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />);
+    const card = output.props.children[2].props.children.props.children[1].
+      props.children[5].props.children[4];
+    const expected = (
+      <div className="juju-card" data-dd data-id="trusty/django-123"></div>);
+    expect(card).toEqualJSX(expected);
+  });
+
   it('can display a charm with terms', function() {
     mockEntity.set('terms', ['term1', 'term2']);
     const showTerms = sinon.stub();
