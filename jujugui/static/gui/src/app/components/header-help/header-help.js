@@ -60,7 +60,8 @@ class HeaderHelp extends React.Component {
     let link = 'https://github.com/juju/juju-gui/issues';
     if (this.props.user) {
       label = 'Get Support';
-      link = 'https://jujucharms.com/support';
+      link = this.props.gisf ? 'https://jujucharms.com/support' :
+        'https://jujucharms.com/docs/stable/about-juju';
     }
     return (
       <li className="header-menu__menu-list-item
@@ -84,7 +85,6 @@ class HeaderHelp extends React.Component {
           View Documentation</a>
       </li>);
     }
-    return;
   }
 
   /**
