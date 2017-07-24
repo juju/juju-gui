@@ -33,6 +33,7 @@ class DeploymentFlow extends React.Component {
       deploying: false,
       credential: this.props.credential,
       loadingTerms: false,
+      isDirectDeploy: !!(this.props.ddData && this.props.ddData.id),
       modelName: this.props.modelName,
       newTerms: [],
       paymentUser: null,
@@ -624,7 +625,7 @@ class DeploymentFlow extends React.Component {
       <juju.components.DeploymentLogin
         callback={callback}
         gisf={this.props.gisf}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={this.state.isDirectDeploy}
         loginToController={this.props.loginToController} />);
   }
 
@@ -962,7 +963,7 @@ class DeploymentFlow extends React.Component {
     return (
       <juju.components.DeploymentPanel
         changeState={this.props.changeState}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={this.state.isDirectDeploy}
         loggedIn={this.props.isLoggedIn()}
         sendAnalytics={this.sendAnalytics.bind(this)}
         title={this.props.modelName}>
