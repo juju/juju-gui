@@ -136,20 +136,39 @@
       }
     }
 
+    a {
+      @extend .link;
+    }
+
     ul {
-      list-style-position: inside;
+      list-style-position: outside;
+      margin-left: 2rem;
+      list-style-type: disc;
+
+      ul {
+        margin-left: 16px;
+      }
     }
 
     li {
       line-height: 1.6;
+      margin-bottom: 0;
     }
 
     pre {
-      padding: 10px 15px;
+      padding: .625rem 1rem;
       background-color: $color-light;
       border: 1px solid $color-mid-light;
       border-radius: 2px;
-      margin: 2rem 0;
+      margin: 1rem 0;
+    }
+
+    @for $index from 1 through 6 {
+      h#{$index} {
+        & + pre {
+          margin-top: 0;
+        }
+      }
     }
 
     code {
