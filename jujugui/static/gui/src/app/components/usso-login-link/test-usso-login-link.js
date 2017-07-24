@@ -40,7 +40,7 @@ describe('USSOLoginLink', () => {
         displayType={'text'}
         loginToController={sinon.stub()} />);
     const expected = <div className="usso-login">
-      <a className={'logout-link usso-login__action'}
+      <a className={'usso-login__action'}
         onClick={output.props.children[0].props.onClick}
         target="_blank">
           Login

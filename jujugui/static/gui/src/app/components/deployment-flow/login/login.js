@@ -94,7 +94,7 @@ class DeploymentLogin extends React.Component {
   }
 
   _getLoginLinks() {
-    if (!this.props.validDirectDeploy) {
+    if (!this.props.showLoginLinks) {
       return null;
     }
     return (
@@ -242,7 +242,7 @@ DeploymentLogin.propTypes = {
   gisf: PropTypes.bool,
   isDirectDeploy: PropTypes.bool,
   loginToController: PropTypes.func.isRequired,
-  validDirectDeploy: PropTypes.func.isRequired
+  showLoginLinks: PropTypes.bool.isRequired
 };
 
 YUI.add('deployment-login', function() {
