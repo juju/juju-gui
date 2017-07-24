@@ -283,12 +283,15 @@ describe('DeploymentFlow', function() {
 
   it('renders direct deploy when ddData is set', () => {
     const changeState = sinon.stub();
+    const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityModel = {id: entityId};
+    const entityData = [entityModel];
     const getEntity = sinon.stub();
-    const makeEntityModel = sinon.stub();
+    const makeEntityModel = sinon.stub().returns(entityModel);
     const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
       changeState: changeState,
-      ddData: {id: 'cs:bundles/kubernetes-core-8'},
+      ddData: {id: entityId},
       getEntity: getEntity,
       makeEntityModel: makeEntityModel,
       modelCommitted: false,
@@ -296,14 +299,19 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    expect(output.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(<juju.components.Spinner />);
+    assert.equal(getEntity.args[0][0], entityId);
+    // Call the getEntity callback and then re-render.
+    getEntity.args[0][1](null, entityData);
+    instance.render();
+    const output2 = renderer.getRenderOutput();
+    expect(output2.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
         changeState={changeState}
-        ddData={{id: 'cs:bundles/kubernetes-core-8'}}
+        ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
-        getEntity={getEntity}
-        makeEntityModel={makeEntityModel}
+        entityModel={entityModel}
         renderMarkdown={renderMarkdown}
       />
     );
@@ -542,7 +550,8 @@ describe('DeploymentFlow', function() {
         callback={output.props.children[10].props.callback}
         gisf={true}
         isDirectDeploy={false}
-        loginToController={loginToController} />);
+        loginToController={loginToController}
+        showLoginLinks={true}/>);
     expect(output.props.children[10]).toEqualJSX(expected);
   });
 

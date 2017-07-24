@@ -634,6 +634,22 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Determines if we should show the login links in the Deployment Login component.
+    @return {Boolean} Whether or not it should render based on the component state.
+  */
+  _shouldShowLoginLinks() {
+    const state = this.state;
+    const isDirectDeploy = state.isDirectDeploy;
+    if (!isDirectDeploy) {
+      // We always want to show the login links if it's not Direct Deploy.
+      return true;
+    }
+    // If it is Direct Deploy and we cannot load the entity then we
+    // don't want to give the user the option to log in and continue deploying.
+    return state.isDirectDeploy && !state.loadingEntity && !!state.ddEntity;
+  }
+
+  /**
     Generate the login link
 
     @method _generateLogin
@@ -654,10 +670,7 @@ class DeploymentFlow extends React.Component {
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
-        validDirectDeploy={
-          state.isDirectDeploy && !state.loadingEntity && !!state.ddEntity}
-        // If we're in direct deploy and we cannot load the entity then we
-        // don't want to give the user the option to log in and continue deploying.
+        showLoginLinks={this._shouldShowLoginLinks()}
         loginToController={this.props.loginToController} />);
   }
 
