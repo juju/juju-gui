@@ -640,6 +640,7 @@ class DeploymentFlow extends React.Component {
     @returns {Object} The markup.
   */
   _generateLogin() {
+    const state = this.state;
     if (this.props.isLoggedIn()) {
       return null;
     }
@@ -652,7 +653,11 @@ class DeploymentFlow extends React.Component {
       <juju.components.DeploymentLogin
         callback={callback}
         gisf={this.props.gisf}
-        isDirectDeploy={this.state.isDirectDeploy}
+        isDirectDeploy={state.isDirectDeploy}
+        validDirectDeploy={
+          state.isDirectDeploy && !state.loadingEntity && !!state.ddEntity}
+        // If we're in direct deploy and we cannot load the entity then we
+        // don't want to give the user the option to log in and continue deploying.
         loginToController={this.props.loginToController} />);
   }
 
