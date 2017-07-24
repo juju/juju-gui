@@ -46,9 +46,9 @@ class ProfileNavigation extends React.Component {
 };
 
 ProfileNavigation.propTypes = {
-  activeSection: React.PropTypes.string.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  sectionsMap: React.PropTypes.instanceOf(Map).isRequired
+  activeSection: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  sectionsMap: PropTypes.instanceOf(Map).isRequired
 };
 
 YUI.add('profile-navigation', function() {

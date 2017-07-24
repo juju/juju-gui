@@ -65,6 +65,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
+        flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -118,6 +119,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
+            flags={{ddeploy: true}}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -151,6 +153,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
+        flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -213,6 +216,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
+        flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
         getEntity={getEntity}
         getFile={getFile}
@@ -270,6 +274,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
+            flags={{ddeploy: true}}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -303,6 +308,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
+        flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -337,6 +343,7 @@ describe('EntityDetails', function() {
         id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
@@ -386,6 +393,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
+        flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -439,6 +447,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
+            flags={{ddeploy: true}}
             getFile={getFile}
             hasPlans={true}
             hash="readme"
@@ -480,6 +489,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
+        flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -533,6 +543,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
+            flags={{ddeploy: true}}
             getFile={getFile}
             hasPlans={true}
             hash="readme"

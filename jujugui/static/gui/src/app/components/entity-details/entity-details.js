@@ -98,6 +98,7 @@ class EntityDetails extends React.Component {
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              flags={this.props.flags}
               getDiagramURL={this.props.getDiagramURL}
               getFile={this.props.getFile}
               hash={this.props.hash}
@@ -242,28 +243,29 @@ class EntityDetails extends React.Component {
 };
 
 EntityDetails.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  apiUrl: React.PropTypes.string.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  deployService: React.PropTypes.func.isRequired,
-  getBundleYAML: React.PropTypes.func.isRequired,
-  getDiagramURL: React.PropTypes.func.isRequired,
-  getEntity: React.PropTypes.func.isRequired,
-  getFile: React.PropTypes.func.isRequired,
-  getModelName: React.PropTypes.func.isRequired,
-  hash: React.PropTypes.string,
-  id: React.PropTypes.string.isRequired,
-  importBundleYAML: React.PropTypes.func.isRequired,
-  listPlansForCharm: React.PropTypes.func.isRequired,
-  makeEntityModel: React.PropTypes.func.isRequired,
-  pluralize: React.PropTypes.func.isRequired,
-  renderMarkdown: React.PropTypes.func.isRequired,
-  scrollCharmbrowser: React.PropTypes.func.isRequired,
-  scrollPosition: React.PropTypes.number.isRequired,
-  setPageTitle: React.PropTypes.func.isRequired,
-  showTerms: React.PropTypes.func.isRequired,
-  urllib: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  apiUrl: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  deployService: PropTypes.func.isRequired,
+  flags: PropTypes.object,
+  getBundleYAML: PropTypes.func.isRequired,
+  getDiagramURL: PropTypes.func.isRequired,
+  getEntity: PropTypes.func.isRequired,
+  getFile: PropTypes.func.isRequired,
+  getModelName: PropTypes.func.isRequired,
+  hash: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  importBundleYAML: PropTypes.func.isRequired,
+  listPlansForCharm: PropTypes.func.isRequired,
+  makeEntityModel: PropTypes.func.isRequired,
+  pluralize: PropTypes.func.isRequired,
+  renderMarkdown: PropTypes.func.isRequired,
+  scrollCharmbrowser: PropTypes.func.isRequired,
+  scrollPosition: PropTypes.number.isRequired,
+  setPageTitle: PropTypes.func.isRequired,
+  showTerms: PropTypes.func.isRequired,
+  urllib: PropTypes.func.isRequired
 };
 
 YUI.add('entity-details', function() {

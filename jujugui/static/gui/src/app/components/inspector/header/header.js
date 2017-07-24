@@ -75,11 +75,11 @@ class InspectorHeader extends React.Component {
 };
 
 InspectorHeader.propTypes = {
-  activeComponent: React.PropTypes.string,
-  backCallback: React.PropTypes.func.isRequired,
-  icon: React.PropTypes.string,
-  title: React.PropTypes.string.isRequired,
-  type: React.PropTypes.string
+  activeComponent: PropTypes.string,
+  backCallback: PropTypes.func.isRequired,
+  icon: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string
 };
 
 YUI.add('inspector-header', function() {

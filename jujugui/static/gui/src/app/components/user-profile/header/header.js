@@ -113,9 +113,9 @@ class UserProfileHeader extends React.Component {
 };
 
 UserProfileHeader.propTypes = {
-  avatar: React.PropTypes.string.isRequired,
-  interactiveLogin: React.PropTypes.func,
-  links: React.PropTypes.array.isRequired,
+  avatar: PropTypes.string.isRequired,
+  interactiveLogin: PropTypes.func,
+  links: PropTypes.array.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for
   //   instance, from the charm store. Might be null if the user is being
@@ -124,7 +124,7 @@ UserProfileHeader.propTypes = {
   // - isCurrent: whether the profile is being displayed for the currently
   //   authenticated user;
   // - profile: the user name for whom profile details must be displayed.
-  userInfo: React.PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired
 };
 
 YUI.add('user-profile-header', function() {

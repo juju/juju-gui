@@ -60,6 +60,7 @@ const createDeploymentFlow = (props = {}) => {
   };
   // Note that the defaults are *only* set for required DeploymentFlow props.
   const defaults = {
+    WebHandler: sinon.stub(),
     acl: {isReadOnly: sinon.stub().returns(false)},
     addAgreement: sinon.stub(),
     addNotification: sinon.stub(),
@@ -86,8 +87,10 @@ const createDeploymentFlow = (props = {}) => {
     getCountries: sinon.stub(),
     getCurrentChangeSet: sinon.stub(),
     getDiagramURL:sinon.stub(),
+    getServiceByName: sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
+    getGithubSSHKeys: sinon.stub(),
     groupedChanges: groupedChanges,
     isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
@@ -99,10 +102,10 @@ const createDeploymentFlow = (props = {}) => {
     profileUsername: 'Spinach',
     renderMarkdown: sinon.stub(),
     sendAnalytics: sinon.stub(),
-    servicesGetById: sinon.stub(),
     setModelName: sinon.stub(),
     showPay: false,
     showTerms: sinon.stub(),
+    sortDescriptionsByApplication: sinon.stub(),
     stats: null,
     updateCloudCredential: sinon.stub(),
     validateForm: sinon.stub(),
@@ -167,12 +170,12 @@ describe('DeploymentFlow', function() {
           completed={true}
           instance="deployment-model-name"
           showCheck={true}
-          title="Set your model name">
-          <div className="six-col">
+          title="You're logged in as Spinach">
+          <div className="six-col no-margin-bottom">
             <juju.components.GenericInput
               disabled={false}
               key="modelName"
-              label="Model name"
+              label="Deploying"
               required={true}
               onBlur={instance._updateModelName}
               ref="modelName"
@@ -207,9 +210,12 @@ describe('DeploymentFlow', function() {
           completed={false}
           disabled={true}
           instance="deployment-ssh-key"
-          showCheck={false}>
+          showCheck={true}
+          title={<span>Add public SSH keys <em>(optional)</em></span>}>
           <juju.components.DeploymentSSHKey
+            WebHandler={props.WebHandler}
             cloud={null}
+            getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKey={instance._setSSHKey}
           />
         </juju.components.DeploymentSection>
@@ -219,7 +225,7 @@ describe('DeploymentFlow', function() {
           disabled={true}
           instance="deployment-machines"
           showCheck={false}
-          title="Machines to be deployed">
+          title="Machines to be provisioned">
           <juju.components.DeploymentMachines
             acl={props.acl}
             cloud={null}
@@ -227,34 +233,23 @@ describe('DeploymentFlow', function() {
             generateMachineDetails={generateMachineDetails}
             machines={props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={true}
-          instance="deployment-services"
-          showCheck={true}
-          title={
-            <span className="deployment-flow__service-title">
-              Applications to be deployed
-              <juju.components.GenericButton
-                action={instance._toggleChangelogs}
-                type="inline-neutral"
-                extraClasses="right">
-                Show changelog
-              </juju.components.GenericButton>
-            </span>}>
-          <juju.components.DeploymentServices
-            acl={props.acl}
-            changesFilterByParent={props.changesFilterByParent}
-            charmsGetById={props.charmsGetById}
-            generateAllChangeDescriptions={props.generateAllChangeDescriptions}
-            groupedChanges={props.groupedChanges}
-            listPlansForCharm={props.listPlansForCharm}
-            parseTermId={instance._parseTermId}
-            servicesGetById={props.servicesGetById}
-            showChangelogs={false}
-            showTerms={props.showTerms}
-            withPlans={true} />
-        </juju.components.DeploymentSection>
+        <div className="deployment-services">
+          <AccordionSection title="Model changes">
+            <DeploymentServices
+              acl={props.acl}
+              changesFilterByParent={props.changesFilterByParent}
+              charmsGetById={props.charmsGetById}
+              generateAllChangeDescriptions={props.generateAllChangeDescriptions}
+              getCurrentChangeSet={props.getCurrentChangeSet}
+              getServiceByName={props.getServiceByName}
+              listPlansForCharm={props.listPlansForCharm}
+              parseTermId={instance._parseTermId}
+              showTerms={props.showTerms}
+              sortDescriptionsByApplication={props.sortDescriptionsByApplication}
+              withPlans={true}
+            />
+          </AccordionSection>
+        </div>
         <juju.components.DeploymentSection
           completed={false}
           disabled={true}
@@ -266,17 +261,6 @@ describe('DeploymentFlow', function() {
             listBudgets={props.listBudgets}
             setBudget={instance._setBudget}
             user="dalek" />
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={true}
-          instance="deployment-changes"
-          showCheck={false}
-          title="Model changes">
-          <juju.components.DeploymentChanges
-            getCurrentChangeSet={props.getCurrentChangeSet}
-            generateAllChangeDescriptions={
-              props.generateAllChangeDescriptions}/>
         </juju.components.DeploymentSection>
         {null}
         <div className="twelve-col">
@@ -408,7 +392,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[6].props.disabled, false);
+    assert.strictEqual(output.props.children[5].props.disabled, false);
   });
 
   it('can enable the services section', function() {
@@ -418,24 +402,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[6].props.disabled, false);
-  });
-
-  it('displays the VPC section in new AWS models', function() {
-    const renderer = createDeploymentFlow({modelCommitted: false});
-    const instance = renderer.getMountedInstance();
-    instance._setCloud({name: 'aws'});
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-vpc"
-        showCheck={false}>
-        <juju.components.DeploymentVPC setVPCId={instance._setVPCId} />
-      </juju.components.DeploymentSection>
-    );
-    expect(output.props.children[5]).toEqualJSX(expectedOutput);
+    assert.notStrictEqual(output.props.children[6], undefined);
   });
 
   it('can enable the budget section', function() {
@@ -446,7 +413,7 @@ describe('DeploymentFlow', function() {
       withPlans: true
     });
     const output = renderer.getRenderOutput();
-    assert.isFalse(output.props.children[6].props.disabled);
+    assert.isFalse(output.props.children[7].props.disabled);
   });
 
   it('can show the payments section', function() {
@@ -495,7 +462,7 @@ describe('DeploymentFlow', function() {
           username="spinach"
           validateForm={validateForm} />
       </juju.components.DeploymentSection>);
-    expect(output.props.children[10]).toEqualJSX(expected);
+    expect(output.props.children[8]).toEqualJSX(expected);
   });
 
   it('can hide the agreements section', function() {
@@ -504,7 +471,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[11].props.children.props.children[0]);
+      output.props.children[9].props.children.props.children[0]);
   });
 
   it('can handle the agreements when there are no added apps', function() {
@@ -516,7 +483,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[11].props.children.props.children[0]);
+      output.props.children[9].props.children.props.children[0]);
   });
 
   it('can display the agreements section', function() {
@@ -531,7 +498,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const agreements = output.props.children[11].props.children
+    const agreements = output.props.children[9].props.children
       .props.children[0];
     const expected = (
       <div className="deployment-flow__deploy-option">
@@ -553,7 +520,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: false
     });
     const output = renderer.getRenderOutput();
-    const agreements = output.props.children[11].props.children
+    const agreements = output.props.children[9].props.children
       .props.children[0];
     const className = agreements.props.className;
     const expectedClass = 'deployment-flow__deploy-option--disabled';
@@ -572,11 +539,11 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentLogin
-        callback={output.props.children[12].props.callback}
+        callback={output.props.children[10].props.callback}
         gisf={true}
         isDirectDeploy={false}
         loginToController={loginToController} />);
-    expect(output.props.children[12]).toEqualJSX(expected);
+    expect(output.props.children[10]).toEqualJSX(expected);
   });
 
   it('can deploy', function() {
@@ -600,7 +567,7 @@ describe('DeploymentFlow', function() {
     const props = instance.props;
     const output = renderer.getRenderOutput();
     // Click to deploy.
-    const deploy = output.props.children[11].props.children.props.children[1];
+    const deploy = output.props.children[9].props.children.props.children[1];
     deploy.props.children.props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
@@ -645,7 +612,7 @@ describe('DeploymentFlow', function() {
     instance._updateModelName();
     const output = renderer.getRenderOutput();
     // Click to deploy.
-    const deploy = output.props.children[11].props.children.props.children[1];
+    const deploy = output.props.children[9].props.children.props.children[1];
     deploy.props.children.props.action();
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
@@ -670,7 +637,7 @@ describe('DeploymentFlow', function() {
     instance._handleTermsAgreement({target: {checked: true}});
     const props = instance.props;
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(props.deploy.callCount, 0,
       'The deploy function should not be called');
@@ -867,13 +834,13 @@ describe('DeploymentFlow', function() {
       }
     };
     let output = renderer.getRenderOutput();
-    let deployButton = output.props.children[11].props.children.props
+    let deployButton = output.props.children[9].props.children.props
       .children[1].props.children;
     deployButton.props.action();
 
     // .action() rerenders the component so we need to get it again
     output = renderer.getRenderOutput();
-    deployButton = output.props.children[11].props.children.props
+    deployButton = output.props.children[9].props.children.props
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
@@ -894,7 +861,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {};
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -924,7 +891,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setSSHKey('my SSH key');
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -954,7 +921,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id');
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
@@ -984,7 +951,7 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     instance._setVPCId('my VPC id', true);
     const output = renderer.getRenderOutput();
-    output.props.children[11].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);

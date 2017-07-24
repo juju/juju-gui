@@ -154,12 +154,12 @@ class EntityContentReadme extends React.Component {
 };
 
 EntityContentReadme.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  entityModel: React.PropTypes.object.isRequired,
-  getFile: React.PropTypes.func.isRequired,
-  hash: React.PropTypes.string,
-  renderMarkdown: React.PropTypes.func.isRequired,
-  scrollCharmbrowser: React.PropTypes.func.isRequired
+  changeState: PropTypes.func.isRequired,
+  entityModel: PropTypes.object.isRequired,
+  getFile: PropTypes.func.isRequired,
+  hash: PropTypes.string,
+  renderMarkdown: PropTypes.func.isRequired,
+  scrollCharmbrowser: PropTypes.func.isRequired
 };
 
 YUI.add('entity-content-readme', function() {

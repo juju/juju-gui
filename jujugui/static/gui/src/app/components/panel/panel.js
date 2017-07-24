@@ -86,14 +86,14 @@ class Panel extends React.Component {
 };
 
 Panel.propTypes = {
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  clickAction: React.PropTypes.func,
-  focus: React.PropTypes.bool,
-  instanceName: React.PropTypes.string.isRequired,
-  visible: React.PropTypes.bool.isRequired
+  clickAction: PropTypes.func,
+  focus: PropTypes.bool,
+  instanceName: PropTypes.string.isRequired,
+  visible: PropTypes.bool.isRequired
 };
 
 Panel.defaultProps = {

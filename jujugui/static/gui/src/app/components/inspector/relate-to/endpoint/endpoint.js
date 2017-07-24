@@ -127,10 +127,10 @@ class InspectorRelateToEndpoint extends React.Component {
 };
 
 InspectorRelateToEndpoint.propTypes = {
-  backState: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  createRelation: React.PropTypes.func.isRequired,
-  endpoints: React.PropTypes.array.isRequired
+  backState: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  createRelation: PropTypes.func.isRequired,
+  endpoints: PropTypes.array.isRequired
 };
 
 YUI.add('inspector-relate-to-endpoint', function() {

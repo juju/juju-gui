@@ -253,13 +253,13 @@ class AddressForm extends React.Component {
 };
 
 AddressForm.propTypes = {
-  addNotification: React.PropTypes.func,
-  address: React.PropTypes.object,
-  disabled: React.PropTypes.bool,
-  getCountries: React.PropTypes.func,
-  showName: React.PropTypes.bool,
-  showPhone: React.PropTypes.bool,
-  validateForm: React.PropTypes.func
+  addNotification: PropTypes.func,
+  address: PropTypes.object,
+  disabled: PropTypes.bool,
+  getCountries: PropTypes.func,
+  showName: PropTypes.bool,
+  showPhone: PropTypes.bool,
+  validateForm: PropTypes.func
 };
 
 AddressForm.defaultProps = {

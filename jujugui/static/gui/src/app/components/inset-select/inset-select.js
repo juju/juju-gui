@@ -97,9 +97,12 @@ class InsetSelect extends React.Component {
     @returns {String} The list classes.
   */
   _generateClasses() {
+    const label = this.props.label ?
+      this.props.label.replace(/\W/g, '').toLowerCase() : null;
     return classNames(
       'inset-select',
       {
+        [`inset-select--${label}`]: this.props.label,
         'inset-select--disabled': this.props.disabled
       }
     );
@@ -125,12 +128,12 @@ class InsetSelect extends React.Component {
 };
 
 InsetSelect.propTypes = {
-  disabled: React.PropTypes.bool,
-  label: React.PropTypes.string,
-  onChange: React.PropTypes.func,
-  options: React.PropTypes.array.isRequired,
-  required: React.PropTypes.bool,
-  value: React.PropTypes.string
+  disabled: PropTypes.bool,
+  label: PropTypes.string,
+  onChange: PropTypes.func,
+  options: PropTypes.array.isRequired,
+  required: PropTypes.bool,
+  value: PropTypes.string
 };
 
 YUI.add('inset-select', function() {

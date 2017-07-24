@@ -364,6 +364,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
+        flags={window.juju_config.flags}
         getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
         getEntity={getEntity}
         getFile={charmstore.getFile.bind(charmstore)}
@@ -761,6 +762,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
+        getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
+        sortDescriptionsByApplication={
+          changesUtils.sortDescriptionsByApplication.bind(null,
+            services.getById.bind(services))}
         isLoggedIn={isLoggedIn}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -788,13 +793,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         profileUsername={this._getUserInfo(state).profile}
         region={modelAPI.get('region')}
         renderMarkdown={marked}
-        servicesGetById={services.getById.bind(services)}
+        getServiceByName={services.getServiceByName.bind(services)}
         showPay={this.applicationConfig.flags.pay || false}
         showTerms={this.terms.showTerms.bind(this.terms)}
         stats={this.stats}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         validateForm={utils.validateForm.bind(utils)}
+        WebHandler={yui.juju.environments.web.WebHandler}
         withPlans={false} />,
       document.getElementById('deployment-container'));
   }

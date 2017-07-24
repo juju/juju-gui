@@ -19,49 +19,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class DeploymentServices extends React.Component {
-  /**
-    Create a list of services from the change set.
-
-    @method _getServices
-    @returns {Array} A list of services.
-  */
-  _getServices() {
-    var addedServices = this.props.groupedChanges['_deploy'];
-    if (!addedServices) {
-      return [];
-    }
-    return Object.keys(addedServices).map((change) => {
-      return this.props.servicesGetById(
-        addedServices[change].command.options.modelId);
-    });
-  }
 
   /**
     Generate the list of extra info markup.
 
     @method _generateExtraInfo
-    @returns {Array} A list of elements by service.
+    @param {Object} changes The sorted changes by application.
+    @returns {Array} A list of elements by application.
   */
-  _generateExtraInfo() {
-    var addedServices = this.props.groupedChanges['_deploy'] || [];
-    var infos = {};
-    Object.keys(addedServices).forEach((change) => {
-      var serviceId = addedServices[change].command.options.modelId;
-      var changeId = addedServices[change].id;
-      var changes = this.props.changesFilterByParent(changeId);
-      var descriptions = this.props.generateAllChangeDescriptions(changes);
-      var items = descriptions.map(change => {
-        return (
-          <juju.components.DeploymentChangeItem
-            change={change}
-            key={change.id}
-            showTime={false} />);
-      });
-      infos[serviceId] = (
+  _generateExtraInfo(changes) {
+    const infos = {};
+    for (let key in changes) {
+      const items = changes[key].map(change =>
+        <juju.components.DeploymentChangeItem
+          change={change}
+          key={change.id}
+          showTime={false} />);
+      infos[key] =
         <ul className="deployment-services__changes">
           {items}
-        </ul>);
-    });
+        </ul>;
+    }
     return infos;
   }
 
@@ -86,18 +64,25 @@ class DeploymentServices extends React.Component {
   }
 
   render() {
+    const props = this.props;
+    const currentChangeSet = props.getCurrentChangeSet();
+    const changes = props.sortDescriptionsByApplication(
+      currentChangeSet,
+      props.generateAllChangeDescriptions(currentChangeSet));
     return (
       <div>
         <juju.components.BudgetTable
           acl={this.props.acl}
           allocationEditable={true}
           charmsGetById={this.props.charmsGetById}
-          extraInfo={this._generateExtraInfo()}
+          extraInfo={this._generateExtraInfo(changes)}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={true}
-          services={this._getServices()}
-          showExtra={this.props.showChangelogs}
+          services={
+            Object
+              .keys(changes)
+              .map(this.props.getServiceByName)}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />
         {this._generateSpend()}
@@ -107,17 +92,17 @@ class DeploymentServices extends React.Component {
 };
 
 DeploymentServices.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changesFilterByParent: React.PropTypes.func.isRequired,
-  charmsGetById: React.PropTypes.func.isRequired,
-  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-  groupedChanges: React.PropTypes.object.isRequired,
-  listPlansForCharm: React.PropTypes.func.isRequired,
-  parseTermId: React.PropTypes.func.isRequired,
-  servicesGetById: React.PropTypes.func.isRequired,
-  showChangelogs: React.PropTypes.bool,
-  showTerms: React.PropTypes.func,
-  withPlans: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  changesFilterByParent: PropTypes.func.isRequired,
+  charmsGetById: PropTypes.func.isRequired,
+  generateAllChangeDescriptions: PropTypes.func.isRequired,
+  getCurrentChangeSet: PropTypes.func.isRequired,
+  getServiceByName: PropTypes.func.isRequired,
+  listPlansForCharm: PropTypes.func.isRequired,
+  parseTermId: PropTypes.func.isRequired,
+  showTerms: PropTypes.func,
+  sortDescriptionsByApplication: PropTypes.func.isRequired,
+  withPlans: PropTypes.bool
 };
 
 YUI.add('deployment-services', function() {

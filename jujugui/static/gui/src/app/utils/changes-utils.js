@@ -93,6 +93,76 @@ YUI.add('changes-utils', function(Y) {
   };
 
   /**
+    Sorts the supplied descriptions by their applications.
+    @param {Function} getServiceById The model function to get services
+      by their ids.
+    @param {Object} changeset The ECS changeset.
+    @param {Ojbect} descriptions The generated descriptions from the
+      ChangesUtils.generateAllChangeDescriptions method.
+    @return {Object} The supplied descriptions in an object where the key is
+      the application associated with the description and each value is an
+      array of descriptions.
+  */
+  ChangesUtils.sortDescriptionsByApplication = (getServiceById, changeset, descriptions) => { // eslint-disable-line max-len
+    const methodBlacklist = ['addCharm', 'addMachines'];
+    const grouped = {};
+    // If the application name is a temporary ID (contains $)
+    // then fetch its real name and return that or return the original name.
+    const getRealAppName = name =>
+      name.includes('$') ? getServiceById(name).get('name') : name;
+    // Not all api calls have the same call signature so this normalizes the
+    // application that the command is for.
+    const nameFetchers = {
+      '_addPendingResources': args => args[0].applicationName,
+      '_deploy': args => args[0].applicationName,
+      '_add_relation': args => {
+        const appNames = [args[0][0]];
+        // Relations will typically have another remote endpoint but sometimes
+        // they won't, like with peer relations between the same app.
+        if (args[1]) {
+          appNames.push(args[1][0]);
+        }
+        return appNames;
+      },
+      default: args => args[0]
+    };
+    // Adds the supplied item to the supplied name.
+    const addToGrouped = (name, item) => {
+      const realName = getRealAppName(name);
+      if (!grouped[realName]) {
+        grouped[realName] = [];
+      }
+      grouped[realName].push(item);
+    };
+
+    // Loop through each one of the descriptions and then add them to the
+    // grouped object under each application.
+    descriptions.forEach(item => {
+      if (methodBlacklist.includes(item.id.split('-')[0])) {
+        // We do not want to show some actions in the deployment flow changelog.
+        return;
+      }
+      const command = changeset[item.id].command;
+      const method = command.method;
+      const args = command.args;
+      let appNames;
+      // Fetch the name from the method.
+      if (typeof nameFetchers[method] === 'function') {
+        appNames = nameFetchers[method](args);
+      } else {
+        appNames = nameFetchers.default(args);
+      }
+      // Some of the fetchers return an array (like for relations).
+      if (Array.isArray(appNames)) {
+        appNames.forEach(name => addToGrouped(name, item));
+      } else {
+        addToGrouped(appNames, item);
+      }
+    });
+    return grouped;
+  };
+
+  /**
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions

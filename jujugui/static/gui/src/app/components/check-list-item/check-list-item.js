@@ -153,14 +153,14 @@ class CheckListItem extends React.Component {
 };
 
 CheckListItem.propTypes = {
-  action: React.PropTypes.func,
-  aside: React.PropTypes.string,
-  className: React.PropTypes.string,
-  disabled: React.PropTypes.bool,
-  extraInfo: React.PropTypes.string,
-  id: React.PropTypes.string,
-  label: React.PropTypes.string.isRequired,
-  whenChanged: React.PropTypes.func.isRequired
+  action: PropTypes.func,
+  aside: PropTypes.string,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  extraInfo: PropTypes.string,
+  id: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  whenChanged: PropTypes.func.isRequired
 };
 
 YUI.add('check-list-item', function() {

@@ -166,18 +166,18 @@ class HeaderBreadcrumb extends React.Component {
 };
 
 HeaderBreadcrumb.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  appState: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  humanizeTimestamp: React.PropTypes.func.isRequired,
-  listModelsWithInfo: React.PropTypes.func,
-  loadingModel: React.PropTypes.bool,
-  modelName: React.PropTypes.string,
-  modelOwner: React.PropTypes.string,
-  showEnvSwitcher: React.PropTypes.bool.isRequired,
-  showProfile: React.PropTypes.func.isRequired,
-  switchModel: React.PropTypes.func.isRequired,
-  user: React.PropTypes.object
+  acl: PropTypes.object.isRequired,
+  appState: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  humanizeTimestamp: PropTypes.func.isRequired,
+  listModelsWithInfo: PropTypes.func,
+  loadingModel: PropTypes.bool,
+  modelName: PropTypes.string,
+  modelOwner: PropTypes.string,
+  showEnvSwitcher: PropTypes.bool.isRequired,
+  showProfile: PropTypes.func.isRequired,
+  switchModel: PropTypes.func.isRequired,
+  user: PropTypes.object
 };
 
 HeaderBreadcrumb.defaultProps = {

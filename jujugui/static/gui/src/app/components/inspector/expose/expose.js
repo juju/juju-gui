@@ -134,13 +134,13 @@ class InspectorExpose extends React.Component {
 };
 
 InspectorExpose.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  exposeService: React.PropTypes.func.isRequired,
-  service: React.PropTypes.object.isRequired,
-  unexposeService: React.PropTypes.func.isRequired,
-  units: React.PropTypes.object.isRequired
+  acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  exposeService: PropTypes.func.isRequired,
+  service: PropTypes.object.isRequired,
+  unexposeService: PropTypes.func.isRequired,
+  units: PropTypes.object.isRequired
 };
 
 YUI.add('inspector-expose', function() {

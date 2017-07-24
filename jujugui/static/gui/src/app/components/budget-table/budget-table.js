@@ -34,12 +34,11 @@ class BudgetTable extends React.Component {
           allocationEditable={this.props.allocationEditable}
           charmsGetById={this.props.charmsGetById}
           extraInfo={
-            this.props.extraInfo && this.props.extraInfo[service.get('id')]}
+            this.props.extraInfo && this.props.extraInfo[service.get('name')]}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={this.props.plansEditable}
           service={service}
-          showExtra={this.props.showExtra}
           showTerms={this.props.showTerms}
           withPlans={this.props.withPlans} />);
     });
@@ -81,8 +80,8 @@ class BudgetTable extends React.Component {
           <div className="three-col">
             Name
           </div>
-          <div className="one-col">
-            Units
+          <div className="two-col">
+            New units
           </div>
           {this._generatePlanHeaders()}
         </div>
@@ -93,17 +92,16 @@ class BudgetTable extends React.Component {
 };
 
 BudgetTable.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  allocationEditable: React.PropTypes.bool,
-  charmsGetById: React.PropTypes.func,
-  extraInfo: React.PropTypes.object,
-  listPlansForCharm: React.PropTypes.func,
-  parseTermId: React.PropTypes.func,
-  plansEditable: React.PropTypes.bool,
-  services: React.PropTypes.array.isRequired,
-  showExtra: React.PropTypes.bool,
-  showTerms: React.PropTypes.func.isRequired,
-  withPlans: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  allocationEditable: PropTypes.bool,
+  charmsGetById: PropTypes.func,
+  extraInfo: PropTypes.object,
+  listPlansForCharm: PropTypes.func,
+  parseTermId: PropTypes.func,
+  plansEditable: PropTypes.bool,
+  services: PropTypes.array.isRequired,
+  showTerms: PropTypes.func.isRequired,
+  withPlans: PropTypes.bool
 };
 
 YUI.add('budget-table', function() {

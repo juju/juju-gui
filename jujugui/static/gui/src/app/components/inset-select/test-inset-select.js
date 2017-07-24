@@ -41,7 +41,7 @@ describe('InsetSelect', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className='inset-select'>
+      <div className='inset-select inset-select--spork'>
         <label className="inset-select__label"
           htmlFor="Spork!">
           Spork!

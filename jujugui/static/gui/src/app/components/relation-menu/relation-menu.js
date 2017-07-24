@@ -116,7 +116,7 @@ const RelationMenu = function(props) {
 };
 
 RelationMenu.propTypes = {
-  relations: React.PropTypes.array.isRequired
+  relations: PropTypes.array.isRequired
 };
 
 YUI.add('relation-menu', function() {

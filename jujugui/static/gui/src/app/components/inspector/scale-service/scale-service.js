@@ -173,12 +173,12 @@ class ScaleService extends React.Component {
 };
 
 ScaleService.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addGhostAndEcsUnits: React.PropTypes.func.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  createMachinesPlaceUnits: React.PropTypes.func.isRequired,
-  providerType: React.PropTypes.string,
-  serviceId: React.PropTypes.string.isRequired
+  acl: PropTypes.object.isRequired,
+  addGhostAndEcsUnits: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
+  createMachinesPlaceUnits: PropTypes.func.isRequired,
+  providerType: PropTypes.string,
+  serviceId: PropTypes.string.isRequired
 };
 
 YUI.add('scale-service', function() {

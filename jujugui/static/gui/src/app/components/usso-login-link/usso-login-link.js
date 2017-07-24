@@ -102,11 +102,11 @@ class USSOLoginLink extends React.Component {
 };
 
 USSOLoginLink.propTypes = {
-  callback: React.PropTypes.func,
-  children: React.PropTypes.node,
-  displayType: React.PropTypes.string.isRequired,
-  gisf: React.PropTypes.bool,
-  loginToController: React.PropTypes.func.isRequired
+  callback: PropTypes.func,
+  children: PropTypes.node,
+  displayType: PropTypes.string.isRequired,
+  gisf: PropTypes.bool,
+  loginToController: PropTypes.func.isRequired
 };
 
 YUI.add('usso-login-link', function() {

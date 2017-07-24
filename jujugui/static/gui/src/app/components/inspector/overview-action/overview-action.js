@@ -109,16 +109,16 @@ class OverviewAction extends React.Component {
 };
 
 OverviewAction.propTypes = {
-  action: React.PropTypes.func.isRequired,
-  icon: React.PropTypes.string,
-  linkAction: React.PropTypes.func,
-  linkTitle: React.PropTypes.string,
-  title: React.PropTypes.string.isRequired,
-  value: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number
+  action: PropTypes.func.isRequired,
+  icon: PropTypes.string,
+  linkAction: PropTypes.func,
+  linkTitle: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
   ]),
-  valueType: React.PropTypes.string
+  valueType: PropTypes.string
 };
 
 YUI.add('overview-action', function() {

@@ -66,6 +66,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         deployTarget={deployTarget}
+        flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -130,6 +131,7 @@ describe('Charmbrowser', function() {
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
+        flags={{}}
         deployService={sinon.stub()}
         deployTarget={sinon.stub()}
         getBundleYAML={sinon.stub()}
@@ -204,6 +206,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         deployTarget={sinon.stub()}
+        flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -238,6 +241,7 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={
               output.props.children.props.children.props.changeState}
+            flags={{ddeploy: true}}
             getEntity={getEntity}
             getModelName={getModelName}
             hash="readme"
@@ -277,6 +281,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
         deployTarget={sinon.stub()}
+        flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}

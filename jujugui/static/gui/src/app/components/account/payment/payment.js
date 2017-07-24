@@ -209,26 +209,26 @@ class AccountPayment extends React.Component {
 };
 
 AccountPayment.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  addAddress: React.PropTypes.func.isRequired,
-  addBillingAddress: React.PropTypes.func.isRequired,
-  addNotification: React.PropTypes.func.isRequired,
-  createCardElement: React.PropTypes.func.isRequired,
-  createPaymentMethod: React.PropTypes.func.isRequired,
-  createToken: React.PropTypes.func.isRequired,
-  createUser: React.PropTypes.func.isRequired,
-  getCharges: React.PropTypes.func.isRequired,
-  getCountries: React.PropTypes.func.isRequired,
-  getReceipt: React.PropTypes.func.isRequired,
-  getUser: React.PropTypes.func.isRequired,
-  removeAddress: React.PropTypes.func.isRequired,
-  removeBillingAddress: React.PropTypes.func.isRequired,
-  removePaymentMethod: React.PropTypes.func.isRequired,
-  updateAddress: React.PropTypes.func.isRequired,
-  updateBillingAddress: React.PropTypes.func.isRequired,
-  updatePaymentMethod: React.PropTypes.func.isRequired,
-  username: React.PropTypes.string.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  addAddress: PropTypes.func.isRequired,
+  addBillingAddress: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  createCardElement: PropTypes.func.isRequired,
+  createPaymentMethod: PropTypes.func.isRequired,
+  createToken: PropTypes.func.isRequired,
+  createUser: PropTypes.func.isRequired,
+  getCharges: PropTypes.func.isRequired,
+  getCountries: PropTypes.func.isRequired,
+  getReceipt: PropTypes.func.isRequired,
+  getUser: PropTypes.func.isRequired,
+  removeAddress: PropTypes.func.isRequired,
+  removeBillingAddress: PropTypes.func.isRequired,
+  removePaymentMethod: PropTypes.func.isRequired,
+  updateAddress: PropTypes.func.isRequired,
+  updateBillingAddress: PropTypes.func.isRequired,
+  updatePaymentMethod: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('account-payment', function() {

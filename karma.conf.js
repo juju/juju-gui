@@ -32,6 +32,7 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/diff.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism-languages.js',
+      'jujugui/static/gui/build/app/assets/javascripts/prop-types.js',
       'jujugui/static/gui/build/app/assets/javascripts/js-macaroon.js',
       'jujugui/static/gui/build/app/utils/component-test-utils.js',
 

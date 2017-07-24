@@ -48,10 +48,10 @@ class EntityContentDescription extends React.Component {
 };
 
 EntityContentDescription.propTypes = {
-  changeState: React.PropTypes.func,
-  entityModel: React.PropTypes.object,
-  includeHeading: React.PropTypes.bool,
-  renderMarkdown: React.PropTypes.func.isRequired
+  changeState: PropTypes.func,
+  entityModel: PropTypes.object,
+  includeHeading: PropTypes.bool,
+  renderMarkdown: PropTypes.func.isRequired
 };
 
 YUI.add('entity-content-description', function() {

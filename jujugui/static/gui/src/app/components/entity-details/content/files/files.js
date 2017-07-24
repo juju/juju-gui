@@ -197,9 +197,9 @@ class EntityFiles extends React.Component {
 };
 
 EntityFiles.propTypes = {
-  apiUrl: React.PropTypes.string.isRequired,
-  entityModel: React.PropTypes.object.isRequired,
-  pluralize: React.PropTypes.func.isRequired
+  apiUrl: PropTypes.string.isRequired,
+  entityModel: PropTypes.object.isRequired,
+  pluralize: PropTypes.func.isRequired
 };
 
 YUI.add('entity-files', function() {

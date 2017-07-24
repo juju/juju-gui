@@ -353,13 +353,13 @@ class Sharing extends React.Component {
 
 
 Sharing.propTypes = {
-  addNotification: React.PropTypes.func,
-  canShareModel: React.PropTypes.bool,
-  closeHandler: React.PropTypes.func,
-  getModelUserInfo: React.PropTypes.func.isRequired,
-  grantModelAccess: React.PropTypes.func.isRequired,
-  humanizeTimestamp: React.PropTypes.func,
-  revokeModelAccess: React.PropTypes.func.isRequired
+  addNotification: PropTypes.func,
+  canShareModel: PropTypes.bool,
+  closeHandler: PropTypes.func,
+  getModelUserInfo: PropTypes.func.isRequired,
+  grantModelAccess: PropTypes.func.isRequired,
+  humanizeTimestamp: PropTypes.func,
+  revokeModelAccess: PropTypes.func.isRequired
 };
 
 Sharing.defaultProps = {

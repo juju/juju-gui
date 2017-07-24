@@ -119,13 +119,13 @@ class ExpandingRow extends React.Component {
 };
 
 ExpandingRow.propTypes = {
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
   ]),
-  classes: React.PropTypes.object,
-  clickable: React.PropTypes.bool,
-  expanded: React.PropTypes.bool
+  classes: PropTypes.object,
+  clickable: PropTypes.bool,
+  expanded: PropTypes.bool
 };
 
 ExpandingRow.defaultProps = {

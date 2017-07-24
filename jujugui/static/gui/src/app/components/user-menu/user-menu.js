@@ -144,11 +144,11 @@ class UserMenu extends React.Component {
 };
 
 UserMenu.propTypes = {
-  LogoutLink: React.PropTypes.object,
-  USSOLoginLink: React.PropTypes.object,
-  controllerAPI: React.PropTypes.object,
-  navigateUserAccount: React.PropTypes.func.isRequired,
-  navigateUserProfile: React.PropTypes.func.isRequired
+  LogoutLink: PropTypes.object,
+  USSOLoginLink: PropTypes.object,
+  controllerAPI: PropTypes.object,
+  navigateUserAccount: PropTypes.func.isRequired,
+  navigateUserProfile: PropTypes.func.isRequired
 };
 
 YUI.add('user-menu', function() {

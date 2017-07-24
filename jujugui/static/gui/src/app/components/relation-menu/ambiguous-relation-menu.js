@@ -58,7 +58,7 @@ const AmbiguousRelationMenu = function(props) {
 };
 
 AmbiguousRelationMenu.propTypes = {
-  endpoints: React.PropTypes.array.isRequired
+  endpoints: PropTypes.array.isRequired
 };
 
 YUI.add('ambiguous-relation-menu', function() {

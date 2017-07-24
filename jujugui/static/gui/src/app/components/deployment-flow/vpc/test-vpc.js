@@ -59,34 +59,39 @@ describe('DeploymentVPC', function() {
 
   it('renders to show the VPC widgets', function() {
     const comp = render('aws');
+    const vpcLink =
+    'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
     const expectedOutput = (
-      <div>
-        <p>
-          Optionally use a specific AWS VPC ID. When not specified, Juju
-          requires a default VPC or EC2-Classic features to be available for
-          the account/region.
+      <div className="twelve-col no-margin-bottom">
+        <p>Juju uses your default VPC – or you can specify one here.</p>
+        <p>AWS accounts created since December 2013 have this –&nbsp;
+          older accounts may not.&nbsp;
+          <a className="link"
+            target="_blank" href={vpcLink}>Default VPC basics.</a>
         </p>
-        <juju.components.GenericInput
-          label="VPC id"
-          key="vpcId"
-          ref="vpcId"
-          multiLine={false}
-          onBlur={comp.instance._onInputBlur}
-          onKeyUp={comp.instance._onInputKeyUp}
-          required={false}
-        />
-        <input
-          type="checkbox"
-          id="vpcIdForce"
-          onClick={comp.instance._onCheckboxClick}
-          onChange={comp.instance._onCheckboxChange}
-          checked={false}
-          disabled={true}
-        />
-        &nbsp;
-        Force Juju to use the AWS VPC ID specified above, even when it fails
-        the minimum validation criteria. This is ignored if VPC ID is not
-        set.
+        <div className="six-col">
+          <juju.components.GenericInput
+            label="VPC ID"
+            key="vpcId"
+            ref="vpcId"
+            multiLine={false}
+            onBlur={comp.instance._onInputBlur}
+            onKeyUp={comp.instance._onInputKeyUp}
+            required={false}
+          />
+          <label>
+            <input
+              type="checkbox"
+              id="vpcIdForce"
+              onChange={comp.instance._onCheckboxChange}
+              onClick={comp.instance._onCheckboxClick}
+              checked={false}
+              disabled={true}
+            />
+            &nbsp;
+            Always use this ID
+          </label>
+        </div>
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
@@ -95,7 +100,7 @@ describe('DeploymentVPC', function() {
   it('stores the VPC data', function() {
     const comp = render();
     const children = comp.output.props.children;
-    const input = children[1];
+    const input = children[2].props.children[0];
     // Simulate returning a value from the id value field.
     comp.instance.refs = {vpcId: {getValue: () => 'my-id'}};
     input.props.onBlur();
@@ -106,11 +111,12 @@ describe('DeploymentVPC', function() {
   it('forces the VPC data', function() {
     const comp = render();
     const children = comp.output.props.children;
-    const input = children[1];
-    const checkbox = children[2];
+    const input = children[2].props.children[0];
+    const checkbox = children[2].props.children[1].props.children[0];
+
     // Simulate forcing a value from the id value field.
     comp.instance.refs = {vpcId: {getValue: () => 'forced-id'}};
-    checkbox.props.onChange({target: {checked: true}});
+    checkbox.props.onChange.call(comp.instance, {target: {checked: true}});
     input.props.onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(2, 'forced-id', true);
@@ -120,7 +126,7 @@ describe('DeploymentVPC', function() {
     const comp = render();
     const children = comp.output.props.children;
     const instance = comp.instance;
-    const input = children[1];
+    const input = children[2].props.children[0];
     // Check that the force check box is initially disabled.
     assert.strictEqual(instance.state.forceEnabled, false, 'initial');
     // Simulate returning a value from the id value field.

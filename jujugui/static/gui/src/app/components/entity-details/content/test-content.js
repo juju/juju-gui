@@ -31,15 +31,15 @@ function _generateTagItem(tag, fn) {
   ];
 }
 
-function generateScript(isBundle) {
+function generateScript(isBundle, isDD) {
   let id = 'trusty/django-123';
   if (isBundle) {
     id = 'django-cluster';
   }
-
+  const dataDD = isDD ? 'data-dd' : '';
   return '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.5.0.js"></script>\n' +
-    '<div class="juju-card" data-id="'+id+'"></div>';
+    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
+    '<div class="juju-card" '+dataDD+' data-id="'+id+'"></div>';
 }
 
 describe('EntityContent', function() {
@@ -194,6 +194,35 @@ describe('EntityContent', function() {
       </div>
     );
     expect(output).toEqualJSX(expected);
+  });
+
+  it('can display a direct deploy card', function() {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        flags={{ddeploy: true}}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />);
+    const script = output.props.children[2].props.children.props.children[1].
+      props.children[5].props.children[2];
+    const card = output.props.children[2].props.children.props.children[1].
+      props.children[5].props.children[4];
+    const expected = (
+      <div className="juju-card" data-dd data-id="trusty/django-123"></div>);
+    const scriptExpected = (
+      <textarea
+        rows="2" cols="70" readOnly="readonly" wrap="off"
+        className="twelve-col" defaultValue={generateScript(false, true)}></textarea>);
+    expect(card).toEqualJSX(expected);
+    expect(script).toEqualJSX(scriptExpected);
   });
 
   it('can display a charm with terms', function() {

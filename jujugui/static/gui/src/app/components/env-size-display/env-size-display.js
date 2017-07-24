@@ -91,10 +91,10 @@ class EnvSizeDisplay extends React.Component {
 };
 
 EnvSizeDisplay.propTypes = {
-  appState: React.PropTypes.object.isRequired,
-  machineCount: React.PropTypes.number.isRequired,
-  pluralize: React.PropTypes.func.isRequired,
-  serviceCount: React.PropTypes.number.isRequired
+  appState: PropTypes.object.isRequired,
+  machineCount: PropTypes.number.isRequired,
+  pluralize: PropTypes.func.isRequired,
+  serviceCount: PropTypes.number.isRequired
 };
 
 YUI.add('env-size-display', function() {

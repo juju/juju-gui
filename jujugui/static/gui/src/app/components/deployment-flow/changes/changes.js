@@ -50,8 +50,8 @@ class DeploymentChanges extends React.Component {
 };
 
 DeploymentChanges.propTypes = {
-  generateAllChangeDescriptions: React.PropTypes.func.isRequired,
-  getCurrentChangeSet: React.PropTypes.func.isRequired
+  generateAllChangeDescriptions: PropTypes.func.isRequired,
+  getCurrentChangeSet: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-changes', function() {

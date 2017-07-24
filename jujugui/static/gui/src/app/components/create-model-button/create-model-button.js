@@ -52,12 +52,12 @@ class CreateModelButton extends React.Component {
 };
 
 CreateModelButton.propTypes = {
-  action: React.PropTypes.func,
-  changeState: React.PropTypes.func.isRequired,
-  disabled: React.PropTypes.bool,
-  switchModel: React.PropTypes.func.isRequired,
-  title: React.PropTypes.string,
-  type: React.PropTypes.string
+  action: PropTypes.func,
+  changeState: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  switchModel: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  type: PropTypes.string
 };
 
 CreateModelButton.defaultProps = {

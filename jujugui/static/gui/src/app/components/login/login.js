@@ -151,11 +151,11 @@ class Login extends React.Component {
 };
 
 Login.propTypes = {
-  controllerIsConnected: React.PropTypes.func.isRequired,
-  errorMessage: React.PropTypes.string,
-  gisf: React.PropTypes.bool.isRequired,
-  loginToAPIs: React.PropTypes.func.isRequired,
-  loginToController: React.PropTypes.func.isRequired
+  controllerIsConnected: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  gisf: PropTypes.bool.isRequired,
+  loginToAPIs: PropTypes.func.isRequired,
+  loginToController: PropTypes.func.isRequired
 };
 
 YUI.add('login-component', function() {

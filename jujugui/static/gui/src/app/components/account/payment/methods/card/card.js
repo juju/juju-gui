@@ -155,12 +155,12 @@ class AccountPaymentMethodCard extends React.Component {
 };
 
 AccountPaymentMethodCard.propTypes = {
-  addNotification: React.PropTypes.func,
-  card: React.PropTypes.object.isRequired,
-  onPaymentMethodRemoved: React.PropTypes.func,
-  removePaymentMethod: React.PropTypes.func,
-  updatePaymentMethod: React.PropTypes.func,
-  username: React.PropTypes.string
+  addNotification: PropTypes.func,
+  card: PropTypes.object.isRequired,
+  onPaymentMethodRemoved: PropTypes.func,
+  removePaymentMethod: PropTypes.func,
+  updatePaymentMethod: PropTypes.func,
+  username: PropTypes.string
 };
 
 YUI.add('account-payment-method-card', function() {

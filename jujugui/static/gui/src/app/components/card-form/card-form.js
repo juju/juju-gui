@@ -75,9 +75,9 @@ class CardForm extends React.Component {
 };
 
 CardForm.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  createCardElement: React.PropTypes.func.isRequired,
-  validateForm: React.PropTypes.func.isRequired
+  acl: PropTypes.object.isRequired,
+  createCardElement: PropTypes.func.isRequired,
+  validateForm: PropTypes.func.isRequired
 };
 
 YUI.add('card-form', function() {

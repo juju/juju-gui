@@ -135,7 +135,7 @@ describe('DeploymentMachines', function() {
       <div>
         <p className="deployment-machines__message">
           These machines will be provisioned on {'My cloud'}.&nbsp;
-          {'You will incur a charge from your cloud provider.'}
+          {'You may incur charges from your cloud provider.'}
         </p>
         <ul className="deployment-machines__list">
           <li className="deployment-flow__row-header twelve-col">
@@ -232,7 +232,7 @@ describe('DeploymentMachines', function() {
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'the cloud'}.&nbsp;
-        {'You will incur a charge from your cloud provider.'}
+        {'You may incur charges from your cloud provider.'}
       </p>);
     expect(output.props.children[0]).toEqualJSX(expected);
   });

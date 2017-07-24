@@ -43,7 +43,7 @@ class InspectorRelationDetails extends React.Component {
 };
 
 InspectorRelationDetails.propTypes = {
-  relation: React.PropTypes.object.isRequired
+  relation: PropTypes.object.isRequired
 };
 
 YUI.add('inspector-relation-details', function() {

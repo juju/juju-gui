@@ -137,18 +137,18 @@ class MachineViewUnplacedUnit extends React.Component {
 };
 
 MachineViewUnplacedUnit.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
-  createMachine: React.PropTypes.func.isRequired,
-  icon: React.PropTypes.string.isRequired,
-  isDragging: React.PropTypes.bool.isRequired,
-  machines: React.PropTypes.object.isRequired,
-  placeUnit: React.PropTypes.func.isRequired,
-  providerType: React.PropTypes.string,
-  removeUnit: React.PropTypes.func.isRequired,
-  selectMachine: React.PropTypes.func.isRequired,
-  series: React.PropTypes.array,
-  unit: React.PropTypes.object.isRequired
+  acl: PropTypes.object.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  createMachine: PropTypes.func.isRequired,
+  icon: PropTypes.string.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  machines: PropTypes.object.isRequired,
+  placeUnit: PropTypes.func.isRequired,
+  providerType: PropTypes.string,
+  removeUnit: PropTypes.func.isRequired,
+  selectMachine: PropTypes.func.isRequired,
+  series: PropTypes.array,
+  unit: PropTypes.object.isRequired
 };
 
 YUI.add('machine-view-unplaced-unit', function() {

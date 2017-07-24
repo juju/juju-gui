@@ -265,21 +265,21 @@ class GenericInput extends React.Component {
 };
 
 GenericInput.propTypes = {
-  autocomplete: React.PropTypes.bool,
-  disabled: React.PropTypes.bool,
-  hasExternalError: React.PropTypes.bool,
-  inlineErrorIcon: React.PropTypes.bool,
-  label: React.PropTypes.string,
-  multiLine: React.PropTypes.bool,
-  onBlur: React.PropTypes.func,
-  onChange: React.PropTypes.func,
-  onFocus: React.PropTypes.func,
-  onKeyUp: React.PropTypes.func,
-  placeholder: React.PropTypes.string,
-  required: React.PropTypes.bool,
-  type: React.PropTypes.string,
-  validate: React.PropTypes.array,
-  value: React.PropTypes.string
+  autocomplete: PropTypes.bool,
+  disabled: PropTypes.bool,
+  hasExternalError: PropTypes.bool,
+  inlineErrorIcon: PropTypes.bool,
+  label: PropTypes.string,
+  multiLine: PropTypes.bool,
+  onBlur: PropTypes.func,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onKeyUp: PropTypes.func,
+  placeholder: PropTypes.string,
+  required: PropTypes.bool,
+  type: PropTypes.string,
+  validate: PropTypes.array,
+  value: PropTypes.string
 };
 
 GenericInput.defaultProps = {

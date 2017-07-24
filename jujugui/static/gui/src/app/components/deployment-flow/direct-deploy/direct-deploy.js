@@ -178,13 +178,13 @@ class DeploymentDirectDeploy extends React.Component {
 };
 
 DeploymentDirectDeploy.propTypes = {
-  changeState: React.PropTypes.func.isRequired,
-  ddData: React.PropTypes.object.isRequired,
-  generatePath: React.PropTypes.func.isRequired,
-  getDiagramURL: React.PropTypes.func.isRequired,
-  getEntity: React.PropTypes.func.isRequired,
-  makeEntityModel: React.PropTypes.func.isRequired,
-  renderMarkdown: React.PropTypes.func.isRequired
+  changeState: PropTypes.func.isRequired,
+  ddData: PropTypes.object.isRequired,
+  generatePath: PropTypes.func.isRequired,
+  getDiagramURL: PropTypes.func.isRequired,
+  getEntity: PropTypes.func.isRequired,
+  makeEntityModel: PropTypes.func.isRequired,
+  renderMarkdown: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-direct-deploy', function() {

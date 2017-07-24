@@ -297,18 +297,18 @@ class ServiceOverview extends React.Component {
 };
 
 ServiceOverview.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  charm: React.PropTypes.object.isRequired,
-  clearState: React.PropTypes.func.isRequired,
-  destroyService: React.PropTypes.func.isRequired,
-  displayPlans: React.PropTypes.bool.isRequired,
-  getUnitStatusCounts: React.PropTypes.func.isRequired,
-  modelUUID: React.PropTypes.string.isRequired,
-  service: React.PropTypes.object.isRequired,
-  serviceRelations: React.PropTypes.array.isRequired,
-  showActivePlan: React.PropTypes.func.isRequired,
-  showPlans: React.PropTypes.bool.isRequired
+  acl: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
+  charm: PropTypes.object.isRequired,
+  clearState: PropTypes.func.isRequired,
+  destroyService: PropTypes.func.isRequired,
+  displayPlans: PropTypes.bool.isRequired,
+  getUnitStatusCounts: PropTypes.func.isRequired,
+  modelUUID: PropTypes.string.isRequired,
+  service: PropTypes.object.isRequired,
+  serviceRelations: PropTypes.array.isRequired,
+  showActivePlan: PropTypes.func.isRequired,
+  showPlans: PropTypes.bool.isRequired
 };
 
 YUI.add('service-overview', function() {

@@ -261,22 +261,6 @@ class BudgetTableRow extends React.Component {
   }
 
   /**
-    Generate the extra info section.
-
-    @method _generateExtra
-    @returns {Object} The extra info markup.
-  */
-  _generateExtra() {
-    if (!this.props.showExtra) {
-      return;
-    }
-    return (
-      <div className="twelve-col no-margin-bottom">
-        {this.props.extraInfo}
-      </div>);
-  }
-
-  /**
     Get the list of terms for the application, updating the state with these
     terms.
 
@@ -409,7 +393,9 @@ class BudgetTableRow extends React.Component {
           <div>
             {this._generateSharedFields()}
             {this._generatePlanCols()}
-            {this._generateExtra()}
+            <div className="twelve-col no-margin-bottom">
+              {this.props.extraInfo}
+            </div>
             {this._generateTermsLink()}
           </div>
           <div>
@@ -423,17 +409,16 @@ class BudgetTableRow extends React.Component {
 };
 
 BudgetTableRow.propTypes = {
-  acl: React.PropTypes.object.isRequired,
-  allocationEditable: React.PropTypes.bool,
-  charmsGetById: React.PropTypes.func,
-  extraInfo: React.PropTypes.object,
-  listPlansForCharm: React.PropTypes.func,
-  parseTermId: React.PropTypes.func,
-  plansEditable: React.PropTypes.bool,
-  service: React.PropTypes.object.isRequired,
-  showExtra: React.PropTypes.bool,
-  showTerms: React.PropTypes.func,
-  withPlans: React.PropTypes.bool
+  acl: PropTypes.object.isRequired,
+  allocationEditable: PropTypes.bool,
+  charmsGetById: PropTypes.func,
+  extraInfo: PropTypes.object,
+  listPlansForCharm: PropTypes.func,
+  parseTermId: PropTypes.func,
+  plansEditable: PropTypes.bool,
+  service: PropTypes.object.isRequired,
+  showTerms: PropTypes.func,
+  withPlans: PropTypes.bool
 };
 
 YUI.add('budget-table-row', function() {

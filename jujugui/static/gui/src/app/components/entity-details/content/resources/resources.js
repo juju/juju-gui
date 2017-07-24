@@ -102,10 +102,10 @@ class EntityResources extends React.Component {
 };
 
 EntityResources.propTypes = {
-  apiUrl: React.PropTypes.string.isRequired,
-  entityId: React.PropTypes.string.isRequired,
-  pluralize: React.PropTypes.func.isRequired,
-  resources: React.PropTypes.array
+  apiUrl: PropTypes.string.isRequired,
+  entityId: PropTypes.string.isRequired,
+  pluralize: PropTypes.func.isRequired,
+  resources: PropTypes.array
 };
 
 YUI.add('entity-resources', function() {
