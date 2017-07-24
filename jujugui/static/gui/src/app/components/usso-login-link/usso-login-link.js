@@ -60,7 +60,7 @@ class USSOLoginLink extends React.Component {
   */
   _renderTextLink() {
     return (
-      <a className={'logout-link usso-login__action'}
+      <a className={'usso-login__action'}
         onClick={this.handleLogin.bind(this)}
         target="_blank">
         {this._generateContent('Login')}

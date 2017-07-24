@@ -18,6 +18,10 @@
     display: none;
   }
 
+  &__action {
+    cursor: pointer;
+  }
+
   &__action:hover + &__notification {
     display: block;
   }
