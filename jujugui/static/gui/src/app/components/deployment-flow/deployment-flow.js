@@ -40,7 +40,7 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
-      sshKey: null,
+      sshKeys: null,
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
       // Whether the user has ticked the checked to agree to terms.
@@ -119,7 +119,7 @@ class DeploymentFlow extends React.Component {
     let disabled;
     let visible;
     const hasCloud = !!this.state.cloud;
-    const hasSSHkey = !!this.state.sshKey;
+    const hasSSHkey = !!this.state.sshKeys;
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
@@ -233,11 +233,11 @@ class DeploymentFlow extends React.Component {
   /**
     Store the provided SSH key in state.
 
-    @method _setSSHKey
-    @param {String} key The SSH key.
+    @method _setSSHKeys
+    @param {Array} keys The list of SSH keys.
   */
-  _setSSHKey(key) {
-    this.setState({sshKey: key});
+  _setSSHKeys(keys) {
+    this.setState({sshKeys: keys});
   }
 
   /**
@@ -335,8 +335,14 @@ class DeploymentFlow extends React.Component {
       credential: this.state.credential,
       region: this.state.region
     };
-    if (this.state.sshKey) {
-      args.config['authorized-keys'] = this.state.sshKey;
+    if (this.state.sshKeys) {
+      // Guarantee we have at least one key.
+      args.config['authorized-keys'] = this.state.sshKeys[0].text;
+      // Also add to change set - adding keys twice is a no-op.
+      this.props.addSSHKeys([
+        this.props.getUserName(),
+        this.state.sshKeys.map(key => key.text),
+        (error, data) => { console.log(error, data); }], {});
     }
     if (this.state.vpcId) {
       args.config['vpc-id'] = this.state.vpcId;
@@ -519,7 +525,7 @@ class DeploymentFlow extends React.Component {
         <juju.components.DeploymentSSHKey
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
-          setSSHKey={this._setSSHKey.bind(this)}
+          setSSHKeys={this._setSSHKeys.bind(this)}
           WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
@@ -1005,7 +1011,7 @@ class DeploymentFlow extends React.Component {
     // has been provided.
     // TODO frankban: avoid duplicating the logic already implemented in the
     // DeploymentSSHKey component.
-    if (this.state.cloud.cloudType === 'azure' && !this.state.sshKey) {
+    if (this.state.cloud.cloudType === 'azure' && !this.state.sshKeys) {
       return false;
     }
     // A new model is ready to be created.
