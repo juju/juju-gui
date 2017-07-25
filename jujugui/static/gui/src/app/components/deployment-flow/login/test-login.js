@@ -266,6 +266,7 @@ describe('DeploymentLogin', function() {
     const callback = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <juju.components.DeploymentLogin
+        addNotification={sinon.stub()}
         callback={callback}
         gisf={true}
         isDirectDeploy={true}
