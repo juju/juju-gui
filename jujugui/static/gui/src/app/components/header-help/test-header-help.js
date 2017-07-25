@@ -215,6 +215,35 @@ describe('HeaderHelp', function() {
       }
     );
 
+    it('shows the jujuchams issues page if in gijoe and logged in', () => {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.HeaderHelp.prototype.wrappedComponent
+          appState={appState}
+          displayShortcutsModal={sinon.stub()}
+          gisf={false}
+          user={{}} />, true);
+      const instance = renderer.getMountedInstance();
+      instance._toggleHelpMenu();
+      const output = renderer.getRenderOutput();
+
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-menu__button header-menu__show-menu');
+
+      const expected = (
+        <li className="header-menu__menu-list-item
+            header-menu__menu-list-item-with-link"
+          role="menuitem" tabIndex="0">
+          <a className="header-menu__menu-list-item-link"
+            href="https://jujucharms.com/docs/stable/about-juju"
+            target="_blank">
+            Get Support
+          </a>
+        </li>);
+      const menu = output.props.children[1];
+      expect(menu.props.children.props.children[1]).toEqualJSX(expected);
+    });
+
     it('keyboard shortcuts link calls app._displayShortcutsModal', () => {
       const showFunc = sinon.stub();
       const evt = {
