@@ -30,9 +30,12 @@ class DeploymentFlow extends React.Component {
     const modelCommitted = this.props.modelCommitted;
     this.state = {
       cloud: modelCommitted ? this.props.cloud : null,
-      deploying: false,
       credential: this.props.credential,
+      deploying: false,
+      ddEntity: null,
+      loadingEntity: false,
       loadingTerms: false,
+      isDirectDeploy: !!(this.props.ddData && this.props.ddData.id),
       modelName: this.props.modelName,
       newTerms: [],
       paymentUser: null,
@@ -52,6 +55,9 @@ class DeploymentFlow extends React.Component {
       this._getAgreements();
     }
     this.sendAnalytics('Component mounted');
+    if (this.state.isDirectDeploy) {
+      this._getDirectDeployEntity(this.props.ddData.id);
+    }
   }
 
   componentDidMount() {
@@ -75,6 +81,28 @@ class DeploymentFlow extends React.Component {
   componentWillUnmount() {
     this.xhrs.forEach((xhr) => {
       xhr && xhr.abort && xhr.abort();
+    });
+  }
+
+  /**
+    Fetches the supplied entity in a directDeploy deployment flow.
+    @param {String} entityId The entity id to fetch.
+  */
+  _getDirectDeployEntity(entityId) {
+    const props = this.props;
+    this.setState({loadingEntity: true});
+    props.getEntity(entityId, (error, data) => {
+      this.setState({loadingEntity: false});
+      if (error) {
+        console.error('unable to fetch entity: ' + error);
+        props.addNotification({
+          title: 'Unable to fetch entity',
+          message: `Unable to fetch entity: ${error}`,
+          level: 'error'
+        });
+        return;
+      }
+      this.setState({ddEntity: this.props.makeEntityModel(data[0])});
     });
   }
 
@@ -606,12 +634,29 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Determines if we should show the login links in the Deployment Login component.
+    @return {Boolean} Whether or not it should render based on the component state.
+  */
+  _shouldShowLoginLinks() {
+    const state = this.state;
+    const isDirectDeploy = state.isDirectDeploy;
+    if (!isDirectDeploy) {
+      // We always want to show the login links if it's not Direct Deploy.
+      return true;
+    }
+    // If it is Direct Deploy and we cannot load the entity then we
+    // don't want to give the user the option to log in and continue deploying.
+    return state.isDirectDeploy && !state.loadingEntity && !!state.ddEntity;
+  }
+
+  /**
     Generate the login link
 
     @method _generateLogin
     @returns {Object} The markup.
   */
   _generateLogin() {
+    const state = this.state;
     if (this.props.isLoggedIn()) {
       return null;
     }
@@ -624,7 +669,8 @@ class DeploymentFlow extends React.Component {
       <juju.components.DeploymentLogin
         callback={callback}
         gisf={this.props.gisf}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={state.isDirectDeploy}
+        showLoginLinks={this._shouldShowLoginLinks()}
         loginToController={this.props.loginToController} />);
   }
 
@@ -892,19 +938,27 @@ class DeploymentFlow extends React.Component {
   */
   _generateDirectDeploy() {
     const props = this.props;
-    if (props.ddData && props.ddData.id) {
+    const state = this.state;
+    if (!this.state.isDirectDeploy) {
+      return;
+    }
+    if (state.loadingEntity) {
+      return (<juju.components.Spinner />);
+    }
+    if (!state.loadingEntity) {
+      // As long as we're not loading the entity then pass what data we do have
+      // through to the DirectDeploy component and have it determine what to
+      // render.
       return (
         <juju.components.DeploymentDirectDeploy
           changeState={props.changeState}
           ddData={props.ddData}
+          entityModel={state.ddEntity}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
-          getEntity={props.getEntity}
-          makeEntityModel={props.makeEntityModel}
-          renderMarkdown={props.renderMarkdown} />
-      );
+          renderMarkdown={props.renderMarkdown} />);
     }
-    return false;
+    return null;
   }
 
   /**
@@ -962,7 +1016,7 @@ class DeploymentFlow extends React.Component {
     return (
       <juju.components.DeploymentPanel
         changeState={this.props.changeState}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={this.state.isDirectDeploy}
         loggedIn={this.props.isLoggedIn()}
         sendAnalytics={this.sendAnalytics.bind(this)}
         title={this.props.modelName}>
@@ -1062,6 +1116,7 @@ YUI.add('deployment-flow', function() {
     'deployment-vpc',
     'entity-content-diagram',
     'generic-button',
-    'generic-input'
+    'generic-input',
+    'loading-spinner'
   ]
 });
