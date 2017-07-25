@@ -551,7 +551,7 @@ describe('DeploymentFlow', function() {
         gisf={true}
         isDirectDeploy={false}
         loginToController={loginToController}
-        showLoginLinks={true}/>);
+        showLoginLinks={true} />);
     expect(output.props.children[10]).toEqualJSX(expected);
   });
 

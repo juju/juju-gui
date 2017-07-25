@@ -254,7 +254,7 @@ describe('DeploymentLogin', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can emit the login links when requested', function() {
+  it('displays the login links when requested', function() {
     const callback = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <juju.components.DeploymentLogin
