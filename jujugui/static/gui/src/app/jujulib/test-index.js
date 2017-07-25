@@ -80,6 +80,12 @@ describe('jujulib utility functions', () => {
       assert.deepEqual(stub.args, [['error', 'data']]);
     });
 
+    it('calls the supplied callback if no data', () => {
+      const cb = sinon.stub();
+      transform(cb, null, null);
+      assert.deepEqual(cb.args[0], [null, null]);
+    });
+
     it('lowercases data keys and calls supplied callback', () => {
       const stub = sinon.stub();
       transform(stub, null, {Upper: 'case', Keys: 'here'});

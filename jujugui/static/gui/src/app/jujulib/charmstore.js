@@ -83,6 +83,10 @@ var module = module;
     _transformQueryResults: function(callback, error, data) {
       if (error !== null) {
         callback(error, data);
+      } else if (!data) {
+        // The only time there should be no data and no error is if the
+        // request to the charmstore times out, or is blocked by a vpn.
+        callback('no entity data returned, can you access the charmstore?');
       } else {
         // If there is a single charm or bundle being requested then we need
         // to wrap it in an array so we can use the same map code.

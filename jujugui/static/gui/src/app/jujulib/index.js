@@ -72,7 +72,7 @@ var module = module;
   };
 
   const _transformAuthObject = function(callback, error, data) {
-    if (error !== null) {
+    if (error !== null || !data) {
       callback(error, data);
     } else {
       const auth = {};
