@@ -150,7 +150,7 @@ class EntityDetails extends React.Component {
     @param {Array} models A list of the entity models found.
   */
   _fetchCallback(error, data) {
-    if (error) {
+    if (error || !data) {
       this._changeActiveComponent('error');
       console.error('cannot fetch the entity:' + error);
       return;
