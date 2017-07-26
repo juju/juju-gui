@@ -137,6 +137,7 @@ describe('EntityHeader', function() {
                 ref="deployAction"
                 action={instance._handleDeployClick}
                 disabled={false}
+                tooltip="Add this charm to a new model"
                 type="positive">
                 Add to model
               </juju.components.GenericButton>
@@ -668,8 +669,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -677,6 +677,7 @@ describe('EntityHeader', function() {
         ref="deployAction"
         action={instance._handleDeployClick}
         disabled={true}
+        tooltip="Add this charm to a new model"
         type="positive">
         Add to model
       </juju.components.GenericButton>);
