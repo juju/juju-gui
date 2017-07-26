@@ -206,7 +206,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         deployTarget={sinon.stub()}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -241,7 +241,7 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={
               output.props.children.props.children.props.changeState}
-            flags={{ddeploy: true}}
+            flags={{'test.ddeploy': true}}
             getEntity={getEntity}
             getModelName={getModelName}
             hash="readme"
