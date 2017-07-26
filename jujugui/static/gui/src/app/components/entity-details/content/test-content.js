@@ -203,7 +203,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
