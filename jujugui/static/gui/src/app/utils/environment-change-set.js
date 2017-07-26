@@ -602,17 +602,7 @@ YUI.add('environment-change-set', function(Y) {
         args: args,
         options: options
       };
-      const record = this._createNewRecord('addSSHKeys', command, []);
-      // For now, just do this for current machines, as this step only takes
-      // place during deploy. In the future, we may want to add this to
-      // machine parents when creating; but by then, Trusty my be end-of-
-      // lifed, obviating the need to do this.
-      Object.keys(this.changeSet).forEach(key => {
-        if (command.method === '_addMachine') {
-          command.parents.push(record.key);
-        }
-      });
-      return record;
+      return this._createNewRecord('addSSHKeys', command, []);
     },
   
     lazyImportSSHKeys: function(args, options) {
@@ -621,17 +611,7 @@ YUI.add('environment-change-set', function(Y) {
         args: args,
         options: options
       };
-      const record = this._createNewRecord('importSSHKeys', command, []);
-      // For now, just do this for current machines, as this step only takes
-      // place during deploy. In the future, we may want to add this to
-      // machine parents when creating; but by then, Trusty my be end-of-
-      // lifed, obviating the need to do this.
-      Object.keys(this.changeSet).forEach(key => {
-        if (command.method === '_addMachine') {
-          command.parents.push(record.key);
-        }
-      });
-      return record;
+      return this._createNewRecord('importSSHKeys', command, []);
     },
 
     /**
