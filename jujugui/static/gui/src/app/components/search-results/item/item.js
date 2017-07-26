@@ -296,7 +296,8 @@ class SearchResultsItem extends React.Component {
             <a className="list-block__list--item-link"
               href={
                 this.props.generatePath({search: null, profile: item.owner})}
-              onClick={this._handleOwnerClick.bind(this, item.owner)}>
+              onClick={this._handleOwnerClick.bind(this, item.owner)}
+              title={`See other charms and bundles by ${item.owner}`}>
               {item.owner}
             </a>
           </p>
