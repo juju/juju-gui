@@ -192,9 +192,9 @@ describe('State', () => {
     error: null
   }, {
     path:
-      'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
+      'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy',
     state: {
-      gui: { inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: 'foo'}
+      gui: { inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: ''}
     },
     error: null
   }, {
