@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class CheckListItem extends React.Component {
+class CheckListItem extends React.PureComponent {
   constructor() {
     super();
     this.state = {

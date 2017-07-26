@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class Spinner extends React.Component {
+class Spinner extends React.PureComponent {
   render() {
     return (
       <div className="spinner-container">

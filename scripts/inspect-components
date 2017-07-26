@@ -27,7 +27,7 @@ _WHITELISTED_PROPS = {
 _definition_exp = re.compile(r"""
     class\s+  # Class definition.
     ([\w\._]+)\s*  # Component name.
-    extends\s+React.Component\s+\{  # Superclass definition.
+    extends\s+React.(Pure)?Component\s+\{  # Superclass definition.
 """, re.VERBOSE)
 _fields_exp = re.compile(r"""
     ([\w_]+)\s*  # Field name.
@@ -39,7 +39,7 @@ _fields_exp = re.compile(r"""
 _MAX_WORKERS = 10
 
 
-class Definition(namedtuple('Definition', 'name path line props')):
+class Definition(namedtuple('Definition', 'name path line props pure')):
     """A react component definition."""
 
     __slots__ = ()
@@ -51,12 +51,15 @@ class Definition(namedtuple('Definition', 'name path line props')):
             'path_label': yellow('path:'),
             'path': self.path,
             'line': self.line,
+            'pure_label': yellow('pure:'),
+            'pure': 'yes' if self.pure else 'no',
             'props_label': yellow('declared properties:'),
             'props': '\n'.join('    {}'.format(prop) for prop in self.props),
         }
         return (
             '{name}:\n'
             '  {path_label} {path}:{line}\n'
+            '  {pure_label} {pure}\n'
             '  {props_label}\n'
             '{props}'
             ''.format(**ctx)
@@ -129,11 +132,22 @@ class Instantiation(namedtuple('Instantiation', 'definition path line props')):
 class _Node():
     """A node that can be used for generating a tree."""
 
-    def __init__(self, name):
+    def __init__(self, name, pure):
         """The provided name identifies this node."""
         self.name = name
+        self._pure = pure
         self._parent = None
         self._children = []
+
+    def __str__(self):
+        """Return the string representation for the node."""
+        juju = 'juju.components.'
+        name = self.name
+        if name.startswith(juju):
+            name = name[len(juju):]
+        if self._pure:
+            return yellow(name)
+        return name
 
     @property
     def parent(self):
@@ -169,7 +183,7 @@ def find_definitions(path, regexp=None, include_tests=False):
             content = fileobj.read()
         definitions = []
         for match in _definition_exp.finditer(content):
-            name = match.groups()[0]
+            name, pure = match.groups()
             if regexp and not re.search(regexp, name):
                 continue
             line = content[:match.start(1)].count('\n') + 1
@@ -183,6 +197,7 @@ def find_definitions(path, regexp=None, include_tests=False):
                 path=filepath,
                 line=line,
                 props=props,
+                pure=bool(pure),
             ))
         return definitions
 
@@ -387,35 +402,47 @@ def _execute_tree(options):
     """Print out all component definitions."""
     logging.debug('executing tree: {}'.format(options.path))
     definitions = tuple(find_definitions(options.path, None))
-    nodes = dict((defn.path, _Node(defn.name)) for defn in definitions)
-    num_instantiations = 0
+    nodes = {}
+    num_pure = 0
+    for definition in definitions:
+        pure = definition.pure
+        if pure:
+            num_pure += 1
+        nodes[definition.path] = _Node(definition.name, pure)
+    num_instantiations = num_pure_instantiations = 0
     for instantiation in find_instantiations(
             options.path, definitions, include_tests=options.test):
         num_instantiations += 1
         definition = instantiation.definition
+        if definition.pure:
+            num_pure_instantiations += 1
         parent = nodes.get(instantiation.path)
         if parent is None or parent.name == definition.name:
             continue
         node = nodes[definition.path]
         node.parent = parent
+    key = operator.attrgetter('name')
     topnodes = sorted([
         node for node in nodes.values() if node.parent is None
-    ], key=operator.attrgetter('name'))
+    ], key=key)
     for node in topnodes:
         walk_node(node)
     print(green('\n{} components instantiated {} times'.format(
         len(definitions), num_instantiations)))
+    print(yellow('{} pure components instantiated {} times ({:.1f}%)'.format(
+        num_pure, num_pure_instantiations,
+        num_pure_instantiations / num_instantiations * 100)))
+    leaves = sorted([
+        node for node in nodes.values() if not node.children
+    ], key=key)
+    print('{} {}'.format(green('leaves:'), ', '.join(map(str, leaves))))
 
 
 def walk_node(node, prefix=''):
     pipe = '│'
     leaf = '├─'
     last = '└─'
-    juju = 'juju.components.'
-    name = node.name
-    if name.startswith(juju):
-        name = name[len(juju):]
-    print('{}{}'.format(blue(prefix) if prefix else '\n', name))
+    print('{}{}'.format(blue(prefix) if prefix else '\n', node))
     if prefix.endswith(leaf):
         prefix = prefix[:-len(leaf)] + pipe + '  '
     elif prefix.endswith(last):
