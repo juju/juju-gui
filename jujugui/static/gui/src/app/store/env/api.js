@@ -2564,6 +2564,15 @@ YUI.add('juju-env-api', function(Y) {
       }, handler);
     },
 
+    addKeys: function(user, keys, callback, options) {
+      if (options && options.immediate) {
+        this._addKeys(user, keys, callback);
+        return;
+      }
+      this.get('ecs').lazyAddSSHKeys(
+        [user, keys, callback], options);
+    },
+
     /**
       Add new authorized SSH keys for the specified user.
 
@@ -2579,8 +2588,17 @@ YUI.add('juju-env-api', function(Y) {
           callback is called with (null, [null, null]) while if key1 fails the
           callback is called with (null, ["some error", null]).
     */
-    addKeys: function(user, keys, callback) {
+    _addKeys: function(user, keys, callback) {
       this._addOrImportKeys('AddKeys', user, keys, callback);
+    },
+
+    importKeys: function(user, keys, callback, options) {
+      if (options && options.immediate) {
+        this._importKeys(user, keys, callback);
+        return;
+      }
+      this.get('ecs').lazyImportSSHKeys(
+        [user, keys, callback], options);
     },
 
     /**
@@ -2600,7 +2618,7 @@ YUI.add('juju-env-api', function(Y) {
           callback is called with (null, [null, null]) while if id1 fails the
           callback is called with (null, ["some error", null]).
     */
-    importKeys: function(user, ids, callback) {
+    _importKeys: function(user, ids, callback) {
       this._addOrImportKeys('ImportKeys', user, ids, callback);
     },
 

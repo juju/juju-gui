@@ -336,13 +336,14 @@ class DeploymentFlow extends React.Component {
       region: this.state.region
     };
     if (this.state.sshKeys) {
-      // Guarantee we have at least one key.
+      // Attempt to provide at least one key in case the addSSHKeys call fails.
       args.config['authorized-keys'] = this.state.sshKeys[0].text;
       // Also add to change set - adding keys twice is a no-op.
-      this.props.addSSHKeys([
+      this.props.addSSHKeys(
         this.props.getUserName(),
         this.state.sshKeys.map(key => key.text),
-        (error, data) => { console.log(error, data); }], {});
+        (error, data) => { console.log(error, data); },
+        {});
     }
     if (this.state.vpcId) {
       args.config['vpc-id'] = this.state.vpcId;

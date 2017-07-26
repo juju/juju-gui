@@ -612,8 +612,28 @@ YUI.add('environment-change-set', function(Y) {
           command.parents.push(record.key);
         }
       });
+      return record;
     },
   
+    lazyImportSSHKeys: function(args, options) {
+      const command = {
+        method: 'importKeys',
+        args: args,
+        options: options
+      };
+      const record = this._createNewRecord('importSSHKeys', command, []);
+      // For now, just do this for current machines, as this step only takes
+      // place during deploy. In the future, we may want to add this to
+      // machine parents when creating; but by then, Trusty my be end-of-
+      // lifed, obviating the need to do this.
+      Object.keys(this.changeSet).forEach(key => {
+        if (command.method === '_addMachine') {
+          command.parents.push(record.key);
+        }
+      });
+      return record;
+    },
+
     /**
       Creates a new entry in the queue for creating a new service.
 

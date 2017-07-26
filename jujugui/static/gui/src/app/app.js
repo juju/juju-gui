@@ -1331,7 +1331,7 @@ YUI.add('juju-gui', function(Y) {
             this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}
           changes={currentChangeSet}
-          addSSHKeys={ecs.lazyAddSSHKeys.bind(ecs)}
+          addSSHKeys={env.addKeys.bind(env)}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
           sendAnalytics={this.sendAnalytics}
