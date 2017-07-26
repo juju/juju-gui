@@ -209,6 +209,8 @@ YUI.add('environment-change-set', function(Y) {
         command.prepare(this.get('db'));
       }
       this._markCommitStatus('in-progress', record.command);
+      // XXX we should ensure that the method is actually a function.
+      // Makyo 2017-07-26
       env[command.method].apply(env, command.args);
     },
 

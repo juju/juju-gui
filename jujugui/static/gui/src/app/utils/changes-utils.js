@@ -104,7 +104,7 @@ YUI.add('changes-utils', function(Y) {
       array of descriptions.
   */
   ChangesUtils.sortDescriptionsByApplication = (getServiceById, changeset, descriptions) => { // eslint-disable-line max-len
-    const methodBlacklist = ['addCharm', 'addMachines'];
+    const methodBlacklist = ['addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys'];
     const grouped = {};
     // If the application name is a temporary ID (contains $)
     // then fetch its real name and return that or return the original name.
@@ -314,7 +314,7 @@ YUI.add('changes-utils', function(Y) {
         default:
           changeItem.icon = 'changes-unknown';
           changeItem.description = 'An unknown change has been made ' +
-              'to this enviroment via the CLI.';
+              'to this model via the CLI.';
           break;
       }
     }
