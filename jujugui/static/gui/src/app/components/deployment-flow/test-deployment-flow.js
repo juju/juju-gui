@@ -145,10 +145,12 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    const addNotification = sinon.stub();
     const formatConstraints = sinon.stub();
     const generateMachineDetails = sinon.stub();
     const validateForm = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       formatConstraints: formatConstraints,
       generateMachineDetails: generateMachineDetails,
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
@@ -201,6 +203,7 @@ describe('DeploymentFlow', function() {
           title="Choose cloud to deploy to">
           <juju.components.DeploymentCloud
             acl={props.acl}
+            addNotification={props.addNotification}
             cloud={null}
             controllerIsReady={props.controllerIsReady}
             listClouds={props.listClouds}
@@ -215,6 +218,7 @@ describe('DeploymentFlow', function() {
           title={<span>Add public SSH keys <em>(optional)</em></span>}>
           <juju.components.DeploymentSSHKey
             WebHandler={props.WebHandler}
+            addNotification={props.addNotification}
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKeys={instance._setSSHKeys}
@@ -235,9 +239,10 @@ describe('DeploymentFlow', function() {
             machines={props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>
         <div className="deployment-services">
-          <AccordionSection title="Model changes">
-            <DeploymentServices
+          <juju.components.AccordionSection title="Model changes">
+            <juju.components.DeploymentServices
               acl={props.acl}
+              addNotification={props.addNotification}
               changesFilterByParent={props.changesFilterByParent}
               charmsGetById={props.charmsGetById}
               generateAllChangeDescriptions={props.generateAllChangeDescriptions}
@@ -247,9 +252,8 @@ describe('DeploymentFlow', function() {
               parseTermId={instance._parseTermId}
               showTerms={props.showTerms}
               sortDescriptionsByApplication={props.sortDescriptionsByApplication}
-              withPlans={true}
-            />
-          </AccordionSection>
+              withPlans={true} />
+          </juju.components.AccordionSection>
         </div>
         <juju.components.DeploymentSection
           completed={false}
@@ -259,6 +263,7 @@ describe('DeploymentFlow', function() {
           title="Confirm budget">
           <juju.components.DeploymentBudget
             acl={props.acl}
+            addNotification={props.addNotification}
             listBudgets={props.listBudgets}
             setBudget={instance._setBudget}
             user="dalek" />
@@ -283,6 +288,7 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders direct deploy when ddData is set', () => {
+    const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
     const entityModel = {id: entityId};
@@ -291,6 +297,7 @@ describe('DeploymentFlow', function() {
     const makeEntityModel = sinon.stub().returns(entityModel);
     const renderMarkdown = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
       getEntity: getEntity,
@@ -308,6 +315,7 @@ describe('DeploymentFlow', function() {
     const output2 = renderer.getRenderOutput();
     expect(output2.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
+        addNotification={addNotification}
         changeState={changeState}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub()}
@@ -538,8 +546,10 @@ describe('DeploymentFlow', function() {
   });
 
   it('renders the login when necessary', function() {
+    const addNotification = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = createDeploymentFlow({
+      addNotification: addNotification,
       gisf: true,
       isLoggedIn: sinon.stub().returns(false),
       loginToController: loginToController,
@@ -548,6 +558,7 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <juju.components.DeploymentLogin
+        addNotification={addNotification}
         callback={output.props.children[10].props.callback}
         gisf={true}
         isDirectDeploy={false}

@@ -56,6 +56,7 @@ class HeaderBreadcrumb extends React.Component {
       <li className="header-breadcrumb__list-item">
         <window.juju.components.EnvSwitcher
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           user={this.props.user}
           changeState={this.props.changeState}
           environmentName={this.props.modelName}
@@ -167,6 +168,7 @@ class HeaderBreadcrumb extends React.Component {
 
 HeaderBreadcrumb.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   humanizeTimestamp: PropTypes.func.isRequired,

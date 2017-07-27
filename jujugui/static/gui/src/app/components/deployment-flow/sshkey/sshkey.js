@@ -84,7 +84,13 @@ class DeploymentSSHKey extends React.Component {
   */
   _addGithubKeysCallback(error, keys) {
     if (error) {
-      console.error(error);
+      const message = 'could not get SSH keys';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       this.setState({error: error});
       return;
     }
@@ -355,6 +361,7 @@ class DeploymentSSHKey extends React.Component {
 
 DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired

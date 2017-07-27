@@ -24,6 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSSHKey', function() {
+  let addNotification;
   let setSSHKeys;
   let getGithubSSHKeys;
 
@@ -35,6 +36,7 @@ describe('DeploymentSSHKey', function() {
   });
 
   beforeEach(() => {
+    addNotification = sinon.stub();
     setSSHKeys = sinon.stub();
     getGithubSSHKeys = sinon.stub();
   });
@@ -48,6 +50,7 @@ describe('DeploymentSSHKey', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSSHKey
         WebHandler={sinon.stub()}
+        addNotification={addNotification}
         cloud={cloud}
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
@@ -162,6 +165,18 @@ describe('DeploymentSSHKey', function() {
   });
 
   describe('github', () => {
+    it('handles errors when getting keys', () => {
+      const comp = render('aws');
+      comp.instance._addGithubKeysCallback('Uh oh!', null);
+      comp.renderer.getRenderOutput();
+      assert.equal(addNotification.callCount, 1);
+      assert.deepEqual(addNotification.args[0][0], {
+        title: 'could not get SSH keys',
+        message: 'could not get SSH keys: Uh oh!',
+        level: 'error'
+      });
+    });
+
     it('shows an error if no keys found', () => {
       const comp = render('aws');
       comp.instance._addGithubKeysCallback(null, []);

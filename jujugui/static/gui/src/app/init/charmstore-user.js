@@ -18,7 +18,13 @@ const CharmstoreUserMixin = (superclass) => class extends superclass {
   storeUser(service, rerenderProfile, rerenderBreadcrumb) {
     const callback = (error, auth) => {
       if (error) {
-        console.error('Unable to query user information', error);
+        const message = 'Unable to query user information';
+        console.error(message, error);
+        this.db.notifications.add({
+          title: message,
+          message: `${message}: ${error}`,
+          level: 'error'
+        });
         return;
       }
       if (auth) {

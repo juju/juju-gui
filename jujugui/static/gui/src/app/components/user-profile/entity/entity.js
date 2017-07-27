@@ -333,10 +333,13 @@ class UserProfileEntity extends React.Component {
       filters,
       (error, charmMetrics) => {
         if (error) {
-          // TODO When there are designs for showing errors for metrics,
-          // we'll be able to implement them here.
-          // Makyo - 2017-04-13
-          console.error(error);
+          const message = 'unable to retrieve metrics';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
           // don't render metrics in case of an error
           this.setState({hasMetrics: false});
           return;
@@ -504,6 +507,7 @@ class UserProfileEntity extends React.Component {
 
 UserProfileEntity.propTypes = {
   acl: PropTypes.object,
+  addNotification: PropTypes.func,
   changeState: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.object,

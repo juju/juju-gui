@@ -61,7 +61,13 @@ class EnvSwitcher extends React.Component {
   */
   _updateModelListCallback(err, models) {
     if (err) {
-      console.error(err);
+      const message = 'unable to retrieve model list';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${err}`,
+        level: 'error'
+      });
+      console.error(message, err);
       return;
     }
     const modelList = models.filter(model => {
@@ -181,6 +187,7 @@ class EnvSwitcher extends React.Component {
 
 EnvSwitcher.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   humanizeTimestamp: PropTypes.func.isRequired,

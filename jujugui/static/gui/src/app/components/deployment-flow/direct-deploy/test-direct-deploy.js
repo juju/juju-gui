@@ -33,6 +33,7 @@ describe('DirectDeploy', function() {
   it('can show a message for an invalid bundle', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub()}
@@ -61,6 +62,7 @@ describe('DirectDeploy', function() {
   it('can show a message for an invalid charm', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
         generatePath={sinon.stub()}
@@ -96,6 +98,7 @@ describe('DirectDeploy', function() {
     const renderMarkdown = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
         generatePath={sinon.stub().returns('http://example.com/')}
@@ -161,6 +164,7 @@ describe('DirectDeploy', function() {
     const getDiagramURL = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub().returns('http://example.com/')}

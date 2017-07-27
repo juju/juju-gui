@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('BudgetTableRow', function() {
-  var acl, listPlansForCharm, parseTermId, service;
+  var acl, addNotification, listPlansForCharm, parseTermId, service;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('BudgetTableRow', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    addNotification = sinon.stub();
     listPlansForCharm = sinon.stub().callsArgWith(1, null, [{
       url: 'plan 1',
       description: 'The basic support plan',
@@ -92,6 +93,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -149,6 +151,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -192,6 +195,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         extraInfo={<span>extra</span>}
         listPlansForCharm={listPlansForCharm}
@@ -275,6 +279,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -333,6 +338,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
@@ -390,6 +396,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
@@ -520,6 +527,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
@@ -651,6 +659,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -668,6 +677,7 @@ describe('BudgetTableRow', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -731,6 +741,7 @@ describe('BudgetTableRow', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -803,6 +814,7 @@ describe('BudgetTableRow', function() {
     jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -824,6 +836,7 @@ describe('BudgetTableRow', function() {
     jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -845,6 +858,7 @@ describe('BudgetTableRow', function() {
     jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -866,6 +880,7 @@ describe('BudgetTableRow', function() {
     jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -895,6 +910,7 @@ describe('BudgetTableRow', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
@@ -916,5 +932,53 @@ describe('BudgetTableRow', function() {
           {content: 'Apache2 terms.', name: 'apache2'}
         ]} />);
     expect(output.props.children[1]).toEqualJSX(expected);
+  });
+
+  it('can handle errors when getting plans', function() {
+    listPlansForCharm = sinon.stub().callsArgWith(1, 'uh oh!', null);
+    jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        addNotification={addNotification}
+        allocationEditable={false}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        withPlans={true} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Fetching plans failed',
+      message: 'Fetching plans failed: uh oh!',
+      level: 'error'
+    });
+  });
+
+  it('can handle errors when getting terms', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['landscape-terms', 'apache2-terms'])
+    });
+    const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        addNotification={addNotification}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />, true);
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.children[3].props.children
+      .props.action();
+    output = renderer.getRenderOutput();
+    assert.equal(addNotification.callCount, 2);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Could not retrieve "null" terms.',
+      message: 'Could not retrieve "null" terms.: uh oh!',
+      level: 'error'
+    });
   });
 });

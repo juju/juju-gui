@@ -68,7 +68,13 @@ class ServiceOverview extends React.Component {
         service.get('name'),
         (err, activePlan, plans) => {
           if (err) {
-            console.error(err);
+            const message = 'fetching plan failed';
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${err}`,
+              level: 'error'
+            });
+            console.error(message, err);
             return;
           }
           if (plans && plans.length > 0) {
@@ -298,6 +304,7 @@ class ServiceOverview extends React.Component {
 
 ServiceOverview.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   clearState: PropTypes.func.isRequired,

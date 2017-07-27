@@ -78,8 +78,13 @@ class DeploymentBudget extends React.Component {
         if (error.indexOf('not found') === -1) {
           // A "profile not found" error is expected, and it means the user
           // does not have a credit limit yet. Notify any other errors.
-          // TODO huwshimi: notify the user with the error.
-          console.error('cannot retrieve budgets:', error);
+          const message = 'cannot retrieve budgets';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
+          console.error(message, error);
         }
         return;
       }
@@ -223,6 +228,7 @@ class DeploymentBudget extends React.Component {
 
 DeploymentBudget.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,
   setBudget: PropTypes.func.isRequired,
   user: PropTypes.string

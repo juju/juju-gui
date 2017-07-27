@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
-  let appState, changeState, humanizeTimestamp,
+  let appState, addNotification, changeState, humanizeTimestamp,
       listModelsWithInfo, showProfile, switchModel;
   const acl = {};
 
@@ -40,6 +40,7 @@ describe('HeaderBreadcrumb', () => {
         return `/u/${stateObj.profile}`;
       }
     };
+    addNotification = sinon.stub();
     listModelsWithInfo = sinon.stub();
     showProfile = sinon.stub();
     switchModel = sinon.stub();
@@ -52,6 +53,7 @@ describe('HeaderBreadcrumb', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         acl={acl}
+        addNotification={addNotification}
         appState={appState}
         user={attrs.user}
         changeState={changeState}
@@ -62,8 +64,7 @@ describe('HeaderBreadcrumb', () => {
         modelOwner={attrs.modelOwner}
         showEnvSwitcher={attrs.showEnvSwitcher}
         showProfile={showProfile}
-        switchModel={switchModel}
-      />, true);
+        switchModel={switchModel} />, true);
     const output = renderer.getRenderOutput();
     const userSection = output.props.children[1].props.children[0];
     let clickUser = null;
@@ -99,6 +100,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
               acl={acl}
+              addNotification={addNotification}
               user={{username: 'who@external', displayName: 'who'}}
               changeState={changeState}
               environmentName={'mymodel'}
@@ -134,6 +136,7 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
               acl={acl}
+              addNotification={addNotification}
               user={{username: 'dalek@external', displayName: 'dalek'}}
               changeState={changeState}
               environmentName={'mymodel'}

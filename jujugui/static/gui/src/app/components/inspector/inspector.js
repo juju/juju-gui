@@ -88,6 +88,7 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           component: <juju.components.ServiceOverview
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             changeState={changeState}
             charm={this.props.charm}
             clearState={this.props.clearState}
@@ -98,8 +99,7 @@ class Inspector extends React.Component {
             service={service}
             serviceRelations={this.props.serviceRelations}
             showActivePlan={this.props.showActivePlan}
-            showPlans={this.props.showPlans}
-          />,
+            showPlans={this.props.showPlans} />,
           backState: backState
         };
         break;

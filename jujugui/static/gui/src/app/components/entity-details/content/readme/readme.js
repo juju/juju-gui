@@ -106,7 +106,13 @@ class EntityContentReadme extends React.Component {
   */
   _getReadmeCallback(error, data) {
     if (error) {
-      console.error(error);
+      const message = 'unable to get readme';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       this.setState({readme: 'No readme.'});
       return;
     }
@@ -157,6 +163,7 @@ class EntityContentReadme extends React.Component {
 };
 
 EntityContentReadme.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   entityModel: PropTypes.object.isRequired,
   getFile: PropTypes.func.isRequired,

@@ -585,6 +585,12 @@ YUI.add('juju-gui', function(Y) {
       const dischargeToken = this.user.getMacaroon('identity');
       if (!dischargeToken) {
         console.error('no discharge token in local storage after login');
+        const message = 'Authentication failed. Please try refreshing the GUI.';
+        this.db.notifications.add({
+          title: message,
+          message: message,
+          level: 'error'
+        });
         return;
       }
       console.log('sending discharge token to storefront');
@@ -604,7 +610,13 @@ YUI.add('juju-gui', function(Y) {
       if (!this.user.getMacaroon('charmstore')) {
         this.get('charmstore').getMacaroon((err, macaroon) => {
           if (err) {
-            console.error(err);
+            const message = 'Authentication failed. Please try refreshing the GUI.';
+            console.error(message, err);
+            this.db.notifications.add({
+              title: message,
+              message: `${message}: ${err}`,
+              level: 'error'
+            });
             return;
           }
           this.storeUser('charmstore', true);
@@ -673,7 +685,13 @@ YUI.add('juju-gui', function(Y) {
               state.changeState(newState);
               return;
             }
-            console.error('error redirecting to previous state', error);
+            const message = 'error redirecting to previous state';
+            console.error(message, error);
+            this.db.notifications.add({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
             return;
           }
         }
@@ -886,6 +904,8 @@ YUI.add('juju-gui', function(Y) {
       };
       ReactDOM.render(
         <window.juju.components.Login
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
           gisf={this.get('gisf')}
@@ -903,16 +923,17 @@ YUI.add('juju-gui', function(Y) {
       const linkContainerId = 'profile-link-container';
       const linkContainer = document.getElementById(linkContainerId);
       if (!linkContainer) {
-        console.error(`no linkContainerId: ${linkContainerId}`);
         return;
       }
       const charmstore = this.get('charmstore');
       const bakery = this.bakery;
-      const USSOLoginLink = (<window.juju.components.USSOLoginLink
-        displayType={'text'}
-        loginToController={controllerAPI.loginWithMacaroon.bind(
-          controllerAPI, bakery)}
-      />);
+      const USSOLoginLink = (
+        <window.juju.components.USSOLoginLink
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
+          displayType={'text'}
+          loginToController={controllerAPI.loginWithMacaroon.bind(
+            controllerAPI, bakery)} />);
 
       let logoutUrl = '/logout';
       if (window.juju_config.baseUrl) {
@@ -2408,7 +2429,14 @@ YUI.add('juju-gui', function(Y) {
         const jujuConfig = window.juju_config;
         const bundleServiceURL = jujuConfig && jujuConfig.bundleServiceURL;
         if (!jujuConfig || !bundleServiceURL) {
-          console.error('no juju config for bundleserviceURL availble');
+          console.error('no juju config for bundleserviceURL available');
+          const message = 'The service for handling bundles is not available.' +
+            ' Please try refreshing the GUI.';
+          this.db.notifications.add({
+            title: message,
+            message: message,
+            level: 'error'
+          });
           return;
         }
         const bundleService = new Bundleservice(
@@ -3060,7 +3088,13 @@ YUI.add('juju-gui', function(Y) {
     storeUser: function(service, rerenderProfile, rerenderBreadcrumb) {
       var callback = function(error, auth) {
         if (error) {
-          console.error('Unable to query user information', error);
+          const message = 'Unable to query user information';
+          console.error(message, error);
+          this.db.notifications.add({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
           return;
         }
         if (auth) {

@@ -524,6 +524,7 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title={title}>
         <juju.components.DeploymentSSHKey
+          addNotification={this.props.addNotification}
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKeys={this._setSSHKeys.bind(this)}
@@ -674,6 +675,7 @@ class DeploymentFlow extends React.Component {
     };
     return (
       <juju.components.DeploymentLogin
+        addNotification={this.props.addNotification}
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
@@ -703,6 +705,7 @@ class DeploymentFlow extends React.Component {
         title="Choose cloud to deploy to">
         <juju.components.DeploymentCloud
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.listClouds}
@@ -796,6 +799,7 @@ class DeploymentFlow extends React.Component {
           title="Model changes">
           <juju.components.DeploymentServices
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             changesFilterByParent={this.props.changesFilterByParent}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
@@ -832,6 +836,7 @@ class DeploymentFlow extends React.Component {
         title="Confirm budget">
         <juju.components.DeploymentBudget
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           listBudgets={this.props.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
@@ -958,6 +963,7 @@ class DeploymentFlow extends React.Component {
       // render.
       return (
         <juju.components.DeploymentDirectDeploy
+          addNotification={props.addNotification}
           changeState={props.changeState}
           ddData={props.ddData}
           entityModel={state.ddEntity}

@@ -67,10 +67,11 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -118,6 +119,7 @@ describe('EntityContent', function() {
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
@@ -437,9 +439,10 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -475,6 +478,7 @@ describe('EntityContent', function() {
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
@@ -547,9 +551,10 @@ describe('EntityContent', function() {
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -573,6 +578,7 @@ describe('EntityContent', function() {
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}

@@ -634,4 +634,30 @@ describe('UserProfileEntity', () => {
       }
     });
   });
+
+  it('handles errors getting metrics', () => {
+    const addNotification = sinon.stub();
+    const charm = jsTestUtils.makeEntity().toEntity();
+    charm.id = 'cs:~yellow/trusty/uptime-0';
+    charm.series = ['trusty', 'zesty'];
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        entity={charm}
+        expanded={false}
+        getKpiMetrics={sinon.stub().callsArgWith(2, 'Uh oh!', null)}
+        d3={{}}
+        type="charm">
+        <span>Summary details</span>
+      </juju.components.UserProfileEntity>, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to retrieve metrics',
+      message: 'unable to retrieve metrics: Uh oh!',
+      level: 'error'
+    });
+  });
 });

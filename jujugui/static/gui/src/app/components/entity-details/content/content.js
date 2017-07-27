@@ -602,6 +602,7 @@ class EntityContent extends React.Component {
             <div className="seven-col append-one">
               {this._generateDescription(entityModel)}
               <juju.components.EntityContentReadme
+                addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
                 entityModel={entityModel}
                 getFile={this.props.getFile}
