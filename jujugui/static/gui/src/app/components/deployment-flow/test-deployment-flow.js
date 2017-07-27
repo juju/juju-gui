@@ -217,7 +217,7 @@ describe('DeploymentFlow', function() {
             WebHandler={props.WebHandler}
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
-            setSSHKeys={instance._setSSHKey}
+            setSSHKeys={instance._setSSHKeys}
           />
         </juju.components.DeploymentSection>
         {undefined}
@@ -282,7 +282,7 @@ describe('DeploymentFlow', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  fit('renders direct deploy when ddData is set', () => {
+  it('renders direct deploy when ddData is set', () => {
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
     const entityModel = {id: entityId};
@@ -314,7 +314,6 @@ describe('DeploymentFlow', function() {
         getDiagramURL={instance.props.getDiagramURL}
         entityModel={entityModel}
         renderMarkdown={renderMarkdown}
-        setSSHKeys={sinon.stub()}
       />
     );
   });

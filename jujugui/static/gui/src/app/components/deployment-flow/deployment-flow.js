@@ -963,8 +963,7 @@ class DeploymentFlow extends React.Component {
           entityModel={state.ddEntity}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
-          renderMarkdown={props.renderMarkdown}
-          setSSHKeys={this._setSSHKeys.bind(this)} />);
+          renderMarkdown={props.renderMarkdown} />);
     }
     return null;
   }
@@ -1049,6 +1048,7 @@ DeploymentFlow.propTypes = {
   acl: PropTypes.object.isRequired,
   addAgreement: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  addSSHKeys: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
