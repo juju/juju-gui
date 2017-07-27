@@ -2564,6 +2564,22 @@ YUI.add('juju-env-api', function(Y) {
       }, handler);
     },
 
+    /**
+      Add an addKeys item to the ECS to allow adding SSH keys to a model.
+
+      @param {String} user The user for whom the keys must be added.
+      @param {Array} keys The SSH keys, like ["ssh-rsa ...", ...].
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments:
+          - a global error string, in the case an API/connection error is
+            encountered, or null otherwise;
+          - a list of possible errors encountered when adding keys, with
+            indexes corresponding to the indexes in the keys argument.
+          For instance, given a call to add key1 and key2, if it succeeds the
+          callback is called with (null, [null, null]) while if key1 fails the
+          callback is called with (null, ["some error", null]).
+      @param {Object} options Options to pass to the ECS.
+    */
     addKeys: function(user, keys, callback, options) {
       if (options && options.immediate) {
         this._addKeys(user, keys, callback);
@@ -2592,6 +2608,24 @@ YUI.add('juju-env-api', function(Y) {
       this._addOrImportKeys('AddKeys', user, keys, callback);
     },
 
+    /**
+      Add an importKeys item to the ECS to allow importing SSH keys into a
+      model.
+
+      @param {String} user The user for whom the keys must be imported.
+      @param {Array} ids The list of sources from which to import SSH keys,
+        with "gh:" (github) or "lp:" (launchpad) prefixes, for instance
+        ["gh:who", "lp:dalek"].
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments:
+          - a global error string, in the case an API/connection error is
+            encountered, or null otherwise;
+          - a list of possible errors encountered when importing keys, with
+            indexes corresponding to the indexes in the ids argument.
+          For instance, given a call to import id1 and id2, if it succeeds the
+          callback is called with (null, [null, null]) while if id1 fails the
+          callback is called with (null, ["some error", null]).
+    */
     importKeys: function(user, keys, callback, options) {
       if (options && options.immediate) {
         this._importKeys(user, keys, callback);
