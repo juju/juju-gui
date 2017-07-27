@@ -747,6 +747,47 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('lazyAddSSHKeys', function() {
+      it('creates a new `addKeys` record', function(done) {
+        const keys = [
+          'ssh-rsa key1 comment',
+          'ssh-rsa key2 comment'
+        ];
+        const options = {};
+        const key = ecs.lazyAddSSHKeys(['user', keys, done], options);
+        const record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_addKeys');
+        // Remove the functions, which will not be equal.
+        const cb = record.command.args.pop();
+        // Also remove the options object.
+        assert.deepEqual(record.command.args[1], keys);
+        assert.deepEqual(record.command.options, options);
+        cb(); // Will call done().
+      });
+    });
+
+    describe('lazyImportSSHKeys', function() {
+      it('creates a new `importKeys` record', function(done) {
+        const id = 'gh:user';
+        const options = {};
+        const key = ecs.lazyImportSSHKeys(['user', id, done], options);
+        const record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_importKeys');
+        // Remove the functions, which will not be equal.
+        const cb = record.command.args.pop();
+        // Also remove the options object.
+        assert.deepEqual(record.command.args[1], id);
+        assert.deepEqual(record.command.options, options);
+        cb(); // Will call done().
+      });
+    });
+
     describe('lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
         const args = {

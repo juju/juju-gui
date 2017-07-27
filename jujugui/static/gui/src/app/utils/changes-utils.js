@@ -104,7 +104,8 @@ YUI.add('changes-utils', function(Y) {
       array of descriptions.
   */
   ChangesUtils.sortDescriptionsByApplication = (getServiceById, changeset, descriptions) => { // eslint-disable-line max-len
-    const methodBlacklist = ['addCharm', 'addMachines'];
+    // ECS methods to blacklist for description sorting.
+    const methodBlacklist = ['addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys'];
     const grouped = {};
     // If the application name is a temporary ID (contains $)
     // then fetch its real name and return that or return the original name.
@@ -311,10 +312,14 @@ YUI.add('changes-utils', function(Y) {
           changeItem.description = 'Configuration values will be changed for ' +
               cfgServ.get('displayName').match(removeBrackets)[1] + '.';
           break;
+        case '_addKeys':
+          changeItem.icon = 'changes-unknown';
+          changeItem.description = 'SSH keys will be added to the model.';
+          break;
         default:
           changeItem.icon = 'changes-unknown';
           changeItem.description = 'An unknown change has been made ' +
-              'to this enviroment via the CLI.';
+              'to this model via the CLI.';
           break;
       }
     }

@@ -103,9 +103,7 @@ class DeploymentSSHKey extends React.Component {
         SSHkeys.push(key);
       }
     });
-    // XXX: Mayko is taking a look at adding all the keys. When done this
-    // should just be this.props.setSSHKey(SSHKeys); Luke 12-07-2017
-    this.props.setSSHKey(SSHkeys[0].text);
+    this.props.setSSHKeys(SSHkeys);
     this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
     this.refs.githubUsername.setValue(null);
     this.refs.githubUsername.focus();
@@ -131,7 +129,7 @@ class DeploymentSSHKey extends React.Component {
       const manualKey = this.refs.sshKey.getValue();
       const key = this._validateAndSplitKey(manualKey);
       if (key) {
-        this.props.setSSHKey(manualKey);
+        this.props.setSSHKeys(manualKey);
         let SSHkeys = this.state.SSHkeys;
         if (!this._keyExists(key)) {
           SSHkeys.push(key);
@@ -166,7 +164,7 @@ class DeploymentSSHKey extends React.Component {
     });
 
     if (!newSSHkeyList.length) {
-      this.props.setSSHKey(null);
+      this.props.setSSHKeys(null);
     }
   }
 
@@ -359,7 +357,7 @@ DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
-  setSSHKey: PropTypes.func.isRequired
+  setSSHKeys: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-ssh-key', function() {

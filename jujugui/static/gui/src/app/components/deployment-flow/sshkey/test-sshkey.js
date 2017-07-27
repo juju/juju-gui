@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSSHKey', function() {
-  let setSSHKey;
+  let setSSHKeys;
   let getGithubSSHKeys;
 
   beforeAll(function(done) {
@@ -35,7 +35,7 @@ describe('DeploymentSSHKey', function() {
   });
 
   beforeEach(() => {
-    setSSHKey = sinon.stub();
+    setSSHKeys = sinon.stub();
     getGithubSSHKeys = sinon.stub();
   });
 
@@ -50,7 +50,7 @@ describe('DeploymentSSHKey', function() {
         WebHandler={sinon.stub()}
         cloud={cloud}
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
-        setSSHKey={setSSHKey}
+        setSSHKeys={setSSHKeys}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
@@ -225,7 +225,7 @@ describe('DeploymentSSHKey', function() {
       );
     });
 
-    it('stores the first SSH key', function() {
+    it('stores the SSH keys', function() {
       const comp = render('gce');
       comp.instance.refs = {
         githubUsername: {
@@ -234,11 +234,15 @@ describe('DeploymentSSHKey', function() {
         }
       };
       comp.instance._addGithubKeysCallback(null, [
-        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
+        {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
       ]);
-      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).
-        toEqual('ssh-rsa thekey');
+      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      expect(comp.instance.props.setSSHKeys.args[0][0]).
+        toEqual([
+          {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
+          {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
+        ]);
     });
   });
 
@@ -267,8 +271,8 @@ describe('DeploymentSSHKey', function() {
 
     it('stores the SSH key', function() {
       comp.instance._handleAddMoreKeys.call(comp.instance);
-      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).
+      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      expect(comp.instance.props.setSSHKeys.args[0][0]).
         toEqual('ssh-rsa thekey');
     });
 
