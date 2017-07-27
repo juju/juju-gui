@@ -3187,7 +3187,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('_addKeys', function() {
+    describe('addKeys', function() {
       it('calls the ecs add keys', function() {
         var lazy = sinon.stub(env.get('ecs'), 'lazyAddSSHKeys');
         this._cleanups.push(lazy.restore);
@@ -3197,7 +3197,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('adds a single key', function(done) {
         // Perform the request.
-        env._addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null]);
           const msg = conn.last_message();
@@ -3209,7 +3209,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             params: {user: 'who', 'ssh-keys': ['ssh-rsa key1']}
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3221,7 +3221,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('adds multiple keys', function(done) {
         // Perform the request.
-        env._addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
+        env.addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, null]);
           const msg = conn.last_message();
@@ -3236,7 +3236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3248,29 +3248,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('adds no keys', function(done) {
         // Perform the request.
-        env._addKeys('who', [], (err, errors) => {
+        env.addKeys('who', [], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env._addKeys('', ['ssh-rsa key1'], (err, errors) => {
+        env.addKeys('', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles request failures while adding keys', function(done) {
         // Perform the request.
-        env._addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3278,11 +3278,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('handles API failures while adding keys', function(done) {
         // Perform the request.
         const keys = ['ssh-rsa key1', 'ssh-rsa key2', 'ssh-rsa key3'];
-        env._addKeys('dalek', keys, (err, errors) => {
+        env.addKeys('dalek', keys, (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3294,11 +3294,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env._addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
+        env.addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3308,11 +3308,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env._addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
+        env.addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3321,7 +3321,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('_importKeys', function() {
+    describe('importKeys', function() {
       it('calls the ecs import keys', function() {
         var lazy = sinon.stub(env.get('ecs'), 'lazyImportSSHKeys');
         this._cleanups.push(lazy.restore);
@@ -3331,7 +3331,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('imports a single key', function(done) {
         // Perform the request.
-        env._importKeys('who', ['gh:who'], (err, errors) => {
+        env.importKeys('who', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null]);
           const msg = conn.last_message();
@@ -3343,7 +3343,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             params: {user: 'who', 'ssh-keys': ['gh:who']}
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3355,7 +3355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('imports multiple keys', function(done) {
         // Perform the request.
-        env._importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
+        env.importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, null]);
           const msg = conn.last_message();
@@ -3370,7 +3370,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3382,29 +3382,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('imports no keys', function(done) {
         // Perform the request.
-        env._importKeys('who', [], (err, errors) => {
+        env.importKeys('who', [], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env._importKeys('', ['gh:who'], (err, errors) => {
+        env.importKeys('', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles request failures while importing keys', function(done) {
         // Perform the request.
-        env._importKeys('who', ['gh:who'], (err, errors) => {
+        env.importKeys('who', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3412,11 +3412,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('handles API failures while importing keys', function(done) {
         // Perform the request.
         const ids = ['gh:rose', 'bb:cyberman', 'lp:dalek'];
-        env._importKeys('dalek', ids, (err, errors) => {
+        env.importKeys('dalek', ids, (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3428,11 +3428,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env._importKeys('cyberman', ['gh:who'], (err, errors) => {
+        env.importKeys('cyberman', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3442,11 +3442,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env._importKeys('rose', ['gh:who'], (err, errors) => {
+        env.importKeys('rose', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
