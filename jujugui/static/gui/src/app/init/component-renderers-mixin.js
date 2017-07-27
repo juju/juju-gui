@@ -903,11 +903,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
     const charmstore = this.charmstore;
     const bakery = this.bakery;
-    const USSOLoginLink = (<window.juju.components.USSOLoginLink
-      displayType={'text'}
-      loginToController={controllerAPI.loginWithMacaroon.bind(
-        controllerAPI, bakery)}
-    />);
+    const USSOLoginLink = (
+      <window.juju.components.USSOLoginLink
+        displayType="text"
+        loginToController={
+          controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
     let logoutUrl = '/logout';
     const applicationConfig = this.applicationConfig;
     if (applicationConfig.baseUrl) {
