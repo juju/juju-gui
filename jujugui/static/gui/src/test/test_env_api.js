@@ -3188,6 +3188,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('addKeys', function() {
+      it('calls the ecs add keys', function() {
+        var lazy = sinon.stub(env.get('ecs'), 'lazyAddSSHKeys');
+        this._cleanups.push(lazy.restore);
+        env.addKeys([], [], function() {});
+        assert.equal(lazy.calledOnce, true);
+      });
+
       it('adds a single key', function(done) {
         // Perform the request.
         env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
@@ -3202,7 +3209,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             params: {user: 'who', 'ssh-keys': ['ssh-rsa key1']}
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3229,7 +3236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3245,7 +3252,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles errors when no user is provided', function(done) {
@@ -3254,7 +3261,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles request failures while adding keys', function(done) {
@@ -3263,7 +3270,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3275,7 +3282,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3291,7 +3298,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3305,7 +3312,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3315,6 +3322,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('importKeys', function() {
+      it('calls the ecs import keys', function() {
+        var lazy = sinon.stub(env.get('ecs'), 'lazyImportSSHKeys');
+        this._cleanups.push(lazy.restore);
+        env.importKeys([], [], function() {});
+        assert.equal(lazy.calledOnce, true);
+      });
+
       it('imports a single key', function(done) {
         // Perform the request.
         env.importKeys('who', ['gh:who'], (err, errors) => {
@@ -3329,7 +3343,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             params: {user: 'who', 'ssh-keys': ['gh:who']}
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3356,7 +3370,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3372,7 +3386,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles errors when no user is provided', function(done) {
@@ -3381,7 +3395,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
       });
 
       it('handles request failures while importing keys', function(done) {
@@ -3390,7 +3404,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3402,7 +3416,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3418,7 +3432,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3432,7 +3446,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();
-        });
+        }, {immediate: true});
         // Mimic response.
         conn.msg({
           'request-id': 1,

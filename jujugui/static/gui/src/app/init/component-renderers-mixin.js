@@ -733,6 +733,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={this.acl}
         addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={db.notifications.add.bind(db.notifications)}
+        addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         charmstore={charmstore}
         changesFilterByParent={

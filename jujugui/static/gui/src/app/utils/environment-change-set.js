@@ -1,6 +1,6 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
+models within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
@@ -196,7 +196,7 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Executes the passed in record on the environment.
+      Executes the passed in record on the model.
 
       @method _execute
       @param {Object} record The individual record object from the changeSet.
@@ -209,6 +209,8 @@ YUI.add('environment-change-set', function(Y) {
         command.prepare(this.get('db'));
       }
       this._markCommitStatus('in-progress', record.command);
+      // XXX we should ensure that the method is actually a function.
+      // Makyo 2017-07-26
       env[command.method].apply(env, command.args);
     },
 
@@ -357,7 +359,7 @@ YUI.add('environment-change-set', function(Y) {
 
     /**
       Wait until the entire level of commits has been received by the
-      environment.  This relies on the fact that _execute wraps the callback
+      model.  This relies on the fact that _execute wraps the callback
       methods in a wrapper that decrements this.levelRecordCount; once it hits
       0, meaning no commits left in that level, it moves on to either finish up
       or commit the next level.
@@ -508,7 +510,7 @@ YUI.add('environment-change-set', function(Y) {
           Object.keys(config).forEach(function(key) {
             // Return the local configuration values to the values in the env.
             // The local config value has keys with undefined values where as
-            // the one from the environment only has values with truthy values.
+            // the one from the model only has values with truthy values.
             config[key] = envConfig[key];
           });
           service.set('config', config);
@@ -544,7 +546,7 @@ YUI.add('environment-change-set', function(Y) {
 
     /* End ECS methods */
 
-    /* Private environment methods. */
+    /* Private model methods. */
 
     /**
       Creates a new entry in the queue for adding a charm to the controller.
@@ -595,11 +597,49 @@ YUI.add('environment-change-set', function(Y) {
       });
       return this._createNewRecord('addPendingResources', command, parents);
     },
+    
+    /**
+      Creates a new entry in the queue for adding SSH keys to the model.
+
+      Receives all the parameters required for the model's "addKeys"
+      method with the exception of the ECS options object.
+
+      @method lazyAddSSHKeys
+      @param {Array} args The arguments to add SSH keys with.
+      @param {Object} options The ECS options.
+    */
+    lazyAddSSHKeys: function(args, options) {
+      const command = {
+        method: '_addKeys',
+        args: args,
+        options: options
+      };
+      return this._createNewRecord('addSSHKeys', command, []);
+    },
+  
+    /**
+      Creates a new entry in the queue for importing SSH keys to the model.
+
+      Receives all the parameters required for the model's "importKeys"
+      method with the exception of the ECS options object.
+
+      @method lazyImportSSHKeys
+      @param {Array} args The arguments to import SSH keys with.
+      @param {Object} options The ECS options.
+    */
+    lazyImportSSHKeys: function(args, options) {
+      const command = {
+        method: '_importKeys',
+        args: args,
+        options: options
+      };
+      return this._createNewRecord('importSSHKeys', command, []);
+    },
 
     /**
       Creates a new entry in the queue for creating a new service.
 
-      Receives all the parameters received by the environment's "deploy"
+      Receives all the parameters received by the model's "deploy"
       method with the exception of the ECS options object.
 
       @method lazyDeploy
@@ -675,7 +715,7 @@ YUI.add('environment-change-set', function(Y) {
       Creates a new entry in the queue for destroying an application; or, if
       the service is in the queue already, removes it.
 
-      Receives all parameters received by the environment's
+      Receives all parameters received by the model's
       'destroyApplication' method with the exception of the ECS options object.
 
       @method lazyDestroyApplication
@@ -768,7 +808,7 @@ YUI.add('environment-change-set', function(Y) {
       Creates a new entry in the queue for destroying a machine; or, if the
       machine is in the queue already, removes it.
 
-      Receives all parameters received by the environment's 'destroyMachines'
+      Receives all parameters received by the model's 'destroyMachines'
       method with the exception of the ECS options object.
 
       @method lazyDestroyMachine
@@ -855,7 +895,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for setting a services config.
 
-      Receives all the parameters received by the environment's "set_config"
+      Receives all the parameters received by the model's "set_config"
       method with the exception of the ECS options object.
 
       @method lazySetConfig
@@ -928,7 +968,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for adding a relation.
 
-      Receives all the parameters received by the environment's "add_relation"
+      Receives all the parameters received by the model's "add_relation"
       method with the exception of the ECS options object.
 
       @method lazyAddRelation
@@ -982,7 +1022,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for removing a relation.
 
-      Receives all the parameters received by the environment's
+      Receives all the parameters received by the model's
       "remove_relation" method with the exception of the ECS options object.
 
       @method lazyRemoveRelation
@@ -1028,7 +1068,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for removing a unit.
 
-      Receives all the parameters received by the environment's
+      Receives all the parameters received by the model's
       "_remove_unit" method with the exception of the ECS options object.
 
       @method lazyRemoveUnit
@@ -1091,7 +1131,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for exposing a service.
 
-      Receives all the parameters received by the environment's "expose"
+      Receives all the parameters received by the model's "expose"
       method with the exception of the ECS options object.
 
       @method lazyExpose
@@ -1144,7 +1184,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for unexposing a service.
 
-      Receives all the parameters received by the environment's "unexpose"
+      Receives all the parameters received by the model's "unexpose"
       method with the exception of the ECS options object.
 
       @method lazyUnexpose
@@ -1177,7 +1217,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for adding machines/containers.
 
-      Receives all the parameters received by the environment's "addMachines"
+      Receives all the parameters received by the model's "addMachines"
       method with the exception of the ECS options object.
 
       @method lazyAddMachines
@@ -1310,7 +1350,7 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for adding service units.
 
-      Receives all the parameters received by the environment's "add_unit"
+      Receives all the parameters received by the model's "add_unit"
       method with the exception of the ECS options object.
 
       @method lazyAddUnits
@@ -1527,7 +1567,7 @@ YUI.add('environment-change-set', function(Y) {
       unitModel.set('deleted', true);
     },
 
-    /* End private environment methods. */
+    /* End private model methods. */
 
     /**
       Validate the unit's placement on a machine.

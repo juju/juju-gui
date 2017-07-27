@@ -41,14 +41,14 @@ const githubSSHKeys = (handler, username, callback) => {
     try {
       data = JSON.parse(response.currentTarget.response);
     } catch(e) {
-      callback(`cannot retrieve SSH keys from gihub: invalid response: ${e}`,
+      callback(`cannot retrieve SSH keys from GitHub: invalid response: ${e}`,
         null);
       return;
     }
 
     // If there's an error, set it to the message from GitHub
     const error = response.currentTarget.status !== 200 ? 
-      `cannot retrieve SSH keys from gihub: ${data.message}` : null;
+      `cannot retrieve SSH keys from GitHub: ${data.message}` : null;
 
     // If there's no error, pull the key into its respective parts for use by
     // the callback.

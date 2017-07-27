@@ -64,6 +64,7 @@ const createDeploymentFlow = (props = {}) => {
     acl: {isReadOnly: sinon.stub().returns(false)},
     addAgreement: sinon.stub(),
     addNotification: sinon.stub(),
+    addSSHKeys: sinon.stub(),
     applications: [],
     changeState: sinon.stub(),
     changes: {},
@@ -220,7 +221,7 @@ describe('DeploymentFlow', function() {
             addNotification={props.addNotification}
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
-            setSSHKey={instance._setSSHKey}
+            setSSHKeys={instance._setSSHKeys}
           />
         </juju.components.DeploymentSection>
         {undefined}
@@ -738,7 +739,7 @@ describe('DeploymentFlow', function() {
         modelName: 'mymodel',
         cloud: {cloudType: 'azure'},
         credential: 'cred',
-        sshKey: 'mykey'
+        sshKeys: ['mykey']
       },
       noTerms: true,
       allowed: true
@@ -748,7 +749,7 @@ describe('DeploymentFlow', function() {
         modelName: 'mymodel',
         cloud: {cloudType: 'aws'},
         credential: 'cred',
-        sshKey: 'mykey'
+        sshKeys: ['mykey']
       },
       noTerms: true,
       allowed: true
@@ -759,7 +760,7 @@ describe('DeploymentFlow', function() {
         cloud: {cloudType: 'aws'},
         credential: 'cred',
         paymentUser: null,
-        sshKey: 'mykey'
+        sshKeys: ['mykey']
       },
       noTerms: true,
       showPay: true,
@@ -909,7 +910,7 @@ describe('DeploymentFlow', function() {
       region: 'skaro'
     });
     const instance = renderer.getMountedInstance();
-    instance._setSSHKey('my SSH key');
+    instance._setSSHKeys([{text: 'my SSH key'}]);
     const output = renderer.getRenderOutput();
     output.props.children[9].props.children.props.children[1].props.children
       .props.action();
