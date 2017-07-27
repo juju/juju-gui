@@ -3551,6 +3551,66 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('fullStatus', function() {
+      it('succeeds', function(done) {
+        // Snapshots could help here!
+        const response = '{"request-id":1,"response":{"model":{"name":"default","cloud-tag":"cloud-localhost","region":"localhost","version":"2.3-alpha1.1","available-version":"","model-status":{"status":"available","info":"","data":{},"since":"2017-07-24T17:35:58.284859958Z","kind":"","version":"","life":""},"meter-status":{"color":"","message":""},"sla":"unsupported"},"machines":{"1":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:38.403313203Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:31.888249394Z","kind":"","version":"","life":""},"dns-name":"10.56.39.236","ip-addresses":["10.56.39.236"],"instance-id":"juju-39bb4b-1","series":"xenial","id":"1","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.236"],"mac-address":"00:16:3e:f8:e2:66","is-up":true},"lxdbr0":{"ip-addresses":["10.0.253.1"],"mac-address":"62:f5:69:49:6e:eb","is-up":true}},"containers":{"1/lxd/0":{"agent-status":{"status":"down","info":"agent is not communicating with the server","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"instance-status":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"dns-name":"","instance-id":"pending","series":"xenial","id":"1/lxd/0","containers":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false},"2":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:35.343625024Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:58.513416815Z","kind":"","version":"","life":""},"dns-name":"10.56.39.67","ip-addresses":["10.56.39.67"],"instance-id":"juju-39bb4b-2","series":"trusty","id":"2","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.67"],"mac-address":"00:16:3e:ae:ab:f4","is-up":true}},"containers":{},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"applications":{"mysql":{"charm":"cs:mysql-57","series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"can-upgrade-to":"","subordinate-to":[],"units":{"mysql/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:24:37.091302286Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19","machine":"1","opened-ports":["3306/tcp"],"public-address":"10.56.39.236","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19"},"wordpress":{"charm":"cs:trusty/wordpress-5","series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"can-upgrade-to":"","subordinate-to":[],"units":{"wordpress/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:25:15.698979271Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":"","machine":"2","opened-ports":["80/tcp"],"public-address":"10.56.39.67","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":""}},"remote-applications":{"haproxy":{"application-url":"local:admin/controller.haproxy","application-name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","data":{},"since":"2017-07-27T10:55:55.481908354Z","kind":"","version":"","life":""}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}}'; // eslint-disable-line max-len
+        const expected = '{"model":{"name":"default","cloud":"localhost","region":"localhost","version":"2.3-alpha1.1","availableVersion":"","sla":"unsupported","status":{"status":"available","info":"","life":"","since":"2017-07-24T17:35:58.284Z"}},"machines":{"1":{"id":"1","instanceID":"juju-39bb4b-1","series":"xenial","dnsName":"10.56.39.236","ipAddresses":["10.56.39.236"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.236"],"macAddress":"00:16:3e:f8:e2:66","isUp":true},"lxdbr0":{"ipAddresses":["10.0.253.1"],"macAddress":"62:f5:69:49:6e:eb","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:38.403Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:31.888Z"},"containers":{"1/lxd/0":{"id":"1/lxd/0","instanceID":"pending","series":"xenial","dnsName":"","networkInterfaces":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"down","info":"agent is not communicating with the server","life":"","since":"2017-07-27T10:11:50.036Z"},"instance":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","life":"","since":"2017-07-27T10:11:50.036Z"},"containers":{}}}},"2":{"id":"2","instanceID":"juju-39bb4b-2","series":"trusty","dnsName":"10.56.39.67","ipAddresses":["10.56.39.67"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.67"],"macAddress":"00:16:3e:ae:ab:f4","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:35.343Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:58.513Z"},"containers":{}}},"applications":{"mysql":{"charm":{"name":"mysql","schema":"cs","user":"","series":"","revision":57},"series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"5.7.19","units":{"mysql/0":{"workloadVersion":"5.7.19","machine":"1","ports":["3306/tcp"],"publicAddress":"10.56.39.236","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:24:37.091Z"},"workload":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}}},"leaderStatus":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}},"wordpress":{"charm":{"name":"wordpress","schema":"cs","user":"","series":"trusty","revision":5},"series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"","units":{"wordpress/0":{"workloadVersion":"","machine":"2","ports":["80/tcp"],"publicAddress":"10.56.39.67","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:25:15.698Z"},"workload":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"leaderStatus":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"remoteApplications":{"haproxy":{"url":"local:admin/controller.haproxy","name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","life":"","since":"2017-07-27T10:55:55.481Z"}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}'; // eslint-disable-line max-len
+        // Perform the request.
+        env.fullStatus((err, status) => {
+          assert.strictEqual(err, null);
+          assert.equal(JSON.stringify(status), expected);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'Client',
+            request: 'FullStatus',
+            version: 1,
+            params: {}
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg(JSON.parse(response));
+      });
+
+      it('handles request failures while retrieving keys', function(done) {
+        // Perform the request.
+        env.fullStatus((err, status) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(status, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('fails for unexpected results', function(done) {
+        // Perform the request.
+        env.fullStatus((err, status) => {
+          assert.strictEqual(err, 'unexpected response: 42');
+          assert.deepEqual(status, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: 42
+        });
+      });
+
+      it('fails for no results', function(done) {
+        // Perform the request.
+        env.fullStatus((err, status) => {
+          assert.strictEqual(err, 'unexpected response: {}');
+          assert.deepEqual(status, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, response: {}});
+      });
+    });
+
     it('offers endpoints', function(done) {
       // Define the asynchronous callback.
       var callback = function(data) {
