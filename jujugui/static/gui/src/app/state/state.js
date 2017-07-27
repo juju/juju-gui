@@ -679,7 +679,12 @@ const State = class State {
               path.push(localType);
             }
           } else {
-            path.push(value);
+            // The deploy key is used for the direct deploy which will also
+            // contain a complex object. We do not want to push that object
+            // stringified into the url.
+            if (key !== 'deploy') {
+              path.push(value);
+            }
           }
         }
       });
