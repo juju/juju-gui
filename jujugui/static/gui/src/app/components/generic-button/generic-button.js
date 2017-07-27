@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class GenericButton extends React.PureComponent {
+class GenericButton extends React.Component {
   /**
     Returns the classes for the button based on the provided props.
     @method _generateClasses

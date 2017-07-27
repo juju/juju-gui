@@ -47,23 +47,41 @@ class Definition(namedtuple('Definition', 'name path line props pure')):
     def __str__(self):
         """Return the string representation of a definition."""
         ctx = {
+            'props_label': yellow('declared properties:'),
+            'props': '\n'.join('    {}'.format(prop) for prop in self.props),
+        }
+        return self.summary() + '  {props_label}\n{props}'.format(**ctx)
+
+    def summary(self):
+        """Return a short string summary of this definition."""
+        ctx = {
             'name': blue(self.name),
             'path_label': yellow('path:'),
             'path': self.path,
             'line': self.line,
             'pure_label': yellow('pure:'),
             'pure': 'yes' if self.pure else 'no',
-            'props_label': yellow('declared properties:'),
-            'props': '\n'.join('    {}'.format(prop) for prop in self.props),
         }
         return (
             '{name}:\n'
             '  {path_label} {path}:{line}\n'
             '  {pure_label} {pure}\n'
-            '  {props_label}\n'
-            '{props}'
             ''.format(**ctx)
         )
+
+    def validate(self):
+        """Validate the declared properties of this definition.
+
+        Return a list of error messages, or an empty list if everything is ok.
+        """
+        if not self.pure:
+            return []
+        name = self.name
+        return [
+            'pure component {} has mutable property {} (type {})'.format(
+                name, prop.name, prop.type_)
+            for prop in self.props if prop.is_mutable()
+        ]
 
 
 class Property(namedtuple('Property', 'name type_ required')):
@@ -75,6 +93,10 @@ class Property(namedtuple('Property', 'name type_ required')):
         """Return the string representation of a property."""
         required = green(' required') if self.required else ''
         return '{}: {}{}'.format(self.name, green(self.type_), required)
+
+    def is_mutable(self):
+        """Report whether this property has a mutable type."""
+        return self.type_ in ('array', 'element', 'object')
 
 
 class Instantiation(namedtuple('Instantiation', 'definition path line props')):
@@ -364,9 +386,9 @@ def _execute_define(options):
 
 def _execute_validate(options):
     """Print out all component instantiations and validate them."""
-    def output(instantiation, errors):
+    def output(obj, errors):
         print('{}{}'.format(
-            instantiation.summary() if options.short else instantiation,
+            obj.summary() if options.short else obj,
             ''.join('  {}\n'.format(red(error)) for error in errors),
         ))
 
@@ -374,14 +396,25 @@ def _execute_validate(options):
     error_summary = []
     error_count = 0
     definitions = find_definitions(options.path, options.regexp)
+    validated_definitions = []
     for instantiation in find_instantiations(
             options.path, definitions, include_tests=options.test):
         errors = instantiation.validate()
         if errors:
             error_summary.append((instantiation, errors))
             error_count += len(errors)
+        definition = instantiation.definition
+        if definition not in validated_definitions:
+            validated_definitions.append(definition)
+            def_errors = definition.validate()
+            if def_errors:
+                error_summary.append((definition, def_errors))
+                error_count += len(def_errors)
         if not options.short:
             output(instantiation, errors)
+            if def_errors:
+                output(definition, def_errors)
+
     if not error_summary:
         print(green('component validation succeeded'))
         return
@@ -390,8 +423,8 @@ def _execute_validate(options):
             big='#' * 79,
             short='#' * 30,
         )))
-    for instantiation, errors in error_summary:
-        output(instantiation, errors)
+    for obj, errors in error_summary:
+        output(obj, errors)
     label = 'error' if error_count == 1 else 'errors'
     raise ValidationError(
         red('component validation failed: {} {} found'.format(

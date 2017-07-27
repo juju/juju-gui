@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class ButtonRow extends React.PureComponent {
+class ButtonRow extends React.Component {
   /**
     Returns the classes for the footer based on the provided props.
     @method _generateClasses
