@@ -213,7 +213,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-unknown',
-      msg: 'An unknown change has been made to this enviroment via the CLI.',
+      msg: 'An unknown change has been made to this model via the CLI.',
       change: {
         command: {
           method: '_anUnknownMethod'

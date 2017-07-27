@@ -3187,10 +3187,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('addKeys', function() {
+    describe('_addKeys', function() {
+      it('calls the ecs add keys', function() {
+        var lazy = sinon.stub(env.get('ecs'), 'lazyAddSSHKeys');
+        this._cleanups.push(lazy.restore);
+        env.addKeys([], [], function() {});
+        assert.equal(lazy.calledOnce, true);
+      });
+
       it('adds a single key', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+        env._addKeys('who', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null]);
           const msg = conn.last_message();
@@ -3214,7 +3221,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('adds multiple keys', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
+        env._addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, null]);
           const msg = conn.last_message();
@@ -3241,7 +3248,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('adds no keys', function(done) {
         // Perform the request.
-        env.addKeys('who', [], (err, errors) => {
+        env._addKeys('who', [], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
@@ -3250,7 +3257,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env.addKeys('', ['ssh-rsa key1'], (err, errors) => {
+        env._addKeys('', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
@@ -3259,7 +3266,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles request failures while adding keys', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
+        env._addKeys('who', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
@@ -3271,7 +3278,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('handles API failures while adding keys', function(done) {
         // Perform the request.
         const keys = ['ssh-rsa key1', 'ssh-rsa key2', 'ssh-rsa key3'];
-        env.addKeys('dalek', keys, (err, errors) => {
+        env._addKeys('dalek', keys, (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
@@ -3287,7 +3294,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env.addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
+        env._addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
@@ -3301,7 +3308,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env.addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
+        env._addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();
@@ -3314,10 +3321,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('importKeys', function() {
+    describe('_importKeys', function() {
+      it('calls the ecs import keys', function() {
+        var lazy = sinon.stub(env.get('ecs'), 'lazyImportSSHKeys');
+        this._cleanups.push(lazy.restore);
+        env.importKeys([], [], function() {});
+        assert.equal(lazy.calledOnce, true);
+      });
+
       it('imports a single key', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:who'], (err, errors) => {
+        env._importKeys('who', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null]);
           const msg = conn.last_message();
@@ -3341,7 +3355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('imports multiple keys', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
+        env._importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, null]);
           const msg = conn.last_message();
@@ -3368,7 +3382,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('imports no keys', function(done) {
         // Perform the request.
-        env.importKeys('who', [], (err, errors) => {
+        env._importKeys('who', [], (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, []);
           done();
@@ -3377,7 +3391,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env.importKeys('', ['gh:who'], (err, errors) => {
+        env._importKeys('', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'no user provided');
           assert.deepEqual(errors, []);
           done();
@@ -3386,7 +3400,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles request failures while importing keys', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:who'], (err, errors) => {
+        env._importKeys('who', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'bad wolf');
           assert.deepEqual(errors, []);
           done();
@@ -3398,7 +3412,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('handles API failures while importing keys', function(done) {
         // Perform the request.
         const ids = ['gh:rose', 'bb:cyberman', 'lp:dalek'];
-        env.importKeys('dalek', ids, (err, errors) => {
+        env._importKeys('dalek', ids, (err, errors) => {
           assert.strictEqual(err, null);
           assert.deepEqual(errors, [null, 'bad wolf', null]);
           done();
@@ -3414,7 +3428,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env.importKeys('cyberman', ['gh:who'], (err, errors) => {
+        env._importKeys('cyberman', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: [{},{}]');
           assert.deepEqual(errors, []);
           done();
@@ -3428,7 +3442,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env.importKeys('rose', ['gh:who'], (err, errors) => {
+        env._importKeys('rose', ['gh:who'], (err, errors) => {
           assert.strictEqual(err, 'unexpected results: []');
           assert.deepEqual(errors, []);
           done();

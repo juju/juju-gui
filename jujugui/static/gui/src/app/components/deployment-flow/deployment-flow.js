@@ -40,7 +40,7 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
-      sshKeys: null,
+      sshKeys: [],
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
       // Whether the user has ticked the checked to agree to terms.
@@ -119,7 +119,7 @@ class DeploymentFlow extends React.Component {
     let disabled;
     let visible;
     const hasCloud = !!this.state.cloud;
-    const hasSSHkey = !!this.state.sshKeys;
+    const hasSSHkey = !!this.state.sshKeys.length;
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
@@ -335,7 +335,7 @@ class DeploymentFlow extends React.Component {
       credential: this.state.credential,
       region: this.state.region
     };
-    if (this.state.sshKeys) {
+    if (this.state.sshKeys.length) {
       // Attempt to provide at least one key in case the addSSHKeys call fails.
       args.config['authorized-keys'] = this.state.sshKeys[0].text;
       // Also add to change set - adding keys twice is a no-op.
@@ -963,7 +963,8 @@ class DeploymentFlow extends React.Component {
           entityModel={state.ddEntity}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
-          renderMarkdown={props.renderMarkdown} />);
+          renderMarkdown={props.renderMarkdown}
+          setSSHKeys={this._setSSHKeys.bind(this)} />);
     }
     return null;
   }
