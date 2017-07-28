@@ -1216,7 +1216,8 @@ YUI.add('juju-gui', function(Y) {
           appState={this.state}
           machineCount={machineCount}
           pluralize={views.utils.pluralize.bind(this)}
-          serviceCount={serviceCount} />,
+          serviceCount={serviceCount}
+          showStatus={window.juju_config.flags.status} />,
         document.getElementById('env-size-display-container'));
     },
 
@@ -1953,6 +1954,32 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handles rendering and/or updating the status UI component.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
+    */
+    _renderStatusView: function(state, next) {
+      ReactDOM.render(
+        <window.juju.components.Status
+          acl={this.acl}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)} />,
+        document.getElementById('status-container'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the status state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearStatusView: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('status-container'));
+      next();
+    },
+
+    /**
       Renders the mask and animations for the drag over notification for when
       a user drags a yaml file or zip file over the canvas.
 
@@ -2216,6 +2243,9 @@ YUI.add('juju-gui', function(Y) {
         ['gui.machines',
           this._renderMachineView.bind(this),
           this._clearMachineView.bind(this)],
+        ['gui.status',
+          this._renderStatusView.bind(this),
+          this._clearStatusView.bind(this)],
         ['gui.inspector',
           this._renderInspector.bind(this)
           // the this._clearInspector method is not called here because the
@@ -3236,6 +3266,7 @@ YUI.add('juju-gui', function(Y) {
     'notification-list',
     'panel-component',
     'sharing',
+    'status',
     'svg-icon',
     'user-menu',
     'profile',

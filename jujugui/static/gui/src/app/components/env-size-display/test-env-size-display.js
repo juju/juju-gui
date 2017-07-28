@@ -55,7 +55,8 @@ describe('EnvSizeDisplay', function() {
         appState={appState}
         machineCount={4}
         pluralize={pluralize}
-        serviceCount={3} />);
+        serviceCount={3}
+        showStatus={true} />);
     assert.equal(
       queryComponentSelector(
         component, 'a[data-view=application]').innerText, '3 applications');
@@ -70,7 +71,8 @@ describe('EnvSizeDisplay', function() {
         serviceCount={3}
         machineCount={4}
         appState={appState}
-        pluralize={sinon.stub()} />);
+        pluralize={sinon.stub()}
+        showStatus={true} />);
     assert.notEqual(
       queryComponentSelector(
         component,
@@ -84,7 +86,8 @@ describe('EnvSizeDisplay', function() {
         serviceCount={3}
         machineCount={4}
         appState={appState}
-        pluralize={sinon.stub()} />);
+        pluralize={sinon.stub()}
+        showStatus={true} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -94,10 +97,16 @@ describe('EnvSizeDisplay', function() {
 
     assert.equal(appState.changeState.callCount, 2);
     assert.deepEqual(appState.changeState.getCall(0).args[0], {
-      gui: {machines: ''}
+      gui: {
+        machines: '',
+        status: null
+      }
     });
     assert.deepEqual(appState.changeState.getCall(1).args[0], {
-      gui: {machines: null}
+      gui: {
+        machines: null,
+        status: null
+      }
     });
   });
 
@@ -107,7 +116,8 @@ describe('EnvSizeDisplay', function() {
         serviceCount={3}
         machineCount={4}
         appState={appState}
-        pluralize={sinon.stub()} />);
+        pluralize={sinon.stub()}
+        showStatus={true} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -122,12 +132,21 @@ describe('EnvSizeDisplay', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
-        machines: ''
+        machines: '',
+        status: null
       }
     });
     delete appState.current.gui.machine;
+    delete appState.current.gui.status;
     appState.current.gui.application = true;
     testUtils.Simulate.click(serviceLink);
+    component = renderIntoDocument(
+      <juju.components.EnvSizeDisplay
+        serviceCount={3}
+        machineCount={4}
+        appState={appState}
+        pluralize={sinon.stub()}
+        showStatus={true} />);
     assert.notEqual(
       queryComponentSelector(
         component,
@@ -137,7 +156,8 @@ describe('EnvSizeDisplay', function() {
     assert.equal(appState.changeState.callCount, 2);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
-        machines: ''
+        machines: '',
+        status: null
       }
     });
   });
