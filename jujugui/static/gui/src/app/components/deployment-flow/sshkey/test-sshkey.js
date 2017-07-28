@@ -288,7 +288,12 @@ describe('DeploymentSSHKey', function() {
       comp.instance._handleAddMoreKeys.call(comp.instance);
       expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
       expect(comp.instance.props.setSSHKeys.args[0][0]).
-        toEqual('ssh-rsa thekey');
+        toEqual({
+          body: 'thekey',
+          text: 'ssh-rsa thekey',
+          type: 'ssh-rsa',
+          id: 0
+        });
     });
 
     it ('shows a table if keys present', () => {
