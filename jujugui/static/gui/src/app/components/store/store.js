@@ -521,7 +521,7 @@ class Store extends React.Component {
                 <h3 className="featured-entity__title">
                                 Prometheus
                 </h3>
-                <p>by prometheus-charmers</p>
+                <p>by Charmers</p>
               </div>
             </span>
           </li>
