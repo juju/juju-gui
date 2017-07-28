@@ -1,0 +1,19 @@
+.status-view {
+  @include customize-scrollbar($canvas-background);
+  @include fade-in(.1s);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $canvas-background;
+  z-index: index($z-indexed-elements, machine-view);
+
+  &__content {
+    position: absolute;
+    top: $navbar-height + 10px;
+    bottom: $deployer-bar-height;
+    left: $left-panel-width + 20px;
+    right: 20px;
+  }
+}
