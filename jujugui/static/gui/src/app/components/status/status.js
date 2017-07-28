@@ -21,7 +21,6 @@ class Status extends React.Component {
 
 
 Status.propTypes = {
-  acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired
 };
 

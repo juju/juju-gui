@@ -15,7 +15,6 @@ describe('Status', function() {
   it('can render', () => {
     const renderer = jsTestUtils.shallowRender(
       <window.juju.components.Status
-        acl={{}}
         addNotification={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
