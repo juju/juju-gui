@@ -68,7 +68,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         machineCount={machineCount}
         pluralize={yui.juju.views.utils.pluralize.bind(this)}
-        serviceCount={serviceCount} />,
+        serviceCount={serviceCount}
+        showStatus={window.juju_config.flags.status} />,
       document.getElementById('env-size-display-container'));
   }
   /**
@@ -546,6 +547,32 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.unmountComponentAtNode(document.getElementById('machine-view'));
     next();
   }
+
+  /**
+    Handles rendering and/or updating the status UI component.
+    @param {Object} state - The app state.
+    @param {Function} next - Call to continue dispatching.
+  */
+  _renderStatusView(state, next) {
+    ReactDOM.render(
+      <window.juju.components.Status
+        addNotification={
+          this.db.notifications.add.bind(this.db.notifications)} />,
+      document.getElementById('status-container'));
+    next();
+  }
+
+  /**
+    The cleanup dispatcher for the status state path.
+    @param {Object} state - The application state.
+    @param {Function} next - Run the next route handler, if any.
+  */
+  _clearStatusView(state, next) {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('status-container'));
+    next();
+  }
+
   /**
     Renders the Inspector component to the page.
     @param {Object} state - The app state.

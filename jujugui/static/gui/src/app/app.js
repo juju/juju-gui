@@ -1961,7 +1961,6 @@ YUI.add('juju-gui', function(Y) {
     _renderStatusView: function(state, next) {
       ReactDOM.render(
         <window.juju.components.Status
-          acl={this.acl}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)} />,
         document.getElementById('status-container'));
