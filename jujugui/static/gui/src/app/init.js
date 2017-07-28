@@ -503,6 +503,9 @@ class GUIApp {
       ['gui.machines',
         this._renderMachineView.bind(this),
         this._clearMachineView.bind(this)],
+      ['gui.status',
+        this._renderStatusView.bind(this),
+        this._clearStatusView.bind(this)],
       ['gui.inspector',
         this._renderInspector.bind(this)
         // the this._clearInspector method is not called here because the

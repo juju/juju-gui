@@ -28,7 +28,8 @@ const ROOT_RESERVED = [
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
-  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
+  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines',
+  'status'];
 
 /** Class representing the State of the Juju GUI */
 const State = class State {
