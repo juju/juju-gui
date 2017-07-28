@@ -2972,7 +2972,6 @@ YUI.add('juju-env-api', function(Y) {
     fullStatus: function(callback) {
       // Define the callback handler.
       const handler = data => {
-        console.log(JSON.stringify(data));
         if (!callback) {
           console.log('data returned by Client.FullStatus API call:', data);
           return;
