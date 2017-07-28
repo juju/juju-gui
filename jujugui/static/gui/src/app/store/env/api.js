@@ -2757,6 +2757,396 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
+      Return information about all entities in this model.
+
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments: an error string
+        and an empty object if an error occurred, null and the status result
+        otherwise. The status result is an object similar to the following:
+
+          {
+            // Information about this model.
+            model: {
+              // The model name.
+              name: "default",
+              // The cloud in which the model lives.
+              cloud: "aws",
+              // The region for model machines.
+              region: "eu-central-1",
+              // The current version of the agents running on the model.
+              version: "2.3-alpha1.1",
+              // The optional version available for a model upgrade.
+              availableVersion: "",
+              // The level of the SLA, "unsupported", "essential", standard"
+              // or "advanced";
+              sla: "unsupported",
+              // Information about model status.
+              status: {
+                // The agent status, like "available" or "error".
+                status: "available",
+                // Additional status info if relevant.
+                info: "",
+                // A date object with the datetime of latest status change.
+                since: "2017-07-24T17:35:58.284859958Z",
+                // Agent life cycle info.
+                life: ""
+              }
+            },
+            // An object mapping machine identifiers to machine status.
+            machines: {
+              "1": {
+                // The machine identifier (again).
+                id: "1",
+                // The instance identifier.
+                instanceID: "juju-39bb4b-1",
+                // The machine series.
+                series: "xenial",
+                // The DNS name for the instance.
+                dnsName: "10.56.39.236",
+                // An array of IP addresses assigned to the instance.
+                ipAddresses: ["10.56.39.236"],
+                // The network interfaces for this machine as an object mapping
+                // interface names to values.
+                networkInterfaces: {
+                  eth0: {
+                    // An array of IP addresses assigned to the interface.
+                    ipAddresses: ["10.56.39.236"],
+                    // The interface MAC address.
+                    macAddress: "00:16:3e:f8:e2:66",
+                    // Whether the interface is up and running.
+                    isUp: true
+                  },
+                },
+                // Constraints used when provisioning this machine.
+                constraints: "",
+                // Hardware characteristics for the provisioned machine.
+                hardware: "arch=amd64 cores=0 mem=0M",
+                // A list of Juju jobs this machine is responsible for.
+                jobs: ["JobHostUnits"],
+                // Whether this machine is involved in leader election.
+                hasVote: false,
+                wantsVote: false,
+                // The machine agent status.
+                agent: {
+                  // The agent status, like "started" or "error".
+                  status: "started",
+                  // Additional status info if relevant.
+                  info: "",
+                  // A date object with the datetime of latest status change.
+                  since: "2017-07-27T09:06:38.403313203Z",
+                  // Life cycle info.
+                  life: ""
+                },
+                // The machine instance status.
+                instance: {
+                  // The agent status, like "running" or "allocating".
+                  status: "running",
+                  // Additional status info if relevant.
+                  info: "Running",
+                  // A date object with the datetime of latest status change.
+                  since: "2017-07-27T09:05:31.888249394Z",
+                  // Life cycle info.
+                  life: ""
+                },
+                // A map of container identifiers to container properties.
+                containers: {
+                  "1/lxd/0": {
+                    // This object basically includes all the fields already
+                    // described for a machine entry, including the
+                    // "containers" field itself, so that we can have multiple
+                    // levels of container nesting.
+                  }
+                }
+              }
+            },
+            // An object mapping app names with application status.
+            applications: {
+              mysql: {
+                // The jujulib.URL object representing the charm URL.
+                charm: URL("cs:mysql-57"),
+                // The application series.
+                series: "xenial",
+                // Whether the application is exposed.
+                exposed: false,
+                // App life cycle.
+                life: "",
+                // Relations with other apps, as an object mapping endpoint
+                // names to target applications.
+                relations: {
+                   cluster: ["mysql"],
+                   db: ["wordpress"]
+                },
+                // A URL of the charm if an upgrade if possible, or null.
+                canUpgradeTo: URL("cs:mysql-58"),
+                // An array of application names this application is
+                // subordinate to.
+                subordinateTo: [],
+                // The version of the workload provided by the application
+                // (for instance, the MySQL version).
+                workloadVersion: "5.7.19",
+                // An object mapping unit names with unit status.
+                units: {
+                  "mysql/0":{
+                    // The workload version (this time where it belongs, at the
+                    // unit level.)
+                    workloadVersion: "5.7.19",
+                    // The machine where this unit is located.
+                    machine: "1",
+                    // A list of opened ports in the unit.
+                    ports: ["3306/tcp"],
+                    // The unit public address.
+                    publicAddress: "10.56.39.236",
+                    // Whether this unit is the leader.
+                    isLeader: true,
+                    // The unit agent status.
+                    agent: {
+                      // The agent status, like "idle" or "error".
+                      status: "idle",
+                      // Additional status info if relevant.
+                      info: "",
+                      // A date object with the datetime of latest change.
+                      since: "2017-07-27T09:09:27.266603201Z",
+                      // Life cycle info.
+                      life: ""
+                    },
+                    // The unit workload status.
+                    workload: {
+                      // The workload status, like "active" or "error".
+                      status: "active",
+                      // Additional status info if relevant.
+                      info: "Ready",
+                      // A date object with the datetime of latest change.
+                      since: "2017-07-27T09:09:26.605041846Z",
+                      // Life cycle info.
+                      life: ""
+                    }
+                  }
+                },
+                // The workload status of the leader unit.
+                leaderStatus: {
+                  // The workload status, like "active" or "error".
+                  status: "active",
+                  // Additional status info if relevant.
+                  info: "Ready",
+                  // A date object with the datetime of latest change.
+                  since: "2017-07-27T09:09:26.605041846Z",
+                  // Life cycle info.
+                  life: ""
+                }
+             },
+            },
+            // An object mapping remote application names to their statuses.
+            remoteApplications: {
+              haproxy: {
+                // The URL where the remote app can be found.
+                url: "local:admin/controller.haproxy",
+                // The name of the remote application (again).
+                name: "haproxy",
+                // A list of the endpoints offered by the remote application.
+                endpoints: [{
+                  name: "reverseproxy",
+                  role: "requirer",
+                  interface: "http",
+                  limit: 0,
+                  scope: "global"
+                }],
+                // Life cycle for the remote application.
+                life: "",
+                // Relations with other apps, as an object mapping endpoint
+                // names to target applications.
+                relations: {
+                   reverseproxy: ["wordpress"]
+                },
+                // The remote application status.
+                status: {
+                  // The status, like "active" or "unknown".
+                  status: "unknown",
+                  // Additional status info if relevant.
+                  info: "waiting for remote connection",
+                  // A date object with the datetime of latest change.
+                  since: "2017-07-27T10:55:55.481908354Z",
+                  // Life cycle info.
+                  life: ""
+                }
+              }
+            },
+            // A list of relations established in this model.
+            relations: [
+              {
+                id: 1,
+                key: "mysql:cluster",
+                interface: "mysql-ha",
+                scope: "global",
+                endpoints: [{
+                  application: "mysql",
+                  name: "cluster",
+                  role: "peer",
+                  subordinate: false
+                }]
+              },
+              {
+                id: 3,
+                key: "wordpress:db mysql:db",
+                interface: "mysql",
+                scope: "global",
+                endpoints: [{
+                  application: "mysql",
+                  name: "db",
+                  role: "provider",
+                  subordinate: false
+                }, {
+                  application: "wordpress",
+                  name: "db",
+                  role: "requirer",
+                  subordinate: false
+                }]
+              },
+              {
+                id: 4,
+                key: "haproxy:reverseproxy wordpress:website",
+                interface: "http",
+                scope: "global",
+                endpoints: [{
+                  application: "wordpress",
+                  name: "website",
+                  role: "provider",
+                  subordinate: false
+                }, {
+                  application: "haproxy",
+                  name: "reverseproxy",
+                  role: "requirer",
+                  subordinate: false
+                }]
+              }
+            ]
+          }
+    */
+    fullStatus: function(callback) {
+      // Define the callback handler.
+      const handler = data => {
+        if (!callback) {
+          console.log('data returned by Client.FullStatus API call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, {});
+          return;
+        }
+        const resp = data.response;
+        if (typeof resp !== 'object' || !Object.keys(resp).length) {
+          callback('unexpected response: ' + JSON.stringify(resp), {});
+          return;
+        }
+        // Define some reusable helpers.
+        const URL = window.jujulib.URL;
+        const objMap = (obj, func) => {
+          if (!obj) {
+            return {};
+          }
+          return Object.keys(obj).reduce((collected, key) => {
+            const value = obj[key];
+            collected[key] = func(value);
+            return collected;
+          }, {});
+        };
+        const makeStatus = data => ({
+          status: data.status,
+          info: data.info,
+          life: data.life,
+          since: new Date(data.since)
+        });
+        const makeMachine = data => ({
+          id: data.id,
+          instanceID: data['instance-id'],
+          series: data.series,
+          dnsName: data['dns-name'],
+          ipAddresses: data['ip-addresses'],
+          networkInterfaces: objMap(data['network-interfaces'], value => ({
+            ipAddresses: value['ip-addresses'],
+            macAddress: value['mac-address'],
+            isUp: value['is-up']
+          })),
+          constraints: data.constraints,
+          hardware: data.hardware,
+          jobs: data.jobs,
+          hasVote: data['has-vote'],
+          wantsVote: data['wants-vote'],
+          agent: makeStatus(data['agent-status']),
+          instance: makeStatus(data['instance-status']),
+          containers: objMap(data.containers, makeMachine)
+        });
+        const model = resp.model;
+        // Call the callback with the retrieved status info.
+        callback(null, {
+          model: {
+            name: model.name,
+            cloud: tags.parse(tags.CLOUD, model['cloud-tag']),
+            region: model.region,
+            version: model.version,
+            availableVersion: model['available-version'],
+            sla: model.sla || '',
+            status: makeStatus(model['model-status'])
+          },
+          machines: objMap(resp.machines, makeMachine),
+          applications: objMap(resp.applications, app => ({
+            charm: URL.fromLegacyString(app.charm),
+            series: app.series,
+            exposed: app.exposed,
+            life: app.life,
+            relations: app.relations,
+            canUpgradeTo: (app['can-upgrade-to'] ?
+              URL.fromLegacyString(app['can-upgrade-to']) : null),
+            subordinateTo: app['subordinate-to'],
+            workloadVersion: app['workload-version'],
+            units: objMap(app.units, unit => ({
+              workloadVersion: unit['workload-version'],
+              machine: unit.machine,
+              ports: unit['opened-ports'],
+              publicAddress: unit['public-address'],
+              isLeader: unit.leader,
+              agent: makeStatus(unit['agent-status']),
+              workload: makeStatus(unit['workload-status'])
+            })),
+            leaderStatus: makeStatus(app.status)
+          })),
+          remoteApplications: objMap(resp['remote-applications'], app => ({
+            url: app['application-url'],
+            name: app['application-name'],
+            endpoints: app.endpoints.map(endpoint => ({
+              name: endpoint.name,
+              role: endpoint.role,
+              interface: endpoint.interface,
+              limit: endpoint.limit,
+              scope: endpoint.scope
+            })),
+            life: app.life,
+            relations: app.relations,
+            status: makeStatus(app.status)
+          })),
+          relations: resp.relations.map(relation => ({
+            id: relation.id,
+            key: relation.key,
+            interface: relation.interface,
+            scope: relation.scope,
+            endpoints: relation.endpoints.map(endpoint => ({
+              application: endpoint.application,
+              name: endpoint.name,
+              role: endpoint.role,
+              subordinate: endpoint.subordinate
+            }))
+          }))
+        });
+      };
+
+      // Send the API call.
+      this._send_rpc({
+        type: 'Client',
+        request: 'FullStatus',
+        params: {}
+      }, handler);
+    },
+
+    /**
       Make application endpoints available for consumption.
 
       @method offer
