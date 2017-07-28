@@ -49,6 +49,10 @@ describe('EntityContentRelations', function() {
       <div className="section entity-relations" id="relations">
         <h3 className="section__title">
           Relations
+          <a href="https://jujucharms.com/docs/stable/charms-relations"
+            target="_blank">
+              <juju.components.SvgIcon name="help_16" size="16" />
+            </a>
         </h3>
         <ul className="section__list" ref="list">
           <li className="link section__list-item"
@@ -67,7 +71,7 @@ describe('EntityContentRelations', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('handles null relations with aplomb', function() {
@@ -104,4 +108,117 @@ describe('EntityContentRelations', function() {
       store: null
     });
   });
+
+  it('can render a show more button when more than 2 relations are available',
+    () => {
+      const changeState = sinon.spy();
+      let relations = mockEntity.get('relations');
+      relations.provides['http2'] = {
+        name: 'http2',
+        interface: 'http2'
+      };
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContentRelations
+          changeState={changeState}
+          relations={mockEntity.get('relations')} />, true);
+      const output = renderer.getRenderOutput();
+      const instance = renderer.getMountedInstance();
+      const expected = (
+        <div className="section entity-relations" id="relations">
+          <h3 className="section__title">
+            Relations
+            <a href="https://jujucharms.com/docs/stable/charms-relations"
+              target="_blank">
+                <juju.components.SvgIcon name="help_16" size="16" />
+              </a>
+          </h3>
+          <ul className="section__list" ref="list">
+            <li className="link section__list-item"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[0].props.onClick}
+              key="http">
+              {'http'}: {'http'}
+            </li>
+            <li className="link section__list-item"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[1].props.onClick}
+              key="http2">
+              {'http2'}: {'http2'}
+            </li>
+            <li className="link section__list-item hidden"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[2].props.onClick}
+              key="cache">
+              {'cache'}: {'cache'}
+            </li>
+            <li className="section__list-item">
+              <button className="button--inline-neutral"
+                onClick={instance._handleViewMore.bind(instance)}
+                role="button">View more relations</button>
+            </li>
+          </ul>
+        </div>);
+      expect(output).toEqualJSX(expected);
+    }
+  );
+
+  it('can shows more and show a fewer button',
+    () => {
+      const changeState = sinon.spy();
+      let relations = mockEntity.get('relations');
+      relations.provides['http2'] = {
+        name: 'http2',
+        interface: 'http2'
+      };
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContentRelations
+          changeState={changeState}
+          relations={mockEntity.get('relations')} />, true);
+      const instance = renderer.getMountedInstance();
+      instance._handleViewMore();
+      const output = renderer.getRenderOutput();
+      const expected = (
+        <div className="section entity-relations" id="relations">
+          <h3 className="section__title">
+            Relations
+            <a href="https://jujucharms.com/docs/stable/charms-relations"
+              target="_blank">
+                <juju.components.SvgIcon name="help_16" size="16" />
+              </a>
+          </h3>
+          <ul className="section__list" ref="list">
+            <li className="link section__list-item"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[0].props.onClick}
+              key="http">
+              {'http'}: {'http'}
+            </li>
+            <li className="link section__list-item"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[1].props.onClick}
+              key="http2">
+              {'http2'}: {'http2'}
+            </li>
+            <li className="link section__list-item"
+              role="button"
+              tabIndex="0"
+              onClick={output.props.children[1].props.children[2].props.onClick}
+              key="cache">
+              {'cache'}: {'cache'}
+            </li>
+            <li className="section__list-item">
+              <button className="button--inline-neutral"
+                onClick={instance._handleRelationClick.bind(instance)}
+                role="button">View fewer relations</button>
+            </li>
+          </ul>
+        </div>);
+      expect(output).toEqualJSX(expected);
+    }
+  );
 });

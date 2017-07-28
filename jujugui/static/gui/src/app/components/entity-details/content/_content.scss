@@ -27,23 +27,22 @@
     }
   }
 
+  &__terms {
+    border-top: 1px solid $color-mid-light;
+  }
+
   &__metadata {
-    margin-top: 40px;
-    font-size: 16px;
-    font-weight: 100;
+    display: block;
+    margin-top: .5rem;
 
-    h4 {
-      border-bottom: 1px solid $light-mid-grey;
-      padding-bottom: 1em;
+    &-title {
+      font-size: 1rem;
+      color: $color-mid-dark;
+      display: inline;
     }
 
-    ul {
-      margin: 1em 0;
-    }
-
-    li {
-      list-style: none;
-      margin-bottom: .8em;
+    .link {
+      cursor: pointer;
     }
   }
 
@@ -161,6 +160,7 @@
       border: 1px solid $color-mid-light;
       border-radius: 2px;
       margin: 1rem 0;
+      overflow-x: auto;
     }
 
     @for $index from 1 through 6 {
@@ -185,7 +185,7 @@
 
   .section {
     margin-bottom: 20px;
-    padding: 30px 20px;
+    padding: 20px;
     border: 1px solid $light-mid-grey;
     border-radius: 2px;
 
@@ -206,13 +206,10 @@
 
     &__links {
       @extend %list-style;
-    }
-  }
 
-  .entity-relations {
-    .section__list-item {
-      text-indent: -1.5em;
-      padding-left: 1.5em;
+      li:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -285,55 +282,6 @@
     }
   }
 
-  &__bundle-config {
-    @extend %list-style;
-    margin-top: 20px;
-    cursor: pointer;
-
-    &-title {
-      padding: 15px 20px;
-      border-top: 1px solid $mid-grey;
-    }
-
-    &-options {
-      padding: 0 30px;
-    }
-
-    &-chevron {
-      float: right;
-
-      .entity-content__bundle-config-contract {
-        display: none;
-      }
-    }
-
-    &.expanding-row--expanded {
-      .expanding-row {
-        &__initial {
-          opacity: 1;
-          height: 50px;
-        }
-
-        &__expanded {
-          background-color: transparent;
-          box-shadow: none;
-        }
-      }
-
-      .entity-content__bundle-config-chevron {
-        .entity-content__bundle-config {
-          &-expand {
-            display: none;
-          }
-
-          &-contract {
-            display: inline-block;
-          }
-        }
-      }
-    }
-  }
-
   &__card {
     textarea {
       color: $dark-warm-grey;
@@ -353,5 +301,11 @@
 
   .popup__panel--wide {
     top: $navbar-height;
+  }
+
+  &__configuration {
+    .entity-content__header {
+      margin-bottom: 1rem;
+    }
   }
 }

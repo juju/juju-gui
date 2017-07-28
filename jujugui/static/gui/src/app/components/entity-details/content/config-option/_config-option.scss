@@ -1,8 +1,16 @@
 .entity-content__config {
+
+  &-image {
+    vertical-align: middle;
+    border-radius: 50%;
+    margin: 0 .625rem;
+  }
+
   &-option {
-    margin-top: 15px;
-    padding-top: 15px;
+    margin-top: 1rem;
+    padding-top: 1rem;
     border-top: 1px dotted $light-mid-grey;
+    margin-left: .625rem;
 
     &:first-of-type {
       margin-top: 0;
@@ -22,8 +30,8 @@
 
   &-description,
   &-default {
-    margin-left: 30px;
-    margin-top: 8px;
+    margin-top: .5rem;
+    margin-bottom: 1rem;
   }
 
   &-default {

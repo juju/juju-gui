@@ -51,7 +51,7 @@ describe('EntityFiles', function() {
     var instance = renderer.getMountedInstance();
     var archiveUrl = `${apiUrl}/django/archive`;
     var fileItems = [
-      <li key="foo.zip" className="entity-files__file">
+      <li className="p-list-tree__item">
         <a href={archiveUrl + '/foo.zip'}
           className="link"
           title="foo.zip"
@@ -59,15 +59,17 @@ describe('EntityFiles', function() {
           foo.zip
         </a>
       </li>,
-      <li key="bar"
-        className="entity-files__directory collapsed"
-        tabIndex="0"
-        role="button"
-        onClick={instance._onDirectoryClick}>
-        /bar
-        <ul className="entity-files__listing">
+      <li className="p-list-tree__item p-list-tree__item--group"
+        tabIndex="0" title="/bar">
+        <button aria-controls="/bar" aria-expanded="false"
+          className="p-list-tree__toggle"
+          id="/bar-toggle"
+          onClick={instance._onDirectoryClick}
+          role="tab">/bar</button>
+        <ul aria-hidden="true" aria-labelledby="/bar-toggle"
+          className="p-list-tree" id="/bar" role="tabpanel">
           {[
-            <li key="bar/foo.txt" className="entity-files__file">
+            <li className="p-list-tree__item">
               <a href={archiveUrl + '/bar/foo.txt'}
                 className="link"
                 title="foo.txt"
@@ -82,27 +84,29 @@ describe('EntityFiles', function() {
     var expected = (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
-          2 files
+          files
         </h3>
+        <ul ref="files" aria-multiselectable="true"
+          className="p-list-tree"
+          role="tablist">
+          {fileItems}
+        </ul>
         <ul className="section__list">
-          <li className="entity-files__link section__list-item">
+          <li className="section__list-item">
             <a ref="codeLink"
-              className="link"
+              className="button--inline-neutral entity-files__link"
               target="_blank"
               href="https://code.launchpad.net/django/code">
               View code
             </a>
           </li>
-          <li className="entity-files__link section__list-item">
+          <li className="section__list-item">
             <a target="_blank"
-              className="link"
+              className="button--inline-neutral entity-files__link"
               href={archiveUrl}>
               Download .zip
             </a>
           </li>
-        </ul>
-        <ul ref="files" className="section__list entity-files__listing">
-          {fileItems}
         </ul>
       </div>
     );

@@ -147,8 +147,10 @@ class EntityContentReadme extends React.Component {
 
   render() {
     return (
-      <div className="entity-content__readme" ref="content"
+      <div className="entity-content__readme">
+        <div className="entity-content__readme-content" ref="content"
         dangerouslySetInnerHTML={{__html: this.state.readme}} />
+      </div>
     );
   }
 };

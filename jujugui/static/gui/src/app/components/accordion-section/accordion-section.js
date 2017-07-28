@@ -42,13 +42,19 @@ class AccordionSection extends React.Component {
     if (!this.props.title) {
       return null;
     }
-    const chevron = this.state.open ? 'chevron_up_16' : 'chevron_down_16';
+    const chevron = this.state.open ?
+      'chevron_up_16' : 'chevron_down_16';
+    const icon = this.props.children ? <juju.components.SvgIcon
+      name={chevron}
+      size="16" className="right" /> : null;
     return (<div
+      role="button"
       className="accordion-section__title"
-      onClick={this._toggle.bind(this)}>{this.props.title}
-      <juju.components.SvgIcon
-        name={chevron}
-        size="16" className="right" />
+      onClick={this._toggle.bind(this)}>
+      <span className="accordion-section__title-content">
+        {this.props.title}
+      </span>
+      {icon}
     </div>);
   }
 

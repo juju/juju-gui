@@ -42,7 +42,42 @@ function generateScript(isBundle, isDD) {
     '<div class="juju-card" '+dataDD+' data-id="'+id+'"></div>';
 }
 
-describe('EntityContent', function() {
+function getByClassName(_root, _className) {
+  let matches = [];
+  if (!_root || !_root.props) {
+    console.log('no root or props');
+    return null;
+  }
+  Object.keys(_root.props).forEach((prop) => {
+    console.log(prop);
+  });
+  if (_root.props.className) {
+    console.log('root has className');
+    console.log(`\t${_root.props.className}`);
+    if (_root.props.className.indexOf(_className) !== -1) {
+      console.log('>>> root classname matches');
+      matches.push(_root);
+    }
+  }
+  if (_root.props.children) {
+    console.log('has children');
+    if (Array.isArray(_root.props.children)) {
+      console.log('children is array');
+      matches.concat(_root.props.children.map((child) => {
+        return getByClassName(child, _className);
+      }));
+    } else {
+      console.log('children is singular');
+      matches.concat(getByClassName(_root.props.children, _className));
+    }
+  }
+  console.log('matches');
+  console.log(matches.length);
+  console.log(matches);
+  return matches;
+}
+
+fdescribe('EntityContent', function() {
   let mockEntity;
 
   beforeAll(function(done) {
@@ -74,6 +109,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={false}
         hash="readme"
@@ -98,25 +134,26 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <div className="row row--grey entity-content__terms">
-          <div className="inner-wrapper">
-            <div className="four-col entity-content__metadata">
-              <h4>Tags</h4>
-              <ul>
-                {_generateTagItem('database', instance._handleTagClick)}
-              </ul>
-            </div>
-          </div>
-        </div>
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               <juju.components.EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
+              <div className="entity-content__terms">
+                <div className="entity-content__metadata">
+                  <h4 className="entity-content__metadata-title">
+                    Tags:
+                  </h4>
+
+                  <a className="link"
+                    data-id="database"
+                    onClick={instance._handleTagClick}>database</a>
+                </div>
+              </div>
               <juju.components.EntityContentReadme
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -124,14 +161,36 @@ describe('EntityContent', function() {
                 hash="readme"
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
+              <div className="entity-content__configuration"
+                id="configuration">
+                <h3 className="entity-content__header">
+                  Configuration
+                </h3>
+                <dl>
+                  <juju.components.EntityContentConfigOption
+                    option={{
+                      default: 'spinach',
+                      description: 'Your username',
+                      name: 'username',
+                      type: 'string'
+                    }} />
+                  <juju.components.EntityContentConfigOption
+                    option={{
+                      default: 'abc123',
+                      description: 'Your password',
+                      name: 'password',
+                      type: 'string'
+                    }} />
+                </dl>
+              </div>
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               <div className="section">
                 <h3 className="section__title">
                   Contribute
                 </h3>
-                <ul className="section__links">
-                  <li>
+                <ul className="section__list">
+                  <li className="section__list-item">
                     <a href="https://bugs.launchpad.net/charms/+source/django"
                       className="link"
                       target="_blank">
@@ -153,8 +212,6 @@ describe('EntityContent', function() {
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={mockEntity.get('revisions')} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm
@@ -175,28 +232,12 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
-        <div id="configuration"
-          className="row row--grey entity-content__configuration">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <h2 className="entity-content__header">Configuration</h2>
-              <dl>
-                <juju.components.EntityContentConfigOption
-                  key={option1.name}
-                  option={option1} />
-                <juju.components.EntityContentConfigOption
-                  key={option2.name}
-                  option={option2} />
-              </dl>
-            </div>
-          </div>
-        </div>
       </div>
     );
     expect(output).toEqualJSX(expected);
   });
 
-  it('can display a direct deploy card', function() {
+  fit('can display a direct deploy card', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         addNotification={sinon.stub()}
@@ -204,6 +245,7 @@ describe('EntityContent', function() {
         changeState={sinon.stub()}
         entityModel={mockEntity}
         flags={{ddeploy: true}}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -211,6 +253,9 @@ describe('EntityContent', function() {
         scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
+    console.log('entity-content__header');
+    console.log(getByClassName(output, 'entity-content__header'));
+    expect(getByClassName(output, 'juju-card')).toEqual({'hi':'test'});
     const script = output.props.children[2].props.children.props.children[1].
       props.children[5].props.children[2];
     const card = output.props.children[2].props.children.props.children[1].
@@ -242,6 +287,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -288,6 +334,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -320,6 +367,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -347,6 +395,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -373,6 +422,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -393,6 +443,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -443,6 +494,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={false}
         hash="readme"

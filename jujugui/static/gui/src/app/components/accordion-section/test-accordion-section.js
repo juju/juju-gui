@@ -40,8 +40,9 @@ describe('AccordionSection', () => {
     expect(comp.output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
+          role="button"
           onClick={comp.instance._toggle.bind(comp.instance)}>
-          My title!
+          <span className="accordion-section__title-content">My title!</span>
           <juju.components.SvgIcon className="right" name="chevron_down_16"
             size="16" />
         </div>
@@ -63,8 +64,9 @@ describe('AccordionSection', () => {
     expect(output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
+          role="button"
           onClick={instance._toggle.bind(instance)}>
-          My title!
+          <span className="accordion-section__title-content">My title!</span>
           <juju.components.SvgIcon className="right" name="chevron_up_16"
             size="16" />
         </div>
@@ -72,4 +74,22 @@ describe('AccordionSection', () => {
           style={{maxHeight: 100}}><span>Hello</span></div>
       </div>);
   });
+
+  it('does not show chevron or content when there are no children', () => {
+    const comp = render({
+      startOpen: false,
+      title: 'My title!'
+    });
+    expect(comp.output).toEqualJSX(
+      <div className="accordion-section">
+        <div className="accordion-section__title"
+          role="button"
+          onClick={comp.instance._toggle.bind(comp.instance)}>
+          <span className="accordion-section__title-content">My title!</span>
+        </div>
+        <div className="accordion-section__content" ref={sinon.stub()}
+          style={{maxHeight: 0}}></div>
+      </div>
+    );
+  })
 });

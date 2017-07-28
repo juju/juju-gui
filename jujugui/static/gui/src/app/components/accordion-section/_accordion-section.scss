@@ -6,15 +6,25 @@
   &__title {
     padding: 1rem 1rem 1rem 0;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 
     em {
       font-style: normal;
       color: $color-mid-dark;
+    }
+
+    &-content {
+      flex: 1;
     }
   }
 
   &__content {
     transition: max-height .333s ease;
     overflow: hidden;
+  }
+
+  & + & {
+    border-top: 0;
   }
 }

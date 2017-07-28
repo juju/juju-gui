@@ -19,6 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class EntityFiles extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {};
+  }
   /**
     Expand a directory when clicked.
 
@@ -27,12 +32,12 @@ class EntityFiles extends React.Component {
   */
   _onDirectoryClick(e) {
     e.stopPropagation();
-    var target = e.currentTarget;
-    var isCollapsed = target.className.indexOf('collapsed') > 0;
-    target.className = classNames(
-      'entity-files__directory',
-      {'collapsed': !isCollapsed}
-    );
+    const target = e.currentTarget;
+    const controls = target.getAttribute('aria-controls');
+    const isExpanded = target.getAttribute('aria-expanded') === 'true';
+    this.setState({
+      [`${controls}-isExpanded`]: !isExpanded
+    });
   }
 
   /**
@@ -87,9 +92,9 @@ class EntityFiles extends React.Component {
     if (codeUrl) {
       codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
       codeLink = (
-        <li className="entity-files__link section__list-item">
+        <li className="section__list-item">
           <a ref="codeLink"
-            className="link"
+            className="button--inline-neutral entity-files__link"
             target="_blank"
             href={codeUrl}>
             View code
@@ -111,7 +116,7 @@ class EntityFiles extends React.Component {
     @return {Array} The markup for the linked files.
   */
   _generateFileItems(files, url) {
-    var filetree = this._buildFiletree(files);
+    const filetree = this._buildFiletree(files);
 
     /**
       Recursively create a nested list.
@@ -123,11 +128,11 @@ class EntityFiles extends React.Component {
       @return {Array} The nested markup for the list of files.
     */
     function buildList(path, children) {
-      var fileName = path.split('/').pop();
+      const fileName = path.split('/').pop();
       if (children === null) {
-        var fileLink = `${url}/${path}`;
+        const fileLink = `${url}/${path}`;
         return (
-          <li key={path} className="entity-files__file">
+          <li key={path} className="p-list-tree__item">
             <a href={fileLink}
               className="link"
               title={fileName}
@@ -137,21 +142,32 @@ class EntityFiles extends React.Component {
           </li>
         );
       } else {
-        var childItems = [];
+        let childItems = [];
         // Note that this logic covers everything *but* the root node; see
         // the corresponding comment below.
         Object.keys(children).forEach(child => {
           childItems.push(buildList.call(this, `${path}/${child}`,
             children[child]));
         });
+        const isExpanded = this.state[`/${fileName}-isExpanded`] || false;
         return (
           <li key={path}
-            className="entity-files__directory collapsed"
+            className="p-list-tree__item p-list-tree__item--group"
             tabIndex="0"
-            role="button"
-            onClick={this._onDirectoryClick.bind(this)}>
-            {'/' + fileName}
-            <ul className="entity-files__listing">
+            title={`/${fileName}`}>
+            <button className="p-list-tree__toggle"
+              id={`/${fileName}-toggle`}
+              role="tab"
+              onClick={this._onDirectoryClick.bind(this)}
+              aria-controls={`/${fileName}`}
+              aria-expanded={`${isExpanded}`}>
+              {`/${fileName}`}
+            </button>
+            <ul className="p-list-tree"
+              id={`/${fileName}`}
+              role="tabpanel"
+              aria-hidden={`${!isExpanded}`}
+              aria-labelledby={`/${fileName}-toggle`}>
               {childItems}
             </ul>
           </li>
@@ -161,9 +177,9 @@ class EntityFiles extends React.Component {
 
     // Need to handle the root node separate from the recursive logic.
     // The loop that covers everything *but* the root node is above.
-    var markup = [];
+    let markup = [];
     Object.keys(filetree).forEach(file => {
-      markup.push(buildList.call(this, file, filetree[file]));
+      markup.push(buildList.bind(this)(file, filetree[file]));
     });
     return markup;
   }
@@ -176,20 +192,23 @@ class EntityFiles extends React.Component {
     return (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
-          {files.length + ' ' + this.props.pluralize('file', files.length)}
+          {this.props.pluralize('File', files.length)}
         </h3>
+        <ul ref="files"
+          className="p-list-tree"
+          aria-multiselectable="true"
+          role="tablist">
+          {this._generateFileItems(files, archiveUrl)}
+        </ul>
         <ul className="section__list">
           {this._generateCodeLink(entityModel.get('code_source'))}
-          <li className="entity-files__link section__list-item">
+          <li className="section__list-item">
             <a target="_blank"
-              className="link"
+              className="button--inline-neutral entity-files__link"
               href={archiveUrl}>
               Download .zip
             </a>
           </li>
-        </ul>
-        <ul ref="files" className="section__list entity-files__listing">
-          {this._generateFileItems(files, archiveUrl)}
         </ul>
       </div>
     );
@@ -205,5 +224,6 @@ EntityFiles.propTypes = {
 YUI.add('entity-files', function() {
   juju.components.EntityFiles = EntityFiles;
 }, '0.1.0', {
-  requires: []
+  requires: [
+  ]
 });
