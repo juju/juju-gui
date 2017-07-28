@@ -898,6 +898,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     };
     ReactDOM.render(
       <window.juju.components.Login
+        addNotification={this._bound.addNotification}
         controllerIsConnected={controllerIsConnected}
         errorMessage={err}
         gisf={this.applicationConfig.gisf}
@@ -933,6 +934,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const bakery = this.bakery;
     const USSOLoginLink = (
       <window.juju.components.USSOLoginLink
+        addNotification={this._bound.addNotification}
         displayType="text"
         loginToController={
           controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
@@ -1014,6 +1016,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <juju.components.HeaderBreadcrumb
         acl={this.acl}
+        addNotification={this._bound.addNotification}
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
