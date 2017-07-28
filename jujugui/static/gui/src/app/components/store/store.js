@@ -507,7 +507,7 @@ class Store extends React.Component {
           </li>
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
-              data-entity="prometheus/1"
+              data-entity="prometheus"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
