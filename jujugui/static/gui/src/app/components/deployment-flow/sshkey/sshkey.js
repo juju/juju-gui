@@ -135,7 +135,7 @@ class DeploymentSSHKey extends React.Component {
       const manualKey = this.refs.sshKey.getValue();
       const key = this._validateAndSplitKey(manualKey);
       if (key) {
-        this.props.setSSHKeys(manualKey);
+        this.props.setSSHKeys([key]);
         let SSHkeys = this.state.SSHkeys;
         if (!this._keyExists(key)) {
           SSHkeys.push(key);
