@@ -336,14 +336,25 @@ class DeploymentFlow extends React.Component {
       region: this.state.region
     };
     if (this.state.sshKeys.length) {
+      const sshKeys = this.state.sshKeys.slice();
       // Attempt to provide at least one key in case the addSSHKeys call fails.
-      args.config['authorized-keys'] = this.state.sshKeys[0].text;
-      // Also add to change set - adding keys twice is a no-op.
+      args.config['authorized-keys'] = sshKeys.shift().text;
+      // Then add the remaining ones to the change set.
+      const ecsOptions = {};
       this.props.addSSHKeys(
         this.props.getUserName(),
-        this.state.sshKeys.map(key => key.text),
-        (error, data) => { console.log(error, data); },
-        {});
+        sshKeys.map(key => key.text),
+        (error, data) => {
+          if (!error) {
+            return;
+          }
+          this.props.addNotification({
+            title: 'Cannot add SSH keys',
+            message: `Cannot add SSH keys: ${error}`,
+            level: 'error'
+          });
+        },
+        ecsOptions);
     }
     if (this.state.vpcId) {
       args.config['vpc-id'] = this.state.vpcId;

@@ -164,13 +164,10 @@ class DeploymentSSHKey extends React.Component {
     const newSSHkeyList = this.state.SSHkeys.filter(key => {
       return key.id !== keyId;
     });
-
-    this.setState({
-      SSHkeys: newSSHkeyList
-    });
-
+    this.setState({SSHkeys: newSSHkeyList});
+    // For now, we only support import all or none.
     if (!newSSHkeyList.length) {
-      this.props.setSSHKeys(null);
+      this.props.setSSHKeys([]);
     }
   }
 
