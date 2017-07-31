@@ -1,7 +1,26 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 
+/**
+  This library provides the shape and reshape customized React property types.
+  The ability to declare a frozen shape is also provided.
+
+  Note that in most of the property wrappers the "...rest" parameter is used.
+  This is required to avoid warnings about calling PropTypes validators
+  directly.
+  See <https://facebook.github.io/react/warnings/dont-call-proptypes.html
+  #fixing-the-false-positive-in-third-party-proptypes>.
+*/
+
 'use strict';
 
+/**
+  Declare a property type as the given shape.
+  This works like PropTypes.shape, except the provided property must only
+  include the fields declared in the shape.
+
+  @param {Object} obj The object defining the shape.
+  @returns {Function} The shape property type.
+*/
 function shape(obj) {
   const wrappedValidator = PropTypes.shape(obj);
   const shapeFields = Object.keys(obj);
@@ -12,10 +31,6 @@ function shape(obj) {
       return null;
     }
     // Check that the object has the declared shape.
-    // Note that including "...rest" is required to avoid warnings about
-    // calling PropTypes validators directly.
-    // See <https://facebook.github.io/react/warnings/dont-call-proptypes.html
-    // #fixing-the-false-positive-in-third-party-proptypes>.
     const err = wrappedValidator(props, propName, componentName, ...rest);
     if (err) {
       return err;
@@ -34,30 +49,10 @@ function shape(obj) {
     return null;
   };
 
-  propType.isRequired = (props, propName, componentName, ...rest) => {
-    if (!props[propName]) {
-      return new Error(
-        `the property "${propName}" is marked as required for the component ` +
-        `"${componentName}" but "${props[propName]}" has been provided`
-      );
-    }
-    return propType(props, propName, componentName, ...rest);
-  };
-
-  propType[SHAPE] = propType.isRequired[SHAPE] = new Declaration(obj);
-  return propType;
-}
-/**
-  Declare a property type as the given shape.
-  This is just a wrapper around PropTypes.shape.
-
-  @param {Object} obj The object defining the shape.
-  @returns {Function} The shape property type.
-*/
-function shape2(obj) {
-  const propType = PropTypes.shape(obj);
-  // We need to annotate on possible chained prop types as well.
-  propType[SHAPE] = propType.isRequired[SHAPE] = new Declaration(obj);
+  propType[SHAPE] = new Declaration(obj);
+  propType.frozen = frozenWrapper(propType);
+  propType.isRequired = isRequiredWrapper(propType);
+  propType.frozen.isRequired = isRequiredWrapper(propType.frozen);
   return propType;
 }
 
@@ -89,7 +84,6 @@ function fromShape(obj, propType) {
   const checker = {};
   Object.keys(shape).forEach(key => {
     const type = shape[key];
-    if (!type) {console.log('======================== KEY:', key)};
     if (type[SHAPE] instanceof Reshape) {
       // Add the reshape method to the resulting instance.
       instance[key] = fromShape.bind(null, instance);
@@ -113,6 +107,66 @@ function fromShape(obj, propType) {
     instance[key] = value;
   });
   return deepFreeze(instance);
+}
+
+/**
+  Return the isRequired wrapper for the given propType validator.
+
+  @param {Function} propType A shape or frozen validator.
+  @return {Function} The isRequired validator.
+*/
+function isRequiredWrapper(propType) {
+  const isRequired = (props, propName, componentName, ...rest) => {
+    if (!props[propName]) {
+      return new Error(
+        `the property "${propName}" is marked as required for the component ` +
+        `"${componentName}" but "${props[propName]}" has been provided`
+      );
+    }
+    return propType(props, propName, componentName, ...rest);
+  };
+  isRequired[SHAPE] = propType[SHAPE];
+  return isRequired;
+}
+
+/**
+  Return a frozen wrapper for the given propType validator.
+  The resulting validator checks that the provided property is deeply frozen.
+
+  @param {Function} propType A shape validator.
+  @return {Function} The frozen validator.
+*/
+function frozenWrapper(propType) {
+  const checkFrozen = (obj, propName, componentName) => {
+    if (!Object.isFrozen(obj)) {
+      throw new Error(
+        `the property "${propName}" provided to component ` +
+        `"${componentName}" is not frozen`
+      );
+    }
+    Object.getOwnPropertyNames(obj).forEach(name => {
+      const prop = obj[name];
+      const type = typeof obj;
+      if (prop !== null && (type === 'object' || type === 'function')) {
+        checkFrozen(prop, `${propName}.${name}`, componentName);
+      }
+    });
+  };
+
+  const frozen = (props, propName, componentName, ...rest) => {
+    const propValue = props[propName];
+    if (!propValue) {
+      return null;
+    }
+    try {
+      checkFrozen(propValue, propName, componentName);
+    } catch (err) {
+      return err;
+    }
+    return propType(props, propName, componentName, ...rest);
+  };
+  frozen[SHAPE] = propType[SHAPE];
+  return frozen;
 }
 
 /**
@@ -149,6 +203,9 @@ const Declaration = class Declaration {
 */
 const Reshape = class Reshape {};
 
+/**
+  A dummy property type only used as a placeholder for the reshape function.
+*/
 const reshapeFunc = () => null;
 reshapeFunc[SHAPE] = new Reshape();
 
