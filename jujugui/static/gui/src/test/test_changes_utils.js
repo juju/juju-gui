@@ -292,7 +292,6 @@ describe('ChangesUtils', function() {
 
   describe('sortDescriptionsByApplication', function() {
     const getServiceById = sinon.stub();
-
     const descriptionsJSON = '[{"id":"addPendingResources-458","icon":"https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg","description":" easyrsa resources will be added.","time":"8:49 am"},{"id":"service-220","icon":"https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-35/icon.svg","description":" kubernetes-master will be added to the model.","time":"8:49 am"},{"id":"expose-102","icon":"exposed_16","description":"kubernetes-master will be exposed","time":"8:49 am"},{"id":"addRelation-83","icon":"changes-relation-added","description":"kube-api-endpoint relation will be added between kubernetes-master and kubernetes-worker.","time":"8:49 am"},{"id":"addUnits-256","icon":"changes-units-added","description":" 1 easyrsa unit will be added.","time":"8:49 am"}]'; // eslint-disable-line max-len
 
     it('sorts additive descriptions by application', function() {
@@ -322,20 +321,17 @@ describe('ChangesUtils', function() {
       const sorted = changesUtils.sortDescriptionsByApplication(
         getServiceById, changeSet, descriptions);
       const expected = {
-        easyrsa: [
-          {
-            id: 'addPendingResources-458',
-            icon: 'https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg', // eslint-disable-line max-len
-            description: ' easyrsa resources will be added.',
-            time: '8:49 am'
-          },
-          {
-            id: 'addUnits-256',
-            icon: 'changes-units-added',
-            description: ' 1 easyrsa unit will be added.',
-            time: '8:49 am'
-          }
-        ],
+        easyrsa: [{
+          id: 'addPendingResources-458',
+          icon: 'https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg', // eslint-disable-line max-len
+          description: ' easyrsa resources will be added.',
+          time: '8:49 am'
+        }, {
+          id: 'addUnits-256',
+          icon: 'changes-units-added',
+          description: ' 1 easyrsa unit will be added.',
+          time: '8:49 am'
+        }],
         'kubernetes-master': [{
           id: 'service-220',
           icon: 'https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-35/icon.svg', // eslint-disable-line max-len
@@ -397,28 +393,23 @@ describe('ChangesUtils', function() {
       const sorted = changesUtils.sortDescriptionsByApplication(
         getServiceById, changeSet, descriptions);
       const expected = {
-        elasticsearch: [
-          {
-            id: 'removeUnit-376',
-            icon: 'changes-units-removed',
-            description: '1 unit will be removed from elasticsearch',
-            time: '3:18 pm'
-          },
-          {
-            id: 'removeRelation-281',
-            icon: 'changes-relation-removed',
-            description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
-            time: '3:21 pm'
-          }
-        ],
-        kibana: [
-          {
-            id: 'removeRelation-281',
-            icon: 'changes-relation-removed',
-            description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
-            time: '3:21 pm'
-          }
-        ]
+        elasticsearch: [{
+          id: 'removeUnit-376',
+          icon: 'changes-units-removed',
+          description: '1 unit will be removed from elasticsearch',
+          time: '3:18 pm'
+        }, {
+          id: 'removeRelation-281',
+          icon: 'changes-relation-removed',
+          description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
+          time: '3:21 pm'
+        }],
+        kibana: [{
+          id: 'removeRelation-281',
+          icon: 'changes-relation-removed',
+          description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
+          time: '3:21 pm'
+        }]
       };
       assert.deepEqual(sorted, expected);
     });
