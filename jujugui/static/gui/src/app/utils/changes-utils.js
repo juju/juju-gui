@@ -105,26 +105,32 @@ YUI.add('changes-utils', function(Y) {
   */
   ChangesUtils.sortDescriptionsByApplication = (getServiceById, changeset, descriptions) => { // eslint-disable-line max-len
     // ECS methods to blacklist for description sorting.
-    const methodBlacklist = ['addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys'];
+    const methodBlacklist = [
+      'addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys', 'destroyMachines'];
     const grouped = {};
     // If the application name is a temporary ID (contains $)
     // then fetch its real name and return that or return the original name.
     const getRealAppName = name =>
       name.includes('$') ? getServiceById(name).get('name') : name;
+    // Fetch the names of a relation.
+    const relationAppNames = args => {
+      const appNames = [args[0][0]];
+      // Relations will typically have another remote endpoint but sometimes
+      // they won't, like with peer relations between the same app.
+      if (args[1]) {
+        appNames.push(args[1][0]);
+      }
+      return appNames;
+    };
     // Not all api calls have the same call signature so this normalizes the
     // application that the command is for.
     const nameFetchers = {
-      '_addPendingResources': args => args[0].applicationName,
-      '_deploy': args => args[0].applicationName,
-      '_add_relation': args => {
-        const appNames = [args[0][0]];
-        // Relations will typically have another remote endpoint but sometimes
-        // they won't, like with peer relations between the same app.
-        if (args[1]) {
-          appNames.push(args[1][0]);
-        }
-        return appNames;
-      },
+      _addPendingResources: args => args[0].applicationName,
+      _deploy: args => args[0].applicationName,
+      _add_relation: relationAppNames,
+      // These unit calls will be grouped by application already.
+      _remove_units: args => args[0][0].split('/')[0],
+      _remove_relation: relationAppNames,
       default: args => args[0]
     };
     // Adds the supplied item to the supplied name.
