@@ -36,7 +36,6 @@ class DeploymentFlow extends React.Component {
       loadingEntity: false,
       loadingTerms: false,
       isDirectDeploy: !!(this.props.ddData && this.props.ddData.id),
-      modelName: this.props.modelName,
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
@@ -57,13 +56,6 @@ class DeploymentFlow extends React.Component {
     this.sendAnalytics('Component mounted');
     if (this.state.isDirectDeploy) {
       this._getDirectDeployEntity(this.props.ddData.id);
-    }
-  }
-
-  componentDidMount() {
-    const modelName = this.refs.modelName;
-    if (modelName) {
-      modelName.focus();
     }
   }
 
@@ -126,11 +118,7 @@ class DeploymentFlow extends React.Component {
     const loggedIn = this.props.isLoggedIn();
     switch (section) {
       case 'model-name':
-        completed = this.props.acl.isReadOnly() ||
-          (
-            (this.state.modelName !== 'mymodel' || hasCloud)
-            && this.state.modelName !== ''
-          );
+        completed = !!this.props.modelName;
         disabled = false;
         visible = loggedIn && willCreateModel;
         break;
@@ -361,7 +349,7 @@ class DeploymentFlow extends React.Component {
       args.config['vpc-id-force'] = this.state.vpcIdForce;
     }
     const deploy = this.props.deploy.bind(
-      this, this._handleClose.bind(this), true, this.state.modelName, args);
+      this, this._handleClose.bind(this), true, this.props.modelName, args);
     if (this.state.newTerms.length > 0) {
       const terms = this.state.newTerms.map(term => {
         const args = {
@@ -576,49 +564,18 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    let sectionTitle = this.props.profileUsername ?
-      `You're logged in as ${this.props.profileUsername}` :
-      'Set your model name';
     return (
       <juju.components.DeploymentSection
         completed={status.completed}
         instance="deployment-model-name"
         showCheck={true}
-        title={sectionTitle}>
-        <div className="six-col no-margin-bottom">
-          <juju.components.GenericInput
-            disabled={this.props.acl.isReadOnly()}
-            key="modelName"
-            label="Deploying"
-            required={true}
-            onBlur={this._updateModelName.bind(this)}
-            ref="modelName"
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }, {
-              regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
-              error: 'This field must only contain lowercase ' +
-                'letters, numbers, and hyphens. It must not start or ' +
-                'end with a hyphen.'
-            }]}
-            value={this.props.modelName} />
-        </div>
+        title="Set your model name">
+        <juju.components.DeploymentModelName
+          acl={this.props.acl}
+          ddEntity={this.state.ddEntity}
+          modelName={this.props.modelName}
+          setModelName={this.props.setModelName} />
       </juju.components.DeploymentSection>);
-  }
-
-  /**
-    Updates the db's environment name when the model name is changed
-    in the deployment panel.
-
-    @method _updateModelName
-  */
-  _updateModelName(evt) {
-    const modelName = this.refs.modelName.getValue();
-    this.setState({modelName: modelName});
-    if (modelName !== '') {
-      this.props.setModelName(modelName);
-    }
   }
 
   /**
@@ -993,7 +950,7 @@ class DeploymentFlow extends React.Component {
   */
   _deploymentAllowed() {
     // No deployments are possible without a model name.
-    if (!this.state.modelName) {
+    if (!this.props.modelName) {
       return false;
     }
     // Check that we have a cloud where to deploy to.
@@ -1133,6 +1090,7 @@ YUI.add('deployment-flow', function() {
     'deployment-direct-deploy',
     'deployment-login',
     'deployment-machines',
+    'deployment-model-name',
     'deployment-panel',
     'deployment-payment',
     'deployment-section',
@@ -1141,7 +1099,6 @@ YUI.add('deployment-flow', function() {
     'deployment-vpc',
     'entity-content-diagram',
     'generic-button',
-    'generic-input',
     'loading-spinner'
   ]
 });

@@ -173,26 +173,12 @@ describe('DeploymentFlow', function() {
           completed={true}
           instance="deployment-model-name"
           showCheck={true}
-          title="You're logged in as Spinach">
-          <div className="six-col no-margin-bottom">
-            <juju.components.GenericInput
-              disabled={false}
-              key="modelName"
-              label="Deploying"
-              required={true}
-              onBlur={instance._updateModelName}
-              ref="modelName"
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
-                error: 'This field must only contain lowercase ' +
-                  'letters, numbers, and hyphens. It must not start ' +
-                  'or end with a hyphen.'
-              }]}
-              value="Pavlova" />
-          </div>
+          title="Set your model name">
+          <juju.components.DeploymentModelName
+            acl={props.acl}
+            ddEntity={null}
+            modelName="Pavlova"
+            setModelName={props.setModelName} />
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
           buttons={undefined}
@@ -579,12 +565,6 @@ describe('DeploymentFlow', function() {
       region: 'north'
     });
     const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('Lamington')
-      }
-    };
-    instance._updateModelName();
     const props = instance.props;
     const output = renderer.getRenderOutput();
     // Click to deploy.
@@ -592,7 +572,7 @@ describe('DeploymentFlow', function() {
     deploy.props.children.props.action();
     assert.equal(props.deploy.callCount, 1);
     assert.strictEqual(props.deploy.args[0].length, 4);
-    assert.equal(props.deploy.args[0][2], 'Lamington');
+    assert.equal(props.deploy.args[0][2], 'Pavlova');
     assert.deepEqual(props.deploy.args[0][3], {
       config: {},
       cloud: 'cloud',
@@ -600,8 +580,6 @@ describe('DeploymentFlow', function() {
       region: 'north'
     });
     assert.equal(props.changeState.callCount, 1);
-    assert.equal(props.setModelName.callCount, 1);
-    assert.equal(props.setModelName.args[0][0], 'Lamington');
     assert.equal(props.sendAnalytics.callCount, 2);
     assert.deepEqual(props.sendAnalytics.args[0], [
       'Deployment Flow', 'Component mounted',
@@ -624,13 +602,6 @@ describe('DeploymentFlow', function() {
       region: 'north',
       stats: {increase: statsIncrease}
     });
-    const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('Lamington')
-      }
-    };
-    instance._updateModelName();
     const output = renderer.getRenderOutput();
     // Click to deploy.
     const deploy = output.props.children[9].props.children.props.children[1];
@@ -649,12 +620,6 @@ describe('DeploymentFlow', function() {
       region: 'north'
     });
     const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('Lamington')
-      }
-    };
-    instance._updateModelName();
     instance._handleTermsAgreement({target: {checked: true}});
     const props = instance.props;
     const output = renderer.getRenderOutput();
@@ -672,10 +637,6 @@ describe('DeploymentFlow', function() {
       name: 'my-terms',
       revision: 9
     }], 'The agreement passed in was not as expected.');
-    assert.equal(props.setModelName.callCount, 1,
-      'The setModelName function was not called.');
-    assert.equal(props.setModelName.args[0][0], 'Lamington',
-      'The setModelName function was not called with the right model name');
   });
 
   it('allows or disallows deployments', function() {
@@ -848,12 +809,6 @@ describe('DeploymentFlow', function() {
       modelCommitted: true,
       region: 'north'
     });
-    const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('Lamington')
-      }
-    };
     let output = renderer.getRenderOutput();
     let deployButton = output.props.children[9].props.children.props
       .children[1].props.children;
@@ -866,35 +821,6 @@ describe('DeploymentFlow', function() {
 
     assert.equal(deployButton.props.disabled, true);
     assert.equal(deployButton.props.children, 'Deploying...');
-  });
-
-  it('can deploy without updating the model name', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
-    const renderer = createDeploymentFlow({
-      charmsGetById: charmsGetById,
-      cloud: {name: 'cloud'},
-      credential: 'cred',
-      modelCommitted: true,
-      region: 'north'
-    });
-    const instance = renderer.getMountedInstance();
-    instance.refs = {};
-    const output = renderer.getRenderOutput();
-    output.props.children[9].props.children.props.children[1].props.children
-      .props.action();
-    const deploy = instance.props.deploy;
-    assert.equal(deploy.callCount, 1);
-    assert.strictEqual(deploy.args[0].length, 4);
-    assert.equal(deploy.args[0][2], 'Pavlova');
-    assert.deepEqual(deploy.args[0][3], {
-      config: {},
-      cloud: 'cloud',
-      credential: 'cred',
-      region: 'north'
-    });
-    assert.equal(instance.props.changeState.callCount, 1);
   });
 
   it('can deploy with SSH keys', function() {
@@ -985,14 +911,6 @@ describe('DeploymentFlow', function() {
       config: {'vpc-id': 'my VPC id', 'vpc-id-force': true}
     });
     assert.equal(instance.props.changeState.callCount, 1);
-  });
-
-  it('focuses on the model name field when loaded', function() {
-    const renderer = createDeploymentFlow();
-    const instance = renderer.getMountedInstance();
-    instance.refs = {modelName: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    assert.equal(instance.refs.modelName.focus.callCount, 1);
   });
 
   it('aborts the requests when unmounting', function() {
