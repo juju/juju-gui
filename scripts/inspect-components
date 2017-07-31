@@ -96,7 +96,7 @@ class Property(namedtuple('Property', 'name type_ required')):
 
     def is_mutable(self):
         """Report whether this property has a mutable type."""
-        return self.type_ in ('array', 'element', 'object')
+        return self.type_ in ('array', 'element', 'object', 'shape')
 
 
 class Instantiation(namedtuple('Instantiation', 'definition path line props')):
