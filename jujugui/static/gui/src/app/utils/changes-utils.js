@@ -112,8 +112,7 @@ YUI.add('changes-utils', function(Y) {
     // then fetch its real name and return that or return the original name.
     const getRealAppName = name =>
       name.includes('$') ? getServiceById(name).get('name') : name;
-    // Not all api calls have the same call signature so this normalizes the
-    // application that the command is for.
+    // Fetch the names of a relation.
     const relationAppNames = args => {
       const appNames = [args[0][0]];
       // Relations will typically have another remote endpoint but sometimes
@@ -123,6 +122,8 @@ YUI.add('changes-utils', function(Y) {
       }
       return appNames;
     };
+    // Not all api calls have the same call signature so this normalizes the
+    // application that the command is for.
     const nameFetchers = {
       _addPendingResources: args => args[0].applicationName,
       _deploy: args => args[0].applicationName,
