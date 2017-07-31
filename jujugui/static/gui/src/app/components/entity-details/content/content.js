@@ -123,9 +123,11 @@ class EntityContent extends React.Component {
     const entity = entityModel.toEntity();
     let applicationIcons = {};
 
-    entity.applications.forEach(applicationEntity => {
-      applicationIcons[applicationEntity.id] = applicationEntity.iconPath;
-    });
+    if (Array.isArray(entity.applications)) {
+      entity.applications.forEach(applicationEntity => {
+        applicationIcons[applicationEntity.id] = applicationEntity.iconPath;
+      });
+    }
 
     // Generate the options for each application in this bundle.
     const applicationsList = Object.keys(applications).map(application => {
@@ -274,23 +276,19 @@ class EntityContent extends React.Component {
     } else if (terms.length === 0) {
       return null;
     } else {
-      const items = terms.map(item => {
-        return (
-          <li className="link"
+      content = terms.map((item, i) => {
+        return [i > 0 ? ', ' : ''].concat(
+          <a className="link"
             key={item.name}
             onClick={this._toggleTerms.bind(this, item)}>
             {item.name}
-          </li>
+          </a>
         );
       });
-      content = (
-        <ul>
-          {items}
-        </ul>);
     }
     return (
       <div className="entity-content__metadata">
-        <h4>Terms</h4>
+        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
         {content}
       </div>);
   }
@@ -662,9 +660,9 @@ YUI.add('entity-content', function() {
     'accordion-section',
     'entity-content-config-option',
     'entity-content-description',
+    'entity-content-diagram',
     'entity-content-readme',
     'entity-content-relations',
-    'entity-content-revisions',
     'entity-files',
     'entity-resources',
     'loading-spinner',
