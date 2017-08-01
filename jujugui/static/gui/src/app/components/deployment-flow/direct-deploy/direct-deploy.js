@@ -22,29 +22,8 @@ class DeploymentDirectDeploy extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      entityModel: false,
-      isBundle: this.props.ddData.id.indexOf('bundle') !== -1,
-      loading: false
+      isBundle: this.props.ddData.id.indexOf('bundle') !== -1
     };
-  }
-
-  componentWillMount() {
-    this.setState({loading: true}, () => {
-      this.props.getEntity(this.props.ddData.id, (error, data) => {
-        this.setState({loading: false}, () => {
-          if (error) {
-            console.error('cannot fetch the entity:' + error);
-            return;
-          }
-          if (data && data.length > 0) {
-            data = data[0];
-            this.setState({
-              entityModel: this.props.makeEntityModel(data)
-            });
-          }
-        });
-      });
-    });
   }
 
   /**
@@ -94,7 +73,7 @@ class DeploymentDirectDeploy extends React.Component {
           getDiagramURL={this.props.getDiagramURL}
           id={this.props.ddData.id} />);
     } else {
-      const entity = this.state.entityModel.toEntity();
+      const entity = this.props.entityModel.toEntity();
       return (
         <div className="deployment-direct-deploy__image-block">
           <img alt={entity.displayName}
@@ -119,9 +98,8 @@ class DeploymentDirectDeploy extends React.Component {
 
   render() {
     let content = null;
-    if (this.state.loading) {
-      content = (<juju.components.Spinner />);
-    } else if (!this.state.entityModel) {
+    const entityModel = this.props.entityModel;
+    if (!entityModel) {
       content = (
         <div>
           This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
@@ -135,7 +113,7 @@ class DeploymentDirectDeploy extends React.Component {
           to find more charms and bundles.
         </div>);
     } else {
-      const entity = this.state.entityModel.toEntity();
+      const entity = entityModel.toEntity();
       const machineNumber = this.state.isBundle ? entity.machineCount : 1;
       content = (
         <div>
@@ -145,7 +123,7 @@ class DeploymentDirectDeploy extends React.Component {
               {entity.displayName}
             </h2>
             <juju.components.EntityContentDescription
-              entityModel={this.state.entityModel}
+              entityModel={entityModel}
               renderMarkdown={this.props.renderMarkdown} />
             <ul>
               <li>
@@ -178,12 +156,12 @@ class DeploymentDirectDeploy extends React.Component {
 };
 
 DeploymentDirectDeploy.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   ddData: PropTypes.object.isRequired,
+  entityModel: PropTypes.object,
   generatePath: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
-  getEntity: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired
 };
 
@@ -194,7 +172,6 @@ YUI.add('deployment-direct-deploy', function() {
     'deployment-section',
     'entity-content-diagram',
     'entity-content-description',
-    'generic-button',
-    'loading-spinner'
+    'generic-button'
   ]
 });

@@ -92,6 +92,13 @@ describe('jujulib charmstore', function() {
       assert.equal(models[2], 'It\'s a charm.');
       assert.equal(models[3], 'It\'s a bundle.');
     });
+
+    it('errors when no data is provided even if there is no error', function() {
+      charmstore._transformQueryResults(cb, null, null);
+      assert.equal(
+        cb.args[0][0],
+        'no entity data returned, can you access the charmstore?');
+    });
   });
 
   describe('_lowerCaseKeys', function() {

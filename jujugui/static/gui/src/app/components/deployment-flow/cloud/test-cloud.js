@@ -79,6 +79,7 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
+        addNotification={sinon.stub()}
         cloud={null}
         controllerIsReady={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -128,13 +129,14 @@ describe('DeploymentCloud', function() {
         </ul>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display the loading state', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
+        addNotification={sinon.stub()}
         cloud={null}
         controllerIsReady={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -148,13 +150,14 @@ describe('DeploymentCloud', function() {
         </div>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render with a chosen cloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
+        addNotification={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         controllerIsReady={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -171,7 +174,7 @@ describe('DeploymentCloud', function() {
             width={256} />
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can select a cloud if there is only one', function() {
@@ -182,6 +185,7 @@ describe('DeploymentCloud', function() {
     jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
+        addNotification={sinon.stub()}
         cloud={null}
         controllerIsReady={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -198,6 +202,7 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
+        addNotification={sinon.stub()}
         cloud={null}
         controllerIsReady={sinon.stub().returns(true)}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -209,6 +214,25 @@ describe('DeploymentCloud', function() {
     assert.deepEqual(setCloud.args[0][0], {
       name: 'google',
       cloudType: 'gce'
+    });
+  });
+
+  it('can handle errors getting clouds', function() {
+    const addNotification = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentCloud
+        acl={acl}
+        addNotification={addNotification}
+        cloud={null}
+        controllerIsReady={sinon.stub().returns(true)}
+        getCloudProviderDetails={getCloudProviderDetails}
+        listClouds={sinon.stub().callsArgWith(0, 'Uh oh!', null)}
+        setCloud={sinon.stub()} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to list clouds',
+      message: 'unable to list clouds: Uh oh!',
+      level: 'error'
     });
   });
 });

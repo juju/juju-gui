@@ -507,12 +507,12 @@ class Store extends React.Component {
           </li>
           <li className="three-col last-col featured-entity">
             <span className="featured-entity__link link"
-              data-entity="u/canonical-bootstack/prometheus"
+              data-entity="prometheus"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
                 <img
                   src={this._generateIconPath(
-                    '~canonical-bootstack/prometheus')}
+                    'prometheus')}
                   alt=""
                   className="featured-entity__image" />
               </div>
@@ -521,7 +521,7 @@ class Store extends React.Component {
                 <h3 className="featured-entity__title">
                                 Prometheus
                 </h3>
-                <p>by canonical-bootstack</p>
+                <p>by prometheus-charmers</p>
               </div>
             </span>
           </li>

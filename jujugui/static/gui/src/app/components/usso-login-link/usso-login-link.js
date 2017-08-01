@@ -30,7 +30,13 @@ class USSOLoginLink extends React.Component {
     }
     this.props.loginToController(err => {
       if (err) {
-        console.error('cannot log into the controller:', err);
+        const message = 'cannot log into the controller';
+        this.props.addNotification({
+          title: message,
+          message: `${message}: ${err}`,
+          level: 'error'
+        });
+        console.error(message, err);
       }
 
       const callback = this.props.callback;
@@ -60,7 +66,7 @@ class USSOLoginLink extends React.Component {
   */
   _renderTextLink() {
     return (
-      <a className={'logout-link usso-login__action'}
+      <a className="usso-login__action"
         onClick={this.handleLogin.bind(this)}
         target="_blank">
         {this._generateContent('Login')}
@@ -102,6 +108,7 @@ class USSOLoginLink extends React.Component {
 };
 
 USSOLoginLink.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   callback: PropTypes.func,
   children: PropTypes.node,
   displayType: PropTypes.string.isRequired,

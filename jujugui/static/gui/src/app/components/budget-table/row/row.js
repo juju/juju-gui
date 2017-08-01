@@ -69,7 +69,13 @@ class BudgetTableRow extends React.Component {
   */
   _getPlansCallback(error, plans) {
     if (error) {
-      console.error('Fetching plans failed: ' + error);
+      const message = 'Fetching plans failed';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
     } else {
       this.setState({
         plansLoading: false,
@@ -281,9 +287,13 @@ class BudgetTableRow extends React.Component {
         const id = term.owner ? `${term.owner}/${term.name}` : term.name;
         const xhr = this.props.showTerms(id, term.revision, (error, term) => {
           if (error) {
-            // XXX kadams54: display this error to the user.
-            console.error(`Could not retrieve "${term}" terms. ` +
-                          `Server responded with: ${error}`);
+            const message = `Could not retrieve "${term}" terms.`;
+            this.props.addNotification({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
+            console.error(message, error);
             return;
           }
           const terms = this.state.terms;
@@ -410,6 +420,7 @@ class BudgetTableRow extends React.Component {
 
 BudgetTableRow.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   allocationEditable: PropTypes.bool,
   charmsGetById: PropTypes.func,
   extraInfo: PropTypes.object,

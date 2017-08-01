@@ -558,7 +558,7 @@ class EntityContent extends React.Component {
     const entity = entityModel.toEntity();
     const storeId = entity.type === 'charm' ?
       entity.storeId : entity.id.split('cs:').join('');
-    const ddeploy = this.props.flags.ddeploy;
+    const ddeploy = this.props.flags['test.ddeploy'];
     const dataDD = ddeploy ? 'data-dd' : '';
     const script = '<script ' +
     'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
@@ -606,6 +606,7 @@ class EntityContent extends React.Component {
               {this._generateTagsAndTerms(entityModel)}
               {this._generatePlans()}
               <juju.components.EntityContentReadme
+                addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
                 entityModel={entityModel}
                 getFile={this.props.getFile}

@@ -84,7 +84,13 @@ class DeploymentSSHKey extends React.Component {
   */
   _addGithubKeysCallback(error, keys) {
     if (error) {
-      console.error(error);
+      const message = 'could not get SSH keys';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       this.setState({error: error});
       return;
     }
@@ -103,9 +109,7 @@ class DeploymentSSHKey extends React.Component {
         SSHkeys.push(key);
       }
     });
-    // XXX: Mayko is taking a look at adding all the keys. When done this
-    // should just be this.props.setSSHKey(SSHKeys); Luke 12-07-2017
-    this.props.setSSHKey(SSHkeys[0].text);
+    this.props.setSSHKeys(SSHkeys);
     this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
     this.refs.githubUsername.setValue(null);
     this.refs.githubUsername.focus();
@@ -131,7 +135,7 @@ class DeploymentSSHKey extends React.Component {
       const manualKey = this.refs.sshKey.getValue();
       const key = this._validateAndSplitKey(manualKey);
       if (key) {
-        this.props.setSSHKey(manualKey);
+        this.props.setSSHKeys([key]);
         let SSHkeys = this.state.SSHkeys;
         if (!this._keyExists(key)) {
           SSHkeys.push(key);
@@ -160,13 +164,10 @@ class DeploymentSSHKey extends React.Component {
     const newSSHkeyList = this.state.SSHkeys.filter(key => {
       return key.id !== keyId;
     });
-
-    this.setState({
-      SSHkeys: newSSHkeyList
-    });
-
+    this.setState({SSHkeys: newSSHkeyList});
+    // For now, we only support import all or none.
     if (!newSSHkeyList.length) {
-      this.props.setSSHKey(null);
+      this.props.setSSHKeys([]);
     }
   }
 
@@ -357,9 +358,10 @@ class DeploymentSSHKey extends React.Component {
 
 DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
-  setSSHKey: PropTypes.func.isRequired
+  setSSHKeys: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-ssh-key', function() {

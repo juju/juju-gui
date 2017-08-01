@@ -1,3 +1,12 @@
+- 2.8.0:
+
+  - Import SSH keys from GitHub during deployment.
+  - Manually add multiple SSH keys during deployment.
+  - Merged multiple changelogs into single Model Changes list.
+  - Release of the Direct Deploy functionality.
+  - (Fix) GUI will properly load now if it cannot reach the charmstore.
+  - (Fix) Large number of errors are now surfaced instead of failing silently.
+
 - 2.7.5:
 
   - AddKeys and ImportKeys api calls added to JS API for upcoming SSH key functionality.

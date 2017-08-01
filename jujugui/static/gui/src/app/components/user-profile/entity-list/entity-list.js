@@ -182,6 +182,7 @@ class UserProfileEntityList extends React.Component {
     const unitCount = bundle.unitCount || <span>&nbsp;</span>;
     return (
       <juju.components.UserProfileEntity
+        addNotification={this.props.addNotification}
         changeState={this.props.changeState}
         entity={bundle}
         getDiagramURL={this.props.getDiagramURL}
@@ -239,6 +240,7 @@ class UserProfileEntityList extends React.Component {
     charm.icon = charm.icon || this._getIcon(id);
     return (
       <juju.components.UserProfileEntity
+        addNotification={this.props.addNotification}
         changeState={this.props.changeState}
         d3={this.props.d3}
         entity={charm}

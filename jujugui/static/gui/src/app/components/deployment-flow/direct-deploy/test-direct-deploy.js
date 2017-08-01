@@ -30,34 +30,15 @@ describe('DirectDeploy', function() {
     YUI().use('deployment-direct-deploy', function() { done(); });
   });
 
-  it('can display the loading spinner', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
-        changeState={sinon.stub()}
-        ddData={{id: 'cs:bundle/kubernetes-core-8'}}
-        generatePath={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub()}
-        makeEntityModel={sinon.stub()}
-        renderMarkdown={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <juju.components.DeploymentSection
-        instance="deployment-direct-deploy">
-        <juju.components.Spinner />
-      </juju.components.DeploymentSection>);
-    expect(output).toEqualJSX(expected);
-  });
-
   it('can show a message for an invalid bundle', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub().callsArgWith(1, null, null)}
-        makeEntityModel={sinon.stub()}
+        entityModel={null}
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -81,12 +62,12 @@ describe('DirectDeploy', function() {
   it('can show a message for an invalid charm', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
         generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub().callsArgWith(1, null, null)}
-        makeEntityModel={sinon.stub()}
+        entityModel={null}
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -117,12 +98,12 @@ describe('DirectDeploy', function() {
     const renderMarkdown = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
         generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub().callsArgWith(1, null, [charm])}
-        makeEntityModel={sinon.stub().returns(charm)}
+        entityModel={charm}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -183,12 +164,12 @@ describe('DirectDeploy', function() {
     const getDiagramURL = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
         generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={getDiagramURL}
-        getEntity={sinon.stub().callsArgWith(1, null, [bundle])}
-        makeEntityModel={sinon.stub().returns(bundle)}
+        entityModel={bundle}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();

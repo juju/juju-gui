@@ -30,14 +30,17 @@ class DeploymentFlow extends React.Component {
     const modelCommitted = this.props.modelCommitted;
     this.state = {
       cloud: modelCommitted ? this.props.cloud : null,
-      deploying: false,
       credential: this.props.credential,
+      deploying: false,
+      ddEntity: null,
+      loadingEntity: false,
       loadingTerms: false,
+      isDirectDeploy: !!(this.props.ddData && this.props.ddData.id),
       modelName: this.props.modelName,
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
-      sshKey: null,
+      sshKeys: [],
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
       // Whether the user has ticked the checked to agree to terms.
@@ -52,6 +55,9 @@ class DeploymentFlow extends React.Component {
       this._getAgreements();
     }
     this.sendAnalytics('Component mounted');
+    if (this.state.isDirectDeploy) {
+      this._getDirectDeployEntity(this.props.ddData.id);
+    }
   }
 
   componentDidMount() {
@@ -79,6 +85,28 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Fetches the supplied entity in a directDeploy deployment flow.
+    @param {String} entityId The entity id to fetch.
+  */
+  _getDirectDeployEntity(entityId) {
+    const props = this.props;
+    this.setState({loadingEntity: true});
+    props.getEntity(entityId, (error, data) => {
+      this.setState({loadingEntity: false});
+      if (error) {
+        console.error('unable to fetch entity: ' + error);
+        props.addNotification({
+          title: 'Unable to fetch entity',
+          message: `Unable to fetch entity: ${error}`,
+          level: 'error'
+        });
+        return;
+      }
+      this.setState({ddEntity: this.props.makeEntityModel(data[0])});
+    });
+  }
+
+  /**
     Use the props and state to figure out if a section should be visible,
     disabled or completed.
 
@@ -91,7 +119,7 @@ class DeploymentFlow extends React.Component {
     let disabled;
     let visible;
     const hasCloud = !!this.state.cloud;
-    const hasSSHkey = !!this.state.sshKey;
+    const hasSSHkey = !!this.state.sshKeys.length;
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
@@ -205,11 +233,11 @@ class DeploymentFlow extends React.Component {
   /**
     Store the provided SSH key in state.
 
-    @method _setSSHKey
-    @param {String} key The SSH key.
+    @method _setSSHKeys
+    @param {Array} keys The list of SSH keys.
   */
-  _setSSHKey(key) {
-    this.setState({sshKey: key});
+  _setSSHKeys(keys) {
+    this.setState({sshKeys: keys});
   }
 
   /**
@@ -307,8 +335,26 @@ class DeploymentFlow extends React.Component {
       credential: this.state.credential,
       region: this.state.region
     };
-    if (this.state.sshKey) {
-      args.config['authorized-keys'] = this.state.sshKey;
+    if (this.state.sshKeys.length) {
+      const sshKeys = this.state.sshKeys.slice();
+      // Attempt to provide at least one key in case the addSSHKeys call fails.
+      args.config['authorized-keys'] = sshKeys.shift().text;
+      // Then add the remaining ones to the change set.
+      const ecsOptions = {};
+      this.props.addSSHKeys(
+        this.props.getUserName(),
+        sshKeys.map(key => key.text),
+        (error, data) => {
+          if (!error) {
+            return;
+          }
+          this.props.addNotification({
+            title: 'Cannot add SSH keys',
+            message: `Cannot add SSH keys: ${error}`,
+            level: 'error'
+          });
+        },
+        ecsOptions);
     }
     if (this.state.vpcId) {
       args.config['vpc-id'] = this.state.vpcId;
@@ -489,9 +535,10 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title={title}>
         <juju.components.DeploymentSSHKey
+          addNotification={this.props.addNotification}
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
-          setSSHKey={this._setSSHKey.bind(this)}
+          setSSHKeys={this._setSSHKeys.bind(this)}
           WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
@@ -606,12 +653,29 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Determines if we should show the login links in the Deployment Login component.
+    @return {Boolean} Whether or not it should render based on the component state.
+  */
+  _shouldShowLoginLinks() {
+    const state = this.state;
+    const isDirectDeploy = state.isDirectDeploy;
+    if (!isDirectDeploy) {
+      // We always want to show the login links if it's not Direct Deploy.
+      return true;
+    }
+    // If it is Direct Deploy and we cannot load the entity then we
+    // don't want to give the user the option to log in and continue deploying.
+    return state.isDirectDeploy && !state.loadingEntity && !!state.ddEntity;
+  }
+
+  /**
     Generate the login link
 
     @method _generateLogin
     @returns {Object} The markup.
   */
   _generateLogin() {
+    const state = this.state;
     if (this.props.isLoggedIn()) {
       return null;
     }
@@ -622,9 +686,11 @@ class DeploymentFlow extends React.Component {
     };
     return (
       <juju.components.DeploymentLogin
+        addNotification={this.props.addNotification}
         callback={callback}
         gisf={this.props.gisf}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={state.isDirectDeploy}
+        showLoginLinks={this._shouldShowLoginLinks()}
         loginToController={this.props.loginToController} />);
   }
 
@@ -650,6 +716,7 @@ class DeploymentFlow extends React.Component {
         title="Choose cloud to deploy to">
         <juju.components.DeploymentCloud
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.listClouds}
@@ -743,6 +810,7 @@ class DeploymentFlow extends React.Component {
           title="Model changes">
           <juju.components.DeploymentServices
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             changesFilterByParent={this.props.changesFilterByParent}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
@@ -779,6 +847,7 @@ class DeploymentFlow extends React.Component {
         title="Confirm budget">
         <juju.components.DeploymentBudget
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           listBudgets={this.props.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
@@ -892,19 +961,28 @@ class DeploymentFlow extends React.Component {
   */
   _generateDirectDeploy() {
     const props = this.props;
-    if (props.ddData && props.ddData.id) {
+    const state = this.state;
+    if (!this.state.isDirectDeploy) {
+      return;
+    }
+    if (state.loadingEntity) {
+      return (<juju.components.Spinner />);
+    }
+    if (!state.loadingEntity) {
+      // As long as we're not loading the entity then pass what data we do have
+      // through to the DirectDeploy component and have it determine what to
+      // render.
       return (
         <juju.components.DeploymentDirectDeploy
+          addNotification={props.addNotification}
           changeState={props.changeState}
           ddData={props.ddData}
+          entityModel={state.ddEntity}
           generatePath={props.generatePath}
           getDiagramURL={props.getDiagramURL}
-          getEntity={props.getEntity}
-          makeEntityModel={props.makeEntityModel}
-          renderMarkdown={props.renderMarkdown} />
-      );
+          renderMarkdown={props.renderMarkdown} />);
     }
-    return false;
+    return null;
   }
 
   /**
@@ -951,7 +1029,7 @@ class DeploymentFlow extends React.Component {
     // has been provided.
     // TODO frankban: avoid duplicating the logic already implemented in the
     // DeploymentSSHKey component.
-    if (this.state.cloud.cloudType === 'azure' && !this.state.sshKey) {
+    if (this.state.cloud.cloudType === 'azure' && !this.state.sshKeys) {
       return false;
     }
     // A new model is ready to be created.
@@ -962,7 +1040,7 @@ class DeploymentFlow extends React.Component {
     return (
       <juju.components.DeploymentPanel
         changeState={this.props.changeState}
-        isDirectDeploy={!!(this.props.ddData && this.props.ddData.id)}
+        isDirectDeploy={this.state.isDirectDeploy}
         loggedIn={this.props.isLoggedIn()}
         sendAnalytics={this.sendAnalytics.bind(this)}
         title={this.props.modelName}>
@@ -987,6 +1065,7 @@ DeploymentFlow.propTypes = {
   acl: PropTypes.object.isRequired,
   addAgreement: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  addSSHKeys: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
@@ -1062,6 +1141,7 @@ YUI.add('deployment-flow', function() {
     'deployment-vpc',
     'entity-content-diagram',
     'generic-button',
-    'generic-input'
+    'generic-input',
+    'loading-spinner'
   ]
 });

@@ -66,7 +66,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -120,7 +120,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
-            flags={{ddeploy: true}}
+            flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
@@ -218,7 +218,7 @@ describe('EntityDetails', function() {
         changeState={changeState}
         deployService={deployService}
         importBundleYAML={importBundleYAML}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getEntity={getEntity}
         getFile={getFile}
@@ -271,7 +271,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
-            flags={{ddeploy: true}}
+            flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
@@ -392,7 +392,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -446,7 +446,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
-            flags={{ddeploy: true}}
+            flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
@@ -490,7 +490,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -544,7 +544,7 @@ describe('EntityDetails', function() {
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
-            flags={{ddeploy: true}}
+            flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
@@ -559,5 +559,91 @@ describe('EntityDetails', function() {
       </div>);
     expect(output).toEqualJSX(expectedOutput);
     assert.equal(listPlansForCharm.callCount, 1);
+  });
+
+  it('handles errors when getting an entity', function() {
+    mockEntity.hasMetrics = sinon.stub().returns(false);
+    const addNotification = sinon.stub();
+    const getEntity = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        acl={acl}
+        addNotification={addNotification}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        deployService={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={sinon.stub()}
+        getModelName={sinon.stub()}
+        hash="readme"
+        id={mockEntity.get('id')}
+        importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        makeEntityModel={makeEntityModel}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        scrollPosition={100}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
+        urllib={urllib} />, true);
+    const instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'cannot fetch the entity',
+      message: 'cannot fetch the entity: Uh oh!',
+      level: 'error'
+    });
+  });
+
+  it('handles errors when getting plans', function() {
+    mockEntity.hasMetrics = sinon.stub().returns(true);
+    const addNotification = sinon.stub();
+    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    const id = mockEntity.get('id');
+    const listPlansForCharm = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    const makeEntityModel = sinon.stub().returns(mockEntity);
+    const shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        acl={acl}
+        addNotification={addNotification}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        deployService={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={sinon.stub()}
+        getModelName={sinon.stub()}
+        hash="readme"
+        id={id}
+        importBundleYAML={sinon.stub()}
+        listPlansForCharm={listPlansForCharm}
+        makeEntityModel={makeEntityModel}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        scrollPosition={100}
+        setPageTitle={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com"
+        urllib={urllib}
+      />, true);
+    const instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    shallowRenderer.getRenderOutput();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Fetching plans failed',
+      message: 'Fetching plans failed: Uh oh!',
+      level: 'error'
+    });
   });
 });

@@ -167,11 +167,12 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => true
     };
+    const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         changeState={changeState}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
@@ -223,6 +224,7 @@ describe('UserProfileModelList', () => {
           </li>
           {[<juju.components.UserProfileEntity
             acl={acl}
+            addNotification={addNotification}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={true}
@@ -311,6 +313,7 @@ describe('UserProfileModelList', () => {
       ]
     }];
     userInfo = {external: 'dalek', profile: 'dalek', isCurrent: false};
+    const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const acl = {
       canAddModels: () => true
@@ -319,7 +322,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         changeState={changeState}
         currentModel={null}
         destroyModels={sinon.stub()}
@@ -369,6 +372,7 @@ describe('UserProfileModelList', () => {
           </li>
           {[<juju.components.UserProfileEntity
             acl={acl}
+            addNotification={addNotification}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={false}
@@ -399,6 +403,7 @@ describe('UserProfileModelList', () => {
           </juju.components.UserProfileEntity>,
           <juju.components.UserProfileEntity
             acl={acl}
+            addNotification={addNotification}
             displayConfirmation={content[1][1].props.displayConfirmation}
             entity={models[1]}
             expanded={false}

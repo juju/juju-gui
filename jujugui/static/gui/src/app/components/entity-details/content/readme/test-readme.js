@@ -44,6 +44,7 @@ describe('EntityContentReadme', function() {
     const changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={changeState}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -74,6 +75,7 @@ describe('EntityContentReadme', function() {
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         getFile={getFile}
         entityModel={mockEntity}
@@ -92,6 +94,7 @@ describe('EntityContentReadme', function() {
   it('can display a message if there is no readme file', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={sinon.spy()}
         getFile={sinon.spy()}
@@ -106,6 +109,7 @@ describe('EntityContentReadme', function() {
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -125,6 +129,7 @@ describe('EntityContentReadme', function() {
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -145,6 +150,7 @@ describe('EntityContentReadme', function() {
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -164,6 +170,7 @@ describe('EntityContentReadme', function() {
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -184,6 +191,7 @@ describe('EntityContentReadme', function() {
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
         getFile={getFile}
@@ -193,5 +201,27 @@ describe('EntityContentReadme', function() {
     const instance = renderer.getMountedInstance();
     instance.componentDidUpdate({hash: 'readme'});
     assert.equal(scrollCharmbrowser.callCount, 0);
+  });
+
+  it('handles error when getting the readme', function() {
+    const addNotification = sinon.stub();
+    const getFile = sinon.stub().callsArgWith(2, 'Uh oh!', null);
+    const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContentReadme
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        renderMarkdown={renderMarkdown}
+        getFile={getFile}
+        entityModel={mockEntity}
+        scrollCharmbrowser={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to get readme',
+      message: 'unable to get readme: Uh oh!',
+      level: 'error'
+    });
   });
 });

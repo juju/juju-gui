@@ -27,14 +27,13 @@ class EnvSizeDisplay extends React.Component {
     @param {Object} e The click event handler
   */
   _changeEnvironmentView(e) {
-    const activeComponent =
-      (e.currentTarget.dataset.view === 'machine') ? '' : null;
+    const view = e.currentTarget.dataset.view;
     this.props.appState.changeState({
       gui: {
-        machines: activeComponent
+        machines: view === 'machine' ? '' : null,
+        status: view === 'status' ? '' : null
       }
     });
-    this.setState({activeComponent});
   }
 
   /**
@@ -56,6 +55,25 @@ class EnvSizeDisplay extends React.Component {
     );
   }
 
+  /**
+    Generates the status link if required.
+
+    @returns {Object} The status markup.
+  */
+  _generateStatus() {
+    if (!this.props.showStatus) {
+      return;
+    }
+    return (
+      <li className={this._genClasses('status')}>
+        <a data-view="status"
+          onClick={this._changeEnvironmentView.bind(this)}
+          className="env-size-display__link">
+          status
+        </a>
+      </li>);
+  }
+
   render() {
     var props = this.props;
     var serviceCount = props.serviceCount;
@@ -68,8 +86,6 @@ class EnvSizeDisplay extends React.Component {
             <a data-view="application"
               onClick={this._changeEnvironmentView.bind(this)}
               className="env-size-display__link">
-              <juju.components.SvgIcon name="relations"
-                className="env-size-display__icon" size="16" />
               {serviceCount}&nbsp;
               {pluralize('application', serviceCount)}
             </a>
@@ -78,12 +94,11 @@ class EnvSizeDisplay extends React.Component {
             <a data-view="machine"
               onClick={this._changeEnvironmentView.bind(this)}
               className="env-size-display__link">
-              <juju.components.SvgIcon name="changes-machine-created"
-                className="env-size-display__icon" size="16" />
               {machineCount}&nbsp;
               {pluralize('machine', machineCount)}
             </a>
           </li>
+          {this._generateStatus()}
         </ul>
       </div>
     );
@@ -94,7 +109,8 @@ EnvSizeDisplay.propTypes = {
   appState: PropTypes.object.isRequired,
   machineCount: PropTypes.number.isRequired,
   pluralize: PropTypes.func.isRequired,
-  serviceCount: PropTypes.number.isRequired
+  serviceCount: PropTypes.number.isRequired,
+  showStatus: PropTypes.bool
 };
 
 YUI.add('env-size-display', function() {

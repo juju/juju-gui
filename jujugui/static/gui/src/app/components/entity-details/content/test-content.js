@@ -67,10 +67,11 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -120,6 +121,7 @@ describe('EntityContent', function() {
                 </div>
               </div>
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
@@ -209,7 +211,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
-        flags={{ddeploy: true}}
+        flags={{'test.ddeploy': true}}
         getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
@@ -455,9 +457,10 @@ describe('EntityContent', function() {
     const changeState = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -493,6 +496,7 @@ describe('EntityContent', function() {
                 </div>
               </div>
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}
@@ -564,9 +568,10 @@ describe('EntityContent', function() {
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
     const scrollCharmbrowser = sinon.stub();
+    const addNotification = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
@@ -592,6 +597,7 @@ describe('EntityContent', function() {
                 getDiagramURL={getDiagramURL}
                 id="django-cluster" />
               <juju.components.EntityContentReadme
+                addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
                 getFile={getFile}

@@ -150,9 +150,15 @@ class EntityDetails extends React.Component {
     @param {Array} models A list of the entity models found.
   */
   _fetchCallback(error, data) {
-    if (error) {
+    if (error || !data) {
       this._changeActiveComponent('error');
-      console.error('cannot fetch the entity:' + error);
+      const message = 'cannot fetch the entity';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       return;
     }
     if (data.length > 0) {
@@ -197,7 +203,13 @@ class EntityDetails extends React.Component {
   */
   _getPlansCallback(error, plans) {
     if (error) {
-      console.error('Fetching plans failed: ' + error);
+      const message = 'Fetching plans failed';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       this.setState({plans: []});
     } else {
       this.setState({plans: plans});

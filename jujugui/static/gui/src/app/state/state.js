@@ -28,7 +28,8 @@ const ROOT_RESERVED = [
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
-  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
+  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines',
+  'status'];
 
 /** Class representing the State of the Juju GUI */
 const State = class State {
@@ -679,7 +680,12 @@ const State = class State {
               path.push(localType);
             }
           } else {
-            path.push(value);
+            // The deploy key is used for the direct deploy which will also
+            // contain a complex object. We do not want to push that object
+            // stringified into the url.
+            if (key !== 'deploy') {
+              path.push(value);
+            }
           }
         }
       });

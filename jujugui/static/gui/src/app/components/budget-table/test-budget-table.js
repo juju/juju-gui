@@ -36,11 +36,13 @@ describe('BudgetTable', function() {
   });
 
   it('can render', function() {
-    var listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -74,6 +76,7 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}
@@ -86,6 +89,7 @@ describe('BudgetTable', function() {
           withPlans={true} />,
         <juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}
@@ -101,11 +105,13 @@ describe('BudgetTable', function() {
   });
 
   it('can render without plans', function() {
-    var listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
@@ -126,6 +132,7 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}
@@ -138,6 +145,7 @@ describe('BudgetTable', function() {
           withPlans={false} />,
         <juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}
@@ -153,11 +161,13 @@ describe('BudgetTable', function() {
   });
 
   it('can display editable plans', function() {
-    var listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
+        addNotification={addNotification}
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
@@ -191,6 +201,7 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}
@@ -203,6 +214,7 @@ describe('BudgetTable', function() {
           withPlans={true} />,
         <juju.components.BudgetTableRow
           acl={acl}
+          addNotification={addNotification}
           allocationEditable={false}
           charmsGetById={undefined}
           extraInfo={undefined}

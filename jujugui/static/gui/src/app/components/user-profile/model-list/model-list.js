@@ -269,6 +269,7 @@ class UserProfileModelList extends React.Component {
     return (
       <juju.components.UserProfileEntity
         acl={props.acl}
+        addNotification={this.props.addNotification}
         displayConfirmation={this._displayConfirmation.bind(this, model)}
         entity={model}
         expanded={isCurrent}

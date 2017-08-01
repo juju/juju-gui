@@ -83,12 +83,13 @@ describe('UserProfileEntityList', () => {
   });
 
   it('renders a list of charms', () => {
+    const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const getKpiMetrics = sinon.stub();
     const type = 'charm';
     let component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         changeState={changeState}
         charmstore={charmstore}
         d3={{}}
@@ -118,6 +119,7 @@ describe('UserProfileEntityList', () => {
             </span>
           </li>
           {[<juju.components.UserProfileEntity
+            addNotification={addNotification}
             changeState={changeState}
             d3={{}}
             entity={charms[0]}
@@ -156,11 +158,12 @@ describe('UserProfileEntityList', () => {
   });
 
   it('renders a list of bundles', () => {
+    const addNotification = sinon.stub();
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         changeState={changeState}
         charmstore={charmstore}
         entities={bundles}
@@ -192,6 +195,7 @@ describe('UserProfileEntityList', () => {
             </span>
           </li>
           {[<juju.components.UserProfileEntity
+            addNotification={addNotification}
             changeState={changeState}
             entity={bundles[0]}
             getDiagramURL={getDiagramURL}

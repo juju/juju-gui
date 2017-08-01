@@ -600,4 +600,59 @@ describe('DeploymentCredential', function() {
     assert.deepEqual(sendAnalytics.args[1],
       ['Button click', 'Cancel add credential']);
   });
+
+  it('can handle errors when getting credential names', () => {
+    const addNotification = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addNotification={addNotification}
+        updateCloudCredential={sinon.stub()}
+        cloud={cloud}
+        controllerIsReady={sinon.stub().returns(true)}
+        editable={true}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
+        getCloudCredentialNames={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
+        getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        user={user}
+        validateForm={sinon.stub()} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to get names for credentials',
+      message: 'unable to get names for credentials: Uh oh!',
+      level: 'error'
+    });
+  });
+
+  it('can handle errors when getting credentials', () => {
+    const addNotification = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addNotification={addNotification}
+        updateCloudCredential={sinon.stub()}
+        cloud={cloud}
+        controllerIsReady={sinon.stub().returns(true)}
+        editable={true}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudProviderDetails={sinon.stub()}
+        sendAnalytics={sendAnalytics}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        user={user}
+        validateForm={sinon.stub()} />);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Unable to get credentials',
+      message: 'Unable to get credentials: Uh oh!',
+      level: 'error'
+    });
+  });
 });

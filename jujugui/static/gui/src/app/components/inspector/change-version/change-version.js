@@ -145,7 +145,13 @@ class InspectorChangeVersion extends React.Component {
   */
   _getVersionsCallback(error, versions) {
     if (error) {
-      console.error(error);
+      const message = 'unable to retrieve charm versions';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
       versions = null;
     }
     let components = [];

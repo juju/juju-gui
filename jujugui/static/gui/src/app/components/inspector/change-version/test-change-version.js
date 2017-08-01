@@ -428,4 +428,28 @@ describe('InspectorChangeVersion', function() {
     shallowRenderer.unmount();
     assert.equal(abort.callCount, 1);
   });
+
+  it('can display list of versions', function() {
+    const addNotification = sinon.stub();
+    const getAvailableVersions = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.InspectorChangeVersion
+        acl={acl}
+        addCharm={sinon.stub()}
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        charmId="cs:django-5"
+        service={{}}
+        setCharm={sinon.stub()}
+        getCharm={sinon.stub()}
+        getAvailableVersions={getAvailableVersions}
+        getMacaroon={sinon.stub()} />, true);
+    renderer.getMountedInstance().componentDidMount();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to retrieve charm versions',
+      message: 'unable to retrieve charm versions: Uh oh!',
+      level: 'error'
+    });
+  });
 });

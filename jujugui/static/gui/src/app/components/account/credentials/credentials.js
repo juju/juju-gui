@@ -308,6 +308,7 @@ class AccountCredentials extends React.Component {
           {chooseCloud}
           <juju.components.DeploymentCloud
             acl={this.props.acl}
+            addNotification={this.props.addNotification}
             cloud={this.state.cloud}
             controllerIsReady={this.props.controllerIsReady}
             listClouds={this.props.listClouds}

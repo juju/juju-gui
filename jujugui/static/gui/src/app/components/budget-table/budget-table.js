@@ -30,6 +30,7 @@ class BudgetTable extends React.Component {
       return (
         <juju.components.BudgetTableRow
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           key={i}
           allocationEditable={this.props.allocationEditable}
           charmsGetById={this.props.charmsGetById}
@@ -93,6 +94,7 @@ class BudgetTable extends React.Component {
 
 BudgetTable.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   allocationEditable: PropTypes.bool,
   charmsGetById: PropTypes.func,
   extraInfo: PropTypes.object,

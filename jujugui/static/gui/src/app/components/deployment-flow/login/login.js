@@ -72,6 +72,7 @@ class DeploymentLogin extends React.Component {
           </div>
           <div className="deployment-login__login">
             <juju.components.USSOLoginLink
+              addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="button"
@@ -82,6 +83,7 @@ class DeploymentLogin extends React.Component {
           <div className="deployment-login__signup">
             Do not have an account?
             <juju.components.USSOLoginLink
+              addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="text"
@@ -90,6 +92,40 @@ class DeploymentLogin extends React.Component {
             </juju.components.USSOLoginLink>
           </div>
         </div>
+      </juju.components.DeploymentSection>);
+  }
+
+  _getLoginLinks() {
+    if (!this.props.showLoginLinks) {
+      return null;
+    }
+    return (
+      <juju.components.DeploymentSection
+        instance="deployment-login-signup">
+        <span className="deployment-login-signup__message">
+            Sign up to start deploying to your favourite cloud
+        </span>
+        <juju.components.USSOLoginLink
+          addNotification={this.props.addNotification}
+          gisf={this.props.gisf}
+          callback={this.props.callback}
+          displayType="button"
+          loginToController={this.props.loginToController}>
+          Sign up
+        </juju.components.USSOLoginLink>
+        or&nbsp;
+        <juju.components.USSOLoginLink
+          addNotification={this.props.addNotification}
+          gisf={this.props.gisf}
+          callback={this.props.callback}
+          displayType="text"
+          loginToController={this.props.loginToController}>
+          log in
+        </juju.components.USSOLoginLink>
+        to get started with&nbsp;
+        <a href="http://jujucharms.com/jaas">
+          JAAS
+        </a>
       </juju.components.DeploymentSection>);
   }
 
@@ -104,31 +140,7 @@ class DeploymentLogin extends React.Component {
     const azureScale = 1;
     return (
       <div>
-        <juju.components.DeploymentSection
-          instance="deployment-login-signup">
-          <span className="deployment-login-signup__message">
-              Sign up to start deploying to your favourite cloud
-          </span>
-          <juju.components.USSOLoginLink
-            gisf={this.props.gisf}
-            callback={this.props.callback}
-            displayType="button"
-            loginToController={this.props.loginToController}>
-            Sign up
-          </juju.components.USSOLoginLink>
-          or&nbsp;
-          <juju.components.USSOLoginLink
-            gisf={this.props.gisf}
-            callback={this.props.callback}
-            displayType="text"
-            loginToController={this.props.loginToController}>
-            log in
-          </juju.components.USSOLoginLink>
-          to get started with&nbsp;
-          <a href="http://jujucharms.com/jaas">
-            JAAS
-          </a>
-        </juju.components.DeploymentSection>
+        {this._getLoginLinks()}
         <juju.components.DeploymentSection
           instance="deployment-login-features">
           <div className="six-col">
@@ -230,10 +242,12 @@ class DeploymentLogin extends React.Component {
 };
 
 DeploymentLogin.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   callback: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   isDirectDeploy: PropTypes.bool,
-  loginToController: PropTypes.func.isRequired
+  loginToController: PropTypes.func.isRequired,
+  showLoginLinks: PropTypes.bool.isRequired
 };
 
 YUI.add('deployment-login', function() {

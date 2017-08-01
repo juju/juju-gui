@@ -24,7 +24,8 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSSHKey', function() {
-  let setSSHKey;
+  let addNotification;
+  let setSSHKeys;
   let getGithubSSHKeys;
 
   beforeAll(function(done) {
@@ -35,7 +36,8 @@ describe('DeploymentSSHKey', function() {
   });
 
   beforeEach(() => {
-    setSSHKey = sinon.stub();
+    addNotification = sinon.stub();
+    setSSHKeys = sinon.stub();
     getGithubSSHKeys = sinon.stub();
   });
 
@@ -48,9 +50,10 @@ describe('DeploymentSSHKey', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSSHKey
         WebHandler={sinon.stub()}
+        addNotification={addNotification}
         cloud={cloud}
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
-        setSSHKey={setSSHKey}
+        setSSHKeys={setSSHKeys}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
@@ -162,6 +165,18 @@ describe('DeploymentSSHKey', function() {
   });
 
   describe('github', () => {
+    it('handles errors when getting keys', () => {
+      const comp = render('aws');
+      comp.instance._addGithubKeysCallback('Uh oh!', null);
+      comp.renderer.getRenderOutput();
+      assert.equal(addNotification.callCount, 1);
+      assert.deepEqual(addNotification.args[0][0], {
+        title: 'could not get SSH keys',
+        message: 'could not get SSH keys: Uh oh!',
+        level: 'error'
+      });
+    });
+
     it('shows an error if no keys found', () => {
       const comp = render('aws');
       comp.instance._addGithubKeysCallback(null, []);
@@ -225,7 +240,7 @@ describe('DeploymentSSHKey', function() {
       );
     });
 
-    it('stores the first SSH key', function() {
+    it('stores the SSH keys', function() {
       const comp = render('gce');
       comp.instance.refs = {
         githubUsername: {
@@ -234,11 +249,15 @@ describe('DeploymentSSHKey', function() {
         }
       };
       comp.instance._addGithubKeysCallback(null, [
-        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
+        {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
       ]);
-      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).
-        toEqual('ssh-rsa thekey');
+      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      expect(comp.instance.props.setSSHKeys.args[0][0]).
+        toEqual([
+          {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
+          {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
+        ]);
     });
   });
 
@@ -267,9 +286,15 @@ describe('DeploymentSSHKey', function() {
 
     it('stores the SSH key', function() {
       comp.instance._handleAddMoreKeys.call(comp.instance);
-      expect(comp.instance.props.setSSHKey.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKey.args[0][0]).
-        toEqual('ssh-rsa thekey');
+      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      assert.deepEqual(
+        comp.instance.props.setSSHKeys.args[0][0],
+        [{
+          body: 'thekey',
+          text: 'ssh-rsa thekey',
+          type: 'ssh-rsa',
+          id: 0
+        }]);
     });
 
     it ('shows a table if keys present', () => {

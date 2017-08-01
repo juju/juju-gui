@@ -213,7 +213,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'changes-unknown',
-      msg: 'An unknown change has been made to this enviroment via the CLI.',
+      msg: 'An unknown change has been made to this model via the CLI.',
       change: {
         command: {
           method: '_anUnknownMethod'
@@ -287,6 +287,131 @@ describe('ChangesUtils', function() {
     assert.deepEqual(changesUtils.filterByParent(changeSet, 'parent1'), {
       one: {parents: ['parent1']},
       three: {parents: ['parent1', 'parent2']}
+    });
+  });
+
+  describe('sortDescriptionsByApplication', function() {
+    const getServiceById = sinon.stub();
+    const descriptionsJSON = '[{"id":"addPendingResources-458","icon":"https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg","description":" easyrsa resources will be added.","time":"8:49 am"},{"id":"service-220","icon":"https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-35/icon.svg","description":" kubernetes-master will be added to the model.","time":"8:49 am"},{"id":"expose-102","icon":"exposed_16","description":"kubernetes-master will be exposed","time":"8:49 am"},{"id":"addRelation-83","icon":"changes-relation-added","description":"kube-api-endpoint relation will be added between kubernetes-master and kubernetes-worker.","time":"8:49 am"},{"id":"addUnits-256","icon":"changes-units-added","description":" 1 easyrsa unit will be added.","time":"8:49 am"}]'; // eslint-disable-line max-len
+
+    it('sorts additive descriptions by application', function() {
+      const descriptions = JSON.parse(descriptionsJSON);
+      const changeSet = {
+        'addPendingResources-458': {
+          command: {
+            method: '_addPendingResources',
+            args: [{applicationName: 'easyrsa'}]}},
+        'service-220': {
+          command: {
+            method: '_deploy',
+            args: [{applicationName: 'kubernetes-master'}]}},
+        'expose-102': {
+          command: {
+            method: '_expose',
+            args: ['kubernetes-master']}},
+        'addRelation-83': {
+          command: {
+            method: '_add_relation',
+            args: [['kubernetes-worker'], ['kubernetes-master']]}},
+        'addUnits-256': {
+          command: {
+            method: '_add_unit',
+            args: ['easyrsa']}}
+      };
+      const sorted = changesUtils.sortDescriptionsByApplication(
+        getServiceById, changeSet, descriptions);
+      const expected = {
+        easyrsa: [{
+          id: 'addPendingResources-458',
+          icon: 'https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg', // eslint-disable-line max-len
+          description: ' easyrsa resources will be added.',
+          time: '8:49 am'
+        }, {
+          id: 'addUnits-256',
+          icon: 'changes-units-added',
+          description: ' 1 easyrsa unit will be added.',
+          time: '8:49 am'
+        }],
+        'kubernetes-master': [{
+          id: 'service-220',
+          icon: 'https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-35/icon.svg', // eslint-disable-line max-len
+          description: ' kubernetes-master will be added to the model.',
+          time: '8:49 am'
+        }, {
+          id: 'expose-102',
+          icon: 'exposed_16',
+          description: 'kubernetes-master will be exposed',
+          time: '8:49 am'
+        }, {
+          id: 'addRelation-83',
+          icon: 'changes-relation-added',
+          description: 'kube-api-endpoint relation will be added between kubernetes-master and kubernetes-worker.', // eslint-disable-line max-len
+          time: '8:49 am'
+        }],
+        'kubernetes-worker': [{
+          id: 'addRelation-83',
+          icon: 'changes-relation-added',
+          description: 'kube-api-endpoint relation will be added between kubernetes-master and kubernetes-worker.', //eslint-disable-line max-len
+          time: '8:49 am'
+        }]
+      };
+      assert.deepEqual(sorted, expected);
+    });
+
+    it('skips methods in the blacklist', function() {
+      const descriptions = [
+        {id: 'addCharm-123'},
+        {id: 'addMachines-123'},
+        {id: 'addSSHKeys-123'},
+        {id: 'importSSHKeys-123'},
+        {id: 'destroyMachines-123'}
+      ];
+      const changeSet = {};
+      const sorted = changesUtils.sortDescriptionsByApplication(
+        getServiceById, changeSet, descriptions);
+      assert.deepEqual(sorted, {});
+    });
+
+    it('does not error for removal commands', function() {
+      const descriptions = [
+        JSON.parse('{"id":"removeUnit-376","icon":"changes-units-removed","description":"1 unit will be removed from elasticsearch","time":"3:18 pm"}'), // eslint-disable-line max-len
+        JSON.parse('{"id":"removeRelation-281","icon":"changes-relation-removed","description":"rest relation will be removed between kibana and elasticsearch.","time":"3:21 pm"}') // eslint-disable-line max-len
+      ];
+
+      const changeSet = {
+        'removeUnit-376': {
+          command: {
+            method: '_remove_units',
+            args: [['elasticsearch/0']]}},
+        'removeRelation-281': {
+          command: {
+            method: '_remove_relation',
+            args: [['kibana'],['elasticsearch']]
+          }
+        }
+      };
+      const sorted = changesUtils.sortDescriptionsByApplication(
+        getServiceById, changeSet, descriptions);
+      const expected = {
+        elasticsearch: [{
+          id: 'removeUnit-376',
+          icon: 'changes-units-removed',
+          description: '1 unit will be removed from elasticsearch',
+          time: '3:18 pm'
+        }, {
+          id: 'removeRelation-281',
+          icon: 'changes-relation-removed',
+          description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
+          time: '3:21 pm'
+        }],
+        kibana: [{
+          id: 'removeRelation-281',
+          icon: 'changes-relation-removed',
+          description: 'rest relation will be removed between kibana and elasticsearch.', // eslint-disable-line max-len
+          time: '3:21 pm'
+        }]
+      };
+      assert.deepEqual(sorted, expected);
     });
   });
 });

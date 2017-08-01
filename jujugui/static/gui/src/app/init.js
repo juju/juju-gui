@@ -362,7 +362,14 @@ class GUIApp {
     if (this.bundleService === undefined) {
       const bundleServiceURL = config && config.bundleServiceURL;
       if (!config || !bundleServiceURL) {
-        console.error('no juju config for bundleserviceURL availble');
+        console.error('no juju config for bundleserviceURL available');
+        const message = 'The service for handling bundles is not available.' +
+          ' Please try refreshing the GUI.';
+        this.db.notifications.add({
+          title: message,
+          message: message,
+          level: 'error'
+        });
         return;
       }
       return new BundleService(
@@ -496,6 +503,9 @@ class GUIApp {
       ['gui.machines',
         this._renderMachineView.bind(this),
         this._clearMachineView.bind(this)],
+      ['gui.status',
+        this._renderStatusView.bind(this),
+        this._clearStatusView.bind(this)],
       ['gui.inspector',
         this._renderInspector.bind(this)
         // the this._clearInspector method is not called here because the
@@ -1337,6 +1347,12 @@ class GUIApp {
     const dischargeToken = this.user.getMacaroon('identity');
     if (!dischargeToken) {
       console.error('no discharge token in local storage after login');
+      const message = 'Authentication failed. Please try refreshing the GUI.';
+      this.db.notifications.add({
+        title: message,
+        message: message,
+        level: 'error'
+      });
       return;
     }
     console.log('sending discharge token to storefront');
@@ -1377,7 +1393,13 @@ class GUIApp {
     if (!this.user.getMacaroon('charmstore')) {
       this.charmstore.getMacaroon((err, macaroon) => {
         if (err) {
-          console.error(err);
+          const message = 'Authentication failed. Please try refreshing the GUI.';
+          console.error(message, err);
+          this.db.notifications.add({
+            title: message,
+            message: `${message}: ${err}`,
+            level: 'error'
+          });
           return;
         }
         this.storeUser('charmstore', true);

@@ -585,6 +585,12 @@ YUI.add('juju-gui', function(Y) {
       const dischargeToken = this.user.getMacaroon('identity');
       if (!dischargeToken) {
         console.error('no discharge token in local storage after login');
+        const message = 'Authentication failed. Please try refreshing the GUI.';
+        this.db.notifications.add({
+          title: message,
+          message: message,
+          level: 'error'
+        });
         return;
       }
       console.log('sending discharge token to storefront');
@@ -604,7 +610,13 @@ YUI.add('juju-gui', function(Y) {
       if (!this.user.getMacaroon('charmstore')) {
         this.get('charmstore').getMacaroon((err, macaroon) => {
           if (err) {
-            console.error(err);
+            const message = 'Authentication failed. Please try refreshing the GUI.';
+            console.error(message, err);
+            this.db.notifications.add({
+              title: message,
+              message: `${message}: ${err}`,
+              level: 'error'
+            });
             return;
           }
           this.storeUser('charmstore', true);
@@ -673,7 +685,13 @@ YUI.add('juju-gui', function(Y) {
               state.changeState(newState);
               return;
             }
-            console.error('error redirecting to previous state', error);
+            const message = 'error redirecting to previous state';
+            console.error(message, error);
+            this.db.notifications.add({
+              title: message,
+              message: `${message}: ${error}`,
+              level: 'error'
+            });
             return;
           }
         }
@@ -886,6 +904,8 @@ YUI.add('juju-gui', function(Y) {
       };
       ReactDOM.render(
         <window.juju.components.Login
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
           gisf={this.get('gisf')}
@@ -903,16 +923,17 @@ YUI.add('juju-gui', function(Y) {
       const linkContainerId = 'profile-link-container';
       const linkContainer = document.getElementById(linkContainerId);
       if (!linkContainer) {
-        console.error(`no linkContainerId: ${linkContainerId}`);
         return;
       }
       const charmstore = this.get('charmstore');
       const bakery = this.bakery;
-      const USSOLoginLink = (<window.juju.components.USSOLoginLink
-        displayType={'text'}
-        loginToController={controllerAPI.loginWithMacaroon.bind(
-          controllerAPI, bakery)}
-      />);
+      const USSOLoginLink = (
+        <window.juju.components.USSOLoginLink
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
+          displayType={'text'}
+          loginToController={controllerAPI.loginWithMacaroon.bind(
+            controllerAPI, bakery)} />);
 
       let logoutUrl = '/logout';
       if (window.juju_config.baseUrl) {
@@ -1195,7 +1216,8 @@ YUI.add('juju-gui', function(Y) {
           appState={this.state}
           machineCount={machineCount}
           pluralize={views.utils.pluralize.bind(this)}
-          serviceCount={serviceCount} />,
+          serviceCount={serviceCount}
+          showStatus={window.juju_config.flags.status} />,
         document.getElementById('env-size-display-container'));
     },
 
@@ -1331,6 +1353,7 @@ YUI.add('juju-gui', function(Y) {
             this.payment && this.payment.createUser.bind(this.payment)}
           credential={env.get('credential')}
           changes={currentChangeSet}
+          addSSHKeys={env.addKeys.bind(env)}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
           sendAnalytics={this.sendAnalytics}
@@ -1931,6 +1954,31 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handles rendering and/or updating the status UI component.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
+    */
+    _renderStatusView: function(state, next) {
+      ReactDOM.render(
+        <window.juju.components.Status
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)} />,
+        document.getElementById('status-container'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the status state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearStatusView: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('status-container'));
+      next();
+    },
+
+    /**
       Renders the mask and animations for the drag over notification for when
       a user drags a yaml file or zip file over the canvas.
 
@@ -2194,6 +2242,9 @@ YUI.add('juju-gui', function(Y) {
         ['gui.machines',
           this._renderMachineView.bind(this),
           this._clearMachineView.bind(this)],
+        ['gui.status',
+          this._renderStatusView.bind(this),
+          this._clearStatusView.bind(this)],
         ['gui.inspector',
           this._renderInspector.bind(this)
           // the this._clearInspector method is not called here because the
@@ -2407,7 +2458,14 @@ YUI.add('juju-gui', function(Y) {
         const jujuConfig = window.juju_config;
         const bundleServiceURL = jujuConfig && jujuConfig.bundleServiceURL;
         if (!jujuConfig || !bundleServiceURL) {
-          console.error('no juju config for bundleserviceURL availble');
+          console.error('no juju config for bundleserviceURL available');
+          const message = 'The service for handling bundles is not available.' +
+            ' Please try refreshing the GUI.';
+          this.db.notifications.add({
+            title: message,
+            message: message,
+            level: 'error'
+          });
           return;
         }
         const bundleService = new Bundleservice(
@@ -3059,7 +3117,13 @@ YUI.add('juju-gui', function(Y) {
     storeUser: function(service, rerenderProfile, rerenderBreadcrumb) {
       var callback = function(error, auth) {
         if (error) {
-          console.error('Unable to query user information', error);
+          const message = 'Unable to query user information';
+          console.error(message, error);
+          this.db.notifications.add({
+            title: message,
+            message: `${message}: ${error}`,
+            level: 'error'
+          });
           return;
         }
         if (auth) {
@@ -3201,6 +3265,7 @@ YUI.add('juju-gui', function(Y) {
     'notification-list',
     'panel-component',
     'sharing',
+    'status',
     'svg-icon',
     'user-menu',
     'profile',

@@ -139,7 +139,8 @@ describe('SearchResultsItem', function() {
             {'By '}
             <a className="list-block__list--item-link"
               href="/u/spinach/apache2"
-              onClick={owner.props.onClick}>
+              onClick={owner.props.onClick}
+              title="See other charms and bundles by test-owner">
               {item.owner}
             </a>
           </p>
@@ -220,7 +221,8 @@ describe('SearchResultsItem', function() {
             {'By '}
             <a className="list-block__list--item-link"
               href="/u/spinach/apache2"
-              onClick={owner.props.onClick}>
+              onClick={owner.props.onClick}
+              title="See other charms and bundles by test-owner">
               {item.owner}
             </a>
           </p>
@@ -323,7 +325,8 @@ describe('SearchResultsItem', function() {
             {'By '}
             <a className="list-block__list--item-link"
               href="/u/spinach/apache2"
-              onClick={owner.props.onClick}>
+              onClick={owner.props.onClick}
+              title="See other charms and bundles by test-owner">
               {item.owner}
             </a>
           </p>

@@ -153,15 +153,19 @@ class EntityHeader extends React.Component {
   _generateDeployAction() {
     const entity = this.props.entityModel.toEntity();
     let deployAction;
+    const modelName = this.props.getModelName();
     // If the entity is not a charm OR it is a charm and has the series set,
     // display a button. Otherwise display a "not supported" message.
-    const title = `Add to ${this.props.getModelName() || 'model'}`;
+    const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
         <juju.components.GenericButton
           ref="deployAction"
           action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
+          tooltip={
+            `Add this ${entity.type} to ` +
+            `${modelName ? 'your current' : 'a new'} model`}
           type="positive">
           {title}
         </juju.components.GenericButton>

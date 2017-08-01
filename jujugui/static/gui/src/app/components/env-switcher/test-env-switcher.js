@@ -36,6 +36,7 @@ describe('EnvSwitcher', function() {
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
@@ -81,6 +82,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
@@ -95,6 +97,7 @@ describe('EnvSwitcher', function() {
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={acl}
+        addNotification={sinon.stub()}
         changeState={changeState}
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
@@ -124,6 +127,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
@@ -146,6 +150,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
@@ -180,6 +185,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
@@ -197,5 +203,27 @@ describe('EnvSwitcher', function() {
     assert.equal(switchModel.callCount, 1);
     assert.deepEqual(instance.state, {showEnvList: false, envList: models});
     assert.deepEqual(switchModel.args[0], [model]);
+  });
+
+  it('handles errors when getting models', function() {
+    const addNotification = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={{}}
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        humanizeTimestamp={sinon.stub()}
+        listModelsWithInfo={listModelsWithInfo}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'unable to retrieve model list',
+      message: 'unable to retrieve model list: Uh oh!',
+      level: 'error'
+    });
   });
 });
