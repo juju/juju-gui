@@ -42,7 +42,7 @@ function generateScript(isBundle, isDD) {
     '<div class="juju-card" '+dataDD+' data-id="'+id+'"></div>';
 }
 
-fdescribe('EntityContent', function() {
+describe('EntityContent', function() {
   let mockEntity;
 
   beforeAll(function(done) {
@@ -577,8 +577,7 @@ fdescribe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com" />);
+        showTerms={sinon.stub()} />);
     const expected = (
       <div className="entity-content">
         <div className="row">
@@ -589,7 +588,8 @@ fdescribe('EntityContent', function() {
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
-              <EntityContentDiagram getDiagramURL={getDiagramURL}
+              <juju.components.EntityContentDiagram
+                getDiagramURL={getDiagramURL}
                 id="django-cluster" />
               <juju.components.EntityContentReadme
                 changeState={changeState}
@@ -599,133 +599,91 @@ fdescribe('EntityContent', function() {
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
                 <div id="configuration"
-                  className="row row--grey entity-content__configuration">
-                <div className="inner-wrapper">
-                  <div className="twelve-col">
-                    <h2 className="entity-content__header">Configuration</h2>
-                    <ul>
-                      <juju.components.ExpandingRow
-                        classes={{
-                          'entity-content__bundle-config': true
-                        }}
-                        key="gunicorn">
-                        <div className="entity-content__bundle-config-title">
-                          gunicorn
-                          <div className="entity-content__bundle-config-chevron">
-                            <div className="entity-content__bundle-config-expand">
-                              <juju.components.SvgIcon
-                                name="chevron_down_16"
-                                size="16" />
-                            </div>
-                            <div className="entity-content__bundle-config-contract">
-                              <juju.components.SvgIcon
-                                name="chevron_up_16"
-                                size="16" />
-                            </div>
-                          </div>
+                  className="entity-content__configuration">
+                  <h3 className="entity-content__header">
+                    Bundle configuration
+                  </h3>
+                  <div>
+                    <juju.components.AccordionSection
+                      title={<span>
+                        <img alt="gunicorn"
+                          className="entity-content__config-image"
+                          src={undefined} width="26"/>
+                        gunicorn
+                      </span>}>
+                      <div className="entity-content__config-description">
+                        <div className="entity-content__config-option">
+                          <dt className="entity-content__config-name">
+                            name
+                          </dt>
+                          <dd className="entity-content__config-description">
+                            <p>title</p>
+                          </dd>
                         </div>
-                        <dl className="entity-content__bundle-config-options">
-                          {[
-                            <div className="entity-content__config-option"
-                              key="name0">
-                              <dt className="entity-content__config-name">
-                                name
-                              </dt>
-                              <dd className="entity-content__config-description">
-                                <p>
-                                  title
-                                </p>
-                              </dd>
-                            </div>,
-                            <div className="entity-content__config-option"
-                              key="active1">
-                              <dt className="entity-content__config-name">
-                                active
-                              </dt>
-                              <dd className="entity-content__config-description">
-                                <p>
-                                  {true}
-                                </p>
-                              </dd>
-                            </div>
-                          ]}
-                        </dl>
-                      </juju.components.ExpandingRow>
-                      <juju.components.ExpandingRow
-                        classes={{
-                          'entity-content__bundle-config': true
-                        }}
-                        key="django">
-                        <div className="entity-content__bundle-config-title">
-                          django
-                          <div className="entity-content__bundle-config-chevron">
-                            <div className="entity-content__bundle-config-expand">
-                              <juju.components.SvgIcon
-                                name="chevron_down_16"
-                                size="16" />
-                            </div>
-                            <div className="entity-content__bundle-config-contract">
-                              <juju.components.SvgIcon
-                                name="chevron_up_16"
-                                size="16" />
-                            </div>
-                          </div>
+                        <div className="entity-content__config-option">
+                          <dt className="entity-content__config-name">
+                            active
+                          </dt>
+                          <dd className="entity-content__config-description">
+                            <p />
+                          </dd>
                         </div>
-                        <dl className="entity-content__bundle-config-options">
-                          {[<div key="none">
-                            Config options not modified in this bundle.
-                          </div>]}
-                        </dl>
-                      </juju.components.ExpandingRow>
-                    </ul>
+                      </div>
+                    </juju.components.AccordionSection>
+                    <juju.components.AccordionSection
+                      title={<span>
+                        <img alt="django"
+                          className="entity-content__config-image"
+                          src={undefined} width="26"/>
+                        django
+                      </span>} />
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="four-col last-col">
-              <div className="section">
-                <h3 className="section__title">
-                  Contribute
-                </h3>
-                <ul className="section__list">
-                  {undefined}
-                  <li className="section__list-item">
-                    <a href={'https://code.launchpad.net/~charmers/charms/' +
-                      'bundles/django-cluster/bundle'}
-                    className="link"
-                    target="_blank">
-                      Project homepage
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {undefined}
-              {undefined}
-              <juju.components.EntityFiles
-                apiUrl={apiUrl}
-                entityModel={mockEntity}
-                pluralize={pluralize} />
-              <div className="entity-content__card section clearfix">
-                <h3 className="section__title">
-                  Embed this charm
-                </h3>
-                <p>Add this card to your website by copying the code below.
-                  <a className="link"
-                    href="https://jujucharms.com/community/cards"
-                    target="_blank">
-                    Learn more
-                  </a>.
-                </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
-                <h4>Preview</h4>
-                <div className="juju-card" data-id="django-cluster"></div>
+              <div className="four-col last-col">
+                <div className="section">
+                  <h3 className="section__title">
+                    Contribute
+                  </h3>
+                  <ul className="section__list">
+                    {undefined}
+                    <li className="section__list-item">
+                      <a href={'https://code.launchpad.net/~charmers/charms/' +
+                        'bundles/django-cluster/bundle'}
+                      className="link"
+                      target="_blank">
+                        Project homepage
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                {undefined}
+                {undefined}
+                <juju.components.EntityFiles
+                  apiUrl={apiUrl}
+                  entityModel={mockEntity}
+                  pluralize={pluralize} />
+                <div className="entity-content__card section clearfix">
+                  <h3 className="section__title">
+                    Embed this charm
+                  </h3>
+                  <p>Add this card to your website by copying the code below.
+                    <a className="link"
+                      href="https://jujucharms.com/community/cards"
+                      target="_blank">
+                      Learn more
+                    </a>.
+                  </p>
+                  <textarea className="twelve-col" cols="70"
+                    defaultValue={script} readOnly="readonly"
+                    rows="2" wrap="off" />
+                  <h4>Preview</h4>
+                  <div className="juju-card" data-id="django-cluster"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     );
     expect(output).toEqualJSX(expected);
   });
@@ -803,7 +761,7 @@ fdescribe('EntityContent', function() {
     assert.equal(relationsComponent, undefined);
   });
 
-  fit('can display plans', function() {
+  it('can display plans', function() {
     const plans = [{
       url: 'plan1',
       price: 'test/price1',
@@ -839,6 +797,8 @@ fdescribe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
       <div id="plans"
         className="row entity-content__plans">
@@ -923,7 +883,7 @@ fdescribe('EntityContent', function() {
           </div>
         </div>
       </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(plansOutput).toEqualJSX(expected);
   });
 
   it('can display loading plans', function() {
@@ -939,6 +899,7 @@ fdescribe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={true}
         plans={null}
@@ -948,9 +909,11 @@ fdescribe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
       <juju.components.Spinner />);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(plansOutput).toEqualJSX(expected);
   });
 
   it('can remove plans when none exist', function() {
@@ -966,6 +929,7 @@ fdescribe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={true}
         hash="readme"
@@ -976,6 +940,8 @@ fdescribe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[1], undefined);
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
+    assert.strictEqual(plansOutput, undefined);
   });
 });

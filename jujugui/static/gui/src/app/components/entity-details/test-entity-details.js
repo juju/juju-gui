@@ -53,6 +53,7 @@ describe('EntityDetails', function() {
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
     const pluralize = sinon.spy();
+    const getDiagramURL = sinon.stub();
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
@@ -67,7 +68,7 @@ describe('EntityDetails', function() {
         importBundleYAML={importBundleYAML}
         flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -120,6 +121,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             flags={{ddeploy: true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -264,17 +266,13 @@ describe('EntityDetails', function() {
             scrollPosition={100}
             urllib={urllib}
           />
-          <juju.components.EntityContentDiagram
-            getDiagramURL={getDiagramURL}
-            id={id}
-            isRow={true}
-          />
           <juju.components.EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
             flags={{ddeploy: true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -375,6 +373,7 @@ describe('EntityDetails', function() {
     const changeState = sinon.spy();
     const deployService = sinon.spy();
     const getBundleYAML = sinon.spy();
+    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
     const getModelName = sinon.spy();
@@ -395,7 +394,7 @@ describe('EntityDetails', function() {
         deployService={deployService}
         flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -448,6 +447,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             flags={{ddeploy: true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
             hash="readme"
@@ -471,6 +471,7 @@ describe('EntityDetails', function() {
     const changeState = sinon.spy();
     const deployService = sinon.spy();
     const getBundleYAML = sinon.spy();
+    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
     const getModelName = sinon.spy();
@@ -491,7 +492,7 @@ describe('EntityDetails', function() {
         deployService={deployService}
         flags={{ddeploy: true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -544,6 +545,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             flags={{ddeploy: true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
             hash="readme"
