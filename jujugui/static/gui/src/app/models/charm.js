@@ -124,7 +124,7 @@ YUI.add('juju-charm-models', function(Y) {
         this.loaded = true;
       });
       this.set('scheme', url.schema);
-      this.set('owner', url.user);
+      this.set('owner', cfg.owner);
       // With multi-series charms it is possible that the parsed values
       // from the ID are undefined, especially the series which has
       // already been set as an array. It would in that case overwrite
