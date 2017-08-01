@@ -210,6 +210,7 @@ const reshapeFunc = () => null;
 reshapeFunc[SHAPE] = new Reshape();
 
 this.shapeTypes = {
+  deepFreeze: deepFreeze,
   fromShape: fromShape,
   reshapeFunc: reshapeFunc,
   shape: shape
