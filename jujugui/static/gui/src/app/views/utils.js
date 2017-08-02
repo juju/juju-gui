@@ -1409,8 +1409,13 @@ YUI.add('juju-view-utils', function(Y) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
-    // Reset the state of the GUI ready for displaying the new model.
-    const newState = {profile: null, gui: null, root: null, hash: null};
+    const current = this.state.current;
+    const newState = {
+      profile: null,
+      gui: {status: null},
+      root: null,
+      hash: null
+    };
     let name = '';
     let uuid = '';
     if (model) {
@@ -1418,9 +1423,11 @@ YUI.add('juju-view-utils', function(Y) {
       name = model.name;
       const owner = model.owner.split('@')[0];
       newState.model = {path: `${owner}/${name}`, uuid: uuid};
+      if (current && current.gui && current.gui.status !== undefined) {
+        newState.gui.status = current.gui.status;
+      }
     } else {
       newState.model = null;
-      const current = this.state.current;
       if (!current || !current.profile) {
         newState.root = 'new';
       }

@@ -244,6 +244,8 @@ def find_instantiations(path, definitions, include_tests=False):
         (definition.name.split('.')[-1], definition)
         for definition in definitions
     )
+    if not defnames:
+        return ()
     exp = _instantiation_exp(defnames.keys())
 
     def find(filepath):
@@ -297,7 +299,7 @@ def _prop_definitions_exp(name):
         \{  # Brace opening.
         ([\s\S]*?)  # Any character.
         (?=  # Until the following happens.
-            \}  # A close brace is encountered.
+            \};  # A close brace and a semicolon are encountered.
         )  # End of condition.
     """, re.VERBOSE | re.MULTILINE)
 
@@ -323,10 +325,17 @@ def _parse_prop_definitions(content):
         line for line in content.splitlines()
         if not line.strip().startswith('//'))
     collected = []
-    last_comma = 0
+    last_comma = callstack = 0
     name = ''
     for char in content:
         if char == ' ':
+            continue
+        if char == '(':
+            callstack += 1
+        if char == ')':
+            callstack -= 1
+        if callstack:
+            collected.append(char)
             continue
         if char == ':':
             if name:

@@ -250,7 +250,7 @@ describe('Juju delta handlers', function() {
   });
 
   describe('applicationInfo handler', function() {
-    var applicationInfo, constraints, config;
+    var applicationInfo, constraints, config, status;
 
     before(function() {
       applicationInfo = handlers.applicationInfo;
@@ -260,6 +260,12 @@ describe('Juju delta handlers', function() {
         'cpu-cores': 4
       };
       config = {cow: 'pie'};
+      status = {
+        current: 'idle',
+        message: 'waiting',
+        data: {},
+        since: 'yesterday'
+      };
     });
 
     it('creates an application in the database', function() {
@@ -270,7 +276,9 @@ describe('Juju delta handlers', function() {
         constraints: constraints,
         config: config,
         life: 'alive',
-        subordinate: true
+        status: status,
+        subordinate: true,
+        'workload-version': '42.47'
       };
       var oldUpdateConfig = models.Service.prototype.updateConfig;
       models.Service.prototype.updateConfig = sinon.stub();
@@ -287,7 +295,14 @@ describe('Juju delta handlers', function() {
       assert.equal(db.services.item(0).updateConfig.callCount, 1);
       models.Service.prototype.updateConfig = oldUpdateConfig;
       assert.strictEqual(application.get('life'), 'alive');
+      assert.deepEqual(application.get('status'), {
+        current: 'idle',
+        message: 'waiting',
+        data: {},
+        since: 'yesterday'
+      });
       assert.strictEqual(application.get('subordinate'), true, 'subordinate');
+      assert.strictEqual(application.get('workloadVersion'), '42.47');
     });
 
     it('updates an application in the database', function() {
@@ -301,7 +316,9 @@ describe('Juju delta handlers', function() {
         'charm-url': 'cs:quantal/wordpress-11',
         exposed: false,
         life: 'dying',
-        subordinate: false
+        status: status,
+        subordinate: false,
+        'workload-version': '2.0.1'
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(db.services.size(), 1);
@@ -310,7 +327,14 @@ describe('Juju delta handlers', function() {
       assert.strictEqual(application.get('charm'), 'cs:quantal/wordpress-11');
       assert.strictEqual(application.get('exposed'), false, 'exposed');
       assert.strictEqual('dying', application.get('life'));
+      assert.deepEqual(application.get('status'), {
+        current: 'idle',
+        message: 'waiting',
+        data: {},
+        since: 'yesterday'
+      });
       assert.strictEqual(application.get('subordinate'), false, 'subordinate');
+      assert.strictEqual(application.get('workloadVersion'), '2.0.1');
     });
 
     it('handles missing constraints', function() {
