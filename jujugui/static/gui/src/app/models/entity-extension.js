@@ -34,21 +34,6 @@ YUI.add('entity-extension', function(Y) {
   EntityExtension.prototype = {
 
     /**
-      Parse the owner from the ID.
-      @method ownerFromId
-      @return {String} the charm owner.
-     */
-    ownerFromId: function() {
-      var id = this.get('id'),
-          owner = id.split('/')[0];
-      if (owner.indexOf('~') === 0) {
-        return owner.replace('~', '');
-      } else {
-        return 'charmers';
-      }
-    },
-
-    /**
       Produces a POJO useful as a display object.
       @method toEntity
       @return {Object} a plain Javascript object containing attributes.
@@ -71,7 +56,7 @@ YUI.add('entity-extension', function(Y) {
         // Store a reference to the model e.g. for deploying a charm.
         model: this,
         name: attrs.name,
-        owner: attrs.owner || this.ownerFromId(),
+        owner: attrs.owner,
         promulgated: attrs.is_approved,
         revision_id: attrs.revision_id,
         revisions: attrs.revisions,

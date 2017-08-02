@@ -30,8 +30,10 @@ describe('test_model.js', function() {
     });
 
     it('must be able to create Charm', function() {
-      var charm = new models.Charm(
-        {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
+      var charm = new models.Charm({
+        id: 'cs:~alt-bac/precise/openstack-dashboard-0',
+        owner: 'alt-bac'
+      });
       charm.get('scheme').should.equal('cs');
       charm.get('owner').should.equal('alt-bac');
       charm.get('series').should.equal('precise');
@@ -49,13 +51,6 @@ describe('test_model.js', function() {
       assert.deepEqual(charm.get('tags'), ['bar', 'foo']);
     });
 
-    it('must not set "owner" for promulgated charms', function() {
-      const charm = new models.Charm({
-        id: 'cs:precise/openstack-dashboard-0'
-      });
-      assert.strictEqual(charm.get('owner'), '');
-    });
-
     it('must accept charm ids without versions.', function() {
       const charm = new models.Charm(
         {id: 'cs:~alt-bac/precise/openstack-dashboard'});
@@ -63,8 +58,10 @@ describe('test_model.js', function() {
     });
 
     it('must accept charm ids with periods.', function() {
-      const charm = new models.Charm(
-        {id: 'cs:~alt.bac/precise/openstack-dashboard-0'});
+      const charm = new models.Charm({
+        id: 'cs:~alt.bac/precise/openstack-dashboard-0',
+        owner: 'alt.bac'
+      });
       assert.equal(charm.get('owner'), 'alt.bac');
     });
 
@@ -77,6 +74,7 @@ describe('test_model.js', function() {
     it('generates a proper full_name for multi-series charms', () => {
       const charm = new models.Charm({
         id: 'cs:~alt-bac/openstack-dashboard',
+        owner: 'alt-bac',
         series: ['precise', 'trusty', 'xenial']
       });
       assert.equal(charm.get('full_name'), '~alt-bac/openstack-dashboard');
@@ -85,8 +83,10 @@ describe('test_model.js', function() {
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
-      const charm = new models.Charm(
-        {id: 'cs:~marco-ceppi/precise/wordpress-17'});
+      const charm = new models.Charm({
+        id: 'cs:~marco-ceppi/precise/wordpress-17',
+        owner: 'marco-ceppi'
+      });
       charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
     });
 

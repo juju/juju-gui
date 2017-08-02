@@ -40,6 +40,7 @@ describe('Entity Extension', function() {
     var attrs = {
       id: '~owner/foobar',
       storeId: 'cs:~owner/foobar-132',
+      owner: 'owner',
       name: 'foo-bar-entity',
       description: 'A test description.',
       revision_id: 132,
@@ -54,17 +55,6 @@ describe('Entity Extension', function() {
   afterEach(function() {
     entityModel.destroy();
     window.juju_config = jujuConfig;
-  });
-
-  it('parses owner from the ID', function() {
-    assert.equal('owner', entityModel.ownerFromId(),
-      'owner was not extracted properly from the ID');
-  });
-
-  it('defaults to charmers when owner is not in ID', function() {
-    entityModel.set('id', 'foobar');
-    assert.equal('charmers', entityModel.ownerFromId(),
-      'default owner was not set to "charmers"');
   });
 
   it('converts a charm to an entity POJO', function() {
