@@ -51,7 +51,7 @@ describe('EntityFiles', function() {
     var instance = renderer.getMountedInstance();
     var archiveUrl = `${apiUrl}/django/archive`;
     var fileItems = [
-      <li className="p-list-tree__item">
+      <li key="foo.zip" className="p-list-tree__item">
         <a href={archiveUrl + '/foo.zip'}
           className="link"
           title="foo.zip"
@@ -59,7 +59,7 @@ describe('EntityFiles', function() {
           foo.zip
         </a>
       </li>,
-      <li className="p-list-tree__item p-list-tree__item--group"
+      <li key="/bar" className="p-list-tree__item p-list-tree__item--group"
         tabIndex="0" title="/bar">
         <button aria-controls="/bar" aria-expanded="false"
           className="p-list-tree__toggle"
@@ -69,7 +69,7 @@ describe('EntityFiles', function() {
         <ul aria-hidden="true" aria-labelledby="/bar-toggle"
           className="p-list-tree" id="/bar" role="tabpanel">
           {[
-            <li className="p-list-tree__item">
+            <li key="foo.txt" className="p-list-tree__item">
               <a href={archiveUrl + '/bar/foo.txt'}
                 className="link"
                 title="foo.txt"

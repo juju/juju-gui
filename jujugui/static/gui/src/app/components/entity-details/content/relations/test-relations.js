@@ -51,8 +51,8 @@ describe('EntityContentRelations', function() {
           Relations
           <a href="https://jujucharms.com/docs/stable/charms-relations"
             target="_blank">
-              <juju.components.SvgIcon name="help_16" size="16" />
-            </a>
+            <juju.components.SvgIcon name="help_16" size="16" />
+          </a>
         </h3>
         <ul className="section__list" ref="list">
           <li className="link section__list-item"
@@ -129,8 +129,8 @@ describe('EntityContentRelations', function() {
             Relations
             <a href="https://jujucharms.com/docs/stable/charms-relations"
               target="_blank">
-                <juju.components.SvgIcon name="help_16" size="16" />
-              </a>
+              <juju.components.SvgIcon name="help_16" size="16" />
+            </a>
           </h3>
           <ul className="section__list" ref="list">
             <li className="link section__list-item"
@@ -186,8 +186,8 @@ describe('EntityContentRelations', function() {
             Relations
             <a href="https://jujucharms.com/docs/stable/charms-relations"
               target="_blank">
-                <juju.components.SvgIcon name="help_16" size="16" />
-              </a>
+              <juju.components.SvgIcon name="help_16" size="16" />
+            </a>
           </h3>
           <ul className="section__list" ref="list">
             <li className="link section__list-item"

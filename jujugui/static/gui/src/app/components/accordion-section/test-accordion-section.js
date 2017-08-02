@@ -91,5 +91,5 @@ describe('AccordionSection', () => {
           style={{maxHeight: 0}}></div>
       </div>
     );
-  })
+  });
 });

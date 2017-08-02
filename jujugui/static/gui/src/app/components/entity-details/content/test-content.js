@@ -23,14 +23,6 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-function _generateTagItem(tag, fn) {
-  return [
-    <li key={tag + 0}>
-      <a data-id={tag} className="link" onClick={fn}>{tag}</a>
-    </li>
-  ];
-}
-
 function generateScript(isBundle, isDD) {
   let id = 'trusty/django-123';
   if (isBundle) {
@@ -84,18 +76,6 @@ describe('EntityContent', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
-    const option1 = {
-      description: 'Your username',
-      type: 'string',
-      default: 'spinach',
-      name: 'username'
-    };
-    const option2 = {
-      description: 'Your password',
-      type: 'string',
-      default: 'abc123',
-      name: 'password'
-    };
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -347,9 +327,9 @@ describe('EntityContent', function() {
         <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
         <juju.components.Spinner />
       </div>);
-      const innerWrapper = output.props.children[0].props.children;
-      const terms = innerWrapper
-        .props.children[0].props.children[2].props.children[1];
+    const innerWrapper = output.props.children[0].props.children;
+    const terms = innerWrapper
+      .props.children[0].props.children[2].props.children[1];
     expect(terms).toEqualJSX(expected);
   });
 
@@ -604,92 +584,92 @@ describe('EntityContent', function() {
                 hash="readme"
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
-                <div id="configuration"
-                  className="entity-content__configuration">
-                  <h3 className="entity-content__header">
-                    Bundle configuration
-                  </h3>
-                  <div>
-                    <juju.components.AccordionSection
-                      title={<span>
-                        <img alt="gunicorn"
-                          className="entity-content__config-image"
-                          src={undefined} width="26"/>
-                        gunicorn
-                      </span>}>
-                      <div className="entity-content__config-description">
-                        <div className="entity-content__config-option">
-                          <dt className="entity-content__config-name">
-                            name
-                          </dt>
-                          <dd className="entity-content__config-description">
-                            <p>title</p>
-                          </dd>
-                        </div>
-                        <div className="entity-content__config-option">
-                          <dt className="entity-content__config-name">
-                            active
-                          </dt>
-                          <dd className="entity-content__config-description">
-                            <p />
-                          </dd>
-                        </div>
+              <div id="configuration"
+                className="entity-content__configuration">
+                <h3 className="entity-content__header">
+                  Bundle configuration
+                </h3>
+                <div>
+                  <juju.components.AccordionSection
+                    title={<span>
+                      <img alt="gunicorn"
+                        className="entity-content__config-image"
+                        src={undefined} width="26"/>
+                      gunicorn
+                    </span>}>
+                    <div className="entity-content__config-description">
+                      <div className="entity-content__config-option">
+                        <dt className="entity-content__config-name">
+                          name
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>title</p>
+                        </dd>
                       </div>
-                    </juju.components.AccordionSection>
-                    <juju.components.AccordionSection
-                      title={<span>
-                        <img alt="django"
-                          className="entity-content__config-image"
-                          src={undefined} width="26"/>
-                        django
-                      </span>} />
-                  </div>
+                      <div className="entity-content__config-option">
+                        <dt className="entity-content__config-name">
+                          active
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p />
+                        </dd>
+                      </div>
+                    </div>
+                  </juju.components.AccordionSection>
+                  <juju.components.AccordionSection
+                    title={<span>
+                      <img alt="django"
+                        className="entity-content__config-image"
+                        src={undefined} width="26"/>
+                      django
+                    </span>} />
                 </div>
               </div>
-              <div className="four-col last-col">
-                <div className="section">
-                  <h3 className="section__title">
-                    Contribute
-                  </h3>
-                  <ul className="section__list">
-                    {undefined}
-                    <li className="section__list-item">
-                      <a href={'https://code.launchpad.net/~charmers/charms/' +
-                        'bundles/django-cluster/bundle'}
-                      className="link"
-                      target="_blank">
-                        Project homepage
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                {undefined}
-                {undefined}
-                <juju.components.EntityFiles
-                  apiUrl={apiUrl}
-                  entityModel={mockEntity}
-                  pluralize={pluralize} />
-                <div className="entity-content__card section clearfix">
-                  <h3 className="section__title">
-                    Embed this charm
-                  </h3>
-                  <p>Add this card to your website by copying the code below.
-                    <a className="link"
-                      href="https://jujucharms.com/community/cards"
-                      target="_blank">
-                      Learn more
-                    </a>.
-                  </p>
-                  <textarea className="twelve-col" cols="70"
-                    defaultValue={script} readOnly="readonly"
-                    rows="2" wrap="off" />
-                  <h4>Preview</h4>
-                  <div className="juju-card" data-id="django-cluster"></div>
-                </div>
+            </div>
+            <div className="four-col last-col">
+              <div className="section">
+                <h3 className="section__title">
+                  Contribute
+                </h3>
+                <ul className="section__list">
+                  {undefined}
+                  <li className="section__list-item">
+                    <a href={'https://code.launchpad.net/~charmers/charms/' +
+                      'bundles/django-cluster/bundle'}
+                    className="link"
+                    target="_blank">
+                      Project homepage
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              {undefined}
+              {undefined}
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+              <div className="entity-content__card section clearfix">
+                <h3 className="section__title">
+                  Embed this charm
+                </h3>
+                <p>Add this card to your website by copying the code below.
+                  <a className="link"
+                    href="https://jujucharms.com/community/cards"
+                    target="_blank">
+                    Learn more
+                  </a>.
+                </p>
+                <textarea className="twelve-col" cols="70"
+                  defaultValue={script} readOnly="readonly"
+                  rows="2" wrap="off" />
+                <h4>Preview</h4>
+                <div className="juju-card" data-id="django-cluster"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
     );
     expect(output).toEqualJSX(expected);
   });
