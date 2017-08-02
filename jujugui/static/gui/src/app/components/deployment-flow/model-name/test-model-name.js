@@ -66,6 +66,38 @@ describe('DeploymentModelName', () => {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can render when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentModelName
+        acl={acl}
+        ddEntity={null}
+        modelName="mymodel"
+        setModelName={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="six-col no-margin-bottom">
+        <juju.components.GenericInput
+          disabled={true}
+          key="modelName"
+          label="Model name"
+          required={true}
+          onBlur={sinon.stub()}
+          ref="modelName"
+          validate={[{
+            regex: /\S+/,
+            error: 'This field is required.'
+          }, {
+            regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
+            error: 'This field must only contain lowercase ' +
+              'letters, numbers, and hyphens. It must not start or ' +
+              'end with a hyphen.'
+          }]}
+          value="mymodel" />
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
   it('can derive the model name from the DD entity name', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentModelName
@@ -98,14 +130,12 @@ describe('DeploymentModelName', () => {
         ddEntity={null}
         modelName="mymodel"
         setModelName={setModelName} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('snazzy-bundle')
-      }
-    };
     const output = renderer.getRenderOutput();
-    output.props.children.props.onBlur();
+    output.props.children.props.onBlur({
+      currentTarget: {
+        value: 'snazzy-bundle'
+      }
+    });
     assert.equal(setModelName.callCount, 1);
     assert.equal(setModelName.args[0][0], 'snazzy-bundle');
   });
@@ -118,14 +148,12 @@ describe('DeploymentModelName', () => {
         ddEntity={null}
         modelName="mymodel"
         setModelName={setModelName} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('')
-      }
-    };
     const output = renderer.getRenderOutput();
-    output.props.children.props.onBlur();
+    output.props.children.props.onBlur({
+      currentTarget: {
+        value: ''
+      }
+    });
     assert.equal(setModelName.callCount, 0);
   });
 });

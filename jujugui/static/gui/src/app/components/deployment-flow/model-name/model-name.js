@@ -30,9 +30,11 @@ class DeploymentModelName extends React.Component {
   /**
     Updates the db's environment name when the model name is changed
     in the deployment panel.
+
+    @param evt {Object} The blur event.
   */
-  _updateModelName() {
-    const modelName = this.refs.modelName.getValue();
+  _updateModelName(evt) {
+    const modelName = evt.currentTarget.value;
     this.setState({modelName: modelName});
     if (modelName !== '') {
       this.props.setModelName(modelName);
