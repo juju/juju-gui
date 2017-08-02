@@ -161,8 +161,15 @@ class EnvSwitcher extends React.Component {
 
   /**
     Handle the model name input receiving focus.
+
+    @param evt {Object} The focus event.
   */
-  _handleInputFocus() {
+  _handleInputFocus(evt) {
+    const range = document.createRange();
+    range.selectNodeContents(evt.currentTarget);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
     this.setState({hasFocus: true});
   }
 
@@ -170,7 +177,11 @@ class EnvSwitcher extends React.Component {
     Handle the model name input losing focus.
   */
   _handleInputBlur() {
-    this.props.setModelName(this.refs.name.innerText.split(' ').join('-'));
+    const name = this.refs.name.innerText.split(' ').join('-');
+    if (name === '') {
+      this.refs.name.innerText = 'untitled-model';
+    }
+    this.props.setModelName(name);
     this.setState({hasFocus: false});
   }
 
@@ -180,7 +191,8 @@ class EnvSwitcher extends React.Component {
   _generateName() {
     if (this.props.modelCommitted) {
       return (
-        <span className="env-switcher__name">
+        <span className="env-switcher__name"
+          ref="name">
           {this.props.environmentName}
         </span>);
     }
@@ -195,14 +207,17 @@ class EnvSwitcher extends React.Component {
   }
 
   render() {
+    const toggleEnvList = this._toggleEnvList.bind(this);
     return (
       <div className="env-switcher"
         role="navigation"
-        aria-label="Model switcher">
+        aria-label="Model switcher"
+        onClick={this.props.modelCommitted ? toggleEnvList : null}
+        tabIndex="0">
         <div className={this._toggleClasses()}>
           {this._generateName()}
           <div className="env-switcher__chevron"
-            onClick={this._toggleEnvList.bind(this)}
+            onClick={toggleEnvList}
             onKeyPress={this._handleKeyToggle.bind(this)}
             id="environmentSwitcherToggle"
             role="button"

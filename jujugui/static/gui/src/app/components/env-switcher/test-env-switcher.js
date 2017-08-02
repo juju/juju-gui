@@ -51,7 +51,9 @@ describe('EnvSwitcher', function() {
     const expected = (
       <div className="env-switcher"
         role="navigation"
-        aria-label="Model switcher">
+        aria-label="Model switcher"
+        onClick={null}
+        tabIndex="0">
         <div className="env-switcher__toggle editable">
           <span className="env-switcher__name"
             contentEditable={true}
@@ -83,6 +85,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
@@ -93,7 +96,8 @@ describe('EnvSwitcher', function() {
         switchModel={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <span className="env-switcher__name">
+      <span className="env-switcher__name"
+        ref="name">
         MyEnv
       </span>);
     expect(output.props.children[0].props.children[0]).toEqualJSX(expected);
@@ -104,6 +108,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         acl={{}}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
@@ -271,6 +276,7 @@ describe('EnvSwitcher', function() {
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
+        setModelName={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidMount();
