@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class SvgIcon extends React.Component {
+class SvgIcon extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = this._generateDimensions(this.props);
