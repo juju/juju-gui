@@ -15,5 +15,22 @@
     bottom: $deployer-bar-height;
     left: $left-panel-width + 20px;
     right: 20px;
+    margin-left: 20px;
+  }
+
+  table th {
+    padding: 3px;
+  }
+
+  table td {
+    padding: 3px;
+  }
+
+  .ok {
+    color: green;
+  }
+
+  .error {
+    color: red;
   }
 }

@@ -416,7 +416,34 @@ YUI.add('juju-models', function(Y) {
       life: {
         value: ALIVE
       },
+      /**
+        The application status, as an object with the following attributes:
+        - current: current status, for instance "idle" or "executing";
+        - message: arbitrary status message set by users;
+        - data: additional status data as an object, mostly unused;
+        - since: date of the last status change, for instance
+          "2015-12-16T12:35:27.873828132+01:00".
+        This info is included in the Juju mega-watcher for applications.
+
+        @attribute status
+        @type {Object}
+        @default {}
+      */
+      status: {
+        value: {}
+      },
       unit_count: {},
+
+      /**
+        The application workload version.
+        This is the optional version of the service provided by this
+        application, for  instance the postgreSQL version.
+
+        @attribute workloadVersion
+        @type {String}
+        @default ''
+      */
+      workloadVersion: {},
 
       /**
         The services current units.

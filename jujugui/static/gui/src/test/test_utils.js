@@ -922,7 +922,7 @@ describe('utilities', function() {
     it('can switch models', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        state: {changeState: sinon.stub()}
+        state: {changeState: sinon.stub(), current: {}}
       };
       const env = {set: sinon.stub()};
       const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
@@ -931,7 +931,7 @@ describe('utilities', function() {
       assert.equal(app.state.changeState.callCount, 1, 'changeState');
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         root: null,
         hash: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
@@ -945,13 +945,13 @@ describe('utilities', function() {
     it('changes to disconnected mode if model is missing', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        state: {changeState: sinon.stub()}
+        state: {changeState: sinon.stub(), current: {}}
       };
       const env = {set: sinon.stub()};
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         root: 'new',
         hash: null,
         model: null
@@ -967,9 +967,42 @@ describe('utilities', function() {
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         hash: null,
         root: null,
+        model: null
+      }]);
+    });
+
+    it('does not close the status pane when switching to a model', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
+      };
+      const env = {set: sinon.stub()};
+      const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
+      utils._switchModel.call(app, env, model);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        profile: null,
+        gui: {status: ''},
+        hash: null,
+        root: null,
+        model: {path: 'who/mymodel', uuid: 'my-uuid'}
+      }]);
+    });
+
+    it('closes the status pane when switching to a new model', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
+      };
+      const env = {set: sinon.stub()};
+      utils._switchModel.call(app, env, null);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        profile: null,
+        gui: {status: null},
+        hash: null,
+        root: 'new',
         model: null
       }]);
     });
@@ -1168,7 +1201,7 @@ describe('utilities', function() {
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         hash: null,
         root: null,
         model: {

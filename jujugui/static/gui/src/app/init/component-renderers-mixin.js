@@ -108,7 +108,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       ReactDOM.unmountComponentAtNode(sharing);
       return;
     }
-    const db = this.db;
     const env = this.env;
     const grantRevoke = (action, username, access, callback) => {
       if (this.get('gisf') && username.indexOf('@') === -1) {
@@ -121,7 +120,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
     ReactDOM.render(
       <window.juju.components.Sharing
-        addNotification={db.notifications.add.bind(db.notifications)}
+        addNotification={this._bound.addNotification}
         canShareModel={this.acl.canShareModel()}
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={env.modelUserInfo.bind(env)}
@@ -190,8 +189,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     let profile = (
       <window.juju.components.UserProfile
         acl={this.acl}
-        addNotification=
-          {this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         charmstore={charmstore}
         currentModel={currentModel}
         d3={yui.d3}
@@ -381,8 +379,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         charmstoreURL={
           utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         apiVersion={window.jujulib.charmstoreAPIVersion}
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         makeEntityModel={yui.juju.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
@@ -430,8 +427,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this.payment && this.payment.addAddress.bind(this.payment)}
         addBillingAddress={
           this.payment && this.payment.addBillingAddress.bind(this.payment)}
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}
@@ -556,9 +552,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderStatusView(state, next) {
     ReactDOM.render(
       <window.juju.components.Status
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)} />,
-      document.getElementById('status-container'));
+        db={this.db}
+        model={this.modelAPI.getAttrs()}
+        urllib={window.jujulib.URL}
+      />,
+      document.getElementById('status-container')
+    );
     next();
   }
 
@@ -619,7 +618,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           addCharm={addCharm}
           addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
             this, db, model, service)}
-          addNotification={db.notifications.add.bind(db.notifications)}
+          addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
           clearState={utils.clearState.bind(this, topo)}
@@ -759,7 +758,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <window.juju.components.DeploymentFlow
         acl={this.acl}
         addAgreement={this.terms.addAgreement.bind(this.terms)}
-        addNotification={db.notifications.add.bind(db.notifications)}
+        addNotification={this._bound.addNotification}
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         charmstore={charmstore}

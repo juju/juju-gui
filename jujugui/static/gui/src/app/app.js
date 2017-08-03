@@ -1961,9 +1961,12 @@ YUI.add('juju-gui', function(Y) {
     _renderStatusView: function(state, next) {
       ReactDOM.render(
         <window.juju.components.Status
-          addNotification={
-            this.db.notifications.add.bind(this.db.notifications)} />,
-        document.getElementById('status-container'));
+          db={this.db}
+          model={this.env.getAttrs()}
+          urllib={window.jujulib.URL}
+        />,
+        document.getElementById('status-container')
+      );
       next();
     },
 
