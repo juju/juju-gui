@@ -22,6 +22,7 @@ class Status extends React.Component {
 
   /**
     Render the current model status.
+    @returns {Object} The resulting element.
   */
   renderStatus() {
     const elements = [];
@@ -52,7 +53,8 @@ class Status extends React.Component {
 
   /**
     Render the model fragment of the status.
-    @params {Object} model The model attributes.
+    @param {Object} model The model attributes.
+    @returns {Object} The resulting element.
   */
   _renderModel(model) {
     return (
@@ -79,8 +81,9 @@ class Status extends React.Component {
 
   /**
     Render the remote applications fragment of the status.
-    @params {Object} remoteApplications The remote applications as included in
+    @param {Object} remoteApplications The remote applications as included in
       the GUI db.
+    @returns {Object} The resulting element.
   */
   _renderRemoteApplications(remoteApplications) {
     const rows = remoteApplications.map(application => {
@@ -114,7 +117,8 @@ class Status extends React.Component {
 
   /**
     Render the applications fragment of the status.
-    @params {Object} applications The applications as included in the GUI db.
+    @param {Object} applications The applications as included in the GUI db.
+    @returns {Object} The resulting element.
   */
   _renderApplications(applications) {
     const urllib = this.props.urllib;
@@ -123,6 +127,8 @@ class Status extends React.Component {
       const charm = urllib.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
+      // Set the revision to null so that it's not included when calling
+      // charm.path() below.
       charm.revision = null;
       return (
         <tr key={app.name}>
@@ -160,7 +166,8 @@ class Status extends React.Component {
 
   /**
     Render the units fragment of the status.
-    @params {Object} applications The applications as included in the GUI db.
+    @param {Object} applications The applications as included in the GUI db.
+    @returns {Object} The resulting element.
   */
   _renderUnits(applications) {
     const formatPorts = ranges => {
@@ -219,7 +226,8 @@ class Status extends React.Component {
 
   /**
     Render the machines fragment of the status.
-    @params {Object} machines The machines as included in the GUI db.
+    @param {Object} machines The machines as included in the GUI db.
+    @returns {Object} The resulting element.
   */
   _renderMachines(machines) {
     const rows = machines.map(machine => {
@@ -257,7 +265,8 @@ class Status extends React.Component {
 
   /**
     Render the relations fragment of the status.
-    @params {Array} relations The relations as included in the GUI db.
+    @param {Array} relations The relations as included in the GUI db.
+    @returns {Object} The resulting element.
   */
   _renderRelations(relations) {
     const rows = relations.map(relation => {
@@ -333,7 +342,7 @@ Status.propTypes = {
 
 /**
   Return an element class name suitable for the given value.
-  @params {String} value The provided value.
+  @param {String} value The provided value.
   @returns {String} The class name ('ok', 'error' or '').
 */
 const getClass = value => {
@@ -352,8 +361,8 @@ const getClass = value => {
 
 /**
   A compare function for sorting an array by the key property.
-  @params {Object} a The first value.
-  @params {Object} b The second value.
+  @param {Object} a The first value.
+  @param {Object} b The second value.
   @returns {Number} -1, 1 or 0.
 */
 const byKey = (a, b) => {
