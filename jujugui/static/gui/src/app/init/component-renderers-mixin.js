@@ -1052,6 +1052,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
+        setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showEnvSwitcher={showEnvSwitcher}
         showProfile={utils.showProfile.bind(
           this, modelAPI && modelAPI.get('ecs'),
