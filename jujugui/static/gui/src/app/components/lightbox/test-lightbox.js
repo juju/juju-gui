@@ -25,7 +25,7 @@ describe('Lightbox', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="lightbox" onClick={close}>
-        <button className="lightbox_close">
+        <button className="lightbox__close">
           <juju.components.SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__content">
@@ -38,6 +38,7 @@ describe('Lightbox', function() {
         </div>
       </div>
     );
+    expect(output).toEqualJSX(expected);
   });
 
   it('renders without a caption', () => {
@@ -50,7 +51,7 @@ describe('Lightbox', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="lightbox" onClick={close}>
-        <button className="lightbox_close">
+        <button className="lightbox__close">
           <juju.components.SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__content">
@@ -60,6 +61,7 @@ describe('Lightbox', function() {
         </div>
       </div>
     );
+    expect(output).toEqualJSX(expected);
   });
 
 });

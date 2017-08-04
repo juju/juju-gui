@@ -31,6 +31,7 @@ class Lightbox extends React.Component {
 
 Lightbox.propTypes = {
   caption: PropTypes.string,
+  children: PropTypes.any,
   close: PropTypes.func.isRequired
 };
 
