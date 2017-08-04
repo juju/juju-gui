@@ -47,10 +47,12 @@ class AccordionSection extends React.Component {
     const icon = this.props.children ? <juju.components.SvgIcon
       name={chevron}
       size="16" className="right" /> : null;
+    const role = this.props.children ? 'button' : null;
+    const onClick = this.props.children ? this._toggle.bind(this) : null;
     return (<div
-      role="button"
+      role={role}
       className="accordion-section__title"
-      onClick={this._toggle.bind(this)}>
+      onClick={onClick}>
       <span className="accordion-section__title-content">
         {this.props.title}
       </span>

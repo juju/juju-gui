@@ -83,8 +83,8 @@ describe('AccordionSection', () => {
     expect(comp.output).toEqualJSX(
       <div className="accordion-section">
         <div className="accordion-section__title"
-          role="button"
-          onClick={comp.instance._toggle.bind(comp.instance)}>
+          role={null}
+          onClick={null}>
           <span className="accordion-section__title-content">My title!</span>
         </div>
         <div className="accordion-section__content" ref={sinon.stub()}
