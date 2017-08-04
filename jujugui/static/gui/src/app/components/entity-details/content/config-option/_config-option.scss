@@ -24,19 +24,13 @@
     font-weight: 500;
   }
 
-  &-type {
-    font-weight: 500;
-  }
-
   &-description,
   &-default {
-    margin-top: .5rem;
-    margin-bottom: 1rem;
+    margin: .5rem 0 1rem 2rem;
   }
 
   &-default {
-    font-size: .875em;
-    color: $dark-warm-grey;
+    font-weight: normal;
     font-family: 'Ubuntu Mono' ,'Consolas' ,'Monaco' ,'Lucida Console' ,'Courier New' ,Courier, monospace;
   }
 }

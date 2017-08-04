@@ -98,6 +98,8 @@ class EntityDetails extends React.Component {
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              clearLightbox={this.props.clearLightbox}
+              displayLightbox={this.props.displayLightbox}
               flags={this.props.flags}
               getDiagramURL={this.props.getDiagramURL}
               getFile={this.props.getFile}
@@ -259,7 +261,9 @@ EntityDetails.propTypes = {
   addNotification: PropTypes.func.isRequired,
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
+  displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,

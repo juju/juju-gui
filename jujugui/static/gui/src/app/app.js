@@ -1808,7 +1808,9 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          clearLightbox={this._clearLightbox.bind(this)}
           deployTarget={this.deployTarget.bind(this, charmstore)}
+          displayLightbox={this._displayLightbox.bind(this)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
             this.bundleImporter)}
@@ -1888,6 +1890,16 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('modal-gui-settings'));
     },
 
+    _displayLightbox: function(content, caption) {
+      ReactDOM.render(
+        <window.juju.components.Lightbox
+          caption={caption}
+          close={this._clearLightbox.bind(this)}>
+          {content}
+        </window.juju.components.Lightbox>,
+        document.getElementById('lightbox'));
+    },
+
     /**
       The cleanup dispatcher keyboard shortcuts modal.
     */
@@ -1902,6 +1914,12 @@ YUI.add('juju-gui', function(Y) {
     _clearSettingsModal: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('modal-gui-settings'));
+    },
+
+    _clearLightbox: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('lightbox')
+      );
     },
 
     /**
@@ -3256,6 +3274,7 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'isv-profile',
+    'lightbox',
     'local-inspector',
     'machine-view',
     'login-component',

@@ -92,7 +92,7 @@ describe('EntityHeader', function() {
                 <li className="entity-header__series">
                   <span className="link"
                     onClick={instance._onLastRevisionClick}>
-                    Latest revision (42)
+                    Latest version (#42)
                   </span>
                 </li>
                 {[<li key="trusty" className="entity-header__series">

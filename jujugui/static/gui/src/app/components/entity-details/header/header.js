@@ -291,7 +291,7 @@ class EntityHeader extends React.Component {
     return (
       <li key={lastRevision} className="entity-header__series">
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
-            Latest revision ({url.revision})
+            Latest version (#{url.revision})
         </span>
       </li>
     );

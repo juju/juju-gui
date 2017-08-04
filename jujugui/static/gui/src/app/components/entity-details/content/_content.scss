@@ -136,7 +136,7 @@
     }
 
     a {
-      @extend .link;
+      color: $link-blue;
     }
 
     ul {
@@ -180,6 +180,10 @@
       border-left: 3px solid $color-mid-light;
       padding-left: 1rem;
       margin: 2rem 0;
+    }
+
+    &-content > *:last-child {
+      margin-bottom: 0;
     }
   }
 
@@ -283,6 +287,10 @@
   }
 
   &__card {
+    &-cta {
+      color: $link-blue;
+    }
+
     textarea {
       color: $dark-warm-grey;
       cursor: default;
@@ -304,6 +312,8 @@
   }
 
   &__configuration {
+    margin-top: 1.6rem;
+    
     .entity-content__header {
       margin-bottom: 1rem;
     }

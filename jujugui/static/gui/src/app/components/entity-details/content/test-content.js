@@ -56,6 +56,8 @@ describe('EntityContent', function() {
     const renderMarkdown = sinon.stub().returns(description);
     const getFile = sinon.spy();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const pluralize = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
@@ -66,6 +68,8 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
         getDiagramURL={sinon.stub()}
         getFile={getFile}
@@ -94,7 +98,6 @@ describe('EntityContent', function() {
                   <h4 className="entity-content__metadata-title">
                     Tags:
                   </h4>
-
                   <a className="link"
                     data-id="database"
                     onClick={instance._handleTagClick}>database</a>
@@ -164,15 +167,15 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="trusty/django-123"></div>
               </div>
@@ -207,9 +210,10 @@ describe('EntityContent', function() {
     const expected = (
       <div className="juju-card" data-dd data-id="trusty/django-123"></div>);
     const scriptExpected = (
-      <textarea
-        rows="2" cols="70" readOnly="readonly" wrap="off"
-        className="twelve-col" defaultValue={generateScript(false, true)}></textarea>);
+      <juju.components.CopyToClipboard
+        className="copy-to-clipboard"
+        value={script.props.value} />
+    );
     expect(card).toEqualJSX(expected);
     expect(script).toEqualJSX(scriptExpected);
   });
@@ -429,6 +433,8 @@ describe('EntityContent', function() {
 
   it('can display a charm with no options', function() {
     mockEntity.set('options', null);
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const description = mockEntity.get('description');
     const apiUrl = 'http://example.com';
     const renderMarkdown = sinon.stub().returns(description);
@@ -443,6 +449,8 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
         getDiagramURL={sinon.stub()}
         getFile={getFile}
@@ -517,15 +525,15 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="trusty/django-123"></div>
               </div>
@@ -544,6 +552,8 @@ describe('EntityContent', function() {
     const getFile = sinon.spy();
     const getDiagramURL = sinon.stub();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const pluralize = sinon.spy();
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
@@ -554,6 +564,8 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
         getDiagramURL={getDiagramURL}
         getFile={getFile}
@@ -574,8 +586,12 @@ describe('EntityContent', function() {
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentDiagram
+                clearLightbox={clearLightbox}
+                displayLightbox={displayLightbox}
                 getDiagramURL={getDiagramURL}
-                id="django-cluster" />
+                id="django-cluster"
+                isExpandable={true}
+                title="django cluster" />
               <juju.components.EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
@@ -654,15 +670,15 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="django-cluster"></div>
               </div>

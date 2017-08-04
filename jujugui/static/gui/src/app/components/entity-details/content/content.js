@@ -346,10 +346,15 @@ class EntityContent extends React.Component {
     if (entityModel.get('entityType') !== 'bundle') {
       return;
     }
+    const entity = entityModel.toEntity();
     return <juju.components.EntityContentDiagram
+      clearLightbox={this.props.clearLightbox}
+      displayLightbox={this.props.displayLightbox}
       getDiagramURL={this.props.getDiagramURL}
       id={entityModel.get('id')}
-      isRow={false} />;
+      isExpandable={true}
+      isRow={false}
+      title={entity.displayName}/>;
   }
 
   /**
@@ -576,13 +581,12 @@ class EntityContent extends React.Component {
         <p>
           Add this card to your website by copying the code below.&nbsp;
           <a href="https://jujucharms.com/community/cards" target="_blank"
-            className="link">
+            className="entity-content__card-cta">
             Learn more
           </a>.
         </p>
-        <textarea
-          rows="2" cols="70" readOnly="readonly" wrap="off"
-          className="twelve-col" defaultValue={script}></textarea>
+        <juju.components.CopyToClipboard
+          value={script} />
         <h4>Preview</h4>
         {cardElement}
       </div>);
@@ -641,6 +645,8 @@ EntityContent.propTypes = {
   addNotification: React.PropTypes.func.isRequired,
   apiUrl: React.PropTypes.string.isRequired,
   changeState: React.PropTypes.func.isRequired,
+  clearLightbox: React.PropTypes.func,
+  displayLightbox: React.PropTypes.func,
   entityModel: React.PropTypes.object.isRequired,
   flags: PropTypes.object,
   getDiagramURL: React.PropTypes.func.isRequired,
@@ -659,6 +665,7 @@ YUI.add('entity-content', function() {
 }, '0.1.0', {
   requires: [
     'accordion-section',
+    'copy-to-clipboard',
     'entity-content-config-option',
     'entity-content-description',
     'entity-content-diagram',

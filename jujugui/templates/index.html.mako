@@ -156,6 +156,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div id="content">
             <div id="modal-shortcuts"></div>
             <div id="modal-gui-settings"></div>
+            <div id="lightbox"></div>
             <div id="main">
             </div> <!-- /container -->
             <div id="drag-over-notification-container"></div>

@@ -49,6 +49,8 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
@@ -64,7 +66,9 @@ describe('EntityDetails', function() {
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
+        displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -119,6 +123,8 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
@@ -200,7 +206,9 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
+    const displayLightbox = sinon.stub();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
@@ -216,7 +224,9 @@ describe('EntityDetails', function() {
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
+        displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -270,6 +280,8 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
@@ -371,7 +383,9 @@ describe('EntityDetails', function() {
     const addNotification = sinon.spy();
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
+    const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
@@ -391,7 +405,9 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
+        displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
@@ -445,6 +461,8 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
@@ -469,7 +487,9 @@ describe('EntityDetails', function() {
     const addNotification = sinon.spy();
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
+    const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
@@ -489,7 +509,9 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
+        displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
@@ -543,6 +565,8 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
