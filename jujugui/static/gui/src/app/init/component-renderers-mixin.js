@@ -1020,6 +1020,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
     const modelAPI = this.modelAPI;
+    const ecs = modelAPI.get('ecs');
     const controllerAPI = this.controllerAPI;
     const utils = yui.juju.views.utils;
     let listModelsWithInfo =
@@ -1051,12 +1052,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
+        isCommitting={ecs.isCommitting.bind(ecs)}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
         showEnvSwitcher={showEnvSwitcher}
         showProfile={utils.showProfile.bind(
-          this, modelAPI && modelAPI.get('ecs'),
+          this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
         switchModel={utils.switchModel.bind(this, modelAPI)}
         loadingModel={this.modelAPI.loading} />,

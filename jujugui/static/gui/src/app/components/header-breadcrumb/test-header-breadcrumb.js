@@ -41,7 +41,7 @@ describe('HeaderBreadcrumb', () => {
       }
     };
     addNotification = sinon.stub();
-    isCommitting = sinon.stub()
+    isCommitting = sinon.stub();
     listModelsWithInfo = sinon.stub();
     showProfile = sinon.stub();
     switchModel = sinon.stub();
