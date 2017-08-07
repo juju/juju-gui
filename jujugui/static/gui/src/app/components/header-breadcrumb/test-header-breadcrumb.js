@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
   let appState, addNotification, changeState, humanizeTimestamp,
-      listModelsWithInfo, showProfile, switchModel;
+      isCommitting, listModelsWithInfo, showProfile, switchModel;
   const acl = {};
 
   beforeAll((done) => {
@@ -41,6 +41,7 @@ describe('HeaderBreadcrumb', () => {
       }
     };
     addNotification = sinon.stub();
+    isCommitting = sinon.stub()
     listModelsWithInfo = sinon.stub();
     showProfile = sinon.stub();
     switchModel = sinon.stub();
@@ -58,6 +59,7 @@ describe('HeaderBreadcrumb', () => {
         user={attrs.user}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
+        isCommitting={isCommitting}
         loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
         modelName={attrs.modelName}
@@ -105,6 +107,7 @@ describe('HeaderBreadcrumb', () => {
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
+              isCommitting={isCommitting}
               listModelsWithInfo={listModelsWithInfo}
               switchModel={switchModel} />
           </li>
@@ -141,6 +144,7 @@ describe('HeaderBreadcrumb', () => {
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
+              isCommitting={isCommitting}
               listModelsWithInfo={listModelsWithInfo}
               switchModel={switchModel} />
           </li>

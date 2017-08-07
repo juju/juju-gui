@@ -39,6 +39,7 @@ describe('EnvSwitcher', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         environmentName="MyEnv"
+        isCommitting={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         showProfile={sinon.stub()}
@@ -77,6 +78,7 @@ describe('EnvSwitcher', function() {
     const acl = {};
     const changeState = sinon.stub();
     const humanizeTimestamp = sinon.stub();
+    const isCommitting = sinon.stub();
     const switchModel = sinon.stub();
     const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
@@ -85,6 +87,7 @@ describe('EnvSwitcher', function() {
         addNotification={sinon.stub()}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
+        isCommitting={isCommitting}
         listModelsWithInfo={sinon.stub()}
         switchModel={switchModel}
         user={user} />, true);
@@ -101,6 +104,7 @@ describe('EnvSwitcher', function() {
         changeState={changeState}
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
+        isCommitting={isCommitting}
         listModelsWithInfo={sinon.stub()}
         switchModel={switchModel}
         user={user} />);
@@ -130,6 +134,7 @@ describe('EnvSwitcher', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
+        isCommitting={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
@@ -153,6 +158,7 @@ describe('EnvSwitcher', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
+        isCommitting={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
@@ -188,6 +194,7 @@ describe('EnvSwitcher', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
+        isCommitting={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
         switchModel={switchModel} />, true);
@@ -205,6 +212,42 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(switchModel.args[0], [model]);
   });
 
+  it('will not switch models while committing.', function() {
+    // To switch environments you click on an environment list item in a sub
+    // component so here we're just going to call the method that gets
+    // passed down.
+    const models = [{
+      uuid: 'abc123',
+      name: 'Tardis',
+      owner: 'The Dr.',
+      password: 'buffalo',
+      isAlive: true
+    }];
+    const listModelsWithInfo = sinon.stub();
+    const switchModel = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        humanizeTimestamp={sinon.stub()}
+        isCommitting={() => true}
+        listModelsWithInfo={listModelsWithInfo}
+        showProfile={sinon.stub()}
+        switchModel={switchModel} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    listModelsWithInfo.args[0][0](null, models);
+    const model = {
+      id: 'abc123',
+      name: 'Tardis',
+      owner: 'The Dr.'
+    };
+    instance.handleModelClick(model);
+    assert.equal(switchModel.callCount, 0);
+    assert.deepEqual(instance.state, {showEnvList: false, envList: models});
+  });
+
   it('handles errors when getting models', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
@@ -214,6 +257,7 @@ describe('EnvSwitcher', function() {
         addNotification={addNotification}
         changeState={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
+        isCommitting={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);

@@ -35,6 +35,7 @@ YUI.add('environment-change-set', function(Y) {
       this.changeSet = {};
       this.currentCommit = [];
       this.currentIndex = 0;
+      this.committing = false;
     },
 
     /* ECS methods */
@@ -374,6 +375,7 @@ YUI.add('environment-change-set', function(Y) {
           window.setTimeout(this._commitNext.bind(this, env, currentIndex), 0);
         } else {
           this.currentLevel = -1;
+          this.committing = false;
           delete this.currentCommit;
           document.dispatchEvent(new CustomEvent('ecs.currentCommitFinished', {
             detail: {
@@ -434,7 +436,17 @@ YUI.add('environment-change-set', function(Y) {
       this.currentCommit = this._buildHierarchy(true);
       this.currentIndex += 1;
       this.currentLevel = -1;
+      this.committing = true;
       this._commitNext(env, this.currentIndex - 1);
+    },
+
+    /**
+      Check to see if the current  commit is in progress.
+
+      @return {Boolean} true if the commit is in progress.
+    */
+    isCommitting: function() {
+      return this.committing;
     },
 
     /**
