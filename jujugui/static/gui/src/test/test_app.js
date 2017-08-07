@@ -725,6 +725,7 @@ describe('App', function() {
       userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       env = new juju.environments.GoEnvironment({
+        ecs: new juju.EnvironmentChangeSet(),
         conn: conn,
         user: userClass
       });

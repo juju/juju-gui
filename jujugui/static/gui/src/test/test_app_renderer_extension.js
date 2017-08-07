@@ -55,7 +55,8 @@ describe('App Renderer Extension', function() {
     this._cleanups.push(createElementStub.restore);
     // Bootstrap various renderer attributes and properties.
     var ecs = {
-      getCurrentChangeSet: sinon.stub().returns({})
+      getCurrentChangeSet: sinon.stub().returns({}),
+      isCommitting: sinon.stub().returns(false)
     };
     var Env = Y.Base.create('env', Y.Base, [], {
     }, {
