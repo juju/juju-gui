@@ -1095,8 +1095,9 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: '/hatch/ghost'}
       });
-      const stub = sinon.stub(
-        state, 'generateState', () => ({ error: null, state: {}}));
+      const stub = sinon
+        .stub(state, 'generateState')
+        .callsFake(() => ({ error: null, state: {}}));
       state.dispatch([], true, false, true);
       assert.equal(stub.callCount, 1);
       assert.deepEqual(stub.args[0], ['/hatch/ghost', true]);
@@ -1108,8 +1109,9 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: 'hatch/ghost'}
       });
-      sinon.stub(state,
-        'generateState', () => ({ error: null, state: {new: 'state'}}));
+      sinon
+        .stub(state,'generateState')
+        .callsFake(() => ({ error: null, state: {new: 'state'}}));
       state.dispatch([], true, false, true);
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
@@ -1124,10 +1126,9 @@ describe('State', () => {
         gui: {
           deploy: '',
           inspector: { id: '$foo'}}};
-      sinon.stub(state,
-        'generateState', () => ({
-          error: null,
-          state: currentState}));
+      sinon
+        .stub(state, 'generateState')
+        .callsFake(() => ({error: null, state: currentState}));
       const dispatch = sinon.stub(state, '_dispatch');
       state.dispatch([], true, false, true);
       assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy', []]);

@@ -48,9 +48,9 @@ describe('topology relation module', function() {
     // The RelationModule's events are wired into the topology view by
     // addModule.  Three types of events are supported: "scene", "yui", and
     // "d3".
-    assert.deepProperty(view, 'events.scene');
-    assert.deepProperty(view, 'events.topo');
-    assert.deepProperty(view, 'events.d3');
+    assert.nestedProperty(view, 'events.scene');
+    assert.nestedProperty(view, 'events.topo');
+    assert.nestedProperty(view, 'events.d3');
   });
 
   it('fires a "clearState" event if a drag line is clicked', function(done) {
