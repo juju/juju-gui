@@ -23,13 +23,14 @@ class BasicTable extends React.Component {
   }
 
   /**
-    Generate the a row.
-    @param header {Boolean} Whether this is a header row.
-    @param columnValues {Array} The list of column values.
+    Generate a row.
+    @param isHeader {Boolean} Whether this is a header row.
+    @param columnContents {Array} The list of column content. This can be
+    strings or JSX etc.
     @param index {Int} The row index (used for unique keys).
     @returns {Object} The row to render.
   */
-  _generateRow(header, columnValues, index) {
+  _generateRow(isHeader, columnContents, index) {
     const columnsNumber = this.props.columns.length;
     const columns = this.props.columns.map((column, i) => {
       let conditionalClasses = {'last-col': i + 1 === columnsNumber};
@@ -42,10 +43,10 @@ class BasicTable extends React.Component {
       }
       const classes = classNames(conditionalClasses);
       let content;
-      if (header) {
+      if (isHeader) {
         content = column.title;
       } else {
-        content = columnValues[i] || '';
+        content = columnContents[i] || '';
       }
       return (
         <div className={classes}
@@ -56,8 +57,8 @@ class BasicTable extends React.Component {
     const classes = classNames(
       'twelve-col',
       {
-        'basic-table__header': header,
-        'basic-table__row': !header
+        'basic-table__header': isHeader,
+        'basic-table__row': !isHeader
       });
     return (
       <li className={classes}
