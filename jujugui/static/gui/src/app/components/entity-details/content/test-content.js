@@ -550,7 +550,7 @@ describe('EntityContent', function() {
     const apiUrl = 'http://example.com';
     const renderMarkdown = sinon.spy();
     const getFile = sinon.spy();
-    const getDiagramURL = sinon.stub();
+    const getDiagramURL = sinon.stub().returns('testRef');
     const changeState = sinon.spy();
     const clearLightbox = sinon.stub();
     const displayLightbox = sinon.stub();
@@ -587,7 +587,7 @@ describe('EntityContent', function() {
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentDiagram
                 clearLightbox={clearLightbox}
-                diagramUrl={undefined}
+                diagramUrl="testRef"
                 displayLightbox={displayLightbox}
                 isExpandable={true}
                 title="django cluster" />
@@ -699,7 +699,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={sinon.stub().returns('testRef')}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}

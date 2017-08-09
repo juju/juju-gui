@@ -19,10 +19,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class EntityContentDiagram extends React.PureComponent {
-  _handleClose() {
-    this.props.clearLightbox();
-  }
-
+  /**
+    If expandable, open image in lightbox.
+  */
   _handleExpand() {
     this.props.displayLightbox(
       <object type="image/svg+xml" data={this.props.diagramUrl} />,
@@ -30,7 +29,12 @@ class EntityContentDiagram extends React.PureComponent {
     );
   }
 
-  _generateExpandButton(url) {
+  /**
+    If expandable, generate the expand button with icon.
+
+    @return {Button} The expand button.
+  */
+  _generateExpandButton() {
     if (this.props.isExpandable) {
       return (
         <button role="button" className="entity-content__diagram-expand"
@@ -50,6 +54,7 @@ class EntityContentDiagram extends React.PureComponent {
     return (
       <div className={classes}>
         <object type="image/svg+xml" data={this.props.diagramUrl}
+          title={this.props.title}
           className="entity-content__diagram-image" />
         {this._generateExpandButton()}
       </div>
