@@ -97,15 +97,17 @@ class ProfileModelList extends React.Component {
       if (!model.isAlive) {
         return;
       }
-      models.push([
-        model.name,
-        `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
-        model.lastConnection,
-        '-'
-      ]);
+      models.push({
+        id: model.id,
+        name: model.name,
+        provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
+        lastConnection: model.lastConnection,
+        action: '-'
+      });
       return models;
     }, []);
-    const rows = this._generateRows(rowData, key);
+    const rows = this._generateRows(
+      rowData, ['name', 'provider', 'lastConnection', 'action']);
     return (
       <ul className="profile-model-list__list">
         {[
@@ -140,15 +142,16 @@ class ProfileModelList extends React.Component {
       // Get the model users permissions
       const modelUser = model.users ? model.users.filter(user =>
         user.displayName === this.props.userInfo.profile) : null;
-      models.push([
-        model.name,
-        `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
-        modelUser.length && modelUser[0].access,
-        model.owner.replace('@external', '')
-      ]);
+      models.push({
+        id: model.id,
+        name: model.name,
+        provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
+        access: modelUser.length && modelUser[0].access,
+        owner: model.owner.replace('@external', '')
+      });
       return models;
     }, []);
-    const rows = this._generateRows(rowData, key);
+    const rows = this._generateRows(rowData, ['name', 'provider', 'access', 'owner']);
     return (
       <ul className="profile-model-list__list">
         {[
@@ -195,24 +198,49 @@ class ProfileModelList extends React.Component {
   }
 
   /**
+    Call the switchModel prop to switch a model passing it the necessary
+    model data. Prevents default and propagation.
+    @param {Object} model The model data necessary for the switchModel call.
+    @param {Object} e The click event.
+  */
+  switchToModel(model, e) {
+    e.preventDefault();
+    e.stopPropagation(); // Required to avoid react error about root DOM node.
+    this.props.switchModel(model);
+  }
+
+  /**
     Generate the JSX markup for a row of model data.
     @param {Map} rowData The data to display.
-    @param {String} key The key for react lists.
+    @param {Array} columns The columns that the supplied data is to be sorted into
     @return {Array} The model list rows as JSX markup.
   */
-  _generateRows(rows, key) {
-    function processData(data) {
-      if (data instanceof Date) {
-        return <juju.components.DateDisplay date={data || '--'} relative={true} />; // eslint-disable-line max-len
+  _generateRows(rows, columns) {
+    function processData(data, label) {
+      switch(label) {
+        case 'lastConnection':
+          return <juju.components.DateDisplay date={data[label] || '--'} relative={true} />;
+          break;
+        case 'name':
+          const owner = data.owner || this.props.userInfo.profile;
+          const name = data.name;
+          const path = `${this.props.baseURL}u/${owner}/${name}`;
+          return <a href={path} onClick={this.switchToModel.bind(this, {
+            name,
+            id: data.id,
+            owner
+          })} >{data.name}</a>;
+          break;
+        default:
+          return data[label];
       }
-      return data;
     }
 
     return (
-      rows.map((row, idx) =>
-        <li className="profile-model-list__row" key={`${key}-${idx}`}>
-          {row.map((data, idx) =>
-            <span key={`${key}-span-${idx}`}>{processData(data)}</span>)}
+      rows.map((rowData, idx) =>
+        <li className="profile-model-list__row" key={idx}>
+          {columns.map(label =>
+            <span key={`${label}-${idx}`}>{processData.call(this, rowData, label)}</span>)}
         </li>));
   }
 
@@ -229,6 +257,7 @@ class ProfileModelList extends React.Component {
 ProfileModelList.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
+  baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
