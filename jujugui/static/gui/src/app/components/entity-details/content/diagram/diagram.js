@@ -64,8 +64,8 @@ class EntityContentDiagram extends React.PureComponent {
 
 EntityContentDiagram.propTypes = {
   clearLightbox: PropTypes.func,
-  displayLightbox: PropTypes.func,
   diagramUrl: PropTypes.string.isRequired,
+  displayLightbox: PropTypes.func,
   isExpandable: PropTypes.bool,
   isRow: PropTypes.bool,
   title: PropTypes.string

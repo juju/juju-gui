@@ -21,8 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('EntityContentDiagram', function() {
-  const getDiagramURL = sinon.stub().returns('example.com/diagram.svg');
-
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('entity-content-diagram', function() { done(); });
