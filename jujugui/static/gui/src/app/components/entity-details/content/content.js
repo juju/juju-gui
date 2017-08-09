@@ -642,22 +642,22 @@ EntityContent.defaultProps = {
 };
 
 EntityContent.propTypes = {
-  addNotification: React.PropTypes.func.isRequired,
-  apiUrl: React.PropTypes.string.isRequired,
-  changeState: React.PropTypes.func.isRequired,
-  clearLightbox: React.PropTypes.func,
-  displayLightbox: React.PropTypes.func,
-  entityModel: React.PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  apiUrl: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  clearLightbox: PropTypes.func,
+  displayLightbox: PropTypes.func,
+  entityModel: PropTypes.object.isRequired,
   flags: PropTypes.object,
-  getDiagramURL: React.PropTypes.func.isRequired,
-  getFile: React.PropTypes.func.isRequired,
-  hasPlans: React.PropTypes.bool.isRequired,
-  hash: React.PropTypes.string,
-  plans: React.PropTypes.array,
-  pluralize: React.PropTypes.func.isRequired,
-  renderMarkdown: React.PropTypes.func.isRequired,
-  scrollCharmbrowser: React.PropTypes.func.isRequired,
-  showTerms: React.PropTypes.func.isRequired
+  getDiagramURL: PropTypes.func.isRequired,
+  getFile: PropTypes.func.isRequired,
+  hasPlans: PropTypes.bool.isRequired,
+  hash: PropTypes.string,
+  plans: PropTypes.array,
+  pluralize: PropTypes.func.isRequired,
+  renderMarkdown: PropTypes.func.isRequired,
+  scrollCharmbrowser: PropTypes.func.isRequired,
+  showTerms: PropTypes.func.isRequired
 };
 
 YUI.add('entity-content', function() {
