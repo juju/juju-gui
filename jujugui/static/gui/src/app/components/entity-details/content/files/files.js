@@ -179,7 +179,7 @@ class EntityFiles extends React.Component {
     // The loop that covers everything *but* the root node is above.
     let markup = [];
     Object.keys(filetree).forEach(file => {
-      markup.push(buildList.bind(this)(file, filetree[file]));
+      markup.push(buildList.call(this, file, filetree[file]));
     });
     return markup;
   }
