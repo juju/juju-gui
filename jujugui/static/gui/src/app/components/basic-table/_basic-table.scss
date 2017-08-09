@@ -1,0 +1,13 @@
+.basic-table {
+  @extend %list-style;
+  margin-bottom: 20px;
+
+  &__header {
+    font-weight: 400;
+    border-bottom: 1px solid $color-dark;
+  }
+
+  &__row {
+    border-bottom: 1px solid $light-mid-grey;
+  }
+}

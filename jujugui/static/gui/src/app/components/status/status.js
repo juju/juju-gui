@@ -4,27 +4,44 @@
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
-
   /**
-    Render the component.
+    Return an element class name suitable for the given value.
+    @param {String} value The provided value.
+    @returns {String} The class name ('ok', 'error' or '').
   */
-  render() {
-    return (
-      <juju.components.Panel
-        instanceName="status-view"
-        visible={true}>
-        <div className="status-view__content">
-          {this.renderStatus()}
-        </div>
-      </juju.components.Panel>
-    );
+  _getClass(value) {
+    switch (value) {
+      case 'active':
+      case 'idle':
+      case 'started':
+        return 'ok';
+      case 'blocked':
+      case 'down':
+      case 'error':
+        return 'error';
+    }
+    return '';
   }
 
   /**
-    Render the current model status.
+    Sort by the key attribute.
+    @param {Object} a The first value.
+    @param {Object} b The second value.
+    @returns {Array} The sorted array.
+  */
+  _byKey(a, b) {
+    if (a.key < b.key)
+      return -1;
+    if (a.key > b.key)
+      return 1;
+    return 0;
+  }
+
+  /**
+    Generate the current model status.
     @returns {Object} The resulting element.
   */
-  renderStatus() {
+  _generateStatus() {
     const elements = [];
     const db = this.props.db;
     const model = this.props.model;
@@ -32,97 +49,120 @@ class Status extends React.Component {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
-    elements.push(this._renderModel(model));
+    elements.push(this._generateModel(model));
     if (db.remoteServices.size()) {
-      elements.push(this._renderRemoteApplications(db.remoteServices));
+      elements.push(this._generateRemoteApplications(db.remoteServices));
     }
     if (db.services.size()) {
       elements.push(
-        this._renderApplications(db.services),
-        this._renderUnits(db.services)
+        this._generateApplications(db.services),
+        this._generateUnits(db.services)
       );
     }
     if (db.machines.size()) {
-      elements.push(this._renderMachines(db.machines));
+      elements.push(this._generateMachines(db.machines));
     }
     if (db.relations.size()) {
-      elements.push(this._renderRelations(db.relations));
+      elements.push(this._generateRelations(db.relations));
     }
     return elements;
   }
 
   /**
-    Render the model fragment of the status.
+    Generate the model fragment of the status.
     @param {Object} model The model attributes.
     @returns {Object} The resulting element.
   */
-  _renderModel(model) {
+  _generateModel(model) {
     return (
-      <table key="model">
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Cloud/Region</th>
-            <th>Version</th>
-            <th>SLA</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr key={model.environmentName}>
-            <td>{model.environmentName}</td>
-            <td>{model.cloud}/{model.region}</td>
-            <td>{model.version}</td>
-            <td>{model.sla}</td>
-          </tr>
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'Model',
+          columnSize: 3
+        }, {
+          content: 'Cloud/Region',
+          columnSize: 3
+        }, {
+          content: 'Version',
+          columnSize: 3
+        }, {
+          content: 'SLA',
+          columnSize: 3
+        }]}
+        key="model"
+        rows={[{
+          columns: [{
+            columnSize: 3,
+            content: model.environmentName
+          }, {
+            columnSize: 3,
+            content: `${model.cloud}/${model.region}`
+          }, {
+            columnSize: 3,
+            content: model.version
+          }, {
+            columnSize: 3,
+            content: model.sla
+          }],
+          key: 'model'
+        }]} />);
   }
 
   /**
-    Render the remote applications fragment of the status.
+    Generate the remote applications fragment of the status.
     @param {Object} remoteApplications The remote applications as included in
       the GUI db.
     @returns {Object} The resulting element.
   */
-  _renderRemoteApplications(remoteApplications) {
+  _generateRemoteApplications(remoteApplications) {
     const rows = remoteApplications.map(application => {
       const app = application.getAttrs();
       const urlParts = app.url.split(':');
-      return (
-        <tr key={app.url}>
-          <td>{app.service}</td>
-          <td>{app.status.current}</td>
-          <td>{urlParts[0]}</td>
-          <td>{urlParts[1]}</td>
-        </tr>
-      );
+      return {
+        columns: [{
+          columnSize: 3,
+          content: app.service
+        }, {
+          columnSize: 3,
+          content: app.status.current
+        }, {
+          columnSize: 3,
+          content: urlParts[0]
+        }, {
+          columnSize: 3,
+          content: urlParts[1]
+        }],
+        key: app.url
+      };
     });
     return (
-      <table key="remote-applications">
-        <thead>
-          <tr>
-            <th>SAAS</th>
-            <th>Status</th>
-            <th>Store</th>
-            <th>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.sort(byKey)}
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'SAAS',
+          columnSize: 3
+        }, {
+          content: 'Status',
+          columnSize: 3
+        }, {
+          content: 'Store',
+          columnSize: 3
+        }, {
+          content: 'URL',
+          columnSize: 3
+        }]}
+        key="remote-applications"
+        rows={rows}
+        sort={this._byKey} />);
   }
 
   /**
-    Render the applications fragment of the status.
+    Generate the applications fragment of the status.
     @param {Object} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _renderApplications(applications) {
+  _generateApplications(applications) {
     const urllib = this.props.urllib;
-    const rows = applications.map(application => {
+    const rows = applications.map((application, i) => {
       const app = application.getAttrs();
       const charm = urllib.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
@@ -130,46 +170,71 @@ class Status extends React.Component {
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
-      return (
-        <tr key={app.name}>
-          <td>{app.name}</td>
-          <td>{app.workloadVersion}</td>
-          <td className={getClass(app.status.current)}>
-            {app.status.current}
-          </td>
-          <td>{app.units.size()}</td>
-          <td>{charm.path()}</td>
-          <td>{store}</td>
-          <td>{revision}</td>
-        </tr>
-      );
+      return {
+        columns:[{
+          columnSize: 2,
+          content: app.name
+        }, {
+          columnSize: 2,
+          content: app.workloadVersion
+        }, {
+          columnSize: 2,
+          content: (
+            <span className={this._getClass(app.status.current)}
+              key={'status' + i}>
+              {app.status.current}
+            </span>)
+        }, {
+          columnSize: 1,
+          content: app.units.size()
+        }, {
+          columnSize: 2,
+          content: charm.path()
+        }, {
+          columnSize: 2,
+          content: store
+        }, {
+          columnSize: 1,
+          content: revision
+        }],
+        key: app.name
+      };
     });
     return (
-      <table key="applications">
-        <thead>
-          <tr>
-            <th>Application</th>
-            <th>Version</th>
-            <th>Status</th>
-            <th>Scale</th>
-            <th>Charm</th>
-            <th>Store</th>
-            <th>Rev</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.sort(byKey)}
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'Application',
+          columnSize: 2
+        }, {
+          content: 'Version',
+          columnSize: 2
+        }, {
+          content: 'Status',
+          columnSize: 2
+        }, {
+          content: 'Scale',
+          columnSize: 1
+        }, {
+          content: 'Charm',
+          columnSize: 2
+        }, {
+          content: 'Store',
+          columnSize: 2
+        }, {
+          content: 'Rev',
+          columnSize: 1
+        }]}
+        key="applications"
+        rows={rows}
+        sort={this._byKey} />);
   }
 
   /**
-    Render the units fragment of the status.
+    Generate the units fragment of the status.
     @param {Object} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _renderUnits(applications) {
+  _generateUnits(applications) {
     const formatPorts = ranges => {
       if (!ranges) {
         return '';
@@ -183,92 +248,140 @@ class Status extends React.Component {
     };
     const rows = [];
     applications.each(application => {
-      application.get('units').each(unit => {
-        rows.push(
-          <tr key={unit.id}>
-            <td>{unit.displayName}</td>
-            <td className={getClass(unit.workloadStatus)}>
-              {unit.workloadStatus}
-            </td>
-            <td className={getClass(unit.agentStatus)}>
-              {unit.agentStatus}
-            </td>
-            <td>{unit.machine}</td>
-            <td>{unit.public_address}</td>
-            <td>{formatPorts(unit.portRanges)}</td>
-            <td>{unit.workloadStatusMessage}</td>
-          </tr>
-        );
+      application.get('units').each((unit, i) => {
+        rows.push({
+          columns: [{
+            columnSize: 2,
+            content: unit.displayName
+          }, {
+            columnSize: 2,
+            content: (
+              <span className={this._getClass(unit.workloadStatus)}
+                key={'workload' + i}>
+                {unit.workloadStatus}
+              </span>)
+          }, {
+            columnSize: 2,
+            content: (
+              <span className={this._getClass(unit.agentStatus)}
+                key={'agent' + i}>
+                {unit.agentStatus}
+              </span>)
+          }, {
+            columnSize: 1,
+            content: unit.machine
+          }, {
+            columnSize: 2,
+            content: unit.public_address
+          }, {
+            columnSize: 1,
+            content: formatPorts(unit.portRanges)
+          }, {
+            columnSize: 2,
+            content: unit.workloadStatusMessage
+          }],
+          key: unit.id
+        });
       });
     });
     if (!rows.length) {
       return null;
     }
     return (
-      <table key="units">
-        <thead>
-          <tr>
-            <th>Unit</th>
-            <th>Workload</th>
-            <th>Agent</th>
-            <th>Machine</th>
-            <th>Public address</th>
-            <th>Ports</th>
-            <th>Message</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.sort(byKey)}
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'Unit',
+          columnSize: 2
+        }, {
+          content: 'Workload',
+          columnSize: 2
+        }, {
+          content: 'Agent',
+          columnSize: 2
+        }, {
+          content: 'Machine',
+          columnSize: 1
+        }, {
+          content: 'Public address',
+          columnSize: 2
+        }, {
+          content: 'Ports',
+          columnSize: 1
+        }, {
+          content: 'Message',
+          columnSize: 2
+        }]}
+        key="units"
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
   /**
-    Render the machines fragment of the status.
+    Generate the machines fragment of the status.
     @param {Object} machines The machines as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _renderMachines(machines) {
-    const rows = machines.map(machine => {
-      return (
-        <tr key={machine.id}>
-          <td>{machine.displayName}</td>
-          <td className={getClass(machine.agent_state)}>
-            {machine.agent_state}
-          </td>
-          <td>{machine.public_address}</td>
-          <td>{machine.instance_id}</td>
-          <td>{machine.series}</td>
-          <td>{machine.agent_state_info}</td>
-        </tr>
-      );
+  _generateMachines(machines) {
+    const rows = machines.map((machine, i) => {
+      return {
+        columns: [{
+          columnSize: 2,
+          content: machine.displayName
+        }, {
+          columnSize: 2,
+          content: (
+            <span className={this._getClass(machine.agent_state)}
+              key={'agent' + i}>
+              {machine.agent_state}
+            </span>)
+        }, {
+          columnSize: 2,
+          content: machine.public_address
+        }, {
+          columnSize: 2,
+          content: machine.instance_id
+        }, {
+          columnSize: 2,
+          content: machine.series
+        }, {
+          columnSize: 2,
+          content: machine.agent_state_info
+        }],
+        key: machine.id
+      };
     });
     return (
-      <table key="machines">
-        <thead>
-          <tr>
-            <th>Machine</th>
-            <th>State</th>
-            <th>DNS</th>
-            <th>Instance ID</th>
-            <th>Series</th>
-            <th>Message</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.sort(byKey)}
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'Machine',
+          columnSize: 2
+        }, {
+          content: 'State',
+          columnSize: 2
+        }, {
+          content: 'DNS',
+          columnSize: 2
+        }, {
+          content: 'Instance ID',
+          columnSize: 2
+        }, {
+          content: 'Series',
+          columnSize: 2
+        }, {
+          content: 'Message',
+          columnSize: 2
+        }]}
+        key="machines"
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
   /**
-    Render the relations fragment of the status.
+    Generate the relations fragment of the status.
     @param {Array} relations The relations as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _renderRelations(relations) {
+  _generateRelations(relations) {
     const rows = relations.map(relation => {
       const rel = relation.getAttrs();
       let name = '';
@@ -295,32 +408,54 @@ class Status extends React.Component {
             break;
         }
       });
-      return (
-        <tr key={rel.id}>
-          <td>{name}</td>
-          <td>{provides}</td>
-          <td>{consumes}</td>
-          <td>{scope}</td>
-        </tr>
-      );
+      return {
+        columns: [{
+          columnSize: 3,
+          content: name
+        }, {
+          columnSize: 3,
+          content: provides
+        }, {
+          columnSize: 3,
+          content: consumes
+        }, {
+          columnSize: 3,
+          content: scope
+        }],
+        key: rel.id
+      };
     });
     return (
-      <table key="relations">
-        <thead>
-          <tr>
-            <th>Relation</th>
-            <th>Provides</th>
-            <th>Consumes</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.sort(byKey)}
-        </tbody>
-      </table>
-    );
+      <juju.components.BasicTable
+        headers={[{
+          content: 'Relation',
+          columnSize: 3
+        }, {
+          content: 'Provides',
+          columnSize: 3
+        }, {
+          content: 'Consumes',
+          columnSize: 3
+        }, {
+          content: 'Type',
+          columnSize: 3
+        }]}
+        key="relations"
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
+  render() {
+    return (
+      <juju.components.Panel
+        instanceName="status-view"
+        visible={true}>
+        <div className="status-view__content">
+          {this._generateStatus()}
+        </div>
+      </juju.components.Panel>
+    );
+  }
 };
 
 Status.propTypes = {
@@ -340,43 +475,11 @@ Status.propTypes = {
   urllib: PropTypes.func.isRequired
 };
 
-/**
-  Return an element class name suitable for the given value.
-  @param {String} value The provided value.
-  @returns {String} The class name ('ok', 'error' or '').
-*/
-const getClass = value => {
-  switch (value) {
-    case 'active':
-    case 'idle':
-    case 'started':
-      return 'ok';
-    case 'blocked':
-    case 'down':
-    case 'error':
-      return 'error';
-  }
-  return '';
-};
-
-/**
-  A compare function for sorting an array by the key property.
-  @param {Object} a The first value.
-  @param {Object} b The second value.
-  @returns {Number} -1, 1 or 0.
-*/
-const byKey = (a, b) => {
-  if (a.key < b.key)
-    return -1;
-  if (a.key > b.key)
-    return 1;
-  return 0;
-};
-
 YUI.add('status', function() {
   juju.components.Status = Status;
 }, '', {
   requires: [
+    'basic-table',
     'panel-component'
   ]
 });

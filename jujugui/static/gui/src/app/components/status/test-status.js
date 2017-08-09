@@ -188,40 +188,37 @@ describe('Status', function() {
     const comp = render(emptyDB);
     const expectedOutput = wrap(
       <div className="status-view__content">
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Model
-              </th>
-              <th>
-                Cloud/Region
-              </th>
-              <th>
-                Version
-              </th>
-              <th>
-                SLA
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                my-model
-              </td>
-              <td>
-                aws/neutral zone
-              </td>
-              <td>
-                2.42.47
-              </td>
-              <td>
-                advanced
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Model',
+            columnSize: 3
+          }, {
+            content: 'Cloud/Region',
+            columnSize: 3
+          }, {
+            content: 'Version',
+            columnSize: 3
+          }, {
+            content: 'SLA',
+            columnSize: 3
+          }]}
+          key="model"
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'my-model'
+            }, {
+              columnSize: 3,
+              content: 'aws/neutral zone'
+            }, {
+              columnSize: 3,
+              content: '2.42.47'
+            }, {
+              columnSize: 3,
+              content: 'advanced'
+            }],
+            key: 'model'
+          }]} />
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
@@ -231,348 +228,344 @@ describe('Status', function() {
     const comp = render(makeDB());
     const expectedOutput = wrap(
       <div className="status-view__content">
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Model
-              </th>
-              <th>
-                Cloud/Region
-              </th>
-              <th>
-                Version
-              </th>
-              <th>
-                SLA
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                my-model
-              </td>
-              <td>
-                aws/neutral zone
-              </td>
-              <td>
-                2.42.47
-              </td>
-              <td>
-                advanced
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                SAAS
-              </th>
-              <th>
-                Status
-              </th>
-              <th>
-                Store
-              </th>
-              <th>
-                URL
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                mongo
-              </td>
-              <td>
-                corrupting data
-              </td>
-              <td>
-                local
-              </td>
-              <td>
-                admin/my.mongo
-              </td>
-            </tr>
-            <tr>
-              <td>
-                haproxy
-              </td>
-              <td>
-                unknown
-              </td>
-              <td>
-                local
-              </td>
-              <td>
-                admin/saas.haproxy
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Application
-              </th>
-              <th>
-                Version
-              </th>
-              <th>
-                Status
-              </th>
-              <th>
-                Scale
-              </th>
-              <th>
-                Charm
-              </th>
-              <th>
-                Store
-              </th>
-              <th>
-                Rev
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                django
-              </td>
-              <td>
-                1.10
-              </td>
-              <td className="ok">
-                active
-              </td>
-              <td>
-                2
-              </td>
-              <td>
-                u/who/django/xenial
-              </td>
-              <td>
-                jujucharms
-              </td>
-              <td>
-                42
-              </td>
-            </tr>
-            <tr>
-              <td>
-                ha
-              </td>
-              <td />
-              <td className="error">
-                error
-              </td>
-              <td>
-                0
-              </td>
-              <td>
-                haproxy
-              </td>
-              <td>
-                jujucharms
-              </td>
-              <td>
-                47
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Unit
-              </th>
-              <th>
-                Workload
-              </th>
-              <th>
-                Agent
-              </th>
-              <th>
-                Machine
-              </th>
-              <th>
-                Public address
-              </th>
-              <th>
-                Ports
-              </th>
-              <th>
-                Message
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                django/0
-              </td>
-              <td className="">
-                installing
-              </td>
-              <td className="ok">
-                idle
-              </td>
-              <td>
-                1
-              </td>
-              <td>
-                1.2.3.4
-              </td>
-              <td>
-                80/tcp, 443/tcp
-              </td>
-              <td>
-                these are the voyages
-              </td>
-            </tr>
-            <tr>
-              <td>
-                django/1
-              </td>
-              <td className="error">
-                error
-              </td>
-              <td className="">
-                executing
-              </td>
-              <td>
-                2
-              </td>
-              <td>
-                1.2.3.5
-              </td>
-              <td>
-                80-88/udp
-              </td>
-              <td>
-                exterminate!
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Machine
-              </th>
-              <th>
-                State
-              </th>
-              <th>
-                DNS
-              </th>
-              <th>
-                Instance ID
-              </th>
-              <th>
-                Series
-              </th>
-              <th>
-                Message
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                1
-              </td>
-              <td className="">
-                pending
-              </td>
-              <td>
-                1.2.3.6
-              </td>
-              <td>
-                machine-1
-              </td>
-              <td>
-                zesty
-              </td>
-              <td />
-            </tr>
-            <tr>
-              <td>
-                2
-              </td>
-              <td className="ok">
-                started
-              </td>
-              <td>
-                1.2.3.7
-              </td>
-              <td>
-                machine-2
-              </td>
-              <td>
-                trusty
-              </td>
-              <td>
-                yes, I am started
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Relation
-              </th>
-              <th>
-                Provides
-              </th>
-              <th>
-                Consumes
-              </th>
-              <th>
-                Type
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                cluster
-              </td>
-              <td>
-                mysql
-              </td>
-              <td>
-                mysql
-              </td>
-              <td>
-                peer
-              </td>
-            </tr>
-            <tr>
-              <td>
-                website
-              </td>
-              <td>
-                wordpress
-              </td>
-              <td>
-                haproxy
-              </td>
-              <td>
-                regular
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Model',
+            columnSize: 3
+          }, {
+            content: 'Cloud/Region',
+            columnSize: 3
+          }, {
+            content: 'Version',
+            columnSize: 3
+          }, {
+            content: 'SLA',
+            columnSize: 3
+          }]}
+          key="model"
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'my-model'
+            }, {
+              columnSize: 3,
+              content: 'aws/neutral zone'
+            }, {
+              columnSize: 3,
+              content: '2.42.47'
+            }, {
+              columnSize: 3,
+              content: 'advanced'
+            }],
+            key: 'model'
+          }]} />
+        <juju.components.BasicTable
+          headers={[{
+            content: 'SAAS',
+            columnSize: 3
+          }, {
+            content: 'Status',
+            columnSize: 3
+          }, {
+            content: 'Store',
+            columnSize: 3
+          }, {
+            content: 'URL',
+            columnSize: 3
+          }]}
+          key="remote-applications"
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'haproxy'
+            }, {
+              columnSize: 3,
+              content: 'unknown'
+            }, {
+              columnSize: 3,
+              content: 'local'
+            }, {
+              columnSize: 3,
+              content: 'admin/saas.haproxy'
+            }],
+            key: 'local:admin/saas.haproxy'
+          }, {
+            columns: [ {
+              columnSize: 3,
+              content: 'mongo'
+            }, {
+              columnSize: 3,
+              content: 'corrupting data'
+            }, {
+              columnSize: 3,
+              content: 'local'
+            }, {
+              columnSize: 3,
+              content: 'admin/my.mongo'
+            }],
+            key: 'local:admin/my.mongo'
+          }]}
+          sort={sinon.stub()} />
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Application',
+            columnSize: 2
+          }, {
+            content: 'Version',
+            columnSize: 2
+          }, {
+            content: 'Status',
+            columnSize: 2
+          }, {
+            content: 'Scale',
+            columnSize: 1
+          }, {
+            content: 'Charm',
+            columnSize: 2
+          }, {
+            content: 'Store',
+            columnSize: 2
+          }, {
+            content: 'Rev',
+            columnSize: 1
+          }]}
+          key="applications"
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: 'django'
+            }, {
+              columnSize: 2,
+              content: '1.10'
+            }, {
+              columnSize: 2,
+              content: <span key="status0" className="ok">active</span>
+            }, {
+              columnSize: 1,
+              content: 2
+            }, {
+              columnSize: 2,
+              content: 'u/who/django/xenial'
+            }, {
+              columnSize: 2,
+              content: 'jujucharms'
+            }, {
+              columnSize: 1,
+              content: 42
+            }],
+            key: 'django'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: 'ha'
+            }, {
+              columnSize: 2,
+              content: ''
+            }, {
+              columnSize: 2,
+              content: <span key="status1" className="error">error</span>
+            }, {
+              columnSize: 1,
+              content: 0
+            }, {
+              columnSize: 2,
+              content: 'haproxy'
+            }, {
+              columnSize: 2,
+              content: 'jujucharms'
+            }, {
+              columnSize: 1,
+              content: 47
+            }],
+            key: 'ha'
+          }]}
+          sort={sinon.stub()} />
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Unit',
+            columnSize: 2
+          }, {
+            content: 'Workload',
+            columnSize: 2
+          }, {
+            content: 'Agent',
+            columnSize: 2
+          }, {
+            content: 'Machine',
+            columnSize: 1
+          }, {
+            content: 'Public address',
+            columnSize: 2
+          }, {
+            content: 'Ports',
+            columnSize: 1
+          }, {
+            content: 'Message',
+            columnSize: 2
+          }]}
+          key="units"
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: 'django/0'
+            }, {
+              columnSize: 2,
+              content: <span key="workload0" className="">installing</span>
+            }, {
+              columnSize: 2,
+              content: <span key="agent0" className="ok">idle</span>
+            }, {
+              columnSize: 1,
+              content: '1'
+            }, {
+              columnSize: 2,
+              content: '1.2.3.4'
+            }, {
+              columnSize: 1,
+              content: '80/tcp, 443/tcp'
+            }, {
+              columnSize: 2,
+              content: 'these are the voyages'
+            }],
+            key: 'id0'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: 'django/1'
+            }, {
+              columnSize: 2,
+              content: <span key="workload1" className="error">error</span>
+            }, {
+              columnSize: 2,
+              content: <span key="agent1" className="">executing</span>
+            }, {
+              columnSize: 1,
+              content: '2'
+            }, {
+              columnSize: 2,
+              content: '1.2.3.5'
+            }, {
+              columnSize: 1,
+              content: '80-88/udp'
+            }, {
+              columnSize: 2,
+              content: 'exterminate!'
+            }],
+            key: 'id1'
+          }]}
+          sort={sinon.stub()} />
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Machine',
+            columnSize: 2
+          }, {
+            content: 'State',
+            columnSize: 2
+          }, {
+            content: 'DNS',
+            columnSize: 2
+          }, {
+            content: 'Instance ID',
+            columnSize: 2
+          }, {
+            content: 'Series',
+            columnSize: 2
+          }, {
+            content: 'Message',
+            columnSize: 2
+          }]}
+          key="machines"
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: '1'
+            }, {
+              columnSize: 2,
+              content: (<span key="agent0" className="">pending</span>)
+            }, {
+              columnSize: 2,
+              content: '1.2.3.6'
+            }, {
+              columnSize: 2,
+              content: 'machine-1'
+            }, {
+              columnSize: 2,
+              content: 'zesty'
+            }, {
+              columnSize: 2,
+              content: ''
+            }],
+            key: 'm1'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: '2'
+            }, {
+              columnSize: 2,
+              content: (<span key="agent1" className="ok">started</span>)
+            }, {
+              columnSize: 2,
+              content: '1.2.3.7'
+            }, {
+              columnSize: 2,
+              content: 'machine-2'
+            }, {
+              columnSize: 2,
+              content: 'trusty'
+            }, {
+              columnSize: 2,
+              content: 'yes, I am started'
+            }],
+            key: 'm2'
+          }]}
+          sort={sinon.stub()} />
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Relation',
+            columnSize: 3
+          }, {
+            content: 'Provides',
+            columnSize: 3
+          }, {
+            content: 'Consumes',
+            columnSize: 3
+          }, {
+            content: 'Type',
+            columnSize: 3
+          }]}
+          key="relations"
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'cluster'
+            }, {
+              columnSize: 3,
+              content: 'mysql'
+            }, {
+              columnSize: 3,
+              content: 'mysql'
+            }, {
+              columnSize: 3,
+              content: 'peer'
+            }],
+            key: 'rel1'
+          }, {
+            columns: [{
+              columnSize: 3,
+              content: 'website'
+            }, {
+              columnSize: 3,
+              content: 'wordpress'
+            }, {
+              columnSize: 3,
+              content: 'haproxy'
+            }, {
+              columnSize: 3,
+              content: 'regular'
+            }],
+            key: 'rel2'
+          }]}
+          sort={sinon.stub()} />
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
