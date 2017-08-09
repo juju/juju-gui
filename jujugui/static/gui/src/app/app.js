@@ -1888,6 +1888,30 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('modal-gui-settings'));
     },
 
+    _displayQuickstart: function(id, name) {
+      const charmstore = this.get('charmstore');
+
+      const getEntity = (id, callback) => {
+        try {
+          url = window.jujulib.URL.fromLegacyString(id);
+        } catch(err) {
+          callback(err, {});
+          return;
+        }
+        // Get the entity and return the XHR.
+        return charmstore.getEntity(url.legacyPath(), callback);
+      };
+
+      ReactDOM.render(
+        <window.juju.components.Quickstart
+          entityId={id}
+          getEntity={getEntity}
+          marked={marked}
+          closeQuickstart={this._clearQuickstart.bind(this)} />,
+        document.getElementById('quickstart')
+      );
+    },
+
     /**
       The cleanup dispatcher keyboard shortcuts modal.
     */
@@ -1902,6 +1926,11 @@ YUI.add('juju-gui', function(Y) {
     _clearSettingsModal: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('modal-gui-settings'));
+    },
+
+    _clearQuickstart: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('quickstart'));
     },
 
     /**
@@ -2372,6 +2401,7 @@ YUI.add('juju-gui', function(Y) {
           level: 'error'
         });
       };
+
       // The charmstore apiv4 format can have the bundle keyword either at the
       // start, for charmers bundles, or after the username, for namespaced
       // bundles. ex) bundle/swift & ~jorge/bundle/swift
@@ -2381,6 +2411,7 @@ YUI.add('juju-gui', function(Y) {
             failureNotification(error);
           } else {
             this.bundleImporter.importBundleYAML(bundleYAML);
+            this._displayQuickstart.call(this, entityId);
           }
         });
       } else {
@@ -2395,9 +2426,10 @@ YUI.add('juju-gui', function(Y) {
             Object.keys(options).forEach(function(key) {
               config[key] = options[key]['default'];
             });
-            // We call the env deploy method directly because we don't want
+
             // the ghost inspector to open.
             this.deployService(new Y.juju.models.Charm(charm));
+            this._displayQuickstart.call(this, entityId);
           }
         });
       }
@@ -3264,6 +3296,7 @@ YUI.add('juju-gui', function(Y) {
     'modal-shortcuts',
     'notification-list',
     'panel-component',
+    'quickstart',
     'sharing',
     'status',
     'svg-icon',
