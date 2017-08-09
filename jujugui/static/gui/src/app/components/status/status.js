@@ -24,16 +24,15 @@ class Status extends React.Component {
   }
 
   /**
-    Sort by the given index.
-    @param index {Int} The index to sort by.
+    Sort by the key attribute.
     @param {Object} a The first value.
     @param {Object} b The second value.
     @returns {Array} The sorted array.
   */
-  _byIndex(index, a, b) {
-    if (a[index] < b[index])
+  _byKey(a, b) {
+    if (a.key < b.key)
       return -1;
-    if (a[index] > b[index])
+    if (a.key > b.key)
       return 1;
     return 0;
   }
@@ -77,26 +76,36 @@ class Status extends React.Component {
   _generateModel(model) {
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'Model',
-          size: 3
+        headers={[{
+          content: 'Model',
+          columnSize: 3
         }, {
-          title: 'Cloud/Region',
-          size: 3
+          content: 'Cloud/Region',
+          columnSize: 3
         }, {
-          title: 'Version',
-          size: 3
+          content: 'Version',
+          columnSize: 3
         }, {
-          title: 'SLA',
-          size: 3
+          content: 'SLA',
+          columnSize: 3
         }]}
         key="model"
-        rows={[[
-          model.environmentName,
-          `${model.cloud}/${model.region}`,
-          model.version,
-          model.sla
-        ]]} />);
+        rows={[{
+          columns: [{
+            columnSize: 3,
+            content: model.environmentName
+          }, {
+            columnSize: 3,
+            content: `${model.cloud}/${model.region}`
+          }, {
+            columnSize: 3,
+            content: model.version
+          }, {
+            columnSize: 3,
+            content: model.sla
+          }],
+          key: 'model'
+        }]} />);
   }
 
   /**
@@ -109,30 +118,41 @@ class Status extends React.Component {
     const rows = remoteApplications.map(application => {
       const app = application.getAttrs();
       const urlParts = app.url.split(':');
-      return [
-        app.service,
-        app.status.current,
-        urlParts[0],
-        urlParts[1]
-      ];
+      return {
+        columns: [{
+          columnSize: 3,
+          content: app.service
+        }, {
+          columnSize: 3,
+          content: app.status.current
+        }, {
+          columnSize: 3,
+          content: urlParts[0]
+        }, {
+          columnSize: 3,
+          content: urlParts[1]
+        }],
+        key: app.url
+      };
     });
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'SAAS',
-          size: 3
+        headers={[{
+          content: 'SAAS',
+          columnSize: 3
         }, {
-          title: 'Status',
-          size: 3
+          content: 'Status',
+          columnSize: 3
         }, {
-          title: 'Store',
-          size: 3
+          content: 'Store',
+          columnSize: 3
         }, {
-          title: 'URL',
-          size: 3
+          content: 'URL',
+          columnSize: 3
         }]}
         key="remote-applications"
-        rows={rows} />);
+        rows={rows}
+        sort={this._byKey} />);
   }
 
   /**
@@ -150,45 +170,63 @@ class Status extends React.Component {
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
-      return [
-        app.name,
-        app.workloadVersion,
-        (<span className={this._getClass(app.status.current)}
-          key={'status' + i}>
-          {app.status.current}
-        </span>),
-        app.units.size(),
-        charm.path(),
-        store,
-        revision
-      ];
+      return {
+        columns:[{
+          columnSize: 2,
+          content: app.name
+        }, {
+          columnSize: 2,
+          content: app.workloadVersion
+        }, {
+          columnSize: 2,
+          content: (
+            <span className={this._getClass(app.status.current)}
+              key={'status' + i}>
+              {app.status.current}
+            </span>)
+        }, {
+          columnSize: 1,
+          content: app.units.size()
+        }, {
+          columnSize: 2,
+          content: charm.path()
+        }, {
+          columnSize: 2,
+          content: store
+        }, {
+          columnSize: 1,
+          content: revision
+        }],
+        key: app.name
+      };
     });
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'Application',
-          size: 2
+        headers={[{
+          content: 'Application',
+          columnSize: 2
         }, {
-          title: 'Version',
-          size: 2
+          content: 'Version',
+          columnSize: 2
         }, {
-          title: 'Status',
-          size: 2
+          content: 'Status',
+          columnSize: 2
         }, {
-          title: 'Scale',
-          size: 1
+          content: 'Scale',
+          columnSize: 1
         }, {
-          title: 'Charm',
-          size: 2
+          content: 'Charm',
+          columnSize: 2
         }, {
-          title: 'Store',
-          size: 2
+          content: 'Store',
+          columnSize: 2
         }, {
-          title: 'Rev',
-          size: 1
+          content: 'Rev',
+          columnSize: 1
         }]}
         key="applications"
-        rows={rows.sort(this._byIndex.bind(this, 0))} />);
+        rows={rows}
+        sort={this._byKey} />);
   }
 
   /**
@@ -211,21 +249,39 @@ class Status extends React.Component {
     const rows = [];
     applications.each(application => {
       application.get('units').each((unit, i) => {
-        rows.push([
-          unit.displayName,
-          (<span className={this._getClass(unit.workloadStatus)}
-            key={'workload' + i}>
-            {unit.workloadStatus}
-          </span>),
-          (<span className={this._getClass(unit.agentStatus)}
-            key={'agent' + i}>
-            {unit.agentStatus}
-          </span>),
-          unit.machine,
-          unit.public_address,
-          formatPorts(unit.portRanges),
-          unit.workloadStatusMessage
-        ]);
+        rows.push({
+          columns: [{
+            columnSize: 2,
+            content: unit.displayName
+          }, {
+            columnSize: 2,
+            content: (
+              <span className={this._getClass(unit.workloadStatus)}
+                key={'workload' + i}>
+                {unit.workloadStatus}
+              </span>)
+          }, {
+            columnSize: 2,
+            content: (
+              <span className={this._getClass(unit.agentStatus)}
+                key={'agent' + i}>
+                {unit.agentStatus}
+              </span>)
+          }, {
+            columnSize: 1,
+            content: unit.machine
+          }, {
+            columnSize: 2,
+            content: unit.public_address
+          }, {
+            columnSize: 1,
+            content: formatPorts(unit.portRanges)
+          }, {
+            columnSize: 2,
+            content: unit.workloadStatusMessage
+          }],
+          key: unit.id
+        });
       });
     });
     if (!rows.length) {
@@ -233,30 +289,31 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'Unit',
-          size: 2
+        headers={[{
+          content: 'Unit',
+          columnSize: 2
         }, {
-          title: 'Workload',
-          size: 2
+          content: 'Workload',
+          columnSize: 2
         }, {
-          title: 'Agent',
-          size: 2
+          content: 'Agent',
+          columnSize: 2
         }, {
-          title: 'Machine',
-          size: 1
+          content: 'Machine',
+          columnSize: 1
         }, {
-          title: 'Public address',
-          size: 2
+          content: 'Public address',
+          columnSize: 2
         }, {
-          title: 'Ports',
-          size: 1
+          content: 'Ports',
+          columnSize: 1
         }, {
-          title: 'Message',
-          size: 2
+          content: 'Message',
+          columnSize: 2
         }]}
         key="units"
-        rows={rows.sort(this._byIndex.bind(this, 0))} />);
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
   /**
@@ -266,41 +323,57 @@ class Status extends React.Component {
   */
   _generateMachines(machines) {
     const rows = machines.map((machine, i) => {
-      return [
-        machine.displayName,
-        (<span className={this._getClass(machine.agent_state)}
-          key={'agent' + i}>
-          {machine.agent_state}
-        </span>),
-        machine.public_address,
-        machine.instance_id,
-        machine.series,
-        machine.agent_state_info
-      ];
+      return {
+        columns: [{
+          columnSize: 2,
+          content: machine.displayName
+        }, {
+          columnSize: 2,
+          content: (
+            <span className={this._getClass(machine.agent_state)}
+              key={'agent' + i}>
+              {machine.agent_state}
+            </span>)
+        }, {
+          columnSize: 2,
+          content: machine.public_address
+        }, {
+          columnSize: 2,
+          content: machine.instance_id
+        }, {
+          columnSize: 2,
+          content: machine.series
+        }, {
+          columnSize: 2,
+          content: machine.agent_state_info
+        }],
+        key: machine.id
+      };
     });
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'Machine',
-          size: 2
+        headers={[{
+          content: 'Machine',
+          columnSize: 2
         }, {
-          title: 'State',
-          size: 2
+          content: 'State',
+          columnSize: 2
         }, {
-          title: 'DNS',
-          size: 2
+          content: 'DNS',
+          columnSize: 2
         }, {
-          title: 'Instance ID',
-          size: 2
+          content: 'Instance ID',
+          columnSize: 2
         }, {
-          title: 'Series',
-          size: 2
+          content: 'Series',
+          columnSize: 2
         }, {
-          title: 'Message',
-          size: 2
+          content: 'Message',
+          columnSize: 2
         }]}
         key="machines"
-        rows={rows.sort(this._byIndex.bind(this, 0))} />);
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
   /**
@@ -335,30 +408,41 @@ class Status extends React.Component {
             break;
         }
       });
-      return [
-        name,
-        provides,
-        consumes,
-        scope
-      ];
+      return {
+        columns: [{
+          columnSize: 3,
+          content: name
+        }, {
+          columnSize: 3,
+          content: provides
+        }, {
+          columnSize: 3,
+          content: consumes
+        }, {
+          columnSize: 3,
+          content: scope
+        }],
+        key: rel.id
+      };
     });
     return (
       <juju.components.BasicTable
-        columns={[{
-          title: 'Relation',
-          size: 3
+        headers={[{
+          content: 'Relation',
+          columnSize: 3
         }, {
-          title: 'Provides',
-          size: 3
+          content: 'Provides',
+          columnSize: 3
         }, {
-          title: 'Consumes',
-          size: 3
+          content: 'Consumes',
+          columnSize: 3
         }, {
-          title: 'Type',
-          size: 3
+          content: 'Type',
+          columnSize: 3
         }]}
         key="relations"
-        rows={rows.sort(this._byIndex.bind(this, 0))} />);
+        rows={rows.sort(this._byKey.bind(this, 0))}
+        sort={this._byKey} />);
   }
 
   render() {

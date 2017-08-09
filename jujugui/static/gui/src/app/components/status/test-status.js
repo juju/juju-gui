@@ -189,26 +189,36 @@ describe('Status', function() {
     const expectedOutput = wrap(
       <div className="status-view__content">
         <juju.components.BasicTable
-          columns={[{
-            title: 'Model',
-            size: 3
+          headers={[{
+            content: 'Model',
+            columnSize: 3
           }, {
-            title: 'Cloud/Region',
-            size: 3
+            content: 'Cloud/Region',
+            columnSize: 3
           }, {
-            title: 'Version',
-            size: 3
+            content: 'Version',
+            columnSize: 3
           }, {
-            title: 'SLA',
-            size: 3
+            content: 'SLA',
+            columnSize: 3
           }]}
           key="model"
-          rows={[[
-            'my-model',
-            'aws/neutral zone',
-            '2.42.47',
-            'advanced'
-          ]]} />
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'my-model'
+            }, {
+              columnSize: 3,
+              content: 'aws/neutral zone'
+            }, {
+              columnSize: 3,
+              content: '2.42.47'
+            }, {
+              columnSize: 3,
+              content: 'advanced'
+            }],
+            key: 'model'
+          }]} />
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
@@ -219,154 +229,343 @@ describe('Status', function() {
     const expectedOutput = wrap(
       <div className="status-view__content">
         <juju.components.BasicTable
-          columns={[{
-            title: 'Model',
-            size: 3
+          headers={[{
+            content: 'Model',
+            columnSize: 3
           }, {
-            title: 'Cloud/Region',
-            size: 3
+            content: 'Cloud/Region',
+            columnSize: 3
           }, {
-            title: 'Version',
-            size: 3
+            content: 'Version',
+            columnSize: 3
           }, {
-            title: 'SLA',
-            size: 3
+            content: 'SLA',
+            columnSize: 3
           }]}
           key="model"
-          rows={[[
-            'my-model',
-            'aws/neutral zone',
-            '2.42.47',
-            'advanced'
-          ]]} />
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'my-model'
+            }, {
+              columnSize: 3,
+              content: 'aws/neutral zone'
+            }, {
+              columnSize: 3,
+              content: '2.42.47'
+            }, {
+              columnSize: 3,
+              content: 'advanced'
+            }],
+            key: 'model'
+          }]} />
         <juju.components.BasicTable
-          columns={[{
-            title: 'SAAS',
-            size: 3
+          headers={[{
+            content: 'SAAS',
+            columnSize: 3
           }, {
-            title: 'Status',
-            size: 3
+            content: 'Status',
+            columnSize: 3
           }, {
-            title: 'Store',
-            size: 3
+            content: 'Store',
+            columnSize: 3
           }, {
-            title: 'URL',
-            size: 3
+            content: 'URL',
+            columnSize: 3
           }]}
           key="remote-applications"
-          rows={[
-            ['haproxy', 'unknown', 'local', 'admin/saas.haproxy'],
-            ['mongo', 'corrupting data', 'local', 'admin/my.mongo']
-          ]} />
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'haproxy'
+            }, {
+              columnSize: 3,
+              content: 'unknown'
+            }, {
+              columnSize: 3,
+              content: 'local'
+            }, {
+              columnSize: 3,
+              content: 'admin/saas.haproxy'
+            }],
+            key: 'local:admin/saas.haproxy'
+          }, {
+            columns: [ {
+              columnSize: 3,
+              content: 'mongo'
+            }, {
+              columnSize: 3,
+              content: 'corrupting data'
+            }, {
+              columnSize: 3,
+              content: 'local'
+            }, {
+              columnSize: 3,
+              content: 'admin/my.mongo'
+            }],
+            key: 'local:admin/my.mongo'
+          }]}
+          sort={sinon.stub()} />
         <juju.components.BasicTable
-          columns={[{
-            title: 'Application',
-            size: 2
+          headers={[{
+            content: 'Application',
+            columnSize: 2
           }, {
-            title: 'Version',
-            size: 2
+            content: 'Version',
+            columnSize: 2
           }, {
-            title: 'Status',
-            size: 2
+            content: 'Status',
+            columnSize: 2
           }, {
-            title: 'Scale',
-            size: 1
+            content: 'Scale',
+            columnSize: 1
           }, {
-            title: 'Charm',
-            size: 2
+            content: 'Charm',
+            columnSize: 2
           }, {
-            title: 'Store',
-            size: 2
+            content: 'Store',
+            columnSize: 2
           }, {
-            title: 'Rev',
-            size: 1
+            content: 'Rev',
+            columnSize: 1
           }]}
           key="applications"
-          rows={[
-            ['django', '1.10',
-              (<span key="status0" className="ok">active</span>),
-              2, 'u/who/django/xenial', 'jujucharms', 42],
-            ['ha', '', (<span key="status1" className="error">error</span>),
-              0, 'haproxy', 'jujucharms', 47]
-          ]} />
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: 'django'
+            }, {
+              columnSize: 2,
+              content: '1.10'
+            }, {
+              columnSize: 2,
+              content: <span key="status0" className="ok">active</span>
+            }, {
+              columnSize: 1,
+              content: 2
+            }, {
+              columnSize: 2,
+              content: 'u/who/django/xenial'
+            }, {
+              columnSize: 2,
+              content: 'jujucharms'
+            }, {
+              columnSize: 1,
+              content: 42
+            }],
+            key: 'django'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: 'ha'
+            }, {
+              columnSize: 2,
+              content: ''
+            }, {
+              columnSize: 2,
+              content: <span key="status1" className="error">error</span>
+            }, {
+              columnSize: 1,
+              content: 0
+            }, {
+              columnSize: 2,
+              content: 'haproxy'
+            }, {
+              columnSize: 2,
+              content: 'jujucharms'
+            }, {
+              columnSize: 1,
+              content: 47
+            }],
+            key: 'ha'
+          }]}
+          sort={sinon.stub()} />
         <juju.components.BasicTable
-          columns={[{
-            title: 'Unit',
-            size: 2
+          headers={[{
+            content: 'Unit',
+            columnSize: 2
           }, {
-            title: 'Workload',
-            size: 2
+            content: 'Workload',
+            columnSize: 2
           }, {
-            title: 'Agent',
-            size: 2
+            content: 'Agent',
+            columnSize: 2
           }, {
-            title: 'Machine',
-            size: 1
+            content: 'Machine',
+            columnSize: 1
           }, {
-            title: 'Public address',
-            size: 2
+            content: 'Public address',
+            columnSize: 2
           }, {
-            title: 'Ports',
-            size: 1
+            content: 'Ports',
+            columnSize: 1
           }, {
-            title: 'Message',
-            size: 2
+            content: 'Message',
+            columnSize: 2
           }]}
           key="units"
-          rows={[
-            ['django/0', (<span key="workload0" className="">installing</span>),
-              (<span key="agent0" className="ok">idle</span>),
-              '1', '1.2.3.4', '80/tcp, 443/tcp', 'these are the voyages'],
-            ['django/1', (<span key="workload1" className="error">error</span>),
-              (<span key="agent1" className="">executing</span>),
-              '2', '1.2.3.5', '80-88/udp', 'exterminate!']
-          ]} />
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: 'django/0'
+            }, {
+              columnSize: 2,
+              content: <span key="workload0" className="">installing</span>
+            }, {
+              columnSize: 2,
+              content: <span key="agent0" className="ok">idle</span>
+            }, {
+              columnSize: 1,
+              content: '1'
+            }, {
+              columnSize: 2,
+              content: '1.2.3.4'
+            }, {
+              columnSize: 1,
+              content: '80/tcp, 443/tcp'
+            }, {
+              columnSize: 2,
+              content: 'these are the voyages'
+            }],
+            key: 'id0'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: 'django/1'
+            }, {
+              columnSize: 2,
+              content: <span key="workload1" className="error">error</span>
+            }, {
+              columnSize: 2,
+              content: <span key="agent1" className="">executing</span>
+            }, {
+              columnSize: 1,
+              content: '2'
+            }, {
+              columnSize: 2,
+              content: '1.2.3.5'
+            }, {
+              columnSize: 1,
+              content: '80-88/udp'
+            }, {
+              columnSize: 2,
+              content: 'exterminate!'
+            }],
+            key: 'id1'
+          }]}
+          sort={sinon.stub()} />
         <juju.components.BasicTable
-          columns={[{
-            title: 'Machine',
-            size: 2
+          headers={[{
+            content: 'Machine',
+            columnSize: 2
           }, {
-            title: 'State',
-            size: 2
+            content: 'State',
+            columnSize: 2
           }, {
-            title: 'DNS',
-            size: 2
+            content: 'DNS',
+            columnSize: 2
           }, {
-            title: 'Instance ID',
-            size: 2
+            content: 'Instance ID',
+            columnSize: 2
           }, {
-            title: 'Series',
-            size: 2
+            content: 'Series',
+            columnSize: 2
           }, {
-            title: 'Message',
-            size: 2
+            content: 'Message',
+            columnSize: 2
           }]}
           key="machines"
-          rows={[
-            ['1', (<span key="agent0" className="">pending</span>),
-              '1.2.3.6', 'machine-1', 'zesty', ''],
-            ['2', (<span key="agent1" className="ok">started</span>),
-              '1.2.3.7', 'machine-2', 'trusty', 'yes, I am started']
-          ]} />
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: '1'
+            }, {
+              columnSize: 2,
+              content: (<span key="agent0" className="">pending</span>)
+            }, {
+              columnSize: 2,
+              content: '1.2.3.6'
+            }, {
+              columnSize: 2,
+              content: 'machine-1'
+            }, {
+              columnSize: 2,
+              content: 'zesty'
+            }, {
+              columnSize: 2,
+              content: ''
+            }],
+            key: 'm1'
+          }, {
+            columns: [{
+              columnSize: 2,
+              content: '2'
+            }, {
+              columnSize: 2,
+              content: (<span key="agent1" className="ok">started</span>)
+            }, {
+              columnSize: 2,
+              content: '1.2.3.7'
+            }, {
+              columnSize: 2,
+              content: 'machine-2'
+            }, {
+              columnSize: 2,
+              content: 'trusty'
+            }, {
+              columnSize: 2,
+              content: 'yes, I am started'
+            }],
+            key: 'm2'
+          }]}
+          sort={sinon.stub()} />
         <juju.components.BasicTable
-          columns={[{
-            title: 'Relation',
-            size: 3
+          headers={[{
+            content: 'Relation',
+            columnSize: 3
           }, {
-            title: 'Provides',
-            size: 3
+            content: 'Provides',
+            columnSize: 3
           }, {
-            title: 'Consumes',
-            size: 3
+            content: 'Consumes',
+            columnSize: 3
           }, {
-            title: 'Type',
-            size: 3
+            content: 'Type',
+            columnSize: 3
           }]}
           key="relations"
-          rows={[
-            ['cluster', 'mysql', 'mysql', 'peer'],
-            ['website', 'wordpress', 'haproxy', 'regular']
-          ]} />
+          rows={[{
+            columns: [{
+              columnSize: 3,
+              content: 'cluster'
+            }, {
+              columnSize: 3,
+              content: 'mysql'
+            }, {
+              columnSize: 3,
+              content: 'mysql'
+            }, {
+              columnSize: 3,
+              content: 'peer'
+            }],
+            key: 'rel1'
+          }, {
+            columns: [{
+              columnSize: 3,
+              content: 'website'
+            }, {
+              columnSize: 3,
+              content: 'wordpress'
+            }, {
+              columnSize: 3,
+              content: 'haproxy'
+            }, {
+              columnSize: 3,
+              content: 'regular'
+            }],
+            key: 'rel2'
+          }]}
+          sort={sinon.stub()} />
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
