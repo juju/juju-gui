@@ -487,7 +487,7 @@ Status.propTypes = {
   }).frozen.isRequired,
   urllib: shapeup.shape({
     fromLegacyString: PropTypes.func.isRequired
-  }).isRequired
+  }).frozen.isRequired
 };
 
 YUI.add('status', function() {
