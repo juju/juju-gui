@@ -25,33 +25,31 @@ class BasicTable extends React.Component {
   /**
     Generate a row.
     @param isHeader {Boolean} Whether this is a header row.
-    @param columnContents {Array} The list of column content. This can be
-    strings or JSX etc.
-    @param index {Int} The row index (used for unique keys).
+    @param row {Object} The row contents, key etc.
     @returns {Object} The row to render.
   */
-  _generateRow(isHeader, columnContents, index) {
-    const columnsNumber = this.props.columns.length;
-    const columns = this.props.columns.map((column, i) => {
+  _generateRow(isHeader, row) {
+    let columnList;
+    if (isHeader) {
+      columnList = row;
+    } else {
+      columnList = row.columns;
+    }
+    const columnsNumber = columnList.length;
+    const columns = columnList.map((column, i) => {
       let conditionalClasses = {'last-col': i + 1 === columnsNumber};
       // Map the column size to the appropriate CSS class.
-      conditionalClasses[this.columnClasses[column.size - 1]] = true;
+      conditionalClasses[this.columnClasses[column.columnSize - 1]] = true;
       if (column.classes) {
         column.classes.forEach(className => {
           conditionalClasses[className] = true;
         });
       }
       const classes = classNames(conditionalClasses);
-      let content;
-      if (isHeader) {
-        content = column.title;
-      } else {
-        content = columnContents[i] || '';
-      }
       return (
         <div className={classes}
           key={i}>
-          {content}
+          {column.content}
         </div>);
     });
     const classes = classNames(
@@ -62,7 +60,7 @@ class BasicTable extends React.Component {
       });
     return (
       <li className={classes}
-        key={index || 0}>
+        key={isHeader ? 'basic-table-header' : row.key}>
         {columns}
       </li>);
   }
@@ -72,15 +70,19 @@ class BasicTable extends React.Component {
     @returns {Object} The rows to render.
   */
   _generateContent() {
-    return this.props.rows.map((row, i) => {
-      return this._generateRow(false, row, i+1);
+    let rows = this.props.rows;
+    if (this.props.sort) {
+      rows.sort(this.props.sort);
+    }
+    return rows.map(row => {
+      return this._generateRow(false, row);
     });
   }
 
   render() {
     return (
       <ul className="basic-table twelve-col">
-        {this._generateRow(true)}
+        {this._generateRow(true, this.props.headers)}
         {this._generateContent()}
       </ul>
     );
@@ -88,14 +90,27 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
-  columns: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    // The width of the column.
-    size: PropTypes.number.isRequired,
+  headers: PropTypes.arrayOf(PropTypes.shape({
+    content: PropTypes.node.isRequired,
+    // The number of columns (between 1 and 12).
+    columnSize: PropTypes.number.isRequired,
     // The extra classes to apply to the column.
     classes: PropTypes.arrayOf(PropTypes.string)
-  })).isRequired,
-  rows: PropTypes.arrayOf(PropTypes.node).isRequired
+  }).isRequired).isRequired,
+  rows: PropTypes.arrayOf(PropTypes.shape({
+    columns: PropTypes.arrayOf(PropTypes.shape({
+      content: PropTypes.node.isRequired,
+      // The number of columns (between 1 and 12).
+      columnSize: PropTypes.number.isRequired,
+      // The extra classes to apply to the column.
+      classes: PropTypes.arrayOf(PropTypes.string)
+    }).isRequired).isRequired,
+    // The row key, used for React indexing and sorting.
+    key: PropTypes.string.isRequired
+  }).isRequired).isRequired,
+  // A method to sort the rows by. The row object is provided to the sort
+  // method.
+  sort: PropTypes.func
 };
 
 YUI.add('basic-table', function() {

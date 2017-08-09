@@ -1,5 +1,6 @@
 .basic-table {
   @extend %list-style;
+  margin-bottom: 20px;
 
   &__header {
     font-weight: 400;
