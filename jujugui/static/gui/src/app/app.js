@@ -1061,6 +1061,7 @@ YUI.add('juju-gui', function(Y) {
             acl={this.acl}
             activeSection={state.hash}
             addNotification={this._bound.addNotification}
+            baseURL={window.juju_config.baseUrl}
             changeState={this._bound.changeState}
             facadesExist={facadesExist}
             listModelsWithInfo={this._bound.listModelsWithInfo}
@@ -1068,7 +1069,6 @@ YUI.add('juju-gui', function(Y) {
             switchModel={this._bound.switchModel}
             userInfo={this._getUserInfo(state)} />;
       }
-
       ReactDOM.render(profile, document.getElementById('top-page-container'));
     },
 
