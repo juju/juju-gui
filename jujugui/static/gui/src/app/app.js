@@ -1961,8 +1961,15 @@ YUI.add('juju-gui', function(Y) {
     _renderStatusView: function(state, next) {
       ReactDOM.render(
         <window.juju.components.Status
-          db={this.db}
-          model={this.env.getAttrs()}
+          db={shapeup.fromShape(
+            this.db,
+            window.juju.components.Status.propTypes.db,
+            {mutable: true}
+          )}
+          model={shapeup.fromShape(
+            this.env.getAttrs(),
+            window.juju.components.Status.propTypes.model
+          )}
           urllib={window.jujulib.URL}
         />,
         document.getElementById('status-container')

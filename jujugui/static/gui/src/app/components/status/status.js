@@ -459,13 +459,13 @@ class Status extends React.Component {
 };
 
 Status.propTypes = {
-  db: PropTypes.shape({
+  db: shapeup.shape({
     machines: PropTypes.object.isRequired,
     relations: PropTypes.object.isRequired,
     remoteServices: PropTypes.object.isRequired,
     services: PropTypes.object.isRequired
   }).isRequired,
-  model: PropTypes.shape({
+  model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,
     region: PropTypes.string,
