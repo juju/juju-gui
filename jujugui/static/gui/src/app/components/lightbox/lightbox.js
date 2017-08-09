@@ -2,7 +2,11 @@
 
 'use strict';
 
-class Lightbox extends React.Component {
+/**
+  Renders a modal like overlay with a darkened background.
+  A caption is displayed in white below the content if present.
+*/
+class Lightbox extends React.PureComponent {
   render() {
     let caption;
 

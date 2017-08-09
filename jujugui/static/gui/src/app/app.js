@@ -1890,6 +1890,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('modal-gui-settings'));
     },
 
+    /**
+      Opents the lightbox with provided content.
+
+      @param {Object} content React Element.
+      @param {String} caption A string to display under the content.
+    */
     _displayLightbox: function(content, caption) {
       ReactDOM.render(
         <window.juju.components.Lightbox
@@ -1916,6 +1922,9 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('modal-gui-settings'));
     },
 
+    /**
+      Remove the lightbox.
+    */
     _clearLightbox: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('lightbox')

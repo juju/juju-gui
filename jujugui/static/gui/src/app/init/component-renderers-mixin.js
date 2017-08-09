@@ -283,10 +283,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('modal-gui-settings'));
   }
 
+  /**
+    Opents the lightbox with provided content.
+
+    @param {Object} content React Element.
+    @param {String} caption A string to display under the content.
+  */
   _displayLightbox(content, caption) {
     ReactDOM.render(
       <window.juju.components.Lightbox
-        caption={caption} 
+        caption={caption}
         close={this._clearLightbox.bind(this)}>
         {content}
       </window.juju.components.Lightbox>,
@@ -307,6 +313,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('modal-gui-settings'));
   }
 
+  /**
+    Remove the lightbox.
+  */
   _clearLightbox() {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('lightbox')
