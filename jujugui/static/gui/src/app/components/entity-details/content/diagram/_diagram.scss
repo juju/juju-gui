@@ -1,15 +1,36 @@
 .entity-content__diagram {
   clear: both;
   padding: 32px;
-  background-color: $canvas-background;
-  // Unfortunately this needs to use !important to override the .row and
-  // .row--grey styles.
-  // scss-lint:disable ImportantRule
-  border-bottom: 1px solid $mid-grey !important;
-  // scss-lint:enable ImportantRule
   text-align: center;
+  background: $color-light;
+  border-radius: 2px;
+  border: 1px solid $color-mid-light;
+  position: relative;
 
   &-image {
-    height: 350px;
+    max-width: 100%;
+    max-height: 350px;
+  }
+
+  &-expand {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: $white;
+    border: 1px solid $color-mid-light;
+    border-radius: 2px;
+    padding: 5px;
+
+    .svg-icon {
+      display: block;
+    }
+
+    &:hover {
+      background: $color-light;
+    }
+
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
   }
 }

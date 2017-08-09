@@ -120,11 +120,21 @@ class EntityContent extends React.Component {
     if (!applications) {
       return;
     }
+    const entity = entityModel.toEntity();
+    let applicationIcons = {};
+
+    if (Array.isArray(entity.applications)) {
+      entity.applications.forEach(applicationEntity => {
+        applicationIcons[applicationEntity.id] = applicationEntity.iconPath;
+      });
+    }
+
     // Generate the options for each application in this bundle.
-    var applicationsList = Object.keys(applications).map(application => {
-      var options = applications[application].options || {};
+    const applicationsList = Object.keys(applications).map(application => {
+      const options = applications[application].options || {};
+      const id = applications[application].charm.split('cs:').join('');
       // Generate the list of options for this application.
-      var optionsList = Object.keys(options).map((name, i) => {
+      let optionsList = Object.keys(options).map((name, i) => {
         return (
           <div className="entity-content__config-option"
             key={name + i}>
@@ -138,43 +148,31 @@ class EntityContent extends React.Component {
             </dd>
           </div>);
       });
-      var classes = {
-        'entity-content__bundle-config': true
-      };
       if (optionsList.length === 0) {
-        optionsList.push(
-          <div key="none">
-            Config options not modified in this bundle.
-          </div>);
+        optionsList = null;
+      }
+      const title = (
+        <span>
+          <img className="entity-content__config-image"
+            src={applicationIcons[id]}
+            alt={application} width="26" />
+          {application}</span>
+      );
+      if (optionsList) {
+        optionsList = (
+          <div className="entity-content__config-description">
+            {optionsList}
+          </div>
+        );
       }
       return (
-        <juju.components.ExpandingRow
-          classes={classes}
+        <juju.components.AccordionSection
+          title={title}
           key={application}>
-          <div className="entity-content__bundle-config-title">
-            {application}
-            <div className="entity-content__bundle-config-chevron">
-              <div className="entity-content__bundle-config-expand">
-                <juju.components.SvgIcon
-                  name="chevron_down_16"
-                  size="16" />
-              </div>
-              <div className="entity-content__bundle-config-contract">
-                <juju.components.SvgIcon
-                  name="chevron_up_16"
-                  size="16" />
-              </div>
-            </div>
-          </div>
-          <dl className="entity-content__bundle-config-options">
-            {optionsList}
-          </dl>
-        </juju.components.ExpandingRow>);
+          {optionsList}
+        </juju.components.AccordionSection>);
     });
-    return (
-      <ul>
-        {applicationsList}
-      </ul>);
+    return (<div>{applicationsList}</div>);
   }
 
   /**
@@ -185,22 +183,20 @@ class EntityContent extends React.Component {
     @return {Object} The options markup.
   */
   _generateOptionsList(entityModel) {
-    var optionsList;
-    if (entityModel.get('entityType') === 'charm') {
+    let optionsList;
+    const isCharm = entityModel.get('entityType') === 'charm';
+    if (isCharm) {
       optionsList = this._generateCharmConfig(entityModel);
     } else {
       optionsList = this._generateBundleConfig(entityModel);
     }
     if (optionsList) {
+      const title = isCharm ? 'Configuration' : 'Bundle configuration';
       return (
         <div id="configuration"
-          className="row row--grey entity-content__configuration">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <h2 className="entity-content__header">Configuration</h2>
-              {optionsList}
-            </div>
-          </div>
+          className="entity-content__configuration">
+          <h3 className="entity-content__header">{title}</h3>
+          {optionsList}
         </div>
       );
     }
@@ -216,12 +212,10 @@ class EntityContent extends React.Component {
   */
   _generateList(list, handler) {
     return list.map(function(item, i) {
-      return (
-        <li key={item + i}>
-          <a data-id={item} className="link" onClick={handler}>
-            {item}
-          </a>
-        </li>
+      return [i > 0 ? ', ' : ''].concat(
+        <a key={item + i} data-id={item} className="link" onClick={handler}>
+          {item}
+        </a>
       );
     });
   }
@@ -244,11 +238,9 @@ class EntityContent extends React.Component {
       tags.push(entityTags[index]);
     }
     return (
-      <div className="four-col entity-content__metadata">
-        <h4>Tags</h4>
-        <ul>
-          {this._generateList(tags, this._handleTagClick.bind(this))}
-        </ul>
+      <div className="entity-content__metadata">
+        <h4 className="entity-content__metadata-title">Tags:</h4>&nbsp;
+        {this._generateList(tags, this._handleTagClick.bind(this))}
       </div>);
   }
 
@@ -284,23 +276,19 @@ class EntityContent extends React.Component {
     } else if (terms.length === 0) {
       return null;
     } else {
-      const items = terms.map(item => {
-        return (
-          <li className="link"
+      content = terms.map((item, i) => {
+        return [i > 0 ? ', ' : ''].concat(
+          <a className="link"
             key={item.name}
             onClick={this._toggleTerms.bind(this, item)}>
             {item.name}
-          </li>
+          </a>
         );
       });
-      content = (
-        <ul>
-          {items}
-        </ul>);
     }
     return (
-      <div className="four-col entity-content__metadata">
-        <h4>Terms</h4>
+      <div className="entity-content__metadata">
+        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
         {content}
       </div>);
   }
@@ -348,6 +336,26 @@ class EntityContent extends React.Component {
   }
 
   /**
+  Generate the diagram markup for a bundle.
+
+  @param {Object} entityModel The entity model.
+  @return {Object} The diagram markup.
+  */
+  _generateDiagram(entityModel) {
+    if (entityModel.get('entityType') !== 'bundle') {
+      return;
+    }
+    const entity = entityModel.toEntity();
+    return <juju.components.EntityContentDiagram
+      clearLightbox={this.props.clearLightbox}
+      displayLightbox={this.props.displayLightbox}
+      diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
+      isExpandable={true}
+      isRow={false}
+      title={entity.displayName}/>;
+  }
+
+  /**
     Generate tags and terms.
 
     @method _generateTagsAndTerms
@@ -357,11 +365,9 @@ class EntityContent extends React.Component {
   _generateTagsAndTerms(entityModel) {
     if (this.props.entityModel.get('entityType') === 'charm') {
       return(
-        <div className="row row--grey entity-content__terms">
-          <div className="inner-wrapper">
-            {this._generateTags()}
-            {this._generateTerms()}
-          </div>
+        <div className="entity-content__terms">
+          {this._generateTags()}
+          {this._generateTerms()}
         </div>
       );
     }
@@ -432,9 +438,9 @@ class EntityContent extends React.Component {
         <h3 className="section__title">
           Contribute
         </h3>
-        <ul className="section__links">
+        <ul className="section__list">
           {bugLink ? (
-            <li>
+            <li className="section__list-item">
               <a href={bugLink}
                 className="link"
                 target="_blank">
@@ -442,7 +448,7 @@ class EntityContent extends React.Component {
               </a>
             </li>) : undefined}
           {homepageLink ? (
-            <li>
+            <li className="section__list-item">
               <a href={homepageLink}
                 className="link"
                 target="_blank">
@@ -573,13 +579,12 @@ class EntityContent extends React.Component {
         <p>
           Add this card to your website by copying the code below.&nbsp;
           <a href="https://jujucharms.com/community/cards" target="_blank"
-            className="link">
+            className="entity-content__card-cta">
             Learn more
           </a>.
         </p>
-        <textarea
-          rows="2" cols="70" readOnly="readonly" wrap="off"
-          className="twelve-col" defaultValue={script}></textarea>
+        <juju.components.CopyToClipboard
+          value={script} />
         <h4>Preview</h4>
         {cardElement}
       </div>);
@@ -595,12 +600,13 @@ class EntityContent extends React.Component {
     const entityModel = this.props.entityModel;
     return (
       <div className="entity-content">
-        {this._generateTagsAndTerms(entityModel)}
-        {this._generatePlans()}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               {this._generateDescription(entityModel)}
+              {this._generateDiagram(entityModel)}
+              {this._generateTagsAndTerms(entityModel)}
+              {this._generatePlans()}
               <juju.components.EntityContentReadme
                 addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
@@ -609,8 +615,9 @@ class EntityContent extends React.Component {
                 hash={this.props.hash}
                 renderMarkdown={this.props.renderMarkdown}
                 scrollCharmbrowser={this.props.scrollCharmbrowser} />
+              {this._generateOptionsList(entityModel)}
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               {this._generateActions()}
               {this._generateResources()}
               {this._showEntityRelations()}
@@ -618,13 +625,10 @@ class EntityContent extends React.Component {
                 apiUrl={this.props.apiUrl}
                 entityModel={entityModel}
                 pluralize={this.props.pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={entityModel.get('revisions')} />
               {this._generateCard()}
             </div>
           </div>
         </div>
-        {this._generateOptionsList(entityModel)}
         {this._generateTermsPopup()}
       </div>
     );
@@ -639,8 +643,11 @@ EntityContent.propTypes = {
   addNotification: PropTypes.func.isRequired,
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearLightbox: PropTypes.func,
+  displayLightbox: PropTypes.func,
   entityModel: PropTypes.object.isRequired,
   flags: PropTypes.object,
+  getDiagramURL: PropTypes.func.isRequired,
   getFile: PropTypes.func.isRequired,
   hasPlans: PropTypes.bool.isRequired,
   hash: PropTypes.string,
@@ -655,14 +662,15 @@ YUI.add('entity-content', function() {
   juju.components.EntityContent = EntityContent;
 }, '0.1.0', {
   requires: [
+    'accordion-section',
+    'copy-to-clipboard',
     'entity-content-config-option',
     'entity-content-description',
+    'entity-content-diagram',
     'entity-content-readme',
     'entity-content-relations',
-    'entity-content-revisions',
     'entity-files',
     'entity-resources',
-    'expanding-row',
     'loading-spinner',
     'svg-icon',
     'terms-popup'

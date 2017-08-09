@@ -70,8 +70,7 @@ class DeploymentDirectDeploy extends React.Component {
     if (this.state.isBundle) {
       return (
         <juju.components.EntityContentDiagram
-          getDiagramURL={this.props.getDiagramURL}
-          id={this.props.ddData.id} />);
+          diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />);
     } else {
       const entity = this.props.entityModel.toEntity();
       return (

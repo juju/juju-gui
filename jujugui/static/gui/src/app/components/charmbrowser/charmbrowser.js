@@ -173,6 +173,8 @@ class Charmbrowser extends React.Component {
             addNotification={this.props.addNotification}
             apiUrl={this.props.apiUrl}
             changeState={changeState}
+            clearLightbox={this.props.clearLightbox}
+            displayLightbox={this.props.displayLightbox}
             importBundleYAML={this.props.importBundleYAML}
             flags={this.props.flags}
             getBundleYAML={this.props.getBundleYAML}
@@ -231,8 +233,10 @@ Charmbrowser.propTypes = {
   appState: PropTypes.object.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   charmstoreURL: PropTypes.string.isRequired,
+  clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
+  displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,

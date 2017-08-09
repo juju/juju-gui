@@ -161,7 +161,7 @@ describe('DirectDeploy', function() {
       })
     };
     const renderMarkdown = sinon.stub();
-    const getDiagramURL = sinon.stub();
+    const getDiagramURL = sinon.stub().returns('imageLink');
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentDirectDeploy
         addNotification={sinon.stub()}
@@ -200,8 +200,7 @@ describe('DirectDeploy', function() {
           <div className="six-col last-col no-margin-bottom">
             <div className="deployment-direct-deploy__image">
               <juju.components.EntityContentDiagram
-                getDiagramURL={getDiagramURL}
-                id="cs:bundle/kubernetes-core-8" />
+                diagramUrl="imageLink" />
             </div>
             <div className="deployment-direct-deploy__edit-model">
               <juju.components.GenericButton

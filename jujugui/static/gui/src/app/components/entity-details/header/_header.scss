@@ -4,10 +4,11 @@
   $icon-size: 96px;
 
   margin-bottom: 0;
-  padding: 32px 0;
+  padding: 60px 0;
   background-color: $white;
   color: $cool-grey;
   overflow: hidden;
+  border-bottom: 1px solid $color-mid-light;
 
   @keyframes slideIn {
     0% {
@@ -166,10 +167,6 @@
     }
   }
 
-  &__series {
-    text-transform: capitalize;
-  }
-
   &__select {
     margin-bottom: 15px;
   }
@@ -213,6 +210,10 @@
   }
 
   &__right {
+    .copy-to-clipboard[type="text"] {
+      box-shadow: none;
+    }
+
     @media screen and (max-width: 768px) {
       margin-top: 20px;
     }
@@ -230,10 +231,10 @@
   }
 
   #item-twitter .svg-icon {
-    fill: $warm-grey;
+    fill: $color-mid-dark;
   }
   #item-googleplus {
-    background: $warm-grey;
+    background: $color-mid-dark;
     fill: $white;
   }
 

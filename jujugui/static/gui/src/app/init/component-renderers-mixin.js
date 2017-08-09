@@ -282,6 +282,22 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
+    Opents the lightbox with provided content.
+
+    @param {Object} content React Element.
+    @param {String} caption A string to display under the content.
+  */
+  _displayLightbox(content, caption) {
+    ReactDOM.render(
+      <window.juju.components.Lightbox
+        caption={caption}
+        close={this._clearLightbox.bind(this)}>
+        {content}
+      </window.juju.components.Lightbox>,
+      document.getElementById('lightbox'));
+  }
+
+  /**
     The cleanup dispatcher keyboard shortcuts modal.
   */
   _clearShortcutsModal() {
@@ -294,6 +310,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('modal-gui-settings'));
   }
+
+  /**
+    Remove the lightbox.
+  */
+  _clearLightbox() {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('lightbox')
+    );
+  }
+
   _renderHeaderLogo() {
     const userName = this.user.displayName;
     const gisf = this.applicationConfig.gisf;
@@ -359,7 +385,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={this.acl}
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
+        clearLightbox={this._clearLightbox.bind(this)}
         deployTarget={this.deployTarget.bind(this, charmstore)}
+        displayLightbox={this._displayLightbox.bind(this)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}

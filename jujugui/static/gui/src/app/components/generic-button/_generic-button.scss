@@ -39,6 +39,28 @@
   }
 }
 
+%button-pattern {
+  font-size: 1em;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .2s;
+  border-radius: 2px;
+  outline: none;
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1em;
+
+  &:disabled,
+  &.button--disabled {
+    opacity: .5;
+    cursor: default;
+  }
+}
+
 .button-wrapper--ruled {
   display: flex;
   flex-direction: row;
