@@ -35,7 +35,7 @@ describe('UserMenu', () => {
   function createEle(props) {
     props = props || {};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserMenu.prototype.wrappedComponent
+      <juju.components.UserMenu.wrappedComponent
         LogoutLink={props.LogoutLink || {}}
         USSOLoginLink={props.USSOLoginLink || {}}
         controllerAPI={props.controllerAPI || {}}

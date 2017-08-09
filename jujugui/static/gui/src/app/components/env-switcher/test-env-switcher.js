@@ -34,7 +34,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -80,7 +80,7 @@ describe('EnvSwitcher', function() {
     const switchModel = sinon.stub();
     const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -95,7 +95,7 @@ describe('EnvSwitcher', function() {
     });
 
     renderer.render(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -125,7 +125,7 @@ describe('EnvSwitcher', function() {
   it('fetches a list of environments on mount', function() {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -148,7 +148,7 @@ describe('EnvSwitcher', function() {
   it('fetches the env list when opening', function() {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -183,7 +183,7 @@ describe('EnvSwitcher', function() {
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -209,7 +209,7 @@ describe('EnvSwitcher', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}
