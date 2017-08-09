@@ -20,7 +20,7 @@ describe('BasicTable', function() {
       classes: ['class1', 'class2']
     }, {
       title: 'Column 2',
-      size: '4'
+      size: 4
     }];
     const rows = [
       ['row 1 column 1', 'row 1 column 2'],

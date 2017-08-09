@@ -35,7 +35,7 @@ class BasicTable extends React.Component {
     const columns = this.props.columns.map((column, i) => {
       let conditionalClasses = {'last-col': i + 1 === columnsNumber};
       // Map the column size to the appropriate CSS class.
-      conditionalClasses[this.columnClasses[parseInt(column.size) - 1]] = true;
+      conditionalClasses[this.columnClasses[column.size - 1]] = true;
       if (column.classes) {
         column.classes.forEach(className => {
           conditionalClasses[className] = true;
@@ -88,21 +88,14 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
-  // The columns array should contain objects in the following format:
-  // [{
-  //  title: 'Column title',
-  //  size: 3, // The width of the column (between 1 and 12).
-  //  classes: ['class1', 'class2', ...]
-  // }, ...]
-  columns: PropTypes.array.isRequired,
-  // The rows property should contain an array of arrays containing the
-  // column content. e.g.
-  // [
-  //  ['row 1 column 1', 'row 1 column 2', ...],
-  //  ['row 2 column 1', 'row 2 column 2', ...],
-  //  ...
-  // ]
-  rows: PropTypes.array.isRequired
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    // The width of the column.
+    size: PropTypes.number.isRequired,
+    // The extra classes to apply to the column.
+    classes: PropTypes.arrayOf(PropTypes.string)
+  })).isRequired,
+  rows: PropTypes.arrayOf(PropTypes.node).isRequired
 };
 
 YUI.add('basic-table', function() {
