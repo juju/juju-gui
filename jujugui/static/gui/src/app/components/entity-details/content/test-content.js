@@ -587,9 +587,8 @@ describe('EntityContent', function() {
                 renderMarkdown={renderMarkdown} />
               <juju.components.EntityContentDiagram
                 clearLightbox={clearLightbox}
+                diagramUrl={undefined}
                 displayLightbox={displayLightbox}
-                getDiagramURL={getDiagramURL}
-                id="django-cluster"
                 isExpandable={true}
                 title="django cluster" />
               <juju.components.EntityContentReadme

@@ -18,23 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class EntityContentDiagram extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      url: this.props.getDiagramURL(this.props.id)
-    };
-  }
-
+class EntityContentDiagram extends React.PureComponent {
   _handleClose() {
     this.props.clearLightbox();
   }
 
   _handleExpand() {
-    console.log(this.props.title);
     this.props.displayLightbox(
-      <object type="image/svg+xml" data={this.state.url} />,
+      <object type="image/svg+xml" data={this.props.diagramUrl} />,
       this.props.title
     );
   }
@@ -58,7 +49,7 @@ class EntityContentDiagram extends React.Component {
     );
     return (
       <div className={classes}>
-        <object type="image/svg+xml" data={this.state.url}
+        <object type="image/svg+xml" data={this.props.diagramUrl}
           className="entity-content__diagram-image" />
         {this._generateExpandButton()}
       </div>
@@ -69,8 +60,7 @@ class EntityContentDiagram extends React.Component {
 EntityContentDiagram.propTypes = {
   clearLightbox: PropTypes.func,
   displayLightbox: PropTypes.func,
-  getDiagramURL: PropTypes.func.isRequired,
-  id: PropTypes.string.isRequired,
+  diagramUrl: PropTypes.string.isRequired,
   isExpandable: PropTypes.bool,
   isRow: PropTypes.bool,
   title: PropTypes.string

@@ -338,7 +338,6 @@ class EntityContent extends React.Component {
   /**
   Generate the diagram markup for a bundle.
 
-  @method _generateDiagram
   @param {Object} entityModel The entity model.
   @return {Object} The diagram markup.
   */
@@ -350,8 +349,7 @@ class EntityContent extends React.Component {
     return <juju.components.EntityContentDiagram
       clearLightbox={this.props.clearLightbox}
       displayLightbox={this.props.displayLightbox}
-      getDiagramURL={this.props.getDiagramURL}
-      id={entityModel.get('id')}
+      diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
       isExpandable={true}
       isRow={false}
       title={entity.displayName}/>;

@@ -31,10 +31,7 @@ describe('EntityContentDiagram', function() {
   it('can display a diagram', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContentDiagram
-        getDiagramURL={getDiagramURL}
-        id="big-bundle" />);
-    assert.equal(getDiagramURL.callCount, 1);
-    assert.equal(getDiagramURL.args[0][0], 'big-bundle');
+        diagramUrl="example.com/diagram.svg" />);
     expect(output).toEqualJSX(
       <div className="entity-content__diagram">
         <object type="image/svg+xml" data="example.com/diagram.svg"
@@ -45,8 +42,7 @@ describe('EntityContentDiagram', function() {
   it('can display a diagram as a row', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.EntityContentDiagram
-        getDiagramURL={getDiagramURL}
-        id="big-bundle"
+        diagramUrl="example.com/diagram.svg"
         isRow={true} />);
     assert.equal(output.props.className,
       'entity-content__diagram row row--grey');

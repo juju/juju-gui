@@ -9,7 +9,6 @@
     &__image {
       margin-bottom: 20px;
       background-color: $light-grey;
-      border: 1px solid $color-mid-light;
       text-align: center;
 
       &-block {
@@ -29,7 +28,6 @@
 
       .entity-content__diagram {
         // Needs to have !imporant as the base style also has !important.
-        border-bottom: none !important;
 
         &-image {
           width: 100%;

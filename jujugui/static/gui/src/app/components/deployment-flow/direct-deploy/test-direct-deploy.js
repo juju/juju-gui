@@ -200,8 +200,7 @@ describe('DirectDeploy', function() {
           <div className="six-col last-col no-margin-bottom">
             <div className="deployment-direct-deploy__image">
               <juju.components.EntityContentDiagram
-                getDiagramURL={getDiagramURL}
-                id="cs:bundle/kubernetes-core-8" />
+                diagramUrl={undefined} />
             </div>
             <div className="deployment-direct-deploy__edit-model">
               <juju.components.GenericButton
