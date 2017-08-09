@@ -1959,18 +1959,12 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderStatusView: function(state, next) {
+      const propTypes = window.juju.components.Status.propTypes;
       ReactDOM.render(
         <window.juju.components.Status
-          db={shapeup.fromShape(
-            this.db,
-            window.juju.components.Status.propTypes.db,
-            {mutable: true}
-          )}
-          model={shapeup.fromShape(
-            this.env.getAttrs(),
-            window.juju.components.Status.propTypes.model
-          )}
-          urllib={window.jujulib.URL}
+          db={shapeup.fromShape(this.db, propTypes.db)}
+          model={shapeup.fromShape(this.env.getAttrs(), propTypes.model)}
+          urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
         />,
         document.getElementById('status-container')
       );

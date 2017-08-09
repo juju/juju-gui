@@ -460,19 +460,34 @@ class Status extends React.Component {
 
 Status.propTypes = {
   db: shapeup.shape({
-    machines: PropTypes.object.isRequired,
-    relations: PropTypes.object.isRequired,
-    remoteServices: PropTypes.object.isRequired,
-    services: PropTypes.object.isRequired
-  }).isRequired,
+    machines: shapeup.shape({
+      map: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
+    }).isRequired,
+    relations: shapeup.shape({
+      map: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
+    }).isRequired,
+    remoteServices: shapeup.shape({
+      map: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
+    }).isRequired,
+    services: shapeup.shape({
+      each: PropTypes.func.isRequired,
+      map: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
+    }).isRequired
+  }).frozen.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
-  }).isRequired,
-  urllib: PropTypes.func.isRequired
+  }).frozen.isRequired,
+  urllib: shapeup.shape({
+    fromLegacyString: PropTypes.func.isRequired
+  }).isRequired
 };
 
 YUI.add('status', function() {
