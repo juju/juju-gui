@@ -185,9 +185,9 @@ class Charmbrowser extends React.Component {
             scrollPosition={this.state.scrollPosition}
             renderMarkdown={this.props.renderMarkdown}
             id={id}
-              // This is used to force a component remount when the entity
-              // changes, for instance a charm detail page has a link to
-              // another charm detail page.
+            // This is used to force a component remount when the entity
+            // changes, for instance a charm detail page has a link to
+            // another charm detail page.
             key={id}
             pluralize={utils.pluralize}
             listPlansForCharm={this.props.listPlansForCharm}
