@@ -178,23 +178,24 @@ class EnvSwitcher extends React.Component {
     Handle the model name input losing focus.
   */
   _handleInputBlur() {
-    if (!this.state.validName) {
-      return;
+    const name = this.refs.name.innerText;
+    // Regex for checking that a string only contains lowercase letters,
+    // numbers, and hyphens and that it does not start or end with a hyphen.
+    const regex = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/;
+    let valid = name && regex.test(name) || false;
+    this.setState({
+      validName: valid,
+      hasFocus: false
+    });
+    if (valid) {
+      this.props.setModelName(name);
     }
-    this.props.setModelName(this.refs.name.innerText);
-    this.setState({hasFocus: false});
   }
 
   /**
     Handle keyup in the model name input.
   */
   _handleInputKeyUp() {
-    const name = this.refs.name.innerText;
-    // Regex for checking that a string only contains lowercase letters,
-    // numbers, and hyphens and that it does not start or end with a hyphen.
-    const regex = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/;
-    let valid = name && regex.test(name) || false;
-    this.setState({validName: valid});
   }
 
   /**
@@ -216,11 +217,10 @@ class EnvSwitcher extends React.Component {
           dangerouslySetInnerHTML={{__html: this.props.environmentName}}
           onBlur={this._handleInputBlur.bind(this)}
           onFocus={this._handleInputFocus.bind(this)}
-          onKeyUp={this._handleInputKeyUp.bind(this)}
           ref="name" />
         <div className="env-switcher__name-error">
-          This field must only contain lowercase letters, numbers, and hyphens.
-          It must not start or end with a hyphen.
+          The model name must only contain lowercase letters, numbers, and
+          hyphens. It must not start or end with a hyphen.
         </div>
       </div>);
   }

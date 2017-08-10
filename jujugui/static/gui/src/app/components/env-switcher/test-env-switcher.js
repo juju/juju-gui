@@ -61,10 +61,9 @@ describe('EnvSwitcher', function() {
               dangerouslySetInnerHTML={{__html: 'MyEnv'}}
               onBlur={sinon.stub()}
               onFocus={sinon.stub()}
-              onKeyUp={sinon.stub()}
               ref="name" />
             <div className="env-switcher__name-error">
-              This field must only contain lowercase letters, numbers, and hyphens.
+              The model name must only contain lowercase letters, numbers, and hyphens.
               It must not start or end with a hyphen.
             </div>
           </div>
@@ -159,7 +158,6 @@ describe('EnvSwitcher', function() {
     };
     const output = renderer.getRenderOutput();
     const input = output.props.children[0].props.children[0].props.children[0];
-    input.props.onKeyUp();
     input.props.onBlur();
     assert.equal(setModelName.callCount, 0);
   });
@@ -184,7 +182,7 @@ describe('EnvSwitcher', function() {
     };
     let output = renderer.getRenderOutput();
     const input = output.props.children[0].props.children[0].props.children[0];
-    input.props.onKeyUp();
+    input.props.onBlur();
     output = renderer.getRenderOutput();
     const expected = (
       <div className="env-switcher env-switcher--error"
