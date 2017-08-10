@@ -39,6 +39,7 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
+  const fromShape = window.shapeup.fromShape;
 
   /**
    * The main app class.
@@ -1962,9 +1963,9 @@ YUI.add('juju-gui', function(Y) {
       const propTypes = window.juju.components.Status.propTypes;
       ReactDOM.render(
         <window.juju.components.Status
-          db={shapeup.fromShape(this.db, propTypes.db)}
-          model={shapeup.fromShape(this.env.getAttrs(), propTypes.model)}
-          urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
+          db={fromShape(this.db, propTypes.db)}
+          model={fromShape(this.env.getAttrs(), propTypes.model)}
+          urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
         />,
         document.getElementById('status-container')
       );
