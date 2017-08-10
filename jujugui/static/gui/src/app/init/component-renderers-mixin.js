@@ -209,7 +209,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         setPageTitle={this.setPageTitle}
         staticURL={this.applicationConfig.staticURL}
         storeUser={this.storeUser.bind(this)}
-        switchModel={utils.switchModel.bind(this, this.modelAPI)}
+        switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)}
       />);
 
@@ -1020,6 +1020,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
     const modelAPI = this.modelAPI;
+    const ecs = modelAPI.get('ecs');
     const controllerAPI = this.controllerAPI;
     const utils = yui.juju.views.utils;
     let listModelsWithInfo =
@@ -1056,9 +1057,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         modelOwner={modelAPI.get('modelOwner')}
         showEnvSwitcher={showEnvSwitcher}
         showProfile={utils.showProfile.bind(
-          this, modelAPI && modelAPI.get('ecs'),
+          this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
-        switchModel={utils.switchModel.bind(this, modelAPI)}
+        switchModel={this._bound.switchModel}
         loadingModel={this.modelAPI.loading} />,
       document.getElementById('header-breadcrumb'));
   }

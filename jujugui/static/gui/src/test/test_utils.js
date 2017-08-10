@@ -864,12 +864,13 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
       const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
       assert.deepEqual(switchArgs, [env, model]);
@@ -879,10 +880,15 @@ describe('utilities', function() {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid-1')
       };
-      const env = {};
+      const env = {
+        get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
+          getCurrentChangeSet: sinon.stub().returns({})
+        })
+      };
       const model = {id: 'model-uuid-1', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       // The underlying _switchModel is not called.
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
@@ -893,13 +899,32 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
       const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
+      assert.deepEqual(utils._switchModel.callCount, 0);
+    });
+    
+    it('does not switch when committing', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+      };
+      const env = {
+        get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(true),
+          getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
+        })
+      };
+      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
+      const addNotification = sinon.stub();
+      utils._switchModel = sinon.stub();
+      utils.switchModel.call(app, env, addNotification, model);
+      assert.deepEqual(addNotification.callCount, 1);
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
@@ -909,13 +934,15 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, null);
+      utils.switchModel.call(app, env, sinon.stub(), null);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
+      console.log(switchArgs);
       assert.deepEqual(switchArgs, [env, null]);
     });
 

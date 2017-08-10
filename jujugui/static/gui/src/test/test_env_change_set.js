@@ -499,6 +499,34 @@ describe('Environment Change Set', function() {
           'uncommitted record\'s index changed');
       });
 
+      it('keeps track of committing status', function() {
+        // Stub enough to pause committing between records.
+        let execute = sinon.stub(ecs, '_execute');
+        this._cleanups.push(execute.restore);
+        let fire = sinon.stub(ecs, 'fire');
+        this._cleanups.push(fire.restore);
+        let changeSet = {
+          'service-568': {
+            index: 0,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          },
+          'service-123': {
+            index: 1,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          }
+        };
+        ecs.changeSet = changeSet;
+        assert.isFalse(ecs.isCommitting());
+        ecs.commit();
+        assert.isTrue(ecs.isCommitting());
+      });
+
       it('passes the commit index through an event', function() {
         const currentCommitFinishedListener = sinon.stub();
         document.addEventListener(

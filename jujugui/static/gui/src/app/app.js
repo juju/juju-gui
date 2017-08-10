@@ -560,19 +560,28 @@ YUI.add('juju-gui', function(Y) {
         document.addEventListener(
           eventName, this._boundAppDragOverHandler);
       });
-      // As a minor performance boost and to avoid potential rerenderings
-      // because of rebinding functions in the render methods. Any method that
-      // requires binding and is passed into components should be bound here
-      // and then used across components.
+      this._bindRenderUtilities();
+      // In Juju >= 2 we connect to the controller and then to the model.
+      this.state.bootstrap();
+    },
+
+    /**
+      As a minor performance boost and to avoid potential rerenderings
+      because of rebinding functions in the render methods. Any method that
+      requires binding and is passed into components should be bound here
+      and then used across components.
+    */
+    _bindRenderUtilities: function() {
       this._bound = {
         addNotification: this.db.notifications.add.bind(this.db.notifications),
         changeState: this.state.changeState.bind(this.state),
         destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
-        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
-        switchModel: views.utils.switchModel.bind(this, this.env)
+        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI) // eslint-disable-line max-len
       };
-      // In Juju >= 2 we connect to the controller and then to the model.
-      this.state.bootstrap();
+      // Bind switchModel separately to include the already bound
+      // addNotifications.
+      this._bound.switchModel = views.utils.switchModel.bind(
+        this, this.env, this._bound.addNotification);
     },
 
     /**
