@@ -375,6 +375,9 @@ YUI.add('environment-change-set', function(Y) {
           window.setTimeout(this._commitNext.bind(this, env, currentIndex), 0);
         } else {
           this.currentLevel = -1;
+          // If there is an error committing and the ECS is aborted, running
+          // commit again will reset this. This is the only exit point from
+          // committing.
           this.committing = false;
           delete this.currentCommit;
           document.dispatchEvent(new CustomEvent('ecs.currentCommitFinished', {
@@ -441,7 +444,7 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Check to see if the current  commit is in progress.
+      Check to see if the current commit is in progress.
 
       @return {Boolean} true if the commit is in progress.
     */
@@ -475,6 +478,7 @@ YUI.add('environment-change-set', function(Y) {
       });
       this.currentIndex += 1;
       this.currentCommit = [];
+      this.committing = false;
       document.dispatchEvent(new Event('ecs.changeSetModified'));
       this.get('db').fireEvent('update');
     },
