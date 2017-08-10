@@ -11,7 +11,7 @@ parserOptions:
 rules:
   comma-dangle: ["error", "never"]
   indent: [2, 2, {SwitchCase: 1, VariableDeclarator: 2}]
-  max-len: [2, 90, 2]
+  max-len: [2, 95, 2]
   no-const-assign: 2
   no-debugger: 2
   no-multi-spaces: 2

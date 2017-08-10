@@ -218,6 +218,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           acl={this.acl}
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
+          baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}

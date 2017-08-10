@@ -44,6 +44,7 @@ Profile.sectionsMap = new Map([
         <juju.components.ProfileModelList
           acl={component.props.acl}
           addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
           changeState={component.props.changeState}
           facadesExist={component.props.facadesExist}
           destroyModels={component.props.destroyModels}
@@ -70,6 +71,7 @@ Profile.propTypes = {
   acl: PropTypes.object,
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
+  baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,

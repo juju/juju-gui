@@ -21,6 +21,7 @@ describe('Profile', function() {
         acl={{}}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
+        baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
@@ -46,6 +47,7 @@ describe('Profile', function() {
           <juju.components.ProfileModelList
             acl={instance.props.acl}
             addNotification={instance.props.addNotification}
+            baseURL={instance.props.baseURL}
             changeState={instance.props.changeState}
             facadesExist={instance.props.facadesExist}
             destroyModels={instance.props.destroyModels}
