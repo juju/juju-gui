@@ -24,21 +24,35 @@ describe('Status', function() {
       version: '2.42.47'
     };
     emptyDB = {
-      machines: {size: sinon.stub().withArgs().returns(0)},
-      relations: {size: sinon.stub().withArgs().returns(0)},
-      remoteServices: {size: sinon.stub().withArgs().returns(0)},
-      services: {size: sinon.stub().withArgs().returns(0)}
+      machines: {
+        map: sinon.stub(),
+        size: sinon.stub().withArgs().returns(0)
+      },
+      relations: {
+        map: sinon.stub(),
+        size: sinon.stub().withArgs().returns(0)
+      },
+      remoteServices: {
+        map: sinon.stub(),
+        size: sinon.stub().withArgs().returns(0)
+      },
+      services: {
+        each: sinon.stub(),
+        map: sinon.stub(),
+        size: sinon.stub().withArgs().returns(0)
+      }
     };
   });
 
   // Render the component with the given db and optional model.
   // Return an object with the instance and the output.
   const render = (db, model=defaultModel) => {
+    const propTypes = window.juju.components.Status.propTypes;
     const renderer = jsTestUtils.shallowRender(
       <window.juju.components.Status
-        db={db}
-        model={model}
-        urllib={window.jujulib.URL}
+        db={shapeup.fromShape(db, propTypes.db)}
+        model={shapeup.fromShape(model, propTypes.model)}
+        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
       />, true
     );
     return {

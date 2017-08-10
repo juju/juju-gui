@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const fromShape = require('shapeup').fromShape;
 const yui = window.yui;
 /**
     A mixin for the JujuGUI class.
@@ -579,11 +580,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderStatusView(state, next) {
+    const propTypes = window.juju.components.Status.propTypes;
     ReactDOM.render(
       <window.juju.components.Status
-        db={this.db}
-        model={this.modelAPI.getAttrs()}
-        urllib={window.jujulib.URL}
+        db={fromShape(this.db, propTypes.db)}
+        model={fromShape(this.modelAPI.getAttrs(), propTypes.model)}
+        urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
       />,
       document.getElementById('status-container')
     );

@@ -67,6 +67,7 @@ globals:
   ReactDOM: true
   renderIntoDocument: true
   saveAs: true
+  shapeup: true
   sinon: true
   Stripe: true
   testUtils: true
