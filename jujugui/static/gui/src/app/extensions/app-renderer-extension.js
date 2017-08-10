@@ -41,7 +41,6 @@ YUI.add('app-renderer-extension', function(Y) {
     */
     _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
       const env = this.env;
-      const ecs = this.env.get('ecs');
       const controllerAPI = this.controllerAPI;
       const utils = views.utils;
       let listModelsWithInfo =
@@ -74,7 +73,6 @@ YUI.add('app-renderer-extension', function(Y) {
           user={this.user}
           changeState={this.state.changeState.bind(this.state)}
           humanizeTimestamp={views.humanizeTimestamp}
-          isCommitting={ecs.isCommitting.bind(ecs)}
           listModelsWithInfo={listModelsWithInfo}
           modelName={this.db.environment.get('name')}
           modelOwner={env.get('modelOwner')}
@@ -82,8 +80,8 @@ YUI.add('app-renderer-extension', function(Y) {
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),
             this.state.changeState.bind(this.state))}
-          switchModel={utils.switchModel.bind(this, env)}
-          loadingModel={this.env.loading} />,
+          switchModel={this._bound.switchModel.bind(this)}
+          loadingModel={env.loading} />,
         document.getElementById('header-breadcrumb'));
     }
   };

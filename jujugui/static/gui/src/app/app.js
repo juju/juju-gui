@@ -568,9 +568,12 @@ YUI.add('juju-gui', function(Y) {
         addNotification: this.db.notifications.add.bind(this.db.notifications),
         changeState: this.state.changeState.bind(this.state),
         destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
-        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
-        switchModel: views.utils.switchModel.bind(this, this.env)
+        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI) // eslint-disable-line max-len
       };
+      // Bind switchModel separately to include the already bound
+      // addNotifications.
+      this._bound.switchModel = views.utils.switchModel.bind(
+        this, this.env, this._bound.addNotification);
       // In Juju >= 2 we connect to the controller and then to the model.
       this.state.bootstrap();
     },

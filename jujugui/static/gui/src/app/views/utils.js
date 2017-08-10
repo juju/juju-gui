@@ -1328,7 +1328,8 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
-  utils.switchModel = function(modelAPI, model, confirmUncommitted=true) {
+  utils.switchModel = function(
+    modelAPI, addNotification, model, confirmUncommitted=true) {
     // XXX if app.js is gone then this appconfig check can be removed.
     if (this.applicationConfig) {
       if (model && model.id === this.modelUUID) {
@@ -1343,6 +1344,15 @@ YUI.add('juju-view-utils', function(Y) {
       // There is nothing to be done as we are already connected to this model.
       // Note that this check is always false when switching models from the
       // profile view, as the "modelUUID" is set to null in that case.
+      return;
+    }
+    if (modelAPI.get('ecs').isCommitting()) {
+      const message = 'cannot switch models while deploying.';
+      addNotification({
+        title: message,
+        message: message,
+        level: 'error'
+      });
       return;
     }
     const switchModel = utils._switchModel.bind(this, modelAPI, model);

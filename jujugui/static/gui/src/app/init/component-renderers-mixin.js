@@ -209,7 +209,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         setPageTitle={this.setPageTitle}
         staticURL={this.applicationConfig.staticURL}
         storeUser={this.storeUser.bind(this)}
-        switchModel={utils.switchModel.bind(this, this.modelAPI)}
+        switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)}
       />);
 
@@ -1052,7 +1052,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
-        isCommitting={ecs.isCommitting.bind(ecs)}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
@@ -1060,7 +1059,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         showProfile={utils.showProfile.bind(
           this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
-        switchModel={utils.switchModel.bind(this, modelAPI)}
+        switchModel={this._bound.switchModel}
         loadingModel={this.modelAPI.loading} />,
       document.getElementById('header-breadcrumb'));
   }

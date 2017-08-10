@@ -116,16 +116,7 @@ class EnvSwitcher extends React.Component {
   handleModelClick(model) {
     const props = this.props;
     this.setState({showEnvList: false});
-    if (this.props.isCommitting()) {
-      const message = 'cannot switch models while deploying.';
-      this.props.addNotification({
-        title: message,
-        message: message,
-        level: 'error'
-      });
-    } else {
-      props.switchModel(model);
-    }
+    props.switchModel(model);
   }
 
   /**
@@ -200,7 +191,6 @@ EnvSwitcher.propTypes = {
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   humanizeTimestamp: PropTypes.func.isRequired,
-  isCommitting: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
   switchModel: PropTypes.func.isRequired,
   user: PropTypes.object
