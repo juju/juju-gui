@@ -87,6 +87,9 @@ describe('App Renderer Extension', function() {
     renderer.changeState = sinon.stub();
     renderer.switchEnv = sinon.stub();
     renderer.createSocketURL = sinon.stub();
+    renderer._bound = {
+      switchModel: sinon.stub()
+    };
   });
 
   afterEach(function() {
