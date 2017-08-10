@@ -1,4 +1,15 @@
 .env-switcher {
+
+  &--error {
+    .env-switcher__toggle {
+      border: 1px solid $error;
+    }
+
+    .env-switcher__name-error {
+      display: block;
+    }
+  }
+
   &__toggle {
     border: 1px solid $color-mid-light;
     border-radius: 2px;
@@ -41,6 +52,23 @@
     white-space: nowrap;
     max-width: 300px;
     cursor: pointer;
+
+    &-error {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 300px;
+      padding: 10px 20px;
+      background-color: $error;
+      border-radius: $border-radius;
+      color: $white;
+
+      &:before {
+        @include diamond($error, 10px, 'up');
+        left: 20px;
+       }
+    }
 
     // Hide line breaks to make the contenteditable a single line input.
     br {

@@ -24,7 +24,8 @@ class EnvSwitcher extends React.Component {
     this.state = {
       envList: [],
       hasFocus: false,
-      showEnvList: false
+      showEnvList: false,
+      validName: true
     };
   }
 
@@ -177,12 +178,23 @@ class EnvSwitcher extends React.Component {
     Handle the model name input losing focus.
   */
   _handleInputBlur() {
-    const name = this.refs.name.innerText.split(' ').join('-');
-    if (name === '') {
-      this.refs.name.innerText = 'untitled-model';
+    if (!this.state.validName) {
+      return;
     }
-    this.props.setModelName(name);
+    this.props.setModelName(this.refs.name.innerText);
     this.setState({hasFocus: false});
+  }
+
+  /**
+    Handle keyup in the model name input.
+  */
+  _handleInputKeyUp() {
+    const name = this.refs.name.innerText;
+    // Regex for checking that a string only contains lowercase letters,
+    // numbers, and hyphens and that it does not start or end with a hyphen.
+    const regex = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/;
+    let valid = name && regex.test(name) || false;
+    this.setState({validName: valid});
   }
 
   /**
@@ -198,18 +210,29 @@ class EnvSwitcher extends React.Component {
     }
     // If the model is not committed then allow the name to be changed.
     return (
-      <span className="env-switcher__name"
-        contentEditable={true}
-        dangerouslySetInnerHTML={{__html: this.props.environmentName}}
-        onBlur={this._handleInputBlur.bind(this)}
-        onFocus={this._handleInputFocus.bind(this)}
-        ref="name" />);
+      <div>
+        <span className="env-switcher__name"
+          contentEditable={true}
+          dangerouslySetInnerHTML={{__html: this.props.environmentName}}
+          onBlur={this._handleInputBlur.bind(this)}
+          onFocus={this._handleInputFocus.bind(this)}
+          onKeyUp={this._handleInputKeyUp.bind(this)}
+          ref="name" />
+        <div className="env-switcher__name-error">
+          This field must only contain lowercase letters, numbers, and hyphens.
+          It must not start or end with a hyphen.
+        </div>
+      </div>);
   }
 
   render() {
     const toggleEnvList = this._toggleEnvList.bind(this);
+    const classes = classNames(
+      'env-switcher',
+      {'env-switcher--error': !this.state.validName}
+    );
     return (
-      <div className="env-switcher"
+      <div className={classes}
         role="navigation"
         aria-label="Model switcher"
         onClick={this.props.modelCommitted ? toggleEnvList : null}

@@ -55,12 +55,19 @@ describe('EnvSwitcher', function() {
         onClick={null}
         tabIndex="0">
         <div className="env-switcher__toggle editable">
-          <span className="env-switcher__name"
-            contentEditable={true}
-            dangerouslySetInnerHTML={{__html: 'MyEnv'}}
-            onBlur={sinon.stub()}
-            onFocus={sinon.stub()}
-            ref="name" />
+          <div>
+            <span className="env-switcher__name"
+              contentEditable={true}
+              dangerouslySetInnerHTML={{__html: 'MyEnv'}}
+              onBlur={sinon.stub()}
+              onFocus={sinon.stub()}
+              onKeyUp={sinon.stub()}
+              ref="name" />
+            <div className="env-switcher__name-error">
+              This field must only contain lowercase letters, numbers, and hyphens.
+              It must not start or end with a hyphen.
+            </div>
+          </div>
           <div className="env-switcher__chevron"
             onClick={instance._toggleEnvList}
             onKeyPress={instance._handleKeyToggle}
@@ -83,7 +90,7 @@ describe('EnvSwitcher', function() {
 
   it('should not have an editable name when the model is committed', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -106,7 +113,7 @@ describe('EnvSwitcher', function() {
   it('can change the model name', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -124,10 +131,70 @@ describe('EnvSwitcher', function() {
       }
     };
     const output = renderer.getRenderOutput();
-    const input = output.props.children[0].props.children[0];
+    const input = output.props.children[0].props.children[0].props.children[0];
     input.props.onBlur();
     assert.equal(setModelName.callCount, 1);
     assert.equal(setModelName.args[0][0], 'new-name');
+  });
+
+  it('does not change the model name if there is an error', () => {
+    const setModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        humanizeTimestamp={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
+        modelCommitted={false}
+        setModelName={setModelName}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      name: {
+        innerText: '-'
+      }
+    };
+    const output = renderer.getRenderOutput();
+    const input = output.props.children[0].props.children[0].props.children[0];
+    input.props.onKeyUp();
+    input.props.onBlur();
+    assert.equal(setModelName.callCount, 0);
+  });
+
+  it('can render when there is an error', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        listModelsWithInfo={sinon.stub()}
+        humanizeTimestamp={sinon.stub()}
+        setModelName={sinon.stub()}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      name: {
+        innerText: '-'
+      }
+    };
+    let output = renderer.getRenderOutput();
+    const input = output.props.children[0].props.children[0].props.children[0];
+    input.props.onKeyUp();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="env-switcher env-switcher--error"
+        role="navigation"
+        aria-label="Model switcher"
+        onClick={null}
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('opens the list on click', () => {
