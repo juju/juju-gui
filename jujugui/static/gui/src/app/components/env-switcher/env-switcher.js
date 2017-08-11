@@ -22,8 +22,10 @@ class EnvSwitcher extends React.Component {
   constructor() {
     super();
     this.state = {
+      envList: [],
+      hasFocus: false,
       showEnvList: false,
-      envList: []
+      validName: true
     };
   }
 
@@ -151,33 +153,106 @@ class EnvSwitcher extends React.Component {
     return classNames(
       'env-switcher__toggle',
       {
+        'editable': !this.props.modelCommitted,
+        'editing': this.state.hasFocus,
         'is-active': this.state.showEnvList
       }
     );
   }
 
-  render() {
+  /**
+    Handle the model name input receiving focus.
+
+    @param evt {Object} The focus event.
+  */
+  _handleInputFocus(evt) {
+    const range = document.createRange();
+    range.selectNodeContents(evt.currentTarget);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    this.setState({hasFocus: true});
+  }
+
+  /**
+    Handle the model name input losing focus.
+  */
+  _handleInputBlur() {
+    const name = this.refs.name.innerText;
+    // Regex for checking that a string only contains lowercase letters,
+    // numbers, and hyphens and that it does not start or end with a hyphen.
+    const regex = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/;
+    let valid = name && regex.test(name) || false;
+    this.setState({
+      validName: valid,
+      hasFocus: false
+    });
+    if (valid) {
+      this.props.setModelName(name);
+    }
+  }
+
+  /**
+    Handle keyup in the model name input.
+  */
+  _handleInputKeyUp() {
+  }
+
+  /**
+    Generate the model name.
+  */
+  _generateName() {
+    if (this.props.modelCommitted) {
+      return (
+        <span className="env-switcher__name"
+          ref="name">
+          {this.props.environmentName}
+        </span>);
+    }
+    // If the model is not committed then allow the name to be changed.
     return (
-      <div className="env-switcher"
+      <div>
+        <span className="env-switcher__name"
+          contentEditable={true}
+          dangerouslySetInnerHTML={{__html: this.props.environmentName}}
+          onBlur={this._handleInputBlur.bind(this)}
+          onFocus={this._handleInputFocus.bind(this)}
+          ref="name" />
+        <div className="env-switcher__name-error">
+          The model name must only contain lowercase letters, numbers, and
+          hyphens. It must not start or end with a hyphen.
+        </div>
+      </div>);
+  }
+
+  render() {
+    const toggleEnvList = this._toggleEnvList.bind(this);
+    const classes = classNames(
+      'env-switcher',
+      {'env-switcher--error': !this.state.validName}
+    );
+    return (
+      <div className={classes}
         role="navigation"
-        aria-label="Model switcher">
-        <div
-          className={this._toggleClasses()}
-          onClick={this._toggleEnvList.bind(this)}
-          onKeyPress={this._handleKeyToggle.bind(this)}
-          id="environmentSwitcherToggle"
-          role="button"
-          tabIndex="0"
-          aria-haspopup="true"
-          aria-owns="environmentSwitcherMenu"
-          aria-controls="environmentSwitcherMenu"
-          aria-expanded="false">
-          <span className="env-switcher__name">
-            {this.props.environmentName}
-          </span>
-          <juju.components.SvgIcon name="chevron_down_16"
-            className="env-switcher__chevron"
-            size="16" />
+        aria-label="Model switcher"
+        onClick={this.props.modelCommitted ? toggleEnvList : null}
+        tabIndex="0">
+        <div className={this._toggleClasses()}>
+          {this._generateName()}
+          <div className="env-switcher__chevron"
+            onClick={toggleEnvList}
+            onKeyPress={this._handleKeyToggle.bind(this)}
+            id="environmentSwitcherToggle"
+            role="button"
+            tabIndex="0"
+            aria-haspopup="true"
+            aria-owns="environmentSwitcherMenu"
+            aria-controls="environmentSwitcherMenu"
+            aria-expanded="false">
+            <juju.components.SvgIcon
+              name="chevron_down_16"
+              size="16" />
+          </div>
         </div>
         {this.environmentList()}
       </div>
@@ -192,6 +267,8 @@ EnvSwitcher.propTypes = {
   environmentName: PropTypes.string,
   humanizeTimestamp: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
+  modelCommitted: PropTypes.bool,
+  setModelName: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   user: PropTypes.object
 };

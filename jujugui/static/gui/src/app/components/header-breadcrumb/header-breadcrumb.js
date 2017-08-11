@@ -62,6 +62,8 @@ class HeaderBreadcrumb extends React.Component {
           environmentName={this.props.modelName}
           humanizeTimestamp={this.props.humanizeTimestamp}
           listModelsWithInfo={this.props.listModelsWithInfo}
+          modelCommitted={this.props.modelCommitted}
+          setModelName={this.props.setModelName}
           switchModel={this.props.switchModel}
         />
       </li>);
@@ -174,8 +176,10 @@ HeaderBreadcrumb.propTypes = {
   humanizeTimestamp: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
   loadingModel: PropTypes.bool,
+  modelCommitted: PropTypes.bool,
   modelName: PropTypes.string,
   modelOwner: PropTypes.string,
+  setModelName: PropTypes.func.isRequired,
   showEnvSwitcher: PropTypes.bool.isRequired,
   showProfile: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,

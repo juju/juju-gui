@@ -1,19 +1,44 @@
 .env-switcher {
+
+  &--error {
+    .env-switcher__toggle {
+      border: 1px solid $error;
+    }
+
+    .env-switcher__name-error {
+      display: block;
+    }
+  }
+
   &__toggle {
     border: 1px solid $color-mid-light;
     border-radius: 2px;
     color: $cool-grey;
-    cursor: pointer;
     margin-left: 3px;
     padding: 4px 36px 4px 9px;
     background-color: $canvas-background;
     transition: background-color .2s;
     position: relative;
     height: 40px;
+    cursor: pointer;
 
     &:hover,
+    &.editing,
     &.is-active {
       background-color: $white;
+    }
+
+    &.editable {
+      box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.1);
+      cursor: default;
+    }
+
+    &.editable .env-switcher__name {
+      cursor: text;
+    }
+
+    &.editing .env-switcher__name {
+      max-width: none;
     }
   }
 
@@ -26,14 +51,39 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 300px;
+    cursor: pointer;
+
+    &-error {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 300px;
+      padding: 10px 20px;
+      background-color: $error;
+      border-radius: $border-radius;
+      color: $white;
+
+      &:before {
+        @include diamond($error, 10px, 'up');
+        left: 20px;
+       }
+    }
+
+    // Hide line breaks to make the contenteditable a single line input.
+    br {
+      display: none;
+    }
   }
 
   &__chevron {
     fill: currentColor;
-    margin-left: 20px;
-    position: relative;
-    top: 12px;
-    right: 10px;
     position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    padding: 10px 5px;
+    cursor: pointer;
   }
 }
