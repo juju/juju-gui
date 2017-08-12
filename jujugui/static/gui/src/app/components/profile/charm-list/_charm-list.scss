@@ -1,0 +1,20 @@
+.profile-charm-list {
+  width: 766px;
+
+  &__table-header {
+    border-bottom: 1px solid $mid-grey;
+    padding-bottom: 10px;
+  }
+
+  &__row {
+    border-bottom: 1px solid $mid-grey;
+    padding-bottom: 10px;
+  }
+
+  &__row,
+  &__table-header {
+    display: grid;
+    grid-template-columns: 225px 200px 150px auto;
+  }
+
+}
