@@ -629,7 +629,7 @@ YUI.add('juju-gui', function(Y) {
             });
             return;
           }
-          this.storeUser('charmstore', true);
+          this.storeUser('charmstore');
           console.log('logged into charmstore');
         });
       }
@@ -1073,6 +1073,7 @@ YUI.add('juju-gui', function(Y) {
             addNotification={this._bound.addNotification}
             baseURL={window.juju_config.baseUrl}
             changeState={this._bound.changeState}
+            charmstore={charmstore}
             facadesExist={facadesExist}
             listModelsWithInfo={this._bound.listModelsWithInfo}
             destroyModels={this._bound.destroyModels}
@@ -2481,7 +2482,7 @@ YUI.add('juju-gui', function(Y) {
         // Store away the charmstore auth info.
         if (this.bakery.storage.get(jujuConfig.charmstoreURL)) {
           this.get('users')['charmstore'] = {loading: true};
-          this.storeUser('charmstore', false, true);
+          this.storeUser('charmstore', true);
         }
       }
     },
@@ -3147,15 +3148,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Takes a macaroon and stores the user info (if any) in the app.
-
-      @method storeUser
+      Stores the user information returned from the whoami charmstore call.
       @param {String} service The service the macaroon comes from.
-      @param {String} macaroon The base64 encoded macaroon.
-      @param {Boolean} rerenderProfile Rerender the user profile.
       @param {Boolean} rerenderBreadcrumb Rerender the breadcrumb.
      */
-    storeUser: function(service, rerenderProfile, rerenderBreadcrumb) {
+    storeUser: function(service, rerenderBreadcrumb) {
       var callback = function(error, auth) {
         if (error) {
           const message = 'Unable to query user information';
@@ -3169,15 +3166,11 @@ YUI.add('juju-gui', function(Y) {
         }
         if (auth) {
           this.get('users')[service] = auth;
-          // If the profile is visible then we want to rerender it with the
-          // updated username.
-          if (rerenderProfile) {
-            this._renderUserProfile(this.state.current, ()=>{});
-          }
         }
         if (rerenderBreadcrumb) {
           this._renderBreadcrumb();
         }
+        this.state.dispatch();
       };
       if (service === 'charmstore') {
         this.get('charmstore').whoami(callback.bind(this));
