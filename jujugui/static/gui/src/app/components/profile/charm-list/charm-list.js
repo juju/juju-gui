@@ -76,7 +76,7 @@ class ProfileCharmList extends React.Component {
     Process the data required for the charm table.
     @param {Object} charm The charm data.
     @param {String} key The key that stores the data in the charm object.
-    @return {String} THe string value to display in the table.
+    @return {String} The string value to display in the table.
   */
   procesData(charm, key) {
     switch(key) {

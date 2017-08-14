@@ -69,7 +69,17 @@ Profile.sectionsMap = new Map([
   }],
   ['bundles', {
     label: 'Bundles',
-    getComponent: context => 'Bundles'
+    getComponent: component => {
+      const fromShape = window.shapeup.fromShape;
+      const propTypes = juju.components.ProfileBundleList.propTypes;
+      return (
+        <juju.components.ProfileBundleList
+          addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
+          changeState={component.props.changeState}
+          charmstore={fromShape(component.props.charmstore, propTypes.charmstore)}
+          user={component.props.userInfo.external} />);
+    }
   }],
   ['credentials', {
     label: 'Cloud Credentials',
@@ -107,6 +117,7 @@ YUI.add('profile', function() {
     'profile-navigation',
     'profile-header',
     'profile-model-list',
-    'profile-charm-list'
+    'profile-charm-list',
+    'profile-bundle-list'
   ]
 });
