@@ -95,7 +95,7 @@ class ProfileCharmList extends React.Component {
         return;
         break;
       case 'series':
-        return charm[key].reduce((list, val) => `${list} ${val}`, '');
+        return charm[key].reduce((list, val) => `${list} ${val}`, '').trim();
         break;
       case 'owner':
         return charm[key] || this.props.user;
