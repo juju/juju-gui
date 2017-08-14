@@ -305,11 +305,12 @@ class ProfileModelList extends React.Component {
           const owner = data.owner || this.props.userInfo.profile;
           const name = data.name;
           const path = `${this.props.baseURL}u/${owner}/${name}`;
-          return <a href={path} onClick={this.switchToModel.bind(this, {
-            name,
-            id: data.id,
-            owner
-          })} >{data.name}</a>;
+          return (
+            <a href={path} onClick={this.switchToModel.bind(this, {
+              name,
+              id: data.id,
+              owner
+            })} >{data.name}</a>);
           break;
         default:
           return data[label];
@@ -317,11 +318,11 @@ class ProfileModelList extends React.Component {
     }
 
     return (
-      rows.map((rowData, idx) =>
+      rows.map((rowData, idx) => (
         <li className="profile-model-list__row" key={idx}>
           {columns.map(label =>
             <span key={`${label}-${idx}`}>{processData.call(this, rowData, label)}</span>)}
-        </li>));
+        </li>)));
   }
 
   _generateNotification() {
