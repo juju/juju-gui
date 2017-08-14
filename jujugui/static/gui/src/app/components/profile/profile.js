@@ -61,6 +61,8 @@ Profile.sectionsMap = new Map([
       return (
         <juju.components.ProfileCharmList
           addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
+          changeState={component.props.changeState}
           charmstore={fromShape(component.props.charmstore, propTypes.charmstore)}
           user={component.props.userInfo.external} />);
     }

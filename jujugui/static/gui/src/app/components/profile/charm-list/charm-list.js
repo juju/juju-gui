@@ -61,6 +61,18 @@ class ProfileCharmList extends React.Component {
   }
 
   /**
+    Prevents the default actions on the link and navigates to the charmstore
+    for the supplied id via changeState.
+    @param {String} path The GUI charm path to navigate to.
+    @param {Object} e The click event.
+  */
+  _navigateToCharm(path, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.changeState({profile: null, store: path, hash: null});
+  }
+
+  /**
     Process the data required for the charm table.
     @param {Object} charm The charm data.
     @param {String} key The key that stores the data in the charm object.
@@ -70,10 +82,15 @@ class ProfileCharmList extends React.Component {
     switch(key) {
       case 'name':
         const name = charm[key];
-        const src = `${this.props.charmstore.url}/${charm.id.replace('cs:', '')}/icon.svg`;
+        const id = charm.id;
+        const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
+        const path = window.jujulib.URL.fromLegacyString(id).path();
         return [
           <img key="img" className="profile-charm-list__icon" src={src} title={name} />,
-          name
+          <a
+            key="link"
+            href={`${this.props.baseURL}${path}`}
+            onClick={this._navigateToCharm.bind(this, path)}>{name}</a>
         ];
         return;
         break;
@@ -116,6 +133,8 @@ class ProfileCharmList extends React.Component {
 
 ProfileCharmList.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  baseURL: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
