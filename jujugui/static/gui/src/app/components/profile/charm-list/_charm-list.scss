@@ -17,4 +17,11 @@
     grid-template-columns: 225px 200px 150px auto;
   }
 
+  &__icon {
+    border-radius: 50%;
+    width: 20px;
+    margin-right: 10px;
+    float: left;
+  }
+
 }

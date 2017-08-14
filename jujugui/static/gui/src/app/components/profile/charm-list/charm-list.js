@@ -68,6 +68,15 @@ class ProfileCharmList extends React.Component {
   */
   procesData(charm, key) {
     switch(key) {
+      case 'name':
+        const name = charm[key];
+        const src = `${this.props.charmstore.url}/${charm.id.replace('cs:', '')}/icon.svg`;
+        return [
+          <img key="img" className="profile-charm-list__icon" src={src} title={name} />,
+          name
+        ];
+        return;
+        break;
       case 'series':
         return charm[key].reduce((list, val) => `${list} ${val}`, '');
         break;
@@ -108,7 +117,8 @@ class ProfileCharmList extends React.Component {
 ProfileCharmList.propTypes = {
   addNotification: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
-    list: PropTypes.func.isRequired
+    list: PropTypes.func.isRequired,
+    url: PropTypes.string.isRequired
   }).isRequired,
   user: PropTypes.string
 };
