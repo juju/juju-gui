@@ -91,7 +91,6 @@ class ProfileBundleList extends React.Component {
           src = `${this.props.charmstore.url}/${app.charm.replace('cs:', '')}/icon.svg`;
           break;
         }
-        console.log(src);
         const path = window.jujulib.URL.fromLegacyString(bundle.id).path();
         return [
           <img key="img" className="profile-bundle-list__icon" src={src} title={name} />,
