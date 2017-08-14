@@ -365,7 +365,8 @@ describe('jujulib charmstore', function() {
             'include=bundle-unit-count&' +
             'include=extra-info&' +
             'include=supported-series&' +
-            'include=stats']);
+            'include=stats&' +
+            'include=perm']);
     });
 
     it('can list bundles', function() {

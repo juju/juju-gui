@@ -23,6 +23,10 @@ describe('Profile', function() {
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
+        charmstore={{
+          list: sinon.stub(),
+          url: '/charmstore'
+        }}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}

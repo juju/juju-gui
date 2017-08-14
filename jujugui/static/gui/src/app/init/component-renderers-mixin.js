@@ -221,6 +221,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           addNotification={this._bound.addNotification}
           baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
+          charmstore={charmstore}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
