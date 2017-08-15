@@ -60,6 +60,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
@@ -170,6 +171,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const icons = output.props.children[3].props.children.props.children;
@@ -262,6 +264,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const icons = output.props.children[3].props.children.props.children;
@@ -355,6 +358,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[0].props.onClick({preventDefault: preventDefault});
@@ -375,6 +379,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const series = output.props.children[2].props.children.props.children;
@@ -404,6 +409,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[1].props.children[1].props.children[0].props.children
@@ -431,6 +437,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[4].props.children.props.children[1]
@@ -449,6 +456,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={sinon.stub()}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -466,6 +474,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={sinon.stub()}
         deployTarget={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -484,6 +493,7 @@ describe('SearchResultsItem', function() {
         acl={acl}
         changeState={changeState}
         deployTarget={deployTarget}
+        displayPostDeployment={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[5].props.children.props.action();

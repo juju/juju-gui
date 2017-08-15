@@ -52,6 +52,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getModelName={sinon.stub()}
@@ -155,6 +156,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
@@ -180,6 +182,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getModelName={sinon.stub()}
@@ -212,6 +215,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
@@ -241,6 +245,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
@@ -270,6 +275,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={entity}
         getBundleYAML={sinon.stub()}
@@ -303,6 +309,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={entity}
         getBundleYAML={sinon.stub()}
@@ -336,6 +343,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
@@ -357,6 +365,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
@@ -379,6 +388,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
@@ -404,6 +414,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -432,6 +443,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -465,6 +477,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -496,6 +509,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -526,6 +540,7 @@ describe('EntityHeader', function() {
     const output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
         acl={acl}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -556,6 +571,7 @@ describe('EntityHeader', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         acl={acl}
+        displayPostDeployment={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
@@ -598,6 +614,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         entityModel={mockEntity}
         changeState={changeState}
         deployService={sinon.spy()}
@@ -633,6 +650,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
+        displayPostDeployment={sinon.stub()}
         entityModel={mockEntity}
         changeState={changeState}
         deployService={sinon.spy()}
@@ -661,6 +679,7 @@ describe('EntityHeader', function() {
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
+        displayPostDeployment={sinon.stub()}
         changeState={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}

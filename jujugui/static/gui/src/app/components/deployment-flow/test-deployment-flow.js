@@ -76,6 +76,7 @@ const createDeploymentFlow = (props = {}) => {
     createUser: sinon.stub(),
     ddData: {},
     deploy: sinon.stub().callsArg(0),
+    displayPostDeployment: sinon.stub(),
     formatConstraints: sinon.stub(),
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
@@ -291,15 +292,23 @@ describe('DeploymentFlow', function() {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
-    const entityModel = {id: entityId};
+    const entityModel = {
+      id: entityId,
+      get: sinon.stub().returns([]),
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
     const entityData = [entityModel];
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub().returns(entityModel);
     const renderMarkdown = sinon.stub();
+    const displayPostDeployment = sinon.stub();
     const renderer = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
+      displayPostDeployment: displayPostDeployment,
       getEntity: getEntity,
       makeEntityModel: makeEntityModel,
       modelCommitted: false,
@@ -312,6 +321,10 @@ describe('DeploymentFlow', function() {
     // Call the getEntity callback and then re-render.
     getEntity.args[0][1](null, entityData);
     instance.render();
+    assert.deepEqual(
+      displayPostDeployment.args[0],
+      ['cs:bundle/kubernetes-core-8', 'Kubernetes Core', []]
+    );
     const output2 = renderer.getRenderOutput();
     expect(output2.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy

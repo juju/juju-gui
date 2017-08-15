@@ -102,7 +102,12 @@ class DeploymentFlow extends React.Component {
         });
         return;
       }
-      this.setState({ddEntity: this.props.makeEntityModel(data[0])});
+      const entityModel = this.props.makeEntityModel(data[0]);
+      this.props.displayPostDeployment(
+        entityId,
+        entityModel.toEntity().displayName,
+        entityModel.get('files'));
+      this.setState({ddEntity: entityModel});
     });
   }
 
@@ -1080,6 +1085,7 @@ DeploymentFlow.propTypes = {
   credential: PropTypes.string,
   ddData: PropTypes.object,
   deploy: PropTypes.func.isRequired,
+  displayPostDeployment: PropTypes.func.isRequired,
   formatConstraints: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
   generateCloudCredentialName: PropTypes.func.isRequired,

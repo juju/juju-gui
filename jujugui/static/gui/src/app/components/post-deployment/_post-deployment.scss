@@ -1,13 +1,22 @@
-.quickstart {
+.post-deployment {
   max-height: 350px;
+  z-index: index($z-indexed-elements, quickstart);
 
   p,
   li {
     font-size: .875rem;
   }
 
-  a {
+  p {
+    display: inline;
+  }
+
+  a,
+  .link {
     color: $link-blue;
+    font-weight: 300;
+    cursor: pointer;
+    font-size: 0.875rem;
   }
 
   h1 {
@@ -23,7 +32,9 @@
   }
 
   &--simple {
-    p {
+    p,
+    a,
+    .link {
       font-size: 1rem;
       margin: 0;
     }

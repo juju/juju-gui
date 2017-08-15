@@ -81,6 +81,7 @@ class EntityDetails extends React.Component {
           <div>
             <juju.components.EntityHeader
               acl={this.props.acl}
+              displayPostDeployment={this.props.displayPostDeployment}
               entityModel={entityModel}
               addNotification={this.props.addNotification}
               importBundleYAML={this.props.importBundleYAML}
@@ -277,6 +278,7 @@ EntityDetails.propTypes = {
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   deployService: PropTypes.func.isRequired,
+  displayPostDeployment: PropTypes.func.isRequired,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,

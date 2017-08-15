@@ -149,7 +149,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="inspector-container"></div>
       <div id="white-box-container"></div>
       <div id="machine-view"></div>
-      <div id="quickstart"></div>
+      <div id="post-deployment"></div>
       <div id="status-container"></div>
       <div id="login-notification"></div>
       <div id="cookie-container"></div>

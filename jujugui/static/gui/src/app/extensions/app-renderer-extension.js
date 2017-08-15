@@ -72,6 +72,7 @@ YUI.add('app-renderer-extension', function(Y) {
           appState={this.state}
           user={this.user}
           changeState={this.state.changeState.bind(this.state)}
+          clearPostDeployment={this._clearPostDeployment.bind(this)}
           humanizeTimestamp={views.humanizeTimestamp}
           listModelsWithInfo={listModelsWithInfo}
           modelName={this.db.environment.get('name')}

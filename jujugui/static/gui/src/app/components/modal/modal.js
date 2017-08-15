@@ -31,6 +31,7 @@ class Modal extends React.Component {
 }
 
 Modal.propTypes = {
+  children: PropTypes.any,
   closeModal: PropTypes.func.isRequired,
   extraClasses: PropTypes.string,
   title: PropTypes.any

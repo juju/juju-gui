@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
-  let series, acl, deployTarget, generatePath;
+  let series, acl, deployTarget, displayPostDeployment, generatePath;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -34,6 +34,7 @@ describe('SearchResults', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     deployTarget = sinon.stub();
+    displayPostDeployment = sinon.stub();
     generatePath = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
@@ -50,6 +51,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={sinon.stub()}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -72,6 +74,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -108,6 +111,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -164,6 +168,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -322,6 +327,7 @@ describe('SearchResults', function() {
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
+                      displayPostDeployment={displayPostDeployment}
                       generatePath={generatePath}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
@@ -329,6 +335,7 @@ describe('SearchResults', function() {
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
+                      displayPostDeployment={displayPostDeployment}
                       generatePath={generatePath}
                       item={results[1]}
                       key="~test-owner/mysql-two" />
@@ -352,6 +359,7 @@ describe('SearchResults', function() {
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
+                        displayPostDeployment={displayPostDeployment}
                         generatePath={generatePath}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
@@ -359,6 +367,7 @@ describe('SearchResults', function() {
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
+                        displayPostDeployment={displayPostDeployment}
                         generatePath={generatePath}
                         item={results[3]}
                         key="~test-owner/mysql-four" />
@@ -379,6 +388,7 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={deployTarget}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -403,6 +413,7 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={deployTarget}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -430,6 +441,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -445,6 +457,7 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -749,6 +762,7 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
+          displayPostDeployment={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}

@@ -59,6 +59,7 @@ class HeaderBreadcrumb extends React.Component {
           addNotification={this.props.addNotification}
           user={this.props.user}
           changeState={this.props.changeState}
+          clearPostDeployment={this.props.clearPostDeployment}
           environmentName={this.props.modelName}
           humanizeTimestamp={this.props.humanizeTimestamp}
           listModelsWithInfo={this.props.listModelsWithInfo}
@@ -171,6 +172,7 @@ HeaderBreadcrumb.propTypes = {
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   humanizeTimestamp: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
   loadingModel: PropTypes.bool,

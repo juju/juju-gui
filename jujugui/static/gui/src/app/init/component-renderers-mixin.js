@@ -193,6 +193,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification=
           {this.db.notifications.add.bind(this.db.notifications)}
         charmstore={charmstore}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         currentModel={currentModel}
         d3={yui.d3}
         facadesExist={facadesExist}
@@ -221,6 +222,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
           changeState={this._bound.changeState}
+          clearPostDeployment={this._clearPostDeployment.bind(this)}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
@@ -284,6 +286,39 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
+    Display post deployment help.
+
+    @param {String} id The entity ID of the charm or bundle.
+    @param {String} displayName The display name of the charm or bundle.
+    @param {Array} files An array of the charm or bundles files.
+  */
+  _displayPostDeployment(id, displayName, files) {
+    this._clearPostDeployment();
+    const charmstore = this.get('charmstore');
+
+    const entityUrl = (id) => {
+      try {
+        return window.jujulib.URL.fromString(id);
+      } catch (_) {
+        return window.jujulib.URL.fromLegacyString(id);
+      }
+    };
+
+    ReactDOM.render(
+      <window.juju.components.PostDeployment
+        changeState={this.state.changeState.bind(this.state)}
+        closePostDeployment={this._clearPostDeployment.bind(this)}
+        entityId={id}
+        entityUrl={entityUrl(id)}
+        getFile={charmstore.getFile.bind(charmstore)}
+        files={files}
+        marked={marked}
+        displayName={displayName} />,
+      document.getElementById('post-deployment')
+    );
+  }
+
+  /**
     The cleanup dispatcher keyboard shortcuts modal.
   */
   _clearShortcutsModal() {
@@ -295,6 +330,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _clearSettingsModal() {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('modal-gui-settings'));
+  }
+  /**
+    The cleanup dispatcher for the post deployment screen.
+  */
+  _clearPostDeployment() {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('post-deployment'));
   }
   _renderHeaderLogo() {
     const userName = this.user.displayName;
@@ -362,6 +404,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         deployTarget={this.deployTarget.bind(this, charmstore)}
+        displayPostDeployment={this._displayPostDeployment.bind(this)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
@@ -777,6 +820,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
         deploy={utils.deploy.bind(utils, this)}
+        displayPostDeployment={this._displayPostDeployment.bind(this)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={utils.formatConstraints.bind(utils)}
@@ -1020,6 +1064,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
