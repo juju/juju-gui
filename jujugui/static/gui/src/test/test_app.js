@@ -1143,6 +1143,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         user: userClass
       });
+      app.state.dispatch = sinon.stub();
       var charmstore = app.get('charmstore');
       csStub = sinon.stub(charmstore, 'whoami');
       this._cleanups.push(csStub);
@@ -1162,19 +1163,16 @@ describe('App', function() {
       assert.deepEqual(users['charmstore'], user);
     });
 
-    it('re-renders the user profile & breadcrumb if told to', function() {
+    it('re-dispatches the app & renders the breadcrumb if told to', function() {
       const user = {user: 'test'};
       const state = {test: 'state'};
       app.state._appStateHistory.push(state);
-      app._renderUserProfile = sinon.stub();
       app._renderBreadcrumb = sinon.stub();
-      app.storeUser('charmstore', true, true);
+      app.storeUser('charmstore', true);
       assert.equal(csStub.callCount, 1);
       csStub.lastCall.args[0](null, user);
-      assert.equal(app._renderUserProfile.callCount, 1);
-      assert.equal(app._renderUserProfile.args[0][0], state);
-      assert.equal(typeof app._renderUserProfile.args[0][1], 'function');
       assert.equal(app._renderBreadcrumb.callCount, 1);
+      assert.equal(app.state.dispatch.callCount, 1);
       assert.deepEqual(app.get('users')['charmstore'], user);
     });
   });

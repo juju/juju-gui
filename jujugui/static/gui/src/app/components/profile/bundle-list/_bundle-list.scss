@@ -1,0 +1,19 @@
+.profile-bundle-list {
+  width: 766px;
+
+  &__row,
+  &__table-header {
+    border-bottom: 1px solid $mid-grey;
+    padding-bottom: 10px;
+    display: grid;
+    grid-template-columns: 225px 200px 150px auto;
+  }
+
+  &__icon {
+    border-radius: 50%;
+    width: 20px;
+    float: left;
+    margin-right: 15px;
+  }
+
+}

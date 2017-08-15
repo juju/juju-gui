@@ -60,7 +60,7 @@ class UserProfile extends React.Component {
         console.log('cannot retrieve charm store macaroon:', err);
         return;
       }
-      props.storeUser('charmstore', true);
+      props.storeUser('charmstore');
     };
     // TODO frankban: should pass an user object as prop here instead.
     const macaroon = props.charmstore.bakery.storage.get('charmstore');
