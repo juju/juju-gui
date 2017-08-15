@@ -78,7 +78,7 @@ class ProfileBundleList extends React.Component {
     @param {String} key The key that stores the data in the bundle object.
     @return {String} The string value to display in the table.
   */
-  procesData(bundle, key) {
+  _processData(bundle, key) {
     switch(key) {
       case 'name':
         const name = bundle[key];
@@ -127,7 +127,8 @@ class ProfileBundleList extends React.Component {
           {this.state.data
             .map((bundle, idx) =>
               <li className="profile-bundle-list__row" key={idx}>
-                {bundleKeys.map(key => <span key={key}>{this.procesData(bundle, key)}</span>)}
+                {bundleKeys.map(key =>
+                  <span key={key}>{this._processData(bundle, key)}</span>)}
               </li>
             )}
         </ul>

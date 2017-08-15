@@ -78,7 +78,7 @@ class ProfileCharmList extends React.Component {
     @param {String} key The key that stores the data in the charm object.
     @return {String} The string value to display in the table.
   */
-  procesData(charm, key) {
+  _processData(charm, key) {
     switch(key) {
       case 'name':
         const name = charm[key];
@@ -123,7 +123,7 @@ class ProfileCharmList extends React.Component {
           {this.state.data
             .map((charm, idx) =>
               <li className="profile-charm-list__row" key={idx}>
-                {charmKeys.map(key => <span key={key}>{this.procesData(charm, key)}</span>)}
+                {charmKeys.map(key => <span key={key}>{this._processData(charm, key)}</span>)}
               </li>
             )}
         </ul>
