@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -26,73 +10,68 @@ class UserMenu extends React.Component {
   constructor() {
     super();
     this.state = {
-      showUserMenu: false
+      showDropdown: false
     };
   }
 
   /**
-    When the menu is shown, clicking anywhere but the menu will close
-    the menu.
-
-    @method handleClickOutside
+    Passed into the dropdown component to call when the user clicks outside
+    of it. We use this trigger to close the dropdown.
+    @param {Object} e The click event.
   */
-  handleClickOutside() {
-    this.setState({ showUserMenu: false });
+  _handleDropdownClickOutside(e) {
+    // If they click the button again we don't want it to clse the menu in the
+    // clickoutside as the _toggleHelpMenu will handle that.
+    if (!ReactDOM.findDOMNode(this).contains(e.target)) {
+      this.setState({showDropdown: false});
+    }
   }
 
   /**
     Clicking the help menu will toggle whether it's visibility.
-
-    @method toggleUserMenu
   */
-  toggleUserMenu() {
-    this.setState({ showUserMenu: !this.state.showUserMenu });
+  _toggleDropdown() {
+    this.setState({showDropdown: !this.state.showDropdown});
   }
 
   _handleProfileClick() {
     this.props.navigateUserProfile();
-    this.toggleUserMenu();
+    this._toggleDropdown();
   }
 
   _handleAccountClick() {
     this.props.navigateUserAccount();
-    this.toggleUserMenu();
+    this._toggleDropdown();
   }
 
   /**
     Generate menu based on whether the button has been clicked.
-
-    @method generateUserMenu
   */
   _generateUserMenu() {
-    if (!this.state.showUserMenu) {
+    if (!this.state.showDropdown) {
       return '';
     }
     const logoutLink = this.props.LogoutLink;
     return (
-      <juju.components.Panel instanceName="header-menu__menu" visible={true}>
-        <ul className="header-menu__menu-list" role="menubar">
-          <li className="header-menu__menu-list-item
-            header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            <a className="header-menu__menu-list-item-link"
-              role="button"
-              onClick={this._handleProfileClick.bind(this)}>Profile</a>
-          </li>
-          <li className="header-menu__menu-list-item
-            header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            <a className="header-menu__menu-list-item-link"
-              role="button"
-              onClick={this._handleAccountClick.bind(this)}>Account</a>
-          </li>
-          <li className="header-menu__menu-list-item
-            header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            {logoutLink}
-          </li>
-        </ul>
-      </juju.components.Panel>
+      <juju.components.DropdownMenu
+        handleClickOutside={this._handleDropdownClickOutside.bind(this)}>
+        <li className="dropdown-menu__list-item"
+          role="menuitem" tabIndex="0">
+          <a className="dropdown-menu__list-item-link"
+            role="button"
+            onClick={this._handleProfileClick.bind(this)}>Profile</a>
+        </li>
+        <li className="dropdown-menu__list-item"
+          role="menuitem" tabIndex="0">
+          <a className="dropdown-menu__list-item-link"
+            role="button"
+            onClick={this._handleAccountClick.bind(this)}>Account</a>
+        </li>
+        <li className="dropdown-menu__list-item"
+          role="menuitem" tabIndex="0">
+          {logoutLink}
+        </li>
+      </juju.components.DropdownMenu>
     );
   }
 
@@ -106,7 +85,7 @@ class UserMenu extends React.Component {
       'header-menu__button',
       {
         'header-menu__button-with-text': isLogin,
-        'header-menu__show-menu': this.state.showUserMenu
+        'header-menu__show-menu': this.state.showDropdown
       });
   }
 
@@ -128,7 +107,7 @@ class UserMenu extends React.Component {
     return (
       <div className="header-menu">
         <span className={this._getClassNames(showLogin)}
-          onClick={this.toggleUserMenu.bind(this)}
+          onClick={this._toggleDropdown.bind(this)}
           role="button"
           tabIndex="0"
           aria-haspopup="true"
@@ -152,8 +131,8 @@ UserMenu.propTypes = {
 };
 
 YUI.add('user-menu', function() {
-  juju.components.UserMenu = enhanceWithClickOutside(UserMenu);
+  juju.components.UserMenu = UserMenu;
 }, '0.1.0', { requires: [
-  'panel-component',
+  'dropdown-menu',
   'svg-icon'
 ]});
