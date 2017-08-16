@@ -21,7 +21,12 @@ describe('Profile', function() {
         acl={{}}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
+        baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
+        charmstore={{
+          list: sinon.stub(),
+          url: '/charmstore'
+        }}
         clearCanvasInfo={options.clearCanvasInfo || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
@@ -47,6 +52,7 @@ describe('Profile', function() {
           <juju.components.ProfileModelList
             acl={instance.props.acl}
             addNotification={instance.props.addNotification}
+            baseURL={instance.props.baseURL}
             changeState={instance.props.changeState}
             clearCanvasInfo={instance.props.clearCanvasInfo}
             facadesExist={instance.props.facadesExist}

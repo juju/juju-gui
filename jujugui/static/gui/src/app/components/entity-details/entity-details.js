@@ -95,12 +95,14 @@ class EntityDetails extends React.Component {
               scrollPosition={this.props.scrollPosition}
               urllib={this.props.urllib}
             />
-            {this._generateDiagram(entityModel)}
             <juju.components.EntityContent
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              clearLightbox={this.props.clearLightbox}
+              displayLightbox={this.props.displayLightbox}
               flags={this.props.flags}
+              getDiagramURL={this.props.getDiagramURL}
               getFile={this.props.getFile}
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
@@ -218,23 +220,6 @@ class EntityDetails extends React.Component {
   }
 
   /**
-  Generate the diagram markup for a bundle.
-
-  @method _generateDiagram
-  @param {Object} entityModel The entity model.
-  @return {Object} The diagram markup.
-  */
-  _generateDiagram(entityModel) {
-    if (entityModel.get('entityType') !== 'bundle') {
-      return;
-    }
-    return <juju.components.EntityContentDiagram
-      getDiagramURL={this.props.getDiagramURL}
-      id={entityModel.get('id')}
-      isRow={true} />;
-  }
-
-  /**
     Handle navigating back.
 
     @method _handleBack
@@ -277,8 +262,10 @@ EntityDetails.propTypes = {
   addNotification: PropTypes.func.isRequired,
   apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   displayCanvasInfo: PropTypes.func.isRequired,
+  displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,

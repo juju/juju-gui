@@ -864,12 +864,13 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
       const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
       assert.deepEqual(switchArgs, [env, model]);
@@ -879,10 +880,15 @@ describe('utilities', function() {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid-1')
       };
-      const env = {};
+      const env = {
+        get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
+          getCurrentChangeSet: sinon.stub().returns({})
+        })
+      };
       const model = {id: 'model-uuid-1', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       // The underlying _switchModel is not called.
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
@@ -893,13 +899,32 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
       const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, model);
+      utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
+      assert.deepEqual(utils._switchModel.callCount, 0);
+    });
+    
+    it('does not switch when committing', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+      };
+      const env = {
+        get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(true),
+          getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
+        })
+      };
+      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
+      const addNotification = sinon.stub();
+      utils._switchModel = sinon.stub();
+      utils.switchModel.call(app, env, addNotification, model);
+      assert.deepEqual(addNotification.callCount, 1);
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
@@ -909,20 +934,22 @@ describe('utilities', function() {
       };
       const env = {
         get: sinon.stub().returns({
+          isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, null);
+      utils.switchModel.call(app, env, sinon.stub(), null);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
+      console.log(switchArgs);
       assert.deepEqual(switchArgs, [env, null]);
     });
 
     it('can switch models', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        state: {changeState: sinon.stub()}
+        state: {changeState: sinon.stub(), current: {}}
       };
       const env = {set: sinon.stub()};
       const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
@@ -931,7 +958,7 @@ describe('utilities', function() {
       assert.equal(app.state.changeState.callCount, 1, 'changeState');
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         root: null,
         hash: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
@@ -945,13 +972,13 @@ describe('utilities', function() {
     it('changes to disconnected mode if model is missing', function() {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
-        state: {changeState: sinon.stub()}
+        state: {changeState: sinon.stub(), current: {}}
       };
       const env = {set: sinon.stub()};
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         root: 'new',
         hash: null,
         model: null
@@ -967,9 +994,42 @@ describe('utilities', function() {
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         hash: null,
         root: null,
+        model: null
+      }]);
+    });
+
+    it('does not close the status pane when switching to a model', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
+      };
+      const env = {set: sinon.stub()};
+      const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
+      utils._switchModel.call(app, env, model);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        profile: null,
+        gui: {status: ''},
+        hash: null,
+        root: null,
+        model: {path: 'who/mymodel', uuid: 'my-uuid'}
+      }]);
+    });
+
+    it('closes the status pane when switching to a new model', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
+      };
+      const env = {set: sinon.stub()};
+      utils._switchModel.call(app, env, null);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        profile: null,
+        gui: {status: null},
+        hash: null,
+        root: 'new',
         model: null
       }]);
     });
@@ -1168,7 +1228,7 @@ describe('utilities', function() {
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: null,
+        gui: {status: null},
         hash: null,
         root: null,
         model: {

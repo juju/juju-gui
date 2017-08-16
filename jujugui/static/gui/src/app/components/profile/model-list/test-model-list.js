@@ -155,6 +155,7 @@ describe('Profile Model List', function() {
       <juju.components.ProfileModelList
         acl={{}}
         addNotification={sinon.stub()}
+        baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         clearCanvasInfo={options.clearCanvasInfo || sinon.stub()}
         facadesExist={true}
@@ -191,15 +192,33 @@ describe('Profile Model List', function() {
             <span>Action</span>
           </li>
           <li className="profile-model-list__row" key="">
-            <span>mymodel</span>
+            <span>
+              <a
+                href="/gui/u/tester/mymodel"
+                onClick={output.props.children[0].props
+                  .children[2].props.children[0].props.children.props.onClick}>
+                mymodel</a></span>
             <span>0 EC2/EU-WEST-1</span>
-            <span>2017-07-06T14:47:03.000Z</span>
+            <span>
+              <juju.components.DateDisplay
+                date="2017-07-06T14:47:03.000Z"
+                relative={true} />
+            </span>
             <span>-</span>
           </li>
           <li className="profile-model-list__row" key="">
-            <span>mymodel2</span>
+            <span>
+              <a
+                href="/gui/u/tester/mymodel2"
+                onClick={output.props.children[0].props
+                  .children[3].props.children[0].props.children.props.onClick}>
+                mymodel2</a></span>
             <span>0 GCE/US-CENTRAL1</span>
-            <span>2017-07-06T16:26:47.000Z</span>
+            <span>
+              <juju.components.DateDisplay
+                date="2017-07-06T16:26:47.000Z"
+                relative={true} />
+            </span>
             <span>-</span>
           </li>
         </ul>
@@ -216,13 +235,23 @@ describe('Profile Model List', function() {
             <span>Owner</span>
           </li>
           <li className="profile-model-list__row" key="">
-            <span>test-db</span>
+            <span>
+              <a
+                href="/gui/u/tester2/test-db"
+                onClick={output.props.children[1].props
+                  .children[2].props.children[0].props.children.props.onClick}>
+                test-db</a></span>
             <span>2 GCE/US-EAST1</span>
             <span>read</span>
             <span>tester2</span>
           </li>
           <li className="profile-model-list__row" key="">
-            <span>website</span>
+            <span>
+              <a
+                href="/gui/u/tester3/website"
+                onClick={output.props.children[1].props
+                  .children[2].props.children[0].props.children.props.onClick}>
+                website</a></span>
             <span>25 GCE/US-EAST1</span>
             <span>admin</span>
             <span>tester3</span>

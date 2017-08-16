@@ -28,7 +28,7 @@ class Profile extends React.Component {
             activeSection={this.props.activeSection || mapEntry[0]}
             changeState={this.props.changeState}
             sectionsMap={sectionsMap}/>
-          {section.getComponent(this)}
+          {section.getComponent.call(this, this)}
         </div>
       </juju.components.Panel>
     );
@@ -44,6 +44,7 @@ Profile.sectionsMap = new Map([
         <juju.components.ProfileModelList
           acl={component.props.acl}
           addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
           changeState={component.props.changeState}
           clearCanvasInfo={component.props.clearCanvasInfo}
           facadesExist={component.props.facadesExist}
@@ -55,11 +56,31 @@ Profile.sectionsMap = new Map([
   }],
   ['charms', {
     label: 'Charms',
-    getComponent: context => 'Charms'
+    getComponent: component => {
+      const fromShape = window.shapeup.fromShape;
+      const propTypes = juju.components.ProfileCharmList.propTypes;
+      return (
+        <juju.components.ProfileCharmList
+          addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
+          changeState={component.props.changeState}
+          charmstore={fromShape(component.props.charmstore, propTypes.charmstore)}
+          user={component.props.userInfo.external} />);
+    }
   }],
   ['bundles', {
     label: 'Bundles',
-    getComponent: context => 'Bundles'
+    getComponent: component => {
+      const fromShape = window.shapeup.fromShape;
+      const propTypes = juju.components.ProfileBundleList.propTypes;
+      return (
+        <juju.components.ProfileBundleList
+          addNotification={component.props.addNotification}
+          baseURL={component.props.baseURL}
+          changeState={component.props.changeState}
+          charmstore={fromShape(component.props.charmstore, propTypes.charmstore)}
+          user={component.props.userInfo.external} />);
+    }
   }],
   ['credentials', {
     label: 'Cloud Credentials',
@@ -71,7 +92,9 @@ Profile.propTypes = {
   acl: PropTypes.object,
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
+  baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  charmstore: PropTypes.object.isRequired,
   clearCanvasInfo: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
@@ -95,6 +118,8 @@ YUI.add('profile', function() {
     'panel-component',
     'profile-navigation',
     'profile-header',
-    'profile-model-list'
+    'profile-model-list',
+    'profile-charm-list',
+    'profile-bundle-list'
   ]
 });

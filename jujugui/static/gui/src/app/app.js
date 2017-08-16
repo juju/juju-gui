@@ -39,6 +39,7 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
+  const fromShape = window.shapeup.fromShape;
 
   /**
    * The main app class.
@@ -559,19 +560,28 @@ YUI.add('juju-gui', function(Y) {
         document.addEventListener(
           eventName, this._boundAppDragOverHandler);
       });
-      // As a minor performance boost and to avoid potential rerenderings
-      // because of rebinding functions in the render methods. Any method that
-      // requires binding and is passed into components should be bound here
-      // and then used across components.
+      this._bindRenderUtilities();
+      // In Juju >= 2 we connect to the controller and then to the model.
+      this.state.bootstrap();
+    },
+
+    /**
+      As a minor performance boost and to avoid potential rerenderings
+      because of rebinding functions in the render methods. Any method that
+      requires binding and is passed into components should be bound here
+      and then used across components.
+    */
+    _bindRenderUtilities: function() {
       this._bound = {
         addNotification: this.db.notifications.add.bind(this.db.notifications),
         changeState: this.state.changeState.bind(this.state),
         destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
-        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
-        switchModel: views.utils.switchModel.bind(this, this.env)
+        listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI) // eslint-disable-line max-len
       };
-      // In Juju >= 2 we connect to the controller and then to the model.
-      this.state.bootstrap();
+      // Bind switchModel separately to include the already bound
+      // addNotifications.
+      this._bound.switchModel = views.utils.switchModel.bind(
+        this, this.env, this._bound.addNotification);
     },
 
     /**
@@ -619,7 +629,7 @@ YUI.add('juju-gui', function(Y) {
             });
             return;
           }
-          this.storeUser('charmstore', true);
+          this.storeUser('charmstore');
           console.log('logged into charmstore');
         });
       }
@@ -1062,7 +1072,9 @@ YUI.add('juju-gui', function(Y) {
             acl={this.acl}
             activeSection={state.hash}
             addNotification={this._bound.addNotification}
+            baseURL={window.juju_config.baseUrl}
             changeState={this._bound.changeState}
+            charmstore={charmstore}
             clearCanvasInfo={this._clearCanvasInfo.bind(this)}
             facadesExist={facadesExist}
             listModelsWithInfo={this._bound.listModelsWithInfo}
@@ -1070,7 +1082,6 @@ YUI.add('juju-gui', function(Y) {
             switchModel={this._bound.switchModel}
             userInfo={this._getUserInfo(state)} />;
       }
-
       ReactDOM.render(profile, document.getElementById('top-page-container'));
     },
 
@@ -1811,8 +1822,10 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          clearLightbox={this._clearLightbox.bind(this)}
           deployTarget={this.deployTarget.bind(this, charmstore)}
           displayCanvasInfo={this._displayCanvasInfo.bind(this)}
+          displayLightbox={this._displayLightbox.bind(this)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
             this.bundleImporter)}
@@ -1940,8 +1953,22 @@ YUI.add('juju-gui', function(Y) {
           );
         }
       );
+    },
 
+    /**
+      Opents the lightbox with provided content.
 
+      @param {Object} content React Element.
+      @param {String} caption A string to display under the content.
+    */
+    _displayLightbox: function(content, caption) {
+      ReactDOM.render(
+        <window.juju.components.Lightbox
+          caption={caption}
+          close={this._clearLightbox.bind(this)}>
+          {content}
+        </window.juju.components.Lightbox>,
+        document.getElementById('lightbox'));
     },
 
     /**
@@ -1966,6 +1993,15 @@ YUI.add('juju-gui', function(Y) {
     _clearCanvasInfo: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('canvas-info'));
+    },
+
+    /**
+      Remove the lightbox.
+    */
+    _clearLightbox: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('lightbox')
+      );
     },
 
     /**
@@ -2023,11 +2059,15 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderStatusView: function(state, next) {
+      const propTypes = window.juju.components.Status.propTypes;
       ReactDOM.render(
         <window.juju.components.Status
-          addNotification={
-            this.db.notifications.add.bind(this.db.notifications)} />,
-        document.getElementById('status-container'));
+          db={fromShape(this.db, propTypes.db)}
+          model={fromShape(this.env.getAttrs(), propTypes.model)}
+          urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
+        />,
+        document.getElementById('status-container')
+      );
       next();
     },
 
@@ -2506,7 +2546,7 @@ YUI.add('juju-gui', function(Y) {
         // Store away the charmstore auth info.
         if (this.bakery.storage.get(jujuConfig.charmstoreURL)) {
           this.get('users')['charmstore'] = {loading: true};
-          this.storeUser('charmstore', false, true);
+          this.storeUser('charmstore', true);
         }
       }
     },
@@ -3172,15 +3212,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Takes a macaroon and stores the user info (if any) in the app.
-
-      @method storeUser
+      Stores the user information returned from the whoami charmstore call.
       @param {String} service The service the macaroon comes from.
-      @param {String} macaroon The base64 encoded macaroon.
-      @param {Boolean} rerenderProfile Rerender the user profile.
       @param {Boolean} rerenderBreadcrumb Rerender the breadcrumb.
      */
-    storeUser: function(service, rerenderProfile, rerenderBreadcrumb) {
+    storeUser: function(service, rerenderBreadcrumb) {
       var callback = function(error, auth) {
         if (error) {
           const message = 'Unable to query user information';
@@ -3194,15 +3230,11 @@ YUI.add('juju-gui', function(Y) {
         }
         if (auth) {
           this.get('users')[service] = auth;
-          // If the profile is visible then we want to rerender it with the
-          // updated username.
-          if (rerenderProfile) {
-            this._renderUserProfile(this.state.current, ()=>{});
-          }
         }
         if (rerenderBreadcrumb) {
           this._renderBreadcrumb();
         }
+        this.state.dispatch();
       };
       if (service === 'charmstore') {
         this.get('charmstore').whoami(callback.bind(this));
@@ -3322,6 +3354,7 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'isv-profile',
+    'lightbox',
     'local-inspector',
     'machine-view',
     'login-component',

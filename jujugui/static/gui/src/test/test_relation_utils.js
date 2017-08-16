@@ -486,7 +486,7 @@ describe('RelationUtils', function() {
       inputRelation.set('foo', 'bar');
       var relation = relationUtils.DecoratedRelation(
         inputRelation, source, target);
-      assert.deepProperty(relation, 'foo');
+      assert.nestedProperty(relation, 'foo');
       assert.equal(relation.foo, 'bar');
     });
 

@@ -63,12 +63,6 @@ describe('EntityContentReadme', function() {
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
     expect(output).toEqualJSX(
       <div className="entity-content__readme">
-        <h2 className="entity-content__header" id="readme">
-          Readme
-          <juju.components.HashLink
-            changeState={changeState}
-            hash="readme" />
-        </h2>
         <div className="entity-content__readme-content"
           ref="content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}} />

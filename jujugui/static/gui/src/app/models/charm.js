@@ -465,8 +465,8 @@ YUI.add('juju-charm-models', function(Y) {
                   return 1;
                 } else {
                   var result = (
-                      // Prefer case-insensitive sort, but honor case when
-                      // string match in a case-insensitive comparison.
+                    // Prefer case-insensitive sort, but honor case when
+                    // string match in a case-insensitive comparison.
                     segmentA.localeCompare(
                       segmentB, undefined, {sensitivity: 'accent'}) ||
                       segmentA.localeCompare(segmentB));

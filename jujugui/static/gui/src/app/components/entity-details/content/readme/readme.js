@@ -66,12 +66,12 @@ class EntityContentReadme extends React.Component {
     @return {Object} The readme content.
   */
   _getReadme() {
-    var entityModel = this.props.entityModel;
-    var readmeFile = this._getReadmeFile(entityModel);
+    const entityModel = this.props.entityModel;
+    const readmeFile = this._getReadmeFile(entityModel);
     if (!readmeFile) {
       this._getReadmeCallback('No readme file.');
     } else {
-      var id = entityModel.get('id');
+      const id = entityModel.get('id');
       this.readmeXhr = this.props.getFile(
         id, readmeFile, this._getReadmeCallback.bind(this));
     }
@@ -118,9 +118,14 @@ class EntityContentReadme extends React.Component {
     }
     const readme = data;
     const renderMarkdown = this.props.renderMarkdown;
+    const entity = this.props.entityModel.toEntity();
     let renderer = new renderMarkdown.Renderer();
     renderer.heading = (text, level) => {
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+      if (level === 1 &&
+        entity.displayName.toLowerCase() === text.toLowerCase()) {
+        return '';
+      }
       return `<h${level} id="${escapedText}">
           ${text}
           <span class="readme-link" data-id="${escapedText}">link</span>
@@ -149,13 +154,7 @@ class EntityContentReadme extends React.Component {
   render() {
     return (
       <div className="entity-content__readme">
-        <h2 className="entity-content__header" id="readme">
-          Readme
-          <juju.components.HashLink
-            changeState={this.props.changeState}
-            hash="readme" />
-        </h2>
-        <div ref="content" className="entity-content__readme-content"
+        <div className="entity-content__readme-content" ref="content"
           dangerouslySetInnerHTML={{__html: this.state.readme}} />
       </div>
     );

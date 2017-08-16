@@ -201,6 +201,10 @@ var module = module;
           return {name: info.Channel, current: info.Current};
         });
       }
+      if (meta.perm) {
+        processed.perm = {};
+        this._lowerCaseKeys(meta.perm || {}, processed.perm);
+      }
 
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
@@ -421,7 +425,8 @@ var module = module;
         'include=bundle-unit-count',
         'include=extra-info',
         'include=supported-series',
-        'include=stats'
+        'include=stats',
+        'include=perm'
       ];
       const url = this._generatePath('list', qs.join('&'));
       const headers = null;

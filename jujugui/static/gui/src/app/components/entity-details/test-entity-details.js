@@ -50,10 +50,13 @@ describe('EntityDetails', function() {
     const deployService = sinon.spy();
     const displayCanvasInfo = sinon.spy();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
     const pluralize = sinon.spy();
+    const getDiagramURL = sinon.stub();
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
@@ -64,12 +67,14 @@ describe('EntityDetails', function() {
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
         displayCanvasInfo={displayCanvasInfo}
+        displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -121,8 +126,11 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -204,7 +212,9 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
     const displayCanvasInfo = sinon.stub();
+    const displayLightbox = sinon.stub();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
@@ -220,8 +230,10 @@ describe('EntityDetails', function() {
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
         displayCanvasInfo={displayCanvasInfo}
+        displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -272,17 +284,15 @@ describe('EntityDetails', function() {
             scrollPosition={100}
             urllib={urllib}
           />
-          <juju.components.EntityContentDiagram
-            getDiagramURL={getDiagramURL}
-            id={id}
-            isRow={true}
-          />
           <juju.components.EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={false}
             hash="readme"
@@ -384,9 +394,12 @@ describe('EntityDetails', function() {
     const addNotification = sinon.spy();
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
     const displayCanvasInfo = sinon.stub();
+    const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
+    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
     const getModelName = sinon.spy();
@@ -404,11 +417,13 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
         displayCanvasInfo={displayCanvasInfo}
+        displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -460,8 +475,11 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
             hash="readme"
@@ -483,9 +501,12 @@ describe('EntityDetails', function() {
     const addNotification = sinon.spy();
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
     const displayCanvasInfo = sinon.stub();
+    const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
+    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
     const getModelName = sinon.spy();
@@ -503,11 +524,13 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
         deployService={deployService}
         displayCanvasInfo={displayCanvasInfo}
+        displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
@@ -559,8 +582,11 @@ describe('EntityDetails', function() {
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             hasPlans={true}
             hash="readme"

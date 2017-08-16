@@ -750,6 +750,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
+          'agent-version': '2.42.47',
           'default-series': 'xenial',
           name: 'my-model',
           'provider-type': 'aws',
@@ -758,17 +759,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'cloud-credential-tag': 'cloudcred-aws_admin@local_aws',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local'
+          'owner-tag': 'user-admin@local',
+          sla: {owner: 'who', level: 'standard'}
         }
       });
-      assert.equal(env.get('defaultSeries'), 'xenial');
-      assert.equal(env.get('providerType'), 'aws');
-      assert.equal(env.get('environmentName'), 'my-model');
-      assert.equal(env.get('modelOwner'), 'admin@local');
-      assert.equal(env.get('modelUUID'), '5bea955d-7a43-47d3-89dd-tag1');
-      assert.equal(env.get('cloud'), 'aws');
-      assert.equal(env.get('region'), 'us-east-1');
-      assert.equal(env.get('credential'), 'aws_admin@local_aws');
+      assert.strictEqual(env.get('defaultSeries'), 'xenial');
+      assert.strictEqual(env.get('providerType'), 'aws');
+      assert.strictEqual(env.get('environmentName'), 'my-model');
+      assert.strictEqual(env.get('modelOwner'), 'admin@local');
+      assert.strictEqual(env.get('modelUUID'), '5bea955d-7a43-47d3-89dd-tag1');
+      assert.strictEqual(env.get('cloud'), 'aws');
+      assert.strictEqual(env.get('region'), 'us-east-1');
+      assert.strictEqual(env.get('credential'), 'aws_admin@local_aws');
+      assert.strictEqual(env.get('sla'), 'standard');
+      assert.strictEqual(env.get('version'), '2.42.47');
     });
 
     it('handles no cloud credential returned by ModelInfo', function() {

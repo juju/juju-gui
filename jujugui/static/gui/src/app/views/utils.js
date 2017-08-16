@@ -1328,7 +1328,8 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
-  utils.switchModel = function(modelAPI, model, confirmUncommitted=true) {
+  utils.switchModel = function(
+    modelAPI, addNotification, model, confirmUncommitted=true) {
     // XXX if app.js is gone then this appconfig check can be removed.
     if (this.applicationConfig) {
       if (model && model.id === this.modelUUID) {
@@ -1343,6 +1344,15 @@ YUI.add('juju-view-utils', function(Y) {
       // There is nothing to be done as we are already connected to this model.
       // Note that this check is always false when switching models from the
       // profile view, as the "modelUUID" is set to null in that case.
+      return;
+    }
+    if (modelAPI.get('ecs').isCommitting()) {
+      const message = 'cannot switch models while deploying.';
+      addNotification({
+        title: message,
+        message: message,
+        level: 'error'
+      });
       return;
     }
     const switchModel = utils._switchModel.bind(this, modelAPI, model);
@@ -1409,8 +1419,13 @@ YUI.add('juju-view-utils', function(Y) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
-    // Reset the state of the GUI ready for displaying the new model.
-    const newState = {profile: null, gui: null, root: null, hash: null};
+    const current = this.state.current;
+    const newState = {
+      profile: null,
+      gui: {status: null},
+      root: null,
+      hash: null
+    };
     let name = '';
     let uuid = '';
     if (model) {
@@ -1418,9 +1433,11 @@ YUI.add('juju-view-utils', function(Y) {
       name = model.name;
       const owner = model.owner.split('@')[0];
       newState.model = {path: `${owner}/${name}`, uuid: uuid};
+      if (current && current.gui && current.gui.status !== undefined) {
+        newState.gui.status = current.gui.status;
+      }
     } else {
       newState.model = null;
-      const current = this.state.current;
       if (!current || !current.profile) {
         newState.root = 'new';
       }

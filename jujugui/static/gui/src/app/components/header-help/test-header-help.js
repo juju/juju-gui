@@ -40,7 +40,7 @@ describe('HeaderHelp', function() {
 
   it('renders', function () {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderHelp.prototype.wrappedComponent
+      <juju.components.HeaderHelp.wrappedComponent
         appState={appState}
         displayShortcutsModal={sinon.stub()}
         gisf={false} />, true);
@@ -78,7 +78,7 @@ describe('HeaderHelp', function() {
 
     it('opens a menu when clicked', function () {
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.HeaderHelp.prototype.wrappedComponent
+        <juju.components.HeaderHelp.wrappedComponent
           appState={appState}
           displayShortcutsModal={sinon.stub()}
           gisf={false} />, true);
@@ -118,7 +118,7 @@ describe('HeaderHelp', function() {
 
     it('show the documentation link if in gisf', function() {
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.HeaderHelp.prototype.wrappedComponent
+        <juju.components.HeaderHelp.wrappedComponent
           appState={appState}
           displayShortcutsModal={sinon.stub()}
           gisf={true} />, true);
@@ -167,7 +167,7 @@ describe('HeaderHelp', function() {
     it('shows the jujuchams issues page if in gisf and logged in',
       function () {
         const renderer = jsTestUtils.shallowRender(
-          <juju.components.HeaderHelp.prototype.wrappedComponent
+          <juju.components.HeaderHelp.wrappedComponent
             appState={appState}
             displayShortcutsModal={sinon.stub()}
             gisf={true}
@@ -217,7 +217,7 @@ describe('HeaderHelp', function() {
 
     it('shows the jujuchams issues page if in gijoe and logged in', () => {
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.HeaderHelp.prototype.wrappedComponent
+        <juju.components.HeaderHelp.wrappedComponent
           appState={appState}
           displayShortcutsModal={sinon.stub()}
           gisf={false}
@@ -250,7 +250,7 @@ describe('HeaderHelp', function() {
         stopPropagation: sinon.stub()
       };
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.HeaderHelp.prototype.wrappedComponent
+        <juju.components.HeaderHelp.wrappedComponent
           appState={appState}
           displayShortcutsModal={showFunc}
           gisf={true}

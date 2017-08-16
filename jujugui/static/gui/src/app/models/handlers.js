@@ -278,7 +278,8 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     applicationInfo: function(db, action, change) {
-      var data = {
+      const status = change.status || {};
+      const data = {
         id: change.name,
         // The name attribute is used to store the temporary name of ghost
         // applications. We set it here for consistency, even if the name of a
@@ -288,7 +289,14 @@ YUI.add('juju-delta-handlers', function(Y) {
         exposed: change.exposed,
         life: change.life,
         constraints: utils.convertConstraints(change.constraints),
-        subordinate: change.subordinate
+        status: {
+          current: status.current,
+          message: status.message,
+          data: status.data,
+          since: status.since
+        },
+        subordinate: change.subordinate,
+        workloadVersion: change['workload-version'] || ''
       };
       // Process the stream.
       db.services.process_delta(action, data);
@@ -316,8 +324,8 @@ YUI.add('juju-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
      */
     remoteApplicationInfo: function(db, action, change) {
-      var status = change.status || {};
-      var data = {
+      const status = change.status || {};
+      const data = {
         id: change['application-url'],
         service: change.name,
         sourceId: change['model-uuid'],

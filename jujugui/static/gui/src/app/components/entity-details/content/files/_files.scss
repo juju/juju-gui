@@ -1,86 +1,94 @@
 .entity-files {
-  $dimension: 13px;
+  .section__list-item {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
 
-  &__link {
-    display: inline-block;
+.p-list-tree {
+  $sp-xx-small: 1rem * .25 !default;
+  $sp-x-small: 1rem * .5 !default;
+  $sp-medium: 1rem !default;;
 
-    a:hover {
+  @mixin list-tree-icon {
+    $icon-size: .9375rem; // 15px
+    background: {
+      position: center;
+      repeat: no-repeat;
+    }
+    content: ' ';
+    display: block;
+    height: $icon-size;
+    left: -$sp-medium;
+    pointer-events: none;
+    position: absolute;
+    top: .4rem;
+    width: $icon-size;
+  }
+
+  border-left: 1px solid $color-mid-light;
+  list-style-type: none;
+  margin-left: $sp-medium;
+  padding: 0 0 0 $sp-x-small;
+
+  &__item {
+    margin-top: $sp-xx-small;
+    padding-left: .8rem;
+    position: relative;
+
+    &::before {
+      background: $color-mid-light;
+      content: ' ';
+      display: block;
+      height: 1px;
+      left: -$sp-x-small;
+      pointer-events: none;
+      position: absolute;
+      top: .8rem;
+      width: .625rem;
+    }
+
+    &--group::after {
+      @include list-tree-icon;
+      background-image: $svg-list-tree-open;
+    }
+  }
+
+  &__toggle {
+    background: transparent;
+    border: 0;
+    font-weight: normal;
+    margin: 0 0 0 -1.75rem;
+    padding: 0 0 0 1.75rem;
+    transition-duration: 0s;
+    width: auto;
+
+    &:hover {
+      background: transparent;
+      color: $color-link;
       text-decoration: underline;
     }
 
-    &:after {
-      color: $dark-warm-grey;
-      content: '\2022';
-      vertical-align: middle;
-      margin: 0 5px;
-    }
-
-    &:last-child:after {
-      display: none;
+    &:focus {
+      background: transparent;
+      outline: 1px dotted $color-mid-light;
     }
   }
 
-  &__file,
-  &__directory {
-    margin: 10px 0;
-    list-style: none;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  .p-list-tree {
+    display: none;
+    margin-left: 0;
 
-    &:before {
-      content: '';
-      width: $dimension;
-      height: 1px;
-      background-color: $light-mid-grey;
-      display: inline-block;
-      position: relative;
-      top: -4px;
-      margin-right: 5px;
-    }
-  }
-
-  &__file {
-    overflow: hidden;
-
-    a {
-      text-decoration: none;
-      color: $cool-grey;
-    }
-  }
-
-  &__directory {
-    position: relative;
-    cursor: pointer;
-
-    &:after {
-      font-size: 11px;
+    &[aria-hidden="false"] {
       display: block;
-      content: '-';
-      position: absolute;
-      top: 0;
-      left: 0 - (($dimension + 2px) / 2);
-      border: 1px solid $dark-warm-grey;
-      width: $dimension;
-      height: $dimension;
-      line-height: $dimension;
-      margin: 3px 0;
-      text-align: center;
-      background-color: $white;
     }
 
-    &.collapsed {
-      &:after {
-        content: '+';
-      }
-
-      .entity-files__listing {
-        display: none;
-      }
+    &[aria-hidden="false"]::after {
+      @include list-tree-icon;
+      background-image: $svg-list-tree-close;
+      // At this point we need to push this icon above the --group icon.
+      z-index: 1;
     }
-  }
-
-  &__listing {
-    margin-left: 20px;
-    border-left: 1px solid $mid-grey;
   }
 }

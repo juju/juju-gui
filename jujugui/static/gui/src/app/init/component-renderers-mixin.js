@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const fromShape = require('shapeup').fromShape;
 const yui = window.yui;
 /**
     A mixin for the JujuGUI class.
@@ -108,7 +109,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       ReactDOM.unmountComponentAtNode(sharing);
       return;
     }
-    const db = this.db;
     const env = this.env;
     const grantRevoke = (action, username, access, callback) => {
       if (this.get('gisf') && username.indexOf('@') === -1) {
@@ -121,7 +121,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
     ReactDOM.render(
       <window.juju.components.Sharing
-        addNotification={db.notifications.add.bind(db.notifications)}
+        addNotification={this._bound.addNotification}
         canShareModel={this.acl.canShareModel()}
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={env.modelUserInfo.bind(env)}
@@ -190,8 +190,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     let profile = (
       <window.juju.components.UserProfile
         acl={this.acl}
-        addNotification=
-          {this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         charmstore={charmstore}
         clearCanvasInfo={this._clearCanvasInfo.bind(this)}
         currentModel={currentModel}
@@ -211,7 +210,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         setPageTitle={this.setPageTitle}
         staticURL={this.applicationConfig.staticURL}
         storeUser={this.storeUser.bind(this)}
-        switchModel={utils.switchModel.bind(this, this.modelAPI)}
+        switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)}
       />);
 
@@ -221,7 +220,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           acl={this.acl}
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
+          baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
+          charmstore={charmstore}
           clearCanvasInfo={this._clearCanvasInfo.bind(this)}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
@@ -334,6 +335,22 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
+    Opens the lightbox with provided content.
+
+    @param {Object} content React Element.
+    @param {String} caption A string to display under the content.
+  */
+  _displayLightbox(content, caption) {
+    ReactDOM.render(
+      <window.juju.components.Lightbox
+        caption={caption}
+        close={this._clearLightbox.bind(this)}>
+        {content}
+      </window.juju.components.Lightbox>,
+      document.getElementById('lightbox'));
+  }
+
+  /**
     The cleanup dispatcher keyboard shortcuts modal.
   */
   _clearShortcutsModal() {
@@ -346,6 +363,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('modal-gui-settings'));
   }
+
   /**
     The cleanup dispatcher for the post deployment screen.
   */
@@ -353,6 +371,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('canvas-info'));
   }
+
+  /**
+    Remove the lightbox.
+  */
+  _clearLightbox() {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('lightbox')
+    );
+  }
+
   _renderHeaderLogo() {
     const userName = this.user.displayName;
     const gisf = this.applicationConfig.gisf;
@@ -418,8 +446,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={this.acl}
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
+        clearLightbox={this._clearLightbox.bind(this)}
         deployTarget={this.deployTarget.bind(this, charmstore)}
         displayCanvasInfo={this._displayCanvasInfo.bind(this)}
+        displayLightbox={this._displayLightbox.bind(this)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
@@ -439,8 +469,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         charmstoreURL={
           utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         apiVersion={window.jujulib.charmstoreAPIVersion}
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         makeEntityModel={yui.juju.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
@@ -488,8 +517,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this.payment && this.payment.addAddress.bind(this.payment)}
         addBillingAddress={
           this.payment && this.payment.addBillingAddress.bind(this.payment)}
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}
@@ -612,11 +640,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderStatusView(state, next) {
+    const propTypes = window.juju.components.Status.propTypes;
     ReactDOM.render(
       <window.juju.components.Status
-        addNotification={
-          this.db.notifications.add.bind(this.db.notifications)} />,
-      document.getElementById('status-container'));
+        db={fromShape(this.db, propTypes.db)}
+        model={fromShape(this.modelAPI.getAttrs(), propTypes.model)}
+        urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
+      />,
+      document.getElementById('status-container')
+    );
     next();
   }
 
@@ -677,7 +709,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           addCharm={addCharm}
           addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
             this, db, model, service)}
-          addNotification={db.notifications.add.bind(db.notifications)}
+          addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
           clearState={utils.clearState.bind(this, topo)}
@@ -817,7 +849,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <window.juju.components.DeploymentFlow
         acl={this.acl}
         addAgreement={this.terms.addAgreement.bind(this.terms)}
-        addNotification={db.notifications.add.bind(db.notifications)}
+        addNotification={this._bound.addNotification}
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         charmstore={charmstore}
@@ -1049,6 +1081,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
     const modelAPI = this.modelAPI;
+    const ecs = modelAPI.get('ecs');
     const controllerAPI = this.controllerAPI;
     const utils = yui.juju.views.utils;
     let listModelsWithInfo =
@@ -1084,11 +1117,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
+        setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showEnvSwitcher={showEnvSwitcher}
         showProfile={utils.showProfile.bind(
-          this, modelAPI && modelAPI.get('ecs'),
+          this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
-        switchModel={utils.switchModel.bind(this, modelAPI)}
+        switchModel={this._bound.switchModel}
         loadingModel={this.modelAPI.loading} />,
       document.getElementById('header-breadcrumb'));
   }

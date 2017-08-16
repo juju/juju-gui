@@ -2,8 +2,6 @@
   clear: both;
 
   &__header {
-    margin: 0 0 1.4rem;
-
     .hash-link {
       display: none;
     }
@@ -23,32 +21,28 @@
 
   &__description {
     margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.4375rem;
+    }
   }
 
-  &__diagram + .entity-content {
-    .entity-content__description {
-      margin-top: 10px;
-      background: $white;
-    }
+  &__terms {
+    border-top: 1px solid $color-mid-light;
   }
 
   &__metadata {
-    margin-top: 40px;
-    font-size: 16px;
-    font-weight: 100;
+    display: block;
+    margin-top: .5rem;
 
-    h4 {
-      border-bottom: 1px solid $light-mid-grey;
-      padding-bottom: 1em;
+    &-title {
+      font-size: 1rem;
+      color: $color-mid-dark;
+      display: inline;
     }
 
-    ul {
-      margin: 1em 0;
-    }
-
-    li {
-      list-style: none;
-      margin-bottom: .8em;
+    .link {
+      cursor: pointer;
     }
   }
 
@@ -90,38 +84,40 @@
     }
   }
 
-  &__readme-content {
+  &__readme {
+    margin-top: 2rem;
+
     h1,
     h2,
     h3 {
-      margin: 1.6em 0;
+      margin: 1.6rem 0 1rem;
     }
 
     h4,
     h5,
     h6 {
-      margin: .8em 0;
+      margin: .8rem 0;
     }
 
     h1 {
-      font-size: 1.4em;
+      font-size: 1.4375rem;
     }
 
     h2 {
-      font-size: 1.3em;
+      font-size: 1.4375rem;
     }
 
     h3 {
-      font-size: 1.2em;
+      font-size: 1.2rem;
     }
 
     h4 {
-      font-size: 1.1em;
+      font-size: 1.1rem;
     }
 
     h5,
     h6 {
-      font-size: 1em;
+      font-size: 1rem;
     }
 
     .readme-link {
@@ -139,31 +135,61 @@
       }
     }
 
+    a {
+      color: $link-blue;
+    }
+
     ul {
-      list-style-position: inside;
+      list-style-position: outside;
+      margin-left: 2rem;
+      list-style-type: disc;
+
+      ul {
+        margin-left: 16px;
+      }
     }
 
     li {
       line-height: 1.6;
+      margin-bottom: 0;
     }
 
     pre {
-      padding: 10px 15px;
-      background-color: $cool-grey;
-      border: 0;
+      padding: .625rem 1rem;
+      background-color: $color-light;
+      border: 1px solid $color-mid-light;
       border-radius: 2px;
-      color: $mid-grey;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
 
-      code {
-        margin-bottom: 0;
-        color: $mid-grey;
+    @for $index from 1 through 6 {
+      h#{$index} {
+        & + pre {
+          margin-top: 0;
+        }
       }
+    }
+
+    code {
+      margin-bottom: 0;
+      font-size: 1.05rem;
+    }
+
+    blockquote {
+      border-left: 3px solid $color-mid-light;
+      padding-left: 1rem;
+      margin: 2rem 0;
+    }
+
+    &-content > *:last-child {
+      margin-bottom: 0;
     }
   }
 
   .section {
     margin-bottom: 20px;
-    padding: 30px 20px;
+    padding: 20px;
     border: 1px solid $light-mid-grey;
     border-radius: 2px;
 
@@ -184,13 +210,10 @@
 
     &__links {
       @extend %list-style;
-    }
-  }
 
-  .entity-relations {
-    .section__list-item {
-      text-indent: -1.5em;
-      padding-left: 1.5em;
+      li:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -263,56 +286,11 @@
     }
   }
 
-  &__bundle-config {
-    @extend %list-style;
-    margin-top: 20px;
-    cursor: pointer;
-
-    &-title {
-      padding: 15px 20px;
-      border-top: 1px solid $mid-grey;
-    }
-
-    &-options {
-      padding: 0 30px;
-    }
-
-    &-chevron {
-      float: right;
-
-      .entity-content__bundle-config-contract {
-        display: none;
-      }
-    }
-
-    &.expanding-row--expanded {
-      .expanding-row {
-        &__initial {
-          opacity: 1;
-          height: 50px;
-        }
-
-        &__expanded {
-          background-color: transparent;
-          box-shadow: none;
-        }
-      }
-
-      .entity-content__bundle-config-chevron {
-        .entity-content__bundle-config {
-          &-expand {
-            display: none;
-          }
-
-          &-contract {
-            display: inline-block;
-          }
-        }
-      }
-    }
-  }
-
   &__card {
+    &-cta {
+      color: $link-blue;
+    }
+
     textarea {
       color: $dark-warm-grey;
       cursor: default;
@@ -331,5 +309,13 @@
 
   .popup__panel--wide {
     top: $navbar-height;
+  }
+
+  &__configuration {
+    margin-top: 1.6rem;
+    
+    .entity-content__header {
+      margin-bottom: 1rem;
+    }
   }
 }

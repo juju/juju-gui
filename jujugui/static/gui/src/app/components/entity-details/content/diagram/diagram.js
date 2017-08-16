@@ -18,30 +18,63 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-class EntityContentDiagram extends React.Component {
+class EntityContentDiagram extends React.PureComponent {
+  /**
+    If expandable, open image in lightbox.
+  */
+  _handleExpand() {
+    this.props.displayLightbox(
+      <object type="image/svg+xml" data={this.props.diagramUrl} />,
+      this.props.title
+    );
+  }
+
+  /**
+    If expandable, generate the expand button with icon.
+
+    @return {Button} The expand button.
+  */
+  _generateExpandButton() {
+    if (this.props.isExpandable) {
+      return (
+        <button role="button" className="entity-content__diagram-expand"
+          onClick={this._handleExpand.bind(this)}>
+          <juju.components.SvgIcon name="fullscreen-grey_16" size="12" />
+        </button>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const url = this.props.getDiagramURL(this.props.id);
     const classes = classNames(
       'entity-content__diagram',
       {'row row--grey': this.props.isRow}
     );
     return (
       <div className={classes}>
-        <object type="image/svg+xml" data={url}
+        <object type="image/svg+xml" data={this.props.diagramUrl}
+          title={this.props.title}
           className="entity-content__diagram-image" />
+        {this._generateExpandButton()}
       </div>
     );
   }
 };
 
 EntityContentDiagram.propTypes = {
-  getDiagramURL: PropTypes.func.isRequired,
-  id: PropTypes.string.isRequired,
-  isRow: PropTypes.bool
+  clearLightbox: PropTypes.func,
+  diagramUrl: PropTypes.string.isRequired,
+  displayLightbox: PropTypes.func,
+  isExpandable: PropTypes.bool,
+  isRow: PropTypes.bool,
+  title: PropTypes.string
 };
 
 YUI.add('entity-content-diagram', function() {
   juju.components.EntityContentDiagram = EntityContentDiagram;
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'svg-icon'
+  ]
 });

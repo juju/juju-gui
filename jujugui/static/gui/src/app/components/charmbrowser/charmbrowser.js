@@ -174,7 +174,9 @@ class Charmbrowser extends React.Component {
             addNotification={this.props.addNotification}
             apiUrl={this.props.apiUrl}
             changeState={changeState}
+            clearLightbox={this.props.clearLightbox}
             displayCanvasInfo={this.props.displayCanvasInfo}
+            displayLightbox={this.props.displayLightbox}
             importBundleYAML={this.props.importBundleYAML}
             flags={this.props.flags}
             getBundleYAML={this.props.getBundleYAML}
@@ -187,9 +189,9 @@ class Charmbrowser extends React.Component {
             scrollPosition={this.state.scrollPosition}
             renderMarkdown={this.props.renderMarkdown}
             id={id}
-              // This is used to force a component remount when the entity
-              // changes, for instance a charm detail page has a link to
-              // another charm detail page.
+            // This is used to force a component remount when the entity
+            // changes, for instance a charm detail page has a link to
+            // another charm detail page.
             key={id}
             pluralize={utils.pluralize}
             listPlansForCharm={this.props.listPlansForCharm}
@@ -233,9 +235,11 @@ Charmbrowser.propTypes = {
   appState: PropTypes.object.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   charmstoreURL: PropTypes.string.isRequired,
+  clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
   displayCanvasInfo: PropTypes.func.isRequired,
+  displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,

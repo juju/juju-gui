@@ -10,10 +10,21 @@
   z-index: index($z-indexed-elements, machine-view);
 
   &__content {
+    overflow: auto;
     position: absolute;
     top: $navbar-height + 10px;
     bottom: $deployer-bar-height;
     left: $left-panel-width + 20px;
-    right: 20px;
+    right: 0;
+    margin-left: 20px;
+    padding-right: 20px;
+  }
+
+  .ok {
+    color: green;
+  }
+
+  .error {
+    color: red;
   }
 }

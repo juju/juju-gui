@@ -23,14 +23,6 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-function _generateTagItem(tag, fn) {
-  return [
-    <li key={tag + 0}>
-      <a data-id={tag} className="link" onClick={fn}>{tag}</a>
-    </li>
-  ];
-}
-
 function generateScript(isBundle, isDD) {
   let id = 'trusty/django-123';
   if (isBundle) {
@@ -64,6 +56,8 @@ describe('EntityContent', function() {
     const renderMarkdown = sinon.stub().returns(description);
     const getFile = sinon.spy();
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const pluralize = sinon.spy();
     const script = generateScript();
     const scrollCharmbrowser = sinon.stub();
@@ -74,7 +68,10 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={false}
         hash="readme"
@@ -83,41 +80,29 @@ describe('EntityContent', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
-    const option1 = {
-      description: 'Your username',
-      type: 'string',
-      default: 'spinach',
-      name: 'username'
-    };
-    const option2 = {
-      description: 'Your password',
-      type: 'string',
-      default: 'abc123',
-      name: 'password'
-    };
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <div className="row row--grey entity-content__terms">
-          <div className="inner-wrapper">
-            <div className="four-col entity-content__metadata">
-              <h4>Tags</h4>
-              <ul>
-                {_generateTagItem('database', instance._handleTagClick)}
-              </ul>
-            </div>
-          </div>
-        </div>
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               <juju.components.EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
+              <div className="entity-content__terms">
+                <div className="entity-content__metadata">
+                  <h4 className="entity-content__metadata-title">
+                    Tags:
+                  </h4>
+                  <a className="link"
+                    data-id="database"
+                    onClick={instance._handleTagClick}>database</a>
+                </div>
+              </div>
               <juju.components.EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
@@ -126,14 +111,36 @@ describe('EntityContent', function() {
                 hash="readme"
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
+              <div className="entity-content__configuration"
+                id="configuration">
+                <h3 className="entity-content__header">
+                  Configuration
+                </h3>
+                <dl>
+                  <juju.components.EntityContentConfigOption
+                    option={{
+                      default: 'spinach',
+                      description: 'Your username',
+                      name: 'username',
+                      type: 'string'
+                    }} />
+                  <juju.components.EntityContentConfigOption
+                    option={{
+                      default: 'abc123',
+                      description: 'Your password',
+                      name: 'password',
+                      type: 'string'
+                    }} />
+                </dl>
+              </div>
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               <div className="section">
                 <h3 className="section__title">
                   Contribute
                 </h3>
-                <ul className="section__links">
-                  <li>
+                <ul className="section__list">
+                  <li className="section__list-item">
                     <a href="https://bugs.launchpad.net/charms/+source/django"
                       className="link"
                       target="_blank">
@@ -155,41 +162,23 @@ describe('EntityContent', function() {
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={mockEntity.get('revisions')} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="trusty/django-123"></div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div id="configuration"
-          className="row row--grey entity-content__configuration">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <h2 className="entity-content__header">Configuration</h2>
-              <dl>
-                <juju.components.EntityContentConfigOption
-                  key={option1.name}
-                  option={option1} />
-                <juju.components.EntityContentConfigOption
-                  key={option2.name}
-                  option={option2} />
-              </dl>
             </div>
           </div>
         </div>
@@ -206,6 +195,7 @@ describe('EntityContent', function() {
         changeState={sinon.stub()}
         entityModel={mockEntity}
         flags={{'test.ddeploy': true}}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -213,16 +203,17 @@ describe('EntityContent', function() {
         scrollCharmbrowser={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
-    const script = output.props.children[2].props.children.props.children[1].
-      props.children[5].props.children[2];
-    const card = output.props.children[2].props.children.props.children[1].
-      props.children[5].props.children[4];
+    const innerWrapper = output.props.children[0].props.children;
+    const cardWrapper = innerWrapper.props.children[1].props.children[4];
+    const script = cardWrapper.props.children[2];
+    const card = cardWrapper.props.children[4];
     const expected = (
       <div className="juju-card" data-dd data-id="trusty/django-123"></div>);
     const scriptExpected = (
-      <textarea
-        rows="2" cols="70" readOnly="readonly" wrap="off"
-        className="twelve-col" defaultValue={generateScript(false, true)}></textarea>);
+      <juju.components.CopyToClipboard
+        className="copy-to-clipboard"
+        value={script.props.value} />
+    );
     expect(card).toEqualJSX(expected);
     expect(script).toEqualJSX(scriptExpected);
   });
@@ -244,6 +235,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -252,23 +244,23 @@ describe('EntityContent', function() {
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const terms = output.props.children[0].props.children.props.children[1];
-    const links = terms.props.children[1].props.children;
+    const innerWrapper = output.props.children[0].props.children;
+    const terms = innerWrapper
+      .props.children[0].props.children[2].props.children[1];
+    const links = [terms.props.children[2][0][1], terms.props.children[2][1][1]];
     const expected = (
-      <div className="four-col entity-content__metadata">
-        <h4>Terms</h4>
-        <ul>
-          {[<li className="link"
-            key="terms1"
-            onClick={links[0].props.onClick}>
-              terms1
-          </li>,
-          <li className="link"
-            key="terms2"
-            onClick={links[1].props.onClick}>
-              terms2
-          </li>]}
-        </ul>
+      <div className="entity-content__metadata">
+        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
+        <a className="link"
+          key="terms1"
+          onClick={links[0].props.onClick}>
+            terms1
+        </a>,
+        <a className="link"
+          key="terms2"
+          onClick={links[1].props.onClick}>
+            terms2
+        </a>
       </div>);
     expect(terms).toEqualJSX(expected);
   });
@@ -290,6 +282,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -299,8 +292,10 @@ describe('EntityContent', function() {
         staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
-    const terms = output.props.children[0].props.children.props.children[1];
-    terms.props.children[1].props.children[1].props.onClick();
+    const innerWrapper = output.props.children[0].props.children;
+    const terms = innerWrapper
+      .props.children[0].props.children[2].props.children[1];
+    terms.props.children[2][1][1].props.onClick();
     output = renderer.getRenderOutput();
     const expected = (
       <juju.components.TermsPopup
@@ -309,7 +304,7 @@ describe('EntityContent', function() {
           name: 'terms2',
           revision: 10
         }]} />);
-    expect(output.props.children[4]).toEqualJSX(expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can display a spinner when loading terms', function() {
@@ -322,6 +317,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -331,11 +327,13 @@ describe('EntityContent', function() {
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="four-col entity-content__metadata">
-        <h4>Terms</h4>
+      <div className="entity-content__metadata">
+        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
         <juju.components.Spinner />
       </div>);
-    const terms = output.props.children[0].props.children.props.children[1];
+    const innerWrapper = output.props.children[0].props.children;
+    const terms = innerWrapper
+      .props.children[0].props.children[2].props.children[1];
     expect(terms).toEqualJSX(expected);
   });
 
@@ -349,6 +347,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -375,6 +374,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -395,6 +395,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -408,15 +409,15 @@ describe('EntityContent', function() {
         <h3 className="section__title">
           Contribute
         </h3>
-        <ul className="section__links">
-          <li>
+        <ul className="section__list">
+          <li className="section__list-item">
             <a href="http://example.com/bugs"
               className="link"
               target="_blank">
               Submit a bug
             </a>
           </li>
-          <li>
+          <li className="section__list-item">
             <a href="http://example.com/"
               className="link"
               target="_blank">
@@ -425,12 +426,15 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[2].props.children.props.children[1];
-    expect(parent.props.children[0]).toEqualJSX(expected);
+    const innerWrapper = output.props.children[0].props.children;
+    const contribute = innerWrapper.props.children[1].props.children[0];
+    expect(contribute).toEqualJSX(expected);
   });
 
   it('can display a charm with no options', function() {
     mockEntity.set('options', null);
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const description = mockEntity.get('description');
     const apiUrl = 'http://example.com';
     const renderMarkdown = sinon.stub().returns(description);
@@ -445,7 +449,10 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={false}
         hash="readme"
@@ -458,25 +465,24 @@ describe('EntityContent', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="entity-content">
-        <div className="row row--grey entity-content__terms">
-          <div className="inner-wrapper">
-            <div className="four-col entity-content__metadata">
-              <h4>Tags</h4>
-              <ul>
-                {_generateTagItem('database', instance._handleTagClick)}
-              </ul>
-            </div>
-          </div>
-        </div>
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               <juju.components.EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
+              <div className="entity-content__terms">
+                <div className="entity-content__metadata">
+                  <h4 className="entity-content__metadata-title">
+                    Tags:
+                  </h4>&nbsp;
+                  <a className="link" data-id="database"
+                    onClick={instance._handleTagClick}>database</a>
+                </div>
+              </div>
               <juju.components.EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
@@ -486,13 +492,13 @@ describe('EntityContent', function() {
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               <div className="section">
                 <h3 className="section__title">
                   Contribute
                 </h3>
-                <ul className="section__links">
-                  <li>
+                <ul className="section__list">
+                  <li className="section__list-item">
                     <a href="https://bugs.launchpad.net/charms/+source/django"
                       className="link"
                       target="_blank">
@@ -514,22 +520,20 @@ describe('EntityContent', function() {
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={mockEntity.get('revisions')} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="trusty/django-123"></div>
               </div>
@@ -546,7 +550,10 @@ describe('EntityContent', function() {
     const apiUrl = 'http://example.com';
     const renderMarkdown = sinon.spy();
     const getFile = sinon.spy();
+    const getDiagramURL = sinon.stub().returns('testRef');
     const changeState = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const pluralize = sinon.spy();
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
@@ -557,26 +564,33 @@ describe('EntityContent', function() {
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
+        clearLightbox={clearLightbox}
+        displayLightbox={displayLightbox}
         entityModel={mockEntity}
+        getDiagramURL={getDiagramURL}
         getFile={getFile}
         hasPlans={false}
         hash="readme"
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com" />);
+        showTerms={sinon.stub()} />);
     const expected = (
       <div className="entity-content">
-        {undefined}
         <div className="row">
           <div className="inner-wrapper">
-            <div className="seven-col append-one">
+            <div className="eight-col">
               <juju.components.EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
+              <juju.components.EntityContentDiagram
+                clearLightbox={clearLightbox}
+                diagramUrl="testRef"
+                displayLightbox={displayLightbox}
+                isExpandable={true}
+                title="django cluster" />
               <juju.components.EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
@@ -585,15 +599,56 @@ describe('EntityContent', function() {
                 hash="readme"
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
+              <div id="configuration"
+                className="entity-content__configuration">
+                <h3 className="entity-content__header">
+                  Bundle configuration
+                </h3>
+                <div>
+                  <juju.components.AccordionSection
+                    title={<span>
+                      <img alt="gunicorn"
+                        className="entity-content__config-image"
+                        src={undefined} width="26"/>
+                      gunicorn
+                    </span>}>
+                    <div className="entity-content__config-description">
+                      <div className="entity-content__config-option">
+                        <dt className="entity-content__config-name">
+                          name
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p>title</p>
+                        </dd>
+                      </div>
+                      <div className="entity-content__config-option">
+                        <dt className="entity-content__config-name">
+                          active
+                        </dt>
+                        <dd className="entity-content__config-description">
+                          <p />
+                        </dd>
+                      </div>
+                    </div>
+                  </juju.components.AccordionSection>
+                  <juju.components.AccordionSection
+                    title={<span>
+                      <img alt="django"
+                        className="entity-content__config-image"
+                        src={undefined} width="26"/>
+                      django
+                    </span>} />
+                </div>
+              </div>
             </div>
-            <div className="four-col">
+            <div className="four-col last-col">
               <div className="section">
                 <h3 className="section__title">
                   Contribute
                 </h3>
-                <ul className="section__links">
+                <ul className="section__list">
                   {undefined}
-                  <li>
+                  <li className="section__list-item">
                     <a href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
                     className="link"
@@ -609,108 +664,23 @@ describe('EntityContent', function() {
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
-              <juju.components.EntityContentRevisions
-                revisions={mockEntity.get('revisions')} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm
                 </h3>
                 <p>Add this card to your website by copying the code below.
-                  <a className="link"
+                  <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
                   </a>.
                 </p>
-                <textarea className="twelve-col" cols="70"
-                  defaultValue={script} readOnly="readonly"
-                  rows="2" wrap="off" />
+                <juju.components.CopyToClipboard
+                  className="copy-to-clipboard"
+                  value={script} />
                 <h4>Preview</h4>
                 <div className="juju-card" data-id="django-cluster"></div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div id="configuration"
-          className="row row--grey entity-content__configuration">
-          <div className="inner-wrapper">
-            <div className="twelve-col">
-              <h2 className="entity-content__header">Configuration</h2>
-              <ul>
-                <juju.components.ExpandingRow
-                  classes={{
-                    'entity-content__bundle-config': true
-                  }}
-                  key="gunicorn">
-                  <div className="entity-content__bundle-config-title">
-                    gunicorn
-                    <div className="entity-content__bundle-config-chevron">
-                      <div className="entity-content__bundle-config-expand">
-                        <juju.components.SvgIcon
-                          name="chevron_down_16"
-                          size="16" />
-                      </div>
-                      <div className="entity-content__bundle-config-contract">
-                        <juju.components.SvgIcon
-                          name="chevron_up_16"
-                          size="16" />
-                      </div>
-                    </div>
-                  </div>
-                  <dl className="entity-content__bundle-config-options">
-                    {[
-                      <div className="entity-content__config-option"
-                        key="name0">
-                        <dt className="entity-content__config-name">
-                          name
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p>
-                            title
-                          </p>
-                        </dd>
-                      </div>,
-                      <div className="entity-content__config-option"
-                        key="active1">
-                        <dt className="entity-content__config-name">
-                          active
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p>
-                            {true}
-                          </p>
-                        </dd>
-                      </div>
-                    ]}
-                  </dl>
-                </juju.components.ExpandingRow>
-                <juju.components.ExpandingRow
-                  classes={{
-                    'entity-content__bundle-config': true
-                  }}
-                  key="django">
-                  <div className="entity-content__bundle-config-title">
-                    django
-                    <div className="entity-content__bundle-config-chevron">
-                      <div className="entity-content__bundle-config-expand">
-                        <juju.components.SvgIcon
-                          name="chevron_down_16"
-                          size="16" />
-                      </div>
-                      <div className="entity-content__bundle-config-contract">
-                        <juju.components.SvgIcon
-                          name="chevron_up_16"
-                          size="16" />
-                      </div>
-                    </div>
-                  </div>
-                  <dl className="entity-content__bundle-config-options">
-                    {[<div key="none">
-                      Config options not modified in this bundle.
-                    </div>]}
-                  </dl>
-                </juju.components.ExpandingRow>
-              </ul>
             </div>
           </div>
         </div>
@@ -729,6 +699,7 @@ describe('EntityContent', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
         getFile={sinon.stub()}
         hasPlans={false}
         pluralize={sinon.stub()}
@@ -742,15 +713,15 @@ describe('EntityContent', function() {
         <h3 className="section__title">
           Contribute
         </h3>
-        <ul className="section__links">
-          <li>
+        <ul className="section__list">
+          <li className="section__list-item">
             <a href="http://example.com/bugs"
               className="link"
               target="_blank">
               Submit a bug
             </a>
           </li>
-          <li>
+          <li className="section__list-item">
             <a href="http://example.com/"
               className="link"
               target="_blank">
@@ -759,7 +730,8 @@ describe('EntityContent', function() {
           </li>
         </ul>
       </div>);
-    const parent = output.props.children[2].props.children.props.children[1];
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
     expect(parent.props.children[0]).toEqualJSX(expected);
   });
 
@@ -776,6 +748,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={false}
         pluralize={pluralize}
@@ -784,8 +757,8 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    const parent = output.props.children[2].props.children.props.children[1];
-    const relationsComponent = parent.props.children[2];
+    const innerWrapper = output.props.children[0].props.children;
+    const relationsComponent = innerWrapper.props.children[1].props.children[2];
     assert.equal(relationsComponent, undefined);
   });
 
@@ -815,6 +788,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={true}
         plans={plans}
@@ -824,6 +798,8 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
       <div id="plans"
         className="row entity-content__plans">
@@ -908,7 +884,7 @@ describe('EntityContent', function() {
           </div>
         </div>
       </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(plansOutput).toEqualJSX(expected);
   });
 
   it('can display loading plans', function() {
@@ -924,6 +900,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={true}
         plans={null}
@@ -933,9 +910,11 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
       <juju.components.Spinner />);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    expect(plansOutput).toEqualJSX(expected);
   });
 
   it('can remove plans when none exist', function() {
@@ -951,6 +930,7 @@ describe('EntityContent', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
+        getDiagramURL={sinon.stub()}
         getFile={getFile}
         hasPlans={true}
         hash="readme"
@@ -961,6 +941,8 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[1], undefined);
+    const innerWrapper = output.props.children[0].props.children;
+    const plansOutput = innerWrapper.props.children[0].props.children[3];
+    assert.strictEqual(plansOutput, undefined);
   });
 });

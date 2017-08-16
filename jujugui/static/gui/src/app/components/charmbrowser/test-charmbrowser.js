@@ -184,6 +184,8 @@ describe('Charmbrowser', function() {
     appState.current.hash = 'readme';
     const getEntity = sinon.spy();
     const makeEntityModel = sinon.spy();
+    const clearLightbox = sinon.stub();
+    const displayLightbox = sinon.stub();
     const deployService = sinon.spy();
     const displayCanvasInfo = sinon.stub();
     const importBundleYAML = sinon.spy();
@@ -209,9 +211,11 @@ describe('Charmbrowser', function() {
         appState={appState}
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
+        clearLightbox={clearLightbox}
         deployService={deployService}
         deployTarget={sinon.stub()}
         displayCanvasInfo={displayCanvasInfo}
+        displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
@@ -247,6 +251,8 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={
               output.props.children.props.children.props.changeState}
+            clearLightbox={clearLightbox}
+            displayLightbox={displayLightbox}
             flags={{'test.ddeploy': true}}
             getEntity={getEntity}
             getModelName={getModelName}

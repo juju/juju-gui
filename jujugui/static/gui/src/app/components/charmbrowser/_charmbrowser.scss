@@ -3,7 +3,7 @@
   $bottom-space: $deployer-bar-height + $panel-space;
   position: absolute;
   top: $navbar-height;
-  left: $panel-space;
+  left: 0;
   right: 0;
   max-height: calc(100% - #{$bottom-space});
   overflow-x: hidden;

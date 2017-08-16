@@ -826,6 +826,9 @@ YUI.add('juju-env-api', function(Y) {
       this.setConnectedAttr('modelUUID', data.uuid);
       this.setConnectedAttr('providerType', data.provider);
       this.setConnectedAttr('region', data.region);
+      this.setConnectedAttr('sla', data.sla);
+      this.setConnectedAttr('version', data.version);
+
 
       // For now we only need to call modelGet if the provider is MAAS.
       if (data.provider !== 'maas') {
@@ -868,6 +871,11 @@ YUI.add('juju-env-api', function(Y) {
         - cloud: the model cloud;
         - region: the cloud region in which the model is placed;
         - credential: the cloud credential name;
+        - sla: the level of the SLA, "unsupported", "essential", standard" or
+          "advanced";
+        - slaOwner: the name of the user who set the SLA initially, or an empty
+          string if the current SLA is "unsupported";
+        - version: the current agent version;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead.
      @return {undefined} Nothing.
@@ -890,6 +898,7 @@ YUI.add('juju-env-api', function(Y) {
           credential = tags.parse(
             tags.CREDENTIAL, response['cloud-credential-tag']);
         }
+        const sla = response.sla || {};
         callback(null, {
           name: response.name,
           series: response['default-series'],
@@ -899,6 +908,9 @@ YUI.add('juju-env-api', function(Y) {
           cloud: tags.parse(tags.CLOUD, response['cloud-tag']),
           region: response['cloud-region'],
           credential: credential,
+          sla: sla.level || '',
+          slaOwner: sla.owner || '',
+          version: response['agent-version'],
           life: response.life,
           isAlive: response.life === 'alive'
         });
@@ -3076,6 +3088,7 @@ YUI.add('juju-env-api', function(Y) {
           containers: objMap(data.containers, makeMachine)
         });
         const model = resp.model;
+        const relations = resp.relations || [];
         // Call the callback with the retrieved status info.
         callback(null, {
           model: {
@@ -3101,7 +3114,7 @@ YUI.add('juju-env-api', function(Y) {
             units: objMap(app.units, unit => ({
               workloadVersion: unit['workload-version'],
               machine: unit.machine,
-              ports: unit['opened-ports'],
+              ports: unit['opened-ports'] || [],
               publicAddress: unit['public-address'],
               isLeader: unit.leader,
               agent: makeStatus(unit['agent-status']),
@@ -3123,7 +3136,7 @@ YUI.add('juju-env-api', function(Y) {
             relations: app.relations,
             status: makeStatus(app.status)
           })),
-          relations: resp.relations.map(relation => ({
+          relations: relations.map(relation => ({
             id: relation.id,
             key: relation.key,
             interface: relation.interface,

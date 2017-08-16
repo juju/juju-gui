@@ -31,74 +31,197 @@ describe('EnvSwitcher', function() {
     YUI().use('env-switcher', function() { done(); });
   });
 
-  it('renders the closed switcher component', function() {
-    var renderer = jsTestUtils.shallowRender(
+  it('renders the closed switcher component', () => {
+    const renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        listModelsWithInfo={sinon.stub()}
+        humanizeTimestamp={sinon.stub()}
+        setModelName={sinon.stub()}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+
+    const expected = (
+      <div className="env-switcher"
+        role="navigation"
+        aria-label="Model switcher"
+        onClick={null}
+        tabIndex="0">
+        <div className="env-switcher__toggle editable">
+          <div>
+            <span className="env-switcher__name"
+              contentEditable={true}
+              dangerouslySetInnerHTML={{__html: 'MyEnv'}}
+              onBlur={sinon.stub()}
+              onFocus={sinon.stub()}
+              ref="name" />
+            <div className="env-switcher__name-error">
+              The model name must only contain lowercase letters, numbers, and hyphens.
+              It must not start or end with a hyphen.
+            </div>
+          </div>
+          <div className="env-switcher__chevron"
+            onClick={instance._toggleEnvList}
+            onKeyPress={instance._handleKeyToggle}
+            id="environmentSwitcherToggle"
+            role="button"
+            tabIndex="0"
+            aria-haspopup="true"
+            aria-owns="environmentSwitcherMenu"
+            aria-controls="environmentSwitcherMenu"
+            aria-expanded="false">
+            <juju.components.SvgIcon
+              name="chevron_down_16"
+              size="16" />
+          </div>
+        </div>
+        {undefined}
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('should not have an editable name when the model is committed', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         clearCanvasInfo={clearCanvasInfo}
         environmentName="MyEnv"
-        listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
+        modelCommitted={true}
+        setModelName={sinon.stub()}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <span className="env-switcher__name"
+        ref="name">
+        MyEnv
+      </span>);
+    expect(output.props.children[0].props.children[0]).toEqualJSX(expected);
+  });
 
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+  it('can change the model name', () => {
+    const setModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        humanizeTimestamp={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
+        modelCommitted={false}
+        setModelName={setModelName}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      name: {
+        innerText: 'new-name'
+      }
+    };
+    const output = renderer.getRenderOutput();
+    const input = output.props.children[0].props.children[0].props.children[0];
+    input.props.onBlur();
+    assert.equal(setModelName.callCount, 1);
+    assert.equal(setModelName.args[0][0], 'new-name');
+  });
 
-    var expected = <div className="env-switcher"
-      role="navigation"
-      aria-label="Model switcher">
-      <div
-        className="env-switcher__toggle"
-        onClick={instance._toggleEnvList}
-        onKeyPress={instance._handleKeyToggle}
-        id="environmentSwitcherToggle"
-        role="button"
-        tabIndex="0"
-        aria-haspopup="true"
-        aria-owns="environmentSwitcherMenu"
-        aria-controls="environmentSwitcherMenu"
-        aria-expanded="false">
-        <span className="env-switcher__name">
-            MyEnv
-        </span>
-        <juju.components.SvgIcon name="chevron_down_16"
-          className="env-switcher__chevron"
-          size="16" />
-      </div>
-      {undefined}
-    </div>;
+  it('does not change the model name if there is an error', () => {
+    const setModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        humanizeTimestamp={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
+        modelCommitted={false}
+        setModelName={setModelName}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      name: {
+        innerText: '-'
+      }
+    };
+    const output = renderer.getRenderOutput();
+    const input = output.props.children[0].props.children[0].props.children[0];
+    input.props.onBlur();
+    assert.equal(setModelName.callCount, 0);
+  });
+
+  it('can render when there is an error', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher.wrappedComponent
+        acl={{}}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        environmentName="MyEnv"
+        listModelsWithInfo={sinon.stub()}
+        humanizeTimestamp={sinon.stub()}
+        setModelName={sinon.stub()}
+        showProfile={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      name: {
+        innerText: '-'
+      }
+    };
+    let output = renderer.getRenderOutput();
+    const input = output.props.children[0].props.children[0].props.children[0];
+    input.props.onBlur();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="env-switcher env-switcher--error"
+        role="navigation"
+        aria-label="Model switcher"
+        onClick={null}
+        tabIndex="0">
+        {output.props.children}
+      </div>);
     expect(output).toEqualJSX(expected);
   });
 
-  it('opens the list on click', function() {
+  it('opens the list on click', () => {
     const acl = {};
     const changeState = sinon.stub();
     const humanizeTimestamp = sinon.stub();
     const switchModel = sinon.stub();
     const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         clearCanvasInfo={clearCanvasInfo}
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
+        setModelName={sinon.stub()}
         switchModel={switchModel}
         user={user} />, true);
     let output = renderer.getRenderOutput();
     // Click the toggler
-    output.props.children[0].props.onClick({
+    output.props.children[0].props.children[1].props.onClick({
       preventDefault: () => null
     });
 
     renderer.render(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -106,6 +229,7 @@ describe('EnvSwitcher', function() {
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
+        setModelName={sinon.stub()}
         switchModel={switchModel}
         user={user} />);
 
@@ -121,22 +245,22 @@ describe('EnvSwitcher', function() {
       handleModelClick={instance.handleModelClick}
       humanizeTimestamp={humanizeTimestamp}
       switchModel={switchModel}
-      user={user}
-    />;
+      user={user} />;
 
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 
-  it('fetches a list of environments on mount', function() {
+  it('fetches a list of environments on mount', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         clearCanvasInfo={clearCanvasInfo}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
+        setModelName={sinon.stub()}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
@@ -151,22 +275,23 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(instance.state.envList, [models[0]]);
   });
 
-  it('fetches the env list when opening', function() {
+  it('fetches the env list when opening', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         clearCanvasInfo={clearCanvasInfo}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
+        setModelName={sinon.stub()}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     // Click the toggler
-    output.props.children[0].props.onClick({
+    output.props.children[0].props.children[1].props.onClick({
       preventDefault: () => null
     });
     assert.equal(listModelsWithInfo.callCount, 1);
@@ -176,7 +301,7 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(instance.state.envList, models);
   });
 
-  it('can call to switch models', function() {
+  it('can call to switch models', () => {
     // To switch environments you click on an environment list item in a sub
     // component so here we're just going to call the method that gets
     // passed down.
@@ -190,13 +315,14 @@ describe('EnvSwitcher', function() {
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         clearCanvasInfo={clearCanvasInfo}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
+        setModelName={sinon.stub()}
         showProfile={sinon.stub()}
         switchModel={switchModel} />, true);
     const instance = renderer.getMountedInstance();
@@ -209,7 +335,6 @@ describe('EnvSwitcher', function() {
     };
     instance.handleModelClick(model);
     assert.equal(switchModel.callCount, 1);
-    assert.deepEqual(instance.state, {showEnvList: false, envList: models});
     assert.deepEqual(switchModel.args[0], [model]);
   });
 
@@ -217,7 +342,7 @@ describe('EnvSwitcher', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
+      <juju.components.EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}
@@ -225,6 +350,7 @@ describe('EnvSwitcher', function() {
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
+        setModelName={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidMount();
