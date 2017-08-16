@@ -45,7 +45,7 @@ Profile.sectionsMap = new Map([
           acl={component.props.acl}
           addNotification={component.props.addNotification}
           changeState={component.props.changeState}
-          clearPostDeployment={component.props.clearPostDeployment}
+          clearCanvasInfo={component.props.clearCanvasInfo}
           facadesExist={component.props.facadesExist}
           destroyModels={component.props.destroyModels}
           listModelsWithInfo={component.props.listModelsWithInfo}
@@ -72,7 +72,7 @@ Profile.propTypes = {
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
-  clearPostDeployment: PropTypes.func.isRequired,
+  clearCanvasInfo: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,

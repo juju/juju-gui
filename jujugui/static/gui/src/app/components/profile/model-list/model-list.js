@@ -177,7 +177,7 @@ class ProfileModelList extends React.Component {
           <juju.components.CreateModelButton
             title="Start a new model"
             changeState={props.changeState}
-            clearPostDeployment={this.props.clearPostDeployment}
+            clearCanvasInfo={this.props.clearCanvasInfo}
             switchModel={props.switchModel} /> : null}
       </li>);
   }
@@ -231,7 +231,7 @@ ProfileModelList.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
-  clearPostDeployment: PropTypes.func.isRequired,
+  clearCanvasInfo: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,

@@ -48,7 +48,7 @@ describe('Charmbrowser', function() {
     var series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const deployTarget = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
@@ -67,7 +67,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         deployTarget={deployTarget}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
@@ -100,7 +100,7 @@ describe('Charmbrowser', function() {
             changeState={searchResults.changeState}
             charmstoreSearch={charmstoreSearch}
             deployTarget={deployTarget}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             generatePath={searchResults.generatePath}
             getName={utils.getName}
             makeEntityModel={makeEntityModel}
@@ -137,7 +137,7 @@ describe('Charmbrowser', function() {
         flags={{}}
         deployService={sinon.stub()}
         deployTarget={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
+        displayCanvasInfo={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -185,7 +185,7 @@ describe('Charmbrowser', function() {
     const getEntity = sinon.spy();
     const makeEntityModel = sinon.spy();
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
@@ -211,7 +211,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         deployTarget={sinon.stub()}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
@@ -258,7 +258,7 @@ describe('Charmbrowser', function() {
             getFile={getFile}
             renderMarkdown={renderMarkdown}
             deployService={deployService}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             id={id}
             addNotification={addNotification}
             pluralize={utils.pluralize}
@@ -288,7 +288,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
         deployTarget={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
+        displayCanvasInfo={sinon.stub()}
         flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}

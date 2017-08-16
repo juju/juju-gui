@@ -216,7 +216,7 @@ class SearchResultsItem extends React.Component {
 
     @param id {String} The id of the entity to deploy.
   */
-  _handleDeploy(id, displayName) {
+  _handleDeploy(id) {
     this.props.deployTarget(id);
 
     // Close the search results so that the deployed entity is visible on the
@@ -226,7 +226,7 @@ class SearchResultsItem extends React.Component {
       profile: null
     });
 
-    this.props.displayPostDeployment(id, displayName);
+    this.props.displayCanvasInfo(id);
   }
 
   /**
@@ -308,7 +308,7 @@ class SearchResultsItem extends React.Component {
         <div className="one-col last-col list-block__list--item-deploy">
           <juju.components.GenericButton
             extraClasses="list-block__list--item-deploy-link"
-            action={this._handleDeploy.bind(this, item.id, item.displayName)}
+            action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
             type="inline-neutral">
             <juju.components.SvgIcon
@@ -325,7 +325,7 @@ SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
-  displayPostDeployment: PropTypes.func.isRequired,
+  displayCanvasInfo: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired
 };

@@ -22,7 +22,7 @@ describe('Profile', function() {
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
         changeState={options.changeState || sinon.stub()}
-        clearPostDeployment={options.clearPostDeployment || sinon.stub()}
+        clearCanvasInfo={options.clearCanvasInfo || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
@@ -48,7 +48,7 @@ describe('Profile', function() {
             acl={instance.props.acl}
             addNotification={instance.props.addNotification}
             changeState={instance.props.changeState}
-            clearPostDeployment={instance.props.clearPostDeployment}
+            clearCanvasInfo={instance.props.clearCanvasInfo}
             facadesExist={instance.props.facadesExist}
             destroyModels={instance.props.destroyModels}
             listModelsWithInfo={instance.props.listModelsWithInfo}

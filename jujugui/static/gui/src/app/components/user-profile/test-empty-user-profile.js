@@ -29,11 +29,11 @@ describe('EmptyUserProfile', () => {
   it('renders the empty state for the current user', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
+    const clearCanvasInfo = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
+        clearCanvasInfo={clearCanvasInfo}
         isCurrentUser={true}
         switchModel={sinon.stub()}
         staticURL={staticURL} />, true);
@@ -55,7 +55,7 @@ describe('EmptyUserProfile', () => {
         </p>
         <juju.components.CreateModelButton
           changeState={changeState}
-          clearPostDeployment={clearPostDeployment}
+          clearCanvasInfo={clearCanvasInfo}
           switchModel={instance.props.switchModel}
           title="Start building"
           type="inline-positive" />
@@ -67,11 +67,11 @@ describe('EmptyUserProfile', () => {
   it('renders the empty state for another user', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
+    const clearCanvasInfo = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
+        clearCanvasInfo={clearCanvasInfo}
         isCurrentUser={false}
         switchModel={sinon.stub()}
         staticURL={staticURL} />, true);
@@ -100,7 +100,7 @@ describe('EmptyUserProfile', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         switchModel={sinon.stub()}
         staticURL='test' />);
     assert.equal(

@@ -193,7 +193,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification=
           {this.db.notifications.add.bind(this.db.notifications)}
         charmstore={charmstore}
-        clearPostDeployment={this._clearPostDeployment.bind(this)}
+        clearCanvasInfo={this._clearCanvasInfo.bind(this)}
         currentModel={currentModel}
         d3={yui.d3}
         facadesExist={facadesExist}
@@ -222,7 +222,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
           changeState={this._bound.changeState}
-          clearPostDeployment={this._clearPostDeployment.bind(this)}
+          clearCanvasInfo={this._clearCanvasInfo.bind(this)}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
@@ -288,33 +288,48 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   /**
     Display post deployment help.
 
-    @param {String} id The entity ID of the charm or bundle.
-    @param {String} displayName The display name of the charm or bundle.
-    @param {Array} files An array of the charm or bundles files.
+    @param {String} entityId The entity ID of the charm or bundle.
   */
-  _displayPostDeployment(id, displayName, files) {
-    this._clearPostDeployment();
+  _displayCanvasInfo(entityId) {
+    this._clearCanvasInfo();
     const charmstore = this.get('charmstore');
 
-    const entityUrl = (id) => {
+    const showEntityDetails = (id) => {
+      let url;
+
       try {
-        return window.jujulib.URL.fromString(id);
+        url = window.jujulib.URL.fromString(id);
       } catch (_) {
-        return window.jujulib.URL.fromLegacyString(id);
+        url = window.jujulib.URL.fromLegacyString(id);
       }
+
+      const storeState = {
+        profile: null,
+        search: null,
+        store: url.path()
+      };
+
+      this.state.changeState(storeState);
     };
 
-    ReactDOM.render(
-      <window.juju.components.PostDeployment
-        changeState={this.state.changeState.bind(this.state)}
-        closePostDeployment={this._clearPostDeployment.bind(this)}
-        entityId={id}
-        entityUrl={entityUrl(id)}
-        getFile={charmstore.getFile.bind(charmstore)}
-        files={files}
-        marked={marked}
-        displayName={displayName} />,
-      document.getElementById('post-deployment')
+    this.get('charmstore').getEntity(entityId,
+      (err, entityData) => {
+        if (err) {
+          console.error(err);
+          console.error(`Entity not found with id: ${entityId}`);
+        }
+
+        ReactDOM.render(
+          <window.juju.components.CanvasInfo
+            closeCanvasInfo={this._clearCanvasInfo.bind(this)}
+            entity={entityData[0]}
+            getFile={charmstore.getFile.bind(charmstore)}
+            makeEntityModel={yui.juju.makeEntityModel}
+            marked={marked}
+            showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+          document.getElementById('canvas-info')
+        );
+      }
     );
   }
 
@@ -334,9 +349,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   /**
     The cleanup dispatcher for the post deployment screen.
   */
-  _clearPostDeployment() {
+  _clearCanvasInfo() {
     ReactDOM.unmountComponentAtNode(
-      document.getElementById('post-deployment'));
+      document.getElementById('canvas-info'));
   }
   _renderHeaderLogo() {
     const userName = this.user.displayName;
@@ -404,7 +419,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         deployTarget={this.deployTarget.bind(this, charmstore)}
-        displayPostDeployment={this._displayPostDeployment.bind(this)}
+        displayCanvasInfo={this._displayCanvasInfo.bind(this)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
@@ -820,7 +835,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
         deploy={utils.deploy.bind(utils, this)}
-        displayPostDeployment={this._displayPostDeployment.bind(this)}
+        displayCanvasInfo={this._displayCanvasInfo.bind(this)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={utils.formatConstraints.bind(utils)}
@@ -1064,7 +1079,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
-        clearPostDeployment={this._clearPostDeployment.bind(this)}
+        clearCanvasInfo={this._clearCanvasInfo.bind(this)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}

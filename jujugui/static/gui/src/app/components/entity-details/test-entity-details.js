@@ -48,7 +48,7 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.spy();
+    const displayCanvasInfo = sinon.spy();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
@@ -65,7 +65,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -110,7 +110,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             addNotification={addNotification}
             deployService={deployService}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
@@ -142,7 +142,7 @@ describe('EntityDetails', function() {
     const id = mockEntity.get('id');
     const getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
@@ -156,7 +156,7 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
@@ -203,7 +203,7 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
@@ -221,7 +221,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -258,7 +258,7 @@ describe('EntityDetails', function() {
         <div>
           <juju.components.EntityHeader
             acl={acl}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -302,7 +302,7 @@ describe('EntityDetails', function() {
     const id = mockEntity.get('id');
     const getEntity = sinon.stub().returns({abort: abort});
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
@@ -316,7 +316,7 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
@@ -353,7 +353,7 @@ describe('EntityDetails', function() {
         id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
-        displayPostDeployment={sinon.stub()}
+        displayCanvasInfo={sinon.stub()}
         flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -385,7 +385,7 @@ describe('EntityDetails', function() {
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
@@ -405,7 +405,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
@@ -441,7 +441,7 @@ describe('EntityDetails', function() {
         <div>
           <juju.components.EntityHeader
             acl={acl}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -484,7 +484,7 @@ describe('EntityDetails', function() {
     const apiUrl = 'http://example.com';
     const changeState = sinon.spy();
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
+    const displayCanvasInfo = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const getFile = sinon.spy();
@@ -504,7 +504,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
+        displayCanvasInfo={displayCanvasInfo}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
@@ -541,7 +541,7 @@ describe('EntityDetails', function() {
           <juju.components.EntityHeader
             acl={acl}
             entityModel={mockEntity}
-            displayPostDeployment={displayPostDeployment}
+            displayCanvasInfo={displayCanvasInfo}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
@@ -588,7 +588,7 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         deployService={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
+        displayCanvasInfo={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -632,7 +632,7 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         deployService={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
+        displayCanvasInfo={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}

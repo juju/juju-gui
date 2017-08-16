@@ -53,7 +53,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
@@ -117,7 +117,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
@@ -197,7 +197,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         environmentName="model-name-1"
         envs={models}
         handleModelClick={sinon.stub()}
@@ -236,7 +236,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         envs={[]}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
@@ -256,7 +256,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={handleModelClick}
@@ -277,7 +277,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}
@@ -297,7 +297,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         acl={_acl}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
+        clearCanvasInfo={sinon.stub()}
         envs={models}
         humanizeTimestamp={humanizeTimestamp}
         handleModelClick={sinon.stub()}

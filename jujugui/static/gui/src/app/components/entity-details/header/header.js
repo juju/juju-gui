@@ -58,10 +58,7 @@ class EntityHeader extends React.Component {
       var id = entity.id.replace('cs:', '');
       this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
     }
-    this.props.displayPostDeployment(
-      entity.id,
-      entity.displayName,
-      entityModel.get('files'));
+    this.props.displayCanvasInfo(entity.id);
     this._closeEntityDetails();
   }
 
@@ -478,7 +475,7 @@ EntityHeader.propTypes = {
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   deployService: PropTypes.func.isRequired,
-  displayPostDeployment: PropTypes.func.isRequired,
+  displayCanvasInfo: PropTypes.func.isRequired,
   entityModel: PropTypes.object.isRequired,
   getBundleYAML: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,

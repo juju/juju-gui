@@ -41,7 +41,7 @@ class EmptyUserProfile extends React.Component {
         {isCurrentUser ? (
           <juju.components.CreateModelButton
             changeState={props.changeState}
-            clearPostDeployment={this.props.clearPostDeployment}
+            clearCanvasInfo={this.props.clearCanvasInfo}
             switchModel={props.switchModel}
             title="Start building"
             type="inline-positive" />) : null}
@@ -52,7 +52,7 @@ class EmptyUserProfile extends React.Component {
 
 EmptyUserProfile.propTypes = {
   changeState: PropTypes.func.isRequired,
-  clearPostDeployment: PropTypes.func.isRequired,
+  clearCanvasInfo: PropTypes.func.isRequired,
   isCurrentUser: PropTypes.bool,
   staticURL: PropTypes.string,
   switchModel: PropTypes.func.isRequired

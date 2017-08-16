@@ -1,20 +1,20 @@
-/* Copyright (C) 2015 Canonical Ltd. */
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
 /**
-  Displays post-deployment information for usage and quickstart.
+  Displays information for usage and quickstart.
   Shown when a charm or bundle is added to the canvas, and on deploy.
 */
-class PostDeployment extends React.Component {
+class CanvasInfo extends React.Component {
   constructor(props) {
     super(props);
-    this.variables = {
+    this.templateTags = {
       details_link: {
         onClick: this._handleViewDetails.bind(this),
         content: '<span role="button" ' +
           'class="link" ' +
-          'data-variable="details_link">View details</span>'
+          'data-templatetag="details_link">View details</span>'
       },
       requires_cli_link: {
         content: '<a ' +
@@ -24,21 +24,22 @@ class PostDeployment extends React.Component {
     };
     this.state= {
       content: null,
+      displayName: null,
       metadata: {}
     };
   }
 
   componentDidMount() {
-    const files = this.props.files;
+    const entity = this.props.makeEntityModel(this.props.entity).toEntity();
 
-    // We only want to try and get the usage.md file if there's one there.
-    // Unfortunately, the only place we can easily know whether the file
-    // exists or not is from the entity details page.
-    // The + icon in search results will make an api request for the file
-    // and 404 if it's not there.
-    if (!files || (files && files.indexOf('usage.md') !== -1)) {
+    this.setState({
+      displayName: entity.displayName
+    });
+
+    const files = this.props.entity.files;
+    if (files && files.indexOf('usage.md') !== -1) {
       this.props.getFile(
-        this.props.entityId,
+        this.props.entity.id,
         'usage.md',
         this._getUsageCallback.bind(this)
       );
@@ -47,17 +48,23 @@ class PostDeployment extends React.Component {
 
   /**
     Callback when usage.md is retrieved.
+    Even if there is an error we still want to display the basic box.
 
-    @param {Object} error Error if there is one.
+    @param {Object} error Error from the API.
     @param {String} usageContents The contents of the file.
   */
   _getUsageCallback(error, usageContents) {
+    if (error) {
+      console.error(error);
+    }
+    // Rather then parsing the JSON to read the error we check if the returned
+    // body starts with a '{'. If it does, it's not a markdown file so ignore.
     if (usageContents && usageContents.substring(0, 1) !== '{') {
       this.setState({
         metadata: this.parseMarkdownMetadata(usageContents)
       });
       const markdown = this.props.marked(
-        this.replaceVars(
+        this.replaceTemplateTags(
           usageContents
         )
       );
@@ -85,18 +92,26 @@ class PostDeployment extends React.Component {
   */
   parseMarkdownMetadata(markdown) {
     let parsedMetadata = {};
-    if (markdown.indexOf('---') === 0) {
+    markdown = markdown.trim();
+    // If the first instance of a hr is at position 0 and
+    // there is another hr expect metadata.
+    if (markdown.indexOf('---') === 0 && markdown.indexOf('---', 1) !== -1) {
       let lineByLine = markdown.split('\n');
       let metadata = [];
       lineByLine.shift();
-      while(lineByLine[0] !== '---') {
+      while(lineByLine.length > 0 && lineByLine[0] !== '---') {
         metadata.push(lineByLine.shift());
       }
       lineByLine.shift();
 
       metadata.forEach(option => {
-        const splitOption = option.split(':');
-        return parsedMetadata[splitOption[0].trim()] = splitOption[1].trim();
+        if (option.indexOf(':') !== -1) {
+          const splitOption = option.split(':');
+          parsedMetadata[splitOption[0].trim()] = splitOption[1].trim();
+        } else {
+          console.error(`${option} does not conform to the metadata format of
+            key: value`);
+        }
       });
 
       return parsedMetadata;
@@ -104,16 +119,18 @@ class PostDeployment extends React.Component {
   }
 
   /**
-    Replace variables within the markdown with a pre-defined list.
+    Replace templateTags within the markdown with a pre-defined list.
 
     @param {String} markdown The raw markdown.
     @return {String} The replaced string.
   */
-  replaceVars(markdown) {
+  replaceTemplateTags(markdown) {
     let replaced = markdown;
 
-    Object.keys(this.variables).forEach(variable => {
-      replaced = replaced.split(`{${variable}}`).join(this.variables[variable].content);
+    Object.keys(this.templateTags).forEach(templateTag => {
+      replaced = replaced
+        .split(`{${templateTag}}`)
+        .join(this.templateTags[templateTag].content);
     });
 
     return replaced;
@@ -121,14 +138,14 @@ class PostDeployment extends React.Component {
 
   /**
     Catches click events on the contents of the modal. This allows replaced
-    variables to have React functionality.
+    templateTags to have React functionality.
 
     @param {SyntheticEvent} evt The click event.
   */
   _handleContentClick(evt) {
-    const variable = evt.target.getAttribute('data-variable');
-    if (variable) {
-      const resolvedVar = this.variables[variable];
+    const templateTag = evt.target.getAttribute('data-templatetag');
+    if (templateTag) {
+      const resolvedVar = this.templateTags[templateTag];
       if (resolvedVar && resolvedVar.onClick) {
         resolvedVar.onClick.call(this);
       }
@@ -137,43 +154,34 @@ class PostDeployment extends React.Component {
 
   /**
     Show the details page of a charm or bundle based on the click.
-
-    @param {SyntheticEvent} evt The click event.
   */
-  _handleViewDetails(evt) {
-    if (evt) evt.preventDefalt();
-    const storeState = {
-      profile: null,
-      search: null,
-      store: this.props.entityUrl.path()
-    };
-
-    this.props.changeState(storeState);
+  _handleViewDetails() {
+    this.props.showEntityDetails();
   }
 
   render() {
     let classes = [
       'modal--right',
       'modal--auto-height',
-      'post-deployment'
+      'canvas-info'
     ];
     if (this.state.content) {
       return (
         <juju.components.Modal
-          closeModal={this.props.closePostDeployment}
+          closeModal={this.props.closeCanvasInfo}
           extraClasses={classes.join(' ')}>
           <div onClick={this._handleContentClick.bind(this)}
             dangerouslySetInnerHTML={{__html: this.state.content}} />
         </juju.components.Modal>
       );
-    } else if (this.props.displayName) {
-      classes.push('post-deployment--simple');
+    } else if (this.state.displayName) {
+      classes.push('canvas-info--simple');
       return (
         <juju.components.Modal
-          closeModal={this.props.closePostDeployment}
+          closeModal={this.props.closeCanvasInfo}
           extraClasses={classes.join(' ')}>
           <p>
-            {this.props.displayName}
+            {this.state.displayName}
           &nbsp;</p>
           <span
             role="button"
@@ -186,19 +194,17 @@ class PostDeployment extends React.Component {
   }
 }
 
-PostDeployment.propTypes = {
-  changeState: PropTypes.func.isRequired,
-  closePostDeployment: PropTypes.func.isRequired,
-  displayName: PropTypes.string.isRequired,
-  entityId: PropTypes.string.isRequired,
-  entityUrl: PropTypes.object.isRequired,
-  files: PropTypes.array,
+CanvasInfo.propTypes = {
+  closeCanvasInfo: PropTypes.func.isRequired,
+  entity: PropTypes.object.isRequired,
   getFile: PropTypes.func.isRequired,
-  marked: PropTypes.func.isRequired
+  makeEntityModel: PropTypes.func.isRequired,
+  marked: PropTypes.func.isRequired,
+  showEntityDetails: PropTypes.func.isRequired
 };
 
-YUI.add('post-deployment', function() {
-  juju.components.PostDeployment = PostDeployment;
+YUI.add('canvas-info', function() {
+  juju.components.CanvasInfo = CanvasInfo;
 }, '0.1.0', { requires: [
   'modal'
 ]});
