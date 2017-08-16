@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -26,34 +10,34 @@ class HeaderHelp extends React.Component {
   constructor() {
     super();
     this.state = {
-      showHelpMenu: false
+      showDropdown: false
     };
   }
 
   /**
-    When the menu is shown, clicking anywhere but the menu will close
-    the menu.
-
-    @method handleClickOutside
+    Passed into the dropdown component to call when the user clicks outside
+    of it. We use this trigger to close the dropdown.
+    @param {Object} e The click event.
   */
-  handleClickOutside() {
-    this.setState({ showHelpMenu: false });
+  _handleDropdownClickOutside(e) {
+    // If they click the button again we don't want it to clse the menu in the
+    // clickoutside as the _toggleDropdown will handle that.
+    if (!ReactDOM.findDOMNode(this).contains(e.target)) {
+      this.setState({showDropdown: false});
+    }
   }
 
   /**
     Clicking the help menu will toggle whether it's visibility.
-
-    @method _toggleHelpMenu
   */
-  _toggleHelpMenu() {
-    this.setState({ showHelpMenu: !this.state.showHelpMenu });
+  _toggleDropdown() {
+    this.setState({showDropdown: !this.state.showDropdown});
   }
 
   /**
     Generate a link to issues based on whether the user is logged in
     and in gisf.
-
-    @method _generateIssuesLink
+    @returns {Object} The React object for the issues link.
    */
   _generateIssuesLink() {
     let label = 'File Issue';
@@ -64,66 +48,60 @@ class HeaderHelp extends React.Component {
         'https://jujucharms.com/docs/stable/about-juju';
     }
     return (
-      <li className="header-menu__menu-list-item
-        header-menu__menu-list-item-with-link"
-        role="menuitem" tabIndex="0">
-        <a className="header-menu__menu-list-item-link"
+      <li className="dropdown-menu__list-item" role="menuitem" tabIndex="0">
+        <a className="dropdown-menu__list-item-link"
           href={link} target="_blank">{label}</a>
-      </li>
-    );
+      </li>);
   }
 
+  /**
+    Generate the documentation link.
+    @returns {Object} The React object for the documentation link or undefined.
+  */
   _generateDocsLink() {
     if (this.props.gisf) {
-      return (<li className="header-menu__menu-list-item
-        header-menu__menu-list-item-with-link"
-        role="menuitem" tabIndex="0">
-        <a
-          className="header-menu__menu-list-item-link"
-          href="https://jujucharms.com/docs/stable/getting-started-jaas"
-          target="_blank">
-          View Documentation</a>
-      </li>);
+      return (
+        <li className="dropdown-menu__list-item" role="menuitem" tabIndex="0">
+          <a className="dropdown-menu__list-item-link"
+            href="https://jujucharms.com/docs/stable/getting-started-jaas"
+            target="_blank">
+            View Documentation</a>
+        </li>);
     }
   }
 
   /**
    Click the button, get the help.
-
     @param {Object} evt The event that triggered the function
   */
   _handleShortcutsLink(evt) {
-    this._toggleHelpMenu();
+    this._toggleDropdown();
     this.props.displayShortcutsModal();
   }
 
   /**
    Generate menu based on whether the button has been clicked.
-
-    @method generateHelpMenu
+   @returns {Object} The React object for the dropdown menu or empty string.
   */
   _generateHelpMenu() {
-    if (this.state.showHelpMenu) {
+    if (this.state.showDropdown) {
       return (
-        <juju.components.Panel
-          instanceName="header-menu__menu"
-          visible={true}>
-          <ul className="header-menu__menu-list" role="menubar">
-            {this._generateDocsLink()}
-            {this._generateIssuesLink()}
-            <li className="header-menu__menu-list-item
-                header-menu__menu-list-item-with-link"
-              role="menuItem"
-              tabIndex="0" onClick={this._handleShortcutsLink.bind(this)}>
-              <span className="header-menu__menu-list-item-link">
-                  Keyboard shortcuts
-                <span className="header-menu__menu-extra-info">
-                    Shift + ?
-                </span>
+        <juju.components.DropdownMenu
+          classes={['header-help']}
+          handleClickOutside={this._handleDropdownClickOutside.bind(this)}>
+          {this._generateDocsLink()}
+          {this._generateIssuesLink()}
+          <li className="dropdown-menu__list-item" role="menuItem"
+            tabIndex="0" onClick={this._handleShortcutsLink.bind(this)}>
+            <span className="dropdown-menu__list-item-link">
+                Keyboard shortcuts
+              <span className="header-help__extra-info">
+                  Shift + ?
               </span>
-            </li>
-          </ul>
-        </juju.components.Panel>);
+            </span>
+          </li>
+        </juju.components.DropdownMenu>
+      );
     }
     return '';
   }
@@ -132,13 +110,12 @@ class HeaderHelp extends React.Component {
    Get class names based on whether the help menu is shown.
    If it is we want to hide the tooltip otherwise there's a black halo
    around the tooltip up arrow.
-
-    @method _getClassNames
+   @returns {String} The classes to add to the element.
   */
   _getClassNames() {
     return classNames(
       'header-menu__button', {
-        'header-menu__show-menu': this.state.showHelpMenu
+        'header-menu__show-menu': this.state.showDropdown
       });
   }
 
@@ -146,7 +123,7 @@ class HeaderHelp extends React.Component {
     return (
       <div className="header-menu">
         <span className={this._getClassNames()}
-          onClick={this._toggleHelpMenu.bind(this)}
+          onClick={this._toggleDropdown.bind(this)}
           role="button"
           tabIndex="0"
           aria-haspopup="true"
@@ -175,8 +152,8 @@ HeaderHelp.propTypes = {
 };
 
 YUI.add('header-help', function() {
-  juju.components.HeaderHelp = enhanceWithClickOutside(HeaderHelp);
+  juju.components.HeaderHelp = HeaderHelp;
 }, '0.1.0', { requires: [
-  'panel-component',
+  'dropdown-menu',
   'svg-icon'
 ]});
