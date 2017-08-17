@@ -1,7 +1,7 @@
 .header-help {
   width: 275px;
 
-  .header-help__extra-info {
+  &__extra-info {
     float: right;
     color: $dark-warm-grey;
   }
