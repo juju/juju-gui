@@ -153,7 +153,12 @@ class Status extends React.Component {
     @param machineId {String} The id of the machine to display.
   */
   _navigateToMachine(machineId) {
-    console.log(machineId);
+    this.props.changeState({
+      gui: {
+        machines: machineId,
+        status: null
+      }
+    });
   }
 
   /**
@@ -483,10 +488,18 @@ class Status extends React.Component {
           content: name
         }, {
           columnSize: 3,
-          content: provides
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToApplication.bind(this, provides)}>
+              {provides}
+            </span>)
         }, {
           columnSize: 3,
-          content: consumes
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToApplication.bind(this, consumes)}>
+              {consumes}
+            </span>)
         }, {
           columnSize: 3,
           content: scope

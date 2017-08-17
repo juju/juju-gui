@@ -45,7 +45,6 @@ describe('BasicTable', function() {
         content: 'row 3 column 1',
         columnSize: 3
       }, {
-        content: 'row 3 column 2',
         columnSize: 3
       }, {
         content: 'row 3 column 3',
@@ -100,7 +99,6 @@ describe('BasicTable', function() {
           </div>
           <div className="three-col"
             key="column-1">
-            row 3 column 2
           </div>
           <div className="last-col six-col"
             key="column-1">

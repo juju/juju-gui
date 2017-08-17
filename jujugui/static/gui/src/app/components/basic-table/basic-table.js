@@ -99,7 +99,7 @@ BasicTable.propTypes = {
   }).isRequired).isRequired,
   rows: PropTypes.arrayOf(PropTypes.shape({
     columns: PropTypes.arrayOf(PropTypes.shape({
-      content: PropTypes.node.isRequired,
+      content: PropTypes.node,
       // The number of columns (between 1 and 12).
       columnSize: PropTypes.number.isRequired,
       // The extra classes to apply to the column.
