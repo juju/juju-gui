@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('MachineView', function() {
+fdescribe('MachineView', function() {
   let acl, machines, parseConstraints, generateMachineDetails;
 
   beforeAll(function(done) {
@@ -51,6 +51,7 @@ describe('MachineView', function() {
   it('can render', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -75,6 +76,7 @@ describe('MachineView', function() {
           units: units
         }}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={{
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -232,6 +234,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -285,6 +288,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -324,6 +328,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -368,6 +373,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -443,6 +449,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
@@ -535,6 +542,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
@@ -598,6 +606,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -653,6 +662,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autoPlaceUnits,
           createMachine: sinon.stub(),
@@ -704,6 +714,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autoPlaceUnits,
           createMachine: sinon.stub(),
@@ -730,6 +741,7 @@ describe('MachineView', function() {
   it('can display onboarding if there are no machines', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -752,6 +764,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -822,6 +835,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -892,6 +906,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
@@ -990,6 +1005,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
@@ -1096,6 +1112,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
@@ -1150,6 +1167,7 @@ describe('MachineView', function() {
   it('can display a form for adding a machine', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -1184,6 +1202,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
@@ -1224,6 +1243,7 @@ describe('MachineView', function() {
     const applications = {
       size: sinon.stub().returns(0)
     };
+    const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -1238,6 +1258,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -1250,9 +1271,12 @@ describe('MachineView', function() {
         parseConstraints={parseConstraints}
       />, true);
     const instance = renderer.getMountedInstance();
-    assert.equal(instance.state.selectedMachine, 'new0');
+    instance.componentDidMount();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new0'}});
     instance.selectMachine('new1');
-    assert.equal(instance.state.selectedMachine, 'new1');
+    assert.equal(changeState.callCount, 2);
+    assert.deepEqual(changeState.args[1][0], {gui: {machines: 'new1'}});
   });
 
   it('can display a list of containers', function() {
@@ -1309,6 +1333,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
       />, true);
@@ -1323,6 +1348,13 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: undefined,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1342,6 +1374,7 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
+          machine={{id: 'new0/lxc/0'}}
           machineAPI={{
             machine: {
               id: 'new0/lxc/0'
@@ -1413,6 +1446,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
       />, true);
@@ -1430,6 +1464,13 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: undefined,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1449,6 +1490,10 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
+          machine={{
+            displayName: 'new0/lxc/0',
+            id: 'new0/lxc/0'
+          }}
           machineAPI={{
             machine: {
               displayName: 'new0/lxc/0',
@@ -1465,6 +1510,10 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0/lxc/5"
+          machine={{
+            displayName: 'new0/lxc/5',
+            id: 'new0/lxc/5'
+          }}
           machineAPI={{
             machine: {
               displayName: 'new0/lxc/5',
@@ -1530,6 +1579,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
@@ -1600,6 +1650,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
       />, true);
@@ -1615,6 +1666,13 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: true,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1634,6 +1692,7 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
+          machine={{id: 'new0/lxc/0'}}
           machineAPI={{
             machine: {id: 'new0/lxc/0'},
             removeUnit: instance._removeUnit
@@ -1682,6 +1741,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: createMachine,
@@ -1734,6 +1794,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: createMachine,
@@ -1756,6 +1817,7 @@ describe('MachineView', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -1779,6 +1841,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),

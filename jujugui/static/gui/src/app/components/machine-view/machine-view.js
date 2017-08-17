@@ -51,21 +51,10 @@ class MachineView extends React.Component {
       // invalid as it will have been assigned a new id, so check that the
       // the machine for the selected id still exists and if not reset it
       // so the first machine gets selected.
-<<<<<<< HEAD
       if (!this.props.dbAPI.machines.getById(selectedMachine)) {
-        selectedMachine = null;
+        this.selectMachine(this._getFirstMachineId(nextProps.dbAPI.machines));
       }
     }
-    if (!selectedMachine) {
-      selectedMachine = this._getFirstMachineId(nextProps.dbAPI.machines);
-    }
-    this.setState({selectedMachine: selectedMachine});
-=======
-      if (!this.props.machines.getById(selectedMachine)) {
-        this.selectMachine(this._getFirstMachineId(nextProps.machines));
-      }
-    }
->>>>>>> Select machines in the machine view using the app state.
   }
 
   /**
@@ -319,11 +308,7 @@ class MachineView extends React.Component {
     const dbAPI = props.dbAPI.reshape(propTypes.dbAPI);
     const modelAPI = props.modelAPI.reshape(propTypes.modelAPI);
     machines.forEach((machine) => {
-<<<<<<< HEAD
-      const selectedMachine = this.state.selectedMachine;
-=======
       const selectedMachine = this._getSelected().machine;
->>>>>>> Select machines in the machine view using the app state.
       components.push(
         <juju.components.MachineViewMachine
           acl={acl}
@@ -360,12 +345,8 @@ class MachineView extends React.Component {
     @returns {Object} A list of machines or onboarding.
   */
   _generateContainers() {
-<<<<<<< HEAD
-    const selectedMachine = this.state.selectedMachine;
-=======
     const selected = this._getSelected();
     const selectedMachine = selected.machine;
->>>>>>> Select machines in the machine view using the app state.
     if (!selectedMachine) {
       return;
     }
@@ -394,22 +375,13 @@ class MachineView extends React.Component {
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={this._dropUnit.bind(this)}
           key={container.id}
-<<<<<<< HEAD
+          machine={container}
           machineAPI={{
             machine: container,
             removeUnit: this._removeUnit.bind(this)
           }}
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={props.parseConstraints}
-=======
-          machine={container}
-          removeUnit={this._removeUnit.bind(this)}
-          // The root container will have the same id as the machine.
-          selected={selected.container === container.id ||
-            (!selected.container && (selected.machine === container.id))}
-          selectMachine={this.selectMachine.bind(this)}
-          services={this.props.services}
->>>>>>> Select machines in the machine view using the app state.
           type="container"
         />);
     });
@@ -469,13 +441,8 @@ class MachineView extends React.Component {
     @method _addContainer
   */
   _addContainer() {
-<<<<<<< HEAD
-    const selectedMachine = this.state.selectedMachine;
-    let deleted = false;
-=======
     var selectedMachine = this._getSelected().machine;
-    var deleted = false;
->>>>>>> Select machines in the machine view using the app state.
+    let deleted = false;
     if (selectedMachine) {
       const machine = this.props.dbAPI.machines.getById(selectedMachine);
       deleted = machine.deleted;
@@ -510,19 +477,10 @@ class MachineView extends React.Component {
     const propTypes = juju.components.MachineViewAddMachine.propTypes;
     return (
       <juju.components.MachineViewAddMachine
-<<<<<<< HEAD
         acl={props.acl.reshape(propTypes.acl)}
         close={this._closeAddMachine.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
-        parentId={this.state.selectedMachine}
-=======
-        acl={props.acl}
-        close={this._closeAddContainer.bind(this)}
-        createMachine={props.createMachine}
         parentId={this._getSelected().machine}
-        placeUnit={props.placeUnit}
-        providerType={props.providerType}
->>>>>>> Select machines in the machine view using the app state.
         series={props.series}
         unit={this.state.placingUnit}
       />
@@ -565,16 +523,10 @@ class MachineView extends React.Component {
     @returns {String} the container header title.
   */
   _generateContainersTitle() {
-<<<<<<< HEAD
     const dbAPI = this.props.dbAPI;
-    const selectedMachine = this.state.selectedMachine;
+    var selectedMachine = this._getSelected().machine;
     let containerCount = 0;
     let unitCount = 0;
-=======
-    var selectedMachine = this._getSelected().machine;
-    var containerCount = 0;
-    var unitCount = 0;
->>>>>>> Select machines in the machine view using the app state.
     if (selectedMachine) {
       const containers = dbAPI.machines.filterByParent(selectedMachine);
       const units = dbAPI.units.filterByMachine(selectedMachine);
@@ -841,7 +793,7 @@ MachineView.propTypes = {
     units: PropTypes.object.isRequired
   }).isRequired,
   generateMachineDetails: PropTypes.func.isRequired,
-<<<<<<< HEAD
+  machine: PropTypes.string.isRequired,
   modelAPI: shapeup.shape({
     autoPlaceUnits: PropTypes.func.isRequired,
     createMachine: PropTypes.func.isRequired,
@@ -853,10 +805,6 @@ MachineView.propTypes = {
     updateMachineConstraints: PropTypes.func.isRequired,
     updateMachineSeries: PropTypes.func.isRequired
   }).isRequired,
-=======
-  machine: PropTypes.string.isRequired,
-  machines: PropTypes.object.isRequired,
->>>>>>> Select machines in the machine view using the app state.
   parseConstraints: PropTypes.func.isRequired,
   series: PropTypes.array
 };
