@@ -1360,10 +1360,7 @@ describe('test_model.js', function() {
       });
 
       it('adds machines with the provided id', function() {
-        // XXX frankban 2014-03-04: PYJUJU DEPRECATION.
-        // This test can be safely removed once machines._modelToObject is
-        // removed.
-        [0, '42', '0/lxc/0', '1/kvm/0/lxc/42'].forEach(function(id) {
+        ['42', '0/lxc/0', '1/kvm/0/lxc/42'].forEach(function(id) {
           var machine = machines.add({id: id});
           assert.deepEqual(machine.id, id);
         });

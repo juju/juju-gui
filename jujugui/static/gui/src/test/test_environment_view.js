@@ -117,25 +117,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         ['machineInfo', 'add', {
           'agent-status': {current: 'running'},
-          'id': 0,
+          'id': '0',
           'instance-id': 'local'
         }],
         ['unitInfo', 'add', {
-          'machine-id': 0,
+          'machine-id': '0',
           'agent-status': {current: '', message: '', data: {}},
           'workload-status': {current: '', message: '', data: {}},
           'public-address': '192.168.122.113',
           'name': 'wordpress/0'
         }],
         ['unitInfo', 'add', {
-          'machine-id': 0,
+          'machine-id': '0',
           'agent-status': {current: '', message: '', data: {}},
           'workload-status': {current: '', message: '', data: {}},
           'public-address': '192.168.122.113',
           'name': 'mediawiki/0'
         }],
         ['unitInfo', 'add', {
-          'machine-id': 0,
+          'machine-id': '0',
           'agent-status': {current: '', message: '', data: {}},
           'workload-status': {current: '', message: '', data: {}},
           'public-address': '192.168.122.222',
