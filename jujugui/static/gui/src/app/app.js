@@ -39,7 +39,6 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
-  const fromShape = window.shapeup.fromShape;
 
   /**
    * The main app class.
@@ -1949,33 +1948,38 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderMachineView: function(state, next) {
       const db = this.db;
-      const ecs = this.env.get('ecs');
+      const env = this.env;
+      const ecs = env.get('ecs');
       const utils = views.utils;
-      const genericConstraints = this.env.genericConstraints;
+      const decorated = window.juju.components.MachineView.DecoratedComponent;
+      const propTypes = decorated.propTypes;
       ReactDOM.render(
         <window.juju.components.MachineView
-          acl={this.acl}
-          addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
-            this, this.db, this.env)}
-          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+          acl={shapeup.fromShape(this.acl, propTypes.acl)}
           changeState={this.state.changeState.bind(this.state)}
-          createMachine={this._createMachine.bind(this)}
-          destroyMachines={this.env.destroyMachines.bind(this.env)}
-          environmentName={db.environment.get('name') || ''}
-          generateMachineDetails={
-            utils.generateMachineDetails.bind(
-              utils, genericConstraints, db.units)}
-          machines={db.machines}
-          parseConstraints={
-            utils.parseConstraints.bind(utils, genericConstraints)}
-          placeUnit={this.env.placeUnit.bind(this.env)}
-          providerType={this.env.get('providerType') || ''}
-          removeUnits={this.env.remove_units.bind(this.env)}
-          services={db.services}
+          dbAPI={shapeup.addReshape({
+            addGhostAndEcsUnits: utils.addGhostAndEcsUnits.bind(this, db, env),
+            applications: db.services,
+            modelName: db.environment.get('name') || '',
+            machines: db.machines,
+            units: db.units
+          })}
+          generateMachineDetails={utils.generateMachineDetails.bind(
+            utils, env.genericConstraints, db.units)}
+          modelAPI={shapeup.addReshape({
+            autoPlaceUnits: this._autoPlaceUnits.bind(this),
+            createMachine: this._createMachine.bind(this),
+            destroyMachines: env.destroyMachines.bind(env),
+            placeUnit: env.placeUnit.bind(env),
+            providerType: env.get('providerType') || '',
+            removeUnits: env.remove_units.bind(env),
+            updateMachineConstraints: ecs.updateMachineConstraints.bind(ecs),
+            updateMachineSeries: ecs.updateMachineSeries.bind(ecs)
+          })}
+          parseConstraints={utils.parseConstraints.bind(
+            utils, env.genericConstraints)}
           series={window.jujulib.CHARM_SERIES}
-          units={db.units}
-          updateMachineConstraints={ecs.updateMachineConstraints.bind(ecs)}
-          updateMachineSeries={ecs.updateMachineSeries.bind(ecs)} />,
+        />,
         document.getElementById('machine-view'));
       next();
     },
@@ -2000,9 +2004,9 @@ YUI.add('juju-gui', function(Y) {
       const propTypes = window.juju.components.Status.propTypes;
       ReactDOM.render(
         <window.juju.components.Status
-          db={fromShape(this.db, propTypes.db)}
-          model={fromShape(this.env.getAttrs(), propTypes.model)}
-          urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
+          db={shapeup.fromShape(this.db, propTypes.db)}
+          model={shapeup.fromShape(this.env.getAttrs(), propTypes.model)}
+          urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
         />,
         document.getElementById('status-container')
       );

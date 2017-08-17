@@ -32,7 +32,7 @@ MachineViewMachineGlobals.dropTarget = {
   */
   drop: function (props, monitor, component) {
     var item = monitor.getItem();
-    props.dropUnit(item.unit, props.machine.id);
+    props.dropUnit(item.unit, props.machineAPI.machine.id);
   },
 
   /**
@@ -43,7 +43,7 @@ MachineViewMachineGlobals.dropTarget = {
     @param {Object} monitor A DropTargetMonitor.
   */
   canDrop: function (props, monitor) {
-    return !props.acl.isReadOnly() && !props.machine.deleted;
+    return !props.acl.isReadOnly() && !props.machineAPI.machine.deleted;
   }
 };
 
@@ -96,9 +96,10 @@ class MachineViewMachine extends React.Component {
     // The series is updated separately from the constraints, so remove it
     // from the object that is passed to the update constraints method.
     delete constraints.series;
-    const id = this.props.machine.id;
-    this.props.updateMachineConstraints(id, constraints);
-    this.props.updateMachineSeries(id, series);
+    const id = this.props.machineAPI.machine.id;
+    const modelAPI = this.props.modelAPI;
+    modelAPI.updateMachineConstraints(id, constraints);
+    modelAPI.updateMachineSeries(id, series);
     this._toggleForm();
   }
 
@@ -111,9 +112,9 @@ class MachineViewMachine extends React.Component {
     if (!this.state.showForm) {
       return null;
     }
-    const machine = this.props.machine;
+    const machine = this.props.machineAPI.machine;
     const disabled = this.props.acl.isReadOnly();
-    const units = this.props.units.filterByMachine(
+    const units = this.props.dbAPI.units.filterByMachine(
       machine.id, this.props.type === 'machine');
     const buttons = [{
       title: 'Cancel',
@@ -135,8 +136,8 @@ class MachineViewMachine extends React.Component {
           currentSeries={machine.series}
           disabled={disabled}
           hasUnit={!!units.length}
-          providerType={this.props.providerType}
-          series={this.props.series}
+          providerType={this.props.modelAPI.providerType}
+          series={this.props.machineAPI.series}
           valuesChanged={this._updateConstraints.bind(this)} />
         <juju.components.ButtonRow
           buttons={buttons}
@@ -151,13 +152,15 @@ class MachineViewMachine extends React.Component {
     @returns {Object} the machine hardware elements.
   */
   _generateHardware() {
-    if (this.props.type === 'container' || !this.props.showConstraints ||
+    const props = this.props;
+    if (props.type === 'container' || !props.showConstraints ||
         this.state.showForm) {
       return;
     }
+    const machineAPI = props.machineAPI;
     return (
       <div className="machine-view__machine-hardware">
-        {this.props.generateMachineDetails(this.props.machine)}
+        {machineAPI.generateMachineDetails(machineAPI.machine)}
       </div>);
   }
 
@@ -171,25 +174,28 @@ class MachineViewMachine extends React.Component {
     if (this.state.showForm) {
       return null;
     }
-    var includeChildren = this.props.type === 'machine';
-    var units = this.props.units.filterByMachine(
-      this.props.machine.id, includeChildren);
+    const props = this.props;
+    const includeChildren = props.type === 'machine';
+    const units = props.dbAPI.units.filterByMachine(
+      props.machineAPI.machine.id, includeChildren);
     if (units.length === 0) {
       return;
     }
-    var components = [];
+    const components = [];
     units.forEach((unit) => {
-      var service = this.props.services.getById(unit.service);
-      if (this.props.type === 'machine' && (service.get('hide')
+      const service = props.dbAPI.applications.getById(unit.service);
+      if (props.type === 'machine' && (service.get('hide')
         || service.get('fade'))) {
         return;
       }
+      const propTypes = (
+        juju.components.MachineViewMachineUnit.DecoratedComponent.propTypes);
       components.push(
         <juju.components.MachineViewMachineUnit
-          acl={this.props.acl}
+          acl={props.acl.reshape(propTypes.acl)}
           key={unit.id}
-          machineType={this.props.type}
-          removeUnit={this.props.removeUnit}
+          machineType={props.type}
+          removeUnit={props.machineAPI.removeUnit}
           service={service}
           unit={unit} />);
     });
@@ -205,7 +211,8 @@ class MachineViewMachine extends React.Component {
     @method _destroyMachine
   */
   _destroyMachine() {
-    this.props.destroyMachines([this.props.machine.id], true);
+    const props = this.props;
+    props.modelAPI.destroyMachines([props.machineAPI.machine.id], true);
   }
 
   /**
@@ -214,9 +221,9 @@ class MachineViewMachine extends React.Component {
     @method _handleSelectMachine
   */
   _handleSelectMachine() {
-    var selectMachine = this.props.selectMachine;
+    const selectMachine = this.props.machineAPI.selectMachine;
     if (selectMachine) {
-      selectMachine(this.props.machine.id);
+      selectMachine(this.props.machineAPI.machine.id);
     }
   }
 
@@ -227,10 +234,10 @@ class MachineViewMachine extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    var machine = this.props.machine;
+    var machine = this.props.machineAPI.machine;
     var classes = {
       'machine-view__machine--drop': this.props.isOver && this.props.canDrop,
-      'machine-view__machine--selected': this.props.selected,
+      'machine-view__machine--selected': this.props.machineAPI.selected,
       'machine-view__machine--uncommitted': machine.deleted ||
         machine.commitStatus === 'uncommitted',
       'machine-view__machine--root': machine.root
@@ -243,7 +250,7 @@ class MachineViewMachine extends React.Component {
   }
 
   render() {
-    var machine = this.props.machine;
+    var machine = this.props.machineAPI.machine;
     var menuItems = [{
       label: 'Destroy',
       action: !this.props.acl.isReadOnly() && this._destroyMachine.bind(this)
@@ -264,14 +271,14 @@ class MachineViewMachine extends React.Component {
         <juju.components.MoreMenu
           items={menuItems} />
         <div className="machine-view__machine-name">
-          {this.props.machine.displayName}
+          {this.props.machineAPI.machine.displayName}
         </div>
         {this._generateHardware()}
         {this._generateUnits()}
         {this._generateConstraintsForm()}
         <div className="machine-view__machine-drop-target">
           <div className="machine-view__machine-drop-message">
-            Add to {this.props.machine.displayName}
+            Add to {this.props.machineAPI.machine.displayName}
           </div>
         </div>
       </div>
@@ -280,27 +287,35 @@ class MachineViewMachine extends React.Component {
 };
 
 MachineViewMachine.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).frozen.isRequired,
   canDrop: PropTypes.bool.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
-  destroyMachines: PropTypes.func.isRequired,
+  dbAPI: shapeup.shape({
+    applications: PropTypes.object.isRequired,
+    units: PropTypes.object.isRequired
+  }).isRequired,
   dropUnit: PropTypes.func.isRequired,
-  generateMachineDetails: PropTypes.func,
   isOver: PropTypes.bool.isRequired,
-  machine: PropTypes.object.isRequired,
-  machineModel: PropTypes.object,
-  parseConstraints: PropTypes.func,
-  providerType: PropTypes.string,
-  removeUnit: PropTypes.func,
-  selectMachine: PropTypes.func,
-  selected: PropTypes.bool,
-  series: PropTypes.array,
-  services: PropTypes.object.isRequired,
+  machineAPI: shapeup.shape({
+    generateMachineDetails: PropTypes.func,
+    machine: PropTypes.object.isRequired,
+    removeUnit: PropTypes.func,
+    series: PropTypes.array,
+    selectMachine: PropTypes.func,
+    selected: PropTypes.bool
+  }).isRequired,
+  modelAPI: shapeup.shape({
+    destroyMachines: PropTypes.func.isRequired,
+    providerType: PropTypes.string,
+    updateMachineConstraints: PropTypes.func,
+    updateMachineSeries: PropTypes.func
+  }).isRequired,
+  parseConstraints: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
-  type: PropTypes.string.isRequired,
-  units: PropTypes.object.isRequired,
-  updateMachineConstraints: PropTypes.func,
-  updateMachineSeries: PropTypes.func
+  type: PropTypes.string.isRequired
 };
 
 YUI.add('machine-view-machine', function() {

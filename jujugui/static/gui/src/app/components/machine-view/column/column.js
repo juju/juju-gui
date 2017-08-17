@@ -85,11 +85,13 @@ class MachineViewColumn extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    return this.props.connectDropTarget(
+    const props = this.props;
+    const propTypes = (
+      juju.components.MachineViewHeader.DecoratedComponent.propTypes);
+    return props.connectDropTarget(
       <div className={this._generateClasses()}>
         <juju.components.MachineViewHeader
-          acl={this.props.acl}
+          acl={props.acl.reshape(propTypes.acl)}
           activeMenuItem={props.activeMenuItem}
           droppable={props.droppable}
           dropUnit={props.dropUnit}
@@ -110,7 +112,10 @@ class MachineViewColumn extends React.Component {
 };
 
 MachineViewColumn.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
   canDrop: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([

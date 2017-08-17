@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
-  let acl, generateMachineDetails, genericConstraints, parseConstraints,
-      services;
+  let acl, applications, generateMachineDetails, genericConstraints,
+      machineUnitACL, parseConstraints;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,12 +30,14 @@ describe('MachineViewMachine', function() {
   });
 
   beforeEach(function () {
-    acl = {isReadOnly: sinon.stub().returns(false)};
+    acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
+    machineUnitACL = acl.reshape(
+      juju.components.MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
     generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
     parseConstraints = sinon.stub().returns({mem: '2048'});
     genericConstraints = [
       'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
-    services = {
+    applications = {
       getById: sinon.stub().returns({
         get: function(val) {
           switch (val) {
@@ -55,9 +57,9 @@ describe('MachineViewMachine', function() {
   });
 
   it('can render a machine', function() {
-    var removeUnit = sinon.stub();
-    var selectMachine = sinon.stub();
-    var machine = {
+    const removeUnit = sinon.stub();
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -67,7 +69,7 @@ describe('MachineViewMachine', function() {
       },
       series: 'wily'
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         agent_state: 'started',
         displayName: 'wordpress/0',
@@ -78,29 +80,36 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         isOver={false}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          removeUnit: removeUnit,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
         parseConstraints={parseConstraints}
-        removeUnit={removeUnit}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="machine-view__machine machine-view__machine--machine"
         onClick={instance._handleSelectMachine}
         role="button"
@@ -118,21 +127,21 @@ describe('MachineViewMachine', function() {
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/1',
@@ -148,8 +157,8 @@ describe('MachineViewMachine', function() {
   });
 
   it('can render a machine in drop mode', function() {
-    var selectMachine = sinon.stub();
-    var machine = {
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -158,7 +167,7 @@ describe('MachineViewMachine', function() {
         mem: 4096
       }
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         agent_state: 'started',
         displayName: 'wordpress/0',
@@ -169,28 +178,35 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         isOver={true}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
         parseConstraints={parseConstraints}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className={'machine-view__machine machine-view__machine--drop ' +
         'machine-view__machine--machine'}
       onClick={instance._handleSelectMachine}
@@ -202,32 +218,40 @@ describe('MachineViewMachine', function() {
   });
 
   it('can display a machine as uncommitted', function() {
-    var selectMachine = sinon.stub();
-    var machine = {
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {},
       commitStatus: 'uncommitted'
     };
-    var units = {filterByMachine: sinon.stub().returns([])};
-    var renderer = jsTestUtils.shallowRender(
+    const units = {filterByMachine: sinon.stub().returns([])};
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
+        parseConstraints={sinon.stub()}
         type="machine"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className={'machine-view__machine ' +
         'machine-view__machine--uncommitted machine-view__machine--machine'}
       onClick={instance._handleSelectMachine}
@@ -239,32 +263,40 @@ describe('MachineViewMachine', function() {
   });
 
   it('can display a deleted machine as uncommitted', function() {
-    var selectMachine = sinon.stub();
-    var machine = {
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {},
       deleted: true
     };
-    var units = {filterByMachine: sinon.stub().returns([])};
-    var renderer = jsTestUtils.shallowRender(
+    const units = {filterByMachine: sinon.stub().returns([])};
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
+        parseConstraints={sinon.stub()}
         type="machine"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className={'machine-view__machine ' +
         'machine-view__machine--uncommitted machine-view__machine--machine'}
       onClick={instance._handleSelectMachine}
@@ -276,9 +308,9 @@ describe('MachineViewMachine', function() {
   });
 
   it('can hide units', function() {
-    var removeUnit = sinon.stub();
-    var selectMachine = sinon.stub();
-    var machine = {
+    const removeUnit = sinon.stub();
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -287,7 +319,7 @@ describe('MachineViewMachine', function() {
         mem: 4096
       }
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         deleted: false,
         displayName: 'mysql/0',
@@ -300,7 +332,7 @@ describe('MachineViewMachine', function() {
         service: 'wordpress'
       }])
     };
-    var wordpress = {
+    const wordpress = {
       get: function(val) {
         switch (val) {
           case 'icon':
@@ -315,7 +347,7 @@ describe('MachineViewMachine', function() {
         }
       }
     };
-    services.getById = function(val) {
+    applications.getById = function(val) {
       switch (val) {
         case 'mysql':
           return {
@@ -339,28 +371,36 @@ describe('MachineViewMachine', function() {
           break;
       }
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        removeUnit={removeUnit}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          removeUnit: removeUnit,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
+        parseConstraints={sinon.stub()}
         type="machine"
-        units={units}/>);
-    var expected = (
+      />);
+    const expected = (
       <ul className="machine-view__machine-units">
         {[
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
@@ -376,9 +416,9 @@ describe('MachineViewMachine', function() {
   });
 
   it('can hide the constraints', function() {
-    var removeUnit = sinon.stub();
-    var selectMachine = sinon.stub();
-    var machine = {
+    const removeUnit = sinon.stub();
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       hardware: {
         cpuCores: 2,
@@ -387,7 +427,7 @@ describe('MachineViewMachine', function() {
         mem: 4096
       }
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         agent_state: 'started',
         displayName: 'wordpress/0',
@@ -398,27 +438,35 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        removeUnit={removeUnit}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          removeUnit: removeUnit,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
+        parseConstraints={sinon.stub()}
         showConstraints={false}
         type="machine"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="machine-view__machine machine-view__machine--machine"
         onClick={instance._handleSelectMachine}
         role="button"
@@ -434,21 +482,21 @@ describe('MachineViewMachine', function() {
         {undefined}
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/1',
@@ -464,10 +512,10 @@ describe('MachineViewMachine', function() {
   });
 
   it('can render a container', function() {
-    var machine = {
+    const machine = {
       displayName: 'new0/lxc/0'
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         agent_state: 'started',
         displayName: 'wordpress/0',
@@ -478,26 +526,34 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var removeUnit = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const removeUnit = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        removeUnit={removeUnit}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          removeUnit: removeUnit
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
+        parseConstraints={sinon.stub()}
         showConstraints={true}
         type="container"
-        units={units}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="machine-view__machine machine-view__machine--container"
         onClick={instance._handleSelectMachine}
         role="button"
@@ -513,21 +569,21 @@ describe('MachineViewMachine', function() {
         {undefined}
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/0"
             machineType="container"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
-            acl={acl}
+            acl={machineUnitACL}
             key="wordpress/1"
             machineType="container"
             removeUnit={removeUnit}
-            service={services.getById()}
+            service={applications.getById()}
             unit={{
               'agent_state': 'started',
               'displayName': 'wordpress/1',
@@ -543,13 +599,13 @@ describe('MachineViewMachine', function() {
   });
 
   it('can destroy a machine', function() {
-    var destroyMachines = sinon.stub();
-    var selectMachine = sinon.stub();
-    var machine = {
+    const destroyMachines = sinon.stub();
+    const selectMachine = sinon.stub();
+    const machine = {
       displayName: 'new0',
       id: 'new0'
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         displayName: 'wordpress/0',
         id: 'wordpress/0'
@@ -558,36 +614,43 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={destroyMachines}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: destroyMachines
+        }}
         parseConstraints={parseConstraints}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={units}/>);
+      />);
     output.props.children[0].props.items[0].action();
     assert.equal(destroyMachines.callCount, 1);
     assert.deepEqual(destroyMachines.args[0][0], ['new0']);
   });
 
   it('can remove a unit', function() {
-    var machine = {
+    const machine = {
       displayName: 'new0/lxc/0'
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         displayName: 'wordpress/0',
         id: 'wordpress/0'
@@ -596,33 +659,41 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var removeUnit = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const removeUnit = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
         isOver={false}
-        machine={machine}
-        services={services}
+        machineAPI={{
+          machine: machine,
+          removeUnit: removeUnit
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
         type="container"
-        removeUnit={removeUnit}
+        parseConstraints={sinon.stub()}
         showConstraints={true}
-        units={units}/>, true);
-    var output = renderer.getRenderOutput();
+      />, true);
+    const output = renderer.getRenderOutput();
     output.props.children[3].props.children[0].props.removeUnit();
     assert.equal(removeUnit.callCount, 1);
   });
 
   it('can disable the destroy when ready only', function() {
-    acl.isReadOnly = sinon.stub().returns(true);
-    var removeUnit = sinon.stub();
-    var selectMachine = sinon.stub();
-    var machine = {
+    acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
+    const removeUnit = sinon.stub();
+    const selectMachine = sinon.stub();
+    const machine = {
       commitStatus: 'uncommitted',
       displayName: 'new0',
       hardware: {
@@ -633,7 +704,7 @@ describe('MachineViewMachine', function() {
       },
       series: 'wily'
     };
-    var units = {
+    const units = {
       filterByMachine: sinon.stub().returns([{
         agent_state: 'started',
         displayName: 'wordpress/0',
@@ -644,28 +715,35 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: units
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         isOver={false}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          removeUnit: removeUnit,
+          selectMachine: selectMachine,
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub()
+        }}
         parseConstraints={parseConstraints}
-        removeUnit={removeUnit}
-        selected={false}
-        selectMachine={selectMachine}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={units}/>, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
+      />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
       <juju.components.MoreMenu
         items={[{
           label: 'Destroy',
@@ -689,22 +767,29 @@ describe('MachineViewMachine', function() {
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: {filterByMachine: sinon.stub().returns([])}
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          removeUnit: sinon.stub(),
+          series: ['wily'],
+          selectMachine: sinon.stub(),
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub(),
+          providerType: 'aws'
+        }}
         parseConstraints={parseConstraints}
-        providerType="aws"
-        removeUnit={sinon.stub()}
-        selected={false}
-        selectMachine={sinon.stub()}
-        series={['wily']}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={{filterByMachine: sinon.stub().returns([])}} />, true);
+      />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children[0].props.items[1].action();
@@ -752,24 +837,31 @@ describe('MachineViewMachine', function() {
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
-        destroyMachines={sinon.stub()}
+        dbAPI={{
+          applications: applications,
+          units: {filterByMachine: sinon.stub().returns([])}
+        }}
         dropUnit={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
         genericConstraints={genericConstraints}
         isOver={false}
-        machine={machine}
+        machineAPI={{
+          generateMachineDetails: generateMachineDetails,
+          machine: machine,
+          removeUnit: sinon.stub(),
+          series: ['wily'],
+          selectMachine: sinon.stub(),
+          selected: false
+        }}
+        modelAPI={{
+          destroyMachines: sinon.stub(),
+          providerType: 'aws',
+          updateMachineConstraints: updateMachineConstraints,
+          updateMachineSeries: updateMachineSeries
+        }}
         parseConstraints={parseConstraints}
-        providerType="aws"
-        removeUnit={sinon.stub()}
-        selected={false}
-        selectMachine={sinon.stub()}
-        series={['wily']}
-        services={services}
         showConstraints={true}
         type="machine"
-        units={{filterByMachine: sinon.stub().returns([])}}
-        updateMachineConstraints={updateMachineConstraints}
-        updateMachineSeries={updateMachineSeries} />, true);
+      />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children[0].props.items[1].action();

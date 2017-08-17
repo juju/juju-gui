@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewScaleUp', function() {
-  var acl, services;
+  let acl, applications;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,8 +29,8 @@ describe('MachineViewScaleUp', function() {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: sinon.stub().returns(false)};
-    services = {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+    applications = {
       toArray: sinon.stub().returns([{
         get: function (val) {
           switch (val) {
@@ -60,7 +60,7 @@ describe('MachineViewScaleUp', function() {
           }
         }
       }, {
-        // Subordinate services should not appear in the list.
+        // Subordinate applications should not appear in the list.
         get: function (val) {
           switch (val) {
             case 'id':
@@ -92,17 +92,19 @@ describe('MachineViewScaleUp', function() {
   });
 
   it('can render', function() {
-    var addGhostAndEcsUnits = sinon.stub();
-    var toggleScaleUp = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const addGhostAndEcsUnits = sinon.stub();
+    const toggleScaleUp = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewScaleUp
         acl={acl}
-        addGhostAndEcsUnits={addGhostAndEcsUnits}
-        services={services}
+        dbAPI={{
+          addGhostAndEcsUnits: addGhostAndEcsUnits,
+          applications: applications
+        }}
         toggleScaleUp={toggleScaleUp} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <form className="machine-view__scale-up"
         onSubmit={instance._handleAddUnits}>
         <ul className="machine-view__scale-up-units">
@@ -158,18 +160,21 @@ describe('MachineViewScaleUp', function() {
   });
 
   it('can disable controls when read only', function() {
-    acl.isReadOnly = sinon.stub().returns(true);
-    var addGhostAndEcsUnits = sinon.stub();
-    var toggleScaleUp = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    acl = shapeup.deepFreeze({isReadOnly: () => true});
+
+    const addGhostAndEcsUnits = sinon.stub();
+    const toggleScaleUp = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewScaleUp
         acl={acl}
-        addGhostAndEcsUnits={addGhostAndEcsUnits}
-        services={services}
+        dbAPI={{
+          addGhostAndEcsUnits: addGhostAndEcsUnits,
+          applications: applications
+        }}
         toggleScaleUp={toggleScaleUp} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <form className="machine-view__scale-up"
         onSubmit={instance._handleAddUnits}>
         <ul className="machine-view__scale-up-units">
@@ -207,7 +212,8 @@ describe('MachineViewScaleUp', function() {
               ref="scaleUpUnit-222222$"
               type="number"
               min="0"
-              step="1" />
+              step="1"
+            />
           </li>
         </ul>
         <juju.components.ButtonRow buttons={[{
@@ -224,20 +230,23 @@ describe('MachineViewScaleUp', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can scale services', function() {
-    var addGhostAndEcsUnits = sinon.stub();
-    var toggleScaleUp = sinon.stub();
-    var output = testUtils.renderIntoDocument(
+  it('can scale applications', function() {
+    const addGhostAndEcsUnits = sinon.stub();
+    const toggleScaleUp = sinon.stub();
+    const output = testUtils.renderIntoDocument(
       <juju.components.MachineViewScaleUp
         acl={acl}
-        addGhostAndEcsUnits={addGhostAndEcsUnits}
-        services={services}
-        toggleScaleUp={toggleScaleUp} />, true);
-    var confirm = ReactDOM.findDOMNode(output).querySelector(
+        dbAPI={{
+          addGhostAndEcsUnits: addGhostAndEcsUnits,
+          applications: applications
+        }}
+        toggleScaleUp={toggleScaleUp}
+      />, true);
+    const confirm = ReactDOM.findDOMNode(output).querySelector(
       '.button--neutral');
-    var input1 = output.refs['scaleUpUnit-111111$'];
+    const input1 = output.refs['scaleUpUnit-111111$'];
     input1.value = '5';
-    var input2 = output.refs['scaleUpUnit-222222$'];
+    const input2 = output.refs['scaleUpUnit-222222$'];
     input2.value = '9';
     testUtils.Simulate.click(confirm);
     assert.equal(addGhostAndEcsUnits.callCount, 2);
@@ -247,10 +256,10 @@ describe('MachineViewScaleUp', function() {
     assert.equal(addGhostAndEcsUnits.args[1][1], '9');
   });
 
-  it('can scale services with dashes in the name', () => {
-    var addGhostAndEcsUnits = sinon.stub();
-    var toggleScaleUp = sinon.stub();
-    var services = {
+  it('can scale applications with dashes in the name', () => {
+    const addGhostAndEcsUnits = sinon.stub();
+    const toggleScaleUp = sinon.stub();
+    const applications = {
       toArray: sinon.stub().returns([{
         get: function (val) {
           switch (val) {
@@ -270,15 +279,18 @@ describe('MachineViewScaleUp', function() {
         return 'juju-gui';
       }
     };
-    var output = testUtils.renderIntoDocument(
+    const output = testUtils.renderIntoDocument(
       <juju.components.MachineViewScaleUp
         acl={acl}
-        addGhostAndEcsUnits={addGhostAndEcsUnits}
-        services={services}
-        toggleScaleUp={toggleScaleUp} />, true);
-    var confirm = ReactDOM.findDOMNode(output).querySelector(
+        dbAPI={{
+          addGhostAndEcsUnits: addGhostAndEcsUnits,
+          applications: applications
+        }}
+        toggleScaleUp={toggleScaleUp}
+      />, true);
+    const confirm = ReactDOM.findDOMNode(output).querySelector(
       '.button--neutral');
-    var input1 = output.refs['scaleUpUnit-juju-gui'];
+    const input1 = output.refs['scaleUpUnit-juju-gui'];
     input1.value = '5';
     testUtils.Simulate.click(confirm);
     assert.equal(addGhostAndEcsUnits.callCount, 1);
