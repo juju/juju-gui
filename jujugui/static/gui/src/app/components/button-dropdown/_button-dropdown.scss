@@ -20,19 +20,6 @@
     &-with-text {
       line-height: 1rem;
       font-size: 1rem;
-
-      .header-menu__icon {
-        display: inline-block;
-        margin-right: .5rem;
-      }
-
-      .header-menu__label {
-        max-width: 6rem;
-        overflow: hidden;
-        display: inline-block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
     }
 
     &:hover {
@@ -42,6 +29,10 @@
       text-decoration: none !important;
       // scss-lint:enable ImportantRule
     }
+  }
+
+  &__icon {
+    display: block;
   }
 
   &__show-menu {

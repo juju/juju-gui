@@ -52,7 +52,7 @@ class ButtonDropdown extends React.Component {
     if (typeof icon === 'string') {
       return (
         <juju.components.SvgIcon name={icon}
-          className="header-menu__icon"
+          className="button-dropdown__icon"
           size="16" />);
     }
     return icon;

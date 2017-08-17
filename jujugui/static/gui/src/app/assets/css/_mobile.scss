@@ -49,12 +49,9 @@
   }
 
   #profile-link-container {
-    .header-menu__button-with-text {
-      .header-menu__icon {
+    .dropdown-menu__button-with-text {
+      .dropdown-menu__icon {
         margin-right: 0;
-      }
-      .header-menu__label {
-        display: none;
       }
     }
   }
