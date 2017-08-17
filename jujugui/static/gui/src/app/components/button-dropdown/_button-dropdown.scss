@@ -5,13 +5,11 @@
     @extend .link;
     @extend .tooltip;
     display: inline-block;
-    border-radius: 2px;
-    border-right-width: 0;
-    border: 1px solid $color-mid-light;
     transition: background-color .2s;
     background-color: $canvas-background;
     padding: 11px;
     margin: 10px 0 10px 10px;
+    cursor: pointer;
     // scss-lint:disable ImportantRule
     color: $warm-grey !important;
     // scss-lint:enable ImportantRule
@@ -23,7 +21,6 @@
     }
 
     &:hover {
-      background-color: $white;
       // scss-lint:disable ImportantRule
       color: $dark-warm-grey !important;
       text-decoration: none !important;

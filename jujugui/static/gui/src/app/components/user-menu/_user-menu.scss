@@ -1,4 +1,4 @@
-.header-help {
+.user-menu {
   &.button-dropdown {
     &__button {
       border-radius: 2px;
@@ -9,14 +9,5 @@
         background-color: $white;
       }
     }
-  }
-
-  .dropdown-menu__list {
-    width: 275px;
-  }
-
-  &__extra-info {
-    float: right;
-    color: $dark-warm-grey;
   }
 }
