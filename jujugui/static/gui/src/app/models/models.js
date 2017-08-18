@@ -1494,12 +1494,8 @@ YUI.add('juju-models', function(Y) {
           "42" is 42.
     */
     parseMachineName: function(name) {
-      // XXX frankban 2014-03-04: PYJUJU DEPRECATION. The single line below
-      // can be safely removed once we remove pyJuju code. The machine names
-      // are always strings in juju-core.
-      name = name + '';
-      var parts = name.split('/');
-      var partsLength = parts.length;
+      const parts = name.split('/');
+      const partsLength = parts.length;
       if (partsLength < 3) {
         // This is a top level machine.
         return {
@@ -1514,28 +1510,6 @@ YUI.add('juju-models', function(Y) {
         containerType: parts[partsLength - 2],
         number: parseInt(parts[partsLength - 1], 10)
       };
-    },
-
-    /**
-      Overrides the LazyModelList method to force an id attribute on.
-      LazyModelList wants an "id" to index on.  It's not configurable.
-
-      @method _modelToObject
-      @param {Model|Object|Model[]|Object[]} model Instance(s) to convert.
-      @return {Object|Object[]} Resulting plain object(s).
-      @protected
-    */
-    _modelToObject: function(model) {
-      var result = MachineList.superclass._modelToObject.call(this, model);
-      // XXX frankban 2014-03-04: PYJUJU DEPRECATION.
-      // I suspect machine_id is something pyJuju used to provide. If this is
-      // the case, we should remove this function when dropping pyJuju support.
-      // Using utils.isValue so that machine 0 is considered a good value.
-      if (!utils.isValue(result.id)) {
-        // machine_id shouldn't change, so this should be safe.
-        result.id = result.machine_id;
-      }
-      return result;
     },
 
     /**
