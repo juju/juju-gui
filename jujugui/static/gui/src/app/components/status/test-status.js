@@ -656,8 +656,10 @@ describe('Status', function() {
 
   it('can navigate to charms from the app list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[2].props.rows[0].columns[4]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[2];
+    const column = section.props.rows[0].columns[4];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {store: 'u/who/django/xenial/42'});
@@ -665,8 +667,10 @@ describe('Status', function() {
 
   it('can navigate to units from the unit list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[3].props.rows[0].columns[0]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[3];
+    const column = section.props.rows[0].columns[0];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {
@@ -682,8 +686,10 @@ describe('Status', function() {
 
   it('can navigate to machines from the unit list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[3].props.rows[0].columns[3]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[3];
+    const column = section.props.rows[0].columns[3];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: '1', status: null}});
@@ -691,8 +697,10 @@ describe('Status', function() {
 
   it('can navigate to machines from the machine list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[4].props.rows[0].columns[0]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[4];
+    const column = section.props.rows[0].columns[0];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: 'm1', status: null}});
@@ -700,8 +708,10 @@ describe('Status', function() {
 
   it('can navigate to provided apps from the relation list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[5].props.rows[0].columns[1]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[5];
+    const column = section.props.rows[0].columns[1];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {inspector: {id: 'mysql'}}});
@@ -709,8 +719,10 @@ describe('Status', function() {
 
   it('can navigate to consumed apps from the relation list', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[5].props.rows[0].columns[2]
-      .content.props.onClick();
+    const content = comp.output.props.children;
+    const section = content.props.children[5];
+    const column = section.props.rows[0].columns[2];
+    column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {inspector: {id: 'mysql'}}});

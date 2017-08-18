@@ -124,16 +124,16 @@ class Status extends React.Component {
 
   /**
     Navigate to the chosen charm.
-    @param charmID {String} The id of the charm to display.
+    @param charmURL {String} The id of the charm to display.
   */
-  _navigateToCharm(appId) {
-    this.props.changeState({store: appId});
+  _navigateToCharm(charmURL) {
+    this.props.changeState({store: charmURL});
   }
 
   /**
     Navigate to the chosen unit.
     @param unitId {String} The id of the unit to display in the format
-      'service-id/unit-id'.
+      'app-id/unit-id'.
   */
   _navigateToUnit(unitId) {
     const unitParts = unitId.split('/');

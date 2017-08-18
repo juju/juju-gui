@@ -593,7 +593,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const propTypes = window.juju.components.Status.propTypes;
     ReactDOM.render(
       <window.juju.components.Status
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
         urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
