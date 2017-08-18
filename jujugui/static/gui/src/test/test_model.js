@@ -1325,28 +1325,28 @@ describe('test_model.js', function() {
         var info = machines.parseMachineName('0');
         assert.isNull(info.parentId);
         assert.isNull(info.containerType);
-        assert.strictEqual(info.number, 0);
+        assert.strictEqual(info.number, '0');
       });
 
       it('retrieves machine info parsing a machine name', function() {
         var info = machines.parseMachineName('42');
         assert.isNull(info.parentId);
         assert.isNull(info.containerType);
-        assert.strictEqual(info.number, 42);
+        assert.strictEqual(info.number, '42');
       });
 
       it('retrieves machine info parsing a container name', function() {
         var info = machines.parseMachineName('0/lxc/0');
         assert.strictEqual(info.parentId, '0');
         assert.strictEqual(info.containerType, 'lxc');
-        assert.strictEqual(info.number, 0);
+        assert.strictEqual(info.number, '0');
       });
 
       it('retrieves machine info parsing a sub-container name', function() {
         var info = machines.parseMachineName('1/lxc/0/kvm/42');
         assert.strictEqual(info.parentId, '1/lxc/0');
         assert.strictEqual(info.containerType, 'kvm');
-        assert.strictEqual(info.number, 42);
+        assert.strictEqual(info.number, '42');
       });
 
       it('stores machines data parsing machine names', function() {
