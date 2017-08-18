@@ -1899,9 +1899,16 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} topo The reference to the topology object.
     */
     showServiceDetails: function(box, topo) {
+      // Navigate to the app in the inspector, clearing the state so that the
+      // app overview is shown.
       topo.get('state').changeState({
         gui: {
-          inspector: {id: box.id}
+          inspector: {
+            id: box.id,
+            activeComponent: undefined,
+            unit: null,
+            unitStatus: null
+          }
         }});
     },
 

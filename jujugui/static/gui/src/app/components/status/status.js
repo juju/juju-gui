@@ -113,10 +113,15 @@ class Status extends React.Component {
     @param appId {String} The id of the application to display.
   */
   _navigateToApplication(appId) {
+    // Navigate to the app in the inspector, clearing the state so that the
+    // app overview is shown.
     this.props.changeState({
       gui: {
         inspector: {
-          id: appId
+          id: appId,
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
         }
       }
     });

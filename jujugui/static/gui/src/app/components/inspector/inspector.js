@@ -43,25 +43,8 @@ class Inspector extends React.Component {
   generateState(nextProps) {
     const service = nextProps.service;
     const serviceId = service.get('id');
-    const lastId = this.props.service.get('id');
     const appState = this.props.appState;
     const changeState = appState.changeState.bind(appState);
-    if (lastId && serviceId !== lastId) {
-      // If we've switched to a new service then return to the service
-      // overview. All metadata properties need to be cleared to prevent
-      // displaying a particular sub-view.
-      changeState({
-        gui: {
-          inspector: {
-            id: serviceId,
-            activeComponent: undefined,
-            unit: null,
-            unitStatus: null
-          }
-        }
-      });
-      return {};
-    }
     const state = {
       activeComponent: appState.current.gui.inspector.activeComponent
     };
