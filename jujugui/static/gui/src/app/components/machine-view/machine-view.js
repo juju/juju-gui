@@ -32,7 +32,7 @@ class MachineView extends React.Component {
   }
 
   componentDidMount() {
-    this.selectMachine(this._getFirstMachineId(this.props.machines));
+    this.selectMachine(this._getFirstMachineId(this.props.dbAPI.machines));
   }
 
   /**
@@ -247,16 +247,10 @@ class MachineView extends React.Component {
       container: null
     };
     if (machine) {
-      // The ID will be in the format "machine-id/container-type/container-id"
-      // e.g. 6/lxd/2.
-      let parts = machine.split('/');
-      // The first part of the ID will be the machine ID.
-      selected.machine = parts[0];
-      // If this is a container ID there will be more parts.
-      if (parts.length > 1) {
-        // The container ID includes the machine ID so use the full string.
-        selected.container = machine;
-      }
+      const parsed = this.props.parseMachineName(machine);
+      selected.machine = parsed.parentId || parsed.number;
+      // Set the container to the full container id.
+      selected.container = parsed.parentId ? machine : null;
     }
     return selected;
   }
@@ -806,6 +800,7 @@ MachineView.propTypes = {
     updateMachineSeries: PropTypes.func.isRequired
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
+  parseMachineName: PropTypes.func.isRequired,
   series: PropTypes.array
 };
 

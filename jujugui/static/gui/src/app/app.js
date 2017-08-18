@@ -1966,6 +1966,7 @@ YUI.add('juju-gui', function(Y) {
           generateMachineDetails={utils.generateMachineDetails.bind(
             utils, env.genericConstraints, db.units)}
           machine={this.state.current.gui.machines}
+          machines={db.machines}
           modelAPI={shapeup.addReshape({
             autoPlaceUnits: this._autoPlaceUnits.bind(this),
             createMachine: this._createMachine.bind(this),
