@@ -118,10 +118,11 @@ describe('BasicTable', function() {
         headers={headers}
         rowClasses={['row-class']}
         rowColumnClasses={['row-column']}
-        rows={rows} />, true);
+        rows={rows}
+        tableClasses={['table-class']} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <ul className="basic-table twelve-col">
+      <ul className="basic-table twelve-col table-class">
         <li className="twelve-col header-class basic-table__header"
           key='basic-table-header'>
           <div className="three-col class1 class2 header-column"

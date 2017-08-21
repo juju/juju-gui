@@ -85,8 +85,12 @@ class BasicTable extends React.Component {
   }
 
   render() {
+    const classes = classNames(
+      'basic-table',
+      'twelve-col',
+      this.props.tableClasses);
     return (
-      <ul className="basic-table twelve-col">
+      <ul className={classes}>
         {this._generateRow(true, this.props.headers)}
         {this._generateContent()}
       </ul>
@@ -100,7 +104,7 @@ BasicTable.propTypes = {
   // The extra classes to apply to all header columns.
   headerColumnClasses: PropTypes.array,
   headers: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.node.isRequired,
+    content: PropTypes.node,
     // The number of columns (between 1 and 12).
     columnSize: PropTypes.number.isRequired,
     // The extra classes to apply to the column.
@@ -125,7 +129,9 @@ BasicTable.propTypes = {
   }).isRequired).isRequired,
   // A method to sort the rows by. The row object is provided to the sort
   // method.
-  sort: PropTypes.func
+  sort: PropTypes.func,
+  // The extra classes to apply to the main table node.
+  tableClasses: PropTypes.array
 };
 
 YUI.add('basic-table', function() {
