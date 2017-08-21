@@ -124,7 +124,9 @@ class MachineViewHeader extends React.Component {
 };
 
 MachineViewHeader.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
   canDrop: PropTypes.bool.isRequired,
   connectDropTarget: PropTypes.func.isRequired,

@@ -4823,9 +4823,9 @@
       }
     },
     "shapeup": {
-      "version": "0.2.1",
-      "resolved": "https://registry.npmjs.org/shapeup/-/shapeup-0.2.1.tgz",
-      "integrity": "sha512-+Sb1CM1nBO13/m+H+KoY7Hwg94Lj1hQolhbQ3G6I7FvPb93j+6I+5MQ07mBEAT1imbg1/1x0PqQLx9tl2ZKosA==",
+      "version": "0.2.3",
+      "resolved": "https://registry.npmjs.org/shapeup/-/shapeup-0.2.3.tgz",
+      "integrity": "sha512-nwOQVKmRBE3/H1h56lI1P9qbqiTVIzsMubznsnwdbLvXfnKnTnV/R+pl+7n+4RNbAH8cQ/vsDyeVU87uiwhKmA==",
       "requires": {
         "prop-types": "15.5.10"
       }

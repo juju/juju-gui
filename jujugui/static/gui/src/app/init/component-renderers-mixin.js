@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const fromShape = require('shapeup').fromShape;
+const shapeup = require('shapeup');
 const yui = window.yui;
+
 /**
     A mixin for the JujuGUI class.
     Stores all of the component renderer and cleanup methods.
@@ -534,33 +535,39 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderMachineView(state, next) {
     const db = this.db;
-    const ecs = this.modelAPI.get('ecs');
+    const modelAPI = this.modelAPI;
+    const ecs = modelAPI.get('ecs');
     const utils = yui.juju.views.utils;
-    const genericConstraints = this.modelAPI.genericConstraints;
+    const decorated = window.juju.components.MachineView.DecoratedComponent;
+    const propTypes = decorated.propTypes;
     ReactDOM.render(
       <window.juju.components.MachineView
-        acl={this.acl}
-        addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
-          this, this.db, this.modelAPI)}
-        autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+        acl={shapeup.fromShape(this.acl, propTypes.acl)}
         changeState={this.state.changeState.bind(this.state)}
-        createMachine={this._createMachine.bind(this)}
-        destroyMachines={this.modelAPI.destroyMachines.bind(this.modelAPI)}
-        environmentName={db.environment.get('name') || ''}
-        generateMachineDetails={
-          utils.generateMachineDetails.bind(
-            utils, genericConstraints, db.units)}
-        machines={db.machines}
-        parseConstraints={
-          utils.parseConstraints.bind(utils, genericConstraints)}
-        placeUnit={this.modelAPI.placeUnit.bind(this.modelAPI)}
-        providerType={this.modelAPI.get('providerType') || ''}
-        removeUnits={this.modelAPI.remove_units.bind(this.modelAPI)}
-        services={db.services}
+        dbAPI={shapeup.addReshape({
+          addGhostAndEcsUnits: utils.addGhostAndEcsUnits.bind(
+            this, db, modelAPI),
+          applications: db.services,
+          modelName: db.environment.get('name') || '',
+          machines: db.machines,
+          units: db.units
+        })}
+        generateMachineDetails={utils.generateMachineDetails.bind(
+          utils, modelAPI.genericConstraints, db.units)}
+        modelAPI={shapeup.addReshape({
+          autoPlaceUnits: this._autoPlaceUnits.bind(this),
+          createMachine: this._createMachine.bind(this),
+          destroyMachines: modelAPI.destroyMachines.bind(modelAPI),
+          placeUnit: modelAPI.placeUnit.bind(modelAPI),
+          providerType: modelAPI.get('providerType') || '',
+          removeUnits: modelAPI.remove_units.bind(modelAPI),
+          updateMachineConstraints: ecs.updateMachineConstraints.bind(ecs),
+          updateMachineSeries: ecs.updateMachineSeries.bind(ecs)
+        })}
+        parseConstraints={utils.parseConstraints.bind(
+          utils, modelAPI.genericConstraints)}
         series={window.jujulib.CHARM_SERIES}
-        units={db.units}
-        updateMachineConstraints={ecs.updateMachineConstraints.bind(ecs)}
-        updateMachineSeries={ecs.updateMachineSeries.bind(ecs)} />,
+      />,
       document.getElementById('machine-view'));
     next();
   }
@@ -584,9 +591,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const propTypes = window.juju.components.Status.propTypes;
     ReactDOM.render(
       <window.juju.components.Status
-        db={fromShape(this.db, propTypes.db)}
-        model={fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        urllib={fromShape(window.jujulib.URL, propTypes.urllib)}
+        db={shapeup.fromShape(this.db, propTypes.db)}
+        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
+        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
       />,
       document.getElementById('status-container')
     );

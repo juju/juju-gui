@@ -29,7 +29,7 @@ MachineViewUnplacedUnitGlobals.dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
-    return {unit: props.unit};
+    return {unit: props.unitAPI.unit};
   },
 
   /**
@@ -83,17 +83,16 @@ class MachineViewUnplacedUnit extends React.Component {
       return;
     }
     const props = this.props;
+    const propTypes = juju.components.MachineViewAddMachine.propTypes;
     return (
       <juju.components.MachineViewAddMachine
-        acl={props.acl}
+        acl={props.acl.reshape(propTypes.acl)}
         close={this._togglePlaceUnit.bind(this)}
-        createMachine={props.createMachine}
-        machines={props.machines}
-        placeUnit={props.placeUnit}
-        providerType={props.providerType}
-        selectMachine={props.selectMachine}
+        dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
+        modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
+        selectMachine={props.unitAPI.selectMachine}
         series={props.series}
-        unit={props.unit}
+        unit={props.unitAPI.unit}
       />
     );
   }
@@ -112,19 +111,21 @@ class MachineViewUnplacedUnit extends React.Component {
   }
 
   render() {
-    var isReadOnly = this.props.acl.isReadOnly();
-    var unit = this.props.unit;
-    var menuItems = [{
+    const props = this.props;
+    const isReadOnly = props.acl.isReadOnly();
+    const unitAPI = props.unitAPI;
+    const unit = unitAPI.unit;
+    const menuItems = [{
       label: 'Deploy to...',
       action: !isReadOnly && this._togglePlaceUnit.bind(this)
     }, {
       label: 'Destroy',
-      action: !isReadOnly && this.props.removeUnit.bind(null, unit.id)
+      action: !isReadOnly && unitAPI.removeUnit.bind(null, unit.id)
     }];
     // Wrap the returned components in the drag source method.
-    return this.props.connectDragSource(
+    return props.connectDragSource(
       <li className={this._generateClasses()}>
-        <img src={this.props.icon} alt={unit.displayName}
+        <img src={unitAPI.icon} alt={unit.displayName}
           className="machine-view__unplaced-unit-icon" />
         {unit.displayName}
         <juju.components.MoreMenu
@@ -137,18 +138,27 @@ class MachineViewUnplacedUnit extends React.Component {
 };
 
 MachineViewUnplacedUnit.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).frozen.isRequired,
   connectDragSource: PropTypes.func.isRequired,
-  createMachine: PropTypes.func.isRequired,
-  icon: PropTypes.string.isRequired,
+  dbAPI: shapeup.shape({
+    machines: PropTypes.object.isRequired
+  }),
   isDragging: PropTypes.bool.isRequired,
-  machines: PropTypes.object.isRequired,
-  placeUnit: PropTypes.func.isRequired,
-  providerType: PropTypes.string,
-  removeUnit: PropTypes.func.isRequired,
-  selectMachine: PropTypes.func.isRequired,
+  modelAPI: shapeup.shape({
+    createMachine: PropTypes.func.isRequired,
+    placeUnit: PropTypes.func.isRequired,
+    providerType: PropTypes.string
+  }).isRequired,
   series: PropTypes.array,
-  unit: PropTypes.object.isRequired
+  unitAPI: shapeup.shape({
+    icon: PropTypes.string.isRequired,
+    removeUnit: PropTypes.func.isRequired,
+    selectMachine: PropTypes.func.isRequired,
+    unit: PropTypes.object.isRequired
+  }).isRequired
 };
 
 YUI.add('machine-view-unplaced-unit', function() {

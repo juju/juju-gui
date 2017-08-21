@@ -21,11 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 class MachineViewAddMachine extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       constraints: null,
       selectedContainer: null,
       selectedMachine:
-        !this.props.machines && !this.props.parentId ? 'new' : null
+        !this.props.dbAPI && !this.props.parentId ? 'new' : null
     };
   }
 
@@ -67,16 +68,16 @@ class MachineViewAddMachine extends React.Component {
       const constraints = state.constraints || {};
       const series = constraints.series || null;
       delete constraints.series;
-      machine = this.props.createMachine(
+      machine = props.modelAPI.createMachine(
         selectedContainer, machineId, series, constraints);
-      if (this.props.selectMachine && !machineId) {
-        this.props.selectMachine(machine.id);
+      if (props.selectMachine && !machineId) {
+        props.selectMachine(machine.id);
       }
     }
     // If the component has been provided a unit then we need to place the
     // unit on the machine/container.
     if (props.unit) {
-      props.placeUnit(
+      props.modelAPI.placeUnit(
         props.unit, machine.id || selectedContainer || selectedMachine);
     }
     this.props.close();
@@ -111,7 +112,7 @@ class MachineViewAddMachine extends React.Component {
           containerType={this.state.selectedContainer || ''}
           disabled={props.acl.isReadOnly()}
           hasUnit={!!props.unit}
-          providerType={props.providerType}
+          providerType={props.modelAPI.providerType}
           series={props.series}
           valuesChanged={this._updateConstraints.bind(this)}
         />
@@ -188,8 +189,8 @@ class MachineViewAddMachine extends React.Component {
     @return {Array} A list of machine options.
   */
   _generateMachineOptions() {
-    var components = [];
-    var machines = this.props.machines.filterByParent();
+    const components = [];
+    const machines = this.props.dbAPI.machines.filterByParent();
     machines.forEach((machine) => {
       if (machine.deleted) {
         return;
@@ -211,12 +212,12 @@ class MachineViewAddMachine extends React.Component {
     @return {Array} A list of container options.
   */
   _generateContainerOptions() {
-    var machines = this.props.machines;
-    if (!machines) {
+    const dbAPI = this.props.dbAPI;
+    if (!dbAPI) {
       return;
     }
     var components = [];
-    var containers = machines.filterByParent(this.state.selectedMachine);
+    var containers = dbAPI.machines.filterByParent(this.state.selectedMachine);
     var machineId = this._getParentId();
     components.push(
       <option
@@ -256,7 +257,7 @@ class MachineViewAddMachine extends React.Component {
       type: 'neutral',
       // In the add-container mode disable the Create button until a container
       // type has been selected.
-      disabled: this.props.acl.isReadOnly() || (!props.unit && !props.machines
+      disabled: props.acl.isReadOnly() || (!props.unit && !props.dbAPI
         && props.parentId && !this.state.selectedContainer)
     }];
     return (
@@ -269,7 +270,7 @@ class MachineViewAddMachine extends React.Component {
     const components = [];
     const props = this.props;
     const state = this.state;
-    if (props.unit && props.machines) {
+    if (props.unit && props.dbAPI) {
       components.push(this._generateSelectMachine());
       if (state.selectedMachine) {
         if (state.selectedMachine === 'new') {
@@ -283,7 +284,7 @@ class MachineViewAddMachine extends React.Component {
         }
         components.push(this._generateButtons());
       }
-    } else if (!props.machines) {
+    } else if (!props.dbAPI) {
       if (props.parentId) {
         components.push(this._generateSelectContainer());
         if (state.selectedContainer) {
@@ -300,13 +301,19 @@ class MachineViewAddMachine extends React.Component {
 };
 
 MachineViewAddMachine.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   close: PropTypes.func.isRequired,
-  createMachine: PropTypes.func.isRequired,
-  machines: PropTypes.object,
+  dbAPI: shapeup.shape({
+    machines: PropTypes.object.isRequired
+  }),
+  modelAPI: shapeup.shape({
+    createMachine: PropTypes.func.isRequired,
+    placeUnit: PropTypes.func,
+    providerType: PropTypes.string
+  }).isRequired,
   parentId: PropTypes.string,
-  placeUnit: PropTypes.func,
-  providerType: PropTypes.string,
   selectMachine: PropTypes.func,
   series: PropTypes.array,
   unit: PropTypes.object

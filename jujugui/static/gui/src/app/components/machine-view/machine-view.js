@@ -25,7 +25,7 @@ class MachineView extends React.Component {
       containerSort: 'name',
       machineSort: 'name',
       placingUnit: null,
-      selectedMachine: this._getFirstMachineId(this.props.machines),
+      selectedMachine: this._getFirstMachineId(this.props.dbAPI.machines),
       showAddMachine: false,
       showConstraints: true,
       showScaleUp: false
@@ -45,12 +45,12 @@ class MachineView extends React.Component {
       // invalid as it will have been assigned a new id, so check that the
       // the machine for the selected id still exists and if not reset it
       // so the first machine gets selected.
-      if (!this.props.machines.getById(selectedMachine)) {
+      if (!this.props.dbAPI.machines.getById(selectedMachine)) {
         selectedMachine = null;
       }
     }
     if (!selectedMachine) {
-      selectedMachine = this._getFirstMachineId(nextProps.machines);
+      selectedMachine = this._getFirstMachineId(nextProps.dbAPI.machines);
     }
     this.setState({selectedMachine: selectedMachine});
   }
@@ -77,7 +77,7 @@ class MachineView extends React.Component {
     @param id The unit id.
   */
   _removeUnit(id) {
-    this.props.removeUnits([id]);
+    this.props.modelAPI.removeUnits([id]);
   }
 
   /**
@@ -89,7 +89,7 @@ class MachineView extends React.Component {
   */
   _dropUnit(unit, machine, newType) {
     if (machine) {
-      this.props.placeUnit(unit, machine);
+      this.props.modelAPI.placeUnit(unit, machine);
     } else {
       var state = {};
       if (newType === 'machine') {
@@ -119,9 +119,9 @@ class MachineView extends React.Component {
   */
   _generateUnplacedUnits() {
     const props = this.props;
-    let units = props.units.filterByMachine();
+    let units = props.dbAPI.units.filterByMachine();
     units = units.filter((unit) => {
-      const service = props.services.getById(unit.service);
+      const service = props.dbAPI.applications.getById(unit.service);
       if (!service.get('subordinate')) {
         return unit;
       }
@@ -129,7 +129,7 @@ class MachineView extends React.Component {
     if (units.length === 0) {
       var icon;
       var content;
-      if (props.services.size() === 0) {
+      if (props.dbAPI.applications.size() === 0) {
         content = (
           <div>
             <p>
@@ -161,23 +161,25 @@ class MachineView extends React.Component {
       placingUnit = state.placingUnit;
     }
     units.forEach((unit) => {
-      const service = props.services.getById(unit.service);
+      const service = props.dbAPI.applications.getById(unit.service);
       if (placingUnit && unit.id === placingUnit.id) {
         return;
       }
+      const propTypes = (
+        juju.components.MachineViewUnplacedUnit.DecoratedComponent.propTypes);
       components.push(
         <juju.components.MachineViewUnplacedUnit
-          acl={props.acl}
-          createMachine={props.createMachine}
-          icon={service.get('icon') || ''}
+          acl={props.acl.reshape(propTypes.acl)}
+          dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           key={unit.id}
-          machines={props.machines}
-          placeUnit={props.placeUnit}
-          providerType={props.providerType}
-          removeUnit={this._removeUnit.bind(this)}
-          selectMachine={this.selectMachine.bind(this)}
+          modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           series={props.series}
-          unit={unit}
+          unitAPI={{
+            icon: service.get('icon') || '',
+            removeUnit: this._removeUnit.bind(this),
+            selectMachine: this.selectMachine.bind(this),
+            unit: unit
+          }}
         />
       );
     });
@@ -185,7 +187,7 @@ class MachineView extends React.Component {
       <div>
         <div className="machine-view__auto-place">
           <juju.components.GenericButton
-            action={props.autoPlaceUnits}
+            action={props.modelAPI.autoPlaceUnits}
             disabled={props.acl.isReadOnly()}
             type="inline-neutral">
             Auto place
@@ -212,12 +214,14 @@ class MachineView extends React.Component {
     if (!this.state.showScaleUp) {
       return;
     }
+    const props = this.props;
+    const propTypes = juju.components.MachineViewScaleUp.propTypes;
     return (
       <juju.components.MachineViewScaleUp
-        acl={this.props.acl}
-        addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
-        services={this.props.services}
-        toggleScaleUp={this._toggleScaleUp.bind(this)} />);
+        acl={props.acl.reshape(propTypes.acl)}
+        dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
+        toggleScaleUp={this._toggleScaleUp.bind(this)}
+      />);
   }
 
   /**
@@ -237,13 +241,14 @@ class MachineView extends React.Component {
     @returns {Object} A list of machines or onboarding.
   */
   _generateMachines() {
-    var machineList = this.props.machines.filterByParent();
-    var machines = this._sortMachines(machineList, this.state.machineSort);
-    var onboarding;
     if (this.state.showAddMachine) {
       return;
     }
-    else if (machines.length === 0) {
+    const props = this.props;
+    const machineList = props.dbAPI.machines.filterByParent();
+    const machines = this._sortMachines(machineList, this.state.machineSort);
+    let onboarding;
+    if (machines.length === 0) {
       return (
         <div className="machine-view__column-onboarding">
           <p>Use machine view to:</p>
@@ -269,30 +274,33 @@ class MachineView extends React.Component {
           customise your deployment.
         </div>);
     }
-    var components = [];
+    const components = [];
+    const propTypes = (
+      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+    const acl = props.acl.reshape(propTypes.acl);
+    const dbAPI = props.dbAPI.reshape(propTypes.dbAPI);
+    const modelAPI = props.modelAPI.reshape(propTypes.modelAPI);
     machines.forEach((machine) => {
-      var selectedMachine = this.state.selectedMachine;
+      const selectedMachine = this.state.selectedMachine;
       components.push(
         <juju.components.MachineViewMachine
-          acl={this.props.acl}
-          destroyMachines={this.props.destroyMachines}
+          acl={acl}
+          dbAPI={dbAPI}
           dropUnit={this._dropUnit.bind(this)}
-          generateMachineDetails={this.props.generateMachineDetails}
           key={machine.id}
-          machine={machine}
-          machineModel={this.props.machines.revive(machine)}
-          parseConstraints={this.props.parseConstraints}
-          providerType={this.props.providerType}
-          selected={selectedMachine === machine.id}
-          selectMachine={this.selectMachine.bind(this)}
-          series={this.props.series}
-          services={this.props.services}
+          machineAPI={{
+            generateMachineDetails: props.generateMachineDetails,
+            machine: machine,
+            series: props.series,
+            selectMachine: this.selectMachine.bind(this),
+            selected: selectedMachine === machine.id
+          }}
+          modelAPI={modelAPI}
+          parseConstraints={props.parseConstraints}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
           type="machine"
-          units={this.props.units}
-          updateMachineConstraints={this.props.updateMachineConstraints}
-          updateMachineSeries={this.props.updateMachineSeries} />);
+        />);
     });
     return (
       <div>
@@ -310,14 +318,15 @@ class MachineView extends React.Component {
     @returns {Object} A list of machines or onboarding.
   */
   _generateContainers() {
-    var selectedMachine = this.state.selectedMachine;
+    const selectedMachine = this.state.selectedMachine;
     if (!selectedMachine) {
       return;
     }
-    var containerList = this.props.machines.filterByParent(selectedMachine);
-    var containers = this._sortMachines(
+    const props = this.props;
+    const containerList = props.dbAPI.machines.filterByParent(selectedMachine);
+    const containers = this._sortMachines(
       containerList, this.state.containerSort);
-    var machine = this.props.machines.getById(selectedMachine);
+    const machine = props.dbAPI.machines.getById(selectedMachine);
     if (!machine) {
       return;
     }
@@ -328,19 +337,24 @@ class MachineView extends React.Component {
       id: selectedMachine,
       root: true
     });
-    var components = [];
+    const propTypes = (
+      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+    const components = [];
     containers.forEach((container) => {
       components.push(
         <juju.components.MachineViewMachine
-          acl={this.props.acl}
-          destroyMachines={this.props.destroyMachines}
+          acl={props.acl.reshape(propTypes.acl)}
+          dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={this._dropUnit.bind(this)}
           key={container.id}
-          machine={container}
-          removeUnit={this._removeUnit.bind(this)}
-          services={this.props.services}
+          machineAPI={{
+            machine: container,
+            removeUnit: this._removeUnit.bind(this)
+          }}
+          modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
+          parseConstraints={props.parseConstraints}
           type="container"
-          units={this.props.units} />);
+        />);
     });
     return (
       <ul className="machine-view__list">
@@ -379,13 +393,12 @@ class MachineView extends React.Component {
       return;
     }
     const props = this.props;
+    const propTypes = juju.components.MachineViewAddMachine.propTypes;
     return (
       <juju.components.MachineViewAddMachine
-        acl={props.acl}
+        acl={props.acl.reshape(propTypes.acl)}
         close={this._closeAddMachine.bind(this)}
-        createMachine={props.createMachine}
-        placeUnit={props.placeUnit}
-        providerType={props.providerType}
+        modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={this.selectMachine.bind(this)}
         series={props.series}
         unit={this.state.placingUnit}
@@ -399,10 +412,10 @@ class MachineView extends React.Component {
     @method _addContainer
   */
   _addContainer() {
-    var selectedMachine = this.state.selectedMachine;
-    var deleted = false;
+    const selectedMachine = this.state.selectedMachine;
+    let deleted = false;
     if (selectedMachine) {
-      var machine = this.props.machines.getById(selectedMachine);
+      const machine = this.props.dbAPI.machines.getById(selectedMachine);
       deleted = machine.deleted;
     }
     if (this.state.selectedMachine && !deleted) {
@@ -432,14 +445,13 @@ class MachineView extends React.Component {
       return;
     }
     const props = this.props;
+    const propTypes = juju.components.MachineViewAddMachine.propTypes;
     return (
       <juju.components.MachineViewAddMachine
-        acl={props.acl}
-        close={this._closeAddContainer.bind(this)}
-        createMachine={props.createMachine}
+        acl={props.acl.reshape(propTypes.acl)}
+        close={this._closeAddMachine.bind(this)}
+        modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         parentId={this.state.selectedMachine}
-        placeUnit={props.placeUnit}
-        providerType={props.providerType}
         series={props.series}
         unit={this.state.placingUnit}
       />
@@ -453,8 +465,8 @@ class MachineView extends React.Component {
     @returns {String} the machine header title.
   */
   _generateMachinesTitle() {
-    var machines = this.props.machines.filterByParent();
-    return `${this.props.environmentName} (${machines.length})`;
+    const machines = this.props.dbAPI.machines.filterByParent();
+    return `${this.props.dbAPI.modelName} (${machines.length})`;
   }
 
   /**
@@ -482,17 +494,18 @@ class MachineView extends React.Component {
     @returns {String} the container header title.
   */
   _generateContainersTitle() {
-    var selectedMachine = this.state.selectedMachine;
-    var containerCount = 0;
-    var unitCount = 0;
+    const dbAPI = this.props.dbAPI;
+    const selectedMachine = this.state.selectedMachine;
+    let containerCount = 0;
+    let unitCount = 0;
     if (selectedMachine) {
-      var containers = this.props.machines.filterByParent(selectedMachine);
-      var units = this.props.units.filterByMachine(selectedMachine);
+      const containers = dbAPI.machines.filterByParent(selectedMachine);
+      const units = dbAPI.units.filterByMachine(selectedMachine);
       containerCount = containers.length;
       unitCount = units.length;
     }
-    var containerPlural = containerCount === 1 ? '' : 's';
-    var unitPlural = unitCount === 1 ? '' : 's';
+    const containerPlural = containerCount === 1 ? '' : 's';
+    const unitPlural = unitCount === 1 ? '' : 's';
     return `${containerCount} container${containerPlural}, ` +
       `${unitCount} unit${unitPlural}`;
   }
@@ -545,9 +558,9 @@ class MachineView extends React.Component {
      @return {Function} The sorting method function.
    */
   _getSortMethod(sort) {
-    var sortMethod;
-    var weight = 0;
-    var units = this.props.units;
+    let sortMethod;
+    let weight = 0;
+    const units = this.props.dbAPI.units;
     switch (sort) {
       case 'units':
         sortMethod = function(model) {
@@ -635,8 +648,9 @@ class MachineView extends React.Component {
   }
 
   render() {
-    var isReadOnly = this.props.acl.isReadOnly();
-    var machineMenuItems = [{
+    const props = this.props;
+    const isReadOnly = props.acl.isReadOnly();
+    const machineMenuItems = [{
       label: 'Add machine',
       action: !isReadOnly && this._addMachine.bind(this)
     }, {
@@ -689,16 +703,18 @@ class MachineView extends React.Component {
       id: 'applications',
       action: this._setSortMethod.bind(this, 'application', true)
     }];
-    var unplacedToggle = {
+    const unplacedToggle = {
       action: this._toggleScaleUp.bind(this),
-      disabled: this.props.services.size() === 0,
+      disabled: props.dbAPI.applications.size() === 0,
       toggleOn: this.state.showScaleUp
     };
+    const comp = juju.components.MachineViewColumn.DecoratedComponent;
+    const acl = props.acl.reshape(comp.propTypes.acl);
     return (
       <div className="machine-view">
         <div className="machine-view__content">
           <juju.components.MachineViewColumn
-            acl={this.props.acl}
+            acl={acl}
             droppable={false}
             title="New units"
             toggle={unplacedToggle}>
@@ -706,7 +722,7 @@ class MachineView extends React.Component {
             {this._generateUnplacedUnits()}
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
-            acl={this.props.acl}
+            acl={acl}
             activeMenuItem={this.state.machineSort}
             droppable={true}
             dropUnit={this._dropUnit.bind(this)}
@@ -717,7 +733,7 @@ class MachineView extends React.Component {
             {this._generateMachines()}
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
-            acl={this.props.acl}
+            acl={acl}
             activeMenuItem={this.state.containerSort}
             droppable={!!this.state.selectedMachine}
             dropUnit={this._dropUnit.bind(this)}
@@ -734,24 +750,33 @@ class MachineView extends React.Component {
 };
 
 MachineView.propTypes = {
-  acl: PropTypes.object.isRequired,
-  addGhostAndEcsUnits: PropTypes.func.isRequired,
-  autoPlaceUnits: PropTypes.func.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).frozen.isRequired,
   changeState: PropTypes.func.isRequired,
-  createMachine: PropTypes.func.isRequired,
-  destroyMachines: PropTypes.func.isRequired,
-  environmentName: PropTypes.string.isRequired,
+  dbAPI: shapeup.shape({
+    addGhostAndEcsUnits: PropTypes.func.isRequired,
+    applications: PropTypes.object.isRequired,
+    machines: PropTypes.object.isRequired,
+    modelName: PropTypes.string.isRequired,
+    reshape: shapeup.reshapeFunc,
+    units: PropTypes.object.isRequired
+  }).isRequired,
   generateMachineDetails: PropTypes.func.isRequired,
-  machines: PropTypes.object.isRequired,
+  modelAPI: shapeup.shape({
+    autoPlaceUnits: PropTypes.func.isRequired,
+    createMachine: PropTypes.func.isRequired,
+    destroyMachines: PropTypes.func.isRequired,
+    placeUnit: PropTypes.func.isRequired,
+    providerType: PropTypes.string,
+    removeUnits: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    updateMachineConstraints: PropTypes.func.isRequired,
+    updateMachineSeries: PropTypes.func.isRequired
+  }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
-  placeUnit: PropTypes.func.isRequired,
-  providerType: PropTypes.string,
-  removeUnits: PropTypes.func.isRequired,
-  series: PropTypes.array,
-  services: PropTypes.object.isRequired,
-  units: PropTypes.object.isRequired,
-  updateMachineConstraints: PropTypes.func.isRequired,
-  updateMachineSeries: PropTypes.func.isRequired
+  series: PropTypes.array
 };
 
 YUI.add('machine-view', function() {

@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewColumn', function() {
-  var acl;
+  let acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,16 +29,16 @@ describe('MachineViewColumn', function() {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: sinon.stub().returns(false)};
+    acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
   });
 
   it('can render', function() {
-    var menuItems = [];
-    var toggle = {};
-    var dropUnit = sinon.stub();
+    const menuItems = [];
+    const toggle = {};
+    const dropUnit = sinon.stub();
     // The component is wrapped to handle drag and drop, but we just want to
     // test the internal component so we access it via DecoratedComponent.
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
         acl={acl}
         activeMenuItem="name"
@@ -53,10 +53,12 @@ describe('MachineViewColumn', function() {
         type="machine">
         <div>contents</div>
       </juju.components.MachineViewColumn.DecoratedComponent>);
-    var expected = (
+    const expected = (
       <div className="machine-view__column">
         <juju.components.MachineViewHeader
-          acl={acl}
+          acl={acl.reshape(
+            juju.components.MachineViewHeader.DecoratedComponent.propTypes.acl
+          )}
           activeMenuItem="name"
           droppable={true}
           dropUnit={dropUnit}
@@ -72,11 +74,11 @@ describe('MachineViewColumn', function() {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render in droppable mode', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
         acl={acl}
         canDrop={false}
@@ -85,15 +87,15 @@ describe('MachineViewColumn', function() {
         isOver={true}
         title="Sandbox"
         type="machine" />);
-    var expected = (
+    const expected = (
       <div className="machine-view__column machine-view__column--drop">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can render in drop mode', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
         acl={acl}
         canDrop={true}
@@ -102,10 +104,10 @@ describe('MachineViewColumn', function() {
         isOver={false}
         title="Sandbox"
         type="machine" />);
-    var expected = (
+    const expected = (
       <div className="machine-view__column machine-view__column--droppable">
         {output.props.children}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });

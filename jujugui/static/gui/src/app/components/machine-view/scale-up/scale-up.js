@@ -20,15 +20,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class MachineViewScaleUp extends React.Component {
   /**
-    Display a list of services.
+    Display a list of applications.
 
     @method _generateServices
     @returns {Object} A unit list or onboarding.
   */
   _generateServices() {
-    var components = [];
-    var services = this.props.services.toArray();
-    services.forEach((service) => {
+    const components = [];
+    const applications = this.props.dbAPI.applications.toArray();
+    applications.forEach((service) => {
       if (service.get('subordinate')) {
         return;
       }
@@ -59,24 +59,25 @@ class MachineViewScaleUp extends React.Component {
   }
 
   /**
-    Add units to the services.
+    Add units to the applications.
 
     @method _handleAddUnits
-    @param {Object} e An event object.
+    @param {Object} evt An event object.
   */
-  _handleAddUnits(e) {
-    if (e) {
-      e.preventDefault();
+  _handleAddUnits(evt) {
+    if (evt) {
+      evt.preventDefault();
     }
-    var re = /(scaleUpUnit-)(.*)/;
+    const re = /(scaleUpUnit-)(.*)/;
+    const props = this.props;
     Object.keys(this.refs).forEach((ref) => {
-      var parts = re.exec(ref);
+      const parts = re.exec(ref);
       if (parts) {
-        var service = this.props.services.getById(parts[2]);
-        this.props.addGhostAndEcsUnits(service, this.refs[ref].value);
+        const application = props.dbAPI.applications.getById(parts[2]);
+        props.dbAPI.addGhostAndEcsUnits(application, this.refs[ref].value);
       }
     });
-    this.props.toggleScaleUp();
+    props.toggleScaleUp();
   }
 
   render() {
@@ -101,9 +102,13 @@ class MachineViewScaleUp extends React.Component {
 };
 
 MachineViewScaleUp.propTypes = {
-  acl: PropTypes.object.isRequired,
-  addGhostAndEcsUnits: PropTypes.func.isRequired,
-  services: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
+  dbAPI: shapeup.shape({
+    addGhostAndEcsUnits: PropTypes.func.isRequired,
+    applications: PropTypes.object.isRequired
+  }).isRequired,
   toggleScaleUp: PropTypes.func.isRequired
 };
 

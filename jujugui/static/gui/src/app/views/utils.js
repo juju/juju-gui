@@ -2074,7 +2074,7 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Generate the series/hardward/constraints details for a machine
+    Generate the series/hardware/constraints details for a machine
 
     @param genericConstraints {Array} The constraints types.
     @param machine {Object} A machine.

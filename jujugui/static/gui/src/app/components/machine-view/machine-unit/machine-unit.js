@@ -114,7 +114,9 @@ class MachineViewMachineUnit extends React.Component {
 };
 
 MachineViewMachineUnit.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   canDrag: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired,
