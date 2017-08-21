@@ -11,7 +11,8 @@ class ProfileModelList extends React.Component {
     super();
     this.state = {
       loadingModels: false,
-      models: null
+      models: null,
+      notification: null
     };
   }
 
@@ -78,6 +79,59 @@ class ProfileModelList extends React.Component {
   }
 
   /**
+    Shows the confirmation modal for destroying a model.
+    @param {Object} model The model data.
+  */
+  _showConfirmation(model) {
+    const buttons = [{
+      title: 'Cancel',
+      action: () => this.setState({notification: null}),
+      type: 'inline-neutral'
+    }, {
+      title: 'Destroy',
+      action: () => {
+        this.setState({notification: null});
+        this.props.destroyModels([model.uuid], () => {
+          this._fetchModels(this.props.facadesExist);
+        });
+      },
+      type: 'destructive'
+    }];
+    const message = `Are you sure you want to destroy ${model.name}?`
+      + ' All the applications and units included in the model will be'
+      + ' destroyed. This action cannot be undone.';
+    this.setState({
+      notification: (
+        <juju.components.Popup
+          buttons={buttons}
+          title="Destroy model">
+          <p>{message}</p>
+        </juju.components.Popup>)
+    });
+  }
+
+  /**
+    Calls to destroy the supplied model.
+    @param {Object} model The model object.
+    @param {String} bdRef The ref index of the button dropdown component.
+    @param {Object} e The click event.
+  */
+  _destroyModel(model, bdRef, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.refs[bdRef]._toggleDropdown();
+    if (model.isController) {
+      this.props.addNotification({
+        title: 'Cannot destroy model',
+        message: 'The controller model cannot be destroyed.',
+        level: 'error'
+      });
+      return;
+    }
+    this._showConfirmation(model);
+  }
+
+  /**
     Generates the list of models that are owned by the active user.
     @return {Object} The model list as JSX.
   */
@@ -92,17 +146,33 @@ class ProfileModelList extends React.Component {
     if (!modelList || modelList.length === 0) {
       return [this._generateHeader(headerLabel, 0, true), tableHeader];
     }
-    const rowData = modelList.reduce((models, model) => {
+    const rowData = modelList.reduce((models, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return;
       }
+      const bdRef = `mymodel-button-dropdown-${index}`;
       models.push({
         id: model.id,
         name: model.name,
         provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
         lastConnection: model.lastConnection,
-        action: '-'
+        action: (
+          <juju.components.ButtonDropdown
+            ref={bdRef}
+            listItems={[
+              <li
+                className="dropdown-menu__list-item" role="menuitem" tabIndex="0"
+                key="delete">
+                <a
+                  className="dropdown-menu__list-item-link"
+                  onClick={this._destroyModel.bind(this, model, bdRef)}>
+                  Delete
+                </a>
+              </li>
+            ]}
+            tooltip="more"
+            icon="contextual-menu-16" />)
       });
       return models;
     }, []);
@@ -244,11 +314,19 @@ class ProfileModelList extends React.Component {
         </li>));
   }
 
+  _generateNotification() {
+    if (!this.state.notification) {
+      return;
+    }
+    return this.state.notification;
+  }
+
   render() {
     return (
       <div className="profile-model-list">
         {this._generateMyModels()}
         {this._generateSharedModels()}
+        {this._generateNotification()}
       </div>);
   }
 
@@ -279,7 +357,9 @@ YUI.add('profile-model-list', function() {
   juju.components.ProfileModelList = ProfileModelList;
 }, '', {
   requires: [
+    'button-dropdown',
     'create-model-button',
-    'date-display'
+    'date-display',
+    'popup'
   ]
 });

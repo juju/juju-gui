@@ -97,7 +97,7 @@ class ButtonDropdown extends React.Component {
 };
 
 ButtonDropdown.propTypes = {
-  classes: PropTypes.string,
+  classes: PropTypes.array,
   disableDropdown: PropTypes.bool,
   icon: PropTypes.oneOfType([
     React.PropTypes.string,
