@@ -61,9 +61,6 @@ class EnvSizeDisplay extends React.Component {
     @returns {Object} The status markup.
   */
   _generateStatus() {
-    if (!this.props.showStatus) {
-      return;
-    }
     return (
       <li className={this._genClasses('status')}>
         <a data-view="status"
@@ -109,8 +106,7 @@ EnvSizeDisplay.propTypes = {
   appState: PropTypes.object.isRequired,
   machineCount: PropTypes.number.isRequired,
   pluralize: PropTypes.func.isRequired,
-  serviceCount: PropTypes.number.isRequired,
-  showStatus: PropTypes.bool
+  serviceCount: PropTypes.number.isRequired
 };
 
 YUI.add('env-size-display', function() {
