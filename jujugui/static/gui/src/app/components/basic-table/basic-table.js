@@ -58,6 +58,7 @@ class BasicTable extends React.Component {
     const classes = classNames(
       'twelve-col',
       isHeader ? this.props.headerClasses : this.props.rowClasses,
+      row.classes,
       {
         'basic-table__header': isHeader,
         'basic-table__row': !isHeader
@@ -94,7 +95,9 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
+  // The extra classes to apply to all header rows.
   headerClasses: PropTypes.array,
+  // The extra classes to apply to all header columns.
   headerColumnClasses: PropTypes.array,
   headers: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.node.isRequired,
@@ -103,9 +106,13 @@ BasicTable.propTypes = {
     // The extra classes to apply to the column.
     classes: PropTypes.arrayOf(PropTypes.string)
   }).isRequired).isRequired,
+  // The extra classes to apply to all non-header rows.
   rowClasses: PropTypes.array,
+  // The extra classes to apply to all non-header columns.
   rowColumnClasses: PropTypes.array,
   rows: PropTypes.arrayOf(PropTypes.shape({
+    // The extra classes to apply to an individual row.
+    classes: PropTypes.array,
     columns: PropTypes.arrayOf(PropTypes.shape({
       content: PropTypes.node,
       // The number of columns (between 1 and 12).

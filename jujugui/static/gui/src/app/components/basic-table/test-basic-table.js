@@ -110,6 +110,7 @@ describe('BasicTable', function() {
   });
 
   it('can apply extra classes', function() {
+    rows[1].classes = ['second-row-class'];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BasicTable
         headerClasses={['header-class']}
@@ -143,7 +144,7 @@ describe('BasicTable', function() {
             row 1 column 2
           </div>
         </li>
-        <li className="twelve-col row-class basic-table__row"
+        <li className="twelve-col row-class second-row-class basic-table__row"
           key="row-two-key">
           <div className="last-col seven-col row-column"
             key="column-1">
