@@ -156,8 +156,13 @@ class Status extends React.Component {
   /**
     Navigate to the chosen machine.
     @param machineId {String} The id of the machine to display.
+    @param evt {Object} The click event.
   */
-  _navigateToMachine(machineId) {
+  _navigateToMachine(machineId, evt) {
+    // Because the changeState below results in this component being removed
+    // from the document there is a React error for some reason if this event
+    // propogates.
+    evt.stopPropagation();
     this.props.changeState({
       gui: {
         machines: machineId,

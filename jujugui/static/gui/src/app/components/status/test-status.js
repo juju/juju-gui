@@ -650,8 +650,16 @@ describe('Status', function() {
     comp.output.props.children.props.children[2].props.rows[0].columns[0]
       .content.props.onClick();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {gui: {inspector: {id: 'django'}}});
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'django',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
   });
 
   it('can navigate to charms from the app list', () => {
@@ -689,7 +697,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[3];
     const column = section.props.rows[0].columns[3];
-    column.content.props.onClick();
+    column.content.props.onClick({stopPropagation: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: '1', status: null}});
@@ -700,7 +708,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[4];
     const column = section.props.rows[0].columns[0];
-    column.content.props.onClick();
+    column.content.props.onClick({stopPropagation: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: 'm1', status: null}});
@@ -713,8 +721,16 @@ describe('Status', function() {
     const column = section.props.rows[0].columns[1];
     column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {gui: {inspector: {id: 'mysql'}}});
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'mysql',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
   });
 
   it('can navigate to consumed apps from the relation list', () => {
@@ -724,7 +740,15 @@ describe('Status', function() {
     const column = section.props.rows[0].columns[2];
     column.content.props.onClick();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {gui: {inspector: {id: 'mysql'}}});
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'mysql',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
   });
 });
