@@ -137,11 +137,11 @@ class Status extends React.Component {
 
   /**
     Navigate to the chosen unit.
-    @param unitId {String} The id of the unit to display in the format
-      'app-id/unit-id'.
+    @param unitName {String} The name of the unit to display in the format
+      'app-id/unit-number'.
   */
-  _navigateToUnit(unitId) {
-    const unitParts = unitId.split('/');
+  _navigateToUnit(unitName) {
+    const unitParts = unitName.split('/');
     this.props.changeState({
       gui: {
         inspector: {
