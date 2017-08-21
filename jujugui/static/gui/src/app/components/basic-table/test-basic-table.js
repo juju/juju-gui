@@ -15,7 +15,7 @@ describe('BasicTable', function() {
     YUI().use('basic-table', function() { done(); });
   });
 
-  beforeEach(()=> {
+  beforeEach(() => {
     headers = [{
       content: 'Column 1',
       columnSize: 3,
@@ -99,6 +99,7 @@ describe('BasicTable', function() {
           </div>
           <div className="three-col"
             key="column-1">
+            <span> </span>
           </div>
           <div className="last-col six-col"
             key="column-1">
@@ -160,7 +161,7 @@ describe('BasicTable', function() {
           </div>
           <div className="three-col row-column"
             key="column-1">
-            row 3 column 2
+            <span> </span>
           </div>
           <div className="last-col six-col row-column"
             key="column-1">

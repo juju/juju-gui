@@ -276,7 +276,7 @@ class Status extends React.Component {
               className={this._getStatusClass(
                 'status-view__status--', app.status.current)}
               key={'status' + i}>
-              {app.status.current}
+              {app.status.current || (<span>&nbsp;</span>)}
             </span>)
         }, {
           columnSize: 1,
@@ -369,7 +369,7 @@ class Status extends React.Component {
                 className={this._getStatusClass(
                   'status-view__status--', unit.workloadStatus)}
                 key={'workload' + i}>
-                {unit.workloadStatus}
+                {unit.workloadStatus || (<span>&nbsp;</span>)}
               </span>)
           }, {
             columnSize: 2,
@@ -378,7 +378,7 @@ class Status extends React.Component {
                 className={this._getStatusClass(
                   'status-view__status--', unit.agentStatus)}
                 key={'agent' + i}>
-                {unit.agentStatus}
+                {unit.agentStatus || (<span>&nbsp;</span>)}
               </span>)
           }, {
             columnSize: 1,
@@ -464,7 +464,7 @@ class Status extends React.Component {
               className={this._getStatusClass(
                 'status-view__status--', machine.agent_state)}
               key={'agent' + i}>
-              {machine.agent_state}
+              {machine.agent_state || (<span>&nbsp;</span>)}
             </span>)
         }, {
           columnSize: 2,

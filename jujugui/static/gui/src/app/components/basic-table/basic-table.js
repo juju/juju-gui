@@ -52,7 +52,7 @@ class BasicTable extends React.Component {
       return (
         <div className={classes}
           key={i}>
-          {column.content}
+          {column.content || (<span>&nbsp;</span>)}
         </div>);
     });
     const classes = classNames(
