@@ -70,7 +70,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         machineCount={machineCount}
         pluralize={yui.juju.views.utils.pluralize.bind(this)}
         serviceCount={serviceCount}
-        showStatus={window.juju_config.flags.status} />,
+      />,
       document.getElementById('env-size-display-container'));
   }
   /**

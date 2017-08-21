@@ -1228,7 +1228,7 @@ YUI.add('juju-gui', function(Y) {
           machineCount={machineCount}
           pluralize={views.utils.pluralize.bind(this)}
           serviceCount={serviceCount}
-          showStatus={window.juju_config.flags.status} />,
+        />,
         document.getElementById('env-size-display-container'));
     },
 
