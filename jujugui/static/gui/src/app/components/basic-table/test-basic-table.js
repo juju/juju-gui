@@ -109,6 +109,66 @@ describe('BasicTable', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can apply extra classes', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BasicTable
+        headerClasses={['header-class']}
+        headerColumnClasses={['header-column']}
+        headers={headers}
+        rowClasses={['row-class']}
+        rowColumnClasses={['row-column']}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ul className="basic-table twelve-col">
+        <li className="twelve-col header-class basic-table__header"
+          key='basic-table-header'>
+          <div className="three-col class1 class2 header-column"
+            key="column-1">
+            Column 1
+          </div>
+          <div className="last-col four-col header-column"
+            key="column-2">
+            <span>Column 2</span>
+          </div>
+        </li>
+        <li className="twelve-col row-class basic-table__row"
+          key="row-one-key">
+          <div className="three-col r1c1class1 r1c1class2 row-column"
+            key="column-1">
+            <span>row 1 column 1</span>
+          </div>
+          <div className="last-col three-col row-column"
+            key="column-2">
+            row 1 column 2
+          </div>
+        </li>
+        <li className="twelve-col row-class basic-table__row"
+          key="row-two-key">
+          <div className="last-col seven-col row-column"
+            key="column-1">
+            row 2 column 1
+          </div>
+        </li>
+        <li className="twelve-col row-class basic-table__row"
+          key="row-three-key">
+          <div className="three-col row-column"
+            key="column-1">
+            row 3 column 1
+          </div>
+          <div className="three-col row-column"
+            key="column-1">
+            row 3 column 2
+          </div>
+          <div className="last-col six-col row-column"
+            key="column-1">
+            row 3 column 3
+          </div>
+        </li>
+      </ul>);
+    expect(output).toEqualJSX(expected);
+  });
+
   it('can sort the table', function() {
     const sort = (a, b) => {
       if (a.key < b.key)
