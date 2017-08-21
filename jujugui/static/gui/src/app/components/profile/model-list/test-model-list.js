@@ -157,7 +157,7 @@ describe('Profile Model List', function() {
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
-        clearCanvasInfo={options.clearCanvasInfo || sinon.stub()}
+        clearPostDeployment={options.clearPostDeployment || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
         destroyModels={sinon.stub()}
@@ -166,9 +166,9 @@ describe('Profile Model List', function() {
   }
 
   it('can render', () => {
-    const clearCanvasInfo = sinon.stub();
+    const clearPostDeployment = sinon.stub();
     const renderer = renderComponent({
-      clearCanvasInfo: clearCanvasInfo
+      clearPostDeployment: clearPostDeployment
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -182,7 +182,7 @@ describe('Profile Model List', function() {
             <juju.components.CreateModelButton
               title="Start a new model"
               changeState={instance.props.changeState}
-              clearCanvasInfo={clearCanvasInfo}
+              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </li>
           <li className="profile-model-list__table-header">

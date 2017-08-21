@@ -76,7 +76,7 @@ const createDeploymentFlow = (props = {}) => {
     createUser: sinon.stub(),
     ddData: {},
     deploy: sinon.stub().callsArg(0),
-    displayCanvasInfo: sinon.stub(),
+    displayPostDeployment: sinon.stub(),
     formatConstraints: sinon.stub(),
     generateAllChangeDescriptions: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
@@ -289,12 +289,12 @@ describe('DeploymentFlow', function() {
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub().returns(entityModel);
     const renderMarkdown = sinon.stub();
-    const displayCanvasInfo = sinon.stub();
+    const displayPostDeployment = sinon.stub();
     const renderer = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
-      displayCanvasInfo: displayCanvasInfo,
+      displayPostDeployment: displayPostDeployment,
       getEntity: getEntity,
       makeEntityModel: makeEntityModel,
       modelCommitted: false,
@@ -308,7 +308,7 @@ describe('DeploymentFlow', function() {
     getEntity.args[0][1](null, entityData);
     instance.render();
     assert.deepEqual(
-      displayCanvasInfo.args[0],
+      displayPostDeployment.args[0],
       ['cs:bundle/kubernetes-core-8']
     );
     const output2 = renderer.getRenderOutput();

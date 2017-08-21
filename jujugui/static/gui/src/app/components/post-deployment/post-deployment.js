@@ -6,7 +6,7 @@
   Displays information for usage and quickstart.
   Shown when a charm or bundle is added to the canvas, and on deploy.
 */
-class CanvasInfo extends React.Component {
+class PostDeployment extends React.Component {
   constructor(props) {
     super(props);
     this.templateTags = {
@@ -163,22 +163,22 @@ class CanvasInfo extends React.Component {
     let classes = [
       'modal--right',
       'modal--auto-height',
-      'canvas-info'
+      'post-deployment'
     ];
     if (this.state.content) {
       return (
         <juju.components.Modal
-          closeModal={this.props.closeCanvasInfo}
+          closeModal={this.props.closePostDeployment}
           extraClasses={classes.join(' ')}>
           <div onClick={this._handleContentClick.bind(this)}
             dangerouslySetInnerHTML={{__html: this.state.content}} />
         </juju.components.Modal>
       );
     } else if (this.state.displayName) {
-      classes.push('canvas-info--simple');
+      classes.push('post-deployment--simple');
       return (
         <juju.components.Modal
-          closeModal={this.props.closeCanvasInfo}
+          closeModal={this.props.closePostDeployment}
           extraClasses={classes.join(' ')}>
           <p>
             {this.state.displayName}
@@ -194,8 +194,8 @@ class CanvasInfo extends React.Component {
   }
 }
 
-CanvasInfo.propTypes = {
-  closeCanvasInfo: PropTypes.func.isRequired,
+PostDeployment.propTypes = {
+  closePostDeployment: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,
   getFile: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
@@ -203,8 +203,8 @@ CanvasInfo.propTypes = {
   showEntityDetails: PropTypes.func.isRequired
 };
 
-YUI.add('canvas-info', function() {
-  juju.components.CanvasInfo = CanvasInfo;
+YUI.add('post-deployment', function() {
+  juju.components.PostDeployment = PostDeployment;
 }, '0.1.0', { requires: [
   'modal'
 ]});

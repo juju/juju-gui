@@ -150,7 +150,7 @@ class Charmbrowser extends React.Component {
             generatePath={appState.generatePath.bind(appState)}
             charmstoreSearch={this.props.charmstoreSearch}
             deployTarget={this.props.deployTarget}
-            displayCanvasInfo={this.props.displayCanvasInfo}
+            displayPostDeployment={this.props.displayPostDeployment}
             getName={utils.getName}
             makeEntityModel={this.props.makeEntityModel}
             owner={search.owner}
@@ -175,7 +175,7 @@ class Charmbrowser extends React.Component {
             apiUrl={this.props.apiUrl}
             changeState={changeState}
             clearLightbox={this.props.clearLightbox}
-            displayCanvasInfo={this.props.displayCanvasInfo}
+            displayPostDeployment={this.props.displayPostDeployment}
             displayLightbox={this.props.displayLightbox}
             importBundleYAML={this.props.importBundleYAML}
             flags={this.props.flags}
@@ -238,7 +238,7 @@ Charmbrowser.propTypes = {
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
-  displayCanvasInfo: PropTypes.func.isRequired,
+  displayPostDeployment: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,

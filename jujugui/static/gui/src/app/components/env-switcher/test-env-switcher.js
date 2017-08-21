@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EnvSwitcher', function() {
-  const clearCanvasInfo = sinon.stub();
+  const clearPostDeployment = sinon.stub();
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -94,7 +94,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
@@ -208,7 +208,7 @@ describe('EnvSwitcher', function() {
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
         setModelName={sinon.stub()}
@@ -225,7 +225,7 @@ describe('EnvSwitcher', function() {
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
@@ -239,7 +239,7 @@ describe('EnvSwitcher', function() {
     const expected = <juju.components.EnvList
       acl={acl}
       changeState={changeState}
-      clearCanvasInfo={clearCanvasInfo}
+      clearPostDeployment={clearPostDeployment}
       environmentName=""
       envs={[]}
       handleModelClick={instance.handleModelClick}
@@ -257,7 +257,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -282,7 +282,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -319,7 +319,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -346,7 +346,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}

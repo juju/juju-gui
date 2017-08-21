@@ -81,7 +81,7 @@ class EntityDetails extends React.Component {
           <div>
             <juju.components.EntityHeader
               acl={this.props.acl}
-              displayCanvasInfo={this.props.displayCanvasInfo}
+              displayPostDeployment={this.props.displayPostDeployment}
               entityModel={entityModel}
               addNotification={this.props.addNotification}
               importBundleYAML={this.props.importBundleYAML}
@@ -264,7 +264,7 @@ EntityDetails.propTypes = {
   changeState: PropTypes.func.isRequired,
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
-  displayCanvasInfo: PropTypes.func.isRequired,
+  displayPostDeployment: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,

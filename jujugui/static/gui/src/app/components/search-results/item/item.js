@@ -226,7 +226,7 @@ class SearchResultsItem extends React.Component {
       profile: null
     });
 
-    this.props.displayCanvasInfo(id);
+    this.props.displayPostDeployment(id);
   }
 
   /**
@@ -325,7 +325,7 @@ SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
-  displayCanvasInfo: PropTypes.func.isRequired,
+  displayPostDeployment: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired
 };

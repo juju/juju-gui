@@ -64,13 +64,13 @@ describe('UserProfileModelList', () => {
       canAddModels: () => true
     };
     const changeState = sinon.stub();
-    const clearCanvasInfo = sinon.stub();
+    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -93,7 +93,7 @@ describe('UserProfileModelList', () => {
           <div className="right">
             <juju.components.CreateModelButton
               changeState={changeState}
-              clearCanvasInfo={clearCanvasInfo}
+              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </div>
         </div>
@@ -110,13 +110,13 @@ describe('UserProfileModelList', () => {
     };
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: false};
     const changeState = sinon.stub();
-    const clearCanvasInfo = sinon.stub();
+    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -151,7 +151,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -175,13 +175,13 @@ describe('UserProfileModelList', () => {
     };
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
-    const clearCanvasInfo = sinon.stub();
+    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -205,7 +205,7 @@ describe('UserProfileModelList', () => {
           <div className="right">
             <juju.components.CreateModelButton
               changeState={changeState}
-              clearCanvasInfo={clearCanvasInfo}
+              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </div>
         </div>
@@ -328,13 +328,13 @@ describe('UserProfileModelList', () => {
       canAddModels: () => true
     };
     const changeState = sinon.stub();
-    const clearCanvasInfo = sinon.stub();
+    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
-        clearCanvasInfo={clearCanvasInfo}
+        clearPostDeployment={clearPostDeployment}
         currentModel={null}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -457,7 +457,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -497,7 +497,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -533,7 +533,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -568,7 +568,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -601,7 +601,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -630,7 +630,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -663,7 +663,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -692,7 +692,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -724,7 +724,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearCanvasInfo={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}

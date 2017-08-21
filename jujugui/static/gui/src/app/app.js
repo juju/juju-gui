@@ -1044,7 +1044,7 @@ YUI.add('juju-gui', function(Y) {
         addNotification=
           {this.db.notifications.add.bind(this.db.notifications)}
         charmstore={charmstore}
-        clearCanvasInfo={this._clearCanvasInfo.bind(this)}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         currentModel={currentModel}
         d3={d3}
         facadesExist={facadesExist}
@@ -1075,7 +1075,7 @@ YUI.add('juju-gui', function(Y) {
             baseURL={window.juju_config.baseUrl}
             changeState={this._bound.changeState}
             charmstore={charmstore}
-            clearCanvasInfo={this._clearCanvasInfo.bind(this)}
+            clearPostDeployment={this._clearPostDeployment.bind(this)}
             facadesExist={facadesExist}
             listModelsWithInfo={this._bound.listModelsWithInfo}
             destroyModels={this._bound.destroyModels}
@@ -1369,7 +1369,7 @@ YUI.add('juju-gui', function(Y) {
           addSSHKeys={env.addKeys.bind(env)}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
-          displayCanvasInfo={this._displayCanvasInfo.bind(this)}
+          displayPostDeployment={this._displayPostDeployment.bind(this)}
           sendAnalytics={this.sendAnalytics}
           setModelName={env.set.bind(env, 'environmentName')}
           formatConstraints={utils.formatConstraints.bind(utils)}
@@ -1824,7 +1824,7 @@ YUI.add('juju-gui', function(Y) {
           charmstoreSearch={charmstore.search.bind(charmstore)}
           clearLightbox={this._clearLightbox.bind(this)}
           deployTarget={this.deployTarget.bind(this, charmstore)}
-          displayCanvasInfo={this._displayCanvasInfo.bind(this)}
+          displayPostDeployment={this._displayPostDeployment.bind(this)}
           displayLightbox={this._displayLightbox.bind(this)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
@@ -1910,11 +1910,11 @@ YUI.add('juju-gui', function(Y) {
 
       @param {String} entityId The entity ID of the charm or bundle.
     */
-    _displayCanvasInfo: function(entityId) {
+    _displayPostDeployment: function(entityId) {
       if(!window.juju_config.flags.canvasInfo){
         return;
       }
-      this._clearCanvasInfo();
+      this._clearPostDeployment();
       const charmstore = this.get('charmstore');
 
       const showEntityDetails = (id) => {
@@ -1942,14 +1942,14 @@ YUI.add('juju-gui', function(Y) {
           }
 
           ReactDOM.render(
-            <window.juju.components.CanvasInfo
-              closeCanvasInfo={this._clearCanvasInfo.bind(this)}
+            <window.juju.components.PostDeployment
+              closePostDeployment={this._clearPostDeployment.bind(this)}
               entity={entityData[0]}
               getFile={charmstore.getFile.bind(charmstore)}
               makeEntityModel={Y.juju.makeEntityModel}
               marked={marked}
               showEntityDetails={showEntityDetails.bind(this, entityId)} />,
-            document.getElementById('canvas-info')
+            document.getElementById('post-deployment')
           );
         }
       );
@@ -1990,9 +1990,9 @@ YUI.add('juju-gui', function(Y) {
     /**
       The cleanup dispatcher for the post deployment screen.
     */
-    _clearCanvasInfo: function() {
+    _clearPostDeployment: function() {
       ReactDOM.unmountComponentAtNode(
-        document.getElementById('canvas-info'));
+        document.getElementById('post-deployment'));
     },
 
     /**
@@ -3363,7 +3363,7 @@ YUI.add('juju-gui', function(Y) {
     'modal-shortcuts',
     'notification-list',
     'panel-component',
-    'canvas-info',
+    'post-deployment',
     'sharing',
     'status',
     'svg-icon',

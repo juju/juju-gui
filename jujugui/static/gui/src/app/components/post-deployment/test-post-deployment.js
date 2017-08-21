@@ -7,11 +7,11 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('CanvasInfo', () => {
+describe('PostDeployment', () => {
 
   beforeAll(done => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('canvas-info', function() { done(); });
+    YUI().use('post-deployment', function() { done(); });
   });
 
   function render(props) {
@@ -19,7 +19,7 @@ describe('CanvasInfo', () => {
     const defaultParsedMarkdown =
       '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>';
     const _props = {
-      closeCanvasInfo: props.closeCanvasInfo || sinon.stub(),
+      closePostDeployment: props.closePostDeployment || sinon.stub(),
       entity: props.entity || {id: 'test', files: []},
       getFile: props.getFile || sinon.stub(),
       makeEntityModel: props.makeEntityModel || sinon.stub().returns({
@@ -31,8 +31,8 @@ describe('CanvasInfo', () => {
       showEntityDetails: props.showEntityDetails || sinon.stub()
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CanvasInfo
-        closeCanvasInfo={_props.closeCanvasInfo}
+      <juju.components.PostDeployment
+        closePostDeployment={_props.closePostDeployment}
         entity={_props.entity}
         getFile={_props.getFile}
         makeEntityModel={_props.makeEntityModel}
@@ -57,8 +57,8 @@ describe('CanvasInfo', () => {
     const classes = [
       'modal--right',
       'modal--auto-height',
-      'canvas-info',
-      'canvas-info--simple'
+      'post-deployment',
+      'post-deployment--simple'
     ];
 
     instance.componentDidMount();
@@ -67,7 +67,7 @@ describe('CanvasInfo', () => {
 
     expect(output).toEqualJSX(
       <juju.components.Modal
-        closeModal={props.closeCanvasInfo}
+        closeModal={props.closePostDeployment}
         extraClasses={classes.join(' ')}>
         <p>
           Test Name
@@ -93,8 +93,8 @@ describe('CanvasInfo', () => {
 
     expect(output).toEqualJSX(
       <juju.components.Modal
-        closeModal={props.closeCanvasInfo}
-        extraClasses="modal--right modal--auto-height canvas-info">
+        closeModal={props.closePostDeployment}
+        extraClasses="modal--right modal--auto-height post-deployment">
         <div dangerouslySetInnerHTML={{__html: rendered.defaultParsedMarkdown}}
           onClick={instance._handleContentClick.bind(instance)} />
       </juju.components.Modal>
