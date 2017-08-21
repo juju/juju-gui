@@ -1040,8 +1040,7 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       let profile = <window.juju.components.UserProfile
         acl={this.acl}
-        addNotification=
-          {this.db.notifications.add.bind(this.db.notifications)}
+        addNotification={this._bound.addNotification}
         charmstore={charmstore}
         currentModel={currentModel}
         d3={d3}
@@ -1060,7 +1059,7 @@ YUI.add('juju-gui', function(Y) {
         setPageTitle={this.setPageTitle}
         staticURL={window.juju_config.staticURL}
         storeUser={this.storeUser.bind(this)}
-        switchModel={utils.switchModel.bind(this, this.env)}
+        switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)}
       />;
 

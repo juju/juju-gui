@@ -311,20 +311,7 @@ class GUIApp {
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
 
-    /**
-      As a minor performance boost and to avoid potential rerenderings
-      because of rebinding functions in the render methods. Any method that
-      requires binding and is passed into components should be bound here
-      and then used across components.
-      @type {Object}
-    */
-    this._bound = {
-      addNotification: this.db.notifications.add.bind(this.db.notifications),
-      changeState: this.state.changeState.bind(this.state),
-      destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
-      listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI), // eslint-disable-line max-len
-      switchModel: yui.juju.views.utils.switchModel.bind(this, this.env)
-    };
+    this._bindRenderUtilities();
 
     /**
       Reference to the rendered topology.
@@ -334,6 +321,30 @@ class GUIApp {
     this._renderComponents();
     this.state.bootstrap();
   }
+
+  /**
+    As a minor performance boost and to avoid potential rerenderings
+    because of rebinding functions in the render methods. Any method that
+    requires binding and is passed into components should be bound here
+    and then used across components.
+  */
+  _bindRenderUtilities() {
+    /**
+      A collection of pre-bound methods to pass to render methods.
+      @type {Object}
+    */
+    this._bound = {
+      addNotification: this.db.notifications.add.bind(this.db.notifications),
+      changeState: this.state.changeState.bind(this.state),
+      destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
+      listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI) // eslint-disable-line max-len
+    };
+    // Bind switchModel separately to include the already bound
+    // addNotifications.
+    this._bound.switchModel = yui.juju.views.utils.switchModel.bind(
+      this, this.env, this._bound.addNotification);
+  }
+
   /**
     Creates a new instance of the charm store API. This method is idempotent.
     @param {object} config The app instantiation configuration.
