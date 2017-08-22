@@ -20,6 +20,12 @@
     padding-right: 20px;
   }
 
+  &__link {
+    @extend .link;
+    cursor: pointer;
+    font-weight: 200 !important;
+  }
+
   .ok {
     color: green;
   }

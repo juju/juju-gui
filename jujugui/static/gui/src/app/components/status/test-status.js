@@ -5,6 +5,7 @@
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('Status', function() {
+  let changeState;
   let defaultModel;
   let emptyDB;
 
@@ -16,6 +17,7 @@ describe('Status', function() {
   });
 
   beforeEach(() => {
+    changeState = sinon.stub();
     defaultModel = {
       cloud: 'aws',
       environmentName: 'my-model',
@@ -50,6 +52,7 @@ describe('Status', function() {
     const propTypes = window.juju.components.Status.propTypes;
     const renderer = jsTestUtils.shallowRender(
       <window.juju.components.Status
+        changeState={changeState}
         db={shapeup.fromShape(db, propTypes.db)}
         model={shapeup.fromShape(model, propTypes.model)}
         urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
@@ -75,7 +78,7 @@ describe('Status', function() {
     const djangoUnits = [{
       agentStatus: 'idle',
       displayName: 'django/0',
-      id: 'id0',
+      id: 'django/id0',
       machine: '1',
       public_address: '1.2.3.4',
       portRanges: [
@@ -87,7 +90,7 @@ describe('Status', function() {
     }, {
       agentStatus: 'executing',
       displayName: 'django/1',
-      id: 'id1',
+      id: 'django/id1',
       machine: '2',
       public_address: '1.2.3.5',
       portRanges: [
@@ -99,6 +102,7 @@ describe('Status', function() {
     const applications = [{
       getAttrs: sinon.stub().withArgs().returns({
         charm: '~who/xenial/django-42',
+        id: 'django',
         name: 'django',
         status: {current: 'active'},
         units: {size: sinon.stub().withArgs().returns(djangoUnits.length)},
@@ -347,7 +351,11 @@ describe('Status', function() {
           rows={[{
             columns: [{
               columnSize: 2,
-              content: 'django'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  django
+                </span>)
             }, {
               columnSize: 2,
               content: '1.10'
@@ -359,7 +367,11 @@ describe('Status', function() {
               content: 2
             }, {
               columnSize: 2,
-              content: 'u/who/django/xenial'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  u/who/django/xenial
+                </span>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -371,7 +383,11 @@ describe('Status', function() {
           }, {
             columns: [{
               columnSize: 2,
-              content: 'ha'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  ha
+                </span>)
             }, {
               columnSize: 2,
               content: ''
@@ -383,7 +399,11 @@ describe('Status', function() {
               content: 0
             }, {
               columnSize: 2,
-              content: 'haproxy'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  haproxy
+                </span>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -421,7 +441,11 @@ describe('Status', function() {
           rows={[{
             columns: [{
               columnSize: 2,
-              content: 'django/0'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  django/0
+                </span>)
             }, {
               columnSize: 2,
               content: <span key="workload0" className="">installing</span>
@@ -430,7 +454,11 @@ describe('Status', function() {
               content: <span key="agent0" className="ok">idle</span>
             }, {
               columnSize: 1,
-              content: '1'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  1
+                </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.4'
@@ -441,11 +469,15 @@ describe('Status', function() {
               columnSize: 2,
               content: 'these are the voyages'
             }],
-            key: 'id0'
+            key: 'django/id0'
           }, {
             columns: [{
               columnSize: 2,
-              content: 'django/1'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  django/1
+                </span>)
             }, {
               columnSize: 2,
               content: <span key="workload1" className="error">error</span>
@@ -454,7 +486,11 @@ describe('Status', function() {
               content: <span key="agent1" className="">executing</span>
             }, {
               columnSize: 1,
-              content: '2'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  2
+                </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.5'
@@ -465,7 +501,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'exterminate!'
             }],
-            key: 'id1'
+            key: 'django/id1'
           }]}
           sort={sinon.stub()} />
         <juju.components.BasicTable
@@ -492,7 +528,11 @@ describe('Status', function() {
           rows={[{
             columns: [{
               columnSize: 2,
-              content: '1'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  1
+                </span>)
             }, {
               columnSize: 2,
               content: (<span key="agent0" className="">pending</span>)
@@ -513,7 +553,11 @@ describe('Status', function() {
           }, {
             columns: [{
               columnSize: 2,
-              content: '2'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  2
+                </span>)
             }, {
               columnSize: 2,
               content: (<span key="agent1" className="ok">started</span>)
@@ -554,10 +598,18 @@ describe('Status', function() {
               content: 'cluster'
             }, {
               columnSize: 3,
-              content: 'mysql'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  mysql
+                </span>)
             }, {
               columnSize: 3,
-              content: 'mysql'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  mysql
+                </span>)
             }, {
               columnSize: 3,
               content: 'peer'
@@ -569,10 +621,18 @@ describe('Status', function() {
               content: 'website'
             }, {
               columnSize: 3,
-              content: 'wordpress'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  wordpress
+                </span>)
             }, {
               columnSize: 3,
-              content: 'haproxy'
+              content: (
+                <span className="status-view__link"
+                  onClick={sinon.stub()}>
+                  haproxy
+                </span>)
             }, {
               columnSize: 3,
               content: 'regular'
@@ -585,4 +645,110 @@ describe('Status', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
+  it('can navigate to applications from the app list', () => {
+    const comp = render(makeDB());
+    comp.output.props.children.props.children[2].props.rows[0].columns[0]
+      .content.props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'django',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
+  });
+
+  it('can navigate to charms from the app list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[2];
+    const column = section.props.rows[0].columns[4];
+    column.content.props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(
+      changeState.args[0][0], {store: 'u/who/django/xenial/42'});
+  });
+
+  it('can navigate to units from the unit list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[3];
+    const column = section.props.rows[0].columns[0];
+    column.content.props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(
+      changeState.args[0][0], {
+        gui: {
+          inspector: {
+            id: 'django',
+            unit: 'id0',
+            activeComponent: 'unit'
+          }
+        }
+      });
+  });
+
+  it('can navigate to machines from the unit list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[3];
+    const column = section.props.rows[0].columns[3];
+    column.content.props.onClick({stopPropagation: sinon.stub()});
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(
+      changeState.args[0][0], {gui: {machines: '1', status: null}});
+  });
+
+  it('can navigate to machines from the machine list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[4];
+    const column = section.props.rows[0].columns[0];
+    column.content.props.onClick({stopPropagation: sinon.stub()});
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(
+      changeState.args[0][0], {gui: {machines: 'm1', status: null}});
+  });
+
+  it('can navigate to provided apps from the relation list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[5];
+    const column = section.props.rows[0].columns[1];
+    column.content.props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'mysql',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
+  });
+
+  it('can navigate to consumed apps from the relation list', () => {
+    const comp = render(makeDB());
+    const content = comp.output.props.children;
+    const section = content.props.children[5];
+    const column = section.props.rows[0].columns[2];
+    column.content.props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      gui: {
+        inspector: {
+          id: 'mysql',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
+  });
 });

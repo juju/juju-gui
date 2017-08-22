@@ -109,6 +109,69 @@ class Status extends React.Component {
   }
 
   /**
+    Navigate to the chosen application.
+    @param appId {String} The id of the application to display.
+  */
+  _navigateToApplication(appId) {
+    // Navigate to the app in the inspector, clearing the state so that the
+    // app overview is shown.
+    this.props.changeState({
+      gui: {
+        inspector: {
+          id: appId,
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }
+      }
+    });
+  }
+
+  /**
+    Navigate to the chosen charm.
+    @param charmURL {String} The id of the charm to display.
+  */
+  _navigateToCharm(charmURL) {
+    this.props.changeState({store: charmURL});
+  }
+
+  /**
+    Navigate to the chosen unit.
+    @param unitName {String} The name of the unit to display in the format
+      'app-id/unit-number'.
+  */
+  _navigateToUnit(unitName) {
+    const unitParts = unitName.split('/');
+    this.props.changeState({
+      gui: {
+        inspector: {
+          id: unitParts[0],
+          unit: unitParts[1],
+          activeComponent: 'unit'
+        }
+      }
+    });
+  }
+
+  /**
+    Navigate to the chosen machine.
+    @param machineId {String} The id of the machine to display.
+    @param evt {Object} The click event.
+  */
+  _navigateToMachine(machineId, evt) {
+    // Because the changeState below results in this component being removed
+    // from the document there is a React error for some reason if this event
+    // propogates.
+    evt.stopPropagation();
+    this.props.changeState({
+      gui: {
+        machines: machineId,
+        status: null
+      }
+    });
+  }
+
+  /**
     Generate the remote applications fragment of the status.
     @param {Object} remoteApplications The remote applications as included in
       the GUI db.
@@ -167,13 +230,18 @@ class Status extends React.Component {
       const charm = urllib.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
+      const charmId = charm.path();
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
       return {
         columns:[{
           columnSize: 2,
-          content: app.name
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToApplication.bind(this, app.id)}>
+              {app.name}
+            </span>)
         }, {
           columnSize: 2,
           content: app.workloadVersion
@@ -189,7 +257,11 @@ class Status extends React.Component {
           content: app.units.size()
         }, {
           columnSize: 2,
-          content: charm.path()
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToCharm.bind(this, charmId)}>
+              {charm.path()}
+            </span>)
         }, {
           columnSize: 2,
           content: store
@@ -252,7 +324,11 @@ class Status extends React.Component {
         rows.push({
           columns: [{
             columnSize: 2,
-            content: unit.displayName
+            content: (
+              <span className="status-view__link"
+                onClick={this._navigateToUnit.bind(this, unit.id)}>
+                {unit.displayName}
+              </span>)
           }, {
             columnSize: 2,
             content: (
@@ -269,7 +345,11 @@ class Status extends React.Component {
               </span>)
           }, {
             columnSize: 1,
-            content: unit.machine
+            content: (
+              <span className="status-view__link"
+                onClick={this._navigateToMachine.bind(this, unit.machine)}>
+                {unit.machine}
+              </span>)
           }, {
             columnSize: 2,
             content: unit.public_address
@@ -326,7 +406,11 @@ class Status extends React.Component {
       return {
         columns: [{
           columnSize: 2,
-          content: machine.displayName
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToMachine.bind(this, machine.id)}>
+              {machine.displayName}
+            </span>)
         }, {
           columnSize: 2,
           content: (
@@ -414,10 +498,18 @@ class Status extends React.Component {
           content: name
         }, {
           columnSize: 3,
-          content: provides
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToApplication.bind(this, provides)}>
+              {provides}
+            </span>)
         }, {
           columnSize: 3,
-          content: consumes
+          content: (
+            <span className="status-view__link"
+              onClick={this._navigateToApplication.bind(this, consumes)}>
+              {consumes}
+            </span>)
         }, {
           columnSize: 3,
           content: scope
@@ -459,6 +551,7 @@ class Status extends React.Component {
 };
 
 Status.propTypes = {
+  changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
       map: PropTypes.func.isRequired,

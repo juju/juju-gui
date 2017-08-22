@@ -32,7 +32,9 @@ class MachineView extends React.Component {
   }
 
   componentDidMount() {
-    this.selectMachine(this._getFirstMachineId(this.props.dbAPI.machines));
+    this.selectMachine(
+      this.props.machine ||
+      this._getFirstMachineId(this.props.dbAPI.machines));
   }
 
   /**
