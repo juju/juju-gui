@@ -1284,6 +1284,62 @@ describe('MachineView', function() {
     assert.deepEqual(changeState.args[1][0], {gui: {machines: 'new1'}});
   });
 
+  it('selects the given machine on mount', function() {
+    const machineList = [{
+      displayName: 'new0',
+      id: 'new0'
+    }, {
+      displayName: 'new1',
+      id: 'new1'
+    }];
+    const machines = {
+      filterByParent: sinon.stub().returns(machineList),
+      getById: sinon.stub(),
+      revive: sinon.stub()
+    };
+    const units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    const applications = {
+      size: sinon.stub().returns(0)
+    };
+    const changeState = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        acl={acl}
+        changeState={changeState}
+        dbAPI={shapeup.addReshape({
+          addGhostAndEcsUnits: sinon.stub(),
+          applications: applications,
+          machines: machines,
+          modelName: 'My Model',
+          units: units
+        })}
+        generateMachineDetails={generateMachineDetails}
+        machine="new1"
+        modelAPI={shapeup.addReshape({
+          autoPlaceUnits: sinon.stub(),
+          createMachine: sinon.stub(),
+          destroyMachines: sinon.stub(),
+          placeUnit: sinon.stub(),
+          removeUnits: sinon.stub(),
+          updateMachineConstraints: sinon.stub(),
+          updateMachineSeries: sinon.stub()
+        })}
+        parseConstraints={parseConstraints}
+        parseMachineName={parseMachineName.returns({
+          parentId: null,
+          containerType: null,
+          number: 'new1'
+        })} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new1'}});
+  });
+
   it('can display a list of containers', function() {
     const machineList = [{
       displayName: 'new0',
