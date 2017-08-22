@@ -49,7 +49,7 @@ class UserMenu extends React.Component {
             {this.props.LogoutLink}
           </li>
         ]}
-        tooltip="user"
+        tooltip={showLogin ? '' : 'user'}
       />);
   }
 };
@@ -65,5 +65,5 @@ UserMenu.propTypes = {
 YUI.add('user-menu', function() {
   juju.components.UserMenu = UserMenu;
 }, '0.1.0', { requires: [
-  'dropdown-menu'
+  'button-dropdown'
 ]});
