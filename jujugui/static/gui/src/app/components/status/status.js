@@ -16,6 +16,27 @@ class Status extends React.Component {
       // entity's state property only has a value for pending/error states.
       return '';
     }
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+    const normalised = value.map(val => this._normaliseStatus(val));
+    let status;
+    // Loop through the order of priority until there is a matching status.
+    ['error', 'pending', 'ok'].some(val => {
+      if (normalised.indexOf(val) > -1) {
+        status = val;
+        return true;
+      }
+    });
+    return prefix + status;
+  }
+
+  /**
+    Normalise the status value.
+    @param status {String} The raw value.
+    @returns {String} The normalised status ('ok', 'error' or 'pending').
+  */
+  _normaliseStatus(value) {
     let status = value;
     switch (value) {
       case 'active':
@@ -33,10 +54,11 @@ class Status extends React.Component {
       case 'executing':
       case 'allocating':
       case 'maintenance':
+      case 'waiting':
         status = 'pending';
         break;
     }
-    return prefix + status;
+    return status;
   }
 
   /**
@@ -354,7 +376,9 @@ class Status extends React.Component {
       application.get('units').each((unit, i) => {
         rows.push({
           classes: [this._getStatusClass(
-            'status-view__table-row--', unit.agentStatus || 'uncommitted')],
+            'status-view__table-row--',
+            unit.agentStatus || unit.workloadStatus ?
+              [unit.agentStatus, unit.workloadStatus] : 'uncommitted')],
           columns: [{
             columnSize: 2,
             content: (

@@ -242,6 +242,13 @@ describe('Status', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
+  it('can display status by priority', () => {
+    const comp = render(makeDB());
+    const unitSection = comp.output.props.children.props.children[3];
+    assert.deepEqual(
+      unitSection.props.rows[1].classes, ['status-view__table-row--error']);
+  });
+
   it('renders with entities', () => {
     const comp = render(makeDB());
     const expectedOutput = wrap(
@@ -455,7 +462,7 @@ describe('Status', function() {
           rowClasses={['status-view__table-row']}
           rowColumnClasses={['status-view__table-column']}
           rows={[{
-            classes: ['status-view__table-row--ok'],
+            classes: ['status-view__table-row--pending'],
             columns: [{
               columnSize: 2,
               content: (
@@ -494,7 +501,7 @@ describe('Status', function() {
             }],
             key: 'django/id0'
           }, {
-            classes: ['status-view__table-row--pending'],
+            classes: ['status-view__table-row--error'],
             columns: [{
               columnSize: 2,
               content: (
@@ -598,7 +605,10 @@ describe('Status', function() {
                 </span>)
             }, {
               columnSize: 2,
-              content: (<span key="agent1" className="status-view__status--ok">started</span>)
+              content: (
+                <span key="agent1" className="status-view__status--ok">
+                  started
+                </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.7'
