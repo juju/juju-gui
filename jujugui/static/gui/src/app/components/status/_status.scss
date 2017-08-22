@@ -26,11 +26,56 @@
     font-weight: 200 !important;
   }
 
-  .ok {
-    color: green;
+  &__table {
+    @extend %stagger-fade-in;
+
+    &-header {
+      margin-bottom: 0;
+      border-bottom: 0;
+    }
+
+    &-row {
+      margin-bottom: 10px;
+      padding: 15px;
+      border: 1px solid $light-mid-grey;
+      border-radius: 4px;
+      transition: border .3s;
+
+      &--uncommitted {
+        border-color: $uncommitted;
+      }
+
+      &--pending {
+        border-color: $pending;
+      }
+
+      &--error {
+        border-color: $error;
+      }
+    }
+
+    &-column {
+      margin-bottom: 0;
+    }
   }
 
-  .error {
-    color: red;
+  &__status {
+    &--pending,
+    &--error,
+    &--ok {
+      transition: color .3s;
+    }
+
+    &--ok {
+      color: $success;
+    }
+
+    &--error {
+      color: $error;
+    }
+
+    &--pending {
+      color: $pending;
+    }
   }
 }

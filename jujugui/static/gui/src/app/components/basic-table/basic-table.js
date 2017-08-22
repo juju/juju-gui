@@ -45,15 +45,20 @@ class BasicTable extends React.Component {
           conditionalClasses[className] = true;
         });
       }
-      const classes = classNames(conditionalClasses);
+      const classes = classNames(
+        conditionalClasses,
+        isHeader ? this.props.headerColumnClasses :
+          this.props.rowColumnClasses);
       return (
         <div className={classes}
           key={i}>
-          {column.content}
+          {column.content || (<span>&nbsp;</span>)}
         </div>);
     });
     const classes = classNames(
       'twelve-col',
+      isHeader ? this.props.headerClasses : this.props.rowClasses,
+      row.classes,
       {
         'basic-table__header': isHeader,
         'basic-table__row': !isHeader
@@ -80,8 +85,12 @@ class BasicTable extends React.Component {
   }
 
   render() {
+    const classes = classNames(
+      'basic-table',
+      'twelve-col',
+      this.props.tableClasses);
     return (
-      <ul className="basic-table twelve-col">
+      <ul className={classes}>
         {this._generateRow(true, this.props.headers)}
         {this._generateContent()}
       </ul>
@@ -90,14 +99,24 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
+  // The extra classes to apply to all header rows.
+  headerClasses: PropTypes.array,
+  // The extra classes to apply to all header columns.
+  headerColumnClasses: PropTypes.array,
   headers: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.node.isRequired,
+    content: PropTypes.node,
     // The number of columns (between 1 and 12).
     columnSize: PropTypes.number.isRequired,
     // The extra classes to apply to the column.
     classes: PropTypes.arrayOf(PropTypes.string)
   }).isRequired).isRequired,
+  // The extra classes to apply to all non-header rows.
+  rowClasses: PropTypes.array,
+  // The extra classes to apply to all non-header columns.
+  rowColumnClasses: PropTypes.array,
   rows: PropTypes.arrayOf(PropTypes.shape({
+    // The extra classes to apply to an individual row.
+    classes: PropTypes.array,
     columns: PropTypes.arrayOf(PropTypes.shape({
       content: PropTypes.node,
       // The number of columns (between 1 and 12).
@@ -110,7 +129,9 @@ BasicTable.propTypes = {
   }).isRequired).isRequired,
   // A method to sort the rows by. The row object is provided to the sort
   // method.
-  sort: PropTypes.func
+  sort: PropTypes.func,
+  // The extra classes to apply to the main table node.
+  tableClasses: PropTypes.array
 };
 
 YUI.add('basic-table', function() {

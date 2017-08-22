@@ -4,23 +4,75 @@
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
+  constructor() {
+    super();
+    this.STATUS_ERROR = 'error';
+    this.STATUS_PENDING = 'pending';
+    this.STATUS_UNCOMMITTED = 'uncommitted';
+    this.STATUS_OK = 'ok';
+    this.STATUS_ORDER = [
+      this.STATUS_ERROR,
+      this.STATUS_PENDING,
+      this.STATUS_UNCOMMITTED,
+      this.STATUS_OK
+    ];
+  }
+
   /**
     Return an element class name suitable for the given value.
+    @param {String} prefix The class prefix.
     @param {String} value The provided value.
     @returns {String} The class name ('ok', 'error' or '').
   */
-  _getClass(value) {
+  _getStatusClass(prefix, value) {
+    if (!value) {
+      // If there is no value then ignore it. This might be the case when an
+      // entity's state property only has a value for pending/error states.
+      return '';
+    }
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+    const normalised = value.map(val => this._normaliseStatus(val));
+    let status;
+    // Loop through the order of priority until there is a matching status.
+    this.STATUS_ORDER.some(val => {
+      if (normalised.indexOf(val) > -1) {
+        status = val;
+        return true;
+      }
+    });
+    return prefix + status;
+  }
+
+  /**
+    Normalise the status value.
+    @param status {String} The raw value.
+    @returns {String} The normalised status ('ok', 'error' or 'pending').
+  */
+  _normaliseStatus(value) {
+    let status = value;
     switch (value) {
       case 'active':
       case 'idle':
       case 'started':
-        return 'ok';
+        status = this.STATUS_OK;
+        break;
       case 'blocked':
       case 'down':
       case 'error':
-        return 'error';
+        status = this.STATUS_ERROR;
+        break;
+      case 'pending':
+      case 'installing':
+      case 'executing':
+      case 'allocating':
+      case 'maintenance':
+      case 'waiting':
+        status = this.STATUS_PENDING;
+        break;
     }
-    return '';
+    return status;
   }
 
   /**
@@ -200,6 +252,8 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'SAAS',
           columnSize: 3
@@ -214,8 +268,11 @@ class Status extends React.Component {
           columnSize: 3
         }]}
         key="remote-applications"
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
         rows={rows}
-        sort={this._byKey} />);
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
   }
 
   /**
@@ -235,6 +292,9 @@ class Status extends React.Component {
       // charm.path() below.
       charm.revision = null;
       return {
+        classes: [this._getStatusClass(
+          'status-view__table-row--',
+          !app.pending ? app.status.current : 'uncommitted')],
         columns:[{
           columnSize: 2,
           content: (
@@ -248,9 +308,11 @@ class Status extends React.Component {
         }, {
           columnSize: 2,
           content: (
-            <span className={this._getClass(app.status.current)}
+            <span
+              className={this._getStatusClass(
+                'status-view__status--', app.status.current)}
               key={'status' + i}>
-              {app.status.current}
+              {app.status.current || (<span>&nbsp;</span>)}
             </span>)
         }, {
           columnSize: 1,
@@ -274,6 +336,8 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Application',
           columnSize: 2
@@ -297,8 +361,11 @@ class Status extends React.Component {
           columnSize: 1
         }]}
         key="applications"
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
         rows={rows}
-        sort={this._byKey} />);
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
   }
 
   /**
@@ -322,6 +389,10 @@ class Status extends React.Component {
     applications.each(application => {
       application.get('units').each((unit, i) => {
         rows.push({
+          classes: [this._getStatusClass(
+            'status-view__table-row--',
+            unit.agentStatus || unit.workloadStatus ?
+              [unit.agentStatus, unit.workloadStatus] : 'uncommitted')],
           columns: [{
             columnSize: 2,
             content: (
@@ -332,16 +403,20 @@ class Status extends React.Component {
           }, {
             columnSize: 2,
             content: (
-              <span className={this._getClass(unit.workloadStatus)}
+              <span
+                className={this._getStatusClass(
+                  'status-view__status--', unit.workloadStatus)}
                 key={'workload' + i}>
-                {unit.workloadStatus}
+                {unit.workloadStatus || (<span>&nbsp;</span>)}
               </span>)
           }, {
             columnSize: 2,
             content: (
-              <span className={this._getClass(unit.agentStatus)}
+              <span
+                className={this._getStatusClass(
+                  'status-view__status--', unit.agentStatus)}
                 key={'agent' + i}>
-                {unit.agentStatus}
+                {unit.agentStatus || (<span>&nbsp;</span>)}
               </span>)
           }, {
             columnSize: 1,
@@ -369,6 +444,8 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Unit',
           columnSize: 2
@@ -392,8 +469,11 @@ class Status extends React.Component {
           columnSize: 2
         }]}
         key="units"
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
         rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey} />);
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
   }
 
   /**
@@ -404,6 +484,10 @@ class Status extends React.Component {
   _generateMachines(machines) {
     const rows = machines.map((machine, i) => {
       return {
+        classes: [this._getStatusClass(
+          'status-view__table-row--',
+          machine.commitStatus === 'uncommitted' ?
+            'uncommitted' : machine.agent_state)],
         columns: [{
           columnSize: 2,
           content: (
@@ -414,9 +498,11 @@ class Status extends React.Component {
         }, {
           columnSize: 2,
           content: (
-            <span className={this._getClass(machine.agent_state)}
+            <span
+              className={this._getStatusClass(
+                'status-view__status--', machine.agent_state)}
               key={'agent' + i}>
-              {machine.agent_state}
+              {machine.agent_state || (<span>&nbsp;</span>)}
             </span>)
         }, {
           columnSize: 2,
@@ -436,6 +522,8 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Machine',
           columnSize: 2
@@ -456,8 +544,11 @@ class Status extends React.Component {
           columnSize: 2
         }]}
         key="machines"
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
         rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey} />);
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
   }
 
   /**
@@ -493,6 +584,8 @@ class Status extends React.Component {
         }
       });
       return {
+        classes: [this._getStatusClass(
+          'status-view__table-row--', rel.pending ? 'uncommitted' : null)],
         columns: [{
           columnSize: 3,
           content: name
@@ -519,6 +612,8 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Relation',
           columnSize: 3
@@ -533,8 +628,11 @@ class Status extends React.Component {
           columnSize: 3
         }]}
         key="relations"
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
         rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey} />);
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
   }
 
   render() {

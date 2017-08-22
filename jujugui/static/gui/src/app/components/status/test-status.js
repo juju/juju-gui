@@ -242,6 +242,13 @@ describe('Status', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
+  it('can display status by priority', () => {
+    const comp = render(makeDB());
+    const unitSection = comp.output.props.children.props.children[3];
+    assert.deepEqual(
+      unitSection.props.rows[1].classes, ['status-view__table-row--error']);
+  });
+
   it('renders with entities', () => {
     const comp = render(makeDB());
     const expectedOutput = wrap(
@@ -278,6 +285,8 @@ describe('Status', function() {
             key: 'model'
           }]} />
         <juju.components.BasicTable
+          headerClasses={['status-view__table-header']}
+          headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'SAAS',
             columnSize: 3
@@ -292,6 +301,8 @@ describe('Status', function() {
             columnSize: 3
           }]}
           key="remote-applications"
+          rowClasses={['status-view__table-row']}
+          rowColumnClasses={['status-view__table-column']}
           rows={[{
             columns: [{
               columnSize: 3,
@@ -323,8 +334,11 @@ describe('Status', function() {
             }],
             key: 'local:admin/my.mongo'
           }]}
-          sort={sinon.stub()} />
+          sort={sinon.stub()}
+          tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          headerClasses={['status-view__table-header']}
+          headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Application',
             columnSize: 2
@@ -348,7 +362,10 @@ describe('Status', function() {
             columnSize: 1
           }]}
           key="applications"
+          rowClasses={['status-view__table-row']}
+          rowColumnClasses={['status-view__table-column']}
           rows={[{
+            classes: ['status-view__table-row--ok'],
             columns: [{
               columnSize: 2,
               content: (
@@ -361,7 +378,7 @@ describe('Status', function() {
               content: '1.10'
             }, {
               columnSize: 2,
-              content: <span key="status0" className="ok">active</span>
+              content: <span key="status0" className="status-view__status--ok">active</span>
             }, {
               columnSize: 1,
               content: 2
@@ -381,6 +398,7 @@ describe('Status', function() {
             }],
             key: 'django'
           }, {
+            classes: ['status-view__table-row--error'],
             columns: [{
               columnSize: 2,
               content: (
@@ -393,7 +411,7 @@ describe('Status', function() {
               content: ''
             }, {
               columnSize: 2,
-              content: <span key="status1" className="error">error</span>
+              content: <span key="status1" className="status-view__status--error">error</span>
             }, {
               columnSize: 1,
               content: 0
@@ -413,8 +431,11 @@ describe('Status', function() {
             }],
             key: 'ha'
           }]}
-          sort={sinon.stub()} />
+          sort={sinon.stub()}
+          tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          headerClasses={['status-view__table-header']}
+          headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Unit',
             columnSize: 2
@@ -438,7 +459,10 @@ describe('Status', function() {
             columnSize: 2
           }]}
           key="units"
+          rowClasses={['status-view__table-row']}
+          rowColumnClasses={['status-view__table-column']}
           rows={[{
+            classes: ['status-view__table-row--pending'],
             columns: [{
               columnSize: 2,
               content: (
@@ -448,10 +472,16 @@ describe('Status', function() {
                 </span>)
             }, {
               columnSize: 2,
-              content: <span key="workload0" className="">installing</span>
+              content: (
+                <span key="workload0" className="status-view__status--pending">
+                  installing
+                </span>)
             }, {
               columnSize: 2,
-              content: <span key="agent0" className="ok">idle</span>
+              content: (
+                <span key="agent0" className="status-view__status--ok">
+                  idle
+                </span>)
             }, {
               columnSize: 1,
               content: (
@@ -471,6 +501,7 @@ describe('Status', function() {
             }],
             key: 'django/id0'
           }, {
+            classes: ['status-view__table-row--error'],
             columns: [{
               columnSize: 2,
               content: (
@@ -480,10 +511,14 @@ describe('Status', function() {
                 </span>)
             }, {
               columnSize: 2,
-              content: <span key="workload1" className="error">error</span>
+              content: (
+                <span key="workload1" className="status-view__status--error">error</span>)
             }, {
               columnSize: 2,
-              content: <span key="agent1" className="">executing</span>
+              content: (
+                <span key="agent1" className="status-view__status--pending">
+                  executing
+                </span>)
             }, {
               columnSize: 1,
               content: (
@@ -503,8 +538,11 @@ describe('Status', function() {
             }],
             key: 'django/id1'
           }]}
-          sort={sinon.stub()} />
+          sort={sinon.stub()}
+          tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          headerClasses={['status-view__table-header']}
+          headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Machine',
             columnSize: 2
@@ -525,7 +563,10 @@ describe('Status', function() {
             columnSize: 2
           }]}
           key="machines"
+          rowClasses={['status-view__table-row']}
+          rowColumnClasses={['status-view__table-column']}
           rows={[{
+            classes: ['status-view__table-row--pending'],
             columns: [{
               columnSize: 2,
               content: (
@@ -535,7 +576,10 @@ describe('Status', function() {
                 </span>)
             }, {
               columnSize: 2,
-              content: (<span key="agent0" className="">pending</span>)
+              content: (
+                <span key="agent0" className="status-view__status--pending">
+                  pending
+                </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.6'
@@ -551,6 +595,7 @@ describe('Status', function() {
             }],
             key: 'm1'
           }, {
+            classes: ['status-view__table-row--ok'],
             columns: [{
               columnSize: 2,
               content: (
@@ -560,7 +605,10 @@ describe('Status', function() {
                 </span>)
             }, {
               columnSize: 2,
-              content: (<span key="agent1" className="ok">started</span>)
+              content: (
+                <span key="agent1" className="status-view__status--ok">
+                  started
+                </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.7'
@@ -576,8 +624,11 @@ describe('Status', function() {
             }],
             key: 'm2'
           }]}
-          sort={sinon.stub()} />
+          sort={sinon.stub()}
+          tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          headerClasses={['status-view__table-header']}
+          headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Relation',
             columnSize: 3
@@ -592,7 +643,10 @@ describe('Status', function() {
             columnSize: 3
           }]}
           key="relations"
+          rowClasses={['status-view__table-row']}
+          rowColumnClasses={['status-view__table-column']}
           rows={[{
+            classes: [''],
             columns: [{
               columnSize: 3,
               content: 'cluster'
@@ -616,6 +670,7 @@ describe('Status', function() {
             }],
             key: 'rel1'
           }, {
+            classes: [''],
             columns: [{
               columnSize: 3,
               content: 'website'
@@ -639,7 +694,8 @@ describe('Status', function() {
             }],
             key: 'rel2'
           }]}
-          sort={sinon.stub()} />
+          sort={sinon.stub()}
+          tableClasses={['status-view__table']} />
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
