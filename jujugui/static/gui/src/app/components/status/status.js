@@ -22,7 +22,7 @@ class Status extends React.Component {
     const normalised = value.map(val => this._normaliseStatus(val));
     let status;
     // Loop through the order of priority until there is a matching status.
-    ['error', 'pending', 'ok'].some(val => {
+    ['error', 'pending', 'uncommitted', 'ok'].some(val => {
       if (normalised.indexOf(val) > -1) {
         status = val;
         return true;
@@ -469,6 +469,8 @@ class Status extends React.Component {
   */
   _generateMachines(machines) {
     const rows = machines.map((machine, i) => {
+      console.log(machine.commitStatus === 'uncommitted' ?
+      'uncommitted' : machine.agent_state);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--',
