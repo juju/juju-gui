@@ -469,8 +469,6 @@ class Status extends React.Component {
   */
   _generateMachines(machines) {
     const rows = machines.map((machine, i) => {
-      console.log(machine.commitStatus === 'uncommitted' ?
-      'uncommitted' : machine.agent_state);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--',
