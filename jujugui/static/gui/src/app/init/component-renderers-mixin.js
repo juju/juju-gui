@@ -555,7 +555,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generateMachineDetails={utils.generateMachineDetails.bind(
           utils, modelAPI.genericConstraints, db.units)}
         machine={this.state.current.gui.machines}
-        machines={db.machines}
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: this._autoPlaceUnits.bind(this),
           createMachine: this._createMachine.bind(this),
@@ -568,6 +567,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         })}
         parseConstraints={utils.parseConstraints.bind(
           utils, modelAPI.genericConstraints)}
+        parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         series={window.jujulib.CHARM_SERIES}
       />,
       document.getElementById('machine-view'));

@@ -369,10 +369,12 @@ class MachineView extends React.Component {
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={this._dropUnit.bind(this)}
           key={container.id}
-          machine={container}
           machineAPI={{
             machine: container,
-            removeUnit: this._removeUnit.bind(this)
+            removeUnit: this._removeUnit.bind(this),
+            selected: selected.container ? selected.container === container.id :
+              selected.machine === container.id,
+            selectMachine: this.selectMachine.bind(this)
           }}
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={props.parseConstraints}
@@ -472,7 +474,7 @@ class MachineView extends React.Component {
     return (
       <juju.components.MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
-        close={this._closeAddMachine.bind(this)}
+        close={this._closeAddContainer.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         parentId={this._getSelected().machine}
         series={props.series}

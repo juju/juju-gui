@@ -1353,13 +1353,6 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0"
-          machine={{
-            commitStatus: 'committed',
-            deleted: undefined,
-            displayName: 'Root container',
-            id: 'new0',
-            root: true
-          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1368,7 +1361,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1379,12 +1374,13 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
-          machine={{id: 'new0/lxc/0'}}
           machineAPI={{
             machine: {
               id: 'new0/lxc/0'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1469,13 +1465,6 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0"
-          machine={{
-            commitStatus: 'committed',
-            deleted: undefined,
-            displayName: 'Root container',
-            id: 'new0',
-            root: true
-          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1484,7 +1473,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1495,16 +1486,14 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
-          machine={{
-            displayName: 'new0/lxc/0',
-            id: 'new0/lxc/0'
-          }}
           machineAPI={{
             machine: {
               displayName: 'new0/lxc/0',
               id: 'new0/lxc/0'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1515,16 +1504,14 @@ describe('MachineView', function() {
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
           key="new0/lxc/5"
-          machine={{
-            displayName: 'new0/lxc/5',
-            id: 'new0/lxc/5'
-          }}
           machineAPI={{
             machine: {
               displayName: 'new0/lxc/5',
               id: 'new0/lxc/5'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1671,13 +1658,6 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0"
-          machine={{
-            commitStatus: 'committed',
-            deleted: true,
-            displayName: 'Root container',
-            id: 'new0',
-            root: true
-          }}
           machineAPI={{
             machine: {
               commitStatus: 'committed',
@@ -1686,7 +1666,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1697,10 +1679,11 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
-          machine={{id: 'new0/lxc/0'}}
           machineAPI={{
             machine: {id: 'new0/lxc/0'},
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
