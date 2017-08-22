@@ -30,17 +30,33 @@ class PostDeployment extends React.Component {
   }
 
   componentDidMount() {
-    const entity = this.props.makeEntityModel(this.props.entity).toEntity();
+    this.props.getEntity(this.props.entityId,
+      this._getEntityCallback.bind(this));
+  }
+
+  /**
+    Callback handler for getting the entity details.
+
+    @param {Object} error Error from the API.
+    @param {Array} entityData The returned data.
+  */
+  _getEntityCallback(error, entityData) {
+    if (error) {
+      console.error(error);
+      console.error(`Entity not found with id: ${this.props.entityId}`);
+    }
+
+    const entity = this.props.makeEntityModel(entityData[0]).toEntity();
 
     this.setState({
       displayName: entity.displayName
     });
 
-    const files = this.props.entity.files;
-    if (files && files.indexOf('usage.md') !== -1) {
+    const files = entityData[0].files;
+    if (files && files.includes('onboarding.md')) {
       this.props.getFile(
-        this.props.entity.id,
-        'usage.md',
+        this.props.entityId,
+        'onboarding.md',
         this._getUsageCallback.bind(this)
       );
     }
@@ -60,12 +76,13 @@ class PostDeployment extends React.Component {
     // Rather then parsing the JSON to read the error we check if the returned
     // body starts with a '{'. If it does, it's not a markdown file so ignore.
     if (usageContents && usageContents.substring(0, 1) !== '{') {
+      const frontmatterAndMarkdown = this.extractFrontmatter(usageContents);
       this.setState({
-        metadata: this.parseMarkdownMetadata(usageContents)
+        metadata: frontmatterAndMarkdown.metadata
       });
       const markdown = this.props.marked(
         this.replaceTemplateTags(
-          usageContents
+          frontmatterAndMarkdown.markdown
         )
       );
 
@@ -88,15 +105,17 @@ class PostDeployment extends React.Component {
     will be assigned to the state.
 
     @param {String} markdown The raw markdown.
-    @return {Object} Parsed metadata.
+    @return {Object} {'metadata': {Object}, 'markdown': {String}} Parsed
+    metadata and modified markdown.
   */
-  parseMarkdownMetadata(markdown) {
+  extractFrontmatter(markdown) {
     let parsedMetadata = {};
+    let lineByLine;
     markdown = markdown.trim();
     // If the first instance of a hr is at position 0 and
     // there is another hr expect metadata.
     if (markdown.indexOf('---') === 0 && markdown.indexOf('---', 1) !== -1) {
-      let lineByLine = markdown.split('\n');
+      lineByLine = markdown.split('\n');
       let metadata = [];
       lineByLine.shift();
       while(lineByLine.length > 0 && lineByLine[0] !== '---') {
@@ -113,9 +132,12 @@ class PostDeployment extends React.Component {
             key: value`);
         }
       });
-
-      return parsedMetadata;
     }
+
+    return {
+      metadata: parsedMetadata,
+      markdown: lineByLine ? lineByLine.join('\n') : markdown
+    };
   }
 
   /**
@@ -161,25 +183,35 @@ class PostDeployment extends React.Component {
 
   render() {
     let classes = [
-      'modal--right',
-      'modal--auto-height',
       'post-deployment'
     ];
     if (this.state.content) {
       return (
-        <juju.components.Modal
-          closeModal={this.props.closePostDeployment}
-          extraClasses={classes.join(' ')}>
+        <juju.components.Panel
+          extraClasses={classes.join(' ')}
+          instanceName="post-deployment"
+          visible={true}>
+          <span className="close" tabIndex="0" role="button"
+            onClick={this.props.closePostDeployment}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
+          </span>
           <div onClick={this._handleContentClick.bind(this)}
             dangerouslySetInnerHTML={{__html: this.state.content}} />
-        </juju.components.Modal>
+        </juju.components.Panel>
       );
     } else if (this.state.displayName) {
       classes.push('post-deployment--simple');
       return (
-        <juju.components.Modal
-          closeModal={this.props.closePostDeployment}
-          extraClasses={classes.join(' ')}>
+        <juju.components.Panel
+          extraClasses={classes.join(' ')}
+          instanceName="post-deployment"
+          visible={true}>
+          <span className="close" tabIndex="0" role="button"
+            onClick={this.props.closePostDeployment}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
+          </span>
           <p>
             {this.state.displayName}
           &nbsp;</p>
@@ -187,7 +219,7 @@ class PostDeployment extends React.Component {
             role="button"
             className="link"
             onClick={this._handleViewDetails.bind(this)}>View details</span>
-        </juju.components.Modal>
+        </juju.components.Panel>
       );
     }
     return null;
@@ -196,7 +228,8 @@ class PostDeployment extends React.Component {
 
 PostDeployment.propTypes = {
   closePostDeployment: PropTypes.func.isRequired,
-  entity: PropTypes.object.isRequired,
+  entityId: PropTypes.string.isRequired,
+  getEntity: PropTypes.func.isRequired,
   getFile: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
   marked: PropTypes.func.isRequired,
@@ -206,5 +239,6 @@ PostDeployment.propTypes = {
 YUI.add('post-deployment', function() {
   juju.components.PostDeployment = PostDeployment;
 }, '0.1.0', { requires: [
-  'modal'
+  'panel-component',
+  'svg-icon'
 ]});

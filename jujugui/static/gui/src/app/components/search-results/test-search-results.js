@@ -24,8 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
-  let series, acl, deployTarget, displayPostDeployment, generatePath;
-
+  let series, acl, deployTarget, generatePath;
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
     YUI().use('search-results', function() { done(); });
@@ -34,7 +33,6 @@ describe('SearchResults', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     deployTarget = sinon.stub();
-    displayPostDeployment = sinon.stub();
     generatePath = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
@@ -51,13 +49,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={sinon.stub()}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
           query={query}
           seriesList={{}}
-          setPageTitle={sinon.stub()} />);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={sinon.stub()} />);
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
@@ -74,13 +72,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
           query="nothing here"
           seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -111,13 +109,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
           query="nothing here"
           seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -168,13 +166,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
           query={query}
           seriesList={series}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       shallowRenderer.getRenderOutput();
@@ -278,11 +276,13 @@ describe('SearchResults', function() {
     }];
     const charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
     const makeEntityModel = sinon.stub().returnsArg(0);
+    const setStagedEntity = sinon.stub();
 
     function renderedResults(
       changeState,
       sortItems,
       seriesItems,
+      setStagedEntity,
       results,
       showCommunity) {
       return (<div className="search-results">
@@ -327,18 +327,18 @@ describe('SearchResults', function() {
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
-                      displayPostDeployment={displayPostDeployment}
                       generatePath={generatePath}
                       item={results[0]}
-                      key="~test-owner/mysql-one" />
+                      key="~test-owner/mysql-one"
+                      setStagedEntity={setStagedEntity} />
                     <juju.components.SearchResultsItem
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
-                      displayPostDeployment={displayPostDeployment}
                       generatePath={generatePath}
                       item={results[1]}
-                      key="~test-owner/mysql-two" />
+                      key="~test-owner/mysql-two"
+                      setStagedEntity={setStagedEntity} />
                   </ul>
                 </div>
                 <div className="clearfix community-results">
@@ -359,18 +359,18 @@ describe('SearchResults', function() {
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
-                        displayPostDeployment={displayPostDeployment}
                         generatePath={generatePath}
                         item={results[2]}
-                        key="~test-owner/mysql-three" />
+                        key="~test-owner/mysql-three"
+                        setStagedEntity={setStagedEntity} />
                       <juju.components.SearchResultsItem
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
-                        displayPostDeployment={displayPostDeployment}
                         generatePath={generatePath}
                         item={results[3]}
-                        key="~test-owner/mysql-four" />
+                        key="~test-owner/mysql-four"
+                        setStagedEntity={setStagedEntity} />
                     </ul>
                   </div>
                 </div>
@@ -388,7 +388,6 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={deployTarget}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -396,13 +395,14 @@ describe('SearchResults', function() {
           series="wily"
           seriesList={series}
           setPageTitle={sinon.stub()}
+          setStagedEntity={setStagedEntity}
           sort="-name"
           type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       const output = shallowRenderer.getRenderOutput();
       const expected = renderedResults(changeState, sortItems,
-        seriesItems, results, false);
+        seriesItems, setStagedEntity, results, false);
       expect(output).toEqualJSX(expected);
     });
 
@@ -413,7 +413,6 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={deployTarget}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -421,6 +420,7 @@ describe('SearchResults', function() {
           series="wily"
           seriesList={series}
           setPageTitle={sinon.stub()}
+          setStagedEntity={setStagedEntity}
           sort="-name"
           type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
@@ -428,7 +428,7 @@ describe('SearchResults', function() {
       instance._toggleCommunityResults();
       const output = shallowRenderer.getRenderOutput();
       const expected = renderedResults(changeState, sortItems,
-        seriesItems, results, true);
+        seriesItems, setStagedEntity, results, true);
       expect(output).toEqualJSX(expected);
     });
 
@@ -441,13 +441,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
           query="apache2"
           seriesList={series}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={setStagedEntity} />, true);
       const instance = renderer.getMountedInstance();
       instance.componentDidMount();
       assert.equal(abort.callCount, 0);
@@ -457,13 +457,13 @@ describe('SearchResults', function() {
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={displayPostDeployment}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
           query="apache2"
           seriesList={series}
-          setPageTitle={sinon.stub()} />);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={setStagedEntity} />);
       renderer.getRenderOutput();
       assert.equal(abort.callCount, 1);
     });
@@ -762,13 +762,13 @@ describe('SearchResults', function() {
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
           deployTarget={sinon.stub()}
-          displayPostDeployment={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
           query={query}
           seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()}
+          setStagedEntity={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);

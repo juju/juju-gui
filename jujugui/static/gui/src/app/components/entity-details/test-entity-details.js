@@ -48,7 +48,6 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.spy();
     const changeState = sinon.spy();
     const clearLightbox = sinon.stub();
     const displayLightbox = sinon.stub();
@@ -60,6 +59,7 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -69,7 +69,6 @@ describe('EntityDetails', function() {
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
@@ -88,6 +87,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={showTerms}
         staticURL="http://example.com"
         urllib={urllib}
@@ -115,10 +115,10 @@ describe('EntityDetails', function() {
             changeState={changeState}
             addNotification={addNotification}
             deployService={deployService}
-            displayPostDeployment={displayPostDeployment}
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -150,7 +150,6 @@ describe('EntityDetails', function() {
     const id = mockEntity.get('id');
     const getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
@@ -164,7 +163,6 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
@@ -180,6 +178,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -211,7 +210,6 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
     const displayLightbox = sinon.stub();
     const changeState = sinon.spy();
     const clearLightbox = sinon.stub();
@@ -223,6 +221,7 @@ describe('EntityDetails', function() {
     const renderMarkdown = sinon.spy();
     const getDiagramURL = sinon.spy();
     const addNotification = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -232,7 +231,6 @@ describe('EntityDetails', function() {
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         displayLightbox={displayLightbox}
         importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
@@ -251,6 +249,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -270,7 +269,6 @@ describe('EntityDetails', function() {
         <div>
           <juju.components.EntityHeader
             acl={acl}
-            displayPostDeployment={displayPostDeployment}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -282,6 +280,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           <juju.components.EntityContent
@@ -312,13 +311,13 @@ describe('EntityDetails', function() {
     const id = mockEntity.get('id');
     const getEntity = sinon.stub().returns({abort: abort});
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
     const changeState = sinon.spy();
     const importBundleYAML = sinon.spy();
     const getBundleYAML = sinon.spy();
     const pluralize = sinon.spy();
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -326,7 +325,6 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
@@ -342,6 +340,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -363,7 +362,6 @@ describe('EntityDetails', function() {
         id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
-        displayPostDeployment={sinon.stub()}
         flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -378,6 +376,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -396,7 +395,6 @@ describe('EntityDetails', function() {
     const changeState = sinon.spy();
     const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
     const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getDiagramURL = sinon.spy();
@@ -409,6 +407,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -419,7 +418,6 @@ describe('EntityDetails', function() {
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -437,6 +435,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -456,7 +455,6 @@ describe('EntityDetails', function() {
         <div>
           <juju.components.EntityHeader
             acl={acl}
-            displayPostDeployment={displayPostDeployment}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -468,6 +466,7 @@ describe('EntityDetails', function() {
             plans={plans}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -503,7 +502,6 @@ describe('EntityDetails', function() {
     const changeState = sinon.spy();
     const clearLightbox = sinon.stub();
     const deployService = sinon.spy();
-    const displayPostDeployment = sinon.stub();
     const displayLightbox = sinon.stub();
     const getBundleYAML = sinon.spy();
     const getDiagramURL = sinon.spy();
@@ -516,6 +514,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -526,7 +525,6 @@ describe('EntityDetails', function() {
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
-        displayPostDeployment={displayPostDeployment}
         displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -544,6 +542,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -564,7 +563,6 @@ describe('EntityDetails', function() {
           <juju.components.EntityHeader
             acl={acl}
             entityModel={mockEntity}
-            displayPostDeployment={displayPostDeployment}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
@@ -575,6 +573,7 @@ describe('EntityDetails', function() {
             plans={[]}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -614,7 +613,6 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         deployService={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -630,6 +628,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib} />, true);
@@ -658,7 +657,6 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com"
         changeState={sinon.stub()}
         deployService={sinon.stub()}
-        displayPostDeployment={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -674,6 +672,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}

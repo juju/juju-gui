@@ -150,7 +150,6 @@ class Charmbrowser extends React.Component {
             generatePath={appState.generatePath.bind(appState)}
             charmstoreSearch={this.props.charmstoreSearch}
             deployTarget={this.props.deployTarget}
-            displayPostDeployment={this.props.displayPostDeployment}
             getName={utils.getName}
             makeEntityModel={this.props.makeEntityModel}
             owner={search.owner}
@@ -159,6 +158,7 @@ class Charmbrowser extends React.Component {
             requires={search.requires}
             series={search.series}
             seriesList={this.props.series}
+            setStagedEntity={this.props.setStagedEntity}
             setPageTitle={this.props.setPageTitle}
             sort={search.sort}
             tags={search.tags}
@@ -175,7 +175,6 @@ class Charmbrowser extends React.Component {
             apiUrl={this.props.apiUrl}
             changeState={changeState}
             clearLightbox={this.props.clearLightbox}
-            displayPostDeployment={this.props.displayPostDeployment}
             displayLightbox={this.props.displayLightbox}
             importBundleYAML={this.props.importBundleYAML}
             flags={this.props.flags}
@@ -186,6 +185,7 @@ class Charmbrowser extends React.Component {
             getModelName={this.props.getModelName}
             getFile={this.props.getFile}
             hash={currentState.hash}
+            setStagedEntity={this.props.setStagedEntity}
             scrollPosition={this.state.scrollPosition}
             renderMarkdown={this.props.renderMarkdown}
             id={id}
@@ -238,7 +238,6 @@ Charmbrowser.propTypes = {
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
-  displayPostDeployment: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
@@ -253,6 +252,7 @@ Charmbrowser.propTypes = {
   renderMarkdown: PropTypes.func.isRequired,
   series: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string,
   urllib: PropTypes.func.isRequired,

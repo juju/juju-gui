@@ -19,19 +19,6 @@
     height: auto;
   }
 
-  &--right {
-    width: 200px;
-    left: auto;
-    right: 20px;
-    top: 160px;
-    bottom: 140px;
-  }
-
-  &--auto-height {
-    top: auto;
-    height: auto;
-  }
-
   .bordered {
     border-bottom: 1px solid $light-mid-grey;
     padding: 20px;

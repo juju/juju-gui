@@ -565,6 +565,10 @@ YUI.add('juju-gui', function(Y) {
       this.state.bootstrap();
     },
 
+    _setStagedEntity: function(entityId) {
+      this.stagedEntity = entityId;
+    },
+
     /**
       As a minor performance boost and to avoid potential rerenderings
       because of rebinding functions in the render methods. Any method that
@@ -1827,6 +1831,7 @@ YUI.add('juju-gui', function(Y) {
           displayPostDeployment={this._displayPostDeployment.bind(this)}
           displayLightbox={this._displayLightbox.bind(this)}
           series={utils.getSeriesList()}
+          setStagedEntity={this._setStagedEntity.bind(this)}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
             this.bundleImporter)}
           flags={window.juju_config.flags}
@@ -1911,6 +1916,7 @@ YUI.add('juju-gui', function(Y) {
       @param {String} entityId The entity ID of the charm or bundle.
     */
     _displayPostDeployment: function(entityId) {
+      entityId = entityId || this.stagedEntity;
       if(!window.juju_config.flags.canvasInfo){
         return;
       }
@@ -1934,24 +1940,16 @@ YUI.add('juju-gui', function(Y) {
         this.state.changeState(storeState);
       };
 
-      this.get('charmstore').getEntity(entityId,
-        (err, entityData) => {
-          if (err) {
-            console.error(err);
-            console.error(`Entity not found with id: ${entityId}`);
-          }
-
-          ReactDOM.render(
-            <window.juju.components.PostDeployment
-              closePostDeployment={this._clearPostDeployment.bind(this)}
-              entity={entityData[0]}
-              getFile={charmstore.getFile.bind(charmstore)}
-              makeEntityModel={Y.juju.makeEntityModel}
-              marked={marked}
-              showEntityDetails={showEntityDetails.bind(this, entityId)} />,
-            document.getElementById('post-deployment')
-          );
-        }
+      ReactDOM.render(
+        <window.juju.components.PostDeployment
+          closePostDeployment={this._clearPostDeployment.bind(this)}
+          entityId={entityId}
+          getEntity={charmstore.getEntity.bind(charmstore)}
+          getFile={charmstore.getFile.bind(charmstore)}
+          makeEntityModel={Y.juju.makeEntityModel}
+          marked={marked}
+          showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+        document.getElementById('post-deployment')
       );
     },
 
@@ -2525,6 +2523,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       this.deployTarget(this.get('charmstore'), ddData.id);
+      this._setStagedEntity(ddData.id);
       this.state.changeState({
         gui: {
           deploy: JSON.stringify(ddData)

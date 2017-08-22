@@ -14,14 +14,19 @@ describe('PostDeployment', () => {
     YUI().use('post-deployment', function() { done(); });
   });
 
-  function render(props) {
+  function renderComponent(props) {
     props = props || {};
     const defaultParsedMarkdown =
       '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>';
     const _props = {
       closePostDeployment: props.closePostDeployment || sinon.stub(),
-      entity: props.entity || {id: 'test', files: []},
-      getFile: props.getFile || sinon.stub(),
+      entityId: props.entityId || 'test',
+      getEntity: props.getEntity
+        || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}]),
+      getFile: props.getFile
+        || sinon.stub().callsArgWith(2, null, `# Test Name
+
+    {details_link}{requires_cli_link}`),
       makeEntityModel: props.makeEntityModel || sinon.stub().returns({
         toEntity: sinon.stub().returns({
           displayName: 'Test Name'
@@ -30,10 +35,12 @@ describe('PostDeployment', () => {
       marked: props.marked || sinon.stub().returns(defaultParsedMarkdown),
       showEntityDetails: props.showEntityDetails || sinon.stub()
     };
+
     const renderer = jsTestUtils.shallowRender(
       <juju.components.PostDeployment
         closePostDeployment={_props.closePostDeployment}
-        entity={_props.entity}
+        entityId={_props.entityId}
+        getEntity={_props.getEntity}
         getFile={_props.getFile}
         makeEntityModel={_props.makeEntityModel}
         marked={_props.marked}
@@ -49,60 +56,62 @@ describe('PostDeployment', () => {
     };
   };
 
-  it('renders without usage.md', () => {
-    const rendered = render();
+  it('renders without onboarding.md', () => {
+    const rendered = renderComponent();
     const instance = rendered.instance;
+    const output = rendered.output;
     const props = rendered.props;
 
     const classes = [
-      'modal--right',
-      'modal--auto-height',
       'post-deployment',
       'post-deployment--simple'
     ];
 
-    instance.componentDidMount();
-
-    const output = rendered.renderer.getRenderOutput();
-
     expect(output).toEqualJSX(
-      <juju.components.Modal
-        closeModal={props.closePostDeployment}
-        extraClasses={classes.join(' ')}>
+      <juju.components.Panel
+        extraClasses={classes.join(' ')}
+        instanceName="post-deployment"
+        visible={true}>
+        <span className="close" tabIndex="0" role="button"
+          onClick={props.closePostDeployment}>
+          <juju.components.SvgIcon name="close_16"
+            size="16" />
+        </span>
         <p>
           Test Name
-        </p>
-        <span className="link" onClick={instance._handleViewDetails.bind(instance)}
-          role="button">View details</span>
-      </juju.components.Modal>
+        &nbsp;</p>
+        <span
+          role="button"
+          className="link"
+          onClick={instance._handleViewDetails.bind(this)}>View details</span>
+      </juju.components.Panel>
     );
   });
 
-  it('renders with usage.md', () => {
-    const rendered = render();
+  it('renders with onrboarding.md', () => {
+    const rendered = renderComponent();
     const props = rendered.props;
     const instance = rendered.instance;
-    instance._getUsageCallback.call(instance, null, `# Test Name
-
-{details_link}{requires_cli_link}`);
-    assert.deepEqual(
-      instance.state.content,
-      rendered.defaultParsedMarkdown);
-
-    const output = rendered.renderer.getRenderOutput();
+    const output = rendered.output;
 
     expect(output).toEqualJSX(
-      <juju.components.Modal
-        closeModal={props.closePostDeployment}
-        extraClasses="modal--right modal--auto-height post-deployment">
+      <juju.components.Panel
+        instanceName="post-deployment"
+        extraClasses="modal--right modal--auto-height post-deployment"
+        visible={true}>
+        <span className="close" tabIndex="0" role="button"
+          onClick={props.closePostDeployment}>
+          <juju.components.SvgIcon name="close_16"
+            size="16" />
+        </span>
         <div dangerouslySetInnerHTML={{__html: rendered.defaultParsedMarkdown}}
           onClick={instance._handleContentClick.bind(instance)} />
-      </juju.components.Modal>
+      </juju.components.Panel>
     );
   });
 
   it('extracts metadata in markdown head', () => {
-    const rendered = render();
+    const rendered = renderComponent();
     const instance = rendered.instance;
 
     const rawMetadata = '---\n' +
@@ -110,15 +119,15 @@ describe('PostDeployment', () => {
       'jump_up: and_get_down\n' +
       '---\n';
 
-    const parsedMetadata = instance.parseMarkdownMetadata(rawMetadata);
-    assert.deepEqual(parsedMetadata, {
+    const parsedMetadata = instance.extractFrontmatter(rawMetadata);
+    assert.deepEqual(parsedMetadata.metadata, {
       stop: 'hammertime',
       jump_up: 'and_get_down'
     });
   });
 
   it('doesn\'t extract bad metadata in markdown head', () => {
-    const rendered = render();
+    const rendered = renderComponent();
     const instance = rendered.instance;
 
     const rawMetadata = '---\n' +
@@ -126,14 +135,14 @@ describe('PostDeployment', () => {
       'jump_up: and_get_down\n' +
       '---\n';
 
-    const parsedMetadata = instance.parseMarkdownMetadata(rawMetadata);
-    assert.deepEqual(parsedMetadata, {
+    const parsedMetadata = instance.extractFrontmatter(rawMetadata);
+    assert.deepEqual(parsedMetadata.metadata, {
       jump_up: 'and_get_down'
     });
   });
 
   it('replaces templateTags in markdown', () => {
-    const rendered = render();
+    const rendered = renderComponent();
     const instance = rendered.instance;
 
     const rawMarkdown = '{details_link} A WORD {requires_cli_link}';

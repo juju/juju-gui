@@ -81,7 +81,6 @@ class EntityDetails extends React.Component {
           <div>
             <juju.components.EntityHeader
               acl={this.props.acl}
-              displayPostDeployment={this.props.displayPostDeployment}
               entityModel={entityModel}
               addNotification={this.props.addNotification}
               importBundleYAML={this.props.importBundleYAML}
@@ -93,6 +92,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
+              setStagedEntity={this.props.setStagedEntity}
               urllib={this.props.urllib}
             />
             <juju.components.EntityContent
@@ -264,7 +264,6 @@ EntityDetails.propTypes = {
   changeState: PropTypes.func.isRequired,
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
-  displayPostDeployment: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
   getBundleYAML: PropTypes.func.isRequired,
@@ -282,6 +281,7 @@ EntityDetails.propTypes = {
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   urllib: PropTypes.func.isRequired
 };

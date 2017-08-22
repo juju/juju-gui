@@ -39,6 +39,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
@@ -118,6 +119,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
@@ -145,6 +147,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
@@ -170,6 +173,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        clearPostDeployment={sinon.stub()}
         environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}

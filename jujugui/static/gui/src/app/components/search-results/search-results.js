@@ -474,10 +474,10 @@ class SearchResults extends React.Component {
             acl={this.props.acl}
             changeState={this.props.changeState}
             deployTarget={this.props.deployTarget}
-            displayPostDeployment={this.props.displayPostDeployment}
             generatePath={this.props.generatePath}
             item={item}
-            key={item.storeId + i} />)}
+            key={item.storeId + i}
+            setStagedEntity={this.props.setStagedEntity} />)}
       </ul>
     </div>);
   }
@@ -527,10 +527,10 @@ class SearchResults extends React.Component {
               acl={this.props.acl}
               changeState={this.props.changeState}
               deployTarget={this.props.deployTarget}
-              displayPostDeployment={this.props.displayPostDeployment}
               generatePath={this.props.generatePath}
               item={item}
-              key={item.storeId + i} />)}
+              key={item.storeId + i}
+              setStagedEntity={this.props.setStagedEntity} />)}
         </ul>
       </div>
     </div>);
@@ -571,7 +571,6 @@ SearchResults.propTypes = {
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
-  displayPostDeployment: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getName: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
@@ -582,6 +581,7 @@ SearchResults.propTypes = {
   series: PropTypes.string,
   seriesList: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   sort: PropTypes.string,
   tags: PropTypes.string,
   type: PropTypes.string
