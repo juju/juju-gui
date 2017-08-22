@@ -41,13 +41,13 @@ class HeaderHelp extends React.Component {
             View Documentation</a>
         </li>);
     }
+    return null;
   }
 
   /**
    Click the button, get the help.
-    @param {Object} evt The event that triggered the function
   */
-  _handleShortcutsLink(evt) {
+  _handleShortcutsLink() {
     this.refs.buttonDropdown._toggleDropdown();
     this.props.displayShortcutsModal();
   }
