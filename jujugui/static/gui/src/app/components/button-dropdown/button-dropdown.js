@@ -28,14 +28,19 @@ class ButtonDropdown extends React.Component {
   }
 
   /**
-    Clicking the help menu will toggle whether it's visibility.
+    Toggles the dropdown visibility.
   */
   _toggleDropdown() {
     this.setState({showDropdown: !this.state.showDropdown});
   }
 
+  /**
+    Generates the drop down menu if the state has showDropdown true and the
+    disableDropdown prop is not true.
+    @return {Object} The dropdown React component.
+  */
   _generateDropdownMenu() {
-    if (!this.state.showDropdown) {
+    if (!this.state.showDropdown || this.props.disableDropdown) {
       return null;
     }
     const props = this.props;
@@ -47,6 +52,10 @@ class ButtonDropdown extends React.Component {
       </juju.components.DropdownMenu>);
   }
 
+  /**
+    Generates the icon element or returns the one provided in the icon prop.
+    @return {Object} The icon React component.
+  */
   _generateIcon() {
     const icon = this.props.icon;
     if (typeof icon === 'string') {
@@ -59,21 +68,39 @@ class ButtonDropdown extends React.Component {
   }
 
   /**
-   Get class names based on whether the help menu is shown.
+    Generates the tooltip element if one is provided in the prop.
+    @return {Object} The tooltip React component.
+  */
+  _generateTooltip() {
+    const tooltip = this.props.tooltip;
+    if (tooltip) {
+      return (
+        <span className="tooltip__tooltip--below">
+          <span className="tooltip__inner tooltip__inner--up">
+            {tooltip}
+          </span>
+        </span>
+      );
+    }
+    return null;
+  }
+
+  /**
+   Get class names based on whether the dropdown is shown.
    If it is we want to hide the tooltip otherwise there's a black halo
    around the tooltip up arrow.
    @returns {String} The classes to add to the element.
   */
   _getClassNames() {
     return classNames(
-      'button-dropdown__button', {
+      'button-dropdown__button',
+      this.props.classes, {
         'button-dropdown__show-menu': this.state.showDropdown,
         'button-dropdown__button-with-text': this.props.disableDropdown
       });
   }
 
   render() {
-    const props = this.props;
     return (
       <div className="button-dropdown">
         <span className={this._getClassNames()}
@@ -81,15 +108,11 @@ class ButtonDropdown extends React.Component {
           role="button"
           tabIndex="0"
           aria-haspopup="true"
-          aria-owns="headerHelpMenu"
-          aria-controls="headerHelpMenu"
+          aria-owns="headerDropdownMenu"
+          aria-controls="headerDropdownMenu"
           aria-expanded="false">
           {this._generateIcon()}
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              {props.tooltip}
-            </span>
-          </span>
+          {this._generateTooltip()}
         </span>
         {this._generateDropdownMenu()}
       </div>);
