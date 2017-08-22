@@ -1032,7 +1032,7 @@ describe('MachineView', function() {
               displayName: 'new0',
               id: 'new0'
             },
-            selected: false,
+            selected: true,
             selectMachine: instance.selectMachine,
             series: ['wily']
           }}
@@ -1052,7 +1052,7 @@ describe('MachineView', function() {
               displayName: 'new5',
               id: 'new5'
             },
-            selected: true,
+            selected: false,
             selectMachine: instance.selectMachine,
             series: ['wily']
           }}
@@ -1254,7 +1254,7 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         acl={acl}
-        changeState={sinon.stub()}
+        changeState={changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: sinon.stub(),
           applications: applications,
