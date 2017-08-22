@@ -8,6 +8,15 @@
       &:hover {
         background-color: $white;
       }
+
+      &-with-text {
+        border: none;
+
+        &:hover {
+          background-color: inherit;
+        }
+      }
     }
   }
+
 }

@@ -199,7 +199,21 @@ describe('Profile Model List', function() {
                 date="2017-07-06T14:47:03.000Z"
                 relative={true} />
             </span>
-            <span>-</span>
+            <span>
+              <ButtonDropdown
+                ref="mymodel-button-dropdown-0"
+                icon="contextual-menu-16"
+                listItems={[
+                  <li key="delete" className="dropdown-menu__list-item"
+                    role="menuitem" tabIndex="0">
+                    <a className="dropdown-menu__list-item-link"
+                      onClick={instance._destroyModel}>
+                    Delete</a>
+                  </li>
+                ]}
+                tooltip="more"
+              />
+            </span>
           </li>
           <li className="profile-model-list__row" key="">
             <span>
@@ -214,7 +228,21 @@ describe('Profile Model List', function() {
                 date="2017-07-06T16:26:47.000Z"
                 relative={true} />
             </span>
-            <span>-</span>
+            <span>
+              <ButtonDropdown
+                ref="mymodel-button-dropdown-1"
+                icon="contextual-menu-16"
+                listItems={[
+                  <li key="delete" className="dropdown-menu__list-item"
+                    role="menuitem" tabIndex="0">
+                    <a className="dropdown-menu__list-item-link"
+                      onClick={instance._destroyModel}>
+                    Delete</a>
+                  </li>
+                ]}
+                tooltip="more"
+              />
+            </span>
           </li>
         </ul>
         <ul className="profile-model-list__list">

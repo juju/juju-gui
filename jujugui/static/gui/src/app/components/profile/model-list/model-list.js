@@ -176,6 +176,10 @@ class ProfileModelList extends React.Component {
       });
       return models;
     }, []);
+    if (!rowData || !rowData.length) {
+      // We have no models
+      return null;
+    }
     const rows = this._generateRows(
       rowData, ['name', 'provider', 'lastConnection', 'action']);
     return (
