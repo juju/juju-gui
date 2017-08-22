@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineView', function() {
-  let acl, machines, parseConstraints, generateMachineDetails;
+  let acl, machines, parseConstraints, parseMachineName, generateMachineDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -31,6 +31,11 @@ describe('MachineView', function() {
   beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     parseConstraints = sinon.stub();
+    parseMachineName = sinon.stub().returns({
+      parentId: null,
+      containerType: null,
+      number: 'new0'
+    });
     generateMachineDetails = sinon.stub();
     machines = {
       filterByParent: sinon.stub().returns([{
@@ -51,6 +56,7 @@ describe('MachineView', function() {
   it('can render', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -75,6 +81,7 @@ describe('MachineView', function() {
           units: units
         }}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={{
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -86,7 +93,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         }}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
@@ -232,6 +239,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -242,7 +250,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -285,6 +293,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -295,7 +304,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[1]
       .props.children[1].props.onClick();
@@ -324,6 +333,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -334,7 +344,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />);
+        parseMachineName={parseMachineName} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
@@ -368,6 +378,7 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -378,7 +389,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     const output = renderer.getRenderOutput();
@@ -443,10 +454,11 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -535,10 +547,11 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -598,6 +611,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -608,7 +622,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />);
+        parseMachineName={parseMachineName} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="task-done_16"
@@ -653,6 +667,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autoPlaceUnits,
           createMachine: sinon.stub(),
@@ -663,7 +678,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />);
+        parseMachineName={parseMachineName} />);
     const node = queryComponentSelector(component,
       '.machine-view__auto-place .button--inline-neutral');
     testUtils.Simulate.click(node);
@@ -704,6 +719,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autoPlaceUnits,
           createMachine: sinon.stub(),
@@ -714,7 +730,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />);
+        parseMachineName={parseMachineName} />);
     const expected = (
       <juju.components.GenericButton
         action={autoPlaceUnits}
@@ -730,6 +746,7 @@ describe('MachineView', function() {
   it('can display onboarding if there are no machines', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -752,6 +769,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -762,7 +780,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -822,6 +840,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -832,7 +851,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="machine-view__column-onboarding">
@@ -892,10 +911,11 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -990,10 +1010,11 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1011,7 +1032,7 @@ describe('MachineView', function() {
               displayName: 'new0',
               id: 'new0'
             },
-            selected: false,
+            selected: true,
             selectMachine: instance.selectMachine,
             series: ['wily']
           }}
@@ -1031,7 +1052,7 @@ describe('MachineView', function() {
               displayName: 'new5',
               id: 'new5'
             },
-            selected: true,
+            selected: false,
             selectMachine: instance.selectMachine,
             series: ['wily']
           }}
@@ -1096,10 +1117,11 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
@@ -1150,6 +1172,7 @@ describe('MachineView', function() {
   it('can display a form for adding a machine', function() {
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -1184,10 +1207,11 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
@@ -1224,12 +1248,13 @@ describe('MachineView', function() {
     const applications = {
       size: sinon.stub().returns(0)
     };
+    const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         acl={acl}
-        changeState={sinon.stub()}
+        changeState={changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: sinon.stub(),
           applications: applications,
@@ -1238,6 +1263,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine=""
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -1248,11 +1274,14 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
-    assert.equal(instance.state.selectedMachine, 'new0');
+    instance.componentDidMount();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new0'}});
     instance.selectMachine('new1');
-    assert.equal(instance.state.selectedMachine, 'new1');
+    assert.equal(changeState.callCount, 2);
+    assert.deepEqual(changeState.args[1][0], {gui: {machines: 'new1'}});
   });
 
   it('can display a list of containers', function() {
@@ -1309,9 +1338,10 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1331,7 +1361,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1346,7 +1378,9 @@ describe('MachineView', function() {
             machine: {
               id: 'new0/lxc/0'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1413,9 +1447,10 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1438,7 +1473,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1454,7 +1491,9 @@ describe('MachineView', function() {
               displayName: 'new0/lxc/0',
               id: 'new0/lxc/0'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1470,7 +1509,9 @@ describe('MachineView', function() {
               displayName: 'new0/lxc/5',
               id: 'new0/lxc/5'
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
@@ -1530,10 +1571,11 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1600,9 +1642,10 @@ describe('MachineView', function() {
         changeState={sinon.stub()}
         dbAPI={dbAPI}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1623,7 +1666,9 @@ describe('MachineView', function() {
               id: 'new0',
               root: true
             },
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: true
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1636,7 +1681,9 @@ describe('MachineView', function() {
           key="new0/lxc/0"
           machineAPI={{
             machine: {id: 'new0/lxc/0'},
-            removeUnit: instance._removeUnit
+            removeUnit: instance._removeUnit,
+            selectMachine: sinon.stub(),
+            selected: false
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
@@ -1682,6 +1729,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: createMachine,
@@ -1692,7 +1740,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
@@ -1734,6 +1782,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: createMachine,
@@ -1744,7 +1793,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
@@ -1756,6 +1805,7 @@ describe('MachineView', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
     const machines = {
       filterByParent: sinon.stub().returns([]),
+      getById: sinon.stub(),
       revive: sinon.stub()
     };
     const units = {
@@ -1779,6 +1829,7 @@ describe('MachineView', function() {
           units: units
         })}
         generateMachineDetails={generateMachineDetails}
+        machine="new0"
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: sinon.stub(),
           createMachine: sinon.stub(),
@@ -1789,7 +1840,7 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-      />, true);
+        parseMachineName={parseMachineName} />, true);
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
       .props.menuItems;

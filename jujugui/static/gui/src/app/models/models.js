@@ -1489,9 +1489,9 @@ YUI.add('juju-models', function(Y) {
           name refers to a top level machine.
           E.g. the container type of "2/lxc/0" is "lxc", the container type of
           "42" is null.
-        - number {Int}: the machine or container number.
-          E.g. the number of container "2/lxc/0" is 0, the number of machine
-          "42" is 42.
+        - number {String}: the machine or container number.
+          E.g. the number of container "2/lxc/0" is "0", the number of machine
+          "42" is "42".
     */
     parseMachineName: function(name) {
       const parts = name.split('/');
@@ -1501,14 +1501,14 @@ YUI.add('juju-models', function(Y) {
         return {
           parentId: null,
           containerType: null,
-          number: parseInt(name, 10)
+          number: name
         };
       }
       // This is a container.
       return {
         parentId: parts.slice(0, partsLength - 2).join('/'),
         containerType: parts[partsLength - 2],
-        number: parseInt(parts[partsLength - 1], 10)
+        number: parts[partsLength - 1]
       };
     },
 

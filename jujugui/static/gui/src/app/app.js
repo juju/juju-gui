@@ -1965,6 +1965,7 @@ YUI.add('juju-gui', function(Y) {
           })}
           generateMachineDetails={utils.generateMachineDetails.bind(
             utils, env.genericConstraints, db.units)}
+          machine={this.state.current.gui.machines}
           modelAPI={shapeup.addReshape({
             autoPlaceUnits: this._autoPlaceUnits.bind(this),
             createMachine: this._createMachine.bind(this),
@@ -1977,6 +1978,7 @@ YUI.add('juju-gui', function(Y) {
           })}
           parseConstraints={utils.parseConstraints.bind(
             utils, env.genericConstraints)}
+          parseMachineName={db.machines.parseMachineName.bind(db.machines)}
           series={window.jujulib.CHARM_SERIES}
         />,
         document.getElementById('machine-view'));
