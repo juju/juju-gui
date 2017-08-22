@@ -4,6 +4,20 @@
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
+  constructor() {
+    super();
+    this.STATUS_ERROR = 'error';
+    this.STATUS_PENDING = 'pending';
+    this.STATUS_UNCOMMITTED = 'uncommitted';
+    this.STATUS_OK = 'ok';
+    this.STATUS_ORDER = [
+      this.STATUS_ERROR,
+      this.STATUS_PENDING,
+      this.STATUS_UNCOMMITTED,
+      this.STATUS_OK
+    ];
+  }
+
   /**
     Return an element class name suitable for the given value.
     @param {String} prefix The class prefix.
@@ -22,7 +36,7 @@ class Status extends React.Component {
     const normalised = value.map(val => this._normaliseStatus(val));
     let status;
     // Loop through the order of priority until there is a matching status.
-    ['error', 'pending', 'uncommitted', 'ok'].some(val => {
+    this.STATUS_ORDER.some(val => {
       if (normalised.indexOf(val) > -1) {
         status = val;
         return true;
@@ -42,12 +56,12 @@ class Status extends React.Component {
       case 'active':
       case 'idle':
       case 'started':
-        status = 'ok';
+        status = this.STATUS_OK;
         break;
       case 'blocked':
       case 'down':
       case 'error':
-        status = 'error';
+        status = this.STATUS_ERROR;
         break;
       case 'pending':
       case 'installing':
@@ -55,7 +69,7 @@ class Status extends React.Component {
       case 'allocating':
       case 'maintenance':
       case 'waiting':
-        status = 'pending';
+        status = this.STATUS_PENDING;
         break;
     }
     return status;
