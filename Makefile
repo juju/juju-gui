@@ -300,7 +300,7 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: lint-python lint-components lint-js lint-css
+lint: lint-python lint-js lint-css
 
 .PHONY: lint-python
 lint-python: $(FLAKE8)
