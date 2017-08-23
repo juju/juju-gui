@@ -12,17 +12,25 @@
     padding: 12px 25px;
     position: absolute;
     z-index: index($z-indexed-elements, environment-help);
-    top: 100%;
-    right: 10px;
+    top: 150%;
+    right: 0px;
     width: 280px;
     display: none;
   }
 
   &__action {
     cursor: pointer;
+    padding: 0;
+    // Importants to overwrite vanilla values
+    // scss-lint:disable ImportantRule
+    color: $warm-grey !important;
+    // scss-lint:enable ImportantRule
   }
 
   &__action:hover + &__notification {
     display: block;
+    // scss-lint:disable ImportantRule
+    color: $dark-warm-grey !important;
+    // scss-lint:enable ImportantRule
   }
 }

@@ -1,31 +1,22 @@
-#profile-link-container {
-  .header-menu {
-    margin-right: 10px;
-  }
+.user-menu {
+  &.button-dropdown {
+    &__button {
+      border-radius: 2px;
+      border-right-width: 0;
+      border: 1px solid $color-mid-light;
 
-  .logout-link {
-    display: block;
-    padding: 10px 20px 10px;
-    text-decoration: none;
-  }
-
-  .usso-login {
-    &__action {
-      text-decoration: none;
-      padding: 0;
-      // Importants to overwrite vanilla values
-      // scss-lint:disable ImportantRule
-      color: $warm-grey !important;
-      // scss-lint:enable ImportantRule
       &:hover {
-        // scss-lint:disable ImportantRule
-        color: $dark-warm-grey !important;
-        // scss-lint:enable ImportantRule
+        background-color: $white;
+      }
+
+      &-with-text {
+        border: none;
+
+        &:hover {
+          background-color: inherit;
+        }
       }
     }
-    &__notification {
-      top: 150%;
-      right: 0;
-    }
   }
+
 }

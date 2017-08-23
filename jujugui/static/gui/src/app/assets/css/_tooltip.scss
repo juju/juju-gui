@@ -34,6 +34,7 @@
     color: $white;
     font-size: 14px;
     white-space: nowrap;
+    z-index: 1;
   }
 
   &__inner--up:after {

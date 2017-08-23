@@ -1,5 +1,22 @@
-#header-help {
-  .header-menu__menu {
+.header-help {
+  &.button-dropdown {
+    &__button {
+      border-radius: 2px;
+      border-right-width: 0;
+      border: 1px solid $color-mid-light;
+
+      &:hover {
+        background-color: $white;
+      }
+    }
+  }
+
+  .dropdown-menu__list {
     width: 275px;
+  }
+
+  &__extra-info {
+    float: right;
+    color: $dark-warm-grey;
   }
 }

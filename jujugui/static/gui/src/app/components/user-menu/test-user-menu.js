@@ -30,17 +30,24 @@ describe('UserMenu', () => {
     YUI().use('user-menu', function() { done(); });
   });
 
-  const LogoutLink = (<div />);
+  const loginLink = <div className="login"></div>;
+  const logoutLink = <div className="logout"></div>;
 
-  function createEle(props) {
-    props = props || {};
+  function renderComponent(options = {}) {
+    const userIsAuthenticated = options.userIsAuthenticated !== undefined ?
+      options.userIsAuthenticated : true;
+    const USSOLoginLink = options.USSOLoginLink !== undefined ?
+      options.USSOLoginLink : loginLink;
+    const controllerAPI = {
+      userIsAuthenticated: userIsAuthenticated
+    };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserMenu.wrappedComponent
-        LogoutLink={props.LogoutLink || {}}
-        USSOLoginLink={props.USSOLoginLink || {}}
-        controllerAPI={props.controllerAPI || {}}
-        navigateUserAccount={props.navigateUserAccount || sinon.stub()}
-        navigateUserProfile={props.navigateUserProfile || sinon.stub()}
+      <juju.components.UserMenu
+        LogoutLink={options.LogoutLink || logoutLink}
+        USSOLoginLink={USSOLoginLink}
+        controllerAPI={controllerAPI}
+        navigateUserAccount={sinon.stub()}
+        navigateUserProfile={sinon.stub()}
       />, true);
     return {
       renderer: renderer,
@@ -49,94 +56,96 @@ describe('UserMenu', () => {
     };
   }
 
-  it('renders a user icon when user is authenticated', () => {
-    const userMenu = createEle({
-      LogoutLink: LogoutLink,
-      controllerAPI: {
-        userIsAuthenticated: sinon.stub().returns(true)
-      }
+  it('renders the login link if supplied', () => {
+    const c = renderComponent({
+      userIsAuthenticated: false
     });
     const expected = (
-      <juju.components.SvgIcon name="user_16"
-        className="header-menu__icon" size="16"
+      <juju.components.ButtonDropdown
+        classes={['user-menu']}
+        ref="buttonDropdown"
+        icon={loginLink}
+        disableDropdown={true}
+        listItems={[
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="profile">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleProfileClick}>Profile</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="account">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleAccountClick}>Account</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="logout">
+            {logoutLink}
+          </li>
+        ]}
+        tooltip={''}
       />
     );
-    const button = userMenu.output.props.children[0];
-    const icon = button.props.children;
-    expect(icon).toEqualJSX(expected);
+    expect(c.output).toEqualJSX(expected);
   });
 
-  describe('menu', () => {
-    it('opens a menu when clicked', () => {
-      // TODO frankban: remove juju_config handling when deleting the flag.
-      const jujuConfig = window.juju_config;
-      window.juju_config = {accountFlag: true};
-
-      const userMenu = createEle({
-        LogoutLink: LogoutLink,
-        controllerAPI: {
-          userIsAuthenticated: sinon.stub().returns(true)
-        }
-      });
-      userMenu.instance.toggleUserMenu();
-      const output = userMenu.renderer.getRenderOutput();
-
-      assert.equal(output.props.children.length, 2);
-      assert.deepEqual(output.props.children[0].props.className,
-        'header-menu__button header-menu__show-menu');
-
-      // TODO frankban: remove juju_config handling when deleting the flag.
-      window.juju_config = jujuConfig;
-
-      const expectedOutput = (<juju.components.Panel
-        instanceName="header-menu__menu"
-        visible={true}>
-        <ul className="header-menu__menu-list" role="menubar">
-          <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            <a className="header-menu__menu-list-item-link"
-              role="button"
-              onClick={userMenu.instance._handleProfileClick}>Profile</a>
-          </li>
-          <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            <a className="header-menu__menu-list-item-link"
-              role="button"
-              onClick={userMenu.instance._handleAccountClick}>Account</a>
-          </li>
-          <li className="header-menu__menu-list-item
-              header-menu__menu-list-item-with-link"
-            role="menuitem" tabIndex="0">
-            {LogoutLink}
-          </li>
-        </ul>
-      </juju.components.Panel>);
-      expect(output.props.children[1]).toEqualJSX(expectedOutput);
+  it('renders a user icon when no login link is supplied', () => {
+    const c = renderComponent({
+      USSOLoginLink: null
     });
-
-    it('closes when handleClickOutside is called', () => {
-      const userMenu = createEle({
-        LogoutLink: LogoutLink,
-        controllerAPI: {
-          userIsAuthenticated: sinon.stub().returns(true)
-        }
-      });
-      userMenu.instance.toggleUserMenu();
-      let output = userMenu.renderer.getRenderOutput();
-
-      assert.equal(output.props.children.length, 2);
-      assert.deepEqual(output.props.children[0].props.className,
-        'header-menu__button header-menu__show-menu');
-      assert.isDefined(output.props.children[1]);
-
-      userMenu.instance.handleClickOutside();
-      output = userMenu.renderer.getRenderOutput();
-      assert.equal(output.props.children.length, 2);
-      assert.deepEqual(output.props.children[0].props.className,
-        'header-menu__button');
-      assert.deepEqual(output.props.children[1], '');
-    });
+    const expected = (
+      <juju.components.ButtonDropdown
+        classes={['user-menu']}
+        ref="buttonDropdown"
+        icon="user_16"
+        disableDropdown={false}
+        listItems={[
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="profile">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleProfileClick}>Profile</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="account">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleAccountClick}>Account</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="logout">
+            {logoutLink}
+          </li>
+        ]}
+        tooltip="user"
+      />
+    );
+    expect(c.output).toEqualJSX(expected);
   });
+
+  it('navigates to user profile when clicked', () => {
+    const c = renderComponent();
+    c.instance.refs = {
+      buttonDropdown: {
+        _toggleDropdown: sinon.stub()
+      }
+    };
+    c.output.props.listItems[0].props.children.props.onClick.call(c.instance);
+    assert.equal(c.instance.props.navigateUserProfile.callCount, 1);
+    assert.equal(c.instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
+  });
+
+  it('navigates to the user account when clicked', () => {
+    const c = renderComponent();
+    c.instance.refs = {
+      buttonDropdown: {
+        _toggleDropdown: sinon.stub()
+      }
+    };
+    c.output.props.listItems[1].props.children.props.onClick.call(c.instance);
+    assert.equal(c.instance.props.navigateUserAccount.callCount, 1);
+    assert.equal(c.instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
+  });
+
 });
