@@ -355,22 +355,55 @@ def _parse_prop_fields(content, name):
 
     Return properties as a list of property names.
     """
+    stack = 0
+
+    def parse_line(line):
+        nonlocal stack
+        chars = []
+        for char in line:
+            if char == '{':
+                stack += 1
+                continue
+            if char == '}':
+                stack -= 1
+                char = '{STRIPPED}'
+            if not stack:
+                chars.append(char)
+        return ''.join(chars)
+
     lines = []
-    end_found = False
+    end_found = has_children = False
     for line in content.splitlines():
         line = line.strip()
-        if not line or line.startswith('//'):
+        # Exclude comments.
+        if line.startswith('//'):
             continue
-        if end_found:
+        # Exclude JSX variables.
+        line = parse_line(line)
+        # Exclude empty lines.
+        if not line:
+            continue
+        # Include all lines before the end of the instantiation.
+        if not end_found:
+            lines.append(line)
+        elif line.startswith('</') and name in line:
+            has_children = True
             break
-        if line.startswith('</') and name in line:
-            break
-        end_found = line.endswith('>') and not line[:-1].strip().endswith('=')
-        lines.append(line)
-    content = ' '.join(lines)
-    return tuple(sorted(
-        match.groups()[0] for match in _fields_exp.finditer(content)
-    ))
+        # Check whether we are at the end of the instantiation.
+        if line.endswith('>'):
+            line = line[:-1].strip()
+            if line.endswith('='):
+                continue
+            if line.endswith('/'):
+                break
+            end_found = True
+
+    # Match the property names.
+    content = ''.join(lines)
+    names = [match.groups()[0] for match in _fields_exp.finditer(content)]
+    if has_children:
+        names.append('children')
+    return tuple(sorted(names))
 
 
 def _iterfiles(path, include_tests):
