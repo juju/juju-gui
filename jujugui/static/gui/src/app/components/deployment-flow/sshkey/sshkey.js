@@ -19,6 +19,7 @@ class DeploymentSSHKey extends React.Component {
     this.state = {
       addSource: 'github',
       SSHkeys: [],
+      lpUsernames: [],
       error: null,
       buttonDisabled: true
     };
@@ -34,7 +35,8 @@ class DeploymentSSHKey extends React.Component {
       this._handleAddMoreKeys(null);
     }
     const hasValue = (this.refs.sshKey && this.refs.sshKey.getValue()) ||
-      (this.refs.githubUsername && this.refs.githubUsername.getValue());
+      (this.refs.githubUsername && this.refs.githubUsername.getValue() ||
+      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue()));
     this.setState({
       buttonDisabled: hasValue ? false : true
     });
@@ -135,15 +137,25 @@ class DeploymentSSHKey extends React.Component {
       const manualKey = this.refs.sshKey.getValue();
       const key = this._validateAndSplitKey(manualKey);
       if (key) {
-        this.props.setSSHKeys([key]);
         let SSHkeys = this.state.SSHkeys;
         if (!this._keyExists(key)) {
           SSHkeys.push(key);
         }
+        this.props.setSSHKeys(SSHkeys);
         this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
         this.refs.sshKey.setValue(null);
         this.refs.sshKey.focus();
       }
+    } else if (source === 'launchpad') {
+      let lpUsernames = this.state.lpUsernames;
+      const username = this.refs.launchpadUsername.getValue();
+      if (lpUsernames.findIndex(d => d === username) === -1) {
+        lpUsernames.push(username);
+      }
+      this.props.setLaunchpadUsernames(lpUsernames);
+      this.setState({lpUsernames: lpUsernames, buttonDisabled: true});
+      this.refs.launchpadUsername.setValue(null);
+      this.refs.launchpadUsername.focus();
     }
   }
 
@@ -172,54 +184,106 @@ class DeploymentSSHKey extends React.Component {
   }
 
   /**
+    Remove launchpad username.
+
+    @param {String} username The username.
+  */
+  _removeLPUsername(username) {
+    const newLPUsernameList = this.state.lpUsernames.filter(name => {
+      return name !== username;
+    });
+    this.setState({lpUsernames: newLPUsernameList});
+    this.props.setLaunchpadUsernames(newLPUsernameList);
+  }
+
+  /**
     Create the added keys section.
 
     @return {Object} The React list of keys.
   */
   _generateAddedKeys() {
     const SSHkeys = this.state.SSHkeys;
+    const lpUsernames = this.state.lpUsernames;
     const stringLengths = 30;
 
-    if (Object.keys(SSHkeys).length === 0) {
+    if (Object.keys(SSHkeys).length === 0 && lpUsernames.length === 0) {
       return false;
     }
 
-    let listBody = [];
-    SSHkeys.forEach((key, i) => {
-      let uniqueKey = key.id + i;
-      let body = key.body;
+    let sshKeysList = null;
+    if (SSHkeys.length) {
+      let listBody = [];
+      SSHkeys.forEach((key, i) => {
+        let uniqueKey = key.id + i;
+        let body = key.body;
 
-      if (body.length >= stringLengths * 2) {
-        const bodyStart = key.body.substring(0, stringLengths);
-        const bodyEnd = key.body.substring(key.body.length - stringLengths);
-        body = `${bodyStart}...${bodyEnd}`;
-      }
-      listBody.push(
-        <li className="deployment-flow__row twelve-col" key={uniqueKey}>
-          <div className="two-col">{key.type}</div>
-          <div className="nine-col added-keys__key-value" title={key.body}>
-            {body}
-          </div>
-          <div className="one-col last-col">
-            <span className="added-keys__key-remove right" title="Remove key"
-              role="button"
-              onClick={this._removeKey.bind(this, key.id)}>
-              <juju.components.SvgIcon
-                name="close_16" size="16" />
-            </span>
-          </div>
-        </li>
+        if (body.length >= stringLengths * 2) {
+          const bodyStart = key.body.substring(0, stringLengths);
+          const bodyEnd = key.body.substring(key.body.length - stringLengths);
+          body = `${bodyStart}...${bodyEnd}`;
+        }
+        listBody.push(
+          <li className="deployment-flow__row twelve-col" key={uniqueKey}>
+            <div className="two-col">{key.type}</div>
+            <div className="nine-col added-keys__key-value" title={key.body}>
+              {body}
+            </div>
+            <div className="one-col last-col">
+              <span className="added-keys__key-remove right" title="Remove key"
+                role="button"
+                onClick={this._removeKey.bind(this, key.id)}>
+                <juju.components.SvgIcon
+                  name="close_16" size="16" />
+              </span>
+            </div>
+          </li>
+        );
+      });
+      sshKeysList = (
+        <ul className="deployment-machines__list clearfix">
+          <li className="deployment-flow__row-header twelve-col" >
+            <div className="two-col">Type</div>
+            <div className="ten-col last-col">Key</div>
+          </li>
+          {listBody}
+        </ul>
       );
-    });
+    }
+
+    let lpUsernameList = null;
+    if (lpUsernames.length) {
+      let usernameList = [];
+      lpUsernames.forEach((username) => {
+        usernameList.push(
+          <li className="deployment-flow__row twelve-col" key={'lp-' + username}>
+            <div className="eleven-col">{username}</div>
+            <div className="one-col last-col">
+              <span className="added-keys__key-remove right"
+                title="Remove username"
+                role="button"
+                onClick={this._removeLPUsername.bind(this, username)}>
+                <juju.components.SvgIcon
+                  name="close_16" size="16" />
+              </span>
+            </div>
+          </li>
+        );
+      });
+      lpUsernameList = (
+        <ul className="deployment-machines__list clearfix">
+          <li className="deployment-flow__row-header twelve-col last-col">
+            Launchpad Users
+          </li>
+          {usernameList}
+        </ul>
+      );
+    }
 
     return (
-      <ul className="deployment-machines__list clearfix">
-        <li className="deployment-flow__row-header twelve-col" >
-          <div className="two-col">Type</div>
-          <div className="ten-col last-col">Key</div>
-        </li>
-        {listBody}
-      </ul>
+      <div>
+        {sshKeysList}
+        {lpUsernameList}
+      </div>
     );
   }
 
@@ -254,6 +318,18 @@ class DeploymentSSHKey extends React.Component {
             key="sshKey"
             ref="sshKey"
             multiLine={true}
+            onKeyUp={this._onKeyUp.bind(this)}
+          />
+        </div>
+      );
+    } else if (this.state.addSource === 'launchpad') {
+      return (
+        <div className="three-col last-col no-margin-bottom">
+          <juju.components.GenericInput
+            label="Launchpad username"
+            key="launchpadUsername"
+            ref="launchpadUsername"
+            multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
           />
         </div>
@@ -293,6 +369,10 @@ class DeploymentSSHKey extends React.Component {
       {
         label: 'Manual',
         value: 'manual'
+      },
+      {
+        label: 'Launchpad',
+        value: 'launchpad'
       }
     ];
   }
@@ -361,6 +441,7 @@ DeploymentSSHKey.propTypes = {
   addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
+  setLaunchpadUsernames: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired
 };
 

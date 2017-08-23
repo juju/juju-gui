@@ -1398,6 +1398,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.sortDescriptionsByApplication.bind(null,
               services.getById.bind(services))}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
+          importSSHKeys={env.importKeys.bind(env)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}

@@ -26,6 +26,7 @@ chai.config.truncateThreshold = 0;
 describe('DeploymentSSHKey', function() {
   let addNotification;
   let setSSHKeys;
+  let setLaunchpadUsernames;
   let getGithubSSHKeys;
 
   beforeAll(function(done) {
@@ -38,6 +39,7 @@ describe('DeploymentSSHKey', function() {
   beforeEach(() => {
     addNotification = sinon.stub();
     setSSHKeys = sinon.stub();
+    setLaunchpadUsernames = sinon.stub();
     getGithubSSHKeys = sinon.stub();
   });
 
@@ -54,6 +56,7 @@ describe('DeploymentSSHKey', function() {
         cloud={cloud}
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
+        setLaunchpadUsernames={setLaunchpadUsernames}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
@@ -92,6 +95,10 @@ describe('DeploymentSSHKey', function() {
                 {
                   label: 'Manual',
                   value: 'manual'
+                },
+                {
+                  label: 'Launchpad',
+                  value: 'launchpad'
                 }
               ]} />
           </div>
@@ -140,6 +147,10 @@ describe('DeploymentSSHKey', function() {
                 {
                   label: 'Manual',
                   value: 'manual'
+                },
+                {
+                  label: 'Launchpad',
+                  value: 'launchpad'
                 }
               ]} />
           </div>
@@ -217,26 +228,28 @@ describe('DeploymentSSHKey', function() {
       ]);
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[1]).toEqualJSX(
-        <ul className="deployment-machines__list clearfix">
-          <li className="deployment-flow__row-header twelve-col">
-            <div className="two-col">Type</div>
-            <div className="ten-col last-col">Key</div>
-          </li>
-          <li className="deployment-flow__row twelve-col">
-            <div className="two-col">ssh-rsa</div>
-            <div className="nine-col added-keys__key-value" title="thekey">
-              thekey
-            </div>
-            <div className="one-col last-col">
-              <span className="added-keys__key-remove right"
-                onClick={comp.instance._removeKey.bind(comp.instance)}
-                role="button"
-                title="Remove key">
-                <juju.components.SvgIcon name="close_16" size="16" />
-              </span>
-            </div>
-          </li>
-        </ul>
+        <div>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col">
+              <div className="two-col">Type</div>
+              <div className="ten-col last-col">Key</div>
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="two-col">ssh-rsa</div>
+              <div className="nine-col added-keys__key-value" title="thekey">
+                thekey
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  role="button"
+                  title="Remove key">
+                  <juju.components.SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
       );
     });
 
@@ -267,6 +280,110 @@ describe('DeploymentSSHKey', function() {
     comp.instance._handleSourceChange();
     expect(comp.instance.state.addSource).toEqual('manual');
     expect(comp.instance.state.buttonDisabled).toEqual(true);
+  });
+
+  describe('launchpad', () => {
+    let comp;
+    beforeEach(() => {
+      comp = render('gce');
+      comp.instance.refs = {
+        sshSource: {getValue: () => 'launchpad'},
+        launchpadUsername: {
+          setValue: () => sinon.stub(),
+          focus: () => sinon.stub(),
+          getValue: () => 'rose'
+        }
+      };
+      comp.instance.setState({buttonDisabled: false});
+    });
+
+    it('stores the Launchpad username', () => {
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      expect(comp.instance.props.setLaunchpadUsernames.callCount).toEqual(1);
+      assert.deepEqual(
+        comp.instance.props.setLaunchpadUsernames.args[0][0],
+        ['rose']);
+    });
+
+    it('shows a table if usernames are present', () => {
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[1]).toEqualJSX(
+        <div>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col last-col">
+              Launchpad Users
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="eleven-col">
+                rose
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  role="button"
+                  title="Remove username">
+                  <juju.components.SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      );
+    });
+
+    it('shows a table for usernames and keys', () => {
+      comp.instance.setState({SSHkeys: [{
+        body: 'thekey',
+        text: 'ssh-rsa thekey',
+        type: 'ssh-rsa',
+        id: 0
+      }]});
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      const output = comp.renderer.getRenderOutput();
+      expect(output.props.children[1]).toEqualJSX(
+        <div>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col">
+              <div className="two-col">Type</div>
+              <div className="ten-col last-col">Key</div>
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="two-col">ssh-rsa</div>
+              <div className="nine-col added-keys__key-value" title="thekey">
+                thekey
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  role="button"
+                  title="Remove key">
+                  <juju.components.SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col last-col">
+              Launchpad Users
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="eleven-col">
+                rose
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  role="button"
+                  title="Remove username">
+                  <juju.components.SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      );
+    });
   });
 
   describe('manual', () => {
@@ -301,26 +418,28 @@ describe('DeploymentSSHKey', function() {
       comp.instance._handleAddMoreKeys.call(comp.instance);
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[1]).toEqualJSX(
-        <ul className="deployment-machines__list clearfix">
-          <li className="deployment-flow__row-header twelve-col">
-            <div className="two-col">Type</div>
-            <div className="ten-col last-col">Key</div>
-          </li>
-          <li className="deployment-flow__row twelve-col">
-            <div className="two-col">ssh-rsa</div>
-            <div className="nine-col added-keys__key-value" title="thekey">
-              thekey
-            </div>
-            <div className="one-col last-col">
-              <span className="added-keys__key-remove right"
-                onClick={comp.instance._removeKey.bind(comp.instance)}
-                role="button"
-                title="Remove key">
-                <juju.components.SvgIcon name="close_16" size="16" />
-              </span>
-            </div>
-          </li>
-        </ul>
+        <div>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col">
+              <div className="two-col">Type</div>
+              <div className="ten-col last-col">Key</div>
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="two-col">ssh-rsa</div>
+              <div className="nine-col added-keys__key-value" title="thekey">
+                thekey
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  role="button"
+                  title="Remove key">
+                  <juju.components.SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
       );
     });
   });
