@@ -646,7 +646,7 @@ describe('jujulib plans service', function() {
       get: function(url, headers, callback) {
         assert.equal(url, 'http://1.2.3.4/' +
           window.jujulib.plansAPIVersion +
-          '/kpimetrics?charm-url=cs%3Ajuju-gui-42');
+          '/metrics/kpi?charm-url=cs%3Ajuju-gui-42');
         const xhr = makeXHRRequest([{
           Metric: 'metric',
           Time: 't',
