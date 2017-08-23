@@ -65,6 +65,7 @@ const createDeploymentFlow = (props = {}) => {
     addAgreement: sinon.stub(),
     addNotification: sinon.stub(),
     addSSHKeys: sinon.stub(),
+    importSSHKeys: sinon.stub(),
     applications: [],
     changeState: sinon.stub(),
     changes: {},
@@ -208,6 +209,7 @@ describe('DeploymentFlow', function() {
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKeys={instance._setSSHKeys}
+            setLaunchpadUsernames={instance._setLaunchpadUsernames}
           />
         </juju.components.DeploymentSection>
         {undefined}
@@ -851,6 +853,28 @@ describe('DeploymentFlow', function() {
       config: {'authorized-keys': 'my SSH key'}
     });
     assert.equal(instance.props.changeState.callCount, 1);
+  });
+
+  it('can deploy with a Launchpad username', () => {
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'azure'},
+      credential: 'creds',
+      modelCommitted: true,
+      modelName: 'mymodel',
+      region: 'skaro'
+    });
+    const instance = renderer.getMountedInstance();
+    instance._setLaunchpadUsernames(['rose']);
+    const output = renderer.getRenderOutput();
+    output.props.children[9].props.children.props.children[1].props.children
+      .props.action();
+    const importKeys = instance.props.importSSHKeys;
+    assert.equal(importKeys.callCount, 1);
+    assert.deepEqual(importKeys.args[0][1], ['lp:rose']);
   });
 
   it('can deploy with a VPC id', function() {

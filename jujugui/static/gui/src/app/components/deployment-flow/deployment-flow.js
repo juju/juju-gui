@@ -40,6 +40,7 @@ class DeploymentFlow extends React.Component {
       paymentUser: null,
       region: this.props.region,
       sshKeys: [],
+      lpUsernames: [],
       // The list of term ids for the uncommitted applications.
       terms: this._getTerms() || [],
       // Whether the user has ticked the checked to agree to terms.
@@ -229,6 +230,16 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Store the provided Launchpad usernames in state.
+
+    @method _setLaunchpadUsernames
+    @param {Array} usernames The list of Launchpad usernames
+  */
+  _setLaunchpadUsernames(usernames) {
+    this.setState({lpUsernames: usernames});
+  }
+
+  /**
     Store the provided AWS virtual private cloud value in state.
     In the case the value is set, also set whether to force Juju to use the
     given value, even when it fails the minimum validation criteria.
@@ -343,6 +354,22 @@ class DeploymentFlow extends React.Component {
           });
         },
         ecsOptions);
+    }
+    if (this.state.lpUsernames.length) {
+      this.props.importSSHKeys(
+        this.props.getUserName(),
+        this.state.lpUsernames.map(key => `lp:${key}`),
+        (error, data) => {
+          if (!error) {
+            return;
+          }
+          this.props.addNotification({
+            title: 'Cannot import SSH keys',
+            message: `Cannot import SSH keys: ${error}`,
+            level: 'error'
+          });
+        }
+      );
     }
     if (this.state.vpcId) {
       args.config['vpc-id'] = this.state.vpcId;
@@ -527,6 +554,7 @@ class DeploymentFlow extends React.Component {
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKeys={this._setSSHKeys.bind(this)}
+          setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
@@ -1056,6 +1084,7 @@ DeploymentFlow.propTypes = {
   getUserName: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   groupedChanges: PropTypes.object.isRequired,
+  importSSHKeys: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,
   listClouds: PropTypes.func,

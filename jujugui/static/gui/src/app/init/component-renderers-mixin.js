@@ -802,6 +802,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={this._bound.addNotification}
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
+        importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
         applications={services.toArray()}
         charmstore={charmstore}
         changesFilterByParent={
