@@ -10,10 +10,10 @@ class DropdownMenu extends React.Component {
   /**
     When the menu is shown, clicking anywhere but the menu will close
     the menu.
-    @param {Object} e The click event.
+    @param {Object} evt The click event.
   */
-  handleClickOutside(e) {
-    this.props.handleClickOutside(e);
+  handleClickOutside(evt) {
+    this.props.handleClickOutside(evt);
   }
 
   render() {
@@ -32,6 +32,7 @@ class DropdownMenu extends React.Component {
 };
 
 DropdownMenu.propTypes = {
+  // The children need to be <li>.
   children: PropTypes.oneOfType([
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node

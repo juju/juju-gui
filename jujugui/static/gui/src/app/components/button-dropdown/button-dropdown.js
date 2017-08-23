@@ -7,8 +7,8 @@
   menu with list items.
 */
 class ButtonDropdown extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       showDropdown: false
     };
@@ -17,12 +17,12 @@ class ButtonDropdown extends React.Component {
   /**
     Passed into the dropdown component to call when the user clicks outside
     of it. We use this trigger to close the dropdown.
-    @param {Object} e The click event.
+    @param {Object} evt The click event.
   */
-  _handleDropdownClickOutside(e) {
-    // If they click the button again we don't want it to clse the menu in the
+  _handleDropdownClickOutside(evt) {
+    // If they click the button again we don't want it to close the menu in the
     // clickoutside as the _toggleDropdown will handle that.
-    if (!ReactDOM.findDOMNode(this).contains(e.target)) {
+    if (!ReactDOM.findDOMNode(this).contains(evt.target)) {
       this.setState({showDropdown: false});
     }
   }
@@ -126,6 +126,10 @@ ButtonDropdown.propTypes = {
     React.PropTypes.string,
     React.PropTypes.object
   ]).isRequired,
+  // The listItems prop isn't required because this component is also used to
+  // display just the 'login' link. At which point the drop down is disabled
+  // and there are no list items.
+  // The list items needs to be an array of <li>.
   listItems: PropTypes.array,
   tooltip: PropTypes.string
 };
