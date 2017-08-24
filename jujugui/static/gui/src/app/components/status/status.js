@@ -19,6 +19,18 @@ class Status extends React.Component {
   }
 
   /**
+    TODO: componentDidMount and componentDidUnmount should be removed
+    when the status beta is over, it adds a class to overwrite the 'beta'
+    pseudo element.
+  */
+  componentWillMount() {
+    document.body.classList.add('u-is-status');
+  }
+  componentWillUnmount() {
+    document.body.classList.remove('u-is-status');
+  }
+
+  /**
     Return an element class name suitable for the given value.
     @param {String} prefix The class prefix.
     @param {String} value The provided value.

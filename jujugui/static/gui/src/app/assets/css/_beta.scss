@@ -12,6 +12,13 @@ body.u-is-beta:before {
   z-index: 11;
 }
 
+/**
+  TODO: Remove this when the status beta is over.
+*/
+body.u-is-beta.u-is-status:before {
+  content: 'Status beta';
+}
+
 body.u-is-beta.display-cookie-notice:before {
   bottom: $bottom + 56px;
 }
