@@ -27,21 +27,17 @@ describe('Status', function() {
     };
     emptyDB = {
       machines: {
-        map: sinon.stub(),
-        size: sinon.stub().withArgs().returns(0)
+        filter: sinon.stub().returns([])
       },
       relations: {
-        map: sinon.stub(),
-        size: sinon.stub().withArgs().returns(0)
+        filter: sinon.stub().returns([])
       },
       remoteServices: {
         map: sinon.stub(),
         size: sinon.stub().withArgs().returns(0)
       },
       services: {
-        each: sinon.stub(),
-        map: sinon.stub(),
-        size: sinon.stub().withArgs().returns(0)
+        filter: sinon.stub().returns([])
       }
     };
   });
@@ -98,30 +94,78 @@ describe('Status', function() {
       ],
       workloadStatus: 'error',
       workloadStatusMessage: 'exterminate!'
-    }];
-    const applications = [{
-      getAttrs: sinon.stub().withArgs().returns({
-        charm: '~who/xenial/django-42',
-        id: 'django',
-        name: 'django',
-        status: {current: 'active'},
-        units: {size: sinon.stub().withArgs().returns(djangoUnits.length)},
-        workloadVersion: '1.10'
-      }),
-      get: sinon.stub().withArgs('units').returns({
-        each: func => djangoUnits.forEach(func)
-      })
     }, {
-      getAttrs: sinon.stub().withArgs().returns({
-        charm: 'haproxy-47',
-        name: 'ha',
-        status: {current: 'error'},
-        units: {size: sinon.stub().withArgs().returns(0)},
-        workloadVersion: ''
-      }),
-      get: sinon.stub().withArgs('units').returns({
-        each: func => {}
-      })
+      // Unplaced units are excluded.
+      agentStatus: '',
+      displayName: 'django/2',
+      id: 'django/id2',
+      public_address: '',
+      portRanges: [],
+      workloadStatus: '',
+      workloadStatusMessage: ''
+    }, {
+      // Uncommitted units are excluded.
+      agentStatus: '',
+      displayName: 'django/3',
+      id: 'django/id3',
+      machine: 'new42',
+      public_address: '',
+      portRanges: [],
+      workloadStatus: '',
+      workloadStatusMessage: ''
+    }];
+    const django = {
+      charm: '~who/xenial/django-42',
+      id: 'django',
+      name: 'django',
+      pending: false,
+      status: {current: 'active'},
+      units: djangoUnits,
+      workloadVersion: '1.10'
+    };
+    const haproxyUnits = [];
+    const haproxy = {
+      charm: 'haproxy-47',
+      name: 'ha',
+      pending: false,
+      status: {current: 'error'},
+      units: haproxyUnits,
+      workloadVersion: ''
+    };
+    const mysqlUnits = [];
+    const mysql = {
+      charm: 'mysql-0',
+      name: 'mysql',
+      pending: true,
+      status: {current: ''},
+      units: mysqlUnits,
+      workloadVersion: ''
+    };
+    const applications = [{
+      getAttrs: sinon.stub().withArgs().returns(django),
+      get: key => {
+        if (key === 'units') {
+          return {filter: func => djangoUnits.filter(func)};
+        }
+        return django[key];
+      }
+    }, {
+      getAttrs: sinon.stub().withArgs().returns(haproxy),
+      get: key => {
+        if (key === 'units') {
+          return {filter: func => haproxyUnits.filter(func)};
+        }
+        return haproxy[key];
+      }
+    }, {
+      // Uncommitted applications are excluded.
+      getAttrs: sinon.stub().withArgs().returns(mysql),
+      get: key => {
+        if (key === 'units') {
+          return {filter: func => mysqlUnits.filter(func)};
+        }
+        return mysql[key];
+      }
     }];
     const machines = [{
       agent_state: 'pending',
@@ -139,8 +183,18 @@ describe('Status', function() {
       instance_id: 'machine-2',
       public_address: '1.2.3.7',
       series: 'trusty'
+    }, {
+      // Uncommitted machines are excluded.
+      agent_state: '',
+      agent_state_info: '',
+      displayName: '3',
+      id: 'new1',
+      instance_id: '',
+      public_address: '',
+      series: 'trusty'
     }];
     const relations = [{
+      get: sinon.stub().withArgs('pending').returns(false),
       getAttrs: sinon.stub().withArgs().returns({
         endpoints: [[
           'mysql', {name: 'cluster', role: 'peer'}
@@ -148,6 +202,7 @@ describe('Status', function() {
         id: 'rel1'
       })
     }, {
+      get: sinon.stub().withArgs('pending').returns(false),
       getAttrs: sinon.stub().withArgs().returns({
         endpoints: [[
           'haproxy', {name: 'website', role: 'provider'}
@@ -155,6 +210,13 @@ describe('Status', function() {
           'wordpress', {name: 'proxy', role: 'requirer'}
         ]],
         id: 'rel2'
+      })
+    }, {
+      // Uncommitted relations are excluded.
+      get: sinon.stub().withArgs('pending').returns(true),
+      getAttrs: sinon.stub().withArgs().returns({
+        endpoints: [],
+        id: 'rel3'
       })
     }];
     const remoteApplications = [{
@@ -172,21 +234,17 @@ describe('Status', function() {
     }];
     return {
       machines: {
-        size: sinon.stub().withArgs().returns(machines.length),
-        map: func => machines.map(func)
+        filter: func => machines.filter(func)
       },
       relations: {
-        size: sinon.stub().withArgs().returns(relations.length),
-        map: func => relations.map(func)
+        filter: func => relations.filter(func)
       },
       remoteServices: {
         size: sinon.stub().withArgs().returns(remoteApplications.length),
         map: func => remoteApplications.map(func)
       },
       services: {
-        size: sinon.stub().withArgs().returns(applications.length),
-        map: func => applications.map(func),
-        each: func => applications.forEach(func)
+        filter: func => applications.filter(func)
       }
     };
   };

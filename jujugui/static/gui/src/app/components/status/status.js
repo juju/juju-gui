@@ -4,8 +4,8 @@
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.STATUS_ERROR = 'error';
     this.STATUS_PENDING = 'pending';
     this.STATUS_UNCOMMITTED = 'uncommitted';
@@ -80,7 +80,6 @@ class Status extends React.Component {
       case 'executing':
       case 'allocating':
       case 'maintenance':
-      case 'waiting':
         status = this.STATUS_PENDING;
         break;
     }
@@ -108,26 +107,34 @@ class Status extends React.Component {
   _generateStatus() {
     const elements = [];
     const db = this.props.db;
+    // Model section.
     const model = this.props.model;
     if (!model.environmentName) {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
     elements.push(this._generateModel(model));
+    // SAAS section.
     if (db.remoteServices.size()) {
       elements.push(this._generateRemoteApplications(db.remoteServices));
     }
-    if (db.services.size()) {
+    // Applications and units sections.
+    const applications = db.services.filter(app => !app.get('pending'));
+    if (applications.length) {
       elements.push(
-        this._generateApplications(db.services),
-        this._generateUnits(db.services)
+        this._generateApplications(applications),
+        this._generateUnits(applications)
       );
     }
-    if (db.machines.size()) {
-      elements.push(this._generateMachines(db.machines));
+    // Machines section.
+    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
+    if (machines.length) {
+      elements.push(this._generateMachines(machines));
     }
-    if (db.relations.size()) {
-      elements.push(this._generateRelations(db.relations));
+    // Relations section.
+    const relations = db.relations.filter(rel => !rel.get('pending'));
+    if (relations.length) {
+      elements.push(this._generateRelations(relations));
     }
     return elements;
   }
@@ -288,8 +295,19 @@ class Status extends React.Component {
   }
 
   /**
+    A predicate function that can be used to filter units so that uncommitted
+    and unplaced units are excluded.
+    @param {Object} unit A unit as included in the database.
+  */
+  _realUnitsPredicate(unit) {
+    // Unplaced units have no machine defined. Subordinate units have an empty
+    // string machine.
+    return unit.machine !== undefined && unit.machine.indexOf('new') !== 0;
+  }
+
+  /**
     Generate the applications fragment of the status.
-    @param {Object} applications The applications as included in the GUI db.
+    @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
   _generateApplications(applications) {
@@ -300,6 +318,7 @@ class Status extends React.Component {
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
+      const units = app.units.filter(this._realUnitsPredicate);
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
@@ -328,7 +347,7 @@ class Status extends React.Component {
             </span>)
         }, {
           columnSize: 1,
-          content: app.units.size()
+          content: units.length
         }, {
           columnSize: 2,
           content: (
@@ -382,7 +401,7 @@ class Status extends React.Component {
 
   /**
     Generate the units fragment of the status.
-    @param {Object} applications The applications as included in the GUI db.
+    @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
   _generateUnits(applications) {
@@ -398,8 +417,9 @@ class Status extends React.Component {
       }).join(', ');
     };
     const rows = [];
-    applications.each(application => {
-      application.get('units').each((unit, i) => {
+    applications.forEach(application => {
+      const units = application.get('units').filter(this._realUnitsPredicate);
+      units.forEach((unit, i) => {
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
@@ -435,7 +455,7 @@ class Status extends React.Component {
             content: (
               <span className="status-view__link"
                 onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine}
+                {unit.machine || (<span>&nbsp;</span>)}
               </span>)
           }, {
             columnSize: 2,
@@ -490,7 +510,7 @@ class Status extends React.Component {
 
   /**
     Generate the machines fragment of the status.
-    @param {Object} machines The machines as included in the GUI db.
+    @param {Array} machines The machines as included in the GUI db.
     @returns {Object} The resulting element.
   */
   _generateMachines(machines) {
@@ -664,21 +684,17 @@ Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
-      map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired
     }).isRequired,
     relations: shapeup.shape({
-      map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired
     }).isRequired,
     remoteServices: shapeup.shape({
       map: PropTypes.func.isRequired,
       size: PropTypes.func.isRequired
     }).isRequired,
     services: shapeup.shape({
-      each: PropTypes.func.isRequired,
-      map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
   model: shapeup.shape({
