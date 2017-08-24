@@ -19,8 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 class MachineView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       containerSort: 'name',
       machineSort: 'name',
@@ -64,12 +64,13 @@ class MachineView extends React.Component {
 
     @method _getFirstMachine
     @param {Object} machines The list of machines.
-    @returns {String} The id of the first machine
+    @returns {String} The id of the first machine, or null if no machines are
+      present.
   */
   _getFirstMachineId(machines) {
-    var machineList = machines.filterByParent();
+    const machineList = machines.filterByParent();
     if (machineList.length === 0) {
-      return;
+      return null;
     }
     return machineList[0].id;
   }
@@ -232,9 +233,13 @@ class MachineView extends React.Component {
     Handle selecting a machine.
 
     @method selectMachine
-    @param {String} id The machine id to select.
+    @param {String} id The machine id to select. If the id is null, no machine
+      is selected.
   */
   selectMachine(id) {
+    if (id === null) {
+      return;
+    }
     this.props.changeState({gui: {machines: id}});
   }
 
