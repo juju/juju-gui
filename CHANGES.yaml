@@ -1,3 +1,11 @@
+- 2.9.0:
+
+  - Beta release of the new Status pane! A highly requested feature, the GUI now shows the model status as it would be shown in the CLI via `juju status` with a number of improvements like the ability to jump right to an application, unit, or machine details. As this is the beta release we’re actively working on expanding the functionality and layout and welcome any feedback you have.
+  - The layout of the bundle and charm details pages have been updated to increase the readability of the content.
+  - When creating a new model the model name can now be changed in the header in addition to the Deployment Flow on uncommitted models.
+  - Last release we added the ability to import SSH keys from GitHub. By popular request we’ve now also added the ability to import SSH keys from Launchpad.
+  - (Fix) Do not allow switching of models while committing changes.
+
 - 2.8.0:
 
   - Import SSH keys from GitHub during deployment.
