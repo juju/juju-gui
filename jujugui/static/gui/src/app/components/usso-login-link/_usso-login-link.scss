@@ -25,6 +25,13 @@
     // scss-lint:disable ImportantRule
     color: $warm-grey !important;
     // scss-lint:enable ImportantRule
+
+    &.button--positive {
+      // scss-lint:disable ImportantRule
+      color: $white !important;
+      // scss-lint:enable ImportantRule
+      padding: 12px 24px;
+    }
   }
 
   &__action:hover + &__notification {
@@ -32,5 +39,11 @@
     // scss-lint:disable ImportantRule
     color: $dark-warm-grey !important;
     // scss-lint:enable ImportantRule
+
+    &.button--positive {
+      // scss-lint:disable ImportantRule
+      color: $white !important;
+      // scss-lint:enable ImportantRule
+    }
   }
 }
