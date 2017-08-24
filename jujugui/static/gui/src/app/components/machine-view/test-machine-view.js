@@ -1340,6 +1340,51 @@ describe('MachineView', function() {
     assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new1'}});
   });
 
+  it('does not select any machines on mount if there are not', function() {
+    const machineList = [];
+    const machines = {filterByParent: sinon.stub().returns(machineList)};
+    const units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    const applications = {
+      size: sinon.stub().returns(0)
+    };
+    const changeState = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        acl={acl}
+        changeState={changeState}
+        dbAPI={shapeup.addReshape({
+          addGhostAndEcsUnits: sinon.stub(),
+          applications: applications,
+          machines: machines,
+          modelName: 'My Model',
+          units: units
+        })}
+        generateMachineDetails={generateMachineDetails}
+        machine=""
+        modelAPI={shapeup.addReshape({
+          autoPlaceUnits: sinon.stub(),
+          createMachine: sinon.stub(),
+          destroyMachines: sinon.stub(),
+          placeUnit: sinon.stub(),
+          removeUnits: sinon.stub(),
+          updateMachineConstraints: sinon.stub(),
+          updateMachineSeries: sinon.stub()
+        })}
+        parseConstraints={parseConstraints}
+        parseMachineName={parseMachineName.returns({
+          parentId: null,
+          containerType: null,
+          number: 'new1'
+        })} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(changeState.callCount, 0);
+  });
+
   it('can display a list of containers', function() {
     const machineList = [{
       displayName: 'new0',

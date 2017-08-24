@@ -613,7 +613,7 @@ YUI.add('environment-change-set', function(Y) {
       });
       return this._createNewRecord('addPendingResources', command, parents);
     },
-    
+
     /**
       Creates a new entry in the queue for adding SSH keys to the model.
 
@@ -632,7 +632,7 @@ YUI.add('environment-change-set', function(Y) {
       };
       return this._createNewRecord('addSSHKeys', command, []);
     },
-  
+
     /**
       Creates a new entry in the queue for importing SSH keys to the model.
 
