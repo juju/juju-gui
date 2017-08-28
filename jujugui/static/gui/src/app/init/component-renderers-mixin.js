@@ -1,8 +1,11 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const shapeup = require('shapeup');
+// const shapeup = require('shapeup');
 const yui = window.yui;
+
+const autodeploy = require('./autodeploy');
+const initUtils = require('./utils');
 
 /**
     A mixin for the JujuGUI class.
@@ -556,8 +559,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           utils, modelAPI.genericConstraints, db.units)}
         machine={this.state.current.gui.machines}
         modelAPI={shapeup.addReshape({
-          autoPlaceUnits: this._autoPlaceUnits.bind(this),
-          createMachine: this._createMachine.bind(this),
+          autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
+          createMachine: autodeploy.createMachine.bind(this),
           destroyMachines: modelAPI.destroyMachines.bind(modelAPI),
           placeUnit: modelAPI.placeUnit.bind(modelAPI),
           providerType: modelAPI.get('providerType') || '',
@@ -781,7 +784,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const services = db.services;
     // Auto place the units. This is probably not the best UX, but is required
     // to display the machines in the deployment flow.
-    this._autoPlaceUnits();
+    autodeploy.autoPlaceUnits(db, modelAPI);
     let cloud = modelAPI.get('providerType');
     if (cloud) {
       cloud = {
@@ -796,6 +799,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       controllerAPI, this.bakery);
     const charmstore = this.charmstore;
     const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
+    const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
     ReactDOM.render(
       <window.juju.components.DeploymentFlow
         acl={this.acl}
@@ -818,7 +822,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         credential={modelAPI.get('credential')}
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
-        deploy={utils.deploy.bind(utils, this)}
+        deploy={utils.deploy.bind(utils, this, autoPlaceUnits, initUtils.createSocketURL)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={utils.formatConstraints.bind(utils)}

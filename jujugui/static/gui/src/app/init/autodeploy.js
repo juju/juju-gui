@@ -13,7 +13,7 @@ function autoPlaceUnits(db, modelAPI) {
     // Get the application name from the unit id then grab the series
     // for that application.
     const series = db.services.getById(unit.id.split('/')[0]).get('series');
-    const machine = _createMachine(db, modelAPI, null, null, series, null);
+    const machine = createMachine(db, modelAPI, null, null, series, null);
     modelAPI.placeUnit(unit, machine.id);
   });
 }
@@ -26,7 +26,7 @@ function autoPlaceUnits(db, modelAPI) {
   @param {Object} constraints The machine/container constraints.
   @return {Object} The newly created ghost machine model instance.
 */
-function _createMachine(db, modelAPI, containerType, parentId, series, constraints) {
+function createMachine(db, modelAPI, containerType, parentId, series, constraints) {
   const cons = utils.formatConstraints(constraints);
   const machine = db.machines.addGhost(
     parentId, containerType, {series: series, constraints: cons});
@@ -116,4 +116,4 @@ function _onMachineCreated(db, machine, response) {
   }
 }
 
-module.exports = {autoPlaceUnits};
+module.exports = {autoPlaceUnits, createMachine};
