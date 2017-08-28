@@ -9,6 +9,7 @@ const initUtils = require('./utils');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const ModelActions = require('../components/model-actions/model-actions');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 
 /**
@@ -90,7 +91,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const utils = yui.juju.views.utils;
     const modelAPI = this.modelAPI;
     ReactDOM.render(
-      <window.juju.components.ModelActions
+      <ModelActions
         acl={this.acl}
         appState={this.state}
         changeState={this.state.changeState.bind(this.state)}
