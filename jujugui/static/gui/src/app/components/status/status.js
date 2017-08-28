@@ -8,12 +8,10 @@ class Status extends React.Component {
     super(props);
     this.STATUS_ERROR = 'error';
     this.STATUS_PENDING = 'pending';
-    this.STATUS_UNCOMMITTED = 'uncommitted';
     this.STATUS_OK = 'ok';
     this.STATUS_ORDER = [
       this.STATUS_ERROR,
       this.STATUS_PENDING,
-      this.STATUS_UNCOMMITTED,
       this.STATUS_OK
     ];
     this.state = {
@@ -400,8 +398,7 @@ class Status extends React.Component {
       charm.revision = null;
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--',
-          !app.pending ? app.status.current : 'uncommitted')],
+          'status-view__table-row--', app.status.current)],
         columns:[{
           columnSize: 2,
           content: (
@@ -501,8 +498,7 @@ class Status extends React.Component {
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
-            unit.agentStatus || unit.workloadStatus ?
-              [unit.agentStatus, unit.workloadStatus] : 'uncommitted')],
+            [unit.agentStatus, unit.workloadStatus])],
           columns: [{
             columnSize: 2,
             content: (
@@ -597,9 +593,7 @@ class Status extends React.Component {
     const rows = machines.map((machine, i) => {
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--',
-          machine.commitStatus === 'uncommitted' ?
-            'uncommitted' : machine.agent_state)],
+          'status-view__table-row--', machine.agent_state)],
         columns: [{
           columnSize: 2,
           content: (
@@ -717,8 +711,6 @@ class Status extends React.Component {
         }
       });
       return {
-        classes: [this._getStatusClass(
-          'status-view__table-row--', rel.pending ? 'uncommitted' : null)],
         columns: [{
           columnSize: 3,
           content: name

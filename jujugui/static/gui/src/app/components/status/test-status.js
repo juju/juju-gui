@@ -306,11 +306,6 @@ describe('Status', function() {
                   pending
                 </option>
                 <option className="status-view__filter-option"
-                  key="uncommitted"
-                  value="uncommitted">
-                  uncommitted
-                </option>
-                <option className="status-view__filter-option"
                   key="ok"
                   value="ok">
                   ok
@@ -416,11 +411,6 @@ describe('Status', function() {
                   key="pending"
                   value="pending">
                   pending
-                </option>
-                <option className="status-view__filter-option"
-                  key="uncommitted"
-                  value="uncommitted">
-                  uncommitted
                 </option>
                 <option className="status-view__filter-option"
                   key="ok"
@@ -855,7 +845,6 @@ describe('Status', function() {
           rowClasses={['status-view__table-row']}
           rowColumnClasses={['status-view__table-column']}
           rows={[{
-            classes: [''],
             columns: [{
               columnSize: 3,
               content: 'cluster'
@@ -883,7 +872,6 @@ describe('Status', function() {
             }],
             key: 'rel1'
           }, {
-            classes: [''],
             columns: [{
               columnSize: 3,
               content: 'website'

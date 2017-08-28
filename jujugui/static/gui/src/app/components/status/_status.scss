@@ -61,10 +61,6 @@
       border-radius: 4px;
       transition: border .3s;
 
-      &--uncommitted {
-        border-color: $uncommitted;
-      }
-
       &--pending {
         border-color: $pending;
       }
