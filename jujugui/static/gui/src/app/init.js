@@ -482,6 +482,7 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
+      ['*', this._renderComponents.bind(this)],
       ['root',
         this._rootDispatcher.bind(this),
         this._clearRoot.bind(this)],
