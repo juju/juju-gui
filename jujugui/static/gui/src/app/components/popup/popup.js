@@ -120,6 +120,10 @@ Popup.defaultProps = {
   className: ''
 };
 
+if (module) {
+  module.exports = Popup;
+}
+
 YUI.add('popup', function() {
   juju.components.Popup = Popup;
 }, '', {

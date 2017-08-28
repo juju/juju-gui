@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
+
+const GenericButton = require('../generic-button/generic-button');
+const GenericInput = require('../generic-input/generic-input');
+const InsetSelect = require('../inset-select/inset-select');
+const Spinner = require('../spinner/spinner');
+const Popup = require('../popup/popup');
 
 /**
   Modal component for viewing which users have access to the model, as well
@@ -154,7 +144,7 @@ class Sharing extends React.Component {
     if (this.state.loadingUsers) {
       return (
         <div className="sharing__loading">
-          <juju.components.Spinner />
+          <Spinner />
         </div>
       );
     }
@@ -187,13 +177,13 @@ class Sharing extends React.Component {
         const revokeUserAccess = this._revokeModelAccess.bind(this, user);
         revokeMarkup = (
           <div className="sharing__user-revoke">
-            <juju.components.GenericButton
+            <GenericButton
               action={revokeUserAccess}
               tooltip="Remove user">
               <juju.components.SvgIcon
                 name="close_16"
                 size="16" />
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         );
       }
@@ -253,7 +243,7 @@ class Sharing extends React.Component {
         <div className="sharing__invite--header">Add a user</div>
         <form onSubmit={this._grantModelAccess.bind(this)}>
           <div className="sharing__invite--username">
-            <juju.components.GenericInput
+            <GenericInput
               inlineErrorIcon={true}
               label="Username"
               placeholder="Username"
@@ -262,7 +252,7 @@ class Sharing extends React.Component {
               required={true} />
           </div>
           <div className="sharing__invite--access">
-            <juju.components.InsetSelect
+            <InsetSelect
               label="Access"
               ref="access"
               options={accessOptions} />
@@ -283,14 +273,14 @@ class Sharing extends React.Component {
   */
   generateAddButton() {
     if (this.state.sending) {
-      return (<juju.components.GenericButton
+      return (<GenericButton
         submit={true}
         tooltip="Add user"
         ref="grantButton"
         type="positive"
         disabled={true}>
         Add
-      </juju.components.GenericButton>);
+      </GenericButton>);
     } else if (this.state.sent) {
       // We want the button to transition back to it's resting state after a
       // set amount of time, so make a closure then trigger it after 1.5s.
@@ -300,7 +290,7 @@ class Sharing extends React.Component {
         };
       })();
       setTimeout(sent, 1500);
-      return (<juju.components.GenericButton
+      return (<GenericButton
         submit={true}
         tooltip="Add user"
         ref="grantButton"
@@ -309,16 +299,16 @@ class Sharing extends React.Component {
         <juju.components.SvgIcon
           name="tick_16"
           size="16" />
-      </juju.components.GenericButton>);
+      </GenericButton>);
     } else {
-      return (<juju.components.GenericButton
+      return (<GenericButton
         submit={true}
         tooltip="Add user"
         ref="grantButton"
         type="positive"
         disabled={!this.state.canAdd}>
         Add
-      </juju.components.GenericButton>);
+      </GenericButton>);
     }
   }
 
@@ -328,7 +318,7 @@ class Sharing extends React.Component {
 
   render() {
     return (
-      <juju.components.Popup
+      <Popup
         className="sharing__popup"
         close={this.props.closeHandler}
         title="Share">
@@ -340,13 +330,13 @@ class Sharing extends React.Component {
         <div className="sharing__users">
           {this._generateUsersWithAccess()}
         </div>
-        <juju.components.GenericButton
+        <GenericButton
           action={this.props.closeHandler}
           type="inline-neutral"
           extraClasses="right">
           Done
-        </juju.components.GenericButton>
-      </juju.components.Popup>
+        </GenericButton>
+      </Popup>
     );
   }
 };
@@ -376,14 +366,4 @@ Sharing.defaultProps = {
   }
 };
 
-YUI.add('sharing', function() {
-  juju.components.Sharing = Sharing;
-}, '0.1.0', {
-  requires: [
-    'generic-button',
-    'generic-input',
-    'inset-select',
-    'loading-spinner',
-    'popup'
-  ]
-});
+module.exports = Sharing;

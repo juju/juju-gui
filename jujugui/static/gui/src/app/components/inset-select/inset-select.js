@@ -136,6 +136,10 @@ InsetSelect.propTypes = {
   value: PropTypes.string
 };
 
+if (module) {
+  module.exports = InsetSelect;
+}
+
 YUI.add('inset-select', function() {
   juju.components.InsetSelect = InsetSelect;
 }, '0.1.0', { requires: [

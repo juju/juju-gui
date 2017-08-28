@@ -10,6 +10,7 @@ const initUtils = require('./utils');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const ModelActions = require('../components/model-actions/model-actions');
+const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 
 /**
@@ -118,22 +119,22 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       ReactDOM.unmountComponentAtNode(sharing);
       return;
     }
-    const env = this.env;
+    const modelAPI = this.modelAPI;
     const grantRevoke = (action, username, access, callback) => {
-      if (this.get('gisf') && username.indexOf('@') === -1) {
+      if (this.applicationConfig.gisf && username.indexOf('@') === -1) {
         username += '@external';
       }
-      action(env.get('modelUUID'), [username], access, callback);
+      action(modelAPI.get('modelUUID'), [username], access, callback);
     };
     const controllerAPI = this.controllerAPI;
     const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI);
     const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
     ReactDOM.render(
-      <window.juju.components.Sharing
+      <Sharing
         addNotification={this._bound.addNotification}
         canShareModel={this.acl.canShareModel()}
         closeHandler={this._sharingVisibility.bind(this, false)}
-        getModelUserInfo={env.modelUserInfo.bind(env)}
+        getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
         humanizeTimestamp={yui.juju.views.utils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)}

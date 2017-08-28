@@ -288,6 +288,10 @@ GenericInput.defaultProps = {
   type: 'text'
 };
 
+if (module) {
+  module.exports = GenericInput;
+}
+
 YUI.add('generic-input', function() {
   juju.components.GenericInput = GenericInput;
 }, '0.1.0', { requires: [
