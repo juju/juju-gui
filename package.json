@@ -14,6 +14,7 @@
     "cloud-vanilla-theme": "0.1.2",
     "cryptojs": ">= 2.5.3",
     "graceful-fs": "4.1.11",
+    "js-yaml": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.9.1.tgz",
     "marked": "0.3.6",
     "mixwith": "0.1.1",
     "prismjs": "1.6.0",
