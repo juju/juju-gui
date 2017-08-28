@@ -100,6 +100,10 @@ Panel.defaultProps = {
   focus: true
 };
 
+if (module) {
+  module.exports = Panel;
+}
+
 YUI.add('panel-component', function() {
   juju.components.Panel = Panel;
 }, '0.1.0', { requires: []});
