@@ -59,7 +59,8 @@ describe('Status', function() {
     );
     return {
       instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput()
+      output: renderer.getRenderOutput(),
+      renderer: renderer
     };
   };
 
@@ -279,13 +280,13 @@ describe('Status', function() {
       <div className="status-view__content">
         <div key="model">
           <div className="twelve-col no-margin-bottom">
-            <div className="nine-col">
+            <div className="eight-col">
               <h2>
                 my-model
               </h2>
             </div>
-            <div className="status-view__filter-label one-col">
-              Filter:
+            <div className="status-view__filter-label two-col">
+              Filter status:
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
@@ -386,13 +387,13 @@ describe('Status', function() {
       <div className="status-view__content">
         <div key="model">
           <div className="twelve-col no-margin-bottom">
-            <div className="nine-col">
+            <div className="eight-col">
               <h2>
                 my-model
               </h2>
             </div>
-            <div className="status-view__filter-label one-col">
-              Filter:
+            <div className="status-view__filter-label two-col">
+              Filter status:
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
@@ -476,6 +477,7 @@ describe('Status', function() {
             }]} />
         </div>
         <juju.components.BasicTable
+          filter={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -508,6 +510,7 @@ describe('Status', function() {
               columnSize: 3,
               content: 'admin/saas.haproxy'
             }],
+            filterValue: 'ok',
             key: 'local:admin/saas.haproxy'
           }, {
             columns: [ {
@@ -523,11 +526,13 @@ describe('Status', function() {
               columnSize: 3,
               content: 'admin/my.mongo'
             }],
+            filterValue: 'ok',
             key: 'local:admin/my.mongo'
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          filter={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -589,6 +594,7 @@ describe('Status', function() {
               columnSize: 1,
               content: 42
             }],
+            filterValue: 'ok',
             key: 'django'
           }, {
             classes: ['status-view__table-row--error'],
@@ -624,11 +630,13 @@ describe('Status', function() {
               columnSize: 1,
               content: 47
             }],
+            filterValue: 'error',
             key: 'ha'
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          filter={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -696,6 +704,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'these are the voyages'
             }],
+            filterValue: 'ok',
             key: 'django/id0'
           }, {
             classes: ['status-view__table-row--error'],
@@ -735,11 +744,13 @@ describe('Status', function() {
               columnSize: 2,
               content: 'exterminate!'
             }],
+            filterValue: 'error',
             key: 'django/id1'
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          filter={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -792,6 +803,7 @@ describe('Status', function() {
               columnSize: 2,
               content: ''
             }],
+            filterValue: 'pending',
             key: 'm1'
           }, {
             classes: ['status-view__table-row--ok'],
@@ -821,11 +833,13 @@ describe('Status', function() {
               columnSize: 2,
               content: 'yes, I am started'
             }],
+            filterValue: 'ok',
             key: 'm2'
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
+          filter={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -1005,5 +1019,23 @@ describe('Status', function() {
         }
       }
     });
+  });
+
+  it('can filter by status', () => {
+    const comp = render(makeDB());
+    const modelSection = comp.output.props.children.props.children[0];
+    const titleRow = modelSection.props.children[0];
+    const selectBox = titleRow.props.children[2].props.children;
+    selectBox.props.onChange({currentTarget: {value: 'error'}});
+    assert.equal(comp.instance.state.filter, 'error');
+  });
+
+  it('can filter by nothing', () => {
+    const comp = render(makeDB());
+    const modelSection = comp.output.props.children.props.children[0];
+    const titleRow = modelSection.props.children[0];
+    const selectBox = titleRow.props.children[2].props.children;
+    selectBox.props.onChange({currentTarget: {value: 'none'}});
+    assert.equal(comp.instance.state.filter, null);
   });
 });
