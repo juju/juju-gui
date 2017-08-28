@@ -55,7 +55,7 @@ describe('FileField', function() {
         </label>
         {null}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(expected).toEqualJSX(output);
   });
 
   it('can return the field value', done => {
@@ -121,7 +121,43 @@ describe('FileField', function() {
           </li>]}
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    expect(expected).toEqualJSX(output);
+  });
+
+  it('can validate the form when the file changes', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.FileField
+        accept=".json"
+        disabled={false}
+        label="Dingo"
+        required={true} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {files: []}};
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.onChange();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="file-field error">
+        <input accept=".json"
+          className="file-field__field"
+          disabled={false}
+          id="Dingo"
+          required={true}
+          onChange={instance.validate}
+          ref="field"
+          type="file" />
+        <label className="file-field__label"
+          htmlFor="Dingo">
+          Dingo
+        </label>
+        <ul className="file-field__errors">
+          {[<li className="file-field__error"
+            key="required">
+            This field is required.
+          </li>]}
+        </ul>
+      </div>);
+    expect(expected).toEqualJSX(output);
   });
 
   it('generate a label when file is stored', () => {
@@ -150,7 +186,7 @@ describe('FileField', function() {
         </label>
         {null}
       </div>);
-    assert.deepEqual(output, expected);
+    expect(expected).toEqualJSX(output);
   });
 
   it('can set the focus on the field', () => {

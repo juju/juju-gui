@@ -153,7 +153,7 @@ class FileField extends React.Component {
           disabled={this.props.disabled}
           id={id}
           required={this.props.required}
-          onChange={this.validate}
+          onChange={this.validate.bind(this)}
           ref="field"
           type="file" />
         {labelElement}
