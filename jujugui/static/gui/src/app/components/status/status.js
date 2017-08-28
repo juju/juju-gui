@@ -16,6 +16,9 @@ class Status extends React.Component {
       this.STATUS_UNCOMMITTED,
       this.STATUS_OK
     ];
+    this.state = {
+      filter: null
+    };
   }
 
   /**
@@ -140,6 +143,38 @@ class Status extends React.Component {
   }
 
   /**
+    Handle filter changes and store the new status in state.
+    @param evt {Object} The change event
+  */
+  _handleFilterChange(evt) {
+    let filter = evt.currentTarget.value;
+    if (filter === 'none') {
+      filter = null;
+    }
+    this.changeState({filter: filter});
+  }
+
+  /**
+    Generate the filter select box.
+    @returns {Object} The select box element to render.
+  */
+  _generateFilters() {
+    const options = ['none'].concat(this.STATUS_ORDER).map(status => {
+      return (
+        <option className="status-view__filter-option"
+          key={status}
+          value={status}>
+          {status}
+        </option>);
+    });
+    return (
+      <select className="status-view__filter-select"
+        onChange={this._handleFilterChange.bind(this)}>
+        {options}
+      </select>);
+  }
+
+  /**
     Generate the model fragment of the status.
     @param {Object} model The model attributes.
     @returns {Object} The resulting element.
@@ -148,9 +183,19 @@ class Status extends React.Component {
     const db = this.props.db;
     return (
       <div key="model">
-        <h2>
-          {model.environmentName}
-        </h2>
+        <div className="twelve-col no-margin-bottom">
+          <div className="nine-col">
+            <h2>
+              {model.environmentName}
+            </h2>
+          </div>
+          <div className="status-view__filter-label one-col">
+            Filter:
+          </div>
+          <div className="status-view__filter two-col last-col">
+            {this._generateFilters()}
+          </div>
+        </div>
         <juju.components.BasicTable
           headers={[{
             content: 'Cloud/Region',

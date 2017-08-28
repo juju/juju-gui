@@ -20,6 +20,17 @@
     padding-right: 20px;
   }
 
+  &__filter {
+    &-label {
+      padding-top: 9px;
+      text-align: right;
+    }
+
+    &-select {
+      text-transform: capitalize;
+    }
+  }
+
   &__link {
     @extend .link;
     cursor: pointer;

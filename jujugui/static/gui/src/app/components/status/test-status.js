@@ -4,7 +4,7 @@
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-fdescribe('Status', function() {
+describe('Status', function() {
   let changeState;
   let defaultModel;
   let emptyDB;
@@ -278,9 +278,46 @@ fdescribe('Status', function() {
     const expectedOutput = wrap(
       <div className="status-view__content">
         <div key="model">
-          <h2>
-            my-model
-          </h2>
+          <div className="twelve-col no-margin-bottom">
+            <div className="nine-col">
+              <h2>
+                my-model
+              </h2>
+            </div>
+            <div className="status-view__filter-label one-col">
+              Filter:
+            </div>
+            <div className="status-view__filter two-col last-col">
+              <select className="status-view__filter-select"
+                onChange={sinon.stub()}>
+                <option className="status-view__filter-option"
+                  key="none"
+                  value="none">
+                  none
+                </option>
+                <option className="status-view__filter-option"
+                  key="error"
+                  value="error">
+                  error
+                </option>
+                <option className="status-view__filter-option"
+                  key="pending"
+                  value="pending">
+                  pending
+                </option>
+                <option className="status-view__filter-option"
+                  key="uncommitted"
+                  value="uncommitted">
+                  uncommitted
+                </option>
+                <option className="status-view__filter-option"
+                  key="ok"
+                  value="ok">
+                  ok
+                </option>
+              </select>
+            </div>
+          </div>
           <juju.components.BasicTable
             headers={[{
               content: 'Cloud/Region',
@@ -353,9 +390,46 @@ fdescribe('Status', function() {
     const expectedOutput = wrap(
       <div className="status-view__content">
         <div key="model">
-          <h2>
-            my-model
-          </h2>
+          <div className="twelve-col no-margin-bottom">
+            <div className="nine-col">
+              <h2>
+                my-model
+              </h2>
+            </div>
+            <div className="status-view__filter-label one-col">
+              Filter:
+            </div>
+            <div className="status-view__filter two-col last-col">
+              <select className="status-view__filter-select"
+                onChange={sinon.stub()}>
+                <option className="status-view__filter-option"
+                  key="none"
+                  value="none">
+                  none
+                </option>
+                <option className="status-view__filter-option"
+                  key="error"
+                  value="error">
+                  error
+                </option>
+                <option className="status-view__filter-option"
+                  key="pending"
+                  value="pending">
+                  pending
+                </option>
+                <option className="status-view__filter-option"
+                  key="uncommitted"
+                  value="uncommitted">
+                  uncommitted
+                </option>
+                <option className="status-view__filter-option"
+                  key="ok"
+                  value="ok">
+                  ok
+                </option>
+              </select>
+            </div>
+          </div>
           <juju.components.BasicTable
             headers={[{
               content: 'Cloud/Region',
