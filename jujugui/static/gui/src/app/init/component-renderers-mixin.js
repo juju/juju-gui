@@ -7,6 +7,9 @@ const yui = window.yui;
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 
+const AddedServicesList = require('../components/added-services-list/added-services-list');
+const SvgIcon = require('../components/svg-icon/svg-icon');
+
 /**
     A mixin for the JujuGUI class.
     Stores all of the component renderer and cleanup methods.
@@ -45,10 +48,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ServiceModule.deselectNodes();
     const db = this.db;
     ReactDOM.render(
-      <window.juju.components.Panel
+      <Panel
         instanceName="inspector-panel"
         visible={db.services.size() > 0}>
-        <window.juju.components.AddedServicesList
+        <AddedServicesList
           services={db.services}
           hoveredId={hoveredId}
           updateUnitFlags={db.updateUnitFlags.bind(db)}
@@ -58,7 +61,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
           changeState={this.state.changeState.bind(this.state)} />
-      </window.juju.components.Panel>,
+      </Panel>,
       document.getElementById('inspector-container'));
   }
   /**
@@ -732,11 +735,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return;
     }
     ReactDOM.render(
-      <window.juju.components.Panel
+      <Panel
         instanceName="inspector-panel"
         visible={true}>
         {inspector}
-      </window.juju.components.Panel>,
+      </Panel>,
       document.getElementById('inspector-container'));
     next();
   }
@@ -1114,7 +1117,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
     ReactDOM.render(
       <div className={classes}>
-        <window.juju.components.SvgIcon
+        <SvgIcon
           height={providerDetails.svgHeight * scale}
           name={providerDetails.id || ''}
           width={providerDetails.svgWidth * scale} />
