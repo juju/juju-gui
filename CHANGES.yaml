@@ -1,3 +1,7 @@
+- 2.9.1:
+
+  - (Fix) Importing GCE credentials via JSON file no longer errors on upload.
+
 - 2.9.0:
 
   - Beta release of the new Status pane! A highly requested feature, the GUI now shows the model status as it would be shown in the CLI via `juju status` with a number of improvements like the ability to jump right to an application, unit, or machine details. As this is the beta release we’re actively working on expanding the functionality and layout and welcome any feedback you have.
