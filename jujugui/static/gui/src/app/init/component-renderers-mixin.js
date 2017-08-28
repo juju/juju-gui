@@ -8,6 +8,7 @@ const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
+const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 
 /**
@@ -72,7 +73,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderEnvSizeDisplay(serviceCount=0, machineCount=0) {
     ReactDOM.render(
-      <window.juju.components.EnvSizeDisplay
+      <EnvSizeDisplay
         appState={this.state}
         machineCount={machineCount}
         pluralize={yui.juju.views.utils.pluralize.bind(this)}
