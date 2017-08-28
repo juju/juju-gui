@@ -191,4 +191,19 @@ describe('BasicTable', function() {
     assert.equal(rowItems[1].key, 'row-three-key');
     assert.equal(rowItems[2].key, 'row-two-key');
   });
+
+  it('can filter the table', function() {
+    rows[0].filterValue = 1;
+    rows[1].filterValue = 20;
+    rows[2].filterValue = 5;
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BasicTable
+        headers={headers}
+        filter={row => row.filterValue > 10}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const rowItems = output.props.children[1];
+    assert.equal(rowItems.length, 1);
+    assert.equal(rowItems[0].key, 'row-two-key');
+  });
 });

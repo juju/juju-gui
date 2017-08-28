@@ -76,12 +76,13 @@ class BasicTable extends React.Component {
   */
   _generateContent() {
     let rows = this.props.rows;
+    if (this.props.filter) {
+      rows = rows.filter(this.props.filter);
+    }
     if (this.props.sort) {
       rows.sort(this.props.sort);
     }
-    return rows.map(row => {
-      return this._generateRow(false, row);
-    });
+    return rows.map(row => this._generateRow(false, row));
   }
 
   render() {
@@ -99,6 +100,9 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
+  // A method to filter the rows by. The row object is provided to the filter
+  // method.
+  filter: PropTypes.func,
   // The extra classes to apply to all header rows.
   headerClasses: PropTypes.array,
   // The extra classes to apply to all header columns.
@@ -124,6 +128,8 @@ BasicTable.propTypes = {
       // The extra classes to apply to the column.
       classes: PropTypes.arrayOf(PropTypes.string)
     }).isRequired).isRequired,
+    // A value provided to the filter method.
+    filterValue: PropTypes.any,
     // The row key, used for React indexing and sorting.
     key: PropTypes.string.isRequired
   }).isRequired).isRequired,
