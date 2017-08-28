@@ -145,7 +145,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderISVProfile() {
     ReactDOM.render(
-      <window.juju.components.ISVProfile
+      <ISVProfile
         d3={yui.d3} />,
       document.getElementById('top-page-container'));
     // The model name should not be visible when viewing the profile.
