@@ -4,7 +4,7 @@
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('Status', function() {
+fdescribe('Status', function() {
   let changeState;
   let defaultModel;
   let emptyDB;
@@ -27,10 +27,12 @@ describe('Status', function() {
     };
     emptyDB = {
       machines: {
-        filter: sinon.stub().returns([])
+        filter: sinon.stub().returns([]),
+        size: sinon.stub().withArgs().returns(0)
       },
       relations: {
-        filter: sinon.stub().returns([])
+        filter: sinon.stub().returns([]),
+        size: sinon.stub().withArgs().returns(0)
       },
       remoteServices: {
         map: sinon.stub(),
@@ -242,10 +244,12 @@ describe('Status', function() {
     getById.withArgs('mysql').returns(applications[2]);
     return {
       machines: {
-        filter: func => machines.filter(func)
+        filter: func => machines.filter(func),
+        size: sinon.stub().withArgs().returns(machines.length)
       },
       relations: {
-        filter: func => relations.filter(func)
+        filter: func => relations.filter(func),
+        size: sinon.stub().withArgs().returns(relations.length)
       },
       remoteServices: {
         size: sinon.stub().withArgs().returns(remoteApplications.length),
@@ -273,37 +277,65 @@ describe('Status', function() {
     const comp = render(emptyDB);
     const expectedOutput = wrap(
       <div className="status-view__content">
-        <juju.components.BasicTable
-          headers={[{
-            content: 'Model',
-            columnSize: 3
-          }, {
-            content: 'Cloud/Region',
-            columnSize: 3
-          }, {
-            content: 'Version',
-            columnSize: 3
-          }, {
-            content: 'SLA',
-            columnSize: 3
-          }]}
-          key="model"
-          rows={[{
-            columns: [{
-              columnSize: 3,
-              content: 'my-model'
+        <div key="model">
+          <h2>
+            my-model
+          </h2>
+          <juju.components.BasicTable
+            headers={[{
+              content: 'Cloud/Region',
+              columnSize: 2
             }, {
-              columnSize: 3,
-              content: 'aws/neutral zone'
+              content: 'Version',
+              columnSize: 2
             }, {
-              columnSize: 3,
-              content: '2.42.47'
+              content: 'SLA',
+              columnSize: 1
             }, {
-              columnSize: 3,
-              content: 'advanced'
-            }],
-            key: 'model'
-          }]} />
+              content: 'Applications',
+              columnSize: 2
+            }, {
+              content: 'Remote applications',
+              columnSize: 2
+            }, {
+              content: 'Units',
+              columnSize: 1
+            }, {
+              content: 'Machines',
+              columnSize: 1
+            }, {
+              content: 'Relations',
+              columnSize: 1
+            }]}
+            rows={[{
+              columns: [{
+                columnSize: 2,
+                content: 'aws/neutral zone'
+              }, {
+                columnSize: 2,
+                content: '2.42.47'
+              }, {
+                columnSize: 1,
+                content: 'advanced'
+              }, {
+                columnSize: 2,
+                content: '0'
+              }, {
+                columnSize: 2,
+                content: '0'
+              }, {
+                columnSize: 1,
+                content: '0'
+              }, {
+                columnSize: 1,
+                content: '0'
+              }, {
+                columnSize: 1,
+                content: '0'
+              }],
+              key: 'model'
+            }]} />
+        </div>
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
@@ -320,37 +352,65 @@ describe('Status', function() {
     const comp = render(makeDB());
     const expectedOutput = wrap(
       <div className="status-view__content">
-        <juju.components.BasicTable
-          headers={[{
-            content: 'Model',
-            columnSize: 3
-          }, {
-            content: 'Cloud/Region',
-            columnSize: 3
-          }, {
-            content: 'Version',
-            columnSize: 3
-          }, {
-            content: 'SLA',
-            columnSize: 3
-          }]}
-          key="model"
-          rows={[{
-            columns: [{
-              columnSize: 3,
-              content: 'my-model'
+        <div key="model">
+          <h2>
+            my-model
+          </h2>
+          <juju.components.BasicTable
+            headers={[{
+              content: 'Cloud/Region',
+              columnSize: 2
             }, {
-              columnSize: 3,
-              content: 'aws/neutral zone'
+              content: 'Version',
+              columnSize: 2
             }, {
-              columnSize: 3,
-              content: '2.42.47'
+              content: 'SLA',
+              columnSize: 1
             }, {
-              columnSize: 3,
-              content: 'advanced'
-            }],
-            key: 'model'
-          }]} />
+              content: 'Applications',
+              columnSize: 2
+            }, {
+              content: 'Remote applications',
+              columnSize: 2
+            }, {
+              content: 'Units',
+              columnSize: 1
+            }, {
+              content: 'Machines',
+              columnSize: 1
+            }, {
+              content: 'Relations',
+              columnSize: 1
+            }]}
+            rows={[{
+              columns: [{
+                columnSize: 2,
+                content: 'aws/neutral zone'
+              }, {
+                columnSize: 2,
+                content: '2.42.47'
+              }, {
+                columnSize: 1,
+                content: 'advanced'
+              }, {
+                columnSize: 2,
+                content: '3'
+              }, {
+                columnSize: 2,
+                content: '2'
+              }, {
+                columnSize: 1,
+                content: '0'
+              }, {
+                columnSize: 1,
+                content: '3'
+              }, {
+                columnSize: 1,
+                content: '3'
+              }],
+              key: 'model'
+            }]} />
+        </div>
         <juju.components.BasicTable
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}

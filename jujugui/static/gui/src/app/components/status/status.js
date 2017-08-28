@@ -145,38 +145,68 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel(model) {
+    const db = this.props.db;
     return (
-      <juju.components.BasicTable
-        headers={[{
-          content: 'Model',
-          columnSize: 3
-        }, {
-          content: 'Cloud/Region',
-          columnSize: 3
-        }, {
-          content: 'Version',
-          columnSize: 3
-        }, {
-          content: 'SLA',
-          columnSize: 3
-        }]}
-        key="model"
-        rows={[{
-          columns: [{
-            columnSize: 3,
-            content: model.environmentName
+      <div key="model">
+        <h2>
+          {model.environmentName}
+        </h2>
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Cloud/Region',
+            columnSize: 2
           }, {
-            columnSize: 3,
-            content: `${model.cloud}/${model.region}`
+            content: 'Version',
+            columnSize: 2
           }, {
-            columnSize: 3,
-            content: model.version
+            content: 'SLA',
+            columnSize: 1
           }, {
-            columnSize: 3,
-            content: model.sla
-          }],
-          key: 'model'
-        }]} />);
+            content: 'Applications',
+            columnSize: 2
+          }, {
+            content: 'Remote applications',
+            columnSize: 2
+          }, {
+            content: 'Units',
+            columnSize: 1
+          }, {
+            content: 'Machines',
+            columnSize: 1
+          }, {
+            content: 'Relations',
+            columnSize: 1
+          }]}
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: `${model.cloud}/${model.region}`
+            }, {
+              columnSize: 2,
+              content: model.version
+            }, {
+              columnSize: 1,
+              content: model.sla
+            }, {
+              columnSize: 2,
+              content: (db.services ? db.services.size() : 0).toString()
+            }, {
+              columnSize: 2,
+              content: (
+                db.remoteServices ? db.remoteServices.size() : 0).toString()
+            }, {
+              columnSize: 1,
+              content: (db.units ? db.units.size() : 0).toString()
+            }, {
+              columnSize: 1,
+              content: (db.machines ? db.machines.size() : 0).toString()
+            }, {
+              columnSize: 1,
+              content: (db.relations ? db.relations.size() : 0).toString()
+            }],
+            key: 'model'
+          }]} />
+      </div>);
   }
 
   /**
@@ -702,10 +732,12 @@ Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
     }).isRequired,
     relations: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      size: PropTypes.func.isRequired
     }).isRequired,
     remoteServices: shapeup.shape({
       map: PropTypes.func.isRequired,
