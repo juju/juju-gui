@@ -32,6 +32,23 @@ class Status extends React.Component {
   }
 
   /**
+    Get the highest status from a list of statuses
+    @param statuses {Ȧrray} A list of statuses.
+    @returns {String} The status.
+  */
+  _getHighestStatus(statuses) {
+    let status;
+    // Loop through the order of priority until there is a matching status.
+    this.STATUS_ORDER.some(val => {
+      if (statuses.indexOf(val) > -1) {
+        status = val;
+        return true;
+      }
+    });
+    return status;
+  }
+
+  /**
     Return an element class name suitable for the given value.
     @param {String} prefix The class prefix.
     @param {String} value The provided value.
@@ -47,15 +64,7 @@ class Status extends React.Component {
       value = [value];
     }
     const normalised = value.map(val => this._normaliseStatus(val));
-    let status;
-    // Loop through the order of priority until there is a matching status.
-    this.STATUS_ORDER.some(val => {
-      if (normalised.indexOf(val) > -1) {
-        status = val;
-        return true;
-      }
-    });
-    return prefix + status;
+    return prefix + this._getHighestStatus(normalised);
   }
 
   /**
@@ -64,11 +73,12 @@ class Status extends React.Component {
     @returns {String} The normalised status ('ok', 'error' or 'pending').
   */
   _normaliseStatus(value) {
-    let status = value;
-    switch (value) {
+    let status = this.STATUS_OK;
+    switch(value) {
       case 'active':
       case 'idle':
       case 'started':
+      case 'waiting':
         status = this.STATUS_OK;
         break;
       case 'blocked':
@@ -99,6 +109,18 @@ class Status extends React.Component {
     if (a.key > b.key)
       return 1;
     return 0;
+  }
+
+  /**
+    Filter a row by the status.
+    @param row {Object} The row values.
+    @returns {Boolean} Whether the row matches the status.
+  */
+  _filterByStatus(row) {
+    if (!this.state.filter) {
+      return true;
+    }
+    return row.filterValue === this.state.filter;
   }
 
   /**
@@ -149,7 +171,7 @@ class Status extends React.Component {
     if (filter === 'none') {
       filter = null;
     }
-    this.changeState({filter: filter});
+    this.setState({filter: filter});
   }
 
   /**
@@ -182,13 +204,13 @@ class Status extends React.Component {
     return (
       <div key="model">
         <div className="twelve-col no-margin-bottom">
-          <div className="nine-col">
+          <div className="eight-col">
             <h2>
               {model.environmentName}
             </h2>
           </div>
-          <div className="status-view__filter-label one-col">
-            Filter:
+          <div className="status-view__filter-label two-col">
+            Filter status:
           </div>
           <div className="status-view__filter two-col last-col">
             {this._generateFilters()}
@@ -339,11 +361,13 @@ class Status extends React.Component {
           columnSize: 3,
           content: urlParts[1]
         }],
+        filterValue: this._normaliseStatus(app.status.current),
         key: app.url
       };
     });
     return (
       <juju.components.BasicTable
+        filter={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -437,11 +461,13 @@ class Status extends React.Component {
           columnSize: 1,
           content: revision
         }],
+        filterValue: this._normaliseStatus(app.status.current),
         key: app.name
       };
     });
     return (
       <juju.components.BasicTable
+        filter={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -543,6 +569,8 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
+          filterValue: this._normaliseStatus(
+            this._getHighestStatus([unit.agentStatus, unit.workloadStatus])),
           key: unit.id
         });
       });
@@ -552,6 +580,7 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
+        filter={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -623,11 +652,13 @@ class Status extends React.Component {
           columnSize: 2,
           content: machine.agent_state_info
         }],
+        filterValue: this._normaliseStatus(machine.agent_state),
         key: machine.id
       };
     });
     return (
       <juju.components.BasicTable
+        filter={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -729,6 +760,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        filter={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
