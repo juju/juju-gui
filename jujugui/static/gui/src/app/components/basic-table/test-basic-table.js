@@ -193,13 +193,13 @@ describe('BasicTable', function() {
   });
 
   it('can filter the table', function() {
-    rows[0].filterValue = 1;
-    rows[1].filterValue = 20;
-    rows[2].filterValue = 5;
+    rows[0].extraData = 1;
+    rows[1].extraData = 20;
+    rows[2].extraData = 5;
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BasicTable
         headers={headers}
-        filterPredicate={row => row.filterValue > 10}
+        filterPredicate={row => row.extraData > 10}
         rows={rows} />, true);
     const output = renderer.getRenderOutput();
     const rowItems = output.props.children[1];

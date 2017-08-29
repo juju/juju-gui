@@ -134,8 +134,8 @@ BasicTable.propTypes = {
       // The extra classes to apply to the column.
       classes: PropTypes.arrayOf(PropTypes.string)
     }).isRequired).isRequired,
-    // A value provided to the filter method.
-    filterValue: PropTypes.any,
+    // Extra data that can be used when ordering, sorting etc.
+    extraData: PropTypes.any,
     // The row key, used for React indexing and sorting.
     key: PropTypes.string.isRequired
   }).isRequired).isRequired,

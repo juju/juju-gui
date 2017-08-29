@@ -27,12 +27,10 @@ describe('Status', function() {
     };
     emptyDB = {
       machines: {
-        filter: sinon.stub().returns([]),
-        size: sinon.stub().withArgs().returns(0)
+        filter: sinon.stub().returns([])
       },
       relations: {
-        filter: sinon.stub().returns([]),
-        size: sinon.stub().withArgs().returns(0)
+        filter: sinon.stub().returns([])
       },
       remoteServices: {
         map: sinon.stub(),
@@ -510,7 +508,7 @@ describe('Status', function() {
               columnSize: 3,
               content: 'admin/saas.haproxy'
             }],
-            filterValue: 'ok',
+            extraData: 'ok',
             key: 'local:admin/saas.haproxy'
           }, {
             columns: [ {
@@ -526,7 +524,7 @@ describe('Status', function() {
               columnSize: 3,
               content: 'admin/my.mongo'
             }],
-            filterValue: 'ok',
+            extraData: 'ok',
             key: 'local:admin/my.mongo'
           }]}
           sort={sinon.stub()}
@@ -594,7 +592,7 @@ describe('Status', function() {
               columnSize: 1,
               content: 42
             }],
-            filterValue: 'ok',
+            extraData: 'ok',
             key: 'django'
           }, {
             classes: ['status-view__table-row--error'],
@@ -630,7 +628,7 @@ describe('Status', function() {
               columnSize: 1,
               content: 47
             }],
-            filterValue: 'error',
+            extraData: 'error',
             key: 'ha'
           }]}
           sort={sinon.stub()}
@@ -704,7 +702,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'these are the voyages'
             }],
-            filterValue: 'ok',
+            extraData: 'ok',
             key: 'django/id0'
           }, {
             classes: ['status-view__table-row--error'],
@@ -744,7 +742,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'exterminate!'
             }],
-            filterValue: 'error',
+            extraData: 'error',
             key: 'django/id1'
           }]}
           sort={sinon.stub()}
@@ -803,7 +801,7 @@ describe('Status', function() {
               columnSize: 2,
               content: ''
             }],
-            filterValue: 'pending',
+            extraData: 'pending',
             key: 'm1'
           }, {
             classes: ['status-view__table-row--ok'],
@@ -833,7 +831,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'yes, I am started'
             }],
-            filterValue: 'ok',
+            extraData: 'ok',
             key: 'm2'
           }]}
           sort={sinon.stub()}

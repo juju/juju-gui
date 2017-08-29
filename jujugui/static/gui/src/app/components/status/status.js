@@ -120,7 +120,7 @@ class Status extends React.Component {
     if (!this.state.statusFilter) {
       return true;
     }
-    return row.filterValue === this.state.statusFilter;
+    return row.extraData === this.state.statusFilter;
   }
 
   /**
@@ -367,7 +367,7 @@ class Status extends React.Component {
           columnSize: 3,
           content: urlParts[1]
         }],
-        filterValue: this._normaliseStatus(app.status.current),
+        extraData: this._normaliseStatus(app.status.current),
         key: app.url
       };
     });
@@ -467,7 +467,7 @@ class Status extends React.Component {
           columnSize: 1,
           content: revision
         }],
-        filterValue: this._normaliseStatus(app.status.current),
+        extraData: this._normaliseStatus(app.status.current),
         key: app.name
       };
     });
@@ -575,7 +575,7 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
-          filterValue: this._normaliseStatus(
+          extraData: this._normaliseStatus(
             this._getHighestStatus([unit.agentStatus, unit.workloadStatus])),
           key: unit.id
         });
@@ -658,7 +658,7 @@ class Status extends React.Component {
           columnSize: 2,
           content: machine.agent_state_info
         }],
-        filterValue: this._normaliseStatus(machine.agent_state),
+        extraData: this._normaliseStatus(machine.agent_state),
         key: machine.id
       };
     });
