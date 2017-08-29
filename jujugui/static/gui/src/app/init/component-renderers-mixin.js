@@ -9,13 +9,16 @@ const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
+const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const ModelActions = require('../components/model-actions/model-actions');
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
+const NotificationList = require('../components/notification-list/notification-list');
 const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Zoom = require('../components/zoom/zoom');
 
 /**
     A mixin for the JujuGUI class.
@@ -924,7 +927,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     var units = db.units;
     var changesUtils = this.changesUtils;
     ReactDOM.render(
-      <window.juju.components.DeploymentBar
+      <DeploymentBar
         acl={this.acl}
         changeState={this.state.changeState.bind(this.state)}
         currentChangeSet={ecs.getCurrentChangeSet()}
@@ -1135,12 +1138,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     Renders the notification component to the page in the designated element.
   */
   _renderNotifications(e) {
-    var notification = null;
+    let notification = null;
     if (e && e.details) {
       notification = e.details[0].model.getAttrs();
     }
     ReactDOM.render(
-      <window.juju.components.NotificationList
+      <NotificationList
         notification={notification}/>,
       document.getElementById('notifications-container'));
   }
@@ -1152,7 +1155,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderDragOverNotification(showIndicator = true) {
     this.topology.fadeHelpIndicator(showIndicator);
     ReactDOM.render(
-      <window.juju.components.ExpandingProgress />,
+      <ExpandingProgress />,
       document.getElementById('drag-over-notification-container'));
   }
 
@@ -1162,7 +1165,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderZoom() {
     ReactDOM.render(
-      <window.juju.components.Zoom
+      <Zoom
         topo={this.topology.topo} />,
       document.getElementById('zoom-container'));
   }
