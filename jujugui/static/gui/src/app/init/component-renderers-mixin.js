@@ -9,6 +9,7 @@ const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
+const Charmbrowser = require('../components/charmbrowser/charmbrowser');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const HeaderLogo = require('../components/header-logo/header-logo');
@@ -404,7 +405,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     };
     const getModelName = () => this.modelAPI.get('environmentName');
     ReactDOM.render(
-      <window.juju.components.Charmbrowser
+      <Charmbrowser
         acl={this.acl}
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
