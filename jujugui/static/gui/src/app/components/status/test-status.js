@@ -116,6 +116,7 @@ describe('Status', function() {
     }];
     const django = {
       charm: '~who/xenial/django-42',
+      icon: 'django.svg',
       id: 'django',
       name: 'django',
       pending: false,
@@ -126,6 +127,7 @@ describe('Status', function() {
     const haproxyUnits = [];
     const haproxy = {
       charm: 'haproxy-47',
+      icon: 'ha.svg',
       name: 'ha',
       pending: false,
       status: {current: 'error'},
@@ -135,6 +137,7 @@ describe('Status', function() {
     const mysqlUnits = [];
     const mysql = {
       charm: 'mysql-0',
+      icon: 'mysql.svg',
       name: 'mysql',
       pending: true,
       status: {current: ''},
@@ -429,6 +432,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="django.svg" />
                   django
                 </span>)
             }, {
@@ -462,6 +467,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="ha.svg" />
                   ha
                 </span>)
             }, {
@@ -526,6 +533,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="django.svg" />
                   django/0
                 </span>)
             }, {
@@ -565,6 +574,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="django.svg" />
                   django/1
                 </span>)
             }, {

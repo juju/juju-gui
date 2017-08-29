@@ -298,6 +298,7 @@ class Status extends React.Component {
     A predicate function that can be used to filter units so that uncommitted
     and unplaced units are excluded.
     @param {Object} unit A unit as included in the database.
+    @returns {Boolean} Whether the unit is real or not.
   */
   _realUnitsPredicate(unit) {
     // Unplaced units have no machine defined. Subordinate units have an empty
@@ -331,6 +332,8 @@ class Status extends React.Component {
           content: (
             <span className="status-view__link"
               onClick={this._navigateToApplication.bind(this, app.id)}>
+              <img className="status-view__icon"
+                src={app.icon} />
               {app.name}
             </span>)
         }, {
@@ -430,6 +433,8 @@ class Status extends React.Component {
             content: (
               <span className="status-view__link"
                 onClick={this._navigateToUnit.bind(this, unit.id)}>
+                <img className="status-view__icon"
+                  src={application.get('icon')} />
                 {unit.displayName}
               </span>)
           }, {

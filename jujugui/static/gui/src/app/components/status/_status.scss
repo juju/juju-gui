@@ -26,6 +26,15 @@
     font-weight: 200 !important;
   }
 
+  &__icon {
+    $size: 20px;
+    width: $size;
+    height: $size;
+    margin-right: 10px;
+    border-radius: $size / 2;
+    vertical-align: middle;
+  }
+
   &__table {
     @extend %stagger-fade-in;
 
