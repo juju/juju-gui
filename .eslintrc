@@ -27,6 +27,7 @@ rules:
   react/jsx-no-duplicate-props: 2
   react/prop-types: 2
   react/sort-prop-types: 2
+  react/jsx-uses-react: 2
   react/jsx-uses-vars: 2
   semi: [2, "always"]
   space-before-blocks: 2
