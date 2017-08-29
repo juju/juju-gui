@@ -11,6 +11,7 @@ const hotkeys = require('./hotkeys');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const ModelActions = require('../components/model-actions/model-actions');
@@ -356,7 +357,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         user: null
       });
     ReactDOM.render(
-      <window.juju.components.HeaderLogo
+      <HeaderLogo
         gisf={gisf}
         homePath={homePath}
         showProfile={showProfile}
