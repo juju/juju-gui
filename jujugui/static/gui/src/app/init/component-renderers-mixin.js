@@ -14,7 +14,9 @@ const EnvSizeDisplay = require('../components/env-size-display/env-size-display'
 const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
+const Lightbox = require('../components/lightbox/lightbox');
 const ModelActions = require('../components/model-actions/model-actions');
+const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const NotificationList = require('../components/notification-list/notification-list');
 const Sharing = require('../components/sharing/sharing');
@@ -296,7 +298,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
   _displaySettingsModal() {
     ReactDOM.render(
-      <window.juju.components.ModalGUISettings
+      <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
@@ -310,11 +312,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _displayLightbox(content, caption) {
     ReactDOM.render(
-      <window.juju.components.Lightbox
+      <Lightbox
         caption={caption}
         close={this._clearLightbox.bind(this)}>
         {content}
-      </window.juju.components.Lightbox>,
+      </Lightbox>,
       document.getElementById('lightbox'));
   }
 
