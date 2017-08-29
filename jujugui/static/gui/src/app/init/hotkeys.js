@@ -153,4 +153,4 @@ const activate = function(context) {
   });
 };
 
-module.exports = {activate};
+module.exports = {activate, keyBindings};
