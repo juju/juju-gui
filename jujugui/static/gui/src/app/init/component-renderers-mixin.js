@@ -6,11 +6,14 @@ const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
+const hotkeys = require('./hotkeys');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const ModelActions = require('../components/model-actions/model-actions');
+const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 
@@ -258,7 +261,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderHeaderSearch() {
     ReactDOM.render(
-      <window.juju.components.HeaderSearch appState={this.state} />,
+      <HeaderSearch appState={this.state} />,
       document.getElementById('header-search-container'));
   }
 
@@ -280,10 +283,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _displayShortcutsModal() {
     ReactDOM.render(
-      <window.juju.components.ModalShortcuts
+      <ModalShortcuts
         closeModal={this._clearShortcutsModal.bind(this)}
         guiVersion={window.GUI_VERSION.version}
-        keybindings={this.keybindings} />,
+        keybindings={hotkeys.keyBindings} />,
       document.getElementById('modal-shortcuts'));
   }
 

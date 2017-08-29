@@ -15,7 +15,7 @@ function queryComponentSelector(component, selector, all) {
   return ReactDOM.findDOMNode(component)[queryFn](selector);
 }
 
-fdescribe('EnvSizeDisplay', function() {
+describe('EnvSizeDisplay', function() {
   let appState;
 
   beforeEach(function() {
