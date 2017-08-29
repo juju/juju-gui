@@ -15,7 +15,7 @@ class Status extends React.Component {
       this.STATUS_OK
     ];
     this.state = {
-      filter: null
+      statusFilter: null
     };
   }
 
@@ -117,10 +117,10 @@ class Status extends React.Component {
     @returns {Boolean} Whether the row matches the status.
   */
   _filterByStatus(row) {
-    if (!this.state.filter) {
+    if (!this.state.statusFilter) {
       return true;
     }
-    return row.filterValue === this.state.filter;
+    return row.filterValue === this.state.statusFilter;
   }
 
   /**
@@ -130,33 +130,40 @@ class Status extends React.Component {
   _generateStatus() {
     const elements = [];
     const db = this.props.db;
+    const applications = db.services.filter(app => !app.get('pending'));
+    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
+    const relations = db.relations.filter(rel => !rel.get('pending'));
+    const counts = {
+      applications: applications.length,
+      machines: machines.length,
+      relations: relations.length,
+      remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
+      units: db.units && db.units.size() || 0
+    };
     // Model section.
     const model = this.props.model;
     if (!model.environmentName) {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
-    elements.push(this._generateModel(model));
+    elements.push(this._generateModel(model, counts));
     // SAAS section.
-    if (db.remoteServices.size()) {
+    if (counts.remoteApplications) {
       elements.push(this._generateRemoteApplications(db.remoteServices));
     }
     // Applications and units sections.
-    const applications = db.services.filter(app => !app.get('pending'));
-    if (applications.length) {
+    if (counts.applications) {
       elements.push(
         this._generateApplications(applications),
         this._generateUnits(applications)
       );
     }
     // Machines section.
-    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
-    if (machines.length) {
+    if (counts.machines) {
       elements.push(this._generateMachines(machines));
     }
     // Relations section.
-    const relations = db.relations.filter(rel => !rel.get('pending'));
-    if (relations.length) {
+    if (counts.relations) {
       elements.push(this._generateRelations(relations));
     }
     return elements;
@@ -171,7 +178,7 @@ class Status extends React.Component {
     if (filter === 'none') {
       filter = null;
     }
-    this.setState({filter: filter});
+    this.setState({statusFilter: filter});
   }
 
   /**
@@ -197,9 +204,10 @@ class Status extends React.Component {
   /**
     Generate the model fragment of the status.
     @param {Object} model The model attributes.
+    @param {Object} counts The counts of applications, units, machines etc.
     @returns {Object} The resulting element.
   */
-  _generateModel(model) {
+  _generateModel(model, counts) {
     const db = this.props.db;
     return (
       <div key="model">
@@ -254,20 +262,19 @@ class Status extends React.Component {
               content: model.sla
             }, {
               columnSize: 2,
-              content: (db.services ? db.services.size() : 0).toString()
+              content: counts.applications
             }, {
               columnSize: 2,
-              content: (
-                db.remoteServices ? db.remoteServices.size() : 0).toString()
+              content: counts.remoteApplications
             }, {
               columnSize: 1,
-              content: (db.units ? db.units.size() : 0).toString()
+              content: counts.units
             }, {
               columnSize: 1,
-              content: (db.machines ? db.machines.size() : 0).toString()
+              content: counts.machines
             }, {
               columnSize: 1,
-              content: (db.relations ? db.relations.size() : 0).toString()
+              content: counts.relations
             }],
             key: 'model'
           }]} />
@@ -367,7 +374,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
-        filter={this._filterByStatus.bind(this)}
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -467,7 +474,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
-        filter={this._filterByStatus.bind(this)}
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -580,7 +587,7 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
-        filter={this._filterByStatus.bind(this)}
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -658,7 +665,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
-        filter={this._filterByStatus.bind(this)}
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -760,7 +767,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
-        filter={this._filterByStatus.bind(this)}
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{

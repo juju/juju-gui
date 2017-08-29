@@ -49,10 +49,17 @@ class BasicTable extends React.Component {
         conditionalClasses,
         isHeader ? this.props.headerColumnClasses :
           this.props.rowColumnClasses);
+      let content = column.content;
+      // if there is no content then add a space so that the column doesn't
+      // collapse.
+      if ((typeof(content) === 'string' && content.replace(/\s/g,'') === '') ||
+        content === undefined || content === null) {
+        content = (<span>&nbsp;</span>);
+      }
       return (
         <div className={classes}
           key={i}>
-          {column.content || (<span>&nbsp;</span>)}
+          {content}
         </div>);
     });
     const classes = classNames(
@@ -76,8 +83,8 @@ class BasicTable extends React.Component {
   */
   _generateContent() {
     let rows = this.props.rows;
-    if (this.props.filter) {
-      rows = rows.filter(this.props.filter);
+    if (this.props.filterPredicate) {
+      rows = rows.filter(this.props.filterPredicate);
     }
     if (this.props.sort) {
       rows.sort(this.props.sort);
@@ -100,9 +107,8 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
-  // A method to filter the rows by. The row object is provided to the filter
-  // method.
-  filter: PropTypes.func,
+  // The filterPredicate function receives a row and must return a boolean.
+  filterPredicate: PropTypes.func,
   // The extra classes to apply to all header rows.
   headerClasses: PropTypes.array,
   // The extra classes to apply to all header columns.

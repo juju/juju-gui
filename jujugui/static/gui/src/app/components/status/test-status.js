@@ -352,19 +352,19 @@ describe('Status', function() {
                 content: 'advanced'
               }, {
                 columnSize: 2,
-                content: '0'
+                content: 0
               }, {
                 columnSize: 2,
-                content: '0'
+                content: 0
               }, {
                 columnSize: 1,
-                content: '0'
+                content: 0
               }, {
                 columnSize: 1,
-                content: '0'
+                content: 0
               }, {
                 columnSize: 1,
-                content: '0'
+                content: 0
               }],
               key: 'model'
             }]} />
@@ -459,25 +459,25 @@ describe('Status', function() {
                 content: 'advanced'
               }, {
                 columnSize: 2,
-                content: '3'
+                content: 2
               }, {
                 columnSize: 2,
-                content: '2'
+                content: 2
               }, {
                 columnSize: 1,
-                content: '0'
+                content: 0
               }, {
                 columnSize: 1,
-                content: '3'
+                content: 2
               }, {
                 columnSize: 1,
-                content: '3'
+                content: 2
               }],
               key: 'model'
             }]} />
         </div>
         <juju.components.BasicTable
-          filter={sinon.stub()}
+          filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -532,7 +532,7 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
-          filter={sinon.stub()}
+          filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -636,7 +636,7 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
-          filter={sinon.stub()}
+          filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -750,7 +750,7 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
-          filter={sinon.stub()}
+          filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -839,7 +839,7 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <juju.components.BasicTable
-          filter={sinon.stub()}
+          filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -1027,7 +1027,7 @@ describe('Status', function() {
     const titleRow = modelSection.props.children[0];
     const selectBox = titleRow.props.children[2].props.children;
     selectBox.props.onChange({currentTarget: {value: 'error'}});
-    assert.equal(comp.instance.state.filter, 'error');
+    assert.equal(comp.instance.state.statusFilter, 'error');
   });
 
   it('can filter by nothing', () => {

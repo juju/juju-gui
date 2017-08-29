@@ -47,7 +47,7 @@ describe('BasicTable', function() {
       }, {
         columnSize: 3
       }, {
-        content: 'row 3 column 3',
+        content: 0,
         columnSize: 6
       }],
       key: 'row-three-key'
@@ -103,7 +103,7 @@ describe('BasicTable', function() {
           </div>
           <div className="last-col six-col"
             key="column-1">
-            row 3 column 3
+            0
           </div>
         </li>
       </ul>);
@@ -165,7 +165,7 @@ describe('BasicTable', function() {
           </div>
           <div className="last-col six-col row-column"
             key="column-1">
-            row 3 column 3
+            0
           </div>
         </li>
       </ul>);
@@ -199,7 +199,7 @@ describe('BasicTable', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.BasicTable
         headers={headers}
-        filter={row => row.filterValue > 10}
+        filterPredicate={row => row.filterValue > 10}
         rows={rows} />, true);
     const output = renderer.getRenderOutput();
     const rowItems = output.props.children[1];
