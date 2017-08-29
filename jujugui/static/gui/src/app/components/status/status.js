@@ -807,12 +807,10 @@ Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired
     }).isRequired,
     relations: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired
     }).isRequired,
     remoteServices: shapeup.shape({
       map: PropTypes.func.isRequired,
