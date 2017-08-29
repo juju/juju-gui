@@ -208,7 +208,6 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel(model, counts) {
-    const db = this.props.db;
     return (
       <div key="model">
         <div className="twelve-col no-margin-bottom">
