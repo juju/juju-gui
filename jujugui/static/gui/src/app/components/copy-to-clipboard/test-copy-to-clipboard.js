@@ -1,35 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
-var realClipboard;
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const CopyToClipboard = require('./copy-to-clipboard');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('CopyToClipboard', function() {
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('copy-to-clipboard', function() { done(); });
-  });
+  let realClipboard;
 
   beforeEach(function() {
     realClipboard = window.Clipboard;
@@ -42,7 +23,7 @@ describe('CopyToClipboard', function() {
 
   it('renders with a default value', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.CopyToClipboard />);
+      <CopyToClipboard />);
     var className = output.props.className;
     var expected = (
       <div className={className}>
@@ -53,7 +34,7 @@ describe('CopyToClipboard', function() {
           value=""/>
         <button className={className + '__btn'}
           ref="btn">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="copy-to-clipboard-16"
             size="16"/>
         </button>
@@ -65,14 +46,14 @@ describe('CopyToClipboard', function() {
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
     var output = testUtils.renderIntoDocument(
-      <juju.components.CopyToClipboard value={value}/>);
+      <CopyToClipboard value={value}/>);
     assert.equal(output.refs.input.value, value,
       'Value is not set properly for input');
   });
 
   it('initializes the Clipboard widget', function() {
     var component = testUtils.renderIntoDocument(
-      <juju.components.CopyToClipboard/>);
+      <CopyToClipboard/>);
     var node = ReactDOM.findDOMNode(component).querySelector('button');
     assert.deepEqual(Clipboard.getCall(0).args[0], node,
       'Clipboard was not initialized with expected node');
