@@ -9,6 +9,7 @@ const initUtils = require('./utils');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const ISVProfile = require('../components/isv-profile/isv-profile');
 const ModelActions = require('../components/model-actions/model-actions');
 const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
