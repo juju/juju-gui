@@ -1,27 +1,22 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AccordionSection = require('../../accordion-section/accordion-section');
+const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
+const EntityContent = require('./content');
+const EntityContentConfigOption = require('./config-option/config-option');
+const EntityContentDescription = require('./description/description');
+const EntityContentDiagram = require('./diagram/diagram');
+const EntityContentReadme = require('./readme/readme');
+const EntityContentRelations = require('./relations/relations');
+const EntityFiles = require('./files/files');
+const EntityResources = require('./resources/resources');
+const Spinner = require('../../spinner/spinner');
+const TermsPopup = require('../../terms-popup/terms-popup');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 function generateScript(isBundle, isDD) {
   let id = 'trusty/django-123';
@@ -36,11 +31,6 @@ function generateScript(isBundle, isDD) {
 
 describe('EntityContent', function() {
   let mockEntity;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-content', function() { done(); });
-  });
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
@@ -64,7 +54,7 @@ describe('EntityContent', function() {
     const addNotification = sinon.stub();
     mockEntity.set('resources', [{resource: 'one'}]);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -88,7 +78,7 @@ describe('EntityContent', function() {
         <div className="row">
           <div className="inner-wrapper">
             <div className="eight-col">
-              <juju.components.EntityContentDescription
+              <EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
@@ -103,7 +93,7 @@ describe('EntityContent', function() {
                     onClick={instance._handleTagClick}>database</a>
                 </div>
               </div>
-              <juju.components.EntityContentReadme
+              <EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -117,14 +107,14 @@ describe('EntityContent', function() {
                   Configuration
                 </h3>
                 <dl>
-                  <juju.components.EntityContentConfigOption
+                  <EntityContentConfigOption
                     option={{
                       default: 'spinach',
                       description: 'Your username',
                       name: 'username',
                       type: 'string'
                     }} />
-                  <juju.components.EntityContentConfigOption
+                  <EntityContentConfigOption
                     option={{
                       default: 'abc123',
                       description: 'Your password',
@@ -150,15 +140,15 @@ describe('EntityContent', function() {
                   {undefined}
                 </ul>
               </div>
-              <juju.components.EntityResources
+              <EntityResources
                 apiUrl={apiUrl}
                 entityId={mockEntity.get('id')}
                 pluralize={pluralize}
                 resources={[{resource: 'one'}]} />
-              <juju.components.EntityContentRelations
+              <EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
-              <juju.components.EntityFiles
+              <EntityFiles
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
@@ -173,7 +163,7 @@ describe('EntityContent', function() {
                     Learn more
                   </a>.
                 </p>
-                <juju.components.CopyToClipboard
+                <CopyToClipboard
                   className="copy-to-clipboard"
                   value={script} />
                 <h4>Preview</h4>
@@ -189,7 +179,7 @@ describe('EntityContent', function() {
 
   it('can display a direct deploy card', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -210,7 +200,7 @@ describe('EntityContent', function() {
     const expected = (
       <div className="juju-card" data-dd data-id="trusty/django-123"></div>);
     const scriptExpected = (
-      <juju.components.CopyToClipboard
+      <CopyToClipboard
         className="copy-to-clipboard"
         value={script.props.value} />
     );
@@ -230,7 +220,7 @@ describe('EntityContent', function() {
       revision: 10
     });
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -277,7 +267,7 @@ describe('EntityContent', function() {
       revision: 10
     });
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -298,7 +288,7 @@ describe('EntityContent', function() {
     terms.props.children[2][1][1].props.onClick();
     output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.TermsPopup
+      <TermsPopup
         close={instance._toggleTerms}
         terms={[{
           name: 'terms2',
@@ -312,7 +302,7 @@ describe('EntityContent', function() {
     const showTerms = sinon.stub();
     showTerms.onFirstCall();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -329,7 +319,7 @@ describe('EntityContent', function() {
     const expected = (
       <div className="entity-content__metadata">
         <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     const innerWrapper = output.props.children[0].props.children;
     const terms = innerWrapper
@@ -342,7 +332,7 @@ describe('EntityContent', function() {
     const showTerms = sinon.stub().onFirstCall().callsArgWith(2, 'Uh oh', null);
     const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={addNotification}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -369,7 +359,7 @@ describe('EntityContent', function() {
     const abort = sinon.stub();
     const showTerms = sinon.stub().returns({abort: abort});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -390,7 +380,7 @@ describe('EntityContent', function() {
     mockEntity.set('bugUrl', 'http://example.com/bugs');
     mockEntity.set('homepage', 'http://example.com/');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -445,7 +435,7 @@ describe('EntityContent', function() {
     const scrollCharmbrowser = sinon.stub();
     const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -469,7 +459,7 @@ describe('EntityContent', function() {
         <div className="row">
           <div className="inner-wrapper">
             <div className="eight-col">
-              <juju.components.EntityContentDescription
+              <EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
@@ -483,7 +473,7 @@ describe('EntityContent', function() {
                     onClick={instance._handleTagClick}>database</a>
                 </div>
               </div>
-              <juju.components.EntityContentReadme
+              <EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -508,15 +498,15 @@ describe('EntityContent', function() {
                   {undefined}
                 </ul>
               </div>
-              <juju.components.EntityResources
+              <EntityResources
                 apiUrl={apiUrl}
                 entityId={mockEntity.get('id')}
                 pluralize={pluralize}
                 resources={undefined} />
-              <juju.components.EntityContentRelations
+              <EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
-              <juju.components.EntityFiles
+              <EntityFiles
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
@@ -531,7 +521,7 @@ describe('EntityContent', function() {
                     Learn more
                   </a>.
                 </p>
-                <juju.components.CopyToClipboard
+                <CopyToClipboard
                   className="copy-to-clipboard"
                   value={script} />
                 <h4>Preview</h4>
@@ -560,7 +550,7 @@ describe('EntityContent', function() {
     const scrollCharmbrowser = sinon.stub();
     const addNotification = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -580,18 +570,18 @@ describe('EntityContent', function() {
         <div className="row">
           <div className="inner-wrapper">
             <div className="eight-col">
-              <juju.components.EntityContentDescription
+              <EntityContentDescription
                 changeState={changeState}
                 entityModel={mockEntity}
                 includeHeading={true}
                 renderMarkdown={renderMarkdown} />
-              <juju.components.EntityContentDiagram
+              <EntityContentDiagram
                 clearLightbox={clearLightbox}
                 diagramUrl="testRef"
                 displayLightbox={displayLightbox}
                 isExpandable={true}
                 title="django cluster" />
-              <juju.components.EntityContentReadme
+              <EntityContentReadme
                 addNotification={addNotification}
                 changeState={changeState}
                 entityModel={mockEntity}
@@ -605,7 +595,7 @@ describe('EntityContent', function() {
                   Bundle configuration
                 </h3>
                 <div>
-                  <juju.components.AccordionSection
+                  <AccordionSection
                     title={<span>
                       <img alt="gunicorn"
                         className="entity-content__config-image"
@@ -630,8 +620,8 @@ describe('EntityContent', function() {
                         </dd>
                       </div>
                     </div>
-                  </juju.components.AccordionSection>
-                  <juju.components.AccordionSection
+                  </AccordionSection>
+                  <AccordionSection
                     title={<span>
                       <img alt="django"
                         className="entity-content__config-image"
@@ -660,7 +650,7 @@ describe('EntityContent', function() {
               </div>
               {undefined}
               {undefined}
-              <juju.components.EntityFiles
+              <EntityFiles
                 apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
@@ -675,7 +665,7 @@ describe('EntityContent', function() {
                     Learn more
                   </a>.
                 </p>
-                <juju.components.CopyToClipboard
+                <CopyToClipboard
                   className="copy-to-clipboard"
                   value={script} />
                 <h4>Preview</h4>
@@ -694,7 +684,7 @@ describe('EntityContent', function() {
     mockEntity.set('bugUrl', 'http://example.com/bugs');
     mockEntity.set('homepage', 'http://example.com/');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl="http://example.com"
         changeState={sinon.stub()}
@@ -743,7 +733,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     mockEntity.set('relations', {requires: {}, provides: {}});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -783,7 +773,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -895,7 +885,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -913,7 +903,7 @@ describe('EntityContent', function() {
     const innerWrapper = output.props.children[0].props.children;
     const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
-      <juju.components.Spinner />);
+      <Spinner />);
     expect(plansOutput).toEqualJSX(expected);
   });
 
@@ -925,7 +915,7 @@ describe('EntityContent', function() {
     const pluralize = sinon.spy();
     const changeState = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContent
+      <EntityContent
         addNotification={sinon.stub()}
         apiUrl={apiUrl}
         changeState={changeState}
