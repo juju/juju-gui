@@ -18,6 +18,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const GenericButton = require('../generic-button/generic-button');
+const SearchResultsItem = require('./item/item');
+const SearchResultsSelectFilter = require('./select-filter/select-filter');
+const SearchResultsTypeFilter = require('./type-filter/type-filter');
+const Spinner = require('../spinner/spinner');
+
 class SearchResults extends React.Component {
   constructor(props) {
     super(props);
@@ -294,7 +300,7 @@ class SearchResults extends React.Component {
         state.activeChild = {
           component:
             <div className="twelve-col initial-load-container last-col">
-              <juju.components.Spinner />
+              <Spinner />
             </div>
         };
         break;
@@ -340,19 +346,19 @@ class SearchResults extends React.Component {
               <div className="inner-wrapper list-block">
                 {this._generateResultsMessage(data.text, data.solutionsCount)}
                 <div className="list-block__filters">
-                  <juju.components.SearchResultsTypeFilter
+                  <SearchResultsTypeFilter
                     changeState={this.props.changeState}
                     currentType={currentType} />
                   <div className="six-col last-col">
                     <div className="list-block__filters--selects">
                       <form>
-                        <juju.components.SearchResultsSelectFilter
+                        <SearchResultsSelectFilter
                           changeState={this.props.changeState}
                           label="Sort by"
                           filter='sort'
                           items={sortItems}
                           currentValue={nextProps.sort || this.props.sort} />
-                        <juju.components.SearchResultsSelectFilter
+                        <SearchResultsSelectFilter
                           changeState={this.props.changeState}
                           label="Series"
                           filter='series'
@@ -470,7 +476,7 @@ class SearchResults extends React.Component {
       </span></h4>
       <ul className="list-block__list">
         {promulgated.map((item, i) =>
-          <juju.components.SearchResultsItem
+          <SearchResultsItem
             acl={this.props.acl}
             changeState={this.props.changeState}
             deployTarget={this.props.deployTarget}
@@ -507,12 +513,12 @@ class SearchResults extends React.Component {
       'Hide community results' : `Show ${community.length} community results`;
     const button = hasPromulgated ? (
       <div className="button-wrapper--ruled">
-        <juju.components.GenericButton
+        <GenericButton
           action={this._toggleCommunityResults.bind(this)}
           type="inline-neutral"
           extraClasses="show-community-button">
           {buttonTitle}
-        </juju.components.GenericButton>
+        </GenericButton>
       </div>) : null;
     return (<div className="clearfix community-results">
       {button}
@@ -522,7 +528,7 @@ class SearchResults extends React.Component {
         </span></h4>
         <ul className="list-block__list">
           {community.map((item, i) =>
-            <juju.components.SearchResultsItem
+            <SearchResultsItem
               acl={this.props.acl}
               changeState={this.props.changeState}
               deployTarget={this.props.deployTarget}
@@ -584,12 +590,4 @@ SearchResults.propTypes = {
   type: PropTypes.string
 };
 
-YUI.add('search-results', function(Y) {
-  juju.components.SearchResults = SearchResults;
-}, '0.1.0', {requires: [
-  'generic-button',
-  'loading-spinner',
-  'search-results-item',
-  'search-results-select-filter',
-  'search-results-type-filter'
-]});
+module.exports = SearchResults;

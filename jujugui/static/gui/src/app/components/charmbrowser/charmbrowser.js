@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const EntityDetails = require('../entity-details/entity-details');
+const Panel = require('../panel/panel');
+const SearchResults = require('../search-results/search-results');
+const Store = require('../store/store');
 
 class Charmbrowser extends React.Component {
   /**
@@ -132,7 +120,7 @@ class Charmbrowser extends React.Component {
     switch (this.state.activeComponent) {
       case 'store':
         activeChild = (
-          <juju.components.Store
+          <Store
             changeState={changeState}
             gisf={this.props.gisf}
             staticURL={this.props.staticURL}
@@ -144,7 +132,7 @@ class Charmbrowser extends React.Component {
       case 'search-results':
         const search = currentState.search;
         activeChild = (
-          <juju.components.SearchResults
+          <SearchResults
             acl={this.props.acl}
             changeState={changeState}
             generatePath={appState.generatePath.bind(appState)}
@@ -168,7 +156,7 @@ class Charmbrowser extends React.Component {
         // TODO frankban: do we still really need this?
         const id = currentState.store || `~${currentState.user}`;
         activeChild = (
-          <juju.components.EntityDetails
+          <EntityDetails
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             apiUrl={this.props.apiUrl}
@@ -211,7 +199,7 @@ class Charmbrowser extends React.Component {
 
   render() {
     return (
-      <juju.components.Panel
+      <Panel
         clickAction={this._close.bind(this)}
         instanceName="white-box"
         focus={false}
@@ -220,7 +208,7 @@ class Charmbrowser extends React.Component {
           ref="charmbrowser">
           {this._generateContent()}
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -256,12 +244,4 @@ Charmbrowser.propTypes = {
   utils: PropTypes.object.isRequired
 };
 
-YUI.add('charmbrowser-component', function() {
-  juju.components.Charmbrowser = Charmbrowser;
-}, '0.1.0', {
-  requires: [
-    'entity-details',
-    'search-results',
-    'store'
-  ]
-});
+module.exports = Charmbrowser;

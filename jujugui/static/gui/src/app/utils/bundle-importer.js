@@ -755,7 +755,6 @@ YUI.add('bundle-importer', function(Y) {
 }, '', {
   requires: [
     'juju-env-api',
-    'environment-change-set',
-    'js-yaml'
+    'environment-change-set'
   ]
 });

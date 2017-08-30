@@ -1,22 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
+const GenericButton = require('../../generic-button/generic-button');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 class EntityHeader extends React.Component {
   constructor() {
@@ -159,7 +146,7 @@ class EntityHeader extends React.Component {
     const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
-        <juju.components.GenericButton
+        <GenericButton
           ref="deployAction"
           action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
@@ -168,7 +155,7 @@ class EntityHeader extends React.Component {
             `${modelName ? 'your current' : 'a new'} model`}
           type="positive">
           {title}
-        </juju.components.GenericButton>
+        </GenericButton>
       );
     } else {
       deployAction = (
@@ -259,7 +246,7 @@ class EntityHeader extends React.Component {
           'https://jujucharms.com/docs/stable/' +
           'authors-subordinate-applications'}
         target="_blank">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="help_16"
             size="16" />
         </a>
@@ -419,7 +406,7 @@ class EntityHeader extends React.Component {
                   <a id="item-twitter"
                     target="_blank"
                     href={twitterUrl}>
-                    <juju.components.SvgIcon
+                    <SvgIcon
                       name="icon-social-twitter"
                       size="36"/>
                   </a>
@@ -428,7 +415,7 @@ class EntityHeader extends React.Component {
                   <a id="item-googleplus"
                     target="_blank"
                     href={googlePlusUrl}>
-                    <juju.components.SvgIcon
+                    <SvgIcon
                       name="icon-social-google"
                       size="36"/>
                   </a>
@@ -438,7 +425,7 @@ class EntityHeader extends React.Component {
             <div className={
               'entity-header__right four-col last-col no-margin-bottom'}>
               {this._generateSelectPlan()}
-              <juju.components.CopyToClipboard
+              <CopyToClipboard
                 value={'juju deploy ' + entity.id} />
               {this._generateDeployAction()}
             </div>
@@ -465,11 +452,4 @@ EntityHeader.propTypes = {
   urllib: PropTypes.func.isRequired
 };
 
-YUI.add('entity-header', function() {
-  juju.components.EntityHeader = EntityHeader;
-}, '0.1.0', {
-  requires: [
-    'copy-to-clipboard',
-    'generic-button'
-  ]
-});
+module.exports = EntityHeader;

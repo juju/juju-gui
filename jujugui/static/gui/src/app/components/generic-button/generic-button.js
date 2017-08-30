@@ -75,7 +75,9 @@ GenericButton.propTypes = {
   type: PropTypes.string
 };
 
-GenericButton.displayName = 'GenericButton';
+if (module) {
+  module.exports = GenericButton;
+}
 
 YUI.add('generic-button', function() {
   juju.components.GenericButton = GenericButton;

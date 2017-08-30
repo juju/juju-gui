@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -22,8 +6,6 @@ class AddedServicesListItem extends React.Component {
   /**
     Parses the supplied unit data to return the status color and number
     to display.
-
-    @method _getPriorityUnits
     @param {Array} units An array of units.
   */
   _getPriorityUnits(units) {
@@ -50,8 +32,6 @@ class AddedServicesListItem extends React.Component {
 
   /**
     Renders and returns the status icon if necessary.
-
-    @method _renderStatusIndicator
     @param {Object} statusData The status data that will be used to generate
       the status icon.
   */
@@ -67,8 +47,6 @@ class AddedServicesListItem extends React.Component {
 
   /**
     Click handler for clicks on the entire list item.
-
-    @method _onClickHandler
     @param {Object} e The click event.
   */
   _onClickHandler(e) {
@@ -96,8 +74,6 @@ class AddedServicesListItem extends React.Component {
 
   /**
     Handle highlighting a service token when the item is hovered.
-
-    @method _onMouseEnter
     @param {Object} e The mouse event.
   */
   _onMouseEnter(e) {
@@ -106,8 +82,6 @@ class AddedServicesListItem extends React.Component {
 
   /**
     Handle unhighlighting a service token when the item is no longer hovered.
-
-    @method _onMouseLeave
     @param {Object} e The mouse event.
   */
   _onMouseLeave(e) {
@@ -154,10 +128,4 @@ AddedServicesListItem.propTypes = {
   service: PropTypes.object.isRequired
 };
 
-YUI.add('added-services-list-item', function() {
-  juju.components.AddedServicesListItem = AddedServicesListItem;
-}, '0.1.0', {
-  requires: [
-    'svg-icon'
-  ]
-});
+module.exports = AddedServicesListItem;

@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const NotificationListItem = require('./item/item');
+
 class NotificationList extends React.Component {
   constructor(props) {
     super(props);
@@ -93,7 +95,7 @@ class NotificationList extends React.Component {
       const notification = notifications[key];
       this._startTimeout(key, notification);
       elements.push(
-        <juju.components.NotificationListItem
+        <NotificationListItem
           key={key}
           timestamp={key}
           ref={'NotificationListItem' + key}
@@ -147,10 +149,4 @@ NotificationList.propTypes = {
   timeout: PropTypes.number
 };
 
-YUI.add('notification-list', function() {
-  juju.components.NotificationList = NotificationList;
-}, '0.1.0', {
-  requires: [
-    'notification-list-item'
-  ]
-});
+module.exports = NotificationList;

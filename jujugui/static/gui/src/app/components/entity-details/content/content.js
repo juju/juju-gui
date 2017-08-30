@@ -1,22 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const AccordionSection = require('../../accordion-section/accordion-section');
+const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
+const EntityContentConfigOption = require('./config-option/config-option');
+const EntityContentDescription = require('./description/description');
+const EntityContentDiagram = require('./diagram/diagram');
+const EntityContentReadme = require('./readme/readme');
+const EntityContentRelations = require('./relations/relations');
+const EntityFiles = require('./files/files');
+const EntityResources = require('./resources/resources');
+const Spinner = require('../../spinner/spinner');
+const TermsPopup = require('../../terms-popup/terms-popup');
 
 class EntityContent extends React.Component {
   constructor() {
@@ -41,8 +36,6 @@ class EntityContent extends React.Component {
   /**
     Get the list of terms for the charm, updating the state with these
     terms.
-
-    @method _getTerms
   */
   _getTerms() {
     const entityTerms = this.props.entityModel.get('terms');
@@ -96,7 +89,7 @@ class EntityContent extends React.Component {
       var option = options[name];
       option.name = name;
       optionsList.push(
-        <juju.components.EntityContentConfigOption
+        <EntityContentConfigOption
           key={name}
           option={option} />
       );
@@ -166,11 +159,11 @@ class EntityContent extends React.Component {
         );
       }
       return (
-        <juju.components.AccordionSection
+        <AccordionSection
           title={title}
           key={application}>
           {optionsList}
-        </juju.components.AccordionSection>);
+        </AccordionSection>);
     });
     return (<div>{applicationsList}</div>);
   }
@@ -272,7 +265,7 @@ class EntityContent extends React.Component {
     const terms = this.state.terms;
     let content;
     if (this.state.termsLoading) {
-      content = <juju.components.Spinner />;
+      content = <Spinner />;
     } else if (terms.length === 0) {
       return null;
     } else {
@@ -315,7 +308,7 @@ class EntityContent extends React.Component {
       return null;
     }
     return (
-      <juju.components.TermsPopup
+      <TermsPopup
         close={this._toggleTerms.bind(this)}
         terms={[terms]} />);
   }
@@ -328,7 +321,7 @@ class EntityContent extends React.Component {
     @return {Object} The description markup.
   */
   _generateDescription(entityModel) {
-    return (<juju.components.EntityContentDescription
+    return (<EntityContentDescription
       changeState={this.props.changeState}
       entityModel={entityModel}
       includeHeading={true}
@@ -346,7 +339,7 @@ class EntityContent extends React.Component {
       return;
     }
     const entity = entityModel.toEntity();
-    return <juju.components.EntityContentDiagram
+    return <EntityContentDiagram
       clearLightbox={this.props.clearLightbox}
       displayLightbox={this.props.displayLightbox}
       diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
@@ -383,7 +376,7 @@ class EntityContent extends React.Component {
     var entityModel = this.props.entityModel;
     if (entityModel.get('entityType') === 'charm') {
       return (
-        <juju.components.EntityResources
+        <EntityResources
           apiUrl={this.props.apiUrl}
           entityId={entityModel.get('id')}
           pluralize={this.props.pluralize}
@@ -410,7 +403,7 @@ class EntityContent extends React.Component {
       var relationsList = Object.keys(requires).concat(Object.keys(provides));
       if (relationsList.length > 0) {
         return (
-          <juju.components.EntityContentRelations
+          <EntityContentRelations
             changeState={this.props.changeState}
             relations={relations} />);
       }
@@ -509,7 +502,7 @@ class EntityContent extends React.Component {
     // Return a spinner if null (we don't have a response yet) or nothing if
     // plans are a 0-length array (no plans found, likely due to an error).
     if (!plans) {
-      return <juju.components.Spinner />;
+      return <Spinner />;
     }
     if (!plans.length) {
       return;
@@ -583,7 +576,7 @@ class EntityContent extends React.Component {
             Learn more
           </a>.
         </p>
-        <juju.components.CopyToClipboard
+        <CopyToClipboard
           value={script} />
         <h4>Preview</h4>
         {cardElement}
@@ -607,7 +600,7 @@ class EntityContent extends React.Component {
               {this._generateDiagram(entityModel)}
               {this._generateTagsAndTerms(entityModel)}
               {this._generatePlans()}
-              <juju.components.EntityContentReadme
+              <EntityContentReadme
                 addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
                 entityModel={entityModel}
@@ -621,7 +614,7 @@ class EntityContent extends React.Component {
               {this._generateActions()}
               {this._generateResources()}
               {this._showEntityRelations()}
-              <juju.components.EntityFiles
+              <EntityFiles
                 apiUrl={this.props.apiUrl}
                 entityModel={entityModel}
                 pluralize={this.props.pluralize} />
@@ -658,21 +651,4 @@ EntityContent.propTypes = {
   showTerms: PropTypes.func.isRequired
 };
 
-YUI.add('entity-content', function() {
-  juju.components.EntityContent = EntityContent;
-}, '0.1.0', {
-  requires: [
-    'accordion-section',
-    'copy-to-clipboard',
-    'entity-content-config-option',
-    'entity-content-description',
-    'entity-content-diagram',
-    'entity-content-readme',
-    'entity-content-relations',
-    'entity-files',
-    'entity-resources',
-    'loading-spinner',
-    'svg-icon',
-    'terms-popup'
-  ]
-});
+module.exports = EntityContent;

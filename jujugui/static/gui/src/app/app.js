@@ -37,7 +37,6 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
 
   /**
@@ -46,7 +45,6 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var extensions = [
-    widgets.AutodeployExtension,
     Y.juju.Cookies,
     Y.juju.AppRenderer,
     Y.juju.GhostDeployer
@@ -3283,36 +3281,21 @@ YUI.add('juju-gui', function(Y) {
     'net-utils',
     // React components
     'account',
-    'added-services-list',
-    'charmbrowser-component',
-    'deployment-bar',
     'deployment-flow',
     'deployment-signup',
-    'env-size-display',
     'header-breadcrumb',
-    'model-actions',
-    'expanding-progress',
     'header-help',
-    'header-logo',
-    'header-search',
     'inspector-component',
-    'isv-profile',
-    'lightbox',
     'local-inspector',
     'machine-view',
     'login-component',
     'logout-component',
-    'modal-gui-settings',
-    'modal-shortcuts',
-    'notification-list',
     'panel-component',
-    'sharing',
     'status',
     'svg-icon',
     'user-menu',
     'profile',
     'user-profile',
-    'zoom',
     // juju-views group
     'd3-components',
     'juju-view-utils',
@@ -3320,7 +3303,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-view-environment',
     'juju-landscape',
     // end juju-views group
-    'autodeploy-extension',
     'io',
     'json-parse',
     'app-base',

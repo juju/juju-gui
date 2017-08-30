@@ -28,6 +28,10 @@ class Spinner extends React.PureComponent {
   }
 };
 
+if (module) {
+  module.exports = Spinner;
+}
+
 YUI.add('loading-spinner', function() {
   juju.components.Spinner = Spinner;
 }, '0.1.0', {
