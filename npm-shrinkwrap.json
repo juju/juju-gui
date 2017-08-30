@@ -1,6 +1,6 @@
 {
   "name": "juju-gui",
-  "version": "2.8.0",
+  "version": "2.9.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -4823,9 +4823,9 @@
       }
     },
     "shapeup": {
-      "version": "0.2.3",
-      "resolved": "https://registry.npmjs.org/shapeup/-/shapeup-0.2.3.tgz",
-      "integrity": "sha512-nwOQVKmRBE3/H1h56lI1P9qbqiTVIzsMubznsnwdbLvXfnKnTnV/R+pl+7n+4RNbAH8cQ/vsDyeVU87uiwhKmA==",
+      "version": "0.2.4",
+      "resolved": "https://registry.npmjs.org/shapeup/-/shapeup-0.2.4.tgz",
+      "integrity": "sha512-81XwAOwDi9B5juU1FHUFsq5wI0v9MrT4ykQ8L4Wh5wWw/WyRTq7jR8ryiNHCnPDLorKHIDNAh6EVIV227Sbgow==",
       "requires": {
         "prop-types": "15.5.10"
       }
