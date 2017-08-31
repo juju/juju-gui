@@ -8,14 +8,15 @@ class Status extends React.Component {
     super(props);
     this.STATUS_ERROR = 'error';
     this.STATUS_PENDING = 'pending';
-    this.STATUS_UNCOMMITTED = 'uncommitted';
     this.STATUS_OK = 'ok';
     this.STATUS_ORDER = [
       this.STATUS_ERROR,
       this.STATUS_PENDING,
-      this.STATUS_UNCOMMITTED,
       this.STATUS_OK
     ];
+    this.state = {
+      statusFilter: null
+    };
   }
 
   /**
@@ -28,6 +29,23 @@ class Status extends React.Component {
   }
   componentWillUnmount() {
     document.body.classList.remove('u-is-status');
+  }
+
+  /**
+    Get the highest status from a list of statuses
+    @param statuses {Ȧrray} A list of statuses.
+    @returns {String} The status.
+  */
+  _getHighestStatus(statuses) {
+    let status;
+    // Loop through the order of priority until there is a matching status.
+    this.STATUS_ORDER.some(val => {
+      if (statuses.indexOf(val) > -1) {
+        status = val;
+        return true;
+      }
+    });
+    return status;
   }
 
   /**
@@ -46,15 +64,7 @@ class Status extends React.Component {
       value = [value];
     }
     const normalised = value.map(val => this._normaliseStatus(val));
-    let status;
-    // Loop through the order of priority until there is a matching status.
-    this.STATUS_ORDER.some(val => {
-      if (normalised.indexOf(val) > -1) {
-        status = val;
-        return true;
-      }
-    });
-    return prefix + status;
+    return prefix + this._getHighestStatus(normalised);
   }
 
   /**
@@ -63,11 +73,12 @@ class Status extends React.Component {
     @returns {String} The normalised status ('ok', 'error' or 'pending').
   */
   _normaliseStatus(value) {
-    let status = value;
-    switch (value) {
+    let status = this.STATUS_OK;
+    switch(value) {
       case 'active':
       case 'idle':
       case 'started':
+      case 'waiting':
         status = this.STATUS_OK;
         break;
       case 'blocked':
@@ -101,82 +112,172 @@ class Status extends React.Component {
   }
 
   /**
+    Filter a row by the status.
+    @param row {Object} The row values.
+    @returns {Boolean} Whether the row matches the status.
+  */
+  _filterByStatus(row) {
+    if (!this.state.statusFilter) {
+      return true;
+    }
+    return row.extraData === this.state.statusFilter;
+  }
+
+  /**
     Generate the current model status.
     @returns {Object} The resulting element.
   */
   _generateStatus() {
     const elements = [];
     const db = this.props.db;
+    const applications = db.services.filter(app => !app.get('pending'));
+    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
+    const relations = db.relations.filter(rel => !rel.get('pending'));
+    const counts = {
+      applications: applications.length,
+      machines: machines.length,
+      relations: relations.length,
+      remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
+      units: db.units && db.units.size() || 0
+    };
     // Model section.
     const model = this.props.model;
     if (!model.environmentName) {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
-    elements.push(this._generateModel(model));
+    elements.push(this._generateModel(model, counts));
     // SAAS section.
-    if (db.remoteServices.size()) {
+    if (counts.remoteApplications) {
       elements.push(this._generateRemoteApplications(db.remoteServices));
     }
     // Applications and units sections.
-    const applications = db.services.filter(app => !app.get('pending'));
-    if (applications.length) {
+    if (counts.applications) {
       elements.push(
         this._generateApplications(applications),
         this._generateUnits(applications)
       );
     }
     // Machines section.
-    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
-    if (machines.length) {
+    if (counts.machines) {
       elements.push(this._generateMachines(machines));
     }
     // Relations section.
-    const relations = db.relations.filter(rel => !rel.get('pending'));
-    if (relations.length) {
+    if (counts.relations) {
       elements.push(this._generateRelations(relations));
     }
     return elements;
   }
 
   /**
+    Handle filter changes and store the new status in state.
+    @param evt {Object} The change event
+  */
+  _handleFilterChange(evt) {
+    let filter = evt.currentTarget.value;
+    if (filter === 'none') {
+      filter = null;
+    }
+    this.setState({statusFilter: filter});
+  }
+
+  /**
+    Generate the filter select box.
+    @returns {Object} The select box element to render.
+  */
+  _generateFilters() {
+    const options = ['none'].concat(this.STATUS_ORDER).map(status => {
+      return (
+        <option className="status-view__filter-option"
+          key={status}
+          value={status}>
+          {status}
+        </option>);
+    });
+    return (
+      <select className="status-view__filter-select"
+        onChange={this._handleFilterChange.bind(this)}>
+        {options}
+      </select>);
+  }
+
+  /**
     Generate the model fragment of the status.
     @param {Object} model The model attributes.
+    @param {Object} counts The counts of applications, units, machines etc.
     @returns {Object} The resulting element.
   */
-  _generateModel(model) {
+  _generateModel(model, counts) {
     return (
-      <juju.components.BasicTable
-        headers={[{
-          content: 'Model',
-          columnSize: 3
-        }, {
-          content: 'Cloud/Region',
-          columnSize: 3
-        }, {
-          content: 'Version',
-          columnSize: 3
-        }, {
-          content: 'SLA',
-          columnSize: 3
-        }]}
-        key="model"
-        rows={[{
-          columns: [{
-            columnSize: 3,
-            content: model.environmentName
+      <div key="model">
+        <div className="twelve-col no-margin-bottom">
+          <div className="eight-col">
+            <h2>
+              {model.environmentName}
+            </h2>
+          </div>
+          <div className="status-view__filter-label two-col">
+            Filter status:
+          </div>
+          <div className="status-view__filter two-col last-col">
+            {this._generateFilters()}
+          </div>
+        </div>
+        <juju.components.BasicTable
+          headers={[{
+            content: 'Cloud/Region',
+            columnSize: 2
           }, {
-            columnSize: 3,
-            content: `${model.cloud}/${model.region}`
+            content: 'Version',
+            columnSize: 2
           }, {
-            columnSize: 3,
-            content: model.version
+            content: 'SLA',
+            columnSize: 1
           }, {
-            columnSize: 3,
-            content: model.sla
-          }],
-          key: 'model'
-        }]} />);
+            content: 'Applications',
+            columnSize: 2
+          }, {
+            content: 'Remote applications',
+            columnSize: 2
+          }, {
+            content: 'Units',
+            columnSize: 1
+          }, {
+            content: 'Machines',
+            columnSize: 1
+          }, {
+            content: 'Relations',
+            columnSize: 1
+          }]}
+          rows={[{
+            columns: [{
+              columnSize: 2,
+              content: `${model.cloud}/${model.region}`
+            }, {
+              columnSize: 2,
+              content: model.version
+            }, {
+              columnSize: 1,
+              content: model.sla
+            }, {
+              columnSize: 2,
+              content: counts.applications
+            }, {
+              columnSize: 2,
+              content: counts.remoteApplications
+            }, {
+              columnSize: 1,
+              content: counts.units
+            }, {
+              columnSize: 1,
+              content: counts.machines
+            }, {
+              columnSize: 1,
+              content: counts.relations
+            }],
+            key: 'model'
+          }]} />
+      </div>);
   }
 
   /**
@@ -266,11 +367,13 @@ class Status extends React.Component {
           columnSize: 3,
           content: urlParts[1]
         }],
+        extraData: this._normaliseStatus(app.status.current),
         key: app.url
       };
     });
     return (
       <juju.components.BasicTable
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -325,8 +428,7 @@ class Status extends React.Component {
       charm.revision = null;
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--',
-          !app.pending ? app.status.current : 'uncommitted')],
+          'status-view__table-row--', app.status.current)],
         columns:[{
           columnSize: 2,
           content: (
@@ -365,11 +467,13 @@ class Status extends React.Component {
           columnSize: 1,
           content: revision
         }],
+        extraData: this._normaliseStatus(app.status.current),
         key: app.name
       };
     });
     return (
       <juju.components.BasicTable
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -426,8 +530,7 @@ class Status extends React.Component {
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
-            unit.agentStatus || unit.workloadStatus ?
-              [unit.agentStatus, unit.workloadStatus] : 'uncommitted')],
+            [unit.agentStatus, unit.workloadStatus])],
           columns: [{
             columnSize: 2,
             content: (
@@ -472,6 +575,8 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
+          extraData: this._normaliseStatus(
+            this._getHighestStatus([unit.agentStatus, unit.workloadStatus])),
           key: unit.id
         });
       });
@@ -481,6 +586,7 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -522,9 +628,7 @@ class Status extends React.Component {
     const rows = machines.map((machine, i) => {
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--',
-          machine.commitStatus === 'uncommitted' ?
-            'uncommitted' : machine.agent_state)],
+          'status-view__table-row--', machine.agent_state)],
         columns: [{
           columnSize: 2,
           content: (
@@ -554,11 +658,13 @@ class Status extends React.Component {
           columnSize: 2,
           content: machine.agent_state_info
         }],
+        extraData: this._normaliseStatus(machine.agent_state),
         key: machine.id
       };
     });
     return (
       <juju.components.BasicTable
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -586,6 +692,27 @@ class Status extends React.Component {
         rows={rows.sort(this._byKey.bind(this, 0))}
         sort={this._byKey}
         tableClasses={['status-view__table']} />);
+  }
+
+  /**
+    Generate a link to an application from a relation.
+    @param name {String} An app name.
+    @returns {Object} The link element.
+  */
+  _generateRelationAppLink(name) {
+    const app = this.props.db.services.getById(name);
+    if (!app) {
+      // If the application is not in the DB it must be remote app so don't
+      // link to it.
+      return (<span>{name}</span>);
+    }
+    return (
+      <span className="status-view__link"
+        onClick={this._navigateToApplication.bind(this, name)}>
+        <img className="status-view__icon"
+          src={app.get('icon')} />
+        {name}
+      </span>);
   }
 
   /**
@@ -621,25 +748,15 @@ class Status extends React.Component {
         }
       });
       return {
-        classes: [this._getStatusClass(
-          'status-view__table-row--', rel.pending ? 'uncommitted' : null)],
         columns: [{
           columnSize: 3,
           content: name
         }, {
           columnSize: 3,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, provides)}>
-              {provides}
-            </span>)
+          content: this._generateRelationAppLink(provides)
         }, {
           columnSize: 3,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, consumes)}>
-              {consumes}
-            </span>)
+          content: this._generateRelationAppLink(consumes)
         }, {
           columnSize: 3,
           content: scope
@@ -649,6 +766,7 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -699,7 +817,8 @@ Status.propTypes = {
       size: PropTypes.func.isRequired
     }).isRequired,
     services: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      getById: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
   model: shapeup.shape({

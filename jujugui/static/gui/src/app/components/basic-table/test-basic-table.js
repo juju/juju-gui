@@ -47,7 +47,7 @@ describe('BasicTable', function() {
       }, {
         columnSize: 3
       }, {
-        content: 'row 3 column 3',
+        content: 0,
         columnSize: 6
       }],
       key: 'row-three-key'
@@ -103,7 +103,7 @@ describe('BasicTable', function() {
           </div>
           <div className="last-col six-col"
             key="column-1">
-            row 3 column 3
+            0
           </div>
         </li>
       </ul>);
@@ -165,7 +165,7 @@ describe('BasicTable', function() {
           </div>
           <div className="last-col six-col row-column"
             key="column-1">
-            row 3 column 3
+            0
           </div>
         </li>
       </ul>);
@@ -190,5 +190,20 @@ describe('BasicTable', function() {
     assert.equal(rowItems[0].key, 'row-one-key');
     assert.equal(rowItems[1].key, 'row-three-key');
     assert.equal(rowItems[2].key, 'row-two-key');
+  });
+
+  it('can filter the table', function() {
+    rows[0].extraData = 1;
+    rows[1].extraData = 20;
+    rows[2].extraData = 5;
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BasicTable
+        headers={headers}
+        filterPredicate={row => row.extraData > 10}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const rowItems = output.props.children[1];
+    assert.equal(rowItems.length, 1);
+    assert.equal(rowItems[0].key, 'row-two-key');
   });
 });

@@ -1,3 +1,8 @@
+- 2.9.2:
+
+  - Application icons are shown in the Beta Status view.
+  - (Fix) Machine View and Status View can both be used in Safari.
+
 - 2.9.1:
 
   - (Fix) Importing GCE credentials via JSON file no longer errors on upload.

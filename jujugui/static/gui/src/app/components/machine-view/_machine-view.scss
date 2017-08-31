@@ -1,6 +1,5 @@
 .machine-view {
   @include customize-scrollbar($canvas-background);
-  @include fade-in(.1s);
   position: absolute;
   top: 0;
   bottom: 0;
@@ -10,6 +9,7 @@
   z-index: index($z-indexed-elements, machine-view);
 
   &__content {
+    @include fade-in(.1s);
     display: flex;
     position: absolute;
     top: $navbar-height + 10px;
