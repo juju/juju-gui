@@ -16,8 +16,4 @@ class ProfileHeader extends React.Component {
 
 ProfileHeader.propTypes = {};
 
-YUI.add('profile-header', function() {
-  juju.components.ProfileHeader = ProfileHeader;
-}, '', {
-  requires: []
-});
+module.exports = ProfileHeader;

@@ -1,23 +1,19 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const Profile = require('../profile');
+const ProfileNavigation = require('./navigation');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Navigation', function() {
-  let sectionsMap;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile', 'profile-navigation', function() {
-      sectionsMap = juju.components.Profile.sectionsMap;
-      done();
-    });
-  });
+  let sectionsMap = Profile.sectionsMap;
 
   function renderComponent(options) {
     return jsTestUtils.shallowRender(
-      <juju.components.ProfileNavigation
+      <ProfileNavigation
         activeSection="bundles"
         changeState={options.changeState || sinon.stub()}
         sectionsMap={sectionsMap}/>, true);
@@ -97,7 +93,7 @@ describe('Profile Navigation', function() {
     );
     expect(output).toEqualJSX(expected);
     renderer.render(
-      <juju.components.ProfileNavigation
+      <ProfileNavigation
         changeState={changeState}
         sectionsMap={sectionsMap}
         activeSection="charms"/>);

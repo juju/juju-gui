@@ -2,6 +2,8 @@
 
 'use strict';
 
+const shapeup = require('shapeup');
+
 /**
   Charm list React component used to display a list of the users bundles in
   their profile.
@@ -147,8 +149,4 @@ ProfileBundleList.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('profile-bundle-list', function() {
-  juju.components.ProfileBundleList = ProfileBundleList;
-}, '', {
-  requires: []
-});
+module.exports = ProfileBundleList;

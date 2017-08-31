@@ -2,6 +2,11 @@
 
 'use strict';
 
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const CreateModelButton = require('../../create-model-button/create-model-button');
+const DateDisplay = require('../../date-display/date-display');
+const Popup = require('../../popup/popup');
+
 /**
   Model list React component used to display a list of the users models in
   their profile.
@@ -102,11 +107,11 @@ class ProfileModelList extends React.Component {
       + ' destroyed. This action cannot be undone.';
     this.setState({
       notification: (
-        <juju.components.Popup
+        <Popup
           buttons={buttons}
           title="Destroy model">
           <p>{message}</p>
-        </juju.components.Popup>)
+        </Popup>)
     });
   }
 
@@ -158,7 +163,7 @@ class ProfileModelList extends React.Component {
         provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
         lastConnection: model.lastConnection,
         action: (
-          <juju.components.ButtonDropdown
+          <ButtonDropdown
             ref={bdRef}
             listItems={[
               <li
@@ -251,7 +256,7 @@ class ProfileModelList extends React.Component {
           {`${label} (${modelCount})`}
         </span>
         {showCreate ?
-          <juju.components.CreateModelButton
+          <CreateModelButton
             title="Start a new model"
             changeState={props.changeState}
             switchModel={props.switchModel} /> : null}
@@ -293,7 +298,7 @@ class ProfileModelList extends React.Component {
     function processData(data, label) {
       switch(label) {
         case 'lastConnection':
-          return <juju.components.DateDisplay date={data[label] || '--'} relative={true} />;
+          return <DateDisplay date={data[label] || '--'} relative={true} />;
           break;
         case 'name':
           const owner = data.owner || this.props.userInfo.profile;
@@ -357,13 +362,4 @@ ProfileModelList.propTypes = {
   userInfo: PropTypes.object.isRequired
 };
 
-YUI.add('profile-model-list', function() {
-  juju.components.ProfileModelList = ProfileModelList;
-}, '', {
-  requires: [
-    'button-dropdown',
-    'create-model-button',
-    'date-display',
-    'popup'
-  ]
-});
+module.exports = ProfileModelList;
