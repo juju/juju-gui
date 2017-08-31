@@ -14,6 +14,7 @@ const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
+const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const Lightbox = require('../components/lightbox/lightbox');
@@ -21,8 +22,10 @@ const ModelActions = require('../components/model-actions/model-actions');
 const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const NotificationList = require('../components/notification-list/notification-list');
+const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const Zoom = require('../components/zoom/zoom');
 
@@ -238,7 +241,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
     if (this.applicationConfig.flags.profile) {
       profile =
-        <window.juju.components.Profile
+        <Profile
           acl={this.acl}
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
@@ -279,7 +282,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderHeaderHelp() {
     ReactDOM.render(
-      <window.juju.components.HeaderHelp
+      <HeaderHelp
         appState={this.state}
         gisf={this.applicationConfig.gisf}
         displayShortcutsModal={this._displayShortcutsModal.bind(this)}
@@ -1039,7 +1042,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         this.state.changeState.bind(this.state));
     };
 
-    ReactDOM.render(<window.juju.components.UserMenu
+    ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
