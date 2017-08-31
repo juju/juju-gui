@@ -20,6 +20,17 @@
     padding-right: 20px;
   }
 
+  &__filter {
+    &-label {
+      padding-top: 9px;
+      text-align: right;
+    }
+
+    &-select {
+      text-transform: capitalize;
+    }
+  }
+
   &__link {
     @extend .link;
     cursor: pointer;
@@ -49,10 +60,6 @@
       border: 1px solid $light-mid-grey;
       border-radius: 4px;
       transition: border .3s;
-
-      &--uncommitted {
-        border-color: $uncommitted;
-      }
 
       &--pending {
         border-color: $pending;
