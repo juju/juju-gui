@@ -210,6 +210,7 @@ describe('DeploymentFlow', function() {
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKeys={instance._setSSHKeys}
             setLaunchpadUsernames={instance._setLaunchpadUsernames}
+            user={undefined}
           />
         </juju.components.DeploymentSection>
         {undefined}

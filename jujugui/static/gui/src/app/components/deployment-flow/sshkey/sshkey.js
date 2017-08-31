@@ -164,7 +164,6 @@ class DeploymentSSHKey extends React.Component {
   */
   _handleSourceChange() {
     const source = this.refs.sshSource.getValue();
-    debugger;
     this.setState({addSource: source, buttonDisabled: true});
   }
 
@@ -324,6 +323,13 @@ class DeploymentSSHKey extends React.Component {
         </div>
       );
     } else if (this.state.addSource === 'launchpad') {
+      let username = undefined;
+      if (this.props.user) {
+        username = this.props.user.displayName;
+        if (this.state.buttonDisabled) {
+          this.setState({buttonDisabled: false});
+        }
+      }
       return (
         <div className="three-col last-col no-margin-bottom">
           <juju.components.GenericInput
@@ -332,7 +338,7 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
-            value={this.props.user.displayName}
+            value={username}
           />
         </div>
       );
@@ -345,7 +351,7 @@ class DeploymentSSHKey extends React.Component {
     @return {Object} The React button element.
   */
   _generateAddKeyButton() {
-    const title = this.state.addSource === 'github' ? 'Add Keys' : 'Add Key';
+    const title = this.state.addSource === 'manual' ? 'Add Key' : 'Add Keys';
     const disabled = this.state.buttonDisabled;
     return (<div className="right">
       <juju.components.GenericButton
@@ -445,7 +451,7 @@ DeploymentSSHKey.propTypes = {
   getGithubSSHKeys: PropTypes.func.isRequired,
   setLaunchpadUsernames: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired,
-  user: PropTypes.func.isRequired
+  user: PropTypes.func
 };
 
 YUI.add('deployment-ssh-key', function() {

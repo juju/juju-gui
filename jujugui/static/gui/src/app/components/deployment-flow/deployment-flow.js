@@ -1105,7 +1105,7 @@ DeploymentFlow.propTypes = {
   stats: PropTypes.object,
   updateCloudCredential: PropTypes.func,
   updateModelName: PropTypes.func,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   validateForm: PropTypes.func.isRequired,
   withPlans: PropTypes.bool
 };
