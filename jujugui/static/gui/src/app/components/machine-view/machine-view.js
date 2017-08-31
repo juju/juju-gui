@@ -253,7 +253,7 @@ class MachineView extends React.Component {
 
     @param {String} id The machine id to select. If the id is null, no machine
       is selected.
-    @param {Boolean} dontScroll Whether to scroll to the selected machine.
+    @param {Boolean} scrollToMachine Whether to scroll to the selected machine.
   */
   selectMachine(id, scrollToMachine=true) {
     if (id === null) {
