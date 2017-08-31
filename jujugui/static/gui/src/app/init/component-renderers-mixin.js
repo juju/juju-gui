@@ -869,6 +869,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         stats={this.stats}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
+        user={this.user}
         validateForm={utils.validateForm.bind(utils)}
         WebHandler={yui.juju.environments.web.WebHandler}
         withPlans={false} />,

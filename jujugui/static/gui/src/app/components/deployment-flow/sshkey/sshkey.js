@@ -164,6 +164,7 @@ class DeploymentSSHKey extends React.Component {
   */
   _handleSourceChange() {
     const source = this.refs.sshSource.getValue();
+    debugger;
     this.setState({addSource: source, buttonDisabled: true});
   }
 
@@ -331,6 +332,7 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
+            value={this.props.user.displayName}
           />
         </div>
       );
@@ -442,7 +444,8 @@ DeploymentSSHKey.propTypes = {
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
   setLaunchpadUsernames: PropTypes.func.isRequired,
-  setSSHKeys: PropTypes.func.isRequired
+  setSSHKeys: PropTypes.func.isRequired,
+  user: PropTypes.func.isRequired
 };
 
 YUI.add('deployment-ssh-key', function() {
