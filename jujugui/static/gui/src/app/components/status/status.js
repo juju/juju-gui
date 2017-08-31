@@ -599,7 +599,6 @@ class Status extends React.Component {
       // If the application is not in the DB it must be remote app so don't
       // link to it.
       return (<span>{name}</span>);
-
     }
     return (
       <span className="status-view__link"
