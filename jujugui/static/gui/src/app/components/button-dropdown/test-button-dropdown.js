@@ -2,20 +2,19 @@
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const ButtonDropdown = require('./button-dropdown');
+const SvgIcon = require('../svg-icon/svg-icon');
+const DropdownMenu = require('../dropdown-menu/dropdown-menu');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Button Dropdown', function() {
 
-  beforeAll(done => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('button-dropdown', 'dropdown-menu', function() {
-      done();
-    });
-  });
-
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
-      <juju.components.ButtonDropdown
+      <ButtonDropdown
         classes={['extra-classes']}
         disableDropdown={options.disableDropdown || false}
         icon={options.icon || 'icon_16'}
@@ -38,7 +37,7 @@ describe('Button Dropdown', function() {
           aria-owns="headerDropdownMenu"
           aria-controls="headerDropdownMenu"
           aria-expanded="false">
-          <juju.components.SvgIcon name="icon_16"
+          <SvgIcon name="icon_16"
             className="button-dropdown__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -67,7 +66,7 @@ describe('Button Dropdown', function() {
             aria-owns="headerDropdownMenu"
             aria-controls="headerDropdownMenu"
             aria-expanded="false">
-            <juju.components.SvgIcon name="icon_16"
+            <SvgIcon name="icon_16"
               className="button-dropdown__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -76,11 +75,11 @@ describe('Button Dropdown', function() {
               </span>
             </span>
           </span>
-          <juju.components.DropdownMenu
+          <DropdownMenu
             classes={['extra-classes']}
             handleClickOutside={output.props.children[1].props.handleClickOutside}>
             item1
-          </juju.components.DropdownMenu>
+          </DropdownMenu>
         </div>
       );
       expect(output).toEqualJSX(expected);
@@ -135,7 +134,7 @@ describe('Button Dropdown', function() {
             aria-owns="headerDropdownMenu"
             aria-controls="headerDropdownMenu"
             aria-expanded="false">
-            <juju.components.SvgIcon name="icon_16"
+            <SvgIcon name="icon_16"
               className="button-dropdown__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
