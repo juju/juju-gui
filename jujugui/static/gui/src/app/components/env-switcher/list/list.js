@@ -18,6 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const CreateModelButton = require('../../create-model-button/create-model-button');
+const Panel = require('../../panel/panel');
+
 class EnvList extends React.Component {
   constructor(props) {
     super(props);
@@ -152,7 +155,7 @@ class EnvList extends React.Component {
     const user = this.props.user;
     let createNew;
     if (user) {
-      createNew = <juju.components.CreateModelButton
+      createNew = <CreateModelButton
         type="neutral"
         title="Start a new model"
         disabled={!canAddModels}
@@ -162,12 +165,12 @@ class EnvList extends React.Component {
       />;
     }
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="env-list-panel"
         visible={true}>
         {this._generateModels()}
         {createNew}
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -183,10 +186,4 @@ EnvList.propTypes = {
   user: PropTypes.object
 };
 
-YUI.add('env-list', function() {
-  juju.components.EnvList = EnvList;
-}, '0.1.0', { requires: [
-  'button-row',
-  'panel-component',
-  'create-model-button'
-]});
+module.exports = EnvList;

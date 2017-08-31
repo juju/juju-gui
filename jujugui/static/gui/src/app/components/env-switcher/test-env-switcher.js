@@ -1,40 +1,21 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const EnvSwitcher = require('./env-switcher');
+const EnvList = require('./list/list');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EnvSwitcher', function() {
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('env-switcher', function() { done(); });
-  });
 
   it('renders the closed switcher component', () => {
     const renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -77,7 +58,7 @@ describe('EnvSwitcher', function() {
             aria-owns="environmentSwitcherMenu"
             aria-controls="environmentSwitcherMenu"
             aria-expanded="false">
-            <juju.components.SvgIcon
+            <SvgIcon
               name="chevron_down_16"
               size="16" />
           </div>
@@ -89,7 +70,7 @@ describe('EnvSwitcher', function() {
 
   it('should not have an editable name when the model is committed', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -112,7 +93,7 @@ describe('EnvSwitcher', function() {
   it('can change the model name', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -139,7 +120,7 @@ describe('EnvSwitcher', function() {
   it('does not change the model name if there is an error', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -164,7 +145,7 @@ describe('EnvSwitcher', function() {
 
   it('can render when there is an error', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -202,7 +183,7 @@ describe('EnvSwitcher', function() {
     const switchModel = sinon.stub();
     const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -218,7 +199,7 @@ describe('EnvSwitcher', function() {
     });
 
     renderer.render(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -232,7 +213,7 @@ describe('EnvSwitcher', function() {
     const instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
 
-    const expected = <juju.components.EnvList
+    const expected = <EnvList
       acl={acl}
       changeState={changeState}
       environmentName=""
@@ -248,7 +229,7 @@ describe('EnvSwitcher', function() {
   it('fetches a list of environments on mount', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -272,7 +253,7 @@ describe('EnvSwitcher', function() {
   it('fetches the env list when opening', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -308,7 +289,7 @@ describe('EnvSwitcher', function() {
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -334,7 +315,7 @@ describe('EnvSwitcher', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.wrappedComponent
+      <EnvSwitcher.wrappedComponent
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}
