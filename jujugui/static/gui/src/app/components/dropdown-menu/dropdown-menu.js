@@ -34,8 +34,8 @@ class DropdownMenu extends React.Component {
 DropdownMenu.propTypes = {
   // The children need to be <li>.
   children: PropTypes.oneOfType([
-    React.PropTypes.arrayOf(React.PropTypes.node),
-    React.PropTypes.node
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node
   ]).isRequired,
   classes: PropTypes.array,
   handleClickOutside: PropTypes.func
