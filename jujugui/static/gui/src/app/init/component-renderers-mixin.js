@@ -12,6 +12,7 @@ const AddedServicesList = require('../components/added-services-list/added-servi
 const Charmbrowser = require('../components/charmbrowser/charmbrowser');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
@@ -22,6 +23,7 @@ const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const NotificationList = require('../components/notification-list/notification-list');
 const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const UserProfile = require('../components/user-profile/user-profile');
 const Zoom = require('../components/zoom/zoom');
 
 /**
@@ -209,7 +211,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
     let profile = (
-      <window.juju.components.UserProfile
+      <UserProfile
         acl={this.acl}
         addNotification={this._bound.addNotification}
         charmstore={charmstore}
@@ -1078,7 +1080,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       showEnvSwitcher = false;
     }
     ReactDOM.render(
-      <juju.components.HeaderBreadcrumb
+      <HeaderBreadcrumb
         acl={this.acl}
         addNotification={this._bound.addNotification}
         appState={this.state}
