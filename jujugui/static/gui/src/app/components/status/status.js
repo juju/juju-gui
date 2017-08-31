@@ -589,6 +589,27 @@ class Status extends React.Component {
   }
 
   /**
+    Generate a link to an application from a relation.
+    @param name {String} An app name.
+    @returns {Object} The link element.
+  */
+  _generateRelationAppLink(name) {
+    const app = this.props.db.services.getById(name);
+    if (!app) {
+      // If the application is not in the DB it must be remote app so don't
+      // link to it.
+      return (<span>{name}</span>);
+    }
+    return (
+      <span className="status-view__link"
+        onClick={this._navigateToApplication.bind(this, name)}>
+        <img className="status-view__icon"
+          src={app.get('icon')} />
+        {name}
+      </span>);
+  }
+
+  /**
     Generate the relations fragment of the status.
     @param {Array} relations The relations as included in the GUI db.
     @returns {Object} The resulting element.
@@ -628,18 +649,10 @@ class Status extends React.Component {
           content: name
         }, {
           columnSize: 3,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, provides)}>
-              {provides}
-            </span>)
+          content: this._generateRelationAppLink(provides)
         }, {
           columnSize: 3,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, consumes)}>
-              {consumes}
-            </span>)
+          content: this._generateRelationAppLink(consumes)
         }, {
           columnSize: 3,
           content: scope
@@ -699,7 +712,8 @@ Status.propTypes = {
       size: PropTypes.func.isRequired
     }).isRequired,
     services: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      getById: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
   model: shapeup.shape({

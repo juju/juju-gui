@@ -37,7 +37,8 @@ describe('Status', function() {
         size: sinon.stub().withArgs().returns(0)
       },
       services: {
-        filter: sinon.stub().returns([])
+        filter: sinon.stub().returns([]),
+        getById: sinon.stub()
       }
     };
   });
@@ -235,6 +236,10 @@ describe('Status', function() {
         url: 'local:admin/my.mongo'
       })
     }];
+    const getById = sinon.stub();
+    getById.withArgs('django').returns(applications[0]);
+    getById.withArgs('haproxy').returns(applications[1]);
+    getById.withArgs('mysql').returns(applications[2]);
     return {
       machines: {
         filter: func => machines.filter(func)
@@ -247,7 +252,8 @@ describe('Status', function() {
         map: func => remoteApplications.map(func)
       },
       services: {
-        filter: func => applications.filter(func)
+        filter: func => applications.filter(func),
+        getById: getById
       }
     };
   };
@@ -724,6 +730,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="mysql.svg" />
                   mysql
                 </span>)
             }, {
@@ -731,6 +739,8 @@ describe('Status', function() {
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="mysql.svg" />
                   mysql
                 </span>)
             }, {
@@ -745,16 +755,14 @@ describe('Status', function() {
               content: 'website'
             }, {
               columnSize: 3,
-              content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
-                  wordpress
-                </span>)
+              content: (<span>wordpress</span>)
             }, {
               columnSize: 3,
               content: (
                 <span className="status-view__link"
                   onClick={sinon.stub()}>
+                  <img className="status-view__icon"
+                    src="ha.svg" />
                   haproxy
                 </span>)
             }, {
