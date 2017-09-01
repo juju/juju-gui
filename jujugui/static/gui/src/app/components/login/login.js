@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const GenericButton = require('../generic-button/generic-button');
+const SvgIcon = require('../svg-icon/svg-icon');
+const USSOLoginLink = require('../usso-login-link/usso-login-link');
+
 class Login extends React.Component {
   componentDidMount() {
     if (this.props.gisf) {
@@ -92,7 +96,7 @@ class Login extends React.Component {
 
   _generateUSSOLink () {
     return (
-      <juju.components.USSOLoginLink
+      <USSOLoginLink
         addNotification={this.props.addNotification}
         displayType="button"
         loginToController={this.props.loginToController}
@@ -107,7 +111,7 @@ class Login extends React.Component {
     return (
       <div className={this._generateClassnames()}>
         <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -136,11 +140,11 @@ class Login extends React.Component {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
+            <GenericButton
               submit={true}
               type="positive">
               Login
-            </juju.components.GenericButton>
+            </GenericButton>
             {this._generateUSSOLink()}
           </form>
         </div>
@@ -166,12 +170,4 @@ Login.propTypes = {
   loginToController: PropTypes.func.isRequired
 };
 
-YUI.add('login-component', function() {
-  juju.components.Login = Login;
-}, '0.1.0', {
-  requires: [
-    'generic-button',
-    'usso-login-link',
-    'svg-icon'
-  ]
-});
+module.exports = Login;
