@@ -2,6 +2,8 @@
 
 'use strict';
 
+const shapeup = require('shapeup');
+
 /**
   Charm list React component used to display a list of the users charms in
   their profile.
@@ -142,8 +144,4 @@ ProfileCharmList.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('profile-charm-list', function() {
-  juju.components.ProfileCharmList = ProfileCharmList;
-}, '', {
-  requires: []
-});
+module.exports = ProfileCharmList;

@@ -1,32 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const DateDisplay = require('../../date-display/date-display');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const UserProfileEntity = require('./entity');
+const UserProfileEntityKPI = require('../kpi/kpi');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileEntity', () => {
   let acl, model;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('user-profile-entity', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {canRemoveModel: (_) => true};
@@ -47,7 +33,7 @@ describe('UserProfileEntity', () => {
   it('can render a model', () => {
     const displayConfirmation = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         acl={acl}
         displayConfirmation={displayConfirmation}
         entity={model}
@@ -56,12 +42,12 @@ describe('UserProfileEntity', () => {
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const button = output.props.children[1].props.children[0].props.children[1]
       .props.children[1];
     const expected = (
-      <juju.components.ExpandingRow classes={{
+      <ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
       expanded={false}>
         <span>Summary details</span>
@@ -80,16 +66,16 @@ describe('UserProfileEntity', () => {
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
-              <juju.components.GenericButton
+              <GenericButton
                 action={displayConfirmation}
                 type="inline-neutral">
                 Destroy model
-              </juju.components.GenericButton>
-              <juju.components.GenericButton
+              </GenericButton>
+              <GenericButton
                 action={button.props.action}
                 type="inline-neutral">
                 Manage
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -110,7 +96,7 @@ describe('UserProfileEntity', () => {
                 Read
               </div>
               <div className="two-col last-col">
-                <juju.components.DateDisplay
+                <DateDisplay
                   date="today"
                   relative={true} />
               </div>
@@ -121,7 +107,7 @@ describe('UserProfileEntity', () => {
             {undefined}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -129,7 +115,7 @@ describe('UserProfileEntity', () => {
     const displayConfirmation = sinon.stub();
     acl = {canRemoveModel: (_) => false};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         acl={acl}
         displayConfirmation={displayConfirmation}
         entity={model}
@@ -138,12 +124,12 @@ describe('UserProfileEntity', () => {
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const button = output.props.children[1].props.children[0].props.children[1]
       .props.children[1];
     const expected = (
-      <juju.components.ExpandingRow classes={{
+      <ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
       expanded={false}>
         <span>Summary details</span>
@@ -162,11 +148,11 @@ describe('UserProfileEntity', () => {
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
-              <juju.components.GenericButton
+              <GenericButton
                 action={button.props.action}
                 type="inline-neutral">
                 Manage
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -187,7 +173,7 @@ describe('UserProfileEntity', () => {
                 Read
               </div>
               <div className="two-col last-col">
-                <juju.components.DateDisplay
+                <DateDisplay
                   date="today"
                   relative={true} />
               </div>
@@ -198,7 +184,7 @@ describe('UserProfileEntity', () => {
             {undefined}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -211,21 +197,21 @@ describe('UserProfileEntity', () => {
     };
     const getDiagramURL = sinon.stub().returns('bundle.svg');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={sinon.stub()}
         entity={bundle}
         expanded={false}
         getDiagramURL={getDiagramURL}
         type="bundle">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
-      <juju.components.ExpandingRow classes={{
+      <ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
       key="django-cluster"
       expanded={false}>
@@ -243,11 +229,11 @@ describe('UserProfileEntity', () => {
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
               {undefined}
-              <juju.components.GenericButton
+              <GenericButton
                 action={viewButton.props.action}
                 type="inline-neutral">
                 View
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -296,7 +282,7 @@ describe('UserProfileEntity', () => {
             {undefined}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -309,21 +295,21 @@ describe('UserProfileEntity', () => {
     };
     const getDiagramURL = sinon.stub().returns('bundle.svg');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={sinon.stub()}
         entity={bundle}
         expanded={false}
         getDiagramURL={getDiagramURL}
         type="bundle">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
-      <juju.components.ExpandingRow classes={{
+      <ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
       key="django-cluster"
       expanded={false}>
@@ -341,11 +327,11 @@ describe('UserProfileEntity', () => {
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
               {undefined}
-              <juju.components.GenericButton
+              <GenericButton
                 action={viewButton.props.action}
                 type="inline-neutral">
                 View
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -394,7 +380,7 @@ describe('UserProfileEntity', () => {
             {undefined}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -402,7 +388,7 @@ describe('UserProfileEntity', () => {
     const charm = jsTestUtils.makeEntity().toEntity();
     charm.series = ['trusty', 'zesty'];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={sinon.stub()}
         entity={charm}
         expanded={false}
@@ -410,7 +396,7 @@ describe('UserProfileEntity', () => {
         d3={{}}
         type="charm">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     let kpiDiv = renderer.getRenderOutput().props.children[1]
       .props.children[1].props.children[7];
     assert.equal(kpiDiv, undefined);
@@ -431,10 +417,10 @@ describe('UserProfileEntity', () => {
       .props.children[1].props.children[7];
     const expectedButton = (
       <div>
-        <juju.components.GenericButton
+        <GenericButton
           action={function noRefCheck() {}}>
           Show KPI Metrics
-        </juju.components.GenericButton>
+        </GenericButton>
       </div>);
     expect(kpiDiv).toEqualJSX(expectedButton);
     instance.setState({kpiVisible: true});
@@ -442,11 +428,11 @@ describe('UserProfileEntity', () => {
       .props.children[1].props.children[7];
     const expectedChart = (
       <div>
-        <juju.components.GenericButton
+        <GenericButton
           action={function noRefCheck() {}}>
           Show KPI Metrics
-        </juju.components.GenericButton>
-        <juju.components.UserProfileEntityKPI
+        </GenericButton>
+        <UserProfileEntityKPI
           d3={{}}
           metricTypes={['bad-wolf']}
           metrics={[{count: 10, metric: 'bad-wolf', sum: 10, time: {}}]} />
@@ -458,21 +444,21 @@ describe('UserProfileEntity', () => {
     const charm = jsTestUtils.makeEntity().toEntity();
     charm.series = ['trusty', 'zesty'];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={sinon.stub()}
         entity={charm}
         expanded={false}
         getKpiMetrics={sinon.stub()}
         type="charm">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
-      <juju.components.ExpandingRow classes={{
+      <ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
       key="cs:django"
       expanded={false}>
@@ -492,11 +478,11 @@ describe('UserProfileEntity', () => {
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
               {undefined}
-              <juju.components.GenericButton
+              <GenericButton
                 action={viewButton.props.action}
                 type="inline-neutral">
                 View
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -532,19 +518,19 @@ describe('UserProfileEntity', () => {
             {undefined}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can switch to a model', () => {
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         entity={model}
         switchModel={switchModel}
         type="model">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
@@ -561,13 +547,13 @@ describe('UserProfileEntity', () => {
   it('can display a delete confirmation', () => {
     const displayConfirmation = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         acl={acl}
         entity={model}
         displayConfirmation={displayConfirmation}
         type="model">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[0].props.action();
@@ -577,11 +563,11 @@ describe('UserProfileEntity', () => {
   it('hides the destroy button for controllers', () => {
     model.isController = true;
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         entity={model}
         type="model">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const destroyButton = output.props.children[1].props.children[0].props
       .children[1].props.children[0];
@@ -594,13 +580,13 @@ describe('UserProfileEntity', () => {
     const getDiagramURL = sinon.stub().returns('bundle.svg');
     const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={changeState}
         entity={bundle}
         getDiagramURL={getDiagramURL}
         type="bundle">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
@@ -616,13 +602,13 @@ describe('UserProfileEntity', () => {
     const getDiagramURL = sinon.stub().returns('bundle.svg');
     const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         changeState={changeState}
         entity={bundle}
         getDiagramURL={getDiagramURL}
         type="bundle">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0].props.onClick();
@@ -641,7 +627,7 @@ describe('UserProfileEntity', () => {
     charm.id = 'cs:~yellow/trusty/uptime-0';
     charm.series = ['trusty', 'zesty'];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         addNotification={addNotification}
         changeState={sinon.stub()}
         entity={charm}
@@ -650,7 +636,7 @@ describe('UserProfileEntity', () => {
         d3={{}}
         type="charm">
         <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
+      </UserProfileEntity>, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(addNotification.callCount, 1);

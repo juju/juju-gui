@@ -2,6 +2,7 @@
 
 'use strict';
 
+const ButtonDropdown = require('../button-dropdown/button-dropdown');
 /**
   Provides a user menu to the header - shows Profile, Account and Logout links.
   If user is not logged in the user icon is replaced with a login button.
@@ -26,7 +27,7 @@ class UserMenu extends React.Component {
     const controllerAPI = this.props.controllerAPI;
     const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
     return (
-      <juju.components.ButtonDropdown
+      <ButtonDropdown
         classes={['user-menu']}
         ref="buttonDropdown"
         icon={showLogin ? this.props.USSOLoginLink : 'user_16'}
@@ -62,8 +63,4 @@ UserMenu.propTypes = {
   navigateUserProfile: PropTypes.func.isRequired
 };
 
-YUI.add('user-menu', function() {
-  juju.components.UserMenu = UserMenu;
-}, '0.1.0', { requires: [
-  'button-dropdown'
-]});
+module.exports = UserMenu;

@@ -3283,8 +3283,6 @@ YUI.add('juju-gui', function(Y) {
     'account',
     'deployment-flow',
     'deployment-signup',
-    'header-breadcrumb',
-    'header-help',
     'inspector-component',
     'local-inspector',
     'machine-view',
@@ -3294,8 +3292,6 @@ YUI.add('juju-gui', function(Y) {
     'status',
     'svg-icon',
     'user-menu',
-    'profile',
-    'user-profile',
     // juju-views group
     'd3-components',
     'juju-view-utils',

@@ -51,8 +51,4 @@ ProfileNavigation.propTypes = {
   sectionsMap: PropTypes.instanceOf(Map).isRequired
 };
 
-YUI.add('profile-navigation', function() {
-  juju.components.ProfileNavigation = ProfileNavigation;
-}, '', {
-  requires: []
-});
+module.exports = ProfileNavigation;
