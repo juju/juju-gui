@@ -164,6 +164,7 @@ describe('MachineView', function() {
               id: 'cpu',
               action: machineMenuItems[8].action
             }]}
+            ref="machinesColumn"
             title="My Model (0)"
             type="machine">
             {undefined}
@@ -208,6 +209,7 @@ describe('MachineView', function() {
               id: 'applications',
               action: containerMenuItems[4].action
             }]}
+            ref="containersColumn"
             title="0 containers, 0 units"
             type="container">
             {undefined}
@@ -936,6 +938,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new0"
           showConstraints={true}
           type="machine"
         />
@@ -953,6 +956,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new1"
           showConstraints={true}
           type="machine"
         />
@@ -1038,6 +1042,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new0"
           showConstraints={true}
           type="machine"
         />
@@ -1058,6 +1063,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new5"
           showConstraints={true}
           type="machine"
         />
@@ -1143,6 +1149,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new0"
           showConstraints={true}
           type="machine"
         />
@@ -1161,6 +1168,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           showConstraints={false}
+          ref="machine-new1"
           type="machine"
         />
       </ul>);
@@ -1276,6 +1284,12 @@ describe('MachineView', function() {
         parseConstraints={parseConstraints}
         parseMachineName={parseMachineName} />, true);
     const instance = renderer.getMountedInstance();
+    const column = document.createElement('div');
+    column.innerHTML = '<div className="machine-view__column-content"></div>';
+    instance.refs = {
+      containersColumn: column,
+      machinesColumn: column
+    };
     instance.componentDidMount();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new0'}});
@@ -1335,6 +1349,12 @@ describe('MachineView', function() {
           number: 'new1'
         })} />, true);
     const instance = renderer.getMountedInstance();
+    const column = document.createElement('div');
+    column.innerHTML = '<div className="machine-view__column-content"></div>';
+    instance.refs = {
+      containersColumn: column,
+      machinesColumn: column
+    };
     instance.componentDidMount();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new1'}});
@@ -1468,6 +1488,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="container-new0"
           type="container"
         />
         <juju.components.MachineViewMachine
@@ -1485,6 +1506,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="container-new0/lxc/0"
           type="container"
         />
       </ul>);
@@ -1580,6 +1602,7 @@ describe('MachineView', function() {
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
+          ref="container-new0"
           type="container"
         />
         <juju.components.MachineViewMachine
@@ -1598,6 +1621,7 @@ describe('MachineView', function() {
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
+          ref="container-new0/lxc/0"
           type="container"
         />
         <juju.components.MachineViewMachine
@@ -1616,6 +1640,7 @@ describe('MachineView', function() {
           }}
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
+          ref="container-new0/lxc/5"
           type="container"
         />
       </ul>);
@@ -1773,6 +1798,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="container-new0"
           type="container"
         />
         <juju.components.MachineViewMachine
@@ -1788,6 +1814,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="container-new0/lxc/0"
           type="container"
         />
       </ul>);
