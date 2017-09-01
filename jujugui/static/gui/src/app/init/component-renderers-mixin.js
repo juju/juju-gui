@@ -18,6 +18,8 @@ const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const Lightbox = require('../components/lightbox/lightbox');
+const Login = require('../components/login/login');
+const Logout = require('../components/logout/logout');
 const ModelActions = require('../components/model-actions/model-actions');
 const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
@@ -27,6 +29,7 @@ const Sharing = require('../components/sharing/sharing');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
+const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
 
 /**
@@ -965,7 +968,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return this.controllerAPI && this.controllerAPI.get('connected');
     };
     ReactDOM.render(
-      <window.juju.components.Login
+      <Login
         addNotification={this._bound.addNotification}
         controllerIsConnected={controllerIsConnected}
         errorMessage={err}
@@ -1000,8 +1003,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
     const charmstore = this.charmstore;
     const bakery = this.bakery;
-    const USSOLoginLink = (
-      <window.juju.components.USSOLoginLink
+    const _USSOLoginLink = (
+      <USSOLoginLink
         addNotification={this._bound.addNotification}
         displayType="text"
         loginToController={
@@ -1014,7 +1017,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const doCharmstoreLogout = () => {
       return this.getUser('charmstore') && !this.get('gisf');
     };
-    const LogoutLink = (<window.juju.components.Logout
+    const LogoutLink = (<Logout
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
       doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
@@ -1047,7 +1050,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
-      USSOLoginLink={USSOLoginLink}
+      USSOLoginLink={_USSOLoginLink}
     />, linkContainer);
   }
 
