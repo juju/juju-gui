@@ -223,7 +223,7 @@ class MachineViewMachine extends React.Component {
   _handleSelectMachine() {
     const selectMachine = this.props.machineAPI.selectMachine;
     if (selectMachine) {
-      selectMachine(this.props.machineAPI.machine.id);
+      selectMachine(this.props.machineAPI.machine.id, false);
     }
   }
 

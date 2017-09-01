@@ -54,7 +54,8 @@ class MachineView extends React.Component {
       // the machine for the selected id still exists and if not reset it
       // so the first machine gets selected.
       if (!this.props.dbAPI.machines.getById(selectedMachine)) {
-        this.selectMachine(this._getFirstMachineId(nextProps.dbAPI.machines));
+        this.selectMachine(
+          this._getFirstMachineId(nextProps.dbAPI.machines));
       }
     }
   }
@@ -230,25 +231,53 @@ class MachineView extends React.Component {
   }
 
   /**
+    Scroll a column to a machine or container.
+    @param {String} id The machine id to scroll to.
+    @param {Boolean} isContainer Whether the machine is a container.
+  */
+  _scrollToMachine(id, isContainer=false) {
+    // Get the correct column that contains the machine to scroll to.
+    const column = ReactDOM.findDOMNode(isContainer ?
+      this.refs.containersColumn : this.refs.machinesColumn);
+    // Get the content node that scrolls.
+    const content = column.querySelector('.machine-view__column-content');
+    const machine = ReactDOM.findDOMNode(
+      this.refs[`${isContainer ? 'container' : 'machine'}-${id}`]);
+    if (content && machine) {
+      content.scrollTop = machine.offsetTop - content.offsetTop;
+    }
+  }
+
+  /**
     Handle selecting a machine.
 
-    @method selectMachine
     @param {String} id The machine id to select. If the id is null, no machine
       is selected.
+    @param {Boolean} scrollToMachine Whether to scroll to the selected machine.
   */
-  selectMachine(id) {
+  selectMachine(id, scrollToMachine=true) {
     if (id === null) {
       return;
+    }
+    if (scrollToMachine) {
+      const selected = this._getSelected(id);
+      this._scrollToMachine(selected.machine, false);
+      if (selected.container) {
+        this._scrollToMachine(selected.container, true);
+      }
     }
     this.props.changeState({gui: {machines: id}});
   }
 
   /**
     Get the currently selected machine and container.
+    @param machine {String} The machine id.
     @returns {Object} The selected machine and container.
   */
-  _getSelected() {
-    const machine = this.props.machine;
+  _getSelected(machine) {
+    if (!machine) {
+      machine = this.props.machine;
+    }
     let selected = {
       machine: null,
       container: null
@@ -325,6 +354,7 @@ class MachineView extends React.Component {
           }}
           modelAPI={modelAPI}
           parseConstraints={props.parseConstraints}
+          ref={`machine-${machine.id}`}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
           type="machine"
@@ -385,6 +415,7 @@ class MachineView extends React.Component {
           }}
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={props.parseConstraints}
+          ref={`container-${container.id}`}
           type="container"
         />);
     });
@@ -759,6 +790,7 @@ class MachineView extends React.Component {
             droppable={true}
             dropUnit={this._dropUnit.bind(this)}
             menuItems={machineMenuItems}
+            ref="machinesColumn"
             title={this._generateMachinesTitle()}
             type="machine">
             {this._generateAddMachine()}
@@ -770,6 +802,7 @@ class MachineView extends React.Component {
             droppable={!!this._getSelected().machine}
             dropUnit={this._dropUnit.bind(this)}
             menuItems={containerMenuItems}
+            ref="containersColumn"
             title={this._generateContainersTitle()}
             type="container">
             {this._generateAddContainer()}

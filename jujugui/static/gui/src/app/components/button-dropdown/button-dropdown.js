@@ -126,8 +126,8 @@ ButtonDropdown.propTypes = {
   classes: PropTypes.array,
   disableDropdown: PropTypes.bool,
   icon: PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.object
+    PropTypes.string,
+    PropTypes.object
   ]).isRequired,
   // The listItems prop isn't required because this component is also used to
   // display just the 'login' link. At which point the drop down is disabled
