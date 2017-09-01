@@ -107,10 +107,4 @@ SvgIcon.propTypes = {
   ])
 };
 
-if (module) {
-  module.exports = SvgIcon;
-}
-
-YUI.add('svg-icon', function() {
-  juju.components.SvgIcon = SvgIcon;
-}, '0.1.0', { requires: []});
+module.exports = SvgIcon;
