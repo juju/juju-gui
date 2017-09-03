@@ -1,22 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const GenericButton = require('../../../generic-button/generic-button');
+const GenericInput = require('../../../generic-input/generic-input');
+const AccountPaymentDetailsAddress = require('./address/address');
 
 class AccountPaymentDetails extends React.Component {
   constructor() {
@@ -57,21 +44,21 @@ class AccountPaymentDetails extends React.Component {
     return (
       <div className="account__payment-details-view twelve-col">
         <div className="account__payment-details-fields">
-          <juju.components.GenericInput
+          <GenericInput
             disabled={true}
             label="Name"
             value={user.name} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={true}
             label="Email address"
             value={user.email} />
           {business ? (
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="VAT number (optional)"
               value={user.vat} />) : null}
           {business ? (
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="Business name"
               value={user.businessName} />) : null}
@@ -79,23 +66,23 @@ class AccountPaymentDetails extends React.Component {
         <h4>
           Addresses
           {this.state.addressEdit ? null : (
-            <juju.components.GenericButton
+            <GenericButton
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
               type="inline-neutral">
               Edit
-            </juju.components.GenericButton>)}
+            </GenericButton>)}
         </h4>
         {this._generateAddresses(user.addresses)}
         <h4>
           Billing addresses
           {this.state.billingAddressEdit ? null : (
-            <juju.components.GenericButton
+            <GenericButton
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
               type="inline-neutral">
               Edit
-            </juju.components.GenericButton>)}
+            </GenericButton>)}
         </h4>
         {this._generateAddresses(user.billingAddresses, true)}
       </div>);
@@ -112,7 +99,7 @@ class AccountPaymentDetails extends React.Component {
   _generateAddresses(addresses, billing=false) {
     let list = addresses.map(address => {
       return (
-        <juju.components.AccountPaymentDetailsAddress
+        <AccountPaymentDetailsAddress
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           addAddress={
@@ -169,13 +156,4 @@ AccountPaymentDetails.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('account-payment-details', function() {
-  juju.components.AccountPaymentDetails = AccountPaymentDetails;
-}, '', {
-  requires: [
-    'account-payment-details-address',
-    'address-form',
-    'expanding-row',
-    'generic-button'
-  ]
-});
+module.exports = AccountPaymentDetails;

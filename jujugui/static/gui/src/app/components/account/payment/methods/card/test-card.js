@@ -1,32 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const AccountPaymentMethodCard = require('./card');
+const GenericButton = require('../../../../generic-button/generic-button');
+const SvgIcon = require('../../../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../../../utils/component-test-utils');
 
 describe('AccountPaymentMethodCard', () => {
   let card;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment-method-card', () => { done(); });
-  });
 
   beforeEach(() => {
     card = {
@@ -51,7 +35,7 @@ describe('AccountPaymentMethodCard', () => {
 
   it('can render', () => {
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         card={card} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
@@ -77,7 +61,7 @@ describe('AccountPaymentMethodCard', () => {
                     {3}/{2017}
                   </div>
                   <div className="account__payment-card-brand">
-                    <juju.components.SvgIcon
+                    <SvgIcon
                       size="40"
                       name="card-fancy" />
                   </div>
@@ -101,7 +85,7 @@ describe('AccountPaymentMethodCard', () => {
   it('can render the actions', () => {
     const updatePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         card={card}
         removePaymentMethod={sinon.stub()}
         updatePaymentMethod={updatePaymentMethod} />, true);
@@ -109,23 +93,23 @@ describe('AccountPaymentMethodCard', () => {
     const output = component.getRenderOutput();
     const expected = (
       <div className="four-col last-col account__payment-card-actions">
-        <juju.components.GenericButton
+        <GenericButton
           action={instance._removePaymentMethod}
           type="inline-neutral">
           Remove payment details
-        </juju.components.GenericButton>
-        <juju.components.GenericButton
+        </GenericButton>
+        <GenericButton
           action={updatePaymentMethod}
           type="inline-neutral">
           Update payment details
-        </juju.components.GenericButton>
+        </GenericButton>
       </div>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('can render when flipped', () => {
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         card={card} />, true);
     let output = component.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick(
@@ -140,7 +124,7 @@ describe('AccountPaymentMethodCard', () => {
     const onPaymentMethodRemoved = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, null);
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         addNotification={sinon.stub()}
         card={card}
         onPaymentMethodRemoved={onPaymentMethodRemoved}
@@ -158,7 +142,7 @@ describe('AccountPaymentMethodCard', () => {
     const addNotification = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, 'Uh oh!');
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         addNotification={addNotification}
         card={card}
         onPaymentMethodRemoved={sinon.stub()}
@@ -178,7 +162,7 @@ describe('AccountPaymentMethodCard', () => {
     const abort = sinon.stub();
     const removePaymentMethod = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         addNotification={sinon.stub()}
         card={card}
         onPaymentMethodRemoved={sinon.stub()}
