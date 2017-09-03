@@ -5,6 +5,7 @@
 const React = require('react');
 
 const DropdownMenu = require('./dropdown-menu');
+const Panel = require('../panel/panel');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
