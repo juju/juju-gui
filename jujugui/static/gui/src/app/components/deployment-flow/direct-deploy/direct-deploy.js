@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const GenericButton = require('../../generic-button/generic-button');
+const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
+const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
+const DeploymentSection = require('../section/section');
 
 class DeploymentDirectDeploy extends React.Component {
   constructor(props) {
@@ -69,7 +57,7 @@ class DeploymentDirectDeploy extends React.Component {
   _generateImage() {
     if (this.state.isBundle) {
       return (
-        <juju.components.EntityContentDiagram
+        <EntityContentDiagram
           diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />);
     } else {
       const entity = this.props.entityModel.toEntity();
@@ -121,7 +109,7 @@ class DeploymentDirectDeploy extends React.Component {
             <h2 className="deployment-direct-deploy__title">
               {entity.displayName}
             </h2>
-            <juju.components.EntityContentDescription
+            <EntityContentDescription
               entityModel={entityModel}
               renderMarkdown={this.props.renderMarkdown} />
             <ul>
@@ -137,20 +125,20 @@ class DeploymentDirectDeploy extends React.Component {
               {this._generateImage()}
             </div>
             <div className="deployment-direct-deploy__edit-model">
-              <juju.components.GenericButton
+              <GenericButton
                 action={this._handleClose.bind(this)}
                 type="inline-neutral">
                 Edit model
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
         </div>);
     }
     return (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-direct-deploy">
         {content}
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
   }
 };
 
@@ -164,13 +152,4 @@ DeploymentDirectDeploy.propTypes = {
   renderMarkdown: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-direct-deploy', function() {
-  juju.components.DeploymentDirectDeploy = DeploymentDirectDeploy;
-}, '0.1.0', {
-  requires: [
-    'deployment-section',
-    'entity-content-diagram',
-    'entity-content-description',
-    'generic-button'
-  ]
-});
+module.exports = DeploymentDirectDeploy;

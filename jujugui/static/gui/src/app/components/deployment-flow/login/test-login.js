@@ -1,41 +1,23 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentLogin = require('./login');
+const DeploymentSection = require('../section/section');
+const SvgIcon = require('../../svg-icon/svg-icon');
+const USSOLoginLink = require('../../usso-login-link/usso-login-link');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentLogin', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-login', function() { done(); });
-  });
 
   it('can render', function() {
     const addNotification = sinon.stub();
     const callback = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentLogin
+      <DeploymentLogin
         addNotification={addNotification}
         callback={callback}
         gisf={true}
@@ -44,7 +26,7 @@ describe('DeploymentLogin', function() {
         showLoginLinks={true} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-login"
         showCheck={true}
         title="You're almost ready to deploy!">
@@ -56,14 +38,14 @@ describe('DeploymentLogin', function() {
           <div className="deployment-login__features">
             <div className="six-col">
               <div className="deployment-login__feature">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
                 Deploy to all major clouds directly from your browser.
               </div>
               <div className="deployment-login__feature">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -72,14 +54,14 @@ describe('DeploymentLogin', function() {
             </div>
             <div className="six-col last-col">
               <div className="deployment-login__feature">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
                 Hosted and managed juju controllers.
               </div>
               <div className="deployment-login__feature">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -88,28 +70,28 @@ describe('DeploymentLogin', function() {
             </div>
           </div>
           <div className="deployment-login__login">
-            <juju.components.USSOLoginLink
+            <USSOLoginLink
               addNotification={addNotification}
               gisf={true}
               callback={callback}
               displayType="button"
               loginToController={loginToController}>
               Login
-            </juju.components.USSOLoginLink>
+            </USSOLoginLink>
           </div>
           <div className="deployment-login__signup">
             Do not have an account?
-            <juju.components.USSOLoginLink
+            <USSOLoginLink
               addNotification={addNotification}
               gisf={true}
               callback={callback}
               displayType="text"
               loginToController={loginToController}>
               Sign up
-            </juju.components.USSOLoginLink>
+            </USSOLoginLink>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -118,7 +100,7 @@ describe('DeploymentLogin', function() {
     const callback = sinon.stub();
     const loginToController = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentLogin
+      <DeploymentLogin
         addNotification={addNotification}
         callback={callback}
         gisf={true}
@@ -128,34 +110,34 @@ describe('DeploymentLogin', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div>
-        <juju.components.DeploymentSection
+        <DeploymentSection
           instance="deployment-login-signup">
           <span className="deployment-login-signup__message">
               Sign up to start deploying to your favourite cloud
           </span>
-          <juju.components.USSOLoginLink
+          <USSOLoginLink
             addNotification={addNotification}
             gisf={true}
             callback={callback}
             displayType="button"
             loginToController={loginToController}>
             Sign up
-          </juju.components.USSOLoginLink>
+          </USSOLoginLink>
           or&nbsp;
-          <juju.components.USSOLoginLink
+          <USSOLoginLink
             addNotification={addNotification}
             gisf={true}
             callback={callback}
             displayType="text"
             loginToController={loginToController}>
             log in
-          </juju.components.USSOLoginLink>
+          </USSOLoginLink>
           to get started with&nbsp;
           <a href="http://jujucharms.com/jaas">
             JAAS
           </a>
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
+        </DeploymentSection>
+        <DeploymentSection
           instance="deployment-login-features">
           <div className="six-col">
             <h3>JAAS gives you Juju, as a service</h3>
@@ -174,19 +156,19 @@ describe('DeploymentLogin', function() {
           </div>
           <div className="six-col last-col">
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={53}
                 name="aws-light"
                 width={140} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={39}
                 name="google-light"
                 width={435} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={24}
                 name="azure"
                 width={204} />
@@ -195,7 +177,7 @@ describe('DeploymentLogin', function() {
           <div className="deployment-login-features__items twelve-col">
             <div className="six-col no-margin-bottom">
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -207,7 +189,7 @@ describe('DeploymentLogin', function() {
                 <li>24/7 monitoring and alerting</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -218,7 +200,7 @@ describe('DeploymentLogin', function() {
                 <li>Read only mode available</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -230,7 +212,7 @@ describe('DeploymentLogin', function() {
             </div>
             <div className="six-col last-col no-margin-bottom">
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -245,7 +227,7 @@ describe('DeploymentLogin', function() {
                 <li>Portable solutions across clouds</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -257,7 +239,7 @@ describe('DeploymentLogin', function() {
               </ul>
             </div>
           </div>
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -265,7 +247,7 @@ describe('DeploymentLogin', function() {
   it('displays the login links when requested', function() {
     const callback = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentLogin
+      <DeploymentLogin
         addNotification={sinon.stub()}
         callback={callback}
         gisf={true}
@@ -274,7 +256,7 @@ describe('DeploymentLogin', function() {
         showLoginLinks={false} />);
     const expected = (
       <div>
-        <juju.components.DeploymentSection
+        <DeploymentSection
           instance="deployment-login-features">
           <div className="six-col">
             <h3>JAAS gives you Juju, as a service</h3>
@@ -293,19 +275,19 @@ describe('DeploymentLogin', function() {
           </div>
           <div className="six-col last-col">
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={53}
                 name="aws-light"
                 width={140} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={39}
                 name="google-light"
                 width={435} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={24}
                 name="azure"
                 width={204} />
@@ -314,7 +296,7 @@ describe('DeploymentLogin', function() {
           <div className="deployment-login-features__items twelve-col">
             <div className="six-col no-margin-bottom">
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -326,7 +308,7 @@ describe('DeploymentLogin', function() {
                 <li>24/7 monitoring and alerting</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -337,7 +319,7 @@ describe('DeploymentLogin', function() {
                 <li>Read only mode available</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -349,7 +331,7 @@ describe('DeploymentLogin', function() {
             </div>
             <div className="six-col last-col no-margin-bottom">
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -364,7 +346,7 @@ describe('DeploymentLogin', function() {
                 <li>Portable solutions across clouds</li>
               </ul>
               <h5 className="deployment-login-features__items-heading">
-                <juju.components.SvgIcon
+                <SvgIcon
                   className="deployment-login__tick"
                   name="task-done_16"
                   size="16" />
@@ -376,7 +358,7 @@ describe('DeploymentLogin', function() {
               </ul>
             </div>
           </div>
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
       </div>);
     expect(output).toEqualJSX(expected);
   });

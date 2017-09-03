@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const Spinner = require('../../spinner/spinner');
+const InsetSelect = require('../../inset-select/inset-select');
+const GenericInput = require('../../generic-input/generic-input');
+const GenericButton = require('../../generic-button/generic-button');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const BudgetChart = require('../../budget-chart/budget-chart');
 
 class DeploymentBudget extends React.Component {
   constructor() {
@@ -136,7 +126,7 @@ class DeploymentBudget extends React.Component {
     if (this.state.loadingBudgets) {
       return (
         <div className="deployment-budget__loading">
-          <juju.components.Spinner />
+          <Spinner />
         </div>);
     }
     var disabled = this.props.acl.isReadOnly();
@@ -145,13 +135,13 @@ class DeploymentBudget extends React.Component {
       'twelve-col': true
     };
     return (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={classes}
         clickable={false}
         expanded={this.state.increaseExpanded}>
         <div>
           <div className="four-col">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={disabled}
               label="Budget"
               onChange={this._handleBudgetChange.bind(this)}
@@ -159,15 +149,15 @@ class DeploymentBudget extends React.Component {
           </div>
           <div className="three-col">
             <span className="deployment-budget__increase-button">
-              <juju.components.GenericButton
+              <GenericButton
                 action={this._toggleIncrease.bind(this)}
                 disabled={disabled}
                 type="base">
                 Increase budget
-              </juju.components.GenericButton>
+              </GenericButton>
             </span>
           </div>
-          <juju.components.BudgetChart
+          <BudgetChart
             budgets={this.state.budgets} />
         </div>
         <div>
@@ -183,7 +173,7 @@ class DeploymentBudget extends React.Component {
               Increase
             </div>
             <div className="three-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="Budget"
                 placeholder="Personal ($100)"
@@ -193,7 +183,7 @@ class DeploymentBudget extends React.Component {
               to
             </div>
             <div className="three-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="New budget amount"
                 required={false} />
@@ -203,25 +193,25 @@ class DeploymentBudget extends React.Component {
                 <span className="link">Manage all budgets</span>
               </div>
               <div className="two-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
                   type="base">
                   Cancel
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
               <div className="two-col last-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
                   type="neutral">
                   Confirm
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
             </div>
           </div>
         </div>
-      </juju.components.ExpandingRow>
+      </ExpandingRow>
     );
   }
 };
@@ -234,15 +224,4 @@ DeploymentBudget.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('deployment-budget', function() {
-  juju.components.DeploymentBudget = DeploymentBudget;
-}, '0.1.0', {
-  requires: [
-    'budget-chart',
-    'expanding-row',
-    'generic-button',
-    'generic-input',
-    'inset-select',
-    'loading-spinner'
-  ]
-});
+module.exports = DeploymentBudget;

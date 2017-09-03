@@ -1,35 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentMachines = require('./machines');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentMachines', function() {
   var acl, machines;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-machines', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -124,7 +103,7 @@ describe('DeploymentMachines', function() {
     generateMachineDetails.onCall(4).returns(
       'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentMachines
+      <DeploymentMachines
         acl={acl}
         cloud={{name: 'My cloud'}}
         formatConstraints={sinon.stub()}
@@ -206,7 +185,7 @@ describe('DeploymentMachines', function() {
 
   it('can render for a local cloud', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentMachines
+      <DeploymentMachines
         acl={acl}
         cloud={{name: 'localhost'}}
         formatConstraints={sinon.stub()}
@@ -223,7 +202,7 @@ describe('DeploymentMachines', function() {
 
   it('can render with unknown cloud', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentMachines
+      <DeploymentMachines
         acl={acl}
         formatConstraints={sinon.stub()}
         generateMachineDetails={sinon.stub()}

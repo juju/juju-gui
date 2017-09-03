@@ -1,49 +1,31 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentSignup = require('./signup');
+const GenericButton = require('../../generic-button/generic-button');
+const DeploymentPanel = require('../panel/panel');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentSignup', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-signup', function() { done(); });
-  });
 
   it('can render', function() {
     const changeState = sinon.stub();
     const exportEnvironmentFile = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSignup
+      <DeploymentSignup
         changeState={changeState}
         exportEnvironmentFile={exportEnvironmentFile}
         modelName="Prawns on the barbie">
         <span>content</span>
-      </juju.components.DeploymentSignup>, true);
+      </DeploymentSignup>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentPanel
+      <DeploymentPanel
         changeState={changeState}
         title="Prawns on the barbie">
         <div className="deployment-signup">
@@ -72,15 +54,15 @@ describe('DeploymentSignup', function() {
               </ol>
               <p>
                 Continue to the&nbsp;
-                <juju.components.GenericButton
+                <GenericButton
                   action={instance._displayFlow}
                   type="inline-neutral">
                   Deployment demo of Juju
-                </juju.components.GenericButton>
+                </GenericButton>
               </p>
             </div>
             <div className="prepend-one four-col last-col">
-              <juju.components.SvgIcon
+              <SvgIcon
                 className="juju-logo"
                 name="juju-logo"
                 size="100%" />
@@ -119,19 +101,19 @@ describe('DeploymentSignup', function() {
             <div className="six-col last-col">
               <ul className="inline-logos no-bullets">
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="aws"
                     size="100%" />
                 </li>
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="google"
                     size="100%" />
                 </li>
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="azure"
                     size="100%" />
@@ -140,19 +122,19 @@ describe('DeploymentSignup', function() {
             </div>
           </div>
         </div>
-      </juju.components.DeploymentPanel>);
+      </DeploymentPanel>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can navigate to the flow view', function() {
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSignup
+      <DeploymentSignup
         changeState={changeState}
         exportEnvironmentFile={sinon.stub()}
         modelName="Lamington">
         <span>content</span>
-      </juju.components.DeploymentSignup>);
+      </DeploymentSignup>);
     output.props.children.props.children[0].props.children[1].props.children[3]
       .props.children[1].props.action();
     assert.equal(changeState.callCount, 1);
