@@ -347,7 +347,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
 
-        YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
+        YUI(GlobalConfig).use([
+            'acl',
+            'analytics',
+            'changes-utils',
+            'juju-charm-models',
+            'juju-bundle-models',
+            'juju-controller-api',
+            'juju-endpoints-controller',
+            'juju-env-base',
+            'juju-env-api',
+            'juju-env-web-handler',
+            'juju-models',
+            'jujulib-utils',
+            'bakery-utils',
+            'net-utils',
+            // juju-views group
+            'd3-components',
+            'juju-view-utils',
+            'juju-topology',
+            'juju-view-environment',
+            'juju-landscape',
+            // end juju-views group
+            'io',
+            'json-parse',
+            'app-base',
+            'app-transitions',
+            'base',
+            'bundle-importer',
+            'bundle-import-notifications',
+            'node',
+            'model',
+            'app-cookies-extension',
+            'app-renderer-extension',
+            'cookie',
+            'querystring',
+            'event-key',
+            'event-touch',
+            'model-controller',
+            'FileSaver',
+            'ghost-deployer-extension',
+            'environment-change-set',
+            'relation-utils', 'yui-patches'], function(Y) {
+          window.yui = Y;
           if (!juju_config.flags) {
             juju_config.flags = {};
           }
