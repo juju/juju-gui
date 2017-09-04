@@ -281,13 +281,13 @@ class Status extends React.Component {
   }
 
   /**
-    Navigate to the chosen application.
+    Generate the state to navigate to an application.
     @param appId {String} The id of the application to display.
   */
-  _navigateToApplication(appId) {
+  _generateApplicationClickState(appId) {
     // Navigate to the app in the inspector, clearing the state so that the
     // app overview is shown.
-    this.props.changeState({
+    return {
       gui: {
         inspector: {
           id: appId,
@@ -296,7 +296,17 @@ class Status extends React.Component {
           unitStatus: null
         }
       }
-    });
+    };
+  }
+
+  /**
+    Navigate to the chosen application.
+    @param appId {String} The id of the application to display.
+  */
+  _navigateToApplication(appId) {
+    // Navigate to the app in the inspector, clearing the state so that the
+    // app overview is shown.
+    this.props.changeState(this._generateApplicationClickState(appId));
   }
 
   /**
@@ -308,13 +318,13 @@ class Status extends React.Component {
   }
 
   /**
-    Navigate to the chosen unit.
+    Generate the state to navigate to a unit.
     @param unitName {String} The name of the unit to display in the format
       'app-id/unit-number'.
   */
-  _navigateToUnit(unitName) {
+  _generateUnitClickState(unitName) {
     const unitParts = unitName.split('/');
-    this.props.changeState({
+    return {
       gui: {
         inspector: {
           id: unitParts[0],
@@ -322,7 +332,7 @@ class Status extends React.Component {
           activeComponent: 'unit'
         }
       }
-    });
+    };
   }
 
   /**
@@ -335,12 +345,21 @@ class Status extends React.Component {
     // from the document there is a React error for some reason if this event
     // propogates.
     evt.stopPropagation();
-    this.props.changeState({
+    this.props.changeState(this._generateMachineClickState(machineId));
+  }
+
+  /**
+    Generate the state to navigate to a machine.
+    @param machineId {String} The id of the machine to display.
+    @returns {Object} The machine state.
+  */
+  _generateMachineClickState(machineId) {
+    return {
       gui: {
         machines: machineId,
         status: null
       }
-    });
+    };
   }
 
   /**
@@ -429,11 +448,11 @@ class Status extends React.Component {
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', app.status.current)],
+        clickState: this._generateApplicationClickState(app.id),
         columns:[{
           columnSize: 2,
           content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, app.id)}>
+            <span>
               <img className="status-view__icon"
                 src={app.icon} />
               {app.name}
@@ -448,7 +467,7 @@ class Status extends React.Component {
               className={this._getStatusClass(
                 'status-view__status--', app.status.current)}
               key={'status' + i}>
-              {app.status.current || (<span>&nbsp;</span>)}
+              {app.status.current}
             </span>)
         }, {
           columnSize: 1,
@@ -473,7 +492,9 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -531,11 +552,11 @@ class Status extends React.Component {
           classes: [this._getStatusClass(
             'status-view__table-row--',
             [unit.agentStatus, unit.workloadStatus])],
+          clickState: this._generateUnitClickState(unit.id),
           columns: [{
             columnSize: 2,
             content: (
-              <span className="status-view__link"
-                onClick={this._navigateToUnit.bind(this, unit.id)}>
+              <span>
                 <img className="status-view__icon"
                   src={application.get('icon')} />
                 {unit.displayName}
@@ -547,7 +568,7 @@ class Status extends React.Component {
                 className={this._getStatusClass(
                   'status-view__status--', unit.workloadStatus)}
                 key={'workload' + i}>
-                {unit.workloadStatus || (<span>&nbsp;</span>)}
+                {unit.workloadStatus}
               </span>)
           }, {
             columnSize: 2,
@@ -556,14 +577,14 @@ class Status extends React.Component {
                 className={this._getStatusClass(
                   'status-view__status--', unit.agentStatus)}
                 key={'agent' + i}>
-                {unit.agentStatus || (<span>&nbsp;</span>)}
+                {unit.agentStatus}
               </span>)
           }, {
             columnSize: 1,
             content: (
               <span className="status-view__link"
                 onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine || (<span>&nbsp;</span>)}
+                {unit.machine}
               </span>)
           }, {
             columnSize: 2,
@@ -586,7 +607,9 @@ class Status extends React.Component {
     }
     return (
       <juju.components.BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -629,13 +652,10 @@ class Status extends React.Component {
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', machine.agent_state)],
+        clickState: this._generateMachineClickState(machine.id),
         columns: [{
           columnSize: 2,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToMachine.bind(this, machine.id)}>
-              {machine.displayName}
-            </span>)
+          content: machine.displayName
         }, {
           columnSize: 2,
           content: (
@@ -643,7 +663,7 @@ class Status extends React.Component {
               className={this._getStatusClass(
                 'status-view__status--', machine.agent_state)}
               key={'agent' + i}>
-              {machine.agent_state || (<span>&nbsp;</span>)}
+              {machine.agent_state}
             </span>)
         }, {
           columnSize: 2,
@@ -664,7 +684,9 @@ class Status extends React.Component {
     });
     return (
       <juju.components.BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -821,6 +843,7 @@ Status.propTypes = {
       getById: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
+  generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,
