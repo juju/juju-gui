@@ -2,6 +2,8 @@
 
 'use strict';
 
+const React = require('react');
+
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 class NotificationListItem extends React.Component {

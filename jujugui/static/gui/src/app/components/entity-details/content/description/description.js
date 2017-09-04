@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const HashLink = require('../../../hash-link/hash-link');
 
 class EntityContentDescription extends React.Component {

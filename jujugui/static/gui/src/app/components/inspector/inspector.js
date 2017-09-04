@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
 const InspectorHeader = require('./header/header');

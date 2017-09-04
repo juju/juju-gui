@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
 const DateDisplay = require('../../../date-display/date-display');
 const ExpandingRow = require('../../../expanding-row/expanding-row');

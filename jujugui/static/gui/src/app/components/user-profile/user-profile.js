@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const EmptyUserProfile = require('./empty-user-profile');
 const Panel = require('../panel/panel');
 const UserProfileEntityList = require('./entity-list/entity-list');

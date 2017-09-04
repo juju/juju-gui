@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const BudgetTable = require('../../budget-table/budget-table');
 const DeploymentChangeItem = require('../change-item/change-item');
 

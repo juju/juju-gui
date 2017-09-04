@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const EnvSwitcher = require('../env-switcher/env-switcher');
 
 // Define the name of the uncommitted model.

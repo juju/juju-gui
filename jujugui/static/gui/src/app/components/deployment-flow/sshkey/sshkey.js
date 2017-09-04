@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 const InsetSelect = require('../../inset-select/inset-select');
 const SvgIcon = require('../../svg-icon/svg-icon');

@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const UserProfileHeader = require('../user-profile/header/header');
 const Panel = require('../panel/panel');
 const AccountCredentials = require('./credentials/credentials');

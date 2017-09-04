@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class GenericButton extends React.Component {
   /**
     Returns the classes for the button based on the provided props.

@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 /** Basic table React component used to display data in a table structure. */
 class BasicTable extends React.Component {

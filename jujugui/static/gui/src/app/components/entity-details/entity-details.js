@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const EntityContent = require('./content/content');
 const EntityHeader = require('./header/header');
 const Spinner = require('../spinner/spinner');

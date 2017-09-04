@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
 const ExpandingRow = require('../../expanding-row/expanding-row');

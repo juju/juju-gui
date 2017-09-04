@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InspectorRelationDetails extends React.Component {
   render() {
     var relation = this.props.relation;

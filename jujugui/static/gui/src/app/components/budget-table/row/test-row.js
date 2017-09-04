@@ -1,35 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const BudgetTableRow = require('./row');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const TermsPopup = require('../../terms-popup/terms-popup');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('BudgetTableRow', function() {
   var acl, addNotification, listPlansForCharm, parseTermId, service;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('budget-table-row', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -91,7 +73,7 @@ describe('BudgetTableRow', function() {
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -102,7 +84,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -141,7 +123,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -149,7 +131,7 @@ describe('BudgetTableRow', function() {
 
   it('can render without plans', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -160,7 +142,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -185,7 +167,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -193,7 +175,7 @@ describe('BudgetTableRow', function() {
 
   it('can display extra info', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -206,7 +188,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -247,7 +229,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -277,7 +259,7 @@ describe('BudgetTableRow', function() {
       }
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -288,7 +270,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -327,7 +309,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -336,7 +318,7 @@ describe('BudgetTableRow', function() {
   it('can display a service that does not need a plan', function() {
     listPlansForCharm = sinon.stub().callsArgWith(1, null, []);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -347,7 +329,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -386,7 +368,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -394,7 +376,7 @@ describe('BudgetTableRow', function() {
 
   it('can display editable plans', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -406,7 +388,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -439,12 +421,12 @@ describe('BudgetTableRow', function() {
               </div>
               <div className="two-col last-col no-margin-bottom">
                 <div className="budget-table__edit">
-                  <juju.components.GenericButton
+                  <GenericButton
                     action={instance._toggle}
                     disabled={false}
                     type="neutral">
                     Change plan
-                  </juju.components.GenericButton>
+                  </GenericButton>
                 </div>
               </div>
             </div>
@@ -480,12 +462,12 @@ describe('BudgetTableRow', function() {
                       Recommended allocation: $550.
                     </div>
                     <div className="two-col last-col">
-                      <juju.components.GenericButton
+                      <GenericButton
                         action={instance._toggle}
                         disabled={false}
                         type="neutral">
                         Select plan
-                      </juju.components.GenericButton>
+                      </GenericButton>
                     </div>
                   </li>,
                   <li className="budget-table__plan twelve-col" key={1}>
@@ -500,12 +482,12 @@ describe('BudgetTableRow', function() {
                       Recommended allocation: $550.
                     </div>
                     <div className="two-col last-col">
-                      <juju.components.GenericButton
+                      <GenericButton
                         action={instance._toggle}
                         disabled={false}
                         type="neutral">
                         Select plan
-                      </juju.components.GenericButton>
+                      </GenericButton>
                     </div>
                   </li>
                 ]}
@@ -516,7 +498,7 @@ describe('BudgetTableRow', function() {
               </p>
             </div>
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -525,7 +507,7 @@ describe('BudgetTableRow', function() {
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -537,7 +519,7 @@ describe('BudgetTableRow', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -570,12 +552,12 @@ describe('BudgetTableRow', function() {
               </div>
               <div className="two-col last-col no-margin-bottom">
                 <div className="budget-table__edit">
-                  <juju.components.GenericButton
+                  <GenericButton
                     action={instance._toggle}
                     disabled={true}
                     type="neutral">
                     Change plan
-                  </juju.components.GenericButton>
+                  </GenericButton>
                 </div>
               </div>
             </div>
@@ -611,12 +593,12 @@ describe('BudgetTableRow', function() {
                       Recommended allocation: $550.
                     </div>
                     <div className="two-col last-col">
-                      <juju.components.GenericButton
+                      <GenericButton
                         action={instance._toggle}
                         disabled={true}
                         type="neutral">
                         Select plan
-                      </juju.components.GenericButton>
+                      </GenericButton>
                     </div>
                   </li>,
                   <li className="budget-table__plan twelve-col" key={1}>
@@ -631,12 +613,12 @@ describe('BudgetTableRow', function() {
                       Recommended allocation: $550.
                     </div>
                     <div className="two-col last-col">
-                      <juju.components.GenericButton
+                      <GenericButton
                         action={instance._toggle}
                         disabled={true}
                         type="neutral">
                         Select plan
-                      </juju.components.GenericButton>
+                      </GenericButton>
                     </div>
                   </li>
                 ]}
@@ -647,7 +629,7 @@ describe('BudgetTableRow', function() {
               </p>
             </div>
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -657,7 +639,7 @@ describe('BudgetTableRow', function() {
     var abort = sinon.stub();
     listPlansForCharm = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -675,7 +657,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -688,7 +670,7 @@ describe('BudgetTableRow', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -727,7 +709,7 @@ describe('BudgetTableRow', function() {
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -739,7 +721,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -754,7 +736,7 @@ describe('BudgetTableRow', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'budget-table-row': true,
             'twelve-col': true
@@ -790,17 +772,17 @@ describe('BudgetTableRow', function() {
             <div className="twelve-col no-margin-bottom" />
             <div className={
               'two-col prepend-five no-margin-bottom budget-table-row__link'}>
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._toggleTerms}
                 type="base">
                 Terms
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div>
             {undefined}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {undefined}
       </div>);
     expect(output).toEqualJSX(expected);
@@ -812,7 +794,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -834,7 +816,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -856,7 +838,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -878,7 +860,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -908,7 +890,7 @@ describe('BudgetTableRow', function() {
       content: 'Apache2 terms.'
     });
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -925,7 +907,7 @@ describe('BudgetTableRow', function() {
       .props.action();
     output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.TermsPopup
+      <TermsPopup
         close={instance._toggleTerms}
         terms={[
           {content: 'Landscape terms.', name: 'landscape'},
@@ -937,7 +919,7 @@ describe('BudgetTableRow', function() {
   it('can handle errors when getting plans', function() {
     listPlansForCharm = sinon.stub().callsArgWith(1, 'uh oh!', null);
     jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}
@@ -959,7 +941,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTableRow
+      <BudgetTableRow
         acl={acl}
         addNotification={addNotification}
         allocationEditable={false}

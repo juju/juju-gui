@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InspectorResourcesList extends React.Component {
   /**
     Generate a list of resources to display.

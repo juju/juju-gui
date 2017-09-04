@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const shapeup = require('shapeup');
 
 const SvgIcon = require('../../svg-icon/svg-icon');

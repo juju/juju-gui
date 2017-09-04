@@ -7,6 +7,8 @@ charms and bundles. You can only see this page is you have access.
 
 'use strict';
 
+const React = require('react');
+
 class PlansUsage extends React.Component {
   constructor() {
     super();

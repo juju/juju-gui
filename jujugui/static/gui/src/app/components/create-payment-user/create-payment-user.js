@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const GenericInput = require('../generic-input/generic-input');
 const GenericButton = require('../generic-button/generic-button');
 const CardForm = require('../card-form/card-form');

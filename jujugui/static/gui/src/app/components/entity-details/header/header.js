@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const GenericButton = require('../../generic-button/generic-button');
 const SvgIcon = require('../../svg-icon/svg-icon');

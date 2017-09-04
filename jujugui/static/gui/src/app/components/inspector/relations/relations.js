@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const CheckListItem = require('../../check-list-item/check-list-item');
 const ButtonRow = require('../../button-row/button-row');
 const OverviewAction = require('../overview-action/overview-action');

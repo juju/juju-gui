@@ -6,7 +6,7 @@ const React = require('react');
 const GenericInput = require('./generic-input');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('GenericInput', function() {
 
