@@ -1,23 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const ButtonRow = require('../button-row/button-row');
+const GenericButton = require('../generic-button/generic-button');
+const Panel = require('../panel/panel');
 /**
   Popup provides a React component for modal confirmation of an
   action.
@@ -32,7 +18,7 @@ class Popup extends React.Component {
     const buttons = this.props.buttons;
     if (buttons) {
       return (
-        <juju.components.ButtonRow
+        <ButtonRow
           buttons={buttons} />);
     }
   }
@@ -47,13 +33,13 @@ class Popup extends React.Component {
     if (close) {
       return (
         <div className="popup__close">
-          <juju.components.GenericButton
+          <GenericButton
             action={close}
             type="base">
-            <juju.components.SvgIcon
+            <SvgIcon
               name="close_16"
               size="16" />
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>);
     }
   }
@@ -89,7 +75,7 @@ class Popup extends React.Component {
 
   render() {
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="popup"
         visible={true}>
         <div className={this._generateClasses()}>
@@ -98,7 +84,7 @@ class Popup extends React.Component {
           {this.props.children}
           {this._generateButtons()}
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -120,16 +106,4 @@ Popup.defaultProps = {
   className: ''
 };
 
-if (module) {
-  module.exports = Popup;
-}
-
-YUI.add('popup', function() {
-  juju.components.Popup = Popup;
-}, '', {
-  requires: [
-    'button-row',
-    'generic-button',
-    'panel-component'
-  ]
-});
+module.exports = Popup;
