@@ -1,33 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const MachineViewAddMachine = require('./add-machine');
+const ButtonRow = require('../../button-row/button-row');
+const Constraints = require('../../constraints/constraints');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('MachineViewAddMachine', function() {
   let acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view-add-machine', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -37,7 +23,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         modelAPI={{
@@ -63,14 +49,14 @@ describe('MachineViewAddMachine', function() {
           <h4 className="add-machine__title">
             Define constraints
           </h4>
-          <juju.components.Constraints
+          <Constraints
             containerType={''}
             disabled={false}
             hasUnit={false}
             providerType={'ec2'}
             valuesChanged={instance._updateConstraints} />
         </div>
-        <juju.components.ButtonRow
+        <ButtonRow
           buttons={buttons}
           key="buttons" />
       </div>);
@@ -81,7 +67,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={shapeup.deepFreeze({isReadOnly: () => true})}
         close={close}
         modelAPI={{
@@ -107,14 +93,14 @@ describe('MachineViewAddMachine', function() {
           <h4 className="add-machine__title">
             Define constraints
           </h4>
-          <juju.components.Constraints
+          <Constraints
             containerType={''}
             disabled={true}
             hasUnit={false}
             providerType={'lxd'}
             valuesChanged={instance._updateConstraints} />
         </div>
-        <juju.components.ButtonRow
+        <ButtonRow
           buttons={buttons}
           key="buttons" />
       </div>);
@@ -125,7 +111,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         modelAPI={{
@@ -171,7 +157,7 @@ describe('MachineViewAddMachine', function() {
       }])
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -216,7 +202,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         modelAPI={{
@@ -232,7 +218,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         modelAPI={{
@@ -252,7 +238,7 @@ describe('MachineViewAddMachine', function() {
     const close = sinon.stub();
     const createMachine = sinon.stub();
     const output = testUtils.renderIntoDocument(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         modelAPI={{
@@ -279,7 +265,7 @@ describe('MachineViewAddMachine', function() {
     const placeUnit = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -313,7 +299,7 @@ describe('MachineViewAddMachine', function() {
     const placeUnit = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -348,7 +334,7 @@ describe('MachineViewAddMachine', function() {
     const placeUnit = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -382,7 +368,7 @@ describe('MachineViewAddMachine', function() {
     const placeUnit = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -417,7 +403,7 @@ describe('MachineViewAddMachine', function() {
     const selectMachine = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{
@@ -448,7 +434,7 @@ describe('MachineViewAddMachine', function() {
     const selectMachine = sinon.stub();
     const unit = {id: 'unit1'};
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl}
         close={close}
         dbAPI={{

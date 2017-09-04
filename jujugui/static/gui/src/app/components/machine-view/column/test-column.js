@@ -1,32 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const MachineViewColumn = require('./column');
+const MachineViewHeader = require('../header/header');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewColumn', function() {
   let acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view-column', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
@@ -39,7 +25,7 @@ describe('MachineViewColumn', function() {
     // The component is wrapped to handle drag and drop, but we just want to
     // test the internal component so we access it via DecoratedComponent.
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewColumn.DecoratedComponent
+      <MachineViewColumn.DecoratedComponent
         acl={acl}
         activeMenuItem="name"
         canDrop={false}
@@ -52,12 +38,12 @@ describe('MachineViewColumn', function() {
         toggle={toggle}
         type="machine">
         <div>contents</div>
-      </juju.components.MachineViewColumn.DecoratedComponent>);
+      </MachineViewColumn.DecoratedComponent>);
     const expected = (
       <div className="machine-view__column">
-        <juju.components.MachineViewHeader
+        <MachineViewHeader
           acl={acl.reshape(
-            juju.components.MachineViewHeader.DecoratedComponent.propTypes.acl
+            MachineViewHeader.DecoratedComponent.propTypes.acl
           )}
           activeMenuItem="name"
           droppable={true}
@@ -69,7 +55,7 @@ describe('MachineViewColumn', function() {
         <div className="machine-view__column-content">
           <div>contents</div>
           <div className="machine-view__column-drop-target">
-            <juju.components.SvgIcon name="add_16"
+            <SvgIcon name="add_16"
               size="16" />
           </div>
         </div>
@@ -79,7 +65,7 @@ describe('MachineViewColumn', function() {
 
   it('can render in droppable mode', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewColumn.DecoratedComponent
+      <MachineViewColumn.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -96,7 +82,7 @@ describe('MachineViewColumn', function() {
 
   it('can render in drop mode', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewColumn.DecoratedComponent
+      <MachineViewColumn.DecoratedComponent
         acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}

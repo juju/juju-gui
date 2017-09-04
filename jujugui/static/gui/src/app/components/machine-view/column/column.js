@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const shapeup = require('shapeup');
+
+const SvgIcon = require('../../svg-icon/svg-icon');
+const MachineViewHeader = require('../header/header');
 
 const MachineViewColumnGlobals = {};
 
@@ -87,10 +75,10 @@ class MachineViewColumn extends React.Component {
   render() {
     const props = this.props;
     const propTypes = (
-      juju.components.MachineViewHeader.DecoratedComponent.propTypes);
+      MachineViewHeader.DecoratedComponent.propTypes);
     return props.connectDropTarget(
       <div className={this._generateClasses()}>
-        <juju.components.MachineViewHeader
+        <MachineViewHeader
           acl={props.acl.reshape(propTypes.acl)}
           activeMenuItem={props.activeMenuItem}
           droppable={props.droppable}
@@ -102,7 +90,7 @@ class MachineViewColumn extends React.Component {
         <div className="machine-view__column-content">
           {this.props.children}
           <div className="machine-view__column-drop-target">
-            <juju.components.SvgIcon name="add_16"
+            <SvgIcon name="add_16"
               size="16" />
           </div>
         </div>
@@ -132,13 +120,6 @@ MachineViewColumn.propTypes = {
   type: PropTypes.string
 };
 
-YUI.add('machine-view-column', function() {
-  juju.components.MachineViewColumn = ReactDnD.DropTarget(
-    'unit', MachineViewColumnGlobals.dropTarget,
-    MachineViewColumnGlobals.collect)(MachineViewColumn);
-}, '0.1.0', {
-  requires: [
-    'machine-view-header',
-    'svg-icon'
-  ]
-});
+module.exports = ReactDnD.DropTarget(
+  'unit', MachineViewColumnGlobals.dropTarget,
+  MachineViewColumnGlobals.collect)(MachineViewColumn);

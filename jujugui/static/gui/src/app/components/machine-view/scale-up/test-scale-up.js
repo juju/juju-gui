@@ -1,32 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const MachineViewScaleUp = require('./scale-up');
+const ButtonRow = require('../../button-row/button-row');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('MachineViewScaleUp', function() {
   let acl, applications;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view-scale-up', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -95,7 +81,7 @@ describe('MachineViewScaleUp', function() {
     const addGhostAndEcsUnits = sinon.stub();
     const toggleScaleUp = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={acl}
         dbAPI={{
           addGhostAndEcsUnits: addGhostAndEcsUnits,
@@ -145,7 +131,7 @@ describe('MachineViewScaleUp', function() {
               step="1" />
           </li>
         </ul>
-        <juju.components.ButtonRow buttons={[{
+        <ButtonRow buttons={[{
           action: toggleScaleUp,
           title: 'Cancel',
           type: 'base'
@@ -165,7 +151,7 @@ describe('MachineViewScaleUp', function() {
     const addGhostAndEcsUnits = sinon.stub();
     const toggleScaleUp = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={acl}
         dbAPI={{
           addGhostAndEcsUnits: addGhostAndEcsUnits,
@@ -216,7 +202,7 @@ describe('MachineViewScaleUp', function() {
             />
           </li>
         </ul>
-        <juju.components.ButtonRow buttons={[{
+        <ButtonRow buttons={[{
           action: toggleScaleUp,
           title: 'Cancel',
           type: 'base'
@@ -234,7 +220,7 @@ describe('MachineViewScaleUp', function() {
     const addGhostAndEcsUnits = sinon.stub();
     const toggleScaleUp = sinon.stub();
     const output = testUtils.renderIntoDocument(
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={acl}
         dbAPI={{
           addGhostAndEcsUnits: addGhostAndEcsUnits,
@@ -280,7 +266,7 @@ describe('MachineViewScaleUp', function() {
       }
     };
     const output = testUtils.renderIntoDocument(
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={acl}
         dbAPI={{
           addGhostAndEcsUnits: addGhostAndEcsUnits,

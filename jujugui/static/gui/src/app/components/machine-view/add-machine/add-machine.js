@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const shapeup = require('shapeup');
+
+const ButtonRow = require('../../button-row/button-row');
+const Constraints = require('../../constraints/constraints');
 
 class MachineViewAddMachine extends React.Component {
   constructor(props) {
@@ -108,7 +96,7 @@ class MachineViewAddMachine extends React.Component {
         <h4 className="add-machine__title">
           Define constraints
         </h4>
-        <juju.components.Constraints
+        <Constraints
           containerType={this.state.selectedContainer || ''}
           disabled={props.acl.isReadOnly()}
           hasUnit={!!props.unit}
@@ -261,7 +249,7 @@ class MachineViewAddMachine extends React.Component {
         && props.parentId && !this.state.selectedContainer)
     }];
     return (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons}
         key="buttons" />);
   }
@@ -319,11 +307,4 @@ MachineViewAddMachine.propTypes = {
   unit: PropTypes.object
 };
 
-YUI.add('machine-view-add-machine', function() {
-  juju.components.MachineViewAddMachine = MachineViewAddMachine;
-}, '0.1.0', {
-  requires: [
-    'button-row',
-    'constraints'
-  ]
-});
+module.exports = MachineViewAddMachine;

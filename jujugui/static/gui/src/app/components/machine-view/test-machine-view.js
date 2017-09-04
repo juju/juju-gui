@@ -1,32 +1,24 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const MachineView = require('./machine-view');
+const MachineViewAddMachine = require('./add-machine/add-machine');
+const MachineViewColumn = require('./column/column');
+const MachineViewMachine = require('./machine/machine');
+const MachineViewScaleUp = require('./scale-up/scale-up');
+const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
+const SvgIcon = require('../svg-icon/svg-icon');
+const GenericButton = require('../generic-button/generic-button');
+
+const jsTestUtils = require('../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('MachineView', function() {
   let acl, machines, parseConstraints, parseMachineName, generateMachineDetails;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
@@ -69,7 +61,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={{
@@ -103,7 +95,7 @@ describe('MachineView', function() {
     const expected = (
       <div className="machine-view">
         <div className="machine-view__content">
-          <juju.components.MachineViewColumn
+          <MachineViewColumn
             acl={acl}
             droppable={false}
             title="New units"
@@ -125,8 +117,8 @@ describe('MachineView', function() {
                 </span>
               </div>
             </div>
-          </juju.components.MachineViewColumn>
-          <juju.components.MachineViewColumn
+          </MachineViewColumn>
+          <MachineViewColumn
             acl={acl}
             activeMenuItem="name"
             droppable={true}
@@ -185,8 +177,8 @@ describe('MachineView', function() {
                 Add machine
               </span>
             </div>
-          </juju.components.MachineViewColumn>
-          <juju.components.MachineViewColumn
+          </MachineViewColumn>
+          <MachineViewColumn
             acl={acl}
             activeMenuItem="name"
             droppable={false}
@@ -214,7 +206,7 @@ describe('MachineView', function() {
             type="container">
             {undefined}
             {undefined}
-          </juju.components.MachineViewColumn>
+          </MachineViewColumn>
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -230,7 +222,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -284,7 +276,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={changeState}
         dbAPI={shapeup.addReshape({
@@ -324,7 +316,7 @@ describe('MachineView', function() {
     const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -349,7 +341,7 @@ describe('MachineView', function() {
         parseMachineName={parseMachineName} />);
     const expected = (
       <div className="machine-view__column-onboarding">
-        <juju.components.SvgIcon name="task-done_16"
+        <SvgIcon name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
@@ -375,7 +367,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -395,9 +387,9 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     const output = renderer.getRenderOutput();
-    const propTypes = juju.components.MachineViewScaleUp.propTypes;
+    const propTypes = MachineViewScaleUp.propTypes;
     const expected = (
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={acl.reshape(propTypes.acl)}
         dbAPI={dbAPI.reshape(propTypes.dbAPI)}
         toggleScaleUp={instance._toggleScaleUp}
@@ -451,7 +443,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -464,10 +456,10 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewUnplacedUnit.DecoratedComponent.propTypes);
+      MachineViewUnplacedUnit.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewUnplacedUnit
+        <MachineViewUnplacedUnit
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/0"
@@ -480,7 +472,7 @@ describe('MachineView', function() {
             unit: unitList[0]
           }}
         />
-        <juju.components.MachineViewUnplacedUnit
+        <MachineViewUnplacedUnit
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/1"
@@ -544,7 +536,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -557,10 +549,10 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewUnplacedUnit.DecoratedComponent.propTypes);
+      MachineViewUnplacedUnit.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        {[<juju.components.MachineViewUnplacedUnit
+        {[<MachineViewUnplacedUnit
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/0"
@@ -602,7 +594,7 @@ describe('MachineView', function() {
     const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -627,7 +619,7 @@ describe('MachineView', function() {
         parseMachineName={parseMachineName} />);
     const expected = (
       <div className="machine-view__column-onboarding">
-        <juju.components.SvgIcon name="task-done_16"
+        <SvgIcon name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
@@ -657,8 +649,8 @@ describe('MachineView', function() {
         get: getStub
       })
     };
-    const component = renderIntoDocument(
-      <juju.components.MachineView
+    const component = testUtils.renderIntoDocument(
+      <MachineView
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -710,7 +702,7 @@ describe('MachineView', function() {
       })
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -734,12 +726,12 @@ describe('MachineView', function() {
         parseConstraints={parseConstraints}
         parseMachineName={parseMachineName} />);
     const expected = (
-      <juju.components.GenericButton
+      <GenericButton
         action={autoPlaceUnits}
         disabled={true}
         type="inline-neutral">
         Auto place
-      </juju.components.GenericButton>);
+      </GenericButton>);
     expect(
       output.props.children.props.children[0].props.children[1].props
         .children[0].props.children[0]).toEqualJSX(expected);
@@ -760,7 +752,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -831,7 +823,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -908,7 +900,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -921,10 +913,10 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -942,7 +934,7 @@ describe('MachineView', function() {
           showConstraints={true}
           type="machine"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1009,7 +1001,7 @@ describe('MachineView', function() {
       updateMachineSeries: updateMachineSeries
     });
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -1022,10 +1014,10 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1046,7 +1038,7 @@ describe('MachineView', function() {
           showConstraints={true}
           type="machine"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1118,7 +1110,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -1132,10 +1124,10 @@ describe('MachineView', function() {
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1153,7 +1145,7 @@ describe('MachineView', function() {
           showConstraints={true}
           type="machine"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1204,7 +1196,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -1223,9 +1215,9 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
-    const propTypes = juju.components.MachineViewAddMachine.propTypes;
+    const propTypes = MachineViewAddMachine.propTypes;
     const expected = (
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl.reshape(propTypes.acl)}
         close={instance._closeAddMachine}
         modelAPI={modelAPI.reshape(propTypes.modelAPI)}
@@ -1260,7 +1252,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={changeState}
         dbAPI={shapeup.addReshape({
@@ -1321,7 +1313,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={changeState}
         dbAPI={shapeup.addReshape({
@@ -1373,7 +1365,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={changeState}
         dbAPI={shapeup.addReshape({
@@ -1454,7 +1446,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -1466,10 +1458,10 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1491,7 +1483,7 @@ describe('MachineView', function() {
           ref="container-new0"
           type="container"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1565,7 +1557,7 @@ describe('MachineView', function() {
       updateMachineSeries: sinon.stub()
     });
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -1577,13 +1569,13 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const reshapedACL = acl.reshape(propTypes.acl);
     const reshapedDBAPI = dbAPI.reshape(propTypes.dbAPI);
     const reshapedModelAPI = modelAPI.reshape(propTypes.modelAPI);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={reshapedACL}
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
@@ -1605,7 +1597,7 @@ describe('MachineView', function() {
           ref="container-new0"
           type="container"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={reshapedACL}
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
@@ -1624,7 +1616,7 @@ describe('MachineView', function() {
           ref="container-new0/lxc/0"
           type="container"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={reshapedACL}
           dbAPI={reshapedDBAPI}
           dropUnit={instance._dropUnit}
@@ -1686,7 +1678,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -1705,9 +1697,9 @@ describe('MachineView', function() {
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
-    const propTypes = juju.components.MachineViewAddMachine.propTypes;
+    const propTypes = MachineViewAddMachine.propTypes;
     const expected = (
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={acl.reshape(propTypes.acl)}
         close={instance._closeAddContainer}
         modelAPI={modelAPI.reshape(propTypes.modelAPI)}
@@ -1763,7 +1755,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={dbAPI}
@@ -1776,10 +1768,10 @@ describe('MachineView', function() {
     instance._addContainer();
     const output = renderer.getRenderOutput();
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const expected = (
       <ul className="machine-view__list">
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1801,7 +1793,7 @@ describe('MachineView', function() {
           ref="container-new0"
           type="container"
         />
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={instance._dropUnit}
@@ -1846,7 +1838,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -1899,7 +1891,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
@@ -1946,7 +1938,7 @@ describe('MachineView', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+      <MachineView.DecoratedComponent
         acl={acl}
         changeState={sinon.stub()}
         dbAPI={shapeup.addReshape({
