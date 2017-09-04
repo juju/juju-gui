@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
 
 class DeploymentBarNotification extends React.Component {
   constructor() {

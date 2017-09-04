@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
 
 const ScaleService = require('./scale-service');
 const ButtonRow = require('../../button-row/button-row');

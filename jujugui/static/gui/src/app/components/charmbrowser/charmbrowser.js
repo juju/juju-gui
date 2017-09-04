@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
 
 const EntityDetails = require('../entity-details/entity-details');
 const Panel = require('../panel/panel');

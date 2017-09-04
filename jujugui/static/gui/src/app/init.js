@@ -5,6 +5,8 @@
   Code to still move over from app.js
     - Y.juju.Cookies Line 50.
 */
+
+const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const utils = require('./init/utils');
