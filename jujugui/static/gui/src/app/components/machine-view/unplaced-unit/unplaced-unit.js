@@ -2,7 +2,7 @@
 'use strict';
 
 const React = require('react');
-
+const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const MoreMenu = require('../../more-menu/more-menu');

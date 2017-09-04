@@ -2,7 +2,7 @@
 'use strict';
 
 const React = require('react');
-
+const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const SvgIcon = require('../../svg-icon/svg-icon');

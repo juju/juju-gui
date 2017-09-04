@@ -3,7 +3,8 @@
 
 const React = require('react');
 const ReactDOM = require('react-dom');
-
+const ReactDnD = require('react-dnd');
+const ReactDnDHTML5Backend = require('react-dnd-html5-backend');
 const shapeup = require('shapeup');
 
 const MachineViewAddMachine = require('./add-machine/add-machine');
