@@ -146,9 +146,4 @@ BasicTable.propTypes = {
   tableClasses: PropTypes.array
 };
 
-YUI.add('basic-table', function() {
-  juju.components.BasicTable = BasicTable;
-}, '', {
-  requires: [
-  ]
-});
+module.exports = BasicTable;
