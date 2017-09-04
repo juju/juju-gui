@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enhanceWithClickOutside = require('react-click-outside');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
