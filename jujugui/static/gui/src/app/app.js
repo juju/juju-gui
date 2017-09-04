@@ -3280,8 +3280,6 @@ YUI.add('juju-gui', function(Y) {
     'bakery-utils',
     'net-utils',
     // React components
-    'account',
-    'deployment-flow',
     'deployment-signup',
     'inspector-component',
     'local-inspector',
@@ -3317,7 +3315,6 @@ YUI.add('juju-gui', function(Y) {
     'model-controller',
     'FileSaver',
     'ghost-deployer-extension',
-    'local-charm-import-helpers',
     'environment-change-set',
     'relation-utils'
   ]

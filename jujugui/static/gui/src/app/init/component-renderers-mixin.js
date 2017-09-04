@@ -7,17 +7,22 @@ const yui = window.yui;
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
+const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 
+const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const Charmbrowser = require('../components/charmbrowser/charmbrowser');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
+const DeploymentFlow = require('../components/deployment-flow/deployment-flow');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
 const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
+const Inspector = require('../components/inspector/inspector');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const Lightbox = require('../components/lightbox/lightbox');
+const LocalInspector = require('../components/local-inspector/local-inspector');
 const Login = require('../components/login/login');
 const Logout = require('../components/logout/logout');
 const ModelActions = require('../components/model-actions/model-actions');
@@ -481,7 +486,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // connected to any model.
     this.modelUUID = null;
     ReactDOM.render(
-      <window.juju.components.Account
+      <Account
         acl={this.acl}
         addAddress={
           this.payment && this.payment.addAddress.bind(this.payment)}
@@ -683,7 +688,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         model.addCharm(url, charmstore, callback, options);
       };
       inspector = (
-        <window.juju.components.Inspector
+        <Inspector
           acl={this.acl}
           addCharm={addCharm}
           addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
@@ -735,9 +740,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       // drag over notification which needs to be closed when the inspector
       // is opened.
       this._hideDragOverNotification();
-      const localCharmHelpers = juju.localCharmHelpers;
       inspector = (
-        <window.juju.components.LocalInspector
+        <LocalInspector
           acl={this.acl}
           changeState={this.state.changeState.bind(this.state)}
           file={window.localCharmFile}
@@ -826,7 +830,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
     const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
     ReactDOM.render(
-      <window.juju.components.DeploymentFlow
+      <DeploymentFlow
         acl={this.acl}
         addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={this._bound.addNotification}
