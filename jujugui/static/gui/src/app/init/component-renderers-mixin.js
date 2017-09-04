@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-// const shapeup = require('shapeup');
+const shapeup = require('shapeup');
 const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
@@ -25,12 +25,15 @@ const Lightbox = require('../components/lightbox/lightbox');
 const LocalInspector = require('../components/local-inspector/local-inspector');
 const Login = require('../components/login/login');
 const Logout = require('../components/logout/logout');
+const MachineView = require('../components/machine-view/machine-view');
 const ModelActions = require('../components/model-actions/model-actions');
 const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const NotificationList = require('../components/notification-list/notification-list');
+const Panel = require('../components/panel/panel');
 const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
+const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
@@ -571,10 +574,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const modelAPI = this.modelAPI;
     const ecs = modelAPI.get('ecs');
     const utils = yui.juju.views.utils;
-    const decorated = window.juju.components.MachineView.DecoratedComponent;
+    const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
     ReactDOM.render(
-      <window.juju.components.MachineView
+      <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
         changeState={this.state.changeState.bind(this.state)}
         dbAPI={shapeup.addReshape({
@@ -623,9 +626,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderStatusView(state, next) {
-    const propTypes = window.juju.components.Status.propTypes;
+    const propTypes = Status.propTypes;
     ReactDOM.render(
-      <window.juju.components.Status
+      <Status
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}

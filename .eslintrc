@@ -67,7 +67,6 @@ globals:
   ReactDnD: true
   ReactDnDHTML5Backend: true
   ReactDOM: true
-  renderIntoDocument: true
   saveAs: true
   shapeup: true
   sinon: true

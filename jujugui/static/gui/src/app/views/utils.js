@@ -2125,7 +2125,5 @@ YUI.add('juju-view-utils', function(Y) {
     'escape',
     'node',
     'view',
-    'panel',
-    'popup'
   ]
 });
