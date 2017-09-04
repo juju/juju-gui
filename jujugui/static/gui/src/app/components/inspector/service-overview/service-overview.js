@@ -1,22 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const ButtonRow = require('../../button-row/button-row');
+const InspectorConfirm = require('../confirm/confirm');
+const OverviewAction = require('../overview-action/overview-action');
 
 class ServiceOverview extends React.Component {
   constructor() {
@@ -112,7 +99,7 @@ class ServiceOverview extends React.Component {
     const items = [];
     actions.forEach(function(action) {
       items.push(
-        <juju.components.OverviewAction
+        <OverviewAction
           key={action.title}
           icon={action.icon}
           action={action.action}
@@ -273,7 +260,7 @@ class ServiceOverview extends React.Component {
       }];
       return (
         <div className="service-overview__delete">
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       );
@@ -289,7 +276,7 @@ class ServiceOverview extends React.Component {
       + 'next deployment.';
     return (
       <div className="service-overview">
-        <juju.components.InspectorConfirm
+        <InspectorConfirm
           message={message}
           open={isDeleted}
           buttons={[]} />
@@ -318,10 +305,4 @@ ServiceOverview.propTypes = {
   showPlans: PropTypes.bool.isRequired
 };
 
-YUI.add('service-overview', function() {
-  juju.components.ServiceOverview = ServiceOverview;
-}, '0.1.0', { requires: [
-  'button-row',
-  'inspector-confirm',
-  'overview-action'
-]});
+module.exports = ServiceOverview;

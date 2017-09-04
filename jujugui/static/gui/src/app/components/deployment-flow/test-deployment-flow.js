@@ -1,27 +1,25 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentFlow = require('./deployment-flow');
+const AccordionSection = require('../accordion-section/accordion-section');
+const DeploymentBudget = require('./budget/budget');
+const DeploymentCloud = require('./cloud/cloud');
+const DeploymentDirectDeploy = require('./direct-deploy/direct-deploy');
+const DeploymentLogin = require('./login/login');
+const DeploymentMachines = require('./machines/machines');
+const DeploymentModelName = require('./model-name/model-name');
+const DeploymentPanel = require('./panel/panel');
+const DeploymentPayment = require('./payment/payment');
+const DeploymentSection = require('./section/section');
+const DeploymentServices = require('./services/services');
+const DeploymentSSHKey = require('./sshkey/sshkey');
+const Spinner = require('../spinner/spinner');
+const GenericButton = require('../generic-button/generic-button');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 /**
   Convenience function for quickly and easily creating a DeploymentFlow
@@ -123,9 +121,9 @@ const createDeploymentFlow = (props = {}) => {
     }
   });
   return jsTestUtils.shallowRender(
-    <juju.components.DeploymentFlow {...props}>
+    <DeploymentFlow {...props}>
       <span>content</span>
-    </juju.components.DeploymentFlow>, true);
+    </DeploymentFlow>, true);
 };
 
 describe('DeploymentFlow', function() {
@@ -164,31 +162,31 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const props = instance.props;
     const expected = (
-      <juju.components.DeploymentPanel
+      <DeploymentPanel
         changeState={props.changeState}
         isDirectDeploy={false}
         loggedIn={true}
         title="Pavlova"
         sendAnalytics={sinon.stub()}>
-        <juju.components.DeploymentSection
+        <DeploymentSection
           completed={true}
           instance="deployment-model-name"
           showCheck={true}
           title="Set your model name">
-          <juju.components.DeploymentModelName
+          <DeploymentModelName
             acl={props.acl}
             ddEntity={null}
             modelName="Pavlova"
             setModelName={props.setModelName} />
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
+        </DeploymentSection>
+        <DeploymentSection
           buttons={undefined}
           completed={false}
           disabled={false}
           instance="deployment-cloud"
           showCheck={true}
           title="Choose cloud to deploy to">
-          <juju.components.DeploymentCloud
+          <DeploymentCloud
             acl={props.acl}
             addNotification={props.addNotification}
             cloud={null}
@@ -196,14 +194,14 @@ describe('DeploymentFlow', function() {
             listClouds={props.listClouds}
             getCloudProviderDetails={props.getCloudProviderDetails}
             setCloud={instance._setCloud} />
-        </juju.components.DeploymentSection>
-        <juju.components.DeploymentSection
+        </DeploymentSection>
+        <DeploymentSection
           completed={false}
           disabled={true}
           instance="deployment-ssh-key"
           showCheck={true}
           title={<span>Add public SSH keys <em>(optional)</em></span>}>
-          <juju.components.DeploymentSSHKey
+          <DeploymentSSHKey
             WebHandler={props.WebHandler}
             addNotification={props.addNotification}
             cloud={null}
@@ -211,24 +209,24 @@ describe('DeploymentFlow', function() {
             setSSHKeys={instance._setSSHKeys}
             setLaunchpadUsernames={instance._setLaunchpadUsernames}
           />
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
         {undefined}
-        <juju.components.DeploymentSection
+        <DeploymentSection
           completed={false}
           disabled={true}
           instance="deployment-machines"
           showCheck={false}
           title="Machines to be provisioned">
-          <juju.components.DeploymentMachines
+          <DeploymentMachines
             acl={props.acl}
             cloud={null}
             formatConstraints={formatConstraints}
             generateMachineDetails={generateMachineDetails}
             machines={props.groupedChanges._addMachines} />
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
         <div className="deployment-services">
-          <juju.components.AccordionSection title="Model changes">
-            <juju.components.DeploymentServices
+          <AccordionSection title="Model changes">
+            <DeploymentServices
               acl={props.acl}
               addNotification={props.addNotification}
               changesFilterByParent={props.changesFilterByParent}
@@ -241,37 +239,37 @@ describe('DeploymentFlow', function() {
               showTerms={props.showTerms}
               sortDescriptionsByApplication={props.sortDescriptionsByApplication}
               withPlans={true} />
-          </juju.components.AccordionSection>
+          </AccordionSection>
         </div>
-        <juju.components.DeploymentSection
+        <DeploymentSection
           completed={false}
           disabled={true}
           instance="deployment-budget"
           showCheck={true}
           title="Confirm budget">
-          <juju.components.DeploymentBudget
+          <DeploymentBudget
             acl={props.acl}
             addNotification={props.addNotification}
             listBudgets={props.listBudgets}
             setBudget={instance._setBudget}
             user="dalek" />
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
         {null}
         <div className="twelve-col">
           <div className="inner-wrapper deployment-flow__deploy">
             {undefined}
             <div className="deployment-flow__deploy-action">
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._handleDeploy}
                 disabled={true}
                 type="positive">
                 Deploy
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
         </div>
         {null}
-      </juju.components.DeploymentPanel>);
+      </DeploymentPanel>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -295,14 +293,14 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    expect(output.props.children[0]).toEqualJSX(<juju.components.Spinner />);
+    expect(output.props.children[0]).toEqualJSX(<Spinner />);
     assert.equal(getEntity.args[0][0], entityId);
     // Call the getEntity callback and then re-render.
     getEntity.args[0][1](null, entityData);
     instance.render();
     const output2 = renderer.getRenderOutput();
     expect(output2.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentDirectDeploy
+      <DeploymentDirectDeploy
         addNotification={addNotification}
         changeState={changeState}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
@@ -448,13 +446,13 @@ describe('DeploymentFlow', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         completed={false}
         disabled={false}
         instance="deployment-payment"
         showCheck={true}
         title="Payment details">
-        <juju.components.DeploymentPayment
+        <DeploymentPayment
           acl={acl}
           addNotification={addNotification}
           createCardElement={createCardElement}
@@ -466,7 +464,7 @@ describe('DeploymentFlow', function() {
           setPaymentUser={instance._setPaymentUser}
           username="spinach"
           validateForm={validateForm} />
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output.props.children[8]).toEqualJSX(expected);
   });
 
@@ -545,7 +543,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentLogin
+      <DeploymentLogin
         addNotification={addNotification}
         callback={output.props.children[10].props.callback}
         gisf={true}
@@ -951,7 +949,7 @@ describe('DeploymentFlow', function() {
     let parseTermId;
 
     beforeAll(function() {
-      parseTermId = juju.components.DeploymentFlow.prototype._parseTermId;
+      parseTermId = DeploymentFlow.prototype._parseTermId;
     });
 
     it('can get the name', function() {

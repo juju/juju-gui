@@ -6,6 +6,7 @@ const React = require('react');
 const Login = require('./login');
 const SvgIcon = require('../svg-icon/svg-icon');
 const GenericButton = require('../generic-button/generic-button');
+const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 const testUtils = require('react-dom/test-utils');

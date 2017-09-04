@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
+const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const Popup = require('../../popup/popup');
+const Spinner = require('../../spinner/spinner');
+const GenericButton = require('../../generic-button/generic-button');
 
 // Define the name of the lxd cloud.
 const LOCAL_CLOUD = 'localhost';
@@ -140,13 +130,13 @@ class AccountCredentials extends React.Component {
       type: 'destructive'
     }];
     return (
-      <window.juju.components.Popup
+      <Popup
         buttons={buttons}
         title="Remove credentials">
         <p>
           Are you sure you want to remove these credentials?
         </p>
-      </window.juju.components.Popup>);
+      </Popup>);
   }
 
   /**
@@ -189,7 +179,7 @@ class AccountCredentials extends React.Component {
     const credentials = this.state.credentials;
     if (this.state.loading) {
       return (
-        <juju.components.Spinner />);
+        <Spinner />);
     }
     const credentialsList = credentials.map(credential => {
       const cloud = this.props.getCloudProviderDetails(credential.cloud);
@@ -205,13 +195,13 @@ class AccountCredentials extends React.Component {
           </span>
           <span className="two-col last-col user-profile__list-col
               no-margin-bottom">
-            <juju.components.GenericButton
+            <GenericButton
               action={
                 this._handleDeleteCredential.bind(this, credential.id)}
               disabled={credential.cloud === LOCAL_CLOUD}
               type="neutral">
               Remove
-            </juju.components.GenericButton>
+            </GenericButton>
           </span>
         </li>);
     });
@@ -278,7 +268,7 @@ class AccountCredentials extends React.Component {
     let chooseCloud = null;
     if (this.state.showAdd && this.state.cloud) {
       addForm = (
-        <juju.components.DeploymentCredentialAdd
+        <DeploymentCredentialAdd
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           close={this._toggleAdd.bind(this)}
@@ -295,18 +285,18 @@ class AccountCredentials extends React.Component {
           validateForm={this.props.validateForm} />);
       chooseCloud = (
         <div className="account__credentials-choose-cloud">
-          <juju.components.GenericButton
+          <GenericButton
             action={this._setCloud.bind(this, null)}
             type="inline-neutral">
             Change cloud
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>);
     }
     if (this.state.showAdd) {
       content = (
         <div>
           {chooseCloud}
-          <juju.components.DeploymentCloud
+          <DeploymentCloud
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             cloud={this.state.cloud}
@@ -318,7 +308,7 @@ class AccountCredentials extends React.Component {
         </div>);
     }
     return (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{'twelve-col': true}}
         clickable={false}
         expanded={this.state.showAdd}>
@@ -326,17 +316,17 @@ class AccountCredentials extends React.Component {
         <div className="twelve-col">
           {content}
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
   }
 
   render() {
     const clouds = this.state.clouds;
     let addButton = (
-      <juju.components.GenericButton
+      <GenericButton
         action={this._toggleAdd.bind(this)}
         type="inline-neutral">
         {this.state.showAdd ? 'Cancel' : 'Add'}
-      </juju.components.GenericButton>);
+      </GenericButton>);
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }
@@ -373,15 +363,4 @@ AccountCredentials.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('account-credentials', function() {
-  juju.components.AccountCredentials = AccountCredentials;
-}, '', {
-  requires: [
-    'deployment-cloud',
-    'deployment-credential-add',
-    'expanding-row',
-    'generic-button',
-    'loading-spinner',
-    'popup'
-  ]
-});
+module.exports = AccountCredentials;

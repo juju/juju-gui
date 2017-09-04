@@ -1,22 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const AccountPaymentMethodCard = require('../../account/payment/methods/card/card');
+const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const Spinner = require('../../spinner/spinner');
 
 class DeploymentPayment extends React.Component {
   constructor() {
@@ -75,7 +62,7 @@ class DeploymentPayment extends React.Component {
       return (
         <li className="deployment-payment__method"
           key={method.name + i}>
-          <juju.components.AccountPaymentMethodCard
+          <AccountPaymentMethodCard
             card={method} />
         </li>);
     });
@@ -92,7 +79,7 @@ class DeploymentPayment extends React.Component {
   */
   _generatePaymentForm() {
     return (
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         createCardElement={this.props.createCardElement}
@@ -108,7 +95,7 @@ class DeploymentPayment extends React.Component {
     let content;
     if (this.state.loading) {
       content = (
-        <juju.components.Spinner />);
+        <Spinner />);
     } else if (this.props.paymentUser) {
       content = this._generatePaymentMethods();
     } else {
@@ -136,11 +123,4 @@ DeploymentPayment.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-payment', function() {
-  juju.components.DeploymentPayment = DeploymentPayment;
-}, '0.1.0', {
-  requires: [
-    'create-payment-user',
-    'loading-spinner'
-  ]
-});
+module.exports = DeploymentPayment;

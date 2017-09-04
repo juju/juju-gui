@@ -1,35 +1,20 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentBudget = require('./budget');
+const Spinner = require('../../spinner/spinner');
+const InsetSelect = require('../../inset-select/inset-select');
+const GenericInput = require('../../generic-input/generic-input');
+const GenericButton = require('../../generic-button/generic-button');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const BudgetChart = require('../../budget-chart/budget-chart');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentBudget', function() {
   var acl, budgets;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-budget', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -41,7 +26,7 @@ describe('DeploymentBudget', function() {
 
   it('can display a loading spinner', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={sinon.stub()}
@@ -50,14 +35,14 @@ describe('DeploymentBudget', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-budget__loading">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
@@ -66,7 +51,7 @@ describe('DeploymentBudget', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{
           'deployment-budget__form': true,
           'twelve-col': true
@@ -75,7 +60,7 @@ describe('DeploymentBudget', function() {
         expanded={false}>
         <div>
           <div className="four-col">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={false}
               label="Budget"
               onChange={instance._handleBudgetChange}
@@ -86,15 +71,15 @@ describe('DeploymentBudget', function() {
           </div>
           <div className="three-col">
             <span className="deployment-budget__increase-button">
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._toggleIncrease}
                 disabled={false}
                 type="base">
                 Increase budget
-              </juju.components.GenericButton>
+              </GenericButton>
             </span>
           </div>
-          <juju.components.BudgetChart
+          <BudgetChart
             budgets={budgets} />
         </div>
         <div>
@@ -110,7 +95,7 @@ describe('DeploymentBudget', function() {
               Increase
             </div>
             <div className="three-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="Budget"
                 placeholder="Personal ($100)"
@@ -120,7 +105,7 @@ describe('DeploymentBudget', function() {
               to
             </div>
             <div className="three-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="New budget amount"
                 required={false} />
@@ -130,32 +115,32 @@ describe('DeploymentBudget', function() {
                 <span className="link">Manage all budgets</span>
               </div>
               <div className="two-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={instance._toggleIncrease}
                   disabled={false}
                   type="base">
                   Cancel
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
               <div className="two-col last-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={instance._toggleIncrease}
                   disabled={false}
                   type="neutral">
                   Confirm
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
             </div>
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
@@ -164,7 +149,7 @@ describe('DeploymentBudget', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{
           'deployment-budget__form': true,
           'twelve-col': true
@@ -173,7 +158,7 @@ describe('DeploymentBudget', function() {
         expanded={false}>
         <div>
           <div className="four-col">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={true}
               label="Budget"
               onChange={instance._handleBudgetChange}
@@ -184,15 +169,15 @@ describe('DeploymentBudget', function() {
           </div>
           <div className="three-col">
             <span className="deployment-budget__increase-button">
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._toggleIncrease}
                 disabled={true}
                 type="base">
                 Increase budget
-              </juju.components.GenericButton>
+              </GenericButton>
             </span>
           </div>
-          <juju.components.BudgetChart
+          <BudgetChart
             budgets={budgets} />
         </div>
         <div>
@@ -208,7 +193,7 @@ describe('DeploymentBudget', function() {
               Increase
             </div>
             <div className="three-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="Budget"
                 placeholder="Personal ($100)"
@@ -218,7 +203,7 @@ describe('DeploymentBudget', function() {
               to
             </div>
             <div className="three-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={true}
                 label="New budget amount"
                 required={false} />
@@ -228,32 +213,32 @@ describe('DeploymentBudget', function() {
                 <span className="link">Manage all budgets</span>
               </div>
               <div className="two-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={instance._toggleIncrease}
                   disabled={true}
                   type="base">
                   Cancel
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
               <div className="two-col last-col">
-                <juju.components.GenericButton
+                <GenericButton
                   action={instance._toggleIncrease}
                   disabled={true}
                   type="neutral">
                   Confirm
-                </juju.components.GenericButton>
+                </GenericButton>
               </div>
             </div>
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
   it('should not load the budgets if there is no user', function() {
     var listBudgets = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
@@ -266,7 +251,7 @@ describe('DeploymentBudget', function() {
   it('should load the budgets again if the user changes', function() {
     var listBudgets = sinon.stub().callsArgWith(0, null, budgets);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
@@ -275,7 +260,7 @@ describe('DeploymentBudget', function() {
     renderer.getRenderOutput();
     assert.equal(listBudgets.callCount, 0);
     renderer.render(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
@@ -288,7 +273,7 @@ describe('DeploymentBudget', function() {
     var abort = sinon.stub();
     var listBudgets = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
@@ -301,7 +286,7 @@ describe('DeploymentBudget', function() {
   it('can set the initial budget', function() {
     var setBudget = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
@@ -314,7 +299,7 @@ describe('DeploymentBudget', function() {
   it('can change the budget', function() {
     var setBudget = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
@@ -330,7 +315,7 @@ describe('DeploymentBudget', function() {
   it('can handle errors when getting budgets', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentBudget
+      <DeploymentBudget
         acl={acl}
         addNotification={addNotification}
         listBudgets={sinon.stub().callsArgWith(0, 'Uh oh!', null)}

@@ -10,11 +10,6 @@ const testUtils = require('react-dom/test-utils');
 
 describe('ExpandingProgress', function() {
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('expanding-progress', function() { done(); });
-  });
-
   it('renders properly', () => {
     var output = jsTestUtils.shallowRender(
       <ExpandingProgress />);

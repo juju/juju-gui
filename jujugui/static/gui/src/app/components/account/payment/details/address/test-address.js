@@ -1,32 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const AccountPaymentDetailsAddress = require('./address');
+const AddressForm = require('../../../../address-form/address-form');
+const ExpandingRow = require('../../../../expanding-row/expanding-row');
+const GenericButton = require('../../../../generic-button/generic-button');
+
+const jsTestUtils = require('../../../../../utils/component-test-utils');
 
 describe('AccountPaymentDetailsAddress', () => {
   let acl, address, newAddress;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment-details-address', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -58,7 +43,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const getCountries = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={addNotification}
@@ -74,19 +59,19 @@ describe('AccountPaymentDetailsAddress', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{
           'account-payment-details-address': true,
           'twelve-col': true
         }}
         clickable={false}
         expanded={true}>
-        <juju.components.AddressForm
+        <AddressForm
           disabled={true}
           address={address}
           getCountries={getCountries} />
         <div className="twelve-col account-payment-details-address__edit">
-          <juju.components.AddressForm
+          <AddressForm
             addNotification={addNotification}
             address={address}
             disabled={false}
@@ -95,28 +80,28 @@ describe('AccountPaymentDetailsAddress', () => {
             validateForm={validateForm} />
           <div className={
             'twelve-col account-payment-details-address__buttons'}>
-            <juju.components.GenericButton
+            <GenericButton
               action={close}
               disabled={false}
               type="inline-neutral">
               Cancel
-            </juju.components.GenericButton>
-            <juju.components.GenericButton
+            </GenericButton>
+            <GenericButton
               action={instance._updateAddress}
               disabled={false}
               type="inline-positive">
               Update
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can cancel the form', () => {
     const close = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -137,7 +122,7 @@ describe('AccountPaymentDetailsAddress', () => {
   it('can validate the form', () => {
     const removeAddress = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -160,7 +145,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const close = sinon.stub();
     const updated = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -193,7 +178,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const updateAddress = sinon.stub().callsArgWith(3, 'Uh oh!');
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={addNotification}
@@ -226,7 +211,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const abort = sinon.stub();
     const updateAddress = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetailsAddress
+      <AccountPaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}

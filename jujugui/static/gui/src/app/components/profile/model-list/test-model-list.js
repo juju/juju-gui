@@ -146,13 +146,6 @@ describe('Profile Model List', function() {
     "lastConnection": "2017-07-05T01:42:05.000Z"
   }]`;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile-model-list', function() {
-      done();
-    });
-  });
-
   function renderComponent(options={}) {
     listModelsWithInfo = (cb) => {
       cb(null, JSON.parse(rawModelData));

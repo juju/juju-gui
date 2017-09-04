@@ -1,32 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const ServiceOverview = require('./service-overview');
+const ButtonRow = require('../../button-row/button-row');
+const InspectorConfirm = require('../confirm/confirm');
+const OverviewAction = require('../overview-action/overview-action');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('ServiceOverview', function() {
   let acl, fakeCharm, fakeService;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('service-overview', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -84,7 +69,7 @@ describe('ServiceOverview', function() {
     };
     const showActivePlan = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -126,7 +111,7 @@ describe('ServiceOverview', function() {
     const modelUUID = 'abc123';
     const showActivePlan = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -176,7 +161,7 @@ describe('ServiceOverview', function() {
     };
     const showActivePlan = sinon.stub().callsArgWith(2, 'Uh oh!', null, null);
     jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={addNotification}
         changeState={sinon.stub()}
@@ -221,7 +206,7 @@ describe('ServiceOverview', function() {
     };
     const showActivePlan = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -244,7 +229,7 @@ describe('ServiceOverview', function() {
   it('shows the all units action', function() {
     fakeService.get.withArgs('units').returns({toArray: () => [{}, {}]});
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -259,7 +244,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
-      <juju.components.OverviewAction
+      <OverviewAction
         icon="units"
         key="Units"
         title="Units"
@@ -272,7 +257,7 @@ describe('ServiceOverview', function() {
 
   it('shows the all units action even if there are no units', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -287,7 +272,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
-      <juju.components.OverviewAction
+      <OverviewAction
         icon="units"
         key="Units"
         title="Units"
@@ -310,7 +295,7 @@ describe('ServiceOverview', function() {
     };
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         clearState={sinon.stub()}
@@ -350,7 +335,7 @@ describe('ServiceOverview', function() {
       {}
     ]});
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -365,7 +350,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Uncommitted"
         title="Uncommitted"
         value={2}
@@ -381,7 +366,7 @@ describe('ServiceOverview', function() {
       {agent_state: 'pending'}
     ]});
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -396,7 +381,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Pending"
         title="Pending"
         value={1}
@@ -412,7 +397,7 @@ describe('ServiceOverview', function() {
       {agent_state: 'error'}
     ]});
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -427,7 +412,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Errors"
         title="Errors"
         value={1}
@@ -440,7 +425,7 @@ describe('ServiceOverview', function() {
 
   it('shows the configure action', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -455,7 +440,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Configure"
         title="Configure"
         value={undefined}
@@ -477,7 +462,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -492,7 +477,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[2],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Relations"
         title="Relations"
         value={undefined}
@@ -516,7 +501,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -531,7 +516,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[3],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Expose"
         title="Expose"
         value="On"
@@ -556,7 +541,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -571,7 +556,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[4],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Resources"
         title="Resources"
         value={undefined}
@@ -601,7 +586,7 @@ describe('ServiceOverview', function() {
       hasMetrics: sinon.stub().returns(true)
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -631,7 +616,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -646,7 +631,7 @@ describe('ServiceOverview', function() {
         showActivePlan={sinon.stub()}
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[5],
-      <juju.components.OverviewAction
+      <OverviewAction
         key="Change version"
         title="Change version"
         linkAction={output.props.children[1].props.children[5].props.linkAction}
@@ -672,7 +657,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         clearState={sinon.stub()}
@@ -705,7 +690,7 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -745,7 +730,7 @@ describe('ServiceOverview', function() {
     };
     const showActivePlan = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -768,7 +753,7 @@ describe('ServiceOverview', function() {
 
   it('renders the delete button', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -788,14 +773,14 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.children.props.buttons[0].action
     }];
     assert.deepEqual(output.props.children[2].props.children,
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
   });
 
   it('disables the delete button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -815,14 +800,14 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.children.props.buttons[0].action
     }];
     assert.deepEqual(output.props.children[2].props.children,
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
   });
 
   it('hides the delete button when pending deletion', function() {
     fakeService.get.withArgs('deleted').returns(true);
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -842,7 +827,7 @@ describe('ServiceOverview', function() {
   it('renders the delete confirmation when pending deletion', function() {
     fakeService.get.withArgs('deleted').returns(true);
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -859,7 +844,7 @@ describe('ServiceOverview', function() {
     const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
-      <juju.components.InspectorConfirm
+      <InspectorConfirm
         message={confirmMessage}
         open={true}
         buttons={[]} />);
@@ -867,7 +852,7 @@ describe('ServiceOverview', function() {
 
   it('hides the confirmation when not deleted', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -884,7 +869,7 @@ describe('ServiceOverview', function() {
     const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
-      <juju.components.InspectorConfirm
+      <InspectorConfirm
         message={confirmMessage}
         open={false}
         buttons={[]} />);
@@ -895,7 +880,7 @@ describe('ServiceOverview', function() {
     const destroyService = sinon.stub();
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
         charm={fakeCharm}

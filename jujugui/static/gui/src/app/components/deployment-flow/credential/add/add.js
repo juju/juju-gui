@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const SvgIcon = require('../../../svg-icon/svg-icon');
+const InsetSelect = require('../../../inset-select/inset-select');
+const GenericInput = require('../../../generic-input/generic-input');
+const ButtonRow = require('../../../button-row/button-row');
+const FileField = require('../../../file-field/file-field');
 
 class DeploymentCredentialAdd extends React.Component {
   constructor(props) {
@@ -144,7 +133,7 @@ class DeploymentCredentialAdd extends React.Component {
       };
     });
     return (
-      <juju.components.InsetSelect
+      <InsetSelect
         disabled={this.props.acl.isReadOnly()}
         label="Authentication type"
         onChange={this._handleAuthChange.bind(this)}
@@ -182,7 +171,7 @@ class DeploymentCredentialAdd extends React.Component {
         return (
           <div className="deployment-credential-add__upload"
             key={field.id}>
-            <juju.components.FileField
+            <FileField
               accept=".json"
               disabled={isReadOnly}
               key={field.id}
@@ -192,7 +181,7 @@ class DeploymentCredentialAdd extends React.Component {
           </div>);
       }
       return (
-        <juju.components.GenericInput
+        <GenericInput
           autocomplete={field.autocomplete}
           disabled={isReadOnly}
           key={field.id}
@@ -215,7 +204,7 @@ class DeploymentCredentialAdd extends React.Component {
         </div>
         <div className="deployment-flow__notice six-col last-col">
           <p className="deployment-flow__notice-content">
-            <juju.components.SvgIcon
+            <SvgIcon
               name="general-action-blue"
               size="16" />
             Credentials are stored securely on our servers and we will
@@ -274,14 +263,14 @@ class DeploymentCredentialAdd extends React.Component {
             target="_blank">
             Sign up for {title}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={isReadOnly}
               label={credentialName}
               required={true}
@@ -295,7 +284,7 @@ class DeploymentCredentialAdd extends React.Component {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>
@@ -320,14 +309,4 @@ DeploymentCredentialAdd.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-credential-add', function() {
-  juju.components.DeploymentCredentialAdd = DeploymentCredentialAdd;
-}, '0.1.0', {
-  requires: [
-    'button-row',
-    'file-field',
-    'generic-input',
-    'inset-select',
-    'svg-icon'
-  ]
-});
+module.exports = DeploymentCredentialAdd;

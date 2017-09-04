@@ -1,36 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Configuration = require('./config');
+const BooleanConfig = require('../../boolean-config/boolean-config');
+const StringConfig = require('../../string-config/string-config');
+const ButtonRow = require('../../button-row/button-row');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('Configuration', function() {
   var acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-config', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -59,7 +41,7 @@ describe('Configuration', function() {
       }};
     var setConfig = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -75,7 +57,7 @@ describe('Configuration', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     expect(output.props.children[0].props.children[4][0]).toEqualJSX(
-      <juju.components.StringConfig
+      <StringConfig
         key="Config-option1"
         ref="Config-option1"
         onChange={instance._handleOnChange}
@@ -86,7 +68,7 @@ describe('Configuration', function() {
         }}
         config={option1key} />);
     expect(output.props.children[0].props.children[4][1]).toEqualJSX(
-      <juju.components.BooleanConfig
+      <BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
@@ -126,7 +108,7 @@ describe('Configuration', function() {
       }};
     const setConfig = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -189,7 +171,7 @@ describe('Configuration', function() {
       }};
     const setConfig = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -237,7 +219,7 @@ describe('Configuration', function() {
       }
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -276,7 +258,7 @@ describe('Configuration', function() {
     var setConfig = sinon.stub();
     var changeState = sinon.stub();
     var component = testUtils.renderIntoDocument(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -339,7 +321,7 @@ describe('Configuration', function() {
     var updateUnit = sinon.stub();
     var getServiceByName = sinon.stub().returns(null);
     var component = testUtils.renderIntoDocument(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -402,7 +384,7 @@ describe('Configuration', function() {
       }};
     var setConfig = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -466,7 +448,7 @@ describe('Configuration', function() {
       }};
     var setConfig = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -530,7 +512,7 @@ describe('Configuration', function() {
         return { option1: option1key };
       }};
     var output = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -578,7 +560,7 @@ describe('Configuration', function() {
     var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
@@ -633,7 +615,7 @@ describe('Configuration', function() {
     var getServiceByName = sinon.stub().returns(true);
     var addNotification = sinon.stub();
     var component = testUtils.renderIntoDocument(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={addNotification}
         changeState={sinon.stub()}
@@ -682,7 +664,7 @@ describe('Configuration', function() {
       set: sinon.stub()
     };
     var component = testUtils.renderIntoDocument(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -708,7 +690,7 @@ describe('Configuration', function() {
     };
     var changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -743,7 +725,7 @@ describe('Configuration', function() {
     var fileClick = sinon.stub();
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -776,7 +758,7 @@ describe('Configuration', function() {
     var formReset = sinon.stub();
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -829,7 +811,7 @@ describe('Configuration', function() {
     });
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -860,7 +842,7 @@ describe('Configuration', function() {
     output.props.children[0].props.children[2].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
     expect(output.props.children[0].props.children[4][0]).toEqualJSX(
-      <juju.components.StringConfig
+      <StringConfig
         key="Config-option1"
         ref="Config-option1"
         onChange={instance._handleOnChange}
@@ -871,7 +853,7 @@ describe('Configuration', function() {
         }}
         config="my apache2" />);
     expect(output.props.children[0].props.children[4][1]).toEqualJSX(
-      <juju.components.BooleanConfig
+      <BooleanConfig
         key="Config-option2"
         ref="Config-option2"
         label="option2:"
@@ -904,7 +886,7 @@ describe('Configuration', function() {
     });
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -968,7 +950,7 @@ describe('Configuration', function() {
       }};
     var setConfig = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -1002,7 +984,7 @@ describe('Configuration', function() {
     var expected = (
       <div className="inspector-config">
         <div className="inspector-config__fields">
-          <juju.components.StringConfig
+          <StringConfig
             disabled={true}
             ref="ServiceName"
             onChange={instance._handleOnChange}
@@ -1022,10 +1004,10 @@ describe('Configuration', function() {
               type="file" />
           </form>
           <div className="inspector-config__config-file">
-            <juju.components.ButtonRow buttons={importButton} />
+            <ButtonRow buttons={importButton} />
           </div>
           {[
-            <juju.components.StringConfig
+            <StringConfig
               disabled={true}
               key="Config-option1"
               ref="Config-option1"
@@ -1036,7 +1018,7 @@ describe('Configuration', function() {
                 type: 'string'
               }}
               config={option1key} />,
-            <juju.components.BooleanConfig
+            <BooleanConfig
               disabled={true}
               key="Config-option2"
               ref="Config-option2"
@@ -1052,7 +1034,7 @@ describe('Configuration', function() {
         </div>
         <div className={
           'inspector-config__buttons inspector-config__buttons--hidden'}>
-          <juju.components.ButtonRow buttons={actionButtons} />
+          <ButtonRow buttons={actionButtons} />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);

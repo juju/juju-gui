@@ -1,19 +1,8 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const ButtonRow = require('../../../button-row/button-row');
+const CheckListItem = require('../../../check-list-item/check-list-item');
 
 class InspectorRelateToEndpoint extends React.Component {
   constructor() {
@@ -54,7 +43,7 @@ class InspectorRelateToEndpoint extends React.Component {
         </li>);
     }
     return relations.map((relation, index) => {
-      return (<juju.components.CheckListItem
+      return (<CheckListItem
         key={index}
         ref={`InspectorRelateToEndpoint-${index}`}
         label={`${relation[0].name} → ${relation[1].name}`}
@@ -110,7 +99,7 @@ class InspectorRelateToEndpoint extends React.Component {
       disabled: disabled
     });
     return (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
   }
 
@@ -133,9 +122,4 @@ InspectorRelateToEndpoint.propTypes = {
   endpoints: PropTypes.array.isRequired
 };
 
-YUI.add('inspector-relate-to-endpoint', function() {
-  juju.components.InspectorRelateToEndpoint = InspectorRelateToEndpoint;
-}, '0.1.0', { requires: [
-  'button-row',
-  'check-list-item'
-]});
+module.exports = InspectorRelateToEndpoint;
