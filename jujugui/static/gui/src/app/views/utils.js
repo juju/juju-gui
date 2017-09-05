@@ -2124,6 +2124,6 @@ YUI.add('juju-view-utils', function(Y) {
     'base-build',
     'escape',
     'node',
-    'view',
+    'view'
   ]
 });
