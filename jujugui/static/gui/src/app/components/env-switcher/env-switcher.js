@@ -2,7 +2,7 @@
 'use strict';
 
 const React = require('react');
-const enhanceWithClickOutside = require('react-click-outside');
+const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const EnvList = require('./list/list');
 const SvgIcon = require('../svg-icon/svg-icon');

@@ -20,7 +20,7 @@ describe('MoreMenu', function() {
     var renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -48,7 +48,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -93,7 +93,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();

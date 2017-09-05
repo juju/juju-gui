@@ -2,7 +2,7 @@
 'use strict';
 
 const React = require('react');
-
+const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 
 const MachineView = require('./machine-view');
@@ -16,6 +16,11 @@ const GenericButton = require('../generic-button/generic-button');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 const testUtils = require('react-dom/test-utils');
+
+function queryComponentSelector(component, selector, all) {
+  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
+  return ReactDOM.findDOMNode(component)[queryFn](selector);
+}
 
 describe('MachineView', function() {
   let acl, machines, parseConstraints, parseMachineName, generateMachineDetails;

@@ -4,6 +4,7 @@
 const React = require('react');
 
 const BudgetTable = require('./budget-table');
+const BudgetTableRow = require('./row/row');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 

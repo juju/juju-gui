@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const AccountPaymentDetails = require('./details');
 const GenericButton = require('../../../generic-button/generic-button');
 const GenericInput = require('../../../generic-input/generic-input');

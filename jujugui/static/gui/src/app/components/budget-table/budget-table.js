@@ -92,3 +92,5 @@ BudgetTable.propTypes = {
   showTerms: PropTypes.func.isRequired,
   withPlans: PropTypes.bool
 };
+
+module.exports = BudgetTable;
