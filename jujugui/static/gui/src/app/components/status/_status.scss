@@ -20,6 +20,29 @@
     padding-right: 20px;
   }
 
+  &__traffic-light {
+    $size: 15px;
+    display: inline-block;
+    width: $size;
+    height: $size;
+    margin-left: 15px;
+    border-radius: $size / 2;
+    transition: background-color .3s;
+    cursor: pointer;
+
+    &--ok {
+      background-color: $success;
+    }
+
+    &--error {
+      background-color: $error;
+    }
+
+    &--pending {
+      background-color: $pending;
+    }
+  }
+
   &__filter {
     &-label {
       padding-top: 9px;

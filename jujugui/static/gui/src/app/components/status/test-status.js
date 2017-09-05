@@ -286,6 +286,14 @@ describe('Status', function() {
             <div className="eight-col">
               <h2>
                 my-model
+                <span
+                  className={'status-view__traffic-light ' +
+                    'status-view__traffic-light--ok'}
+                  onClick={sinon.stub()}
+                  role="button"
+                  title={'Everything in this model has the status "OK"'}
+                  tabIndex="0">
+                </span>
               </h2>
             </div>
             <div className="status-view__filter-label two-col">
@@ -293,7 +301,8 @@ describe('Status', function() {
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
-                onChange={sinon.stub()}>
+                onChange={sinon.stub()}
+                value="none">
                 <option className="status-view__filter-option"
                   key="none"
                   value="none">
@@ -393,6 +402,14 @@ describe('Status', function() {
             <div className="eight-col">
               <h2>
                 my-model
+                <span
+                  className={'status-view__traffic-light ' +
+                    'status-view__traffic-light--ok'}
+                  onClick={sinon.stub()}
+                  role="button"
+                  title={'Everything in this model has the status "OK"'}
+                  tabIndex="0">
+                </span>
               </h2>
             </div>
             <div className="status-view__filter-label two-col">
@@ -400,7 +417,8 @@ describe('Status', function() {
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
-                onChange={sinon.stub()}>
+                onChange={sinon.stub()}
+                value="none">
                 <option className="status-view__filter-option"
                   key="none"
                   value="none">
@@ -745,7 +763,7 @@ describe('Status', function() {
               columnSize: 2,
               content: 'these are the voyages'
             }],
-            extraData: 'ok',
+            extraData: 'pending',
             key: 'django/id0'
           }, {
             classes: ['status-view__table-row--error'],
@@ -1072,5 +1090,59 @@ describe('Status', function() {
     const selectBox = titleRow.props.children[2].props.children;
     selectBox.props.onChange({currentTarget: {value: 'none'}});
     assert.equal(comp.instance.state.filter, null);
+  });
+
+  it('can show a highest status notification', () => {
+    const comp = render(makeDB());
+    const expectedOutput = (
+      <div className="twelve-col no-margin-bottom">
+        <div className="eight-col">
+          <h2>
+            my-model
+            <span
+              className={'status-view__traffic-light ' +
+                'status-view__traffic-light--error'}
+              onClick={sinon.stub()}
+              role="button"
+              title={'Something in this model has the status "error"'}
+              tabIndex="0">
+            </span>
+          </h2>
+        </div>
+        <div className="status-view__filter-label two-col">
+          Filter status:
+        </div>
+        <div className="status-view__filter two-col last-col">
+          <select className="status-view__filter-select"
+            onChange={sinon.stub()}
+            value="none">
+            <option className="status-view__filter-option"
+              key="none"
+              value="none">
+              none
+            </option>
+            <option className="status-view__filter-option"
+              key="error"
+              value="error">
+              error
+            </option>
+            <option className="status-view__filter-option"
+              key="pending"
+              value="pending">
+              pending
+            </option>
+            <option className="status-view__filter-option"
+              key="ok"
+              value="ok">
+              ok
+            </option>
+          </select>
+        </div>
+      </div>);
+    comp.instance.componentDidUpdate();
+    const output = comp.renderer.getRenderOutput();
+    const wrapper = output.props.children;
+    const header = wrapper.props.children[0];
+    expect(header.props.children[0]).toEqualJSX(expectedOutput);
   });
 });
