@@ -34,12 +34,19 @@ class DeploymentSSHKey extends React.Component {
     if (evt.which === 13) {
       this._handleAddMoreKeys(null);
     }
-    const hasValue = (this.refs.sshKey && this.refs.sshKey.getValue()) ||
+    this._updateButtonState();
+  }
+
+  _updateButtonState() {
+    const hasValue = ((this.refs.sshKey && this.refs.sshKey.getValue()) ||
       (this.refs.githubUsername && this.refs.githubUsername.getValue() ||
-      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue()));
-    this.setState({
-      buttonDisabled: hasValue ? false : true
-    });
+      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue())))
+      !== undefined;
+    if (this.state.buttonDisabled === hasValue) {
+      this.setState({
+        buttonDisabled: !hasValue
+      });
+    }
   }
 
   /**
@@ -164,7 +171,7 @@ class DeploymentSSHKey extends React.Component {
   */
   _handleSourceChange() {
     const source = this.refs.sshSource.getValue();
-    this.setState({addSource: source, buttonDisabled: true});
+    this.setState({addSource: source});
   }
 
   /**
@@ -323,13 +330,6 @@ class DeploymentSSHKey extends React.Component {
         </div>
       );
     } else if (this.state.addSource === 'launchpad') {
-      let username = undefined;
-      if (this.props.user) {
-        username = this.props.user.displayName;
-        if (this.state.buttonDisabled) {
-          this.setState({buttonDisabled: false});
-        }
-      }
       return (
         <div className="three-col last-col no-margin-bottom">
           <juju.components.GenericInput
@@ -338,7 +338,7 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
-            value={username}
+            value={this.props.username}
           />
         </div>
       );
@@ -400,6 +400,10 @@ class DeploymentSSHKey extends React.Component {
     return false;
   }
 
+  componentDidUpdate() {
+    this._updateButtonState();
+  }
+
   render() {
     const cloud = this.props.cloud;
     if (!cloud) {
@@ -451,7 +455,7 @@ DeploymentSSHKey.propTypes = {
   getGithubSSHKeys: PropTypes.func.isRequired,
   setLaunchpadUsernames: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired,
-  user: PropTypes.func
+  username: PropTypes.string
 };
 
 YUI.add('deployment-ssh-key', function() {

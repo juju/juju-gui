@@ -44,15 +44,10 @@ describe('DeploymentSSHKey', function() {
   });
 
   // Render the component and return the instance and the output.
-  const render = (cloudType, _getGithubSSHKeys, user) => {
+  const render = (cloudType, _getGithubSSHKeys, username) => {
     let cloud = null;
     if (cloudType) {
       cloud = {cloudType: cloudType};
-    }
-    let userInstance = null;
-    if (user) {
-      userInstance = function() {};
-      userInstance.displayName = user;
     }
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSSHKey
@@ -62,7 +57,7 @@ describe('DeploymentSSHKey', function() {
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
         setLaunchpadUsernames={setLaunchpadUsernames}
-        user={userInstance}
+        username={username}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
@@ -132,8 +127,12 @@ describe('DeploymentSSHKey', function() {
 
   it('prefills Launchpad username if available', () => {
     const comp = render('aws', null, 'rose');
-    comp.instance.refs = {sshSource: {getValue: () => 'launchpad'}};
+    comp.instance.refs = {
+      launchpadUsername: {getValue: () => 'rose'},
+      sshSource: {getValue: () => 'launchpad'}
+    };
     comp.instance._handleSourceChange();
+    comp.instance._updateButtonState();
     const expectedOutput = (
       <div className="deployment-ssh-key">
         <p>
@@ -281,6 +280,7 @@ describe('DeploymentSSHKey', function() {
       const comp = render('aws');
       comp.instance.refs = {
         githubUsername: {
+          getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }
@@ -319,6 +319,7 @@ describe('DeploymentSSHKey', function() {
       const comp = render('gce');
       comp.instance.refs = {
         githubUsername: {
+          getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }

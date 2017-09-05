@@ -555,7 +555,7 @@ class DeploymentFlow extends React.Component {
           getGithubSSHKeys={this.props.getGithubSSHKeys}
           setSSHKeys={this._setSSHKeys.bind(this)}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
-          user={this.props.user}
+          username={this.props.username}
           WebHandler={this.props.WebHandler}
         />
       </juju.components.DeploymentSection>);
@@ -1105,7 +1105,7 @@ DeploymentFlow.propTypes = {
   stats: PropTypes.object,
   updateCloudCredential: PropTypes.func,
   updateModelName: PropTypes.func,
-  user: PropTypes.object,
+  username: PropTypes.string,
   validateForm: PropTypes.func.isRequired,
   withPlans: PropTypes.bool
 };
