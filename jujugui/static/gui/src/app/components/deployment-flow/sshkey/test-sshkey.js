@@ -44,7 +44,7 @@ describe('DeploymentSSHKey', function() {
   });
 
   // Render the component and return the instance and the output.
-  const render = (cloudType, _getGithubSSHKeys) => {
+  const render = (cloudType, _getGithubSSHKeys, username) => {
     let cloud = null;
     if (cloudType) {
       cloud = {cloudType: cloudType};
@@ -57,6 +57,7 @@ describe('DeploymentSSHKey', function() {
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
         setLaunchpadUsernames={setLaunchpadUsernames}
+        username={username}
       />, true);
     return {
       instance: renderer.getMountedInstance(),
@@ -122,6 +123,66 @@ describe('DeploymentSSHKey', function() {
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
+  });
+
+  it('prefills Launchpad username if available', () => {
+    const comp = render('aws', null, 'rose');
+    comp.instance.refs = {
+      launchpadUsername: {getValue: () => 'rose'},
+      sshSource: {getValue: () => 'launchpad'}
+    };
+    comp.instance._handleSourceChange();
+    comp.instance._updateButtonState();
+    const expectedOutput = (
+      <div className="deployment-ssh-key">
+        <p>
+          Keys will allow you SSH access to the machines
+          provisioned by Juju for this model.
+        </p>
+        {false}
+        {false}
+        <div className="twelve-col no-margin-bottom">
+          <div className="three-col no-margin-bottom">
+            <juju.components.InsetSelect
+              disabled={false}
+              ref="sshSource"
+              label="Source"
+              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
+              options={[
+                {
+                  label: 'GitHub',
+                  value: 'github'
+                },
+                {
+                  label: 'Manual',
+                  value: 'manual'
+                },
+                {
+                  label: 'Launchpad',
+                  value: 'launchpad'
+                }
+              ]} />
+          </div>
+          <div className="three-col last-col no-margin-bottom">
+            <juju.components.GenericInput
+              ref="launchpadUsername"
+              autocomplete
+              key="launchpadUsername"
+              label="Launchpad username"
+              onKeyUp={comp.instance._onKeyUp.
+                bind(comp.instance)}
+              value="rose"
+              type="text" />
+          </div>
+          <div className="right">
+            <juju.components.GenericButton
+              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+              type="positive">Add Keys</juju.components.GenericButton>
+          </div>
+        </div>
+      </div>
+    );
+    expect(comp.renderer.getRenderOutput()).toEqualJSX(expectedOutput);
   });
 
   it('renders with azure', function() {
@@ -219,6 +280,7 @@ describe('DeploymentSSHKey', function() {
       const comp = render('aws');
       comp.instance.refs = {
         githubUsername: {
+          getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }
@@ -257,6 +319,7 @@ describe('DeploymentSSHKey', function() {
       const comp = render('gce');
       comp.instance.refs = {
         githubUsername: {
+          getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }

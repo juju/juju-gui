@@ -1416,6 +1416,7 @@ YUI.add('juju-gui', function(Y) {
           stats={this.stats}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          username={this.user ? this.user.displayName : undefined}
           validateForm={utils.validateForm.bind(utils)}
           WebHandler={Y.juju.environments.web.WebHandler}
           withPlans={false} />,
