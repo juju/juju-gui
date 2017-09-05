@@ -66,4 +66,4 @@ const Environment = function() {
   );
 };
 
-module.export = Environment;
+module.exports = Environment;

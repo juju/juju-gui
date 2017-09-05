@@ -5,7 +5,7 @@
   Code to still move over from app.js
     - Y.juju.Cookies Line 50.
 */
-
+const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
@@ -18,6 +18,10 @@ const DeployerMixin = require('./init/deployer-mixin');
 
 // Hacks untill all of the global references have been removed.
 window.jsyaml = require('js-yaml');
+// Required for the envionment.js file.
+window.ReactDOM = ReactDOM;
+window.React = React;
+juju.components.Environment = require('./components/environment/environment');
 
 const yui = window.yui;
 
