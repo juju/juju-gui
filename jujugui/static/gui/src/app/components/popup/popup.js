@@ -6,6 +6,8 @@ const React = require('react');
 const ButtonRow = require('../button-row/button-row');
 const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');
+const SvgIcon = require('../svg-icon/svg-icon');
+
 /**
   Popup provides a React component for modal confirmation of an
   action.

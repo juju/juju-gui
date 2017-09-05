@@ -7,8 +7,9 @@ const Popup = require('./popup');
 const ButtonRow = require('../button-row/button-row');
 const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');
+const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Popup', () => {
 

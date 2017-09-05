@@ -243,7 +243,7 @@ describe('AccountPaymentMethod', () => {
     });
   });
 
-  it('can cancel the requests when unmounting', () => {
+  it('can cancel the requests when unmounting (method)', () => {
     const abort = sinon.stub();
     const updatePaymentMethod = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
