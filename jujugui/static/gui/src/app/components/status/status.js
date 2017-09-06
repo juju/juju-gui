@@ -14,6 +14,8 @@ class Status extends React.Component {
       this.STATUS_PENDING,
       this.STATUS_OK
     ];
+    // This property is used to store the new highest status during a render or
+    // state change and the value is then stored in state in componentDidUpdate.
     this.newHighest = null;
     this.state = {
       highestStatus: this.STATUS_OK,
@@ -267,9 +269,17 @@ class Status extends React.Component {
   */
   _generateModel(model, counts) {
     const highestStatus = this.state.highestStatus;
-    let title = 'Everything in this model has the status "OK"';
-    if (highestStatus !== this.STATUS_OK) {
-      title = `Something in this model has the status "${highestStatus}"`;
+    let title = 'Everything is OK';
+    switch (highestStatus) {
+      case this.STATUS_OK:
+        title = 'Everything is OK';
+        break;
+      case this.STATUS_PENDING:
+        title = 'Items are pending';
+        break;
+      case this.STATUS_ERROR:
+        title = 'Items are in error';
+        break;
     }
     return (
       <div key="model">
