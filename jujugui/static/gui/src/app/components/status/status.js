@@ -571,8 +571,23 @@ class Status extends React.Component {
     };
     const rows = [];
     applications.forEach(application => {
+      const appExposed = application.get('exposed');
       const units = application.get('units').filter(this._realUnitsPredicate);
       units.forEach(unit => {
+        let publicAddress = unit.public_address;
+        if (appExposed) {
+          const portRanges = unit.portRanges;
+          const port = portRanges[0].from;
+          const label = `${unit.public_address}:${port}`;
+          const protocol = port === 443 ? 'https' : 'http';
+          const href = `${protocol}://${label}`;
+          publicAddress = (
+            <a className="status-view__link"
+              href={href}
+              target="_blank">
+              {unit.public_address}
+            </a>);
+        }
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
@@ -603,7 +618,7 @@ class Status extends React.Component {
               </a>)
           }, {
             columnSize: 2,
-            content: unit.public_address
+            content: publicAddress
           }, {
             columnSize: 1,
             content: formatPorts(unit.portRanges)
@@ -669,7 +684,7 @@ class Status extends React.Component {
           'status-view__table-row--', machine.agent_state)],
         clickState: this._generateMachineClickState(machine.id),
         columns: [{
-          columnSize: 2,
+          columnSize: 1,
           content: machine.displayName
         }, {
           columnSize: 2,
@@ -678,13 +693,13 @@ class Status extends React.Component {
           columnSize: 2,
           content: machine.public_address
         }, {
-          columnSize: 2,
+          columnSize: 3,
           content: machine.instance_id
         }, {
-          columnSize: 2,
+          columnSize: 1,
           content: machine.series
         }, {
-          columnSize: 2,
+          columnSize: 3,
           content: machine.agent_state_info
         }],
         extraData: this._normaliseStatus(machine.agent_state),
@@ -700,7 +715,7 @@ class Status extends React.Component {
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Machine',
-          columnSize: 2
+          columnSize: 1
         }, {
           content: 'State',
           columnSize: 2
@@ -709,13 +724,13 @@ class Status extends React.Component {
           columnSize: 2
         }, {
           content: 'Instance ID',
-          columnSize: 2
+          columnSize: 3
         }, {
           content: 'Series',
-          columnSize: 2
+          columnSize: 1
         }, {
           content: 'Message',
-          columnSize: 2
+          columnSize: 3
         }]}
         key="machines"
         rowClasses={['status-view__table-row']}

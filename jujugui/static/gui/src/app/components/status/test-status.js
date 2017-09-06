@@ -121,6 +121,7 @@ describe('Status', function() {
     }];
     const django = {
       charm: '~who/xenial/django-42',
+      exposed: true,
       icon: 'django.svg',
       id: 'django',
       name: 'django',
@@ -731,7 +732,12 @@ describe('Status', function() {
                 </a>)
             }, {
               columnSize: 2,
-              content: '1.2.3.4'
+              content: (
+                <a className="status-view__link"
+                  href="http://1.2.3.4:80"
+                  target="_blank">
+                  1.2.3.4
+                </a>)
             }, {
               columnSize: 1,
               content: '80/tcp, 443/tcp'
@@ -780,7 +786,12 @@ describe('Status', function() {
                 </a>)
             }, {
               columnSize: 2,
-              content: '1.2.3.5'
+              content: (
+                <a className="status-view__link"
+                  href="http://1.2.3.5:80"
+                  target="_blank">
+                  1.2.3.5
+                </a>)
             }, {
               columnSize: 1,
               content: '80-88/udp'
@@ -801,7 +812,7 @@ describe('Status', function() {
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Machine',
-            columnSize: 2
+            columnSize: 1
           }, {
             content: 'State',
             columnSize: 2
@@ -810,13 +821,13 @@ describe('Status', function() {
             columnSize: 2
           }, {
             content: 'Instance ID',
-            columnSize: 2
+            columnSize: 3
           }, {
             content: 'Series',
-            columnSize: 2
+            columnSize: 1
           }, {
             content: 'Message',
-            columnSize: 2
+            columnSize: 3
           }]}
           key="machines"
           rowClasses={['status-view__table-row']}
@@ -830,7 +841,7 @@ describe('Status', function() {
               }
             },
             columns: [{
-              columnSize: 2,
+              columnSize: 1,
               content: '1'
             }, {
               columnSize: 2,
@@ -842,13 +853,13 @@ describe('Status', function() {
               columnSize: 2,
               content: '1.2.3.6'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'machine-1'
             }, {
-              columnSize: 2,
+              columnSize: 1,
               content: 'zesty'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: ''
             }],
             extraData: 'pending',
@@ -862,7 +873,7 @@ describe('Status', function() {
               }
             },
             columns: [{
-              columnSize: 2,
+              columnSize: 1,
               content: '2'
             }, {
               columnSize: 2,
@@ -874,13 +885,13 @@ describe('Status', function() {
               columnSize: 2,
               content: '1.2.3.7'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'machine-2'
             }, {
-              columnSize: 2,
+              columnSize: 1,
               content: 'trusty'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'yes, I am started'
             }],
             extraData: 'ok',
@@ -965,6 +976,21 @@ describe('Status', function() {
       </div>
     );
     expect(comp.output).toEqualJSX(expectedOutput);
+  });
+
+  it('can link to the DNS address for a unit', () => {
+    const comp = render(makeDB());
+    const wrapper = comp.output.props.children;
+    const units = wrapper.props.children[3];
+    const unit = units.props.rows[0];
+    const address = unit.columns[4].content;
+    const expected = (
+      <a className="status-view__link"
+        href="http://1.2.3.4:80"
+        target="_blank">
+        1.2.3.4
+      </a>);
+    expect(address).toEqualJSX(expected);
   });
 
   it('can navigate to charms from the app list', () => {
