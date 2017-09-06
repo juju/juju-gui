@@ -595,6 +595,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <window.juju.components.Status
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
+        generatePath={this.state.generatePath.bind(this.state)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
         urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
       />,

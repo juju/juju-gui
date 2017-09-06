@@ -23,6 +23,33 @@ class BasicTable extends React.Component {
   }
 
   /**
+    Show the entity details when clicked.
+
+    @method _handleRowClick
+    @param state {String} The new state to update to.
+    @param evt {Object} The click event.
+  */
+  _handleRowClick(state, evt) {
+    evt.preventDefault();
+    this.props.changeState(state);
+  }
+
+  /**
+    Generate a row anchor.
+    @param clickState {Function} The method to call when the row is clicked.
+    @returns {Object} The anchor element or null.
+  */
+  _generateAnchor(clickState) {
+    if (!clickState) {
+      return null;
+    }
+    return (
+      <a className="basic-table__row-link"
+        href={this.props.generatePath(clickState)}
+        onClick={this._handleRowClick.bind(this, clickState)}></a>);
+  }
+
+  /**
     Generate a row.
     @param isHeader {Boolean} Whether this is a header row.
     @param row {Object} The row contents, key etc.
@@ -73,6 +100,7 @@ class BasicTable extends React.Component {
     return (
       <li className={classes}
         key={isHeader ? 'basic-table-header' : row.key}>
+        {this._generateAnchor(row.clickState)}
         {columns}
       </li>);
   }
@@ -107,8 +135,10 @@ class BasicTable extends React.Component {
 };
 
 BasicTable.propTypes = {
+  changeState: PropTypes.func,
   // The filterPredicate function receives a row and must return a boolean.
   filterPredicate: PropTypes.func,
+  generatePath: PropTypes.func,
   // The extra classes to apply to all header rows.
   headerClasses: PropTypes.array,
   // The extra classes to apply to all header columns.
@@ -127,6 +157,8 @@ BasicTable.propTypes = {
   rows: PropTypes.arrayOf(PropTypes.shape({
     // The extra classes to apply to an individual row.
     classes: PropTypes.array,
+    // The new state to update to when a row is clicked.
+    clickState: PropTypes.object,
     columns: PropTypes.arrayOf(PropTypes.shape({
       content: PropTypes.node,
       // The number of columns (between 1 and 12).

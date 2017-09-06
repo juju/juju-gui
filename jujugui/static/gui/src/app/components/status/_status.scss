@@ -33,6 +33,9 @@
 
   &__link {
     @extend .link;
+    position: relative;
+    // Raise all links above the main row link.
+    z-index: 2;
     cursor: pointer;
     font-weight: 200 !important;
   }

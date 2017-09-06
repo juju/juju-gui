@@ -2008,6 +2008,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Status
           changeState={this._bound.changeState}
+          generatePath={this.state.generatePath.bind(this.state)}
           db={shapeup.fromShape(this.db, propTypes.db)}
           model={shapeup.fromShape(this.env.getAttrs(), propTypes.model)}
           urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
