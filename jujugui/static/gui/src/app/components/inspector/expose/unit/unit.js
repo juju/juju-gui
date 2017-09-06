@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InspectorExposeUnit extends React.Component {
   /**
     Don't bubble the click event to the parent.

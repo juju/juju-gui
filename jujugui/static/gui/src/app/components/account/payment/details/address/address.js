@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const AddressForm = require('../../../../address-form/address-form');
 const ExpandingRow = require('../../../../expanding-row/expanding-row');
 const GenericButton = require('../../../../generic-button/generic-button');

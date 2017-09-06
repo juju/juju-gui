@@ -7,6 +7,8 @@ charms and bundles. You can only see this page is you have access.
 
 'use strict';
 
+const React = require('react');
+
 const Panel = require('../panel/panel');
 const PlansUsage = require('./plans-usage/plans-usage');
 

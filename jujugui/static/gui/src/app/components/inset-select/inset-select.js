@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InsetSelect extends React.Component {
   /**
     Get the value of the field.

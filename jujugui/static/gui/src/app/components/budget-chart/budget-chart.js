@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class BudgetChart extends React.Component {
   /**
     Generate the widths for the chart bars.

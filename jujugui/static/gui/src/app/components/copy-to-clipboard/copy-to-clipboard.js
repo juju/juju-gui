@@ -1,6 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+const ReactDOM = require('react-dom');
+
 const SvgIcon = require('../svg-icon/svg-icon');
 
 class CopyToClipboard extends React.Component {

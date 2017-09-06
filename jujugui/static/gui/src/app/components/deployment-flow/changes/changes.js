@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const DeploymentChangeItem = require('../change-item/change-item');
 

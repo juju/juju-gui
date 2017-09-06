@@ -15,7 +15,7 @@ describe('EnvSwitcher', function() {
     const renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -70,7 +70,7 @@ describe('EnvSwitcher', function() {
 
   it('should not have an editable name when the model is committed', () => {
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -93,7 +93,7 @@ describe('EnvSwitcher', function() {
   it('can change the model name', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -120,7 +120,7 @@ describe('EnvSwitcher', function() {
   it('does not change the model name if there is an error', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -145,7 +145,7 @@ describe('EnvSwitcher', function() {
 
   it('can render when there is an error', () => {
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -183,7 +183,7 @@ describe('EnvSwitcher', function() {
     const switchModel = sinon.stub();
     const user = {username: 'who@external', displayName: 'who'};
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -199,7 +199,7 @@ describe('EnvSwitcher', function() {
     });
 
     renderer.render(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -229,7 +229,7 @@ describe('EnvSwitcher', function() {
   it('fetches a list of environments on mount', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -253,7 +253,7 @@ describe('EnvSwitcher', function() {
   it('fetches the env list when opening', () => {
     const listModelsWithInfo = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -289,7 +289,7 @@ describe('EnvSwitcher', function() {
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -315,7 +315,7 @@ describe('EnvSwitcher', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const renderer = jsTestUtils.shallowRender(
-      <EnvSwitcher.wrappedComponent
+      <EnvSwitcher.WrappedComponent
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}

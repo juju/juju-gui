@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InspectorRelateTo extends React.Component {
   /**
     The callable to be passed to the relate to items for navigating to the

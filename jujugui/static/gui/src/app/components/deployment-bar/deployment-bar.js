@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const DeploymentBarNotification = require('./notification/notification');
 const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');

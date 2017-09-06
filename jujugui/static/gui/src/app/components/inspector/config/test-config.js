@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
 
 const Configuration = require('./config');
 const BooleanConfig = require('../../boolean-config/boolean-config');

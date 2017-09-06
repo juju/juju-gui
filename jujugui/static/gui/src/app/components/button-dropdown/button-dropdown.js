@@ -2,6 +2,9 @@
 
 'use strict';
 
+const React = require('react');
+const ReactDOM = require('react-dom');
+
 const SvgIcon = require('../svg-icon/svg-icon');
 const DropdownMenu = require('../dropdown-menu/dropdown-menu');
 

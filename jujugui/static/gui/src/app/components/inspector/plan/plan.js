@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class InspectorPlan extends React.Component {
   /**
     Generates the elements if the applicaton has a plan selected.

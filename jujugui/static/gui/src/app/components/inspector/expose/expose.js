@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
 

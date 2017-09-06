@@ -1,6 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+const ReactDOM = require('react-dom');
+
 class InspectorHeader extends React.Component {
   /**
     Returns the supplied classes with the type class applied if it

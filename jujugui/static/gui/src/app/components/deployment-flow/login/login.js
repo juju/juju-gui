@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const DeploymentSection = require('../section/section');
 const SvgIcon = require('../../svg-icon/svg-icon');
 const USSOLoginLink = require('../../usso-login-link/usso-login-link');

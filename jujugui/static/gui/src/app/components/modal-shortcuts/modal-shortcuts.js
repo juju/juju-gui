@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const SvgIcon = require('../svg-icon/svg-icon');
 
 class ModalShortcuts extends React.Component {

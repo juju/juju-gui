@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');

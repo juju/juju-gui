@@ -46,7 +46,6 @@ globals:
   consoleManager: true
   dataLayer: true
   describe: true
-  enhanceWithClickOutside: true
   Exception: true
   expect: true
   fail: true
@@ -62,12 +61,6 @@ globals:
   nacl: true
   Prism: true
   PropTypes: true
-  queryComponentSelector: true
-  React: true
-  ReactDnD: true
-  ReactDnDHTML5Backend: true
-  ReactDOM: true
-  renderIntoDocument: true
   saveAs: true
   shapeup: true
   sinon: true

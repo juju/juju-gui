@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const EnvList = require('./list/list');
 const SvgIcon = require('../svg-icon/svg-icon');

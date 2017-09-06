@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 /** Navigation React component for use in the Profile component. */
 class ProfileNavigation extends React.Component {

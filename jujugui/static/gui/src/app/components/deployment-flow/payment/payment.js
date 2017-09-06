@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const AccountPaymentMethodCard = require('../../account/payment/methods/card/card');
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
 const Spinner = require('../../spinner/spinner');

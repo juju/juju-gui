@@ -1,31 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const MoreMenu = require('./more-menu');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('MoreMenu', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('more-menu', function() { done(); });
-  });
 
   it('can render as closed', function() {
     var menuItems = [{
@@ -37,7 +20,7 @@ describe('MoreMenu', function() {
     var renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
-      <juju.components.MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -48,7 +31,7 @@ describe('MoreMenu', function() {
           onClick={instance._handleToggleMenu}
           role="button"
           tabIndex="0">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="contextual-menu-16"
             size="16" />
         </span>
@@ -65,7 +48,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -77,7 +60,7 @@ describe('MoreMenu', function() {
           onClick={instance._handleToggleMenu}
           role="button"
           tabIndex="0">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="contextual-menu-16"
             size="16" />
         </span>
@@ -110,7 +93,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MoreMenu.wrappedComponent
+      <MoreMenu.WrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();

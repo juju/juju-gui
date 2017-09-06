@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 /** Basic table React component used to display data in a table structure. */
 class BasicTable extends React.Component {
@@ -146,9 +147,4 @@ BasicTable.propTypes = {
   tableClasses: PropTypes.array
 };
 
-YUI.add('basic-table', function() {
-  juju.components.BasicTable = BasicTable;
-}, '', {
-  requires: [
-  ]
-});
+module.exports = BasicTable;

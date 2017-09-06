@@ -13,12 +13,11 @@ describe('Dropdown Menu', function() {
 
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
-      <DropdownMenu.wrappedComponent
+      <DropdownMenu.WrappedComponent
         handleClickOutside={options.handleClickOutside}>
         {options.children}
-      </DropdownMenu.wrappedComponent>, true);
+      </DropdownMenu.WrappedComponent>, true);
   }
-
 
   it('can render', () => {
     const handleClickOutside = sinon.stub();

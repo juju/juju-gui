@@ -1,12 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 const GenericButton = require('../generic-button/generic-button');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
+const SvgIcon = require('../svg-icon/svg-icon');
 
 /**
   Modal component for viewing which users have access to the model, as well
@@ -180,7 +182,7 @@ class Sharing extends React.Component {
             <GenericButton
               action={revokeUserAccess}
               tooltip="Remove user">
-              <juju.components.SvgIcon
+              <SvgIcon
                 name="close_16"
                 size="16" />
             </GenericButton>
@@ -296,7 +298,7 @@ class Sharing extends React.Component {
         ref="grantButton"
         type="positive"
         disabled={!this.state.canAdd}>
-        <juju.components.SvgIcon
+        <SvgIcon
           name="tick_16"
           size="16" />
       </GenericButton>);

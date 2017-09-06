@@ -139,7 +139,7 @@ fast-babel: $(RAWJSFILES)
 	FILE_LIST="$?" ./scripts/transpile.js
 	@touch $@
 
-$(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js $(NODE_MODULES)
+$(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
@@ -221,8 +221,8 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
-	# Commented out as it's a hack for the new init to be built.
-	# $(NODE_MODULES)/.bin/browserify --no-builtins -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+	# Hack for the new init to be built.
+	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
 
 .PHONY: watch
 watch:

@@ -5,7 +5,7 @@ const React = require('react');
 
 const SvgIcon = require('./svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('SvgIcon', function() {
 

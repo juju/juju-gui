@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class DeploymentMachines extends React.Component {
   /**
     Generate the list of machines

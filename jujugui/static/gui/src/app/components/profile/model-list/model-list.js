@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const CreateModelButton = require('../../create-model-button/create-model-button');

@@ -1,6 +1,12 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const BasicTable = require('../basic-table/basic-table');
+const Panel = require('../panel/panel');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
@@ -223,7 +229,7 @@ class Status extends React.Component {
             {this._generateFilters()}
           </div>
         </div>
-        <juju.components.BasicTable
+        <BasicTable
           headers={[{
             content: 'Cloud/Region',
             columnSize: 2
@@ -372,7 +378,7 @@ class Status extends React.Component {
       };
     });
     return (
-      <juju.components.BasicTable
+      <BasicTable
         filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
@@ -472,7 +478,7 @@ class Status extends React.Component {
       };
     });
     return (
-      <juju.components.BasicTable
+      <BasicTable
         filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
@@ -585,7 +591,7 @@ class Status extends React.Component {
       return null;
     }
     return (
-      <juju.components.BasicTable
+      <BasicTable
         filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
@@ -663,7 +669,7 @@ class Status extends React.Component {
       };
     });
     return (
-      <juju.components.BasicTable
+      <BasicTable
         filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
@@ -765,7 +771,7 @@ class Status extends React.Component {
       };
     });
     return (
-      <juju.components.BasicTable
+      <BasicTable
         filterPredicate={this._filterByStatus.bind(this)}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
@@ -792,13 +798,13 @@ class Status extends React.Component {
 
   render() {
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="status-view"
         visible={true}>
         <div className="status-view__content">
           {this._generateStatus()}
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -833,11 +839,4 @@ Status.propTypes = {
   }).frozen.isRequired
 };
 
-YUI.add('status', function() {
-  juju.components.Status = Status;
-}, '', {
-  requires: [
-    'basic-table',
-    'panel-component'
-  ]
-});
+module.exports = Status;

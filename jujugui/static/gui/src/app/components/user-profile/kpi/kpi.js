@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const UserProfileEntityMetric = require('./metric');
 
 class UserProfileEntityKPI extends React.Component {

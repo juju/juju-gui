@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const CreateModelButton = require('../create-model-button/create-model-button');
 
 // This component handles the empty user profile.

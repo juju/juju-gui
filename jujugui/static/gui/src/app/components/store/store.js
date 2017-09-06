@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class Store extends React.Component {
   componentDidMount() {
     this.props.setPageTitle('Store');

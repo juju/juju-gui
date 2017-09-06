@@ -1,9 +1,11 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const GenericButton = require('../../../generic-button/generic-button');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
-const CardForm = require('./card/card');
+const CardForm = require('../../../card-form/card-form');
 const AddressForm = require('../../../address-form/address-form');
 const AccountPaymentMethod = require('./method/method');
 

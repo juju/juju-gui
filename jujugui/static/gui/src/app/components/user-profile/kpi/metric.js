@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class UserProfileEntityMetric extends React.Component {
   _renderChart(el) {
     const metric = this.props.metric;

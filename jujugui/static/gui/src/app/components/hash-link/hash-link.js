@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const SvgIcon = require('../svg-icon/svg-icon');
 /*
   This component can be used to add in-page links to ids e.g. it could be used

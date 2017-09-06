@@ -5,7 +5,7 @@ const React = require('react');
 
 const GenericButton = require('../../../generic-button/generic-button');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
-const CardForm = require('./card/card');
+const CardForm = require('../../../card-form/card-form');
 const AddressForm = require('../../../address-form/address-form');
 const AccountPaymentMethod = require('./method/method');
 const AccountPaymentMethods = require('./methods');
@@ -114,7 +114,7 @@ describe('AccountPaymentMethods', () => {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can cancel the requests when unmounting', () => {
+  it('can cancel the requests when unmounting (methods)', () => {
     const abort = sinon.stub();
     const createToken = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(

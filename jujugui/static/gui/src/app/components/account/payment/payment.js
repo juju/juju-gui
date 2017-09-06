@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const Spinner = require('../../spinner/spinner');
 const AccountPaymentCharges = require('./charges/charges');
 const AccountPaymentDetails = require('./details/details');

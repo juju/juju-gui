@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const GenericInput = require('../../generic-input/generic-input');
 
 class DeploymentModelName extends React.Component {

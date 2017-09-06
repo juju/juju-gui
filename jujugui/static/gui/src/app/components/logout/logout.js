@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class Logout extends React.Component {
   /**
     Generate the classes based on the props.

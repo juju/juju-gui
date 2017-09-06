@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 const AccordionSection = require('../../accordion-section/accordion-section');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const EntityContentConfigOption = require('./config-option/config-option');

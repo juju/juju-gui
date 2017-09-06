@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+
 class Constraints extends React.Component {
   /**
     Called when the component is first mounted.

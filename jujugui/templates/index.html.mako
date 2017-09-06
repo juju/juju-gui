@@ -300,7 +300,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
     <!-- The below init js is for the transition from app.js -->
     <script src="${convoy_url}?app/init-pkg.js"></script>
-    <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/prop-types.js&app/assets/javascripts/shapeup-legacy.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
+    <script data-manual src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon.js"></script>
@@ -347,7 +347,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
 
-        YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
+        YUI(GlobalConfig).use([
+            'acl',
+            'analytics',
+            'changes-utils',
+            'juju-charm-models',
+            'juju-bundle-models',
+            'juju-controller-api',
+            'juju-endpoints-controller',
+            'juju-env-base',
+            'juju-env-api',
+            'juju-env-web-handler',
+            'juju-models',
+            'jujulib-utils',
+            'bakery-utils',
+            'net-utils',
+            // juju-views group
+            'd3-components',
+            'juju-view-utils',
+            'juju-topology',
+            'juju-view-environment',
+            'juju-landscape',
+            // end juju-views group
+            'io',
+            'json-parse',
+            'app-base',
+            'app-transitions',
+            'base',
+            'bundle-importer',
+            'bundle-import-notifications',
+            'node',
+            'model',
+            'app-cookies-extension',
+            'app-renderer-extension',
+            'cookie',
+            'querystring',
+            'event-key',
+            'event-touch',
+            'model-controller',
+            'FileSaver',
+            'ghost-deployer-extension',
+            'environment-change-set',
+            'relation-utils', 'yui-patches'], function(Y) {
+          window.yui = Y;
           if (!juju_config.flags) {
             juju_config.flags = {};
           }
