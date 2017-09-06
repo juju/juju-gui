@@ -14,7 +14,11 @@ class Status extends React.Component {
       this.STATUS_PENDING,
       this.STATUS_OK
     ];
+    // This property is used to store the new highest status during a render or
+    // state change and the value is then stored in state in componentDidUpdate.
+    this.newHighest = null;
     this.state = {
+      highestStatus: this.STATUS_OK,
       statusFilter: null
     };
   }
@@ -31,16 +35,47 @@ class Status extends React.Component {
     document.body.classList.remove('u-is-status');
   }
 
+  componentWillReceiveProps() {
+    // Reset to the lowest status so that when the apps, units etc. are looped
+    // through the highest status can be stored.
+    this.setState({highestStatus: this.STATUS_OK});
+  }
+
+  componentDidUpdate() {
+    // Update the state with the new status now that all status changes/renders
+    // are complete.
+    if (this.newHighest && (this.state.highestStatus !== this.newHighest)) {
+      this.setState({highestStatus: this.newHighest});
+      this.newHighest = null;
+    }
+  }
+
   /**
-    Get the highest status from a list of statuses
+    Set the highest status if the passed status is higher than the current.
+    @param status {String} A status.
+  */
+  _setHighestStatus(status) {
+    const normalised = this._normaliseStatus(status);
+    if (this.STATUS_ORDER.indexOf(normalised) <
+      this.STATUS_ORDER.indexOf(this.state.highestStatus)) {
+      // Store the new state instead of updating state directly as this change
+      // may have been triggered by a state update or render and you can't
+      // update state during a state update or render.
+      this.newHighest = normalised;
+    }
+  }
+
+  /**
+    Get the highest status from a list of statuses.
     @param statuses {Ȧrray} A list of statuses.
     @returns {String} The status.
   */
   _getHighestStatus(statuses) {
+    const normalised = statuses.map(status => this._normaliseStatus(status));
     let status;
     // Loop through the order of priority until there is a matching status.
     this.STATUS_ORDER.some(val => {
-      if (statuses.indexOf(val) > -1) {
+      if (normalised.indexOf(val) > -1) {
         status = val;
         return true;
       }
@@ -194,7 +229,15 @@ class Status extends React.Component {
     if (filter === 'none') {
       filter = null;
     }
-    this.setState({statusFilter: filter});
+    this._changeFilterStatus(filter);
+  }
+
+  /**
+    Set the filter status.
+    @param status {String} A status.
+  */
+  _changeFilterStatus(status) {
+    this.setState({statusFilter: status});
   }
 
   /**
@@ -212,7 +255,8 @@ class Status extends React.Component {
     });
     return (
       <select className="status-view__filter-select"
-        onChange={this._handleFilterChange.bind(this)}>
+        onChange={this._handleFilterChange.bind(this)}
+        value={this.state.statusFilter || 'none'}>
         {options}
       </select>);
   }
@@ -224,12 +268,33 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel(model, counts) {
+    const highestStatus = this.state.highestStatus;
+    let title = 'Everything is OK';
+    switch (highestStatus) {
+      case this.STATUS_OK:
+        title = 'Everything is OK';
+        break;
+      case this.STATUS_PENDING:
+        title = 'Items are pending';
+        break;
+      case this.STATUS_ERROR:
+        title = 'Items are in error';
+        break;
+    }
     return (
       <div key="model">
         <div className="twelve-col no-margin-bottom">
           <div className="eight-col">
             <h2>
               {model.environmentName}
+              <span
+                className={'status-view__traffic-light ' +
+                  `status-view__traffic-light--${highestStatus}`}
+                onClick={this._changeFilterStatus.bind(this, highestStatus)}
+                role="button"
+                title={title}
+                tabIndex="0">
+              </span>
             </h2>
           </div>
           <div className="status-view__filter-label two-col">
@@ -474,6 +539,7 @@ class Status extends React.Component {
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
+      this._setHighestStatus(app.status.current);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', app.status.current)],
@@ -574,6 +640,8 @@ class Status extends React.Component {
       const appExposed = application.get('exposed');
       const units = application.get('units').filter(this._realUnitsPredicate);
       units.forEach(unit => {
+        this._setHighestStatus(this._getHighestStatus(
+          [unit.agentStatus, unit.workloadStatus]));
         let publicAddress = unit.public_address;
         if (appExposed) {
           const portRanges = unit.portRanges;
@@ -626,8 +694,8 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
-          extraData: this._normaliseStatus(
-            this._getHighestStatus([unit.agentStatus, unit.workloadStatus])),
+          extraData: this._getHighestStatus(
+            [unit.agentStatus, unit.workloadStatus]),
           key: unit.id
         });
       });
@@ -679,6 +747,7 @@ class Status extends React.Component {
   */
   _generateMachines(machines) {
     const rows = machines.map(machine => {
+      this._setHighestStatus(machine.agent_state);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', machine.agent_state)],
