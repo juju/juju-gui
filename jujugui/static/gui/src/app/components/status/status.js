@@ -98,6 +98,22 @@ class Status extends React.Component {
   }
 
   /**
+    Generate a status for display.
+    @param status {String} The status to display.
+    @returns {Object} The status markup.
+  */
+  _generateStatusDisplay(status) {
+    // If the status provided from a model property it might have no value.
+    if (!status) {
+      return null;
+    }
+    return (
+      <span className={this._getStatusClass('status-view__status--', status)}>
+        {status}
+      </span>);
+  }
+
+  /**
     Sort by the key attribute.
     @param {Object} a The first value.
     @param {Object} b The second value.
@@ -302,19 +318,31 @@ class Status extends React.Component {
   /**
     Navigate to the chosen application.
     @param appId {String} The id of the application to display.
+    @param evt {Object} The click event.
   */
-  _navigateToApplication(appId) {
+  _navigateToApplication(appId, evt) {
+    evt.preventDefault();
     // Navigate to the app in the inspector, clearing the state so that the
     // app overview is shown.
     this.props.changeState(this._generateApplicationClickState(appId));
   }
 
   /**
-    Navigate to the chosen charm.
+    Generate the state to navigate to a charm.
     @param charmURL {String} The id of the charm to display.
   */
-  _navigateToCharm(charmURL) {
-    this.props.changeState({store: charmURL});
+  _generateCharmClickState(charmURL) {
+    return {store: charmURL};
+  }
+
+  /**
+    Navigate to the chosen charm.
+    @param charmURL {String} The id of the charm to display.
+    @param evt {Object} The click event.
+  */
+  _navigateToCharm(charmURL, evt) {
+    evt.preventDefault();
+    this.props.changeState(this._generateCharmClickState(charmURL));
   }
 
   /**
@@ -345,6 +373,7 @@ class Status extends React.Component {
     // from the document there is a React error for some reason if this event
     // propogates.
     evt.stopPropagation();
+    evt.preventDefault();
     this.props.changeState(this._generateMachineClickState(machineId));
   }
 
@@ -435,7 +464,7 @@ class Status extends React.Component {
   */
   _generateApplications(applications) {
     const urllib = this.props.urllib;
-    const rows = applications.map((application, i) => {
+    const rows = applications.map(application => {
       const app = application.getAttrs();
       const charm = urllib.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
@@ -462,23 +491,19 @@ class Status extends React.Component {
           content: app.workloadVersion
         }, {
           columnSize: 2,
-          content: (
-            <span
-              className={this._getStatusClass(
-                'status-view__status--', app.status.current)}
-              key={'status' + i}>
-              {app.status.current}
-            </span>)
+          content: this._generateStatusDisplay(app.status.current)
         }, {
           columnSize: 1,
           content: units.length
         }, {
           columnSize: 2,
           content: (
-            <span className="status-view__link"
+            <a className="status-view__link"
+              href={this.props.generatePath(
+                this._generateCharmClickState(charmId))}
               onClick={this._navigateToCharm.bind(this, charmId)}>
               {charm.path()}
-            </span>)
+            </a>)
         }, {
           columnSize: 2,
           content: store
@@ -547,7 +572,7 @@ class Status extends React.Component {
     const rows = [];
     applications.forEach(application => {
       const units = application.get('units').filter(this._realUnitsPredicate);
-      units.forEach((unit, i) => {
+      units.forEach(unit => {
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
@@ -563,29 +588,19 @@ class Status extends React.Component {
               </span>)
           }, {
             columnSize: 2,
-            content: (
-              <span
-                className={this._getStatusClass(
-                  'status-view__status--', unit.workloadStatus)}
-                key={'workload' + i}>
-                {unit.workloadStatus}
-              </span>)
+            content: this._generateStatusDisplay(unit.workloadStatus)
           }, {
             columnSize: 2,
-            content: (
-              <span
-                className={this._getStatusClass(
-                  'status-view__status--', unit.agentStatus)}
-                key={'agent' + i}>
-                {unit.agentStatus}
-              </span>)
+            content: this._generateStatusDisplay(unit.agentStatus)
           }, {
             columnSize: 1,
             content: (
-              <span className="status-view__link"
+              <a className="status-view__link"
+                href={this.props.generatePath(
+                  this._generateMachineClickState(unit.machine))}
                 onClick={this._navigateToMachine.bind(this, unit.machine)}>
                 {unit.machine}
-              </span>)
+              </a>)
           }, {
             columnSize: 2,
             content: unit.public_address
@@ -648,7 +663,7 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines(machines) {
-    const rows = machines.map((machine, i) => {
+    const rows = machines.map(machine => {
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', machine.agent_state)],
@@ -658,13 +673,7 @@ class Status extends React.Component {
           content: machine.displayName
         }, {
           columnSize: 2,
-          content: (
-            <span
-              className={this._getStatusClass(
-                'status-view__status--', machine.agent_state)}
-              key={'agent' + i}>
-              {machine.agent_state}
-            </span>)
+          content: this._generateStatusDisplay(machine.agent_state)
         }, {
           columnSize: 2,
           content: machine.public_address
@@ -729,12 +738,14 @@ class Status extends React.Component {
       return (<span>{name}</span>);
     }
     return (
-      <span className="status-view__link"
+      <a className="status-view__link"
+        href={this.props.generatePath(
+          this._generateApplicationClickState(name))}
         onClick={this._navigateToApplication.bind(this, name)}>
         <img className="status-view__icon"
           src={app.get('icon')} />
         {name}
-      </span>);
+      </a>);
   }
 
   /**

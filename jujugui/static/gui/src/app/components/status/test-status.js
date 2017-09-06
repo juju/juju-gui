@@ -589,17 +589,18 @@ describe('Status', function() {
               content: '1.10'
             }, {
               columnSize: 2,
-              content: <span key="status0" className="status-view__status--ok">active</span>
+              content: <span className="status-view__status--ok">active</span>
             }, {
               columnSize: 1,
               content: 2
             }, {
               columnSize: 2,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   u/who/django/xenial
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -634,17 +635,18 @@ describe('Status', function() {
               content: ''
             }, {
               columnSize: 2,
-              content: <span key="status1" className="status-view__status--error">error</span>
+              content: <span className="status-view__status--error">error</span>
             }, {
               columnSize: 1,
               content: 0
             }, {
               columnSize: 2,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   haproxy
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -710,22 +712,23 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="workload0" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   installing
                 </span>)
             }, {
               columnSize: 2,
               content: (
-                <span key="agent0" className="status-view__status--ok">
+                <span className="status-view__status--ok">
                   idle
                 </span>)
             }, {
               columnSize: 1,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   1
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: '1.2.3.4'
@@ -760,20 +763,21 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="workload1" className="status-view__status--error">error</span>)
+                <span className="status-view__status--error">error</span>)
             }, {
               columnSize: 2,
               content: (
-                <span key="agent1" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   executing
                 </span>)
             }, {
               columnSize: 1,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   2
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: '1.2.3.5'
@@ -831,7 +835,7 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="agent0" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   pending
                 </span>)
             }, {
@@ -863,7 +867,7 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="agent1" className="status-view__status--ok">
+                <span className="status-view__status--ok">
                   started
                 </span>)
             }, {
@@ -911,21 +915,23 @@ describe('Status', function() {
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="mysql.svg" />
                   mysql
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="mysql.svg" />
                   mysql
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: 'peer'
@@ -941,12 +947,13 @@ describe('Status', function() {
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="ha.svg" />
                   haproxy
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: 'regular'
@@ -965,7 +972,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[2];
     const column = section.props.rows[0].columns[4];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {store: 'u/who/django/xenial/42'});
@@ -976,7 +983,10 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[3];
     const column = section.props.rows[0].columns[3];
-    column.content.props.onClick({stopPropagation: sinon.stub()});
+    column.content.props.onClick({
+      stopPropagation: sinon.stub(),
+      preventDefault: sinon.stub()
+    });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: '1', status: null}});
@@ -987,7 +997,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[5];
     const column = section.props.rows[0].columns[1];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -1006,7 +1016,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[5];
     const column = section.props.rows[0].columns[2];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
