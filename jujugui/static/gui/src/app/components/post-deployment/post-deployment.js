@@ -29,7 +29,7 @@ class PostDeployment extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getEntity(this.props.entityId,
       this._getEntityCallback.bind(this));
   }

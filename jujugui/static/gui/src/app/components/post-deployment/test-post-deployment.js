@@ -44,8 +44,8 @@ describe('PostDeployment', () => {
         getFile={_props.getFile}
         makeEntityModel={_props.makeEntityModel}
         marked={_props.marked}
-        showEntityDetails={_props.showEntityDetails} />
-      , true);
+        showEntityDetails={_props.showEntityDetails} />,
+      true);
 
     return {
       output: renderer.getRenderOutput(),
@@ -92,20 +92,26 @@ describe('PostDeployment', () => {
     const rendered = renderComponent();
     const props = rendered.props;
     const instance = rendered.instance;
-    const output = rendered.output;
+
+    instance._getEntityCallback(null, [{id: 'test', files: ['onboarding.md']}]);
+
+    const output = rendered.renderer.getRenderOutput();
 
     expect(output).toEqualJSX(
       <juju.components.Panel
         instanceName="post-deployment"
-        extraClasses="modal--right modal--auto-height post-deployment"
+        extraClasses="post-deployment"
         visible={true}>
         <span className="close" tabIndex="0" role="button"
           onClick={props.closePostDeployment}>
           <juju.components.SvgIcon name="close_16"
             size="16" />
         </span>
-        <div dangerouslySetInnerHTML={{__html: rendered.defaultParsedMarkdown}}
-          onClick={instance._handleContentClick.bind(instance)} />
+        <div dangerouslySetInnerHTML={
+          {
+            __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+          }
+        } onClick={instance._handleContentClick.bind(instance)} />
       </juju.components.Panel>
     );
   });

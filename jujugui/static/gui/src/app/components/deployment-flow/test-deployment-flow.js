@@ -273,7 +273,7 @@ describe('DeploymentFlow', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  fit('renders direct deploy when ddData is set', () => {
+  it('renders direct deploy when ddData is set', () => {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
@@ -304,9 +304,6 @@ describe('DeploymentFlow', function() {
     // Call the getEntity callback and then re-render.
     getEntity.args[0][1](null, entityData);
     instance.render();
-    assert.deepEqual(
-      ['cs:bundle/kubernetes-core-8']
-    );
     const output2 = renderer.getRenderOutput();
     expect(output2.props.children[0]).toEqualJSX(
       <juju.components.DeploymentDirectDeploy
