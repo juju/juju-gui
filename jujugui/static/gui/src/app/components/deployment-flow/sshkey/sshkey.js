@@ -41,12 +41,19 @@ class DeploymentSSHKey extends React.Component {
     if (evt.which === 13) {
       this._handleAddMoreKeys(null);
     }
-    const hasValue = (this.refs.sshKey && this.refs.sshKey.getValue()) ||
+    this._updateButtonState();
+  }
+
+  _updateButtonState() {
+    const hasValue = ((this.refs.sshKey && this.refs.sshKey.getValue()) ||
       (this.refs.githubUsername && this.refs.githubUsername.getValue() ||
-      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue()));
-    this.setState({
-      buttonDisabled: hasValue ? false : true
-    });
+      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue())))
+      !== undefined;
+    if (this.state.buttonDisabled === hasValue) {
+      this.setState({
+        buttonDisabled: !hasValue
+      });
+    }
   }
 
   /**
@@ -171,7 +178,7 @@ class DeploymentSSHKey extends React.Component {
   */
   _handleSourceChange() {
     const source = this.refs.sshSource.getValue();
-    this.setState({addSource: source, buttonDisabled: true});
+    this.setState({addSource: source});
   }
 
   /**
@@ -338,6 +345,7 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
+            value={this.props.username}
           />
         </div>
       );
@@ -350,7 +358,7 @@ class DeploymentSSHKey extends React.Component {
     @return {Object} The React button element.
   */
   _generateAddKeyButton() {
-    const title = this.state.addSource === 'github' ? 'Add Keys' : 'Add Key';
+    const title = this.state.addSource === 'manual' ? 'Add Key' : 'Add Keys';
     const disabled = this.state.buttonDisabled;
     return (<div className="right">
       <GenericButton
@@ -397,6 +405,10 @@ class DeploymentSSHKey extends React.Component {
         type="negative" />);
     }
     return false;
+  }
+
+  componentDidUpdate() {
+    this._updateButtonState();
   }
 
   render() {
@@ -449,7 +461,8 @@ DeploymentSSHKey.propTypes = {
   cloud: PropTypes.object,
   getGithubSSHKeys: PropTypes.func.isRequired,
   setLaunchpadUsernames: PropTypes.func.isRequired,
-  setSSHKeys: PropTypes.func.isRequired
+  setSSHKeys: PropTypes.func.isRequired,
+  username: PropTypes.string
 };
 
 module.exports = DeploymentSSHKey;

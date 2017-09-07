@@ -634,6 +634,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <Status
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
+        generatePath={this.state.generatePath.bind(this.state)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
         urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
       />,
@@ -908,6 +909,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         stats={this.stats}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
+        username={this.user ? this.user.displayName : undefined}
         validateForm={utils.validateForm.bind(utils)}
         WebHandler={yui.juju.environments.web.WebHandler}
         withPlans={false} />,

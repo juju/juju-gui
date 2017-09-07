@@ -8,6 +8,17 @@
   }
 
   &__row {
+    position: relative;
     border-bottom: 1px solid $light-mid-grey;
+
+    &-link {
+      position: absolute;
+      // Raise the main link above the children so that it can be clicked on.
+      z-index: 1;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
   }
 }

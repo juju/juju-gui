@@ -15,6 +15,7 @@ describe('Status', function() {
   let changeState;
   let defaultModel;
   let emptyDB;
+  let generatePath;
 
   beforeEach(() => {
     changeState = sinon.stub();
@@ -41,6 +42,7 @@ describe('Status', function() {
         getById: sinon.stub()
       }
     };
+    generatePath = sinon.stub();
   });
 
   // Render the component with the given db and optional model.
@@ -51,6 +53,7 @@ describe('Status', function() {
       <Status
         changeState={changeState}
         db={shapeup.fromShape(db, propTypes.db)}
+        generatePath={generatePath}
         model={shapeup.fromShape(model, propTypes.model)}
         urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
       />, true
@@ -118,6 +121,7 @@ describe('Status', function() {
     }];
     const django = {
       charm: '~who/xenial/django-42',
+      exposed: true,
       icon: 'django.svg',
       id: 'django',
       name: 'django',
@@ -130,6 +134,7 @@ describe('Status', function() {
     const haproxy = {
       charm: 'haproxy-47',
       icon: 'ha.svg',
+      id: 'ha',
       name: 'ha',
       pending: false,
       status: {current: 'error'},
@@ -281,6 +286,14 @@ describe('Status', function() {
             <div className="eight-col">
               <h2>
                 my-model
+                <span
+                  className={'status-view__traffic-light ' +
+                    'status-view__traffic-light--ok'}
+                  onClick={sinon.stub()}
+                  role="button"
+                  title="Everything is OK"
+                  tabIndex="0">
+                </span>
               </h2>
             </div>
             <div className="status-view__filter-label two-col">
@@ -288,7 +301,8 @@ describe('Status', function() {
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
-                onChange={sinon.stub()}>
+                onChange={sinon.stub()}
+                value="none">
                 <option className="status-view__filter-option"
                   key="none"
                   value="none">
@@ -388,6 +402,14 @@ describe('Status', function() {
             <div className="eight-col">
               <h2>
                 my-model
+                <span
+                  className={'status-view__traffic-light ' +
+                    'status-view__traffic-light--ok'}
+                  onClick={sinon.stub()}
+                  role="button"
+                  title="Everything is OK"
+                  tabIndex="0">
+                </span>
               </h2>
             </div>
             <div className="status-view__filter-label two-col">
@@ -395,7 +417,8 @@ describe('Status', function() {
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
-                onChange={sinon.stub()}>
+                onChange={sinon.stub()}
+                value="none">
                 <option className="status-view__filter-option"
                   key="none"
                   value="none">
@@ -530,7 +553,9 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <BasicTable
+          changeState={changeState}
           filterPredicate={sinon.stub()}
+          generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -560,11 +585,20 @@ describe('Status', function() {
           rowColumnClasses={['status-view__table-column']}
           rows={[{
             classes: ['status-view__table-row--ok'],
+            clickState: {
+              gui: {
+                inspector: {
+                  activeComponent: undefined,
+                  id: 'django',
+                  unit: null,
+                  unitStatus: null
+                }
+              }
+            },
             columns: [{
               columnSize: 2,
               content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
+                <span>
                   <img className="status-view__icon"
                     src="django.svg" />
                   django
@@ -574,17 +608,18 @@ describe('Status', function() {
               content: '1.10'
             }, {
               columnSize: 2,
-              content: <span key="status0" className="status-view__status--ok">active</span>
+              content: <span className="status-view__status--ok">active</span>
             }, {
               columnSize: 1,
               content: 2
             }, {
               columnSize: 2,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   u/who/django/xenial
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -596,11 +631,20 @@ describe('Status', function() {
             key: 'django'
           }, {
             classes: ['status-view__table-row--error'],
+            clickState: {
+              gui: {
+                inspector: {
+                  activeComponent: undefined,
+                  id: 'ha',
+                  unit: null,
+                  unitStatus: null
+                }
+              }
+            },
             columns: [{
               columnSize: 2,
               content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
+                <span>
                   <img className="status-view__icon"
                     src="ha.svg" />
                   ha
@@ -610,17 +654,18 @@ describe('Status', function() {
               content: ''
             }, {
               columnSize: 2,
-              content: <span key="status1" className="status-view__status--error">error</span>
+              content: <span className="status-view__status--error">error</span>
             }, {
               columnSize: 1,
               content: 0
             }, {
               columnSize: 2,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   haproxy
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
               content: 'jujucharms'
@@ -634,7 +679,9 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <BasicTable
+          changeState={changeState}
           filterPredicate={sinon.stub()}
+          generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -664,11 +711,19 @@ describe('Status', function() {
           rowColumnClasses={['status-view__table-column']}
           rows={[{
             classes: ['status-view__table-row--pending'],
+            clickState: {
+              gui: {
+                inspector: {
+                  activeComponent: 'unit',
+                  id: 'django',
+                  unit: 'id0'
+                }
+              }
+            },
             columns: [{
               columnSize: 2,
               content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
+                <span>
                   <img className="status-view__icon"
                     src="django.svg" />
                   django/0
@@ -676,25 +731,31 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="workload0" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   installing
                 </span>)
             }, {
               columnSize: 2,
               content: (
-                <span key="agent0" className="status-view__status--ok">
+                <span className="status-view__status--ok">
                   idle
                 </span>)
             }, {
               columnSize: 1,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   1
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
-              content: '1.2.3.4'
+              content: (
+                <a className="status-view__link"
+                  href="http://1.2.3.4:80"
+                  target="_blank">
+                  1.2.3.4
+                </a>)
             }, {
               columnSize: 1,
               content: '80/tcp, 443/tcp'
@@ -702,15 +763,23 @@ describe('Status', function() {
               columnSize: 2,
               content: 'these are the voyages'
             }],
-            extraData: 'ok',
+            extraData: 'pending',
             key: 'django/id0'
           }, {
             classes: ['status-view__table-row--error'],
+            clickState: {
+              gui: {
+                inspector: {
+                  activeComponent: 'unit',
+                  id: 'django',
+                  unit: 'id1'
+                }
+              }
+            },
             columns: [{
               columnSize: 2,
               content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
+                <span>
                   <img className="status-view__icon"
                     src="django.svg" />
                   django/1
@@ -718,23 +787,29 @@ describe('Status', function() {
             }, {
               columnSize: 2,
               content: (
-                <span key="workload1" className="status-view__status--error">error</span>)
+                <span className="status-view__status--error">error</span>)
             }, {
               columnSize: 2,
               content: (
-                <span key="agent1" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   executing
                 </span>)
             }, {
               columnSize: 1,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   2
-                </span>)
+                </a>)
             }, {
               columnSize: 2,
-              content: '1.2.3.5'
+              content: (
+                <a className="status-view__link"
+                  href="http://1.2.3.5:80"
+                  target="_blank">
+                  1.2.3.5
+                </a>)
             }, {
               columnSize: 1,
               content: '80-88/udp'
@@ -748,12 +823,14 @@ describe('Status', function() {
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
         <BasicTable
+          changeState={changeState}
           filterPredicate={sinon.stub()}
+          generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
             content: 'Machine',
-            columnSize: 2
+            columnSize: 1
           }, {
             content: 'State',
             columnSize: 2
@@ -762,73 +839,77 @@ describe('Status', function() {
             columnSize: 2
           }, {
             content: 'Instance ID',
-            columnSize: 2
+            columnSize: 3
           }, {
             content: 'Series',
-            columnSize: 2
+            columnSize: 1
           }, {
             content: 'Message',
-            columnSize: 2
+            columnSize: 3
           }]}
           key="machines"
           rowClasses={['status-view__table-row']}
           rowColumnClasses={['status-view__table-column']}
           rows={[{
             classes: ['status-view__table-row--pending'],
+            clickState: {
+              gui: {
+                machines: 'm1',
+                status: null
+              }
+            },
             columns: [{
-              columnSize: 2,
-              content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
-                  1
-                </span>)
+              columnSize: 1,
+              content: '1'
             }, {
               columnSize: 2,
               content: (
-                <span key="agent0" className="status-view__status--pending">
+                <span className="status-view__status--pending">
                   pending
                 </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.6'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'machine-1'
             }, {
-              columnSize: 2,
+              columnSize: 1,
               content: 'zesty'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: ''
             }],
             extraData: 'pending',
             key: 'm1'
           }, {
             classes: ['status-view__table-row--ok'],
+            clickState: {
+              gui: {
+                machines: 'm2',
+                status: null
+              }
+            },
             columns: [{
-              columnSize: 2,
-              content: (
-                <span className="status-view__link"
-                  onClick={sinon.stub()}>
-                  2
-                </span>)
+              columnSize: 1,
+              content: '2'
             }, {
               columnSize: 2,
               content: (
-                <span key="agent1" className="status-view__status--ok">
+                <span className="status-view__status--ok">
                   started
                 </span>)
             }, {
               columnSize: 2,
               content: '1.2.3.7'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'machine-2'
             }, {
-              columnSize: 2,
+              columnSize: 1,
               content: 'trusty'
             }, {
-              columnSize: 2,
+              columnSize: 3,
               content: 'yes, I am started'
             }],
             extraData: 'ok',
@@ -863,21 +944,23 @@ describe('Status', function() {
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="mysql.svg" />
                   mysql
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="mysql.svg" />
                   mysql
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: 'peer'
@@ -893,12 +976,13 @@ describe('Status', function() {
             }, {
               columnSize: 3,
               content: (
-                <span className="status-view__link"
+                <a className="status-view__link"
+                  href={undefined}
                   onClick={sinon.stub()}>
                   <img className="status-view__icon"
                     src="ha.svg" />
                   haproxy
-                </span>)
+                </a>)
             }, {
               columnSize: 3,
               content: 'regular'
@@ -912,21 +996,19 @@ describe('Status', function() {
     expect(comp.output).toEqualJSX(expectedOutput);
   });
 
-  it('can navigate to applications from the app list', () => {
+  it('can link to the DNS address for a unit', () => {
     const comp = render(makeDB());
-    comp.output.props.children.props.children[2].props.rows[0].columns[0]
-      .content.props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      gui: {
-        inspector: {
-          id: 'django',
-          activeComponent: undefined,
-          unit: null,
-          unitStatus: null
-        }
-      }
-    });
+    const wrapper = comp.output.props.children;
+    const units = wrapper.props.children[3];
+    const unit = units.props.rows[0];
+    const address = unit.columns[4].content;
+    const expected = (
+      <a className="status-view__link"
+        href="http://1.2.3.4:80"
+        target="_blank">
+        1.2.3.4
+      </a>);
+    expect(address).toEqualJSX(expected);
   });
 
   it('can navigate to charms from the app list', () => {
@@ -934,29 +1016,10 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[2];
     const column = section.props.rows[0].columns[4];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {store: 'u/who/django/xenial/42'});
-  });
-
-  it('can navigate to units from the unit list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[3];
-    const column = section.props.rows[0].columns[0];
-    column.content.props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {
-        gui: {
-          inspector: {
-            id: 'django',
-            unit: 'id0',
-            activeComponent: 'unit'
-          }
-        }
-      });
   });
 
   it('can navigate to machines from the unit list', () => {
@@ -964,21 +1027,13 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[3];
     const column = section.props.rows[0].columns[3];
-    column.content.props.onClick({stopPropagation: sinon.stub()});
+    column.content.props.onClick({
+      stopPropagation: sinon.stub(),
+      preventDefault: sinon.stub()
+    });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {gui: {machines: '1', status: null}});
-  });
-
-  it('can navigate to machines from the machine list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[4];
-    const column = section.props.rows[0].columns[0];
-    column.content.props.onClick({stopPropagation: sinon.stub()});
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {gui: {machines: 'm1', status: null}});
   });
 
   it('can navigate to provided apps from the relation list', () => {
@@ -986,7 +1041,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[5];
     const column = section.props.rows[0].columns[1];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -1005,7 +1060,7 @@ describe('Status', function() {
     const content = comp.output.props.children;
     const section = content.props.children[5];
     const column = section.props.rows[0].columns[2];
-    column.content.props.onClick();
+    column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -1035,5 +1090,59 @@ describe('Status', function() {
     const selectBox = titleRow.props.children[2].props.children;
     selectBox.props.onChange({currentTarget: {value: 'none'}});
     assert.equal(comp.instance.state.filter, null);
+  });
+
+  it('can show a highest status notification', () => {
+    const comp = render(makeDB());
+    const expectedOutput = (
+      <div className="twelve-col no-margin-bottom">
+        <div className="eight-col">
+          <h2>
+            my-model
+            <span
+              className={'status-view__traffic-light ' +
+                'status-view__traffic-light--error'}
+              onClick={sinon.stub()}
+              role="button"
+              title="Items are in error"
+              tabIndex="0">
+            </span>
+          </h2>
+        </div>
+        <div className="status-view__filter-label two-col">
+          Filter status:
+        </div>
+        <div className="status-view__filter two-col last-col">
+          <select className="status-view__filter-select"
+            onChange={sinon.stub()}
+            value="none">
+            <option className="status-view__filter-option"
+              key="none"
+              value="none">
+              none
+            </option>
+            <option className="status-view__filter-option"
+              key="error"
+              value="error">
+              error
+            </option>
+            <option className="status-view__filter-option"
+              key="pending"
+              value="pending">
+              pending
+            </option>
+            <option className="status-view__filter-option"
+              key="ok"
+              value="ok">
+              ok
+            </option>
+          </select>
+        </div>
+      </div>);
+    comp.instance.componentDidUpdate();
+    const output = comp.renderer.getRenderOutput();
+    const wrapper = output.props.children;
+    const header = wrapper.props.children[0];
+    expect(header.props.children[0]).toEqualJSX(expectedOutput);
   });
 });

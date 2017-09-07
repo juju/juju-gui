@@ -20,7 +20,11 @@ class Status extends React.Component {
       this.STATUS_PENDING,
       this.STATUS_OK
     ];
+    // This property is used to store the new highest status during a render or
+    // state change and the value is then stored in state in componentDidUpdate.
+    this.newHighest = null;
     this.state = {
+      highestStatus: this.STATUS_OK,
       statusFilter: null
     };
   }
@@ -37,16 +41,47 @@ class Status extends React.Component {
     document.body.classList.remove('u-is-status');
   }
 
+  componentWillReceiveProps() {
+    // Reset to the lowest status so that when the apps, units etc. are looped
+    // through the highest status can be stored.
+    this.setState({highestStatus: this.STATUS_OK});
+  }
+
+  componentDidUpdate() {
+    // Update the state with the new status now that all status changes/renders
+    // are complete.
+    if (this.newHighest && (this.state.highestStatus !== this.newHighest)) {
+      this.setState({highestStatus: this.newHighest});
+      this.newHighest = null;
+    }
+  }
+
   /**
-    Get the highest status from a list of statuses
+    Set the highest status if the passed status is higher than the current.
+    @param status {String} A status.
+  */
+  _setHighestStatus(status) {
+    const normalised = this._normaliseStatus(status);
+    if (this.STATUS_ORDER.indexOf(normalised) <
+      this.STATUS_ORDER.indexOf(this.state.highestStatus)) {
+      // Store the new state instead of updating state directly as this change
+      // may have been triggered by a state update or render and you can't
+      // update state during a state update or render.
+      this.newHighest = normalised;
+    }
+  }
+
+  /**
+    Get the highest status from a list of statuses.
     @param statuses {Ȧrray} A list of statuses.
     @returns {String} The status.
   */
   _getHighestStatus(statuses) {
+    const normalised = statuses.map(status => this._normaliseStatus(status));
     let status;
     // Loop through the order of priority until there is a matching status.
     this.STATUS_ORDER.some(val => {
-      if (statuses.indexOf(val) > -1) {
+      if (normalised.indexOf(val) > -1) {
         status = val;
         return true;
       }
@@ -101,6 +136,22 @@ class Status extends React.Component {
         break;
     }
     return status;
+  }
+
+  /**
+    Generate a status for display.
+    @param status {String} The status to display.
+    @returns {Object} The status markup.
+  */
+  _generateStatusDisplay(status) {
+    // If the status provided from a model property it might have no value.
+    if (!status) {
+      return null;
+    }
+    return (
+      <span className={this._getStatusClass('status-view__status--', status)}>
+        {status}
+      </span>);
   }
 
   /**
@@ -184,7 +235,15 @@ class Status extends React.Component {
     if (filter === 'none') {
       filter = null;
     }
-    this.setState({statusFilter: filter});
+    this._changeFilterStatus(filter);
+  }
+
+  /**
+    Set the filter status.
+    @param status {String} A status.
+  */
+  _changeFilterStatus(status) {
+    this.setState({statusFilter: status});
   }
 
   /**
@@ -202,7 +261,8 @@ class Status extends React.Component {
     });
     return (
       <select className="status-view__filter-select"
-        onChange={this._handleFilterChange.bind(this)}>
+        onChange={this._handleFilterChange.bind(this)}
+        value={this.state.statusFilter || 'none'}>
         {options}
       </select>);
   }
@@ -214,12 +274,33 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel(model, counts) {
+    const highestStatus = this.state.highestStatus;
+    let title = 'Everything is OK';
+    switch (highestStatus) {
+      case this.STATUS_OK:
+        title = 'Everything is OK';
+        break;
+      case this.STATUS_PENDING:
+        title = 'Items are pending';
+        break;
+      case this.STATUS_ERROR:
+        title = 'Items are in error';
+        break;
+    }
     return (
       <div key="model">
         <div className="twelve-col no-margin-bottom">
           <div className="eight-col">
             <h2>
               {model.environmentName}
+              <span
+                className={'status-view__traffic-light ' +
+                  `status-view__traffic-light--${highestStatus}`}
+                onClick={this._changeFilterStatus.bind(this, highestStatus)}
+                role="button"
+                title={title}
+                tabIndex="0">
+              </span>
             </h2>
           </div>
           <div className="status-view__filter-label two-col">
@@ -287,13 +368,13 @@ class Status extends React.Component {
   }
 
   /**
-    Navigate to the chosen application.
+    Generate the state to navigate to an application.
     @param appId {String} The id of the application to display.
   */
-  _navigateToApplication(appId) {
+  _generateApplicationClickState(appId) {
     // Navigate to the app in the inspector, clearing the state so that the
     // app overview is shown.
-    this.props.changeState({
+    return {
       gui: {
         inspector: {
           id: appId,
@@ -302,25 +383,47 @@ class Status extends React.Component {
           unitStatus: null
         }
       }
-    });
+    };
+  }
+
+  /**
+    Navigate to the chosen application.
+    @param appId {String} The id of the application to display.
+    @param evt {Object} The click event.
+  */
+  _navigateToApplication(appId, evt) {
+    evt.preventDefault();
+    // Navigate to the app in the inspector, clearing the state so that the
+    // app overview is shown.
+    this.props.changeState(this._generateApplicationClickState(appId));
+  }
+
+  /**
+    Generate the state to navigate to a charm.
+    @param charmURL {String} The id of the charm to display.
+  */
+  _generateCharmClickState(charmURL) {
+    return {store: charmURL};
   }
 
   /**
     Navigate to the chosen charm.
     @param charmURL {String} The id of the charm to display.
+    @param evt {Object} The click event.
   */
-  _navigateToCharm(charmURL) {
-    this.props.changeState({store: charmURL});
+  _navigateToCharm(charmURL, evt) {
+    evt.preventDefault();
+    this.props.changeState(this._generateCharmClickState(charmURL));
   }
 
   /**
-    Navigate to the chosen unit.
+    Generate the state to navigate to a unit.
     @param unitName {String} The name of the unit to display in the format
       'app-id/unit-number'.
   */
-  _navigateToUnit(unitName) {
+  _generateUnitClickState(unitName) {
     const unitParts = unitName.split('/');
-    this.props.changeState({
+    return {
       gui: {
         inspector: {
           id: unitParts[0],
@@ -328,7 +431,7 @@ class Status extends React.Component {
           activeComponent: 'unit'
         }
       }
-    });
+    };
   }
 
   /**
@@ -341,12 +444,22 @@ class Status extends React.Component {
     // from the document there is a React error for some reason if this event
     // propogates.
     evt.stopPropagation();
-    this.props.changeState({
+    evt.preventDefault();
+    this.props.changeState(this._generateMachineClickState(machineId));
+  }
+
+  /**
+    Generate the state to navigate to a machine.
+    @param machineId {String} The id of the machine to display.
+    @returns {Object} The machine state.
+  */
+  _generateMachineClickState(machineId) {
+    return {
       gui: {
         machines: machineId,
         status: null
       }
-    });
+    };
   }
 
   /**
@@ -422,7 +535,7 @@ class Status extends React.Component {
   */
   _generateApplications(applications) {
     const urllib = this.props.urllib;
-    const rows = applications.map((application, i) => {
+    const rows = applications.map(application => {
       const app = application.getAttrs();
       const charm = urllib.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
@@ -432,14 +545,15 @@ class Status extends React.Component {
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
+      this._setHighestStatus(app.status.current);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', app.status.current)],
+        clickState: this._generateApplicationClickState(app.id),
         columns:[{
           columnSize: 2,
           content: (
-            <span className="status-view__link"
-              onClick={this._navigateToApplication.bind(this, app.id)}>
+            <span>
               <img className="status-view__icon"
                 src={app.icon} />
               {app.name}
@@ -449,23 +563,19 @@ class Status extends React.Component {
           content: app.workloadVersion
         }, {
           columnSize: 2,
-          content: (
-            <span
-              className={this._getStatusClass(
-                'status-view__status--', app.status.current)}
-              key={'status' + i}>
-              {app.status.current || (<span>&nbsp;</span>)}
-            </span>)
+          content: this._generateStatusDisplay(app.status.current)
         }, {
           columnSize: 1,
           content: units.length
         }, {
           columnSize: 2,
           content: (
-            <span className="status-view__link"
+            <a className="status-view__link"
+              href={this.props.generatePath(
+                this._generateCharmClickState(charmId))}
               onClick={this._navigateToCharm.bind(this, charmId)}>
               {charm.path()}
-            </span>)
+            </a>)
         }, {
           columnSize: 2,
           content: store
@@ -479,7 +589,9 @@ class Status extends React.Component {
     });
     return (
       <BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -531,49 +643,56 @@ class Status extends React.Component {
     };
     const rows = [];
     applications.forEach(application => {
+      const appExposed = application.get('exposed');
       const units = application.get('units').filter(this._realUnitsPredicate);
-      units.forEach((unit, i) => {
+      units.forEach(unit => {
+        this._setHighestStatus(this._getHighestStatus(
+          [unit.agentStatus, unit.workloadStatus]));
+        let publicAddress = unit.public_address;
+        if (appExposed) {
+          const portRanges = unit.portRanges;
+          const port = portRanges[0].from;
+          const label = `${unit.public_address}:${port}`;
+          const protocol = port === 443 ? 'https' : 'http';
+          const href = `${protocol}://${label}`;
+          publicAddress = (
+            <a className="status-view__link"
+              href={href}
+              target="_blank">
+              {unit.public_address}
+            </a>);
+        }
         rows.push({
           classes: [this._getStatusClass(
             'status-view__table-row--',
             [unit.agentStatus, unit.workloadStatus])],
+          clickState: this._generateUnitClickState(unit.id),
           columns: [{
             columnSize: 2,
             content: (
-              <span className="status-view__link"
-                onClick={this._navigateToUnit.bind(this, unit.id)}>
+              <span>
                 <img className="status-view__icon"
                   src={application.get('icon')} />
                 {unit.displayName}
               </span>)
           }, {
             columnSize: 2,
-            content: (
-              <span
-                className={this._getStatusClass(
-                  'status-view__status--', unit.workloadStatus)}
-                key={'workload' + i}>
-                {unit.workloadStatus || (<span>&nbsp;</span>)}
-              </span>)
+            content: this._generateStatusDisplay(unit.workloadStatus)
           }, {
             columnSize: 2,
-            content: (
-              <span
-                className={this._getStatusClass(
-                  'status-view__status--', unit.agentStatus)}
-                key={'agent' + i}>
-                {unit.agentStatus || (<span>&nbsp;</span>)}
-              </span>)
+            content: this._generateStatusDisplay(unit.agentStatus)
           }, {
             columnSize: 1,
             content: (
-              <span className="status-view__link"
+              <a className="status-view__link"
+                href={this.props.generatePath(
+                  this._generateMachineClickState(unit.machine))}
                 onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine || (<span>&nbsp;</span>)}
-              </span>)
+                {unit.machine}
+              </a>)
           }, {
             columnSize: 2,
-            content: unit.public_address
+            content: publicAddress
           }, {
             columnSize: 1,
             content: formatPorts(unit.portRanges)
@@ -581,8 +700,8 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
-          extraData: this._normaliseStatus(
-            this._getHighestStatus([unit.agentStatus, unit.workloadStatus])),
+          extraData: this._getHighestStatus(
+            [unit.agentStatus, unit.workloadStatus]),
           key: unit.id
         });
       });
@@ -592,7 +711,9 @@ class Status extends React.Component {
     }
     return (
       <BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
@@ -631,37 +752,29 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines(machines) {
-    const rows = machines.map((machine, i) => {
+    const rows = machines.map(machine => {
+      this._setHighestStatus(machine.agent_state);
       return {
         classes: [this._getStatusClass(
           'status-view__table-row--', machine.agent_state)],
+        clickState: this._generateMachineClickState(machine.id),
         columns: [{
-          columnSize: 2,
-          content: (
-            <span className="status-view__link"
-              onClick={this._navigateToMachine.bind(this, machine.id)}>
-              {machine.displayName}
-            </span>)
+          columnSize: 1,
+          content: machine.displayName
         }, {
           columnSize: 2,
-          content: (
-            <span
-              className={this._getStatusClass(
-                'status-view__status--', machine.agent_state)}
-              key={'agent' + i}>
-              {machine.agent_state || (<span>&nbsp;</span>)}
-            </span>)
+          content: this._generateStatusDisplay(machine.agent_state)
         }, {
           columnSize: 2,
           content: machine.public_address
         }, {
-          columnSize: 2,
+          columnSize: 3,
           content: machine.instance_id
         }, {
-          columnSize: 2,
+          columnSize: 1,
           content: machine.series
         }, {
-          columnSize: 2,
+          columnSize: 3,
           content: machine.agent_state_info
         }],
         extraData: this._normaliseStatus(machine.agent_state),
@@ -670,12 +783,14 @@ class Status extends React.Component {
     });
     return (
       <BasicTable
+        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
         headerClasses={['status-view__table-header']}
         headerColumnClasses={['status-view__table-header-column']}
         headers={[{
           content: 'Machine',
-          columnSize: 2
+          columnSize: 1
         }, {
           content: 'State',
           columnSize: 2
@@ -684,13 +799,13 @@ class Status extends React.Component {
           columnSize: 2
         }, {
           content: 'Instance ID',
-          columnSize: 2
+          columnSize: 3
         }, {
           content: 'Series',
-          columnSize: 2
+          columnSize: 1
         }, {
           content: 'Message',
-          columnSize: 2
+          columnSize: 3
         }]}
         key="machines"
         rowClasses={['status-view__table-row']}
@@ -713,12 +828,14 @@ class Status extends React.Component {
       return (<span>{name}</span>);
     }
     return (
-      <span className="status-view__link"
+      <a className="status-view__link"
+        href={this.props.generatePath(
+          this._generateApplicationClickState(name))}
         onClick={this._navigateToApplication.bind(this, name)}>
         <img className="status-view__icon"
           src={app.get('icon')} />
         {name}
-      </span>);
+      </a>);
   }
 
   /**
@@ -827,6 +944,7 @@ Status.propTypes = {
       getById: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
+  generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,

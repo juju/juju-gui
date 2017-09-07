@@ -201,4 +201,53 @@ describe('BasicTable', function() {
     assert.equal(rowItems.length, 1);
     assert.equal(rowItems[0].key, 'row-two-key');
   });
+
+  it('display row links', function() {
+    rows[0].clickState = {another: 'state'};
+    const generatePath = sinon.stub().returns('http://example.com');
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BasicTable
+        changeState={sinon.stub()}
+        generatePath={generatePath}
+        headers={headers}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const rowItems = output.props.children[1];
+    const expected = (
+      <li className="twelve-col basic-table__row"
+        key="row-one-key">
+        <a className="basic-table__row-link"
+          href="http://example.com"
+          onClick={sinon.stub()}></a>
+        <div className="three-col r1c1class1 r1c1class2"
+          key="column-1">
+          <span>row 1 column 1</span>
+        </div>
+        <div className="last-col three-col"
+          key="column-2">
+          row 1 column 2
+        </div>
+      </li>);
+    expect(rowItems[0]).toEqualJSX(expected);
+  });
+
+  it('can navigate when a row is clicked', function() {
+    rows[0].clickState = {another: 'state'};
+    const changeState = sinon.stub();
+    const preventDefault = sinon.stub();
+    const generatePath = sinon.stub().returns('http://example.com');
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BasicTable
+        changeState={changeState}
+        generatePath={generatePath}
+        headers={headers}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const rowItems = output.props.children[1];
+    rowItems[0].props.children[0].props.onClick(
+      {preventDefault: preventDefault});
+    assert.equal(preventDefault.callCount, 1);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {another: 'state'});
+  });
 });
