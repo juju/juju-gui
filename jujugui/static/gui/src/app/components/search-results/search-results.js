@@ -476,7 +476,8 @@ class SearchResults extends React.Component {
             deployTarget={this.props.deployTarget}
             generatePath={this.props.generatePath}
             item={item}
-            key={item.storeId + i} />)}
+            key={item.storeId + i}
+            setStagedEntity={this.props.setStagedEntity} />)}
       </ul>
     </div>);
   }
@@ -528,7 +529,8 @@ class SearchResults extends React.Component {
               deployTarget={this.props.deployTarget}
               generatePath={this.props.generatePath}
               item={item}
-              key={item.storeId + i} />)}
+              key={item.storeId + i}
+              setStagedEntity={this.props.setStagedEntity} />)}
         </ul>
       </div>
     </div>);
@@ -579,6 +581,7 @@ SearchResults.propTypes = {
   series: PropTypes.string,
   seriesList: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   sort: PropTypes.string,
   tags: PropTypes.string,
   type: PropTypes.string

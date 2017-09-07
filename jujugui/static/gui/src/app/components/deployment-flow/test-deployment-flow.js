@@ -280,7 +280,13 @@ describe('DeploymentFlow', function() {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
-    const entityModel = {id: entityId};
+    const entityModel = {
+      id: entityId,
+      get: sinon.stub().returns([]),
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
     const entityData = [entityModel];
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub().returns(entityModel);

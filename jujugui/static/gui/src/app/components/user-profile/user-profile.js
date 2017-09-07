@@ -88,6 +88,7 @@ class UserProfile extends React.Component {
       return (
         <juju.components.EmptyUserProfile
           changeState={props.changeState}
+          clearPostDeployment={this.props.clearPostDeployment}
           isCurrentUser={props.userInfo.isCurrent}
           staticURL={props.staticURL}
           switchModel={props.switchModel} />);
@@ -99,6 +100,7 @@ class UserProfile extends React.Component {
         acl={props.acl}
         addNotification={props.addNotification}
         changeState={props.changeState}
+        clearPostDeployment={this.props.clearPostDeployment}
         key='modelList'
         ref='modelList'
         currentModel={props.currentModel}
@@ -186,6 +188,7 @@ UserProfile.propTypes = {
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   currentModel: PropTypes.string,
   d3: PropTypes.object,
   destroyModels: PropTypes.func.isRequired,

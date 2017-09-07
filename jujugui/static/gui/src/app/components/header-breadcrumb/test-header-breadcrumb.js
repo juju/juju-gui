@@ -24,8 +24,8 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
-  let appState, addNotification, changeState, humanizeTimestamp,
-      listModelsWithInfo, showProfile, switchModel;
+  let appState, addNotification, changeState, clearPostDeployment,
+      humanizeTimestamp, listModelsWithInfo, showProfile, switchModel;
   const acl = {};
 
   beforeAll((done) => {
@@ -45,6 +45,7 @@ describe('HeaderBreadcrumb', () => {
     showProfile = sinon.stub();
     switchModel = sinon.stub();
     changeState = sinon.stub();
+    clearPostDeployment = sinon.stub();
     humanizeTimestamp = sinon.stub();
   });
 
@@ -57,6 +58,7 @@ describe('HeaderBreadcrumb', () => {
         appState={appState}
         user={attrs.user}
         changeState={changeState}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={humanizeTimestamp}
         loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
@@ -108,6 +110,7 @@ describe('HeaderBreadcrumb', () => {
               addNotification={addNotification}
               user={{username: 'who@external', displayName: 'who'}}
               changeState={changeState}
+              clearPostDeployment={clearPostDeployment}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
@@ -149,6 +152,7 @@ describe('HeaderBreadcrumb', () => {
               addNotification={addNotification}
               user={{username: 'dalek@external', displayName: 'dalek'}}
               changeState={changeState}
+              clearPostDeployment={clearPostDeployment}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}

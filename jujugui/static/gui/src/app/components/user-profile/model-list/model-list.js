@@ -349,6 +349,7 @@ class UserProfileModelList extends React.Component {
       createNewButton = (
         <juju.components.CreateModelButton
           changeState={props.changeState}
+          clearPostDeployment={this.props.clearPostDeployment}
           switchModel={props.switchModel} />
       );
     }
@@ -392,6 +393,7 @@ UserProfileModelList.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   currentModel: PropTypes.string,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,

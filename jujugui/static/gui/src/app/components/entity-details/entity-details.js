@@ -92,6 +92,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
+              setStagedEntity={this.props.setStagedEntity}
               urllib={this.props.urllib}
             />
             <juju.components.EntityContent
@@ -280,6 +281,7 @@ EntityDetails.propTypes = {
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   urllib: PropTypes.func.isRequired
 };

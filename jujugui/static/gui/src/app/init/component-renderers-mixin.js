@@ -193,6 +193,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={this.acl}
         addNotification={this._bound.addNotification}
         charmstore={charmstore}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         currentModel={currentModel}
         d3={yui.d3}
         facadesExist={facadesExist}
@@ -223,6 +224,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
           charmstore={charmstore}
+          clearPostDeployment={this._clearPostDeployment.bind(this)}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
@@ -286,7 +288,55 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
-    Opents the lightbox with provided content.
+    Display post deployment help.
+
+    @param {String} entityId The entity ID of the charm or bundle.
+  */
+  _displayPostDeployment(entityId) {
+    this._clearPostDeployment();
+    const charmstore = this.get('charmstore');
+
+    const showEntityDetails = (id) => {
+      let url;
+
+      try {
+        url = window.jujulib.URL.fromString(id);
+      } catch (_) {
+        url = window.jujulib.URL.fromLegacyString(id);
+      }
+
+      const storeState = {
+        profile: null,
+        search: null,
+        store: url.path()
+      };
+
+      this.state.changeState(storeState);
+    };
+
+    this.get('charmstore').getEntity(entityId,
+      (err, entityData) => {
+        if (err) {
+          console.error(err);
+          console.error(`Entity not found with id: ${entityId}`);
+        }
+
+        ReactDOM.render(
+          <window.juju.components.PostDeployment
+            closePostDeployment={this._clearPostDeployment.bind(this)}
+            entity={entityData[0]}
+            getFile={charmstore.getFile.bind(charmstore)}
+            makeEntityModel={yui.juju.makeEntityModel}
+            marked={marked}
+            showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+          document.getElementById('post-deployment')
+        );
+      }
+    );
+  }
+
+  /**
+    Opens the lightbox with provided content.
 
     @param {Object} content React Element.
     @param {String} caption A string to display under the content.
@@ -313,6 +363,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _clearSettingsModal() {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('modal-gui-settings'));
+  }
+
+  /**
+    The cleanup dispatcher for the post deployment screen.
+  */
+  _clearPostDeployment() {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('post-deployment'));
   }
 
   /**
@@ -391,6 +449,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         charmstoreSearch={charmstore.search.bind(charmstore)}
         clearLightbox={this._clearLightbox.bind(this)}
         deployTarget={this.deployTarget.bind(this, charmstore)}
+        displayPostDeployment={this._displayPostDeployment.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
         series={utils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
@@ -820,6 +879,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
         deploy={utils.deploy.bind(utils, this)}
+        displayPostDeployment={this._displayPostDeployment.bind(this)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={utils.formatConstraints.bind(utils)}
@@ -1065,6 +1125,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}

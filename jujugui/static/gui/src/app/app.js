@@ -564,6 +564,10 @@ YUI.add('juju-gui', function(Y) {
       this.state.bootstrap();
     },
 
+    _setStagedEntity: function(entityId) {
+      this.stagedEntity = entityId;
+    },
+
     /**
       As a minor performance boost and to avoid potential rerenderings
       because of rebinding functions in the render methods. Any method that
@@ -1042,6 +1046,7 @@ YUI.add('juju-gui', function(Y) {
         acl={this.acl}
         addNotification={this._bound.addNotification}
         charmstore={charmstore}
+        clearPostDeployment={this._clearPostDeployment.bind(this)}
         currentModel={currentModel}
         d3={d3}
         facadesExist={facadesExist}
@@ -1072,6 +1077,7 @@ YUI.add('juju-gui', function(Y) {
             baseURL={window.juju_config.baseUrl}
             changeState={this._bound.changeState}
             charmstore={charmstore}
+            clearPostDeployment={this._clearPostDeployment.bind(this)}
             facadesExist={facadesExist}
             listModelsWithInfo={this._bound.listModelsWithInfo}
             destroyModels={this._bound.destroyModels}
@@ -1365,6 +1371,7 @@ YUI.add('juju-gui', function(Y) {
           addSSHKeys={env.addKeys.bind(env)}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
+          displayPostDeployment={this._displayPostDeployment.bind(this)}
           sendAnalytics={this.sendAnalytics}
           setModelName={env.set.bind(env, 'environmentName')}
           formatConstraints={utils.formatConstraints.bind(utils)}
@@ -1821,8 +1828,10 @@ YUI.add('juju-gui', function(Y) {
           charmstoreSearch={charmstore.search.bind(charmstore)}
           clearLightbox={this._clearLightbox.bind(this)}
           deployTarget={this.deployTarget.bind(this, charmstore)}
+          displayPostDeployment={this._displayPostDeployment.bind(this)}
           displayLightbox={this._displayLightbox.bind(this)}
           series={utils.getSeriesList()}
+          setStagedEntity={this._setStagedEntity.bind(this)}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
             this.bundleImporter)}
           flags={window.juju_config.flags}
@@ -1902,6 +1911,49 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Display post deployment help.
+
+      @param {String} entityId The entity ID of the charm or bundle.
+    */
+    _displayPostDeployment: function(entityId) {
+      entityId = entityId || this.stagedEntity;
+      if(!window.juju_config.flags.canvasInfo){
+        return;
+      }
+      this._clearPostDeployment();
+      const charmstore = this.get('charmstore');
+
+      const showEntityDetails = (id) => {
+        let url;
+        try {
+          url = window.jujulib.URL.fromString(id);
+        } catch (_) {
+          url = window.jujulib.URL.fromLegacyString(id);
+        }
+
+        const storeState = {
+          profile: null,
+          search: null,
+          store: url.path()
+        };
+
+        this.state.changeState(storeState);
+      };
+
+      ReactDOM.render(
+        <window.juju.components.PostDeployment
+          closePostDeployment={this._clearPostDeployment.bind(this)}
+          entityId={entityId}
+          getEntity={charmstore.getEntity.bind(charmstore)}
+          getFile={charmstore.getFile.bind(charmstore)}
+          makeEntityModel={Y.juju.makeEntityModel}
+          marked={marked}
+          showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+        document.getElementById('post-deployment')
+      );
+    },
+
+    /**
       Opents the lightbox with provided content.
 
       @param {Object} content React Element.
@@ -1931,6 +1983,14 @@ YUI.add('juju-gui', function(Y) {
     _clearSettingsModal: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('modal-gui-settings'));
+    },
+
+    /**
+      The cleanup dispatcher for the post deployment screen.
+    */
+    _clearPostDeployment: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('post-deployment'));
     },
 
     /**
@@ -2423,6 +2483,7 @@ YUI.add('juju-gui', function(Y) {
           level: 'error'
         });
       };
+
       // The charmstore apiv4 format can have the bundle keyword either at the
       // start, for charmers bundles, or after the username, for namespaced
       // bundles. ex) bundle/swift & ~jorge/bundle/swift
@@ -2446,6 +2507,7 @@ YUI.add('juju-gui', function(Y) {
             Object.keys(options).forEach(function(key) {
               config[key] = options[key]['default'];
             });
+
             // We call the env deploy method directly because we don't want
             // the ghost inspector to open.
             this.deployService(new Y.juju.models.Charm(charm));
@@ -2470,6 +2532,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       this.deployTarget(this.get('charmstore'), ddData.id);
+      this._setStagedEntity(ddData.id);
       this.state.changeState({
         gui: {
           deploy: JSON.stringify(ddData)
@@ -3308,6 +3371,7 @@ YUI.add('juju-gui', function(Y) {
     'modal-shortcuts',
     'notification-list',
     'panel-component',
+    'post-deployment',
     'sharing',
     'status',
     'svg-icon',

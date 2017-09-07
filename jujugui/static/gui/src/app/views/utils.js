@@ -1604,6 +1604,7 @@ YUI.add('juju-view-utils', function(Y) {
       const socketUrl = app.createSocketURL(
         app.get('socketTemplate'), model.uuid);
       app.switchEnv(socketUrl, null, null, commit, true, false);
+      app._displayPostDeployment();
     };
     controllerAPI.createModel(
       modelName, user.controller.user, args, handler);

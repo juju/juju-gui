@@ -60,6 +60,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -163,6 +164,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -189,6 +191,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -221,6 +224,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -250,6 +254,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -278,6 +283,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={pluralize}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -311,6 +317,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const output = renderer.getRenderOutput();
@@ -345,6 +352,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
@@ -366,6 +374,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
@@ -388,6 +397,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const textContent = output.refs.deployAction.innerText;
@@ -413,6 +423,7 @@ describe('EntityHeader', function() {
         entityModel={mockEntity}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
@@ -442,6 +453,7 @@ describe('EntityHeader', function() {
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const refs = output.refs;
@@ -475,6 +487,7 @@ describe('EntityHeader', function() {
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const refs = output.refs;
@@ -505,6 +518,7 @@ describe('EntityHeader', function() {
         entityModel={entity}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
@@ -522,6 +536,7 @@ describe('EntityHeader', function() {
     const getBundleYAML = sinon.stub().callsArgWith(1, 'error');
     const importBundleYAML = sinon.stub();
     const addNotification = sinon.stub();
+    const setStagedEntity = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
     const output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
@@ -536,6 +551,7 @@ describe('EntityHeader', function() {
         addNotification={addNotification}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={setStagedEntity}
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
@@ -566,6 +582,7 @@ describe('EntityHeader', function() {
         addNotification={addNotification}
         pluralize={sinon.stub()}
         scrollPosition={100}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -607,6 +624,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -642,6 +660,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -669,6 +688,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
+        setStagedEntity={sinon.stub()}
         urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();

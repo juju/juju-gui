@@ -59,6 +59,7 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const addNotification = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -86,6 +87,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={showTerms}
         staticURL="http://example.com"
         urllib={urllib}
@@ -116,6 +118,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -175,6 +178,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -217,6 +221,7 @@ describe('EntityDetails', function() {
     const renderMarkdown = sinon.spy();
     const getDiagramURL = sinon.spy();
     const addNotification = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -244,6 +249,7 @@ describe('EntityDetails', function() {
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -274,6 +280,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           <juju.components.EntityContent
@@ -310,6 +317,7 @@ describe('EntityDetails', function() {
     const pluralize = sinon.spy();
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -332,6 +340,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -367,6 +376,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -397,6 +407,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -424,6 +435,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -454,6 +466,7 @@ describe('EntityDetails', function() {
             plans={plans}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -501,6 +514,7 @@ describe('EntityDetails', function() {
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const pluralize = sinon.spy();
     const renderMarkdown = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
@@ -528,6 +542,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}
@@ -558,6 +573,7 @@ describe('EntityDetails', function() {
             plans={[]}
             pluralize={pluralize}
             scrollPosition={100}
+            setStagedEntity={setStagedEntity}
             urllib={urllib}
           />
           {undefined}
@@ -612,6 +628,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib} />, true);
@@ -655,6 +672,7 @@ describe('EntityDetails', function() {
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
         urllib={urllib}

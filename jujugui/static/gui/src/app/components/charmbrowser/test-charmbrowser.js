@@ -45,17 +45,18 @@ describe('Charmbrowser', function() {
     var query = 'django';
     appState.current.search = {text: query};
     appState.generatePath = sinon.stub();
-    var series = {};
+    const series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
     const deployTarget = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var makeEntityModel = sinon.spy();
-    var utils = {getName: sinon.stub()};
-    var renderer = jsTestUtils.shallowRender(
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const setStagedEntity = sinon.stub();
+    const makeEntityModel = sinon.spy();
+    const utils = {getName: sinon.stub()};
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
         addNotification={addNotification}
@@ -79,13 +80,14 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={series}
         setPageTitle={setPageTitle}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const searchResults = output.props.children.props.children.props;
-    var expected = (
+    const expected = (
       <juju.components.Panel
         instanceName="white-box"
         clickAction={instance._close}
@@ -108,6 +110,7 @@ describe('Charmbrowser', function() {
             series={undefined}
             seriesList={series}
             setPageTitle={setPageTitle}
+            setStagedEntity={setStagedEntity}
             sort={undefined}
             tags={undefined}
             type={undefined} />
@@ -117,12 +120,13 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the store when the app state calls for it', function() {
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var utils = {getName: sinon.stub()};
-    var makeEntityModel = sinon.spy();
-    var seriesList = {};
-    var renderer = jsTestUtils.shallowRender(
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const setStagedEntity = sinon.stub();
+    const utils = {getName: sinon.stub()};
+    const makeEntityModel = sinon.spy();
+    const seriesList = {};
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
@@ -146,6 +150,7 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={seriesList}
         setPageTitle={setPageTitle}
+        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL='surl'
         urllib={sinon.stub()}
@@ -196,6 +201,7 @@ describe('Charmbrowser', function() {
       pluralize: sinon.spy()
     };
     const setPageTitle = sinon.spy();
+    const setStagedEntity = sinon.stub();
     const urllib = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
@@ -224,6 +230,7 @@ describe('Charmbrowser', function() {
         renderMarkdown={renderMarkdown}
         series={{}}
         setPageTitle={setPageTitle}
+        setStagedEntity={setStagedEntity}
         showTerms={showTerms}
         staticURL="http://example.com"
         urllib={urllib}
@@ -263,6 +270,7 @@ describe('Charmbrowser', function() {
             pluralize={utils.pluralize}
             scrollCharmbrowser={instance._scrollCharmbrowser}
             setPageTitle={setPageTitle}
+            setStagedEntity={setStagedEntity}
             showTerms={showTerms}
             urllib={urllib}
           />
@@ -300,6 +308,7 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={{}}
         setPageTitle={sinon.stub()}
+        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);

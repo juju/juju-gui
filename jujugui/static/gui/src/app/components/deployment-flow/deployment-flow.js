@@ -95,7 +95,8 @@ class DeploymentFlow extends React.Component {
         });
         return;
       }
-      this.setState({ddEntity: this.props.makeEntityModel(data[0])});
+      const entityModel = this.props.makeEntityModel(data[0]);
+      this.setState({ddEntity: entityModel});
     });
   }
 
