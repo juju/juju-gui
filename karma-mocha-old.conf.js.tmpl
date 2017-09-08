@@ -23,7 +23,6 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'node_modules/keysim/dist/keysim.js',
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/assets/chai.js',
 
@@ -127,6 +126,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/test/test_*.js': ['browserify'],
+      'jujugui/static/gui/src/test/utils.js': ['browserify'],
     },
 
     browserify: {
