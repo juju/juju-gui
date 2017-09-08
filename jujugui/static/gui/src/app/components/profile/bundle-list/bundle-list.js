@@ -1,6 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
+
+const shapeup = require('shapeup');
 
 /**
   Charm list React component used to display a list of the users bundles in
@@ -147,8 +150,4 @@ ProfileBundleList.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('profile-bundle-list', function() {
-  juju.components.ProfileBundleList = ProfileBundleList;
-}, '', {
-  requires: []
-});
+module.exports = ProfileBundleList;

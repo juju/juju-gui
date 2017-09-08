@@ -1,22 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+const ReactDOM = require('react-dom');
+const ReactDnD = require('react-dnd');
+const ReactDnDHTML5Backend = require('react-dnd-html5-backend');
+const shapeup = require('shapeup');
+
+const MachineViewAddMachine = require('./add-machine/add-machine');
+const MachineViewColumn = require('./column/column');
+const MachineViewMachine = require('./machine/machine');
+const MachineViewScaleUp = require('./scale-up/scale-up');
+const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
+const SvgIcon = require('../svg-icon/svg-icon');
+const GenericButton = require('../generic-button/generic-button');
 
 class MachineView extends React.Component {
   constructor(props) {
@@ -155,7 +152,7 @@ class MachineView extends React.Component {
       return (
         <div className="machine-view__column-onboarding">
           {icon ? (
-            <juju.components.SvgIcon name={icon}
+            <SvgIcon name={icon}
               size="16" />) : null}
           {content}
         </div>);
@@ -172,9 +169,9 @@ class MachineView extends React.Component {
         return;
       }
       const propTypes = (
-        juju.components.MachineViewUnplacedUnit.DecoratedComponent.propTypes);
+        MachineViewUnplacedUnit.DecoratedComponent.propTypes);
       components.push(
-        <juju.components.MachineViewUnplacedUnit
+        <MachineViewUnplacedUnit
           acl={props.acl.reshape(propTypes.acl)}
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           key={unit.id}
@@ -192,12 +189,12 @@ class MachineView extends React.Component {
     return (
       <div>
         <div className="machine-view__auto-place">
-          <juju.components.GenericButton
+          <GenericButton
             action={props.modelAPI.autoPlaceUnits}
             disabled={props.acl.isReadOnly()}
             type="inline-neutral">
             Auto place
-          </juju.components.GenericButton>
+          </GenericButton>
           <p>
             You can also drag and drop unplaced units to customise your
             deployment.
@@ -221,9 +218,9 @@ class MachineView extends React.Component {
       return;
     }
     const props = this.props;
-    const propTypes = juju.components.MachineViewScaleUp.propTypes;
+    const propTypes = MachineViewScaleUp.propTypes;
     return (
-      <juju.components.MachineViewScaleUp
+      <MachineViewScaleUp
         acl={props.acl.reshape(propTypes.acl)}
         dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
         toggleScaleUp={this._toggleScaleUp.bind(this)}
@@ -333,14 +330,14 @@ class MachineView extends React.Component {
     }
     const components = [];
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const acl = props.acl.reshape(propTypes.acl);
     const dbAPI = props.dbAPI.reshape(propTypes.dbAPI);
     const modelAPI = props.modelAPI.reshape(propTypes.modelAPI);
     machines.forEach((machine) => {
       const selectedMachine = this._getSelected().machine;
       components.push(
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={acl}
           dbAPI={dbAPI}
           dropUnit={this._dropUnit.bind(this)}
@@ -397,11 +394,11 @@ class MachineView extends React.Component {
       root: true
     });
     const propTypes = (
-      juju.components.MachineViewMachine.DecoratedComponent.propTypes);
+      MachineViewMachine.DecoratedComponent.propTypes);
     const components = [];
     containers.forEach((container) => {
       components.push(
-        <juju.components.MachineViewMachine
+        <MachineViewMachine
           acl={props.acl.reshape(propTypes.acl)}
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={this._dropUnit.bind(this)}
@@ -456,9 +453,9 @@ class MachineView extends React.Component {
       return;
     }
     const props = this.props;
-    const propTypes = juju.components.MachineViewAddMachine.propTypes;
+    const propTypes = MachineViewAddMachine.propTypes;
     return (
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
         close={this._closeAddMachine.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
@@ -508,9 +505,9 @@ class MachineView extends React.Component {
       return;
     }
     const props = this.props;
-    const propTypes = juju.components.MachineViewAddMachine.propTypes;
+    const propTypes = MachineViewAddMachine.propTypes;
     return (
-      <juju.components.MachineViewAddMachine
+      <MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
         close={this._closeAddContainer.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
@@ -771,20 +768,20 @@ class MachineView extends React.Component {
       disabled: props.dbAPI.applications.size() === 0,
       toggleOn: this.state.showScaleUp
     };
-    const comp = juju.components.MachineViewColumn.DecoratedComponent;
+    const comp = MachineViewColumn.DecoratedComponent;
     const acl = props.acl.reshape(comp.propTypes.acl);
     return (
       <div className="machine-view">
         <div className="machine-view__content">
-          <juju.components.MachineViewColumn
+          <MachineViewColumn
             acl={acl}
             droppable={false}
             title="New units"
             toggle={unplacedToggle}>
             {this._generateScaleUp()}
             {this._generateUnplacedUnits()}
-          </juju.components.MachineViewColumn>
-          <juju.components.MachineViewColumn
+          </MachineViewColumn>
+          <MachineViewColumn
             acl={acl}
             activeMenuItem={this.state.machineSort}
             droppable={true}
@@ -795,8 +792,8 @@ class MachineView extends React.Component {
             type="machine">
             {this._generateAddMachine()}
             {this._generateMachines()}
-          </juju.components.MachineViewColumn>
-          <juju.components.MachineViewColumn
+          </MachineViewColumn>
+          <MachineViewColumn
             acl={acl}
             activeMenuItem={this.state.containerSort}
             droppable={!!this._getSelected().machine}
@@ -807,7 +804,7 @@ class MachineView extends React.Component {
             type="container">
             {this._generateAddContainer()}
             {this._generateContainers()}
-          </juju.components.MachineViewColumn>
+          </MachineViewColumn>
         </div>
       </div>
     );
@@ -846,17 +843,5 @@ MachineView.propTypes = {
   series: PropTypes.array
 };
 
-YUI.add('machine-view', function() {
-  juju.components.MachineView = ReactDnD.DragDropContext(
-    ReactDnDHTML5Backend)(MachineView);
-}, '0.1.0', {
-  requires: [
-    'machine-view-add-machine',
-    'machine-view-column',
-    'machine-view-header',
-    'machine-view-machine',
-    'machine-view-scale-up',
-    'machine-view-unplaced-unit',
-    'svg-icon'
-  ]
-});
+module.exports = ReactDnD.DragDropContext(
+  ReactDnDHTML5Backend)(MachineView);

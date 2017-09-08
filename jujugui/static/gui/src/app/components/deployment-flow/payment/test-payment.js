@@ -1,35 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AccountPaymentMethodCard = require('../../account/payment/methods/card/card');
+const DeploymentPayment = require('./payment');
+const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const Spinner = require('../../spinner/spinner');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentPayment', function() {
   let acl, getCountries, getUser, user;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-payment', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -48,7 +30,7 @@ describe('DeploymentPayment', function() {
 
   it('can display a loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -62,7 +44,7 @@ describe('DeploymentPayment', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="deployment-payment">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -70,7 +52,7 @@ describe('DeploymentPayment', function() {
   it('can store the user details', function() {
     const setPaymentUser = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -87,7 +69,7 @@ describe('DeploymentPayment', function() {
 
   it('can display payment methods', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -105,7 +87,7 @@ describe('DeploymentPayment', function() {
         <ul className="deployment-payment__methods twelve-col">
           {[<li className="deployment-payment__method"
             key="Company0">
-            <juju.components.AccountPaymentMethodCard
+            <AccountPaymentMethodCard
               card={{name: 'Company'}} />
           </li>]}
         </ul>
@@ -118,7 +100,7 @@ describe('DeploymentPayment', function() {
     const addNotification = sinon.stub();
     const setPaymentUser = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
@@ -144,7 +126,7 @@ describe('DeploymentPayment', function() {
     const createToken = sinon.stub();
     const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={addNotification}
         createCardElement={createCardElement}
@@ -160,7 +142,7 @@ describe('DeploymentPayment', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="deployment-payment">
-        <juju.components.CreatePaymentUser
+        <CreatePaymentUser
           acl={acl}
           addNotification={addNotification}
           createCardElement={createCardElement}
@@ -178,7 +160,7 @@ describe('DeploymentPayment', function() {
     const abort = sinon.stub();
     getUser = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPayment
+      <DeploymentPayment
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}

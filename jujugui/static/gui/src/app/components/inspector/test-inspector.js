@@ -1,36 +1,28 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Inspector = require('./inspector');
+const InspectorChangeVersion = require('./change-version/change-version');
+const InspectorExpose = require('./expose/expose');
+const InspectorHeader = require('./header/header');
+const Configuration = require('./config/config');
+const InspectorPlan = require('./plan/plan');
+const InspectorRelateTo = require('./relate-to/relate-to');
+const InspectorRelateToEndpoint = require('./relate-to/endpoint/endpoint');
+const InspectorRelations = require('./relations/relations');
+const InspectorResourcesList = require('./resources/list/list');
+const ScaleService = require('./scale-service/scale-service');
+const ServiceOverview = require('./service-overview/service-overview');
+const UnitDetails = require('./unit-details/unit-details');
+const UnitList = require('./unit-list/unit-list');
+
+const jsTestUtils = require('../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('Inspector', function() {
   var acl, appState;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-component', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -70,7 +62,7 @@ describe('Inspector', function() {
     var showActivePlan = sinon.stub();
     var serviceRelations = ['relations'];
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -110,7 +102,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent={undefined}
         type={undefined}
@@ -120,7 +112,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
     var expectedOverview = (
-      <juju.components.ServiceOverview
+      <ServiceOverview
         acl={acl}
         addNotification={addNotification}
         changeState={overview.props.changeState}
@@ -156,7 +148,7 @@ describe('Inspector', function() {
       units: unitStatus
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -192,12 +184,12 @@ describe('Inspector', function() {
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}>
-      </juju.components.Inspector>, true);
+      </Inspector>, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent='units'
         type={unitStatus}
@@ -208,7 +200,7 @@ describe('Inspector', function() {
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         service={service}
         unitStatus="error"
@@ -237,7 +229,7 @@ describe('Inspector', function() {
     };
     var charm = {};
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -278,7 +270,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="config"
         type={undefined}
@@ -289,7 +281,7 @@ describe('Inspector', function() {
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.Configuration
+      <Configuration
         acl={acl}
         service={service}
         changeState={children.props.changeState}
@@ -327,7 +319,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -363,12 +355,12 @@ describe('Inspector', function() {
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}>
-      </juju.components.Inspector>, true);
+      </Inspector>, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent='unit'
         type={headerType}
@@ -379,7 +371,7 @@ describe('Inspector', function() {
 
     var children = output.props.children[1].props.children;
     var expectedChildren = (
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
         service={service}
@@ -406,7 +398,7 @@ describe('Inspector', function() {
       units: 'error'
     };
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -455,7 +447,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -524,7 +516,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -560,7 +552,7 @@ describe('Inspector', function() {
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}>
-      </juju.components.Inspector>);
+      </Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -588,7 +580,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -624,7 +616,7 @@ describe('Inspector', function() {
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}>
-      </juju.components.Inspector>);
+      </Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -660,7 +652,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -696,7 +688,7 @@ describe('Inspector', function() {
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}>
-      </juju.components.Inspector>);
+      </Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -721,7 +713,7 @@ describe('Inspector', function() {
       activeComponent: 'scale'
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -762,7 +754,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="scale"
         type={undefined}
@@ -773,7 +765,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.ScaleService
+      <ScaleService
         acl={acl}
         addGhostAndEcsUnits={children.props.addGhostAndEcsUnits}
         changeState={children.props.changeState}
@@ -801,7 +793,7 @@ describe('Inspector', function() {
       activeComponent: 'expose'
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -841,7 +833,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="expose"
         type={undefined}
@@ -851,7 +843,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={addNotification}
         changeState={children.props.changeState}
@@ -876,7 +868,7 @@ describe('Inspector', function() {
     };
     var serviceRelations = ['relatons'];
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -916,7 +908,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="relations"
         type={undefined}
@@ -926,7 +918,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={children.props.changeState}
         destroyRelations={destroyRelations}
@@ -947,7 +939,7 @@ describe('Inspector', function() {
       activeComponent: 'relate-to'
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -987,7 +979,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="relate-to"
         type={undefined}
@@ -997,7 +989,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorRelateTo
+      <InspectorRelateTo
         changeState={children.props.changeState}
         application={service}
         relatableApplications={['apps']}/>);
@@ -1022,7 +1014,7 @@ describe('Inspector', function() {
       get: sinon.stub().returns('spouse-name')
     });
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1062,7 +1054,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="relate-to"
         type={undefined}
@@ -1072,7 +1064,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorRelateToEndpoint
+      <InspectorRelateToEndpoint
         backState={{
           gui: {
             inspector: {
@@ -1101,7 +1093,7 @@ describe('Inspector', function() {
     };
     var serviceRelations = ['relatons'];
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1141,7 +1133,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent='plan'
         type={undefined}
@@ -1151,7 +1143,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorPlan
+      <InspectorPlan
         acl={acl}
         currentPlan={activePlan} />);
   });
@@ -1175,7 +1167,7 @@ describe('Inspector', function() {
       activeComponent: 'change-version'
     };
     var component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={addCharm}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1214,7 +1206,7 @@ describe('Inspector', function() {
     var output = component.getRenderOutput();
     var header = output.props.children[0];
     var expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent="change-version"
         type={undefined}
@@ -1224,7 +1216,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     expect(children).toEqualJSX(
-      <juju.components.InspectorChangeVersion
+      <InspectorChangeVersion
         acl={acl}
         addNotification={addNotification}
         changeState={children.props.changeState}
@@ -1255,7 +1247,7 @@ describe('Inspector', function() {
       activeComponent: 'resources'
     };
     const component = jsTestUtils.shallowRender(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={addCharm}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1295,7 +1287,7 @@ describe('Inspector', function() {
     const output = component.getRenderOutput();
     const header = output.props.children[0];
     const expectedHeader = (
-      <juju.components.InspectorHeader
+      <InspectorHeader
         backCallback={instance._backCallback}
         activeComponent='resources'
         type={undefined}
@@ -1305,7 +1297,7 @@ describe('Inspector', function() {
     expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;
     assert.deepEqual(children,
-      <juju.components.InspectorResourcesList
+      <InspectorResourcesList
         acl={acl}
         resources={[{resource: 'one'}]} />);
   });
@@ -1324,7 +1316,7 @@ describe('Inspector', function() {
       }};
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1388,7 +1380,7 @@ describe('Inspector', function() {
       }};
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1444,7 +1436,7 @@ describe('Inspector', function() {
     var service = {get: getStub};
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1497,7 +1489,7 @@ describe('Inspector', function() {
       }};
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
@@ -1553,7 +1545,7 @@ describe('Inspector', function() {
     };
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.Inspector
+      <Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}

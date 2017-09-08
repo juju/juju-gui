@@ -1,32 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const UserProfileEntityList = require('./entity-list');
+const Spinner = require('../../spinner/spinner');
+const UserProfileEntity = require('../entity/entity');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileEntityList', () => {
   var charmstore, charms, bundles;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('user-profile-entity-list', () => { done(); });
-  });
 
   beforeEach(() => {
     var list = sinon.stub();
@@ -48,7 +32,7 @@ describe('UserProfileEntityList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
@@ -65,7 +49,7 @@ describe('UserProfileEntityList', () => {
     charmstore.list = sinon.stub();
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -77,7 +61,7 @@ describe('UserProfileEntityList', () => {
     var output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__charm-list twelve-col">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -88,7 +72,7 @@ describe('UserProfileEntityList', () => {
     const getKpiMetrics = sinon.stub();
     const type = 'charm';
     let component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={addNotification}
         changeState={changeState}
         charmstore={charmstore}
@@ -118,7 +102,7 @@ describe('UserProfileEntityList', () => {
               Series
             </span>
           </li>
-          {[<juju.components.UserProfileEntity
+          {[<UserProfileEntity
             addNotification={addNotification}
             changeState={changeState}
             d3={{}}
@@ -151,7 +135,7 @@ describe('UserProfileEntityList', () => {
                 </li>]}
               </ul>
             </span>
-          </juju.components.UserProfileEntity>]}
+          </UserProfileEntity>]}
         </ul>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -162,7 +146,7 @@ describe('UserProfileEntityList', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={addNotification}
         changeState={changeState}
         charmstore={charmstore}
@@ -194,7 +178,7 @@ describe('UserProfileEntityList', () => {
               Units
             </span>
           </li>
-          {[<juju.components.UserProfileEntity
+          {[<UserProfileEntity
             addNotification={addNotification}
             changeState={changeState}
             entity={bundles[0]}
@@ -226,7 +210,7 @@ describe('UserProfileEntityList', () => {
               'user-profile__list-col three-col prepend-one last-col'}>
               {5}
             </span>
-          </juju.components.UserProfileEntity>]}
+          </UserProfileEntity>]}
         </ul>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -235,7 +219,7 @@ describe('UserProfileEntityList', () => {
   it('requests charms and updates state', () => {
     const setEntities = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -256,7 +240,7 @@ describe('UserProfileEntityList', () => {
   it('requests bundles and updates state', () => {
     const setEntities = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -278,7 +262,7 @@ describe('UserProfileEntityList', () => {
     var charmstoreAbort = sinon.stub();
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -295,7 +279,7 @@ describe('UserProfileEntityList', () => {
     var list = sinon.stub();
     var charmstore = {list: list};
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -306,7 +290,7 @@ describe('UserProfileEntityList', () => {
         user={null} />, true);
     assert.equal(list.callCount, 0);
     component.render(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -322,7 +306,7 @@ describe('UserProfileEntityList', () => {
     charmstore.list = sinon.stub().callsArgWith(1, 'error', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={addNotification}
         changeState={sinon.stub()}
         charmstore={charmstore}
@@ -343,7 +327,7 @@ describe('UserProfileEntityList', () => {
     charmstore.list = sinon.stub().callsArgWith(1, 'error', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntityList
+      <UserProfileEntityList
         addNotification={addNotification}
         changeState={sinon.stub()}
         charmstore={charmstore}

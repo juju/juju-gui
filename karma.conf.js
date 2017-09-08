@@ -12,30 +12,16 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'jasmine-expect-jsx', 'chai-sinon'],
+    frameworks: ['browserify', 'jasmine', 'jasmine-expect-jsx', 'chai-sinon'],
 
     // List of files / patterns to load in the browser; Karma is smart enough,
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'node_modules/keysim/dist/keysim.js',
-      'jujugui/static/gui/build/app/assets/javascripts/version.js',
-      'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',
       'jujugui/static/gui/build/app/assets/javascripts/classnames.js',
-      'jujugui/static/gui/build/app/assets/javascripts/marked.js',
       'jujugui/static/gui/build/app/assets/javascripts/clipboard.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-click-outside.js',
-      'jujugui/static/gui/build/app/assets/javascripts/ReactDnD.min.js',
-      'jujugui/static/gui/build/app/assets/javascripts/ReactDnDHTML5Backend.min.js',
-      'jujugui/static/gui/build/app/assets/javascripts/diff.js',
-      'jujugui/static/gui/build/app/assets/javascripts/prism.js',
-      'jujugui/static/gui/build/app/assets/javascripts/prism-languages.js',
       'jujugui/static/gui/build/app/assets/javascripts/prop-types.js',
-      'jujugui/static/gui/build/app/assets/javascripts/shapeup-legacy.js',
       'jujugui/static/gui/build/app/assets/javascripts/js-macaroon.js',
-      'jujugui/static/gui/build/app/utils/component-test-utils.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
@@ -55,12 +41,11 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/state/*.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/d3-min.js',
-
-      'jujugui/static/gui/src/app/components/**/*.js',
       // This file needs to go before any tests as it adds a beforEach and
       // afterEach for every test so that we can ensure there are no prop type
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
+      'jujugui/static/gui/src/app/components/**/test-*.js',
 
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
@@ -80,24 +65,18 @@ module.exports = function(config) {
     ],
 
     // list of files to exclude
-    exclude: [
-      'jujugui/static/gui/build/app/components/**/*-min.js'
-    ],
+    exclude: [],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'jujugui/static/gui/src/app/components/**/*.js': ['babel'],
+      'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
     },
 
-    // set the options for the various preprocessors used
-    babelPreprocessor: {
-      filename: function (file) {
-        return file.originalPath.replace(/gui\/src\//, 'gui/build/');
-      },
-      sourceFileName: function (file) {
-        return file.originalPath;
-      }
+    browserify: {
+      debug: true,
+      transform: [ 'babelify' ]
     },
 
     // test results reporter to use

@@ -1,35 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AddressForm = require('./address-form');
+const Spinner = require('../spinner/spinner');
+const InsetSelect = require('../inset-select/inset-select');
+const GenericInput = require('../generic-input/generic-input');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('AddressForm', function() {
   let getCountries, refs;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('address-form', function() { done(); });
-  });
 
   beforeEach(() => {
     getCountries = sinon.stub().callsArgWith(0, null, [{
@@ -66,7 +48,7 @@ describe('AddressForm', function() {
 
   it('can display a loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={sinon.stub()}
@@ -74,14 +56,14 @@ describe('AddressForm', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="address-form">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can display the form', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}
@@ -90,7 +72,7 @@ describe('AddressForm', function() {
     const expected = (
       <div className="address-form">
         <div>
-          <juju.components.InsetSelect
+          <InsetSelect
             disabled={false}
             label="Country"
             options={[{
@@ -99,7 +81,7 @@ describe('AddressForm', function() {
             }]}
             ref="country"
             value="GB" />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="Full name"
             ref="name"
@@ -109,7 +91,7 @@ describe('AddressForm', function() {
               error: 'This field is required.'
             }]}
             value={undefined} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="Address line 1"
             ref="line1"
@@ -119,13 +101,13 @@ describe('AddressForm', function() {
               error: 'This field is required.'
             }]}
             value={undefined} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="Address line 2 (optional)"
             ref="line2"
             required={false}
             value={undefined} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="State/province"
             ref="state"
@@ -137,7 +119,7 @@ describe('AddressForm', function() {
             value={undefined} />
           <div className="twelve-col">
             <div className="six-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="Town/city"
                 ref="city"
@@ -149,7 +131,7 @@ describe('AddressForm', function() {
                 value={undefined} />
             </div>
             <div className="six-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="Postcode"
                 ref="postcode"
@@ -161,7 +143,7 @@ describe('AddressForm', function() {
                 value={undefined}/>
             </div>
             <div className="twelve-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="Phone number"
                 ref="phoneNumber"
@@ -180,7 +162,7 @@ describe('AddressForm', function() {
 
   it('can display the form without some fields', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}
@@ -191,7 +173,7 @@ describe('AddressForm', function() {
     const expected = (
       <div className="address-form">
         <div>
-          <juju.components.InsetSelect
+          <InsetSelect
             disabled={false}
             label="Country"
             options={[{
@@ -201,7 +183,7 @@ describe('AddressForm', function() {
             ref="country"
             value="GB" />
           {null}
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="Address line 1"
             ref="line1"
@@ -211,13 +193,13 @@ describe('AddressForm', function() {
               error: 'This field is required.'
             }]}
             value={undefined} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="Address line 2 (optional)"
             ref="line2"
             required={false}
             value={undefined} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={false}
             label="State/province"
             ref="state"
@@ -229,7 +211,7 @@ describe('AddressForm', function() {
             value={undefined} />
           <div className="twelve-col">
             <div className="six-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="Town/city"
                 ref="city"
@@ -241,7 +223,7 @@ describe('AddressForm', function() {
                 value={undefined} />
             </div>
             <div className="six-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="Postcode"
                 ref="postcode"
@@ -261,7 +243,7 @@ describe('AddressForm', function() {
 
   it('can validate the form', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}
@@ -275,7 +257,7 @@ describe('AddressForm', function() {
     getCountries = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={addNotification}
         disabled={false}
         getCountries={getCountries}
@@ -292,7 +274,7 @@ describe('AddressForm', function() {
     const abort = sinon.stub();
     getCountries = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}
@@ -304,7 +286,7 @@ describe('AddressForm', function() {
 
   it('can get the address', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}
@@ -326,7 +308,7 @@ describe('AddressForm', function() {
 
   it('can get the address without some fields', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AddressForm
+      <AddressForm
         addNotification={sinon.stub()}
         disabled={false}
         getCountries={getCountries}

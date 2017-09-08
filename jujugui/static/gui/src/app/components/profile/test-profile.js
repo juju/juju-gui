@@ -1,23 +1,21 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const ProfileNavigation = require('./navigation/navigation');
+const ProfileHeader = require('./header/header');
+const ProfileModelList = require('./model-list/model-list');
+const Profile = require('./profile');
+const Panel = require('../panel/panel');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Profile', function() {
-  let Profile;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile', function() {
-      Profile = juju.components.Profile;
-      done();
-    });
-  });
 
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
-      <window.juju.components.Profile
+      <Profile
         acl={{}}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
@@ -39,16 +37,16 @@ describe('Profile', function() {
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expected = (
-      <juju.components.Panel
+      <Panel
         instanceName="profile"
         visible={true}>
-        <juju.components.ProfileHeader />
+        <ProfileHeader />
         <div className="profile__content">
-          <juju.components.ProfileNavigation
+          <ProfileNavigation
             activeSection={Profile.sectionsMap.entries().next().value[0]}
             changeState={instance.props.changeState}
             sectionsMap={Profile.sectionsMap} />
-          <juju.components.ProfileModelList
+          <ProfileModelList
             acl={instance.props.acl}
             addNotification={instance.props.addNotification}
             baseURL={instance.props.baseURL}
@@ -59,7 +57,7 @@ describe('Profile', function() {
             switchModel={instance.props.switchModel}
             userInfo={instance.props.userInfo} />
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
     expect(output).toEqualJSX(expected);
   });

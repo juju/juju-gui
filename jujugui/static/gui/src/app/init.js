@@ -1,23 +1,12 @@
-// /* Copyright (C) 2017 Canonical Ltd. */
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 /*
-  In an effort to develop this init.js along side with the rest of the
-  app here are the changes you'll have to manually change to continue
-  working on the new system.
-
-  index.html.mako
-    - Uncomment the init-pkg.js script tags lines 300, 308.
-    - Uncomment the initialization code lines 353, 354.
-    - Comment the old init code lines 352, 357.
-  Makefile
-    - Uncomment the hack to generate the init-pkg file Line 221.
-
   Code to still move over from app.js
     - Y.juju.Cookies Line 50.
-    - widgets.AutodeployExtension Line 49.
 */
-
+const React = require('react');
+const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const utils = require('./init/utils');
@@ -26,6 +15,13 @@ const csUser = require('./init/charmstore-user');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
+
+// Hacks untill all of the global references have been removed.
+window.jsyaml = require('js-yaml');
+// Required for the envionment.js file.
+window.ReactDOM = ReactDOM;
+window.React = React;
+juju.components.Environment = require('./components/environment/environment');
 
 const yui = window.yui;
 
@@ -319,7 +315,10 @@ class GUIApp {
     */
     this.topology = this._renderTopology();
     this._renderComponents();
-    this.state.bootstrap();
+    const result = this.state.bootstrap();
+    if (result.error) {
+      console.error(result.error);
+    }
   }
 
   /**
@@ -342,7 +341,7 @@ class GUIApp {
     // Bind switchModel separately to include the already bound
     // addNotifications.
     this._bound.switchModel = yui.juju.views.utils.switchModel.bind(
-      this, this.env, this._bound.addNotification);
+      this, this.modelAPI, this._bound.addNotification);
   }
 
   /**
@@ -489,6 +488,7 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
+      ['*', this._renderComponents.bind(this)],
       ['root',
         this._rootDispatcher.bind(this),
         this._clearRoot.bind(this)],
@@ -1164,7 +1164,7 @@ class GUIApp {
           uuid: this.modelUUID,
           server: publicHost.value,
           port: publicHost.port
-        }, null, null, null, true, false));
+        }), null, null, null, true, false);
     });
   }
 
@@ -1629,8 +1629,8 @@ class GUIApp {
     // Detach event listeners.
     const remove = document.removeEventListener;
     const handlers = this._domEventHandlers;
-    this._hotkeyListener.detach();
     const ecsListener = handlers['renderDeploymentBarListener'];
+    remove('keydown', this._hotkeyListener);
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);
     remove('login', handlers['controllerLoginHandler']);

@@ -1,32 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const UnitDetails = require('./unit-details');
+const ButtonRow = require('../../button-row/button-row');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UnitDetails', function() {
   var acl, fakeUnit, service;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('unit-details', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -52,7 +35,7 @@ describe('UnitDetails', function() {
 
   it('shows the unit properties', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -101,7 +84,7 @@ describe('UnitDetails', function() {
   it('does not render workload status message when not provided', function() {
     fakeUnit.workloadStatusMessage = '';
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -150,7 +133,7 @@ describe('UnitDetails', function() {
     fakeUnit.workloadStatus = '';
     fakeUnit.workloadStatusMessage = '';
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -193,7 +176,7 @@ describe('UnitDetails', function() {
   it('does not render statuses if uncommitted', function() {
     fakeUnit.agent_state = '';
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -244,7 +227,7 @@ describe('UnitDetails', function() {
       id: 'unit1'
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
@@ -329,7 +312,7 @@ describe('UnitDetails', function() {
       }
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
@@ -393,7 +376,7 @@ describe('UnitDetails', function() {
   it('shows no addresses if no addresses are unavailable', function() {
     fakeUnit = {agent_state: 'started', id: 'unit1'};
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
@@ -434,7 +417,7 @@ describe('UnitDetails', function() {
       id: 'unit1'
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
@@ -492,7 +475,7 @@ describe('UnitDetails', function() {
       id: 'unit1'
     };
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
@@ -538,7 +521,7 @@ describe('UnitDetails', function() {
 
   it('renders the remove button', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -549,14 +532,14 @@ describe('UnitDetails', function() {
       title: 'Remove',
       action: output.props.children[1].props.buttons[0].action
     }];
-    const expectedOutput = <juju.components.ButtonRow buttons={buttons} />;
+    const expectedOutput = <ButtonRow buttons={buttons} />;
     expect(output.props.children[1]).toEqualJSX(expectedOutput);
   });
 
   it('can disable remove button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -567,7 +550,7 @@ describe('UnitDetails', function() {
       title: 'Remove',
       action: output.props.children[1].props.buttons[0].action
     }];
-    const expectedOutput = <juju.components.ButtonRow buttons={buttons} />;
+    const expectedOutput = <ButtonRow buttons={buttons} />;
     expect(output.props.children[1]).toEqualJSX(expectedOutput);
   });
 
@@ -575,7 +558,7 @@ describe('UnitDetails', function() {
     const destroyUnits = sinon.stub();
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -590,7 +573,7 @@ describe('UnitDetails', function() {
     const destroyUnits = sinon.stub();
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -613,7 +596,7 @@ describe('UnitDetails', function() {
     const destroyUnits = sinon.stub();
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
+      <UnitDetails
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}

@@ -1,35 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentCredentialAdd = require('./add');
+const SvgIcon = require('../../../svg-icon/svg-icon');
+const InsetSelect = require('../../../inset-select/inset-select');
+const GenericInput = require('../../../generic-input/generic-input');
+const ButtonRow = require('../../../button-row/button-row');
+const FileField = require('../../../file-field/file-field');
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('DeploymentCredentialAdd', function() {
   let acl, sendAnalytics, getCloudProviderDetails;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-credential-add', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -98,7 +81,7 @@ describe('DeploymentCredentialAdd', function() {
   it('can render without a cloud', function() {
     var cloud = getCloudProviderDetails('gce');
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -123,14 +106,14 @@ describe('DeploymentCredentialAdd', function() {
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Project ID (credential name)"
               required={true}
@@ -151,7 +134,7 @@ describe('DeploymentCredentialAdd', function() {
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
               a message
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Authentication type"
                 onChange={instance._handleAuthChange}
@@ -163,7 +146,7 @@ describe('DeploymentCredentialAdd', function() {
                   value: 'jsonfile'
                 }]} />
               {[
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={false}
                   key="client-id"
@@ -176,7 +159,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={false}
                   key="client-email"
@@ -189,7 +172,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={false}
                   key="private-key"
@@ -202,7 +185,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={false}
                   key="project-id"
@@ -212,7 +195,7 @@ describe('DeploymentCredentialAdd', function() {
                   ref="project-id"
                   type={undefined}
                   validate={undefined} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={false}
                   key="password"
@@ -226,7 +209,7 @@ describe('DeploymentCredentialAdd', function() {
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
@@ -239,7 +222,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>);
@@ -248,7 +231,7 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can render without a cancel button', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -275,7 +258,7 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can update to a new cloud', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -291,7 +274,7 @@ describe('DeploymentCredentialAdd', function() {
         validateForm={sinon.stub()} />, true);
     let output = renderer.getRenderOutput();
     renderer.render(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -316,14 +299,14 @@ describe('DeploymentCredentialAdd', function() {
             target="_blank">
             Sign up for {'Amazon Web Services'}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Credential name"
               required={true}
@@ -346,7 +329,7 @@ describe('DeploymentCredentialAdd', function() {
               a message
               {undefined}
               {[
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={true}
                   disabled={false}
                   key="access-key"
@@ -359,7 +342,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={false}
                   disabled={false}
                   key="secret-key"
@@ -376,7 +359,7 @@ describe('DeploymentCredentialAdd', function() {
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
@@ -389,7 +372,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>);
@@ -399,7 +382,7 @@ describe('DeploymentCredentialAdd', function() {
   it('can render credential fields for a cloud', function() {
     var cloud = getCloudProviderDetails('gce');
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -424,14 +407,14 @@ describe('DeploymentCredentialAdd', function() {
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Project ID (credential name)"
               required={true}
@@ -456,7 +439,7 @@ describe('DeploymentCredentialAdd', function() {
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
               a message
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Authentication type"
                 onChange={instance._handleAuthChange}
@@ -467,7 +450,7 @@ describe('DeploymentCredentialAdd', function() {
                   label: 'jsonfile',
                   value: 'jsonfile'
                 }]} />
-              {[<juju.components.GenericInput
+              {[<GenericInput
                 autocomplete={undefined}
                 disabled={false}
                 key="client-id"
@@ -480,7 +463,7 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <GenericInput
                 autocomplete={undefined}
                 disabled={false}
                 key="client-email"
@@ -493,7 +476,7 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <GenericInput
                 autocomplete={undefined}
                 disabled={false}
                 key="private-key"
@@ -506,7 +489,7 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <GenericInput
                 autocomplete={undefined}
                 disabled={false}
                 key="project-id"
@@ -516,7 +499,7 @@ describe('DeploymentCredentialAdd', function() {
                 ref="project-id"
                 type={undefined}
                 validate={undefined} />,
-              <juju.components.GenericInput
+              <GenericInput
                 autocomplete={undefined}
                 disabled={false}
                 key="password"
@@ -530,7 +513,7 @@ describe('DeploymentCredentialAdd', function() {
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
@@ -543,7 +526,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>);
@@ -553,7 +536,7 @@ describe('DeploymentCredentialAdd', function() {
   it('can render a cloud with a json field', function() {
     var cloud = getCloudProviderDetails('gce');
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -579,14 +562,14 @@ describe('DeploymentCredentialAdd', function() {
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Project ID (credential name)"
               required={true}
@@ -607,7 +590,7 @@ describe('DeploymentCredentialAdd', function() {
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
               a message
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Authentication type"
                 onChange={instance._handleAuthChange}
@@ -620,7 +603,7 @@ describe('DeploymentCredentialAdd', function() {
                 }]} />
               {[
                 <div className="deployment-credential-add__upload" key="file">
-                  <juju.components.FileField
+                  <FileField
                     accept=".json"
                     disabled={false}
                     key="file"
@@ -632,7 +615,7 @@ describe('DeploymentCredentialAdd', function() {
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
@@ -645,7 +628,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>);
@@ -656,7 +639,7 @@ describe('DeploymentCredentialAdd', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var cloud = getCloudProviderDetails('gce');
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -681,14 +664,14 @@ describe('DeploymentCredentialAdd', function() {
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="Project ID (credential name)"
               required={true}
@@ -709,7 +692,7 @@ describe('DeploymentCredentialAdd', function() {
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
               a message
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={true}
                 label="Authentication type"
                 onChange={instance._handleAuthChange}
@@ -721,7 +704,7 @@ describe('DeploymentCredentialAdd', function() {
                   value: 'jsonfile'
                 }]} />
               {[
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={true}
                   key="client-id"
@@ -734,7 +717,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={true}
                   key="client-email"
@@ -747,7 +730,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={true}
                   key="private-key"
@@ -760,7 +743,7 @@ describe('DeploymentCredentialAdd', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={true}
                   key="project-id"
@@ -770,7 +753,7 @@ describe('DeploymentCredentialAdd', function() {
                   ref="project-id"
                   type={undefined}
                   validate={undefined} />,
-                <juju.components.GenericInput
+                <GenericInput
                   autocomplete={undefined}
                   disabled={true}
                   key="password"
@@ -784,7 +767,7 @@ describe('DeploymentCredentialAdd', function() {
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="general-action-blue"
                   size="16" />
                 Credentials are stored securely on our servers and we will
@@ -797,7 +780,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>);
@@ -808,7 +791,7 @@ describe('DeploymentCredentialAdd', function() {
     var updateCloudCredential = sinon.stub().callsArg(3);
     const getCredentials = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -869,7 +852,7 @@ describe('DeploymentCredentialAdd', function() {
   it('properly unescapes necessary fields', function() {
     const updateCloudCredential = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -919,7 +902,7 @@ describe('DeploymentCredentialAdd', function() {
   it('does not submit the form if there are validation errors', function() {
     var updateCloudCredential = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -943,7 +926,7 @@ describe('DeploymentCredentialAdd', function() {
     const updateCloudCredential = sinon.stub().callsArgWith(3, error);
     const addNotification = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={acl}
         addNotification={addNotification}
         updateCloudCredential={updateCloudCredential}

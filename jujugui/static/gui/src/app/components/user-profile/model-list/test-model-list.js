@@ -1,32 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const CreateModelButton = require('../../create-model-button/create-model-button');
+const DateDisplay = require('../../date-display/date-display');
+const Popup = require('../../popup/popup');
+const Spinner = require('../../spinner/spinner');
+const UserProfileEntity = require('../entity/entity');
+const UserProfileModelList = require('./model-list');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileModelList', () => {
   let models, userInfo;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('user-profile-model-list', () => { done(); });
-  });
 
   beforeEach(() => {
     models = [{
@@ -65,7 +52,7 @@ describe('UserProfileModelList', () => {
     };
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -89,7 +76,7 @@ describe('UserProfileModelList', () => {
             </span>
           </div>
           <div className="right">
-            <juju.components.CreateModelButton
+            <CreateModelButton
               changeState={changeState}
               switchModel={instance.props.switchModel} />
           </div>
@@ -108,7 +95,7 @@ describe('UserProfileModelList', () => {
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: false};
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -143,7 +130,7 @@ describe('UserProfileModelList', () => {
 
   it('displays loading spinner when loading', () => {
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -157,7 +144,7 @@ describe('UserProfileModelList', () => {
     const output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__model-list twelve-col">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -170,7 +157,7 @@ describe('UserProfileModelList', () => {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
@@ -195,7 +182,7 @@ describe('UserProfileModelList', () => {
             </span>
           </div>
           <div className="right">
-            <juju.components.CreateModelButton
+            <CreateModelButton
               changeState={changeState}
               switchModel={instance.props.switchModel} />
           </div>
@@ -222,7 +209,7 @@ describe('UserProfileModelList', () => {
               Last accessed
             </span>
           </li>
-          {[<juju.components.UserProfileEntity
+          {[<UserProfileEntity
             acl={acl}
             addNotification={addNotification}
             displayConfirmation={content[1][0].props.displayConfirmation}
@@ -248,11 +235,11 @@ describe('UserProfileModelList', () => {
               write
             </span>
             <span className="user-profile__list-col two-col last-col">
-              <juju.components.DateDisplay
+              <DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
             </span>
-          </juju.components.UserProfileEntity>]}
+          </UserProfileEntity>]}
         </ul>
         {undefined}
       </div>
@@ -320,7 +307,7 @@ describe('UserProfileModelList', () => {
     };
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
@@ -370,7 +357,7 @@ describe('UserProfileModelList', () => {
               Last accessed
             </span>
           </li>
-          {[<juju.components.UserProfileEntity
+          {[<UserProfileEntity
             acl={acl}
             addNotification={addNotification}
             displayConfirmation={content[1][0].props.displayConfirmation}
@@ -396,12 +383,12 @@ describe('UserProfileModelList', () => {
               write
             </span>
             <span className="user-profile__list-col two-col last-col">
-              <juju.components.DateDisplay
+              <DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
             </span>
-          </juju.components.UserProfileEntity>,
-          <juju.components.UserProfileEntity
+          </UserProfileEntity>,
+          <UserProfileEntity
             acl={acl}
             addNotification={addNotification}
             displayConfirmation={content[1][1].props.displayConfirmation}
@@ -427,11 +414,11 @@ describe('UserProfileModelList', () => {
               write
             </span>
             <span className="user-profile__list-col two-col last-col">
-              <juju.components.DateDisplay
+              <DateDisplay
                 date='2016-09-12T15:42:09Z'
                 relative={true}/>
             </span>
-          </juju.components.UserProfileEntity>]}
+          </UserProfileEntity>]}
         </ul>
         {undefined}
       </div>
@@ -443,7 +430,7 @@ describe('UserProfileModelList', () => {
     models[0].isAlive = false;
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -467,7 +454,7 @@ describe('UserProfileModelList', () => {
       canAddModels: () => false
     };
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         acl={acl}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         models={[]}
@@ -482,7 +469,7 @@ describe('UserProfileModelList', () => {
   it('can display a confirmation when models are to be destroyed', () => {
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -497,7 +484,7 @@ describe('UserProfileModelList', () => {
     output.props.children[1].props.children[1][0].props.displayConfirmation();
     output = component.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <Popup
         buttons={output.props.children[2].props.buttons}
         title="Destroy model">
         <p>
@@ -505,7 +492,7 @@ describe('UserProfileModelList', () => {
           applications and units included in the model will be destroyed.
           This action cannot be undone.
         </p>
-      </juju.components.Popup>);
+      </Popup>);
     expect(output.props.children[2]).toEqualJSX(expected);
   });
 
@@ -517,7 +504,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub().callsArgWith(1, null, results);
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -551,7 +538,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -583,7 +570,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -611,7 +598,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub().callsArgWith(1, error, null);
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -643,7 +630,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub().callsArgWith(1, null, statuses);
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -671,7 +658,7 @@ describe('UserProfileModelList', () => {
     const destroyModels = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
         currentModel={'model1'}
@@ -702,7 +689,7 @@ describe('UserProfileModelList', () => {
   it('handles errors when getting ', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
+      <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
         currentModel={'model1'}

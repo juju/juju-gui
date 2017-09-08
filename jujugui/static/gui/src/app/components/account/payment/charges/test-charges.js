@@ -1,35 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AccountPaymentCharges = require('./charges');
+const ReceiptPopup = require('./receipt-popup/receipt-popup');
+const DateDisplay = require('../../../date-display/date-display');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const GenericButton = require('../../../generic-button/generic-button');
+const Spinner = require('../../../spinner/spinner');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('AccountPaymentCharges', function() {
   let acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment-charges', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -37,7 +21,7 @@ describe('AccountPaymentCharges', function() {
 
   it('can display the loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         getCharges={sinon.stub()}
@@ -45,7 +29,7 @@ describe('AccountPaymentCharges', function() {
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Spinner />);
+      <Spinner />);
     expect(output.props.children.props.children[1]).toEqualJSX(expected);
   });
 
@@ -65,7 +49,7 @@ describe('AccountPaymentCharges', function() {
       }]
     }]);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         getCharges={getCharges}
@@ -96,7 +80,7 @@ describe('AccountPaymentCharges', function() {
                 Total
               </div>
             </li>
-            <juju.components.ExpandingRow
+            <ExpandingRow
               classes={{
                 'twelve-col': true,
                 'user-profile__list-row': true
@@ -108,7 +92,7 @@ describe('AccountPaymentCharges', function() {
                   12344
                 </div>
                 <div className="two-col no-margin-bottom">
-                  <juju.components.DateDisplay
+                  <DateDisplay
                     date="2016-01-02T15:04:05Z"
                     relative={true} />
                 </div>
@@ -122,7 +106,7 @@ describe('AccountPaymentCharges', function() {
                   {120} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
-                  <juju.components.GenericButton
+                  <GenericButton
                     action={
                       output.props.children.props.children[1]
                         .props.children[1][0].props.children[0]
@@ -130,7 +114,7 @@ describe('AccountPaymentCharges', function() {
                     disabled={false}
                     type="inline-neutral">
                     Show receipt
-                  </juju.components.GenericButton>
+                  </GenericButton>
                 </div>
               </div>
               <div className="twelve-col">
@@ -169,7 +153,7 @@ describe('AccountPaymentCharges', function() {
                   </ul>
                 </div>
               </div>
-            </juju.components.ExpandingRow>
+            </ExpandingRow>
           </ul>
           {null}
         </div>
@@ -180,7 +164,7 @@ describe('AccountPaymentCharges', function() {
   it('can display when there are no charges', function() {
     const getCharges = sinon.stub().callsArgWith(1, null, []);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         getCharges={getCharges}
@@ -213,7 +197,7 @@ describe('AccountPaymentCharges', function() {
       lineItems: []
     }]);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         getCharges={getCharges}
@@ -244,7 +228,7 @@ describe('AccountPaymentCharges', function() {
                 Total
               </div>
             </li>
-            <juju.components.ExpandingRow
+            <ExpandingRow
               classes={{
                 'twelve-col': true,
                 'user-profile__list-row': true
@@ -256,7 +240,7 @@ describe('AccountPaymentCharges', function() {
                   12344
                 </div>
                 <div className="two-col no-margin-bottom">
-                  <juju.components.DateDisplay
+                  <DateDisplay
                     date="2016-01-02T15:04:05Z"
                     relative={true} />
                 </div>
@@ -270,7 +254,7 @@ describe('AccountPaymentCharges', function() {
                   {120} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
-                  <juju.components.GenericButton
+                  <GenericButton
                     action={
                       output.props.children.props.children[1]
                         .props.children[1][0].props.children[0]
@@ -278,7 +262,7 @@ describe('AccountPaymentCharges', function() {
                     disabled={false}
                     type="inline-neutral">
                     Show receipt
-                  </juju.components.GenericButton>
+                  </GenericButton>
                 </div>
               </div>
               <div className="twelve-col">
@@ -286,7 +270,7 @@ describe('AccountPaymentCharges', function() {
                   There are no items for this charge.
                 </div>
               </div>
-            </juju.components.ExpandingRow>
+            </ExpandingRow>
           </ul>
           {null}
         </div>
@@ -298,7 +282,7 @@ describe('AccountPaymentCharges', function() {
     const addNotification = sinon.stub();
     const getCharges = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={addNotification}
         getCharges={getCharges}
@@ -325,7 +309,7 @@ describe('AccountPaymentCharges', function() {
     const addNotification = sinon.stub();
     const getReceipt = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={addNotification}
         getCharges={getCharges}
@@ -338,7 +322,7 @@ describe('AccountPaymentCharges', function() {
       .props.children[5].props.children.props.action();
     output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={addNotification}
         close={instance._togglePopup}
         chargeId="TEST-12344"
@@ -350,7 +334,7 @@ describe('AccountPaymentCharges', function() {
     const abort = sinon.stub();
     const getCharges = sinon.stub().returns({abort: abort});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentCharges
+      <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         getCharges={getCharges}

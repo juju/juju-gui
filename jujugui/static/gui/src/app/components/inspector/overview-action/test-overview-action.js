@@ -1,41 +1,21 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const OverviewAction = require('./overview-action');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('OverviewAction', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('overview-action', function() { done(); });
-  });
 
   it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={callbackStub}
         title="spinach" />);
     var output = shallowRenderer.getRenderOutput();
@@ -46,7 +26,7 @@ describe('OverviewAction', function() {
   it('displays the provided title', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         title="My action" />);
     var output = shallowRenderer.getRenderOutput();
@@ -55,13 +35,13 @@ describe('OverviewAction', function() {
 
   it('sets the provided icon', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         icon="action-icon"
         title="spinach" />);
     assert.deepEqual(output.props.children[0],
       <span className="overview-action__icon">
-        <juju.components.SvgIcon name="action-icon"
+        <SvgIcon name="action-icon"
           size="16" />
       </span>);
   });
@@ -69,7 +49,7 @@ describe('OverviewAction', function() {
   it('sets the link', function() {
     var linkAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         linkAction={linkAction}
         linkTitle="Juju Charms"
@@ -86,7 +66,7 @@ describe('OverviewAction', function() {
     var linkAction = sinon.stub();
     var stopPropagation = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         linkAction={linkAction}
         linkTitle="Juju Charms"
@@ -101,7 +81,7 @@ describe('OverviewAction', function() {
   it('hides the link if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         title="spinach" />);
     var output = shallowRenderer.getRenderOutput();
@@ -112,7 +92,7 @@ describe('OverviewAction', function() {
   it('sets the value', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         title="spinach"
         value="5" />);
@@ -123,7 +103,7 @@ describe('OverviewAction', function() {
   it('sets the value type class', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         title="spinach"
         value="5"
@@ -136,7 +116,7 @@ describe('OverviewAction', function() {
   it('hides the value if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.OverviewAction
+      <OverviewAction
         action={sinon.stub()}
         title="spinach" />);
     var output = shallowRenderer.getRenderOutput();

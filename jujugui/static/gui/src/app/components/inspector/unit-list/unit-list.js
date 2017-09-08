@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const ButtonRow = require('../../button-row/button-row');
+const CheckListItem = require('../../check-list-item/check-list-item');
+const OverviewAction = require('../overview-action/overview-action');
 
 class UnitList extends React.Component {
   constructor() {
@@ -148,7 +137,7 @@ class UnitList extends React.Component {
   _generateUnitList(group) {
     var key = group.key;
     var unitList = [
-      <juju.components.CheckListItem
+      <CheckListItem
         aside={group.count + ''}
         disabled={this.props.acl.isReadOnly()}
         key={key}
@@ -160,7 +149,7 @@ class UnitList extends React.Component {
     group.units.forEach((unit) => {
       var ref = 'CheckListItem-' + unit.id;
       unitList.push(
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={this.props.acl.isReadOnly()}
           key={unit.displayName}
           ref={ref}
@@ -291,7 +280,7 @@ class UnitList extends React.Component {
       disabled: disabled
     });
     return (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
   }
 
@@ -309,7 +298,7 @@ class UnitList extends React.Component {
     }
     return (
       <div className="unit-list__actions">
-        <juju.components.OverviewAction
+        <OverviewAction
           action={this._navigate.bind(this)}
           icon="plus_box_16"
           title="Scale application" />
@@ -337,10 +326,4 @@ UnitList.propTypes = {
   units: PropTypes.array.isRequired
 };
 
-YUI.add('unit-list', function() {
-  juju.components.UnitList = UnitList;
-}, '0.1.0', { requires: [
-  'overview-action',
-  'button-row',
-  'check-list-item'
-]});
+module.exports = UnitList;

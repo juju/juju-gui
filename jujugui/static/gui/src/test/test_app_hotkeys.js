@@ -18,33 +18,69 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+
+const Keysim = require('keysim');
+const utils = require('./utils');
+
 describe('application hotkeys', function() {
-  let app, container, env, juju, jujuConfig, utils;
-  const requirements = [
-    'juju-gui',
-    'juju-tests-utils',
-    'node-event-simulate',
-    'modal-gui-settings',
-    'modal-shortcuts'
-  ];
+  let app, container, env, juju, jujuConfig;
   const keyboard = Keysim.Keyboard.US_ENGLISH;
 
   before(function(done) {
-    YUI(GlobalConfig).use(requirements, function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+    // The module list is copied from index.html.mako and is required by
+    // init.js.
+    YUI(GlobalConfig).use([
+      'acl',
+      'analytics',
+      'changes-utils',
+      'juju-charm-models',
+      'juju-bundle-models',
+      'juju-controller-api',
+      'juju-endpoints-controller',
+      'juju-env-base',
+      'juju-env-api',
+      'juju-env-web-handler',
+      'juju-models',
+      'jujulib-utils',
+      'bakery-utils',
+      'net-utils',
+      // juju-views group
+      'd3-components',
+      'juju-view-utils',
+      'juju-topology',
+      'juju-view-environment',
+      'juju-landscape',
+      // end juju-views group
+      'io',
+      'json-parse',
+      'app-base',
+      'app-transitions',
+      'base',
+      'bundle-importer',
+      'bundle-import-notifications',
+      'node',
+      'model',
+      'app-cookies-extension',
+      'app-renderer-extension',
+      'cookie',
+      'querystring',
+      'event-key',
+      'event-touch',
+      'model-controller',
+      'FileSaver',
+      'ghost-deployer-extension',
+      'environment-change-set',
+      'relation-utils',
+      'yui-patches'], function(Y) {
+      // init.js requires the window to contain the YUI object.
+      window.yui = Y;
       juju = Y.namespace('juju');
-
+      // The require needs to be after the yui modules have been loaded.
+      const JujuGUI = require('../app/init');
       // 02-05-2016 Luke: I've moved this to 'before' rather then 'beforeEach'.
       // 'beforeEach' duplicated the 'keydown' event listener on subsequent
       // inits of the 'container' 'app' resulting in keyboard events firing
       // multiple times.
-      jujuConfig = window.juju_config;
-      window.juju_config = {
-        flags: {},
-        charmstoreURL: 'http://1.2.3.4/',
-        plansURL: 'http://plans.example.com/',
-        termsURL: 'http://terms.example.com/'
-      };
       container = utils.makeAppContainer();
       const userClass = new window.jujugui.User({storage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -54,24 +90,22 @@ describe('application hotkeys', function() {
         user: userClass
       });
       env.connect();
-      app = new Y.juju.App({
+      app = new JujuGUI({
         baseUrl: 'http://example.com/',
+        flags: {},
+        charmstoreURL: 'http://1.2.3.4/',
+        plansURL: 'http://plans.example.com/',
+        termsURL: 'http://terms.example.com/',
         consoleEnabled: true,
         controllerAPI: new juju.ControllerAPI({
           conn: new utils.SocketStub(),
           user: userClass
         }),
         env: env,
-        container: container,
-        viewContainer: container,
         jujuCoreVersion: '2.0.0',
         controllerSocketTemplate: '',
         user: userClass
       });
-      app.showView(new Y.View());
-      app.activateHotkeys();
-      app.render();
-
       done();
     });
   });
@@ -79,7 +113,7 @@ describe('application hotkeys', function() {
   after(function(done) {
     window.juju_config = jujuConfig;
     env.close(() => {
-      app.destroy({remove: true});
+      app.destructor();
       container.remove(true);
       done();
     });

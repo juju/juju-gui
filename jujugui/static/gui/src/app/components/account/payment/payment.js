@@ -1,22 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const Spinner = require('../../spinner/spinner');
+const AccountPaymentCharges = require('./charges/charges');
+const AccountPaymentDetails = require('./details/details');
+const AccountPaymentMethods = require('./methods/methods');
+const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const GenericButton = require('../../generic-button/generic-button');
 
 class AccountPayment extends React.Component {
   constructor() {
@@ -104,7 +96,7 @@ class AccountPayment extends React.Component {
   _generatePaymentDetails() {
     return (
       <div>
-        <juju.components.AccountPaymentMethods
+        <AccountPaymentMethods
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           createCardElement={this.props.createCardElement}
@@ -117,7 +109,7 @@ class AccountPayment extends React.Component {
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
-        <juju.components.AccountPaymentDetails
+        <AccountPaymentDetails
           acl={this.props.acl}
           addAddress={this.props.addAddress}
           addBillingAddress={this.props.addBillingAddress}
@@ -131,7 +123,7 @@ class AccountPayment extends React.Component {
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
-        <juju.components.AccountPaymentCharges
+        <AccountPaymentCharges
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           getCharges={this.props.getCharges}
@@ -152,7 +144,7 @@ class AccountPayment extends React.Component {
           Payment details
         </h2>
         <div className="twelve-col">
-          <juju.components.CreatePaymentUser
+          <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             createCardElement={this.props.createCardElement}
@@ -179,11 +171,11 @@ class AccountPayment extends React.Component {
         </h2>
         <div className="account-payment__no-user">
           You are not set up to make payments.
-          <juju.components.GenericButton
+          <GenericButton
             action={this._toggleAdd.bind(this)}
             type="inline-neutral">
             Set up payments
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>
       </div>);
   }
@@ -192,7 +184,7 @@ class AccountPayment extends React.Component {
     let content;
     if (this.state.loading) {
       content = (
-        <juju.components.Spinner />);
+        <Spinner />);
     } else if (this.state.paymentUser) {
       content = this._generatePaymentDetails();
     } else if (this.state.showAdd) {
@@ -231,14 +223,4 @@ AccountPayment.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('account-payment', function() {
-  juju.components.AccountPayment = AccountPayment;
-}, '0.1.0', {
-  requires: [
-    'account-payment-charges',
-    'account-payment-details',
-    'account-payment-methods',
-    'create-payment-user',
-    'loading-spinner'
-  ]
-});
+module.exports = AccountPayment;
