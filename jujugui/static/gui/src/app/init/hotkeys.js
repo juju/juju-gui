@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const ReactDOM = require('react-dom');
+
 const yui = window.yui;
 
 const keyBindings = {
@@ -87,7 +89,7 @@ const activate = function(context) {
     tab: 9, pageup: 33, pagedown: 34};
   const code_map = {};
   Object.keys(key_map).forEach(k => code_map[key_map[k]] = k);
-  return document.addEventListener('keydown', evt => {
+  const listener = evt => {
     // Normalize key-code
     // This gets triggered by different types of elements some YUI some
     // React. So try and use the native tagName property first, if that
@@ -150,7 +152,10 @@ const activate = function(context) {
       // If we handled the event nothing else has to.
       evt.stopPropagation();
     }
-  });
+  };
+  const boundListener = listener.bind(this);
+  document.addEventListener('keydown', boundListener);
+  return boundListener;
 };
 
 module.exports = {activate, keyBindings};
