@@ -62,7 +62,11 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/statsd.js',
       'jujugui/static/gui/build/app/utils/test-statsd.js',
       'jujugui/static/gui/build/app/utils/github-ssh-keys.js',
-      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js'
+      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js',
+
+      'jujugui/static/gui/build/modules.js',
+      'jujugui/static/gui/src/test/globalconfig.js',
+      'jujugui/static/gui/src/test/test_app_hotkeys.js'
     ],
 
     // list of files to exclude
@@ -73,6 +77,8 @@ module.exports = function(config) {
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/test/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/test/test_app_hotkeys.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
     },
 
