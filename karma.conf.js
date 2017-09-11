@@ -66,6 +66,7 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/globalconfig.js',
+      'jujugui/static/gui/src/test/test-init.js',
       'jujugui/static/gui/src/test/test_app_hotkeys.js'
     ],
 
@@ -80,6 +81,12 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test-*.js': ['browserify'],
       'jujugui/static/gui/src/test/test_app_hotkeys.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
+    },
+
+    proxies: {
+      '/dev/combo': 'http://0.0.0.0:{TEST_PORT}/dev/combo?',
+      '/data': 'http://0.0.0.0:{TEST_PORT}/test/data',
+      '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:{TEST_PORT}/test/'
     },
 
     browserify: {

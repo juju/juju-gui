@@ -1,3 +1,7 @@
+var juju = {
+  utils: {},
+  components: {}
+};
 var flags = {};
 var zip = {};
 var origBeforeEach = Mocha.Suite.prototype.beforeEach;

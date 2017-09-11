@@ -1,7 +1,3 @@
-var juju = {
-  utils: {},
-  components: {}
-};
 var GlobalConfig = {
   combine: true,
   base: '/dev/combo?/app/assets/javascripts/yui/',
