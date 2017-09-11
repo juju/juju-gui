@@ -1,10 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-/*
-  Code to still move over from app.js
-    - Y.juju.Cookies Line 50.
-*/
 const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
@@ -12,6 +8,7 @@ const mixwith = require('mixwith');
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
+const cookieUtil = require('./init/cookie-util');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
@@ -79,11 +76,6 @@ class GUIApp {
       @type {Integer}
     */
     this._dragLeaveTimer = null;
-    /**
-      Reference to the juju.Cookies instance.
-      @type {juju.Cookies}
-    */
-    this._cookieHandler = null;
     /**
       The keydown event listener from the hotkey activation.
       @type {Object}
@@ -426,10 +418,8 @@ class GUIApp {
     @param {Function} next - The next route handler.
   */
   authorizeCookieUse(state, next) {
-    var GTM_enabled = this.GTM_enabled;
-    if (GTM_enabled) {
-      this._cookieHandler = this._cookieHandler || new yui.juju.Cookies();
-      this._cookieHandler.check();
+    if (this.applicationConfig.GTM_enabled) {
+      cookieUtil.check(document);
     }
     next();
   }
