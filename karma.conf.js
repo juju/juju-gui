@@ -46,6 +46,7 @@ module.exports = function(config) {
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
       'jujugui/static/gui/src/app/components/**/test-*.js',
+      'jujugui/static/gui/src/app/init/test-*.js',
 
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
@@ -71,6 +72,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
     },
 
@@ -94,7 +96,9 @@ module.exports = function(config) {
     colors: true,
 
     // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    // possible values:
+    // config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN ||
+    // config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
