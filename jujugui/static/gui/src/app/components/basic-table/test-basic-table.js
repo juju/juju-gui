@@ -202,7 +202,7 @@ describe('BasicTable', function() {
     assert.equal(rowItems[0].key, 'row-two-key');
   });
 
-  it('display row links', function() {
+  it('displays row links', function() {
     rows[0].clickState = {another: 'state'};
     const generatePath = sinon.stub().returns('http://example.com');
     const renderer = jsTestUtils.shallowRender(

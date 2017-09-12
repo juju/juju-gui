@@ -46,7 +46,6 @@ module.exports = function(config) {
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
       'jujugui/static/gui/src/app/components/**/test-*.js',
-      'jujugui/static/gui/src/app/init/test-*.js',
 
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
@@ -62,7 +61,12 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/statsd.js',
       'jujugui/static/gui/build/app/utils/test-statsd.js',
       'jujugui/static/gui/build/app/utils/github-ssh-keys.js',
-      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js'
+      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js',
+
+      'jujugui/static/gui/build/modules.js',
+      'jujugui/static/gui/src/test/globalconfig.js',
+      'jujugui/static/gui/src/app/test-*.js',
+      'jujugui/static/gui/src/app/init/test-*.js'
     ],
 
     // list of files to exclude
@@ -72,8 +76,15 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/app/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
+    },
+
+    proxies: {
+      '/dev/combo': 'http://0.0.0.0:8888/dev/combo?',
+      '/data': 'http://0.0.0.0:8888/test/data',
+      '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:8888/test/'
     },
 
     browserify: {

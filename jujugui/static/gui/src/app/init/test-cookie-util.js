@@ -41,15 +41,15 @@ describe('CookieUtil', () => {
   });
 
   it('closing the banner sets the cookie', () => {
+    const date = new Date('January 12, 2025');
     assert.equal(fakeDocument.cookie, '');
     cookieUtil.close(fakeDocument);
-    assert.equal(
-      fakeDocument.cookie,
-      '_cookies_accepted=true; expiry=Sun Jan 12 2025 00:00:00 GMT-0600 (CST)');
+    assert.equal(fakeDocument.cookie, `_cookies_accepted=true; expiry=${date}`);
   });
 
   it('the cookie prevents the node from being made visible', () => {
-    fakeDocument.cookie = '_cookies_accepted=true; expiry=Sun Jan 12 2025 00:00:00 GMT-0600 (CST)'; // eslint-disable-line max-len
+    const date = new Date('January 12, 2025');
+    fakeDocument.cookie = `_cookies_accepted=true; expiry=${date}`;
     cookieUtil.check(fakeDocument);
     assert.equal(container.children.length, 0);
   });

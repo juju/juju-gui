@@ -56,8 +56,8 @@ globals:
   jsyaml: true
   juju: true
   jujulib: true
-  Keysim: true
   marked: true
+  MODULES: true
   nacl: true
   Prism: true
   PropTypes: true

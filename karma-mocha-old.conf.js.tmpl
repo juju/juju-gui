@@ -23,10 +23,10 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'node_modules/keysim/dist/keysim.js',
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/assets/chai.js',
 
+      'jujugui/static/gui/src/test/test-setup.js',
       'jujugui/static/gui/src/test/globalconfig.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
@@ -66,7 +66,6 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/utils/jujulib-conversion-utils.js',
       // It's possible we can remove some or all of these above.
 
-      'jujugui/static/gui/src/test/test_app_hotkeys.js',
       'jujugui/static/gui/src/test/test_app.js',
       'jujugui/static/gui/src/test/test_autodeploy_extension.js',
       'jujugui/static/gui/src/test/test_bundle_import_notifications.js',
@@ -127,6 +126,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/test/test_*.js': ['browserify'],
+      'jujugui/static/gui/src/test/utils.js': ['browserify'],
     },
 
     browserify: {
