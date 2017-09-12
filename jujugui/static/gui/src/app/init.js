@@ -13,6 +13,8 @@ const cookieUtil = require('./init/cookie-util');
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
+const Notification = require('./components/notification/notification');
+
 // Hacks untill all of the global references have been removed.
 window.jsyaml = require('js-yaml');
 // Required for the envionment.js file.
@@ -114,13 +116,35 @@ class GUIApp {
     const cookieSetter = (value, callback) => {
       this.charmstore.setAuthCookie(value, callback);
     };
+
+    /**
+      Shows the login notification
+      @param {Object} content JSX of the content.
+    */
+    const showLoginNotification = (content) => {
+      const holder = document.getElementById('login-notification');
+      let dismiss = null;
+      if (stateGetter().root !== 'login') {
+        dismiss = () => {
+          ReactDOM.unmountComponentAtNode(holder);
+        };
+      }
+      ReactDOM.render(
+        <Notification
+          content={content}
+          dismiss={dismiss}
+          extraClasses="four-col"
+          isBlocking={true}
+        />, holder);
+    };
     /**
       A bakery instance.
       Used to perform requests on a macaroon authenticated endpoints.
       @type {Object}
     */
     this.bakery = yui.juju.bakeryutils.newBakery(
-      config, this.user, stateGetter, cookieSetter, webHandler);
+      config, this.user, stateGetter, cookieSetter, webHandler,
+      showLoginNotification);
     /**
       A charm store API client instance.
       Used to retrieve information about charms and bundles via the charm store.
