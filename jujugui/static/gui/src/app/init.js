@@ -15,8 +15,6 @@ const newBakery = require('./utils/bakery-utils');
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
-const Notification = require('./components/notification/notification');
-
 // Hacks untill all of the global references have been removed.
 window.jsyaml = require('js-yaml');
 // Required for the envionment.js file.
