@@ -56,7 +56,7 @@ describe('PostDeployment', () => {
     };
   };
 
-  it('renders without onboarding.md', () => {
+  it('renders without getstarted.md', () => {
     const rendered = renderComponent();
     const instance = rendered.instance;
     const output = rendered.output;
@@ -93,7 +93,7 @@ describe('PostDeployment', () => {
     const props = rendered.props;
     const instance = rendered.instance;
 
-    instance._getEntityCallback(null, [{id: 'test', files: ['onboarding.md']}]);
+    instance._getEntityCallback(null, [{id: 'test', files: ['getstarted.md']}]);
 
     const output = rendered.renderer.getRenderOutput();
 

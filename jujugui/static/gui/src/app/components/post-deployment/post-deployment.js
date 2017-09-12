@@ -53,23 +53,23 @@ class PostDeployment extends React.Component {
     });
 
     const files = entityData[0].files;
-    if (files && files.includes('onboarding.md')) {
+    if (files && files.includes('getstarted.md')) {
       this.props.getFile(
         this.props.entityId,
-        'onboarding.md',
-        this._getUsageCallback.bind(this)
+        'getstarted.md',
+        this._getGetStartedCallback.bind(this)
       );
     }
   }
 
   /**
-    Callback when usage.md is retrieved.
+    Callback when getstarted.md is retrieved.
     Even if there is an error we still want to display the basic box.
 
     @param {Object} error Error from the API.
     @param {String} usageContents The contents of the file.
   */
-  _getUsageCallback(error, usageContents) {
+  _getGetStartedCallback(error, usageContents) {
     if (error) {
       console.error(error);
     }
