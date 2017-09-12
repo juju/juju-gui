@@ -20,8 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 const Keysim = require('keysim');
-const hotkeys = require('../app/init/hotkeys');
-const utils = require('./utils');
+const hotkeys = require('./hotkeys');
+const utils = require('../../test/utils');
 
 describe('hotkeys', function() {
   const keyboard = Keysim.Keyboard.US_ENGLISH;

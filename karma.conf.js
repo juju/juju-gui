@@ -66,8 +66,8 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/globalconfig.js',
-      'jujugui/static/gui/src/test/test-init.js',
-      'jujugui/static/gui/src/test/test_app_hotkeys.js'
+      'jujugui/static/gui/src/app/test-*.js',
+      'jujugui/static/gui/src/app/init/test-*.js'
     ],
 
     // list of files to exclude
@@ -77,9 +77,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/app/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/test/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/test/test_app_hotkeys.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
     },
 
