@@ -25,6 +25,7 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
+      'jujugui/static/gui/src/test/factory.js',
 
       'jujugui/static/gui/src/app/jujulib/index.js',
       'jujugui/static/gui/src/app/jujulib/charmstore.js',

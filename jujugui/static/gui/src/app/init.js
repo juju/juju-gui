@@ -9,6 +9,7 @@ const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
+const BundleImporter = require('./init/bundle-importer');
 
 const newBakery = require('./utils/bakery-utils');
 
@@ -239,7 +240,7 @@ class GUIApp {
       Application instance of the bundle importer.
       @type {Object}
     */
-    this.bundleImporter = new yui.juju.BundleImporter({
+    this.bundleImporter = new BundleImporter({
       db: this.db,
       modelAPI: this.modelAPI,
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
@@ -1619,7 +1620,7 @@ class GUIApp {
     this.db.destroy();
     this.endpointsController.destroy();
     // Detach event listeners.
-    const remove = document.removeEventListener;
+    const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;
     this._hotkeyListener.deactivate();
     const ecsListener = handlers['renderDeploymentBarListener'];

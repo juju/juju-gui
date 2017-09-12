@@ -370,7 +370,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-base',
             'app-transitions',
             'base',
-            'bundle-importer',
             'bundle-import-notifications',
             'node',
             'model',
