@@ -206,7 +206,7 @@ describe('BasicTable', function() {
     rows[0].clickState = {another: 'state'};
     const generatePath = sinon.stub().returns('http://example.com');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         changeState={sinon.stub()}
         generatePath={generatePath}
         headers={headers}
@@ -237,7 +237,7 @@ describe('BasicTable', function() {
     const preventDefault = sinon.stub();
     const generatePath = sinon.stub().returns('http://example.com');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         changeState={changeState}
         generatePath={generatePath}
         headers={headers}

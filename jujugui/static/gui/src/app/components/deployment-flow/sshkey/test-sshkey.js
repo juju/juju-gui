@@ -125,7 +125,7 @@ describe('DeploymentSSHKey', function() {
         {false}
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={false}
               ref="sshSource"
               label="Source"
@@ -146,7 +146,7 @@ describe('DeploymentSSHKey', function() {
               ]} />
           </div>
           <div className="three-col last-col no-margin-bottom">
-            <juju.components.GenericInput
+            <GenericInput
               ref="launchpadUsername"
               autocomplete
               key="launchpadUsername"
@@ -157,9 +157,9 @@ describe('DeploymentSSHKey', function() {
               type="text" />
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
-              type="positive">Add Keys</juju.components.GenericButton>
+              type="positive">Add Keys</GenericButton>
           </div>
         </div>
       </div>
