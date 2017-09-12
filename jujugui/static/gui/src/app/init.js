@@ -1619,8 +1619,8 @@ class GUIApp {
     // Detach event listeners.
     const remove = document.removeEventListener;
     const handlers = this._domEventHandlers;
-    const ecsListener = handlers['renderDeploymentBarListener'];
     this._hotkeyListener.deactivate();
+    const ecsListener = handlers['renderDeploymentBarListener'];
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);
     remove('login', handlers['controllerLoginHandler']);
