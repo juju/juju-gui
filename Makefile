@@ -156,14 +156,8 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 $(YUI): $(NODE_MODULES)
 
 $(REACT_ASSETS): $(NODE_MODULES)
-	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
-	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
-	cp $(NODE_MODULES)/react-dom/dist/react-dom.js $(BUILT_JS_ASSETS)/react-dom.js
-	cp $(NODE_MODULES)/react-dom/dist/react-dom.min.js $(BUILT_JS_ASSETS)/react-dom.min.js
 	cp $(NODE_MODULES)/prop-types/prop-types.js $(BUILT_JS_ASSETS)/prop-types.js
 	cp $(NODE_MODULES)/prop-types/prop-types.min.js $(BUILT_JS_ASSETS)/prop-types.min.js
-	cp $(NODE_MODULES)/shapeup/shapeup-legacy.js $(BUILT_JS_ASSETS)/shapeup-legacy.js
-	cp $(NODE_MODULES)/shapeup/shapeup-legacy-min.js $(BUILT_JS_ASSETS)/shapeup-legacy-min.js
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
 	cp $(NODE_MODULES)/marked/lib/marked.js $(BUILT_JS_ASSETS)/marked.js
 	cp $(NODE_MODULES)/marked/marked.min.js $(BUILT_JS_ASSETS)/marked.min.js
@@ -366,6 +360,8 @@ dist: clean-all fast-dist
 
 .PHONY: fast-dist
 fast-dist: deps fast-babel gui test-deps collect-requirements version
+	# We are only minifying the init bundle here because it takes considerable time.
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
 	$(PY) setup.py sdist --formats=bztar\
 
 #######

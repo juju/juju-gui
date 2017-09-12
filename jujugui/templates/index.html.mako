@@ -298,7 +298,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     % if raw:
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <!-- The below init js is for the transition from app.js -->
     <script src="${convoy_url}?app/init-pkg.js"></script>
     <script data-manual src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
@@ -306,11 +305,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon.js"></script>
     <script src="${convoy_url}?app/state/state.js&app/user/user.js&app/utils/github-ssh-keys.js&app/utils/statsd.js&app/jujulib/index.js&app/jujulib/charmstore.js&app/jujulib/bundleservice.js&app/jujulib/plans.js&app/jujulib/payment.js&app/jujulib/stripe.js&app/jujulib/terms.js&app/jujulib/reconnecting-websocket.js&app/jujulib/urls.js&app/jujulib/bakery.js"></script>
     % else:
-    <!-- The below init js is for the transition from app.js -->
     <script src="${convoy_url}?app/init-pkg-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/version-min.js"></script>
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <script data-manual src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/prop-types.min.js&app/assets/javascripts/shapeup-legacy-min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside-min.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
+    <script data-manual src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon-min.js"></script>
