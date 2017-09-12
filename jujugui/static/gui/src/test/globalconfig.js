@@ -18,7 +18,50 @@ var GlobalConfig = {
         // From modules.js
         modules: YUI_MODULES,
     },
-  }
+  },
+  test_url: window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/"
 };
-
-GlobalConfig.test_url = window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/";
+const MODULES = [
+  'acl',
+  'analytics',
+  'changes-utils',
+  'juju-charm-models',
+  'juju-bundle-models',
+  'juju-controller-api',
+  'juju-endpoints-controller',
+  'juju-env-base',
+  'juju-env-api',
+  'juju-env-web-handler',
+  'juju-models',
+  'jujulib-utils',
+  'bakery-utils',
+  'net-utils',
+  // juju-views group
+  'd3-components',
+  'juju-view-utils',
+  'juju-topology',
+  'juju-view-environment',
+  'juju-landscape',
+  // end juju-views group
+  'io',
+  'json-parse',
+  'app-base',
+  'app-transitions',
+  'base',
+  'bundle-importer',
+  'bundle-import-notifications',
+  'node',
+  'model',
+  'app-cookies-extension',
+  'app-renderer-extension',
+  'cookie',
+  'querystring',
+  'event-key',
+  'event-touch',
+  'model-controller',
+  'FileSaver',
+  'ghost-deployer-extension',
+  'environment-change-set',
+  'relation-utils',
+  'yui-patches'
+];

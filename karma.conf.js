@@ -46,7 +46,6 @@ module.exports = function(config) {
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
       'jujugui/static/gui/src/app/components/**/test-*.js',
-      'jujugui/static/gui/src/app/init/test-*.js',
 
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
