@@ -34,7 +34,6 @@ const MODULES = [
   'juju-env-web-handler',
   'juju-models',
   'jujulib-utils',
-  'bakery-utils',
   'net-utils',
   // juju-views group
   'd3-components',
