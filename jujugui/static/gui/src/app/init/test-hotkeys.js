@@ -24,8 +24,8 @@ const hotkeys = require('./hotkeys');
 const utils = require('../../test/utils');
 
 describe('hotkeys', function() {
+  let container, context, listener;
   const keyboard = Keysim.Keyboard.US_ENGLISH;
-  let container, context;
 
   beforeEach(() => {
     context = {
@@ -34,11 +34,12 @@ describe('hotkeys', function() {
       _displaySettingsModal: sinon.stub(),
       _displayShortcutsModal: sinon.stub()
     };
-    hotkeys.activate(context);
+    listener = hotkeys.activate(context);
     container = utils.makeAppContainer();
   });
 
   afterEach(() => {
+    listener.deactivate();
     container.remove();
   });
 

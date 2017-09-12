@@ -1620,7 +1620,7 @@ class GUIApp {
     const remove = document.removeEventListener;
     const handlers = this._domEventHandlers;
     const ecsListener = handlers['renderDeploymentBarListener'];
-    remove('keydown', this._hotkeyListener);
+    this._hotkeyListener.deactivate();
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);
     remove('login', handlers['controllerLoginHandler']);

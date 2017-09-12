@@ -80,9 +80,9 @@ const keyBindings = {
 /**
   Activate the key listeners.
   @param {Object} context The context to execute the hotkey callbacks under.
-  @return {Object} The keydown event listener.
+  @return {Object} A reference to deactivate the listeners.
 */
-const activate = function(context) {
+const activate = context => {
   const key_map = {
     '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
     enter: 13, esc: 27, backspace: 8,
@@ -155,7 +155,17 @@ const activate = function(context) {
   };
   const boundListener = listener.bind(this);
   document.addEventListener('keydown', boundListener);
-  return boundListener;
+  return {
+    deactivate: deactivate.bind(this, boundListener)
+  };
+};
+
+/**
+  Deactivate the key listeners.
+  @param {Object} context The context to execute the hotkey callbacks under.
+*/
+const deactivate = listener => {
+  document.removeEventListener('keydown', listener);
 };
 
 module.exports = {activate, keyBindings};
