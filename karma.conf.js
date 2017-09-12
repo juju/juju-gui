@@ -84,9 +84,9 @@ module.exports = function(config) {
     },
 
     proxies: {
-      '/dev/combo': 'http://0.0.0.0:{TEST_PORT}/dev/combo?',
-      '/data': 'http://0.0.0.0:{TEST_PORT}/test/data',
-      '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:{TEST_PORT}/test/'
+      '/dev/combo': 'http://0.0.0.0:8888/dev/combo?',
+      '/data': 'http://0.0.0.0:8888/test/data',
+      '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:8888/test/'
     },
 
     browserify: {

@@ -4,8 +4,26 @@
 const Keysim = require('keysim');
 const utils = require('./utils');
 
-fdescribe('init', () => {
-  let app, container, env, juju, JujuGUI;
+describe('init', () => {
+  let app, container, JujuGUI;
+
+  const createApp = config => {
+    const defaults = {
+      apiAddress: 'http://api.example.com/',
+      bundleServiceURL: 'http://examle.com/bundleservice',
+      controllerSocketTemplate: 'wss://$server:$port/api',
+      socket_protocol: 'wss',
+      baseUrl: 'http://example.com/',
+      charmstoreURL: 'http://1.2.3.4/',
+      flags: {},
+      gisf: false,
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
+    // Overwrite any default values with those provided.
+    const initConfig = Object.assign(defaults, config);
+    return new JujuGUI(initConfig);
+  };
 
   beforeAll(done => {
     // The module list is copied from index.html.mako and is required by
@@ -55,10 +73,6 @@ fdescribe('init', () => {
       'yui-patches'], function(Y) {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
-      window.yui.juju.views = {utils: {}};
-      window.yui.juju.components = {};
-      juju = Y.namespace('juju');
-      Y.namespace('juju.environments');
       // The require needs to be after the yui modules have been loaded.
       JujuGUI = require('../app/init');
       done();
@@ -67,51 +81,15 @@ fdescribe('init', () => {
 
   beforeEach(() => {
     container = utils.makeAppContainer();
-    const userClass = new window.jujugui.User({storage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
-    env = new juju.environments.GoEnvironment({
-      conn: new utils.SocketStub(),
-      ecs: new juju.EnvironmentChangeSet(),
-      user: userClass
-    });
-    env.connect();
-    app = new JujuGUI({
-      baseUrl: 'http://example.com/',
-      flags: {},
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/',
-      consoleEnabled: true,
-      controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub(),
-        user: userClass
-      }),
-      env: env,
-      jujuCoreVersion: '2.0.0',
-      controllerSocketTemplate: '',
-      user: userClass
-    });
+    app = createApp();
   });
 
-  afterAll(done => {
-    env.close(() => {
-      app.destructor();
-      container.remove(true);
-      done();
-    });
+  afterAll(() => {
+    app.destructor();
+    container.remove();
   });
 
-  const getMockStorage = () => {
-    return () => {
-      return {
-        store: {},
-        setItem: (name, val) => {this.store.name = val;},
-        getItem: name => this.store.name || null
-      };
-    };
-  };
-
-  it('should listen for keyboard events', function() {
+  it('activates the listeners for keyboard events', () => {
     window.GUI_VERSION = {version: '1.2.3', commit: '123abc]'};
     const keyboard = Keysim.Keyboard.US_ENGLISH;
     const keystroke = new Keysim.Keystroke(Keysim.Keystroke.SHIFT, 191);
