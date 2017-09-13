@@ -985,10 +985,12 @@ YUI.add('juju-topology-relation', function(Y) {
     _renderAmbiguousRelationMenu: function(endpoints) {
       const container = this.getContainer();
       var menu = container.querySelector('#ambiguous-relation-menu');
+      /* eslint-disable no-undef */
       ReactDOM.render(
         <juju.components.AmbiguousRelationMenu
           endpoints={endpoints} />,
         menu.querySelector('#ambiguous-relation-menu-content'));
+      /* eslint-enable */
       return menu;
     },
 
@@ -1106,10 +1108,12 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     showRelationMenu: function(relation) {
       const menu = document.querySelector('#relation-menu');
+      /* eslint-disable no-undef */
       ReactDOM.render(
         <juju.components.RelationMenu
           relations={relation.relations} />,
         menu);
+      /* eslint-enable */
       menu.classList.add('active');
       this.set('relationMenuActive', true);
       this.set('relationMenuRelation', relation);
