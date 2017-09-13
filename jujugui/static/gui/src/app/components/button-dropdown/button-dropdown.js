@@ -2,6 +2,12 @@
 
 'use strict';
 
+const React = require('react');
+const ReactDOM = require('react-dom');
+
+const SvgIcon = require('../svg-icon/svg-icon');
+const DropdownMenu = require('../dropdown-menu/dropdown-menu');
+
 /**
   Creates a component that has an icon, which when clicked, opens a dropdown
   menu with list items.
@@ -45,11 +51,11 @@ class ButtonDropdown extends React.Component {
     }
     const props = this.props;
     return (
-      <juju.components.DropdownMenu
+      <DropdownMenu
         classes={props.classes}
         handleClickOutside={this._handleDropdownClickOutside.bind(this)}>
         {props.listItems}
-      </juju.components.DropdownMenu>);
+      </DropdownMenu>);
   }
 
   /**
@@ -60,7 +66,7 @@ class ButtonDropdown extends React.Component {
     const icon = this.props.icon;
     if (typeof icon === 'string') {
       return (
-        <juju.components.SvgIcon name={icon}
+        <SvgIcon name={icon}
           className="button-dropdown__icon"
           size="16" />);
     }
@@ -138,9 +144,4 @@ ButtonDropdown.defaultProps = {
   disableDropdown: false
 };
 
-YUI.add('button-dropdown', function() {
-  juju.components.ButtonDropdown = ButtonDropdown;
-}, '0.1.0', { requires: [
-  'dropdown-menu',
-  'svg-icon'
-]});
+module.exports = ButtonDropdown;

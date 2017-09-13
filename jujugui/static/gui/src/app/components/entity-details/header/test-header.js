@@ -1,36 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
+const EntityHeader = require('./header');
+const GenericButton = require('../../generic-button/generic-button');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('EntityHeader', function() {
   let acl, mockEntity, urllib;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-header', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -48,7 +30,7 @@ describe('EntityHeader', function() {
 
   it('renders the latest entity properly', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -111,7 +93,7 @@ describe('EntityHeader', function() {
                     href={'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
                       '.com%2Fdjango%2Ftrusty%2F'}>
-                    <juju.components.SvgIcon
+                    <SvgIcon
                       name="icon-social-twitter"
                       size="36"/>
                   </a>
@@ -121,7 +103,7 @@ describe('EntityHeader', function() {
                     target="_blank"
                     href={'https://plus.google.com/share?url=https%3A%2F%2F' +
                       'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
-                    <juju.components.SvgIcon
+                    <SvgIcon
                       name="icon-social-google"
                       size="36"/>
                   </a>
@@ -131,16 +113,16 @@ describe('EntityHeader', function() {
             <div className={
               'entity-header__right four-col last-col no-margin-bottom'}>
               {undefined}
-              <juju.components.CopyToClipboard
+              <CopyToClipboard
                 value="juju deploy cs:django" />
-              <juju.components.GenericButton
+              <GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
                 disabled={false}
                 tooltip="Add this charm to a new model"
                 type="positive">
                 Add to model
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
         </header>
@@ -151,7 +133,7 @@ describe('EntityHeader', function() {
   it('renders an old entity properly', function() {
     mockEntity.set('revision_id', 122);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -176,7 +158,7 @@ describe('EntityHeader', function() {
   it('can display plans', function() {
     const plans = [{url: 'test'}];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -208,7 +190,7 @@ describe('EntityHeader', function() {
 
   it('displays correctly when loading plans', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -237,7 +219,7 @@ describe('EntityHeader', function() {
 
   it('displays correctly when there are no plans', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -266,7 +248,7 @@ describe('EntityHeader', function() {
     pluralize.withArgs('unit').returns('units');
     const entity = jsTestUtils.makeEntity(true);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -299,7 +281,7 @@ describe('EntityHeader', function() {
   it('can mark charms as subordinates', function() {
     const entity = jsTestUtils.makeEntity(false, {is_subordinate: true});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -321,7 +303,7 @@ describe('EntityHeader', function() {
           'https://jujucharms.com/docs/stable/' +
           'authors-subordinate-applications'}
         target="_blank">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="help_16"
             size="16"/>
         </a>
@@ -333,7 +315,7 @@ describe('EntityHeader', function() {
 
   it('displays an add to model button', function() {
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
@@ -354,7 +336,7 @@ describe('EntityHeader', function() {
 
   it('displays the model name in the add to model button if provided', () => {
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
@@ -376,7 +358,7 @@ describe('EntityHeader', function() {
   it('displays an unsupported message for multi-series charms', function() {
     mockEntity.set('series', undefined);
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
@@ -401,7 +383,7 @@ describe('EntityHeader', function() {
     const importBundleYAML = sinon.stub();
     const getBundleYAML = sinon.stub();
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
@@ -429,7 +411,7 @@ describe('EntityHeader', function() {
     const getBundleYAML = sinon.stub();
     const plans = [{url: 'test-plan'}];
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
@@ -462,7 +444,7 @@ describe('EntityHeader', function() {
     const getBundleYAML = sinon.stub();
     const plans = [{url: 'test-plan'}];
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
@@ -493,7 +475,7 @@ describe('EntityHeader', function() {
     const importBundleYAML = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
@@ -524,7 +506,7 @@ describe('EntityHeader', function() {
     const addNotification = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -554,7 +536,7 @@ describe('EntityHeader', function() {
     const addNotification = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -595,7 +577,7 @@ describe('EntityHeader', function() {
       stopPropagation: sinon.stub().withArgs()
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
@@ -630,7 +612,7 @@ describe('EntityHeader', function() {
       stopPropagation: sinon.stub().withArgs()
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
@@ -657,7 +639,7 @@ describe('EntityHeader', function() {
   it('can disable the deploy button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityHeader
+      <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
         deployService={sinon.spy()}
@@ -673,14 +655,14 @@ describe('EntityHeader', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
-      <juju.components.GenericButton
+      <GenericButton
         ref="deployAction"
         action={instance._handleDeployClick}
         disabled={true}
         tooltip="Add this charm to a new model"
         type="positive">
         Add to model
-      </juju.components.GenericButton>);
+      </GenericButton>);
     expect(
       output.props.children.props.children.props.children[1].props.children[2]
     ).toEqualJSX(expectedOutput);

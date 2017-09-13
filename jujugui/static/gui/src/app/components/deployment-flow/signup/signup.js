@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const GenericButton = require('../../generic-button/generic-button');
+const DeploymentPanel = require('../panel/panel');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 class DeploymentSignup extends React.Component {
   /**
@@ -68,7 +57,7 @@ class DeploymentSignup extends React.Component {
 
   render() {
     return (
-      <juju.components.DeploymentPanel
+      <DeploymentPanel
         changeState={this.props.changeState}
         title={this.props.modelName}>
         <div className="deployment-signup">
@@ -97,15 +86,15 @@ class DeploymentSignup extends React.Component {
               </ol>
               <p>
                 Continue to the&nbsp;
-                <juju.components.GenericButton
+                <GenericButton
                   action={this._displayFlow.bind(this)}
                   type="inline-neutral">
                   Deployment demo of Juju
-                </juju.components.GenericButton>
+                </GenericButton>
               </p>
             </div>
             <div className="prepend-one four-col last-col">
-              <juju.components.SvgIcon
+              <SvgIcon
                 className="juju-logo"
                 name="juju-logo"
                 size="100%" />
@@ -144,19 +133,19 @@ class DeploymentSignup extends React.Component {
             <div className="six-col last-col">
               <ul className="inline-logos no-bullets">
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="aws"
                     size="100%" />
                 </li>
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="google"
                     size="100%" />
                 </li>
                 <li className="inline-logos__item">
-                  <juju.components.SvgIcon
+                  <SvgIcon
                     className="inline-logos__image"
                     name="azure"
                     size="100%" />
@@ -165,7 +154,7 @@ class DeploymentSignup extends React.Component {
             </div>
           </div>
         </div>
-      </juju.components.DeploymentPanel>
+      </DeploymentPanel>
     );
   }
 };
@@ -177,12 +166,4 @@ DeploymentSignup.propTypes = {
   staticURL: PropTypes.string
 };
 
-YUI.add('deployment-signup', function() {
-  juju.components.DeploymentSignup = DeploymentSignup;
-}, '0.1.0', {
-  requires: [
-    'deployment-panel',
-    'generic-button',
-    'generic-input'
-  ]
-});
+module.exports = DeploymentSignup;

@@ -1,22 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const GenericButton = require('../../../../generic-button/generic-button');
+const GenericInput = require('../../../../generic-input/generic-input');
+const ExpandingRow = require('../../../../expanding-row/expanding-row');
+const AddressForm = require('../../../../address-form/address-form');
+const AccountPaymentMethodCard = require('../card/card');
 
 class AccountPaymentMethod extends React.Component {
   constructor() {
@@ -40,7 +31,7 @@ class AccountPaymentMethod extends React.Component {
   */
   _generatePaymentMethod() {
     return (
-      <juju.components.AccountPaymentMethodCard
+      <AccountPaymentMethodCard
         addNotification={this.props.addNotification}
         card={this.props.paymentMethod}
         onPaymentMethodRemoved={this.props.updateUser}
@@ -98,7 +89,7 @@ class AccountPaymentMethod extends React.Component {
     const month = `0${paymentMethod.month}`.slice(-2);
     return (
       <div className="account-payment-method__form">
-        <juju.components.AddressForm
+        <AddressForm
           address={paymentMethod.address}
           disabled={this.props.acl.isReadOnly()}
           addNotification={this.props.addNotification}
@@ -108,7 +99,7 @@ class AccountPaymentMethod extends React.Component {
           showPhone={false}
           validateForm={this.props.validateForm} />
         <div className="twelve-col">
-          <juju.components.GenericInput
+          <GenericInput
             disabled={this.props.acl.isReadOnly()}
             label="Expiry MM/YY"
             ref="expiry"
@@ -123,16 +114,16 @@ class AccountPaymentMethod extends React.Component {
             value={`${month}/${paymentMethod.year}`} />
         </div>
         <div className="twelve-col account-payment-method__buttons">
-          <juju.components.GenericButton
+          <GenericButton
             action={this._toggleForm.bind(this)}
             type="inline-neutral">
             Cancel
-          </juju.components.GenericButton>
-          <juju.components.GenericButton
+          </GenericButton>
+          <GenericButton
             action={this._updatePaymentMethod.bind(this)}
             type="inline-positive">
             Update
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>
       </div>);
   }
@@ -141,7 +132,7 @@ class AccountPaymentMethod extends React.Component {
     const content = this.state.showForm ?
       this._generateEditForm() : this._generatePaymentMethod();
     return (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{
           'user-profile__list-row': true,
           'twelve-col': true
@@ -152,7 +143,7 @@ class AccountPaymentMethod extends React.Component {
         <div className="account-payment-method">
           {content}
         </div>
-      </juju.components.ExpandingRow>
+      </ExpandingRow>
     );
   }
 };
@@ -169,13 +160,4 @@ AccountPaymentMethod.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('account-payment-method', function() {
-  juju.components.AccountPaymentMethod = AccountPaymentMethod;
-}, '', {
-  requires: [
-    'account-payment-method-card',
-    'address-form',
-    'expanding-row',
-    'generic-button'
-  ]
-});
+module.exports = AccountPaymentMethod;

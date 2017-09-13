@@ -1,35 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const InspectorPlan = require('./plan');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('InspectorPlan', () => {
   var acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-plan', () => { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -42,7 +21,7 @@ describe('InspectorPlan', () => {
       url: 'canonical-landscape/24-7'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorPlan
+      <InspectorPlan
         acl={acl}
         changeState={sinon.stub()}
         currentPlan={currentPlan}
@@ -62,7 +41,7 @@ describe('InspectorPlan', () => {
 
   it('can render correctly without a selected plan', () => {
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorPlan
+      <InspectorPlan
         acl={acl}
         changeState={sinon.stub()}
         currentPlan={null}

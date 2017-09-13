@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const TermsPopup = require('../../terms-popup/terms-popup');
 
 class BudgetTableRow extends React.Component {
   constructor() {
@@ -134,12 +123,12 @@ class BudgetTableRow extends React.Component {
             Recommended allocation: $550.
           </div>
           <div className="two-col last-col">
-            <juju.components.GenericButton
+            <GenericButton
               action={this._toggle.bind(this)}
               disabled={disabled}
               type="neutral">
               Select plan
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </li>);
     });
@@ -187,12 +176,12 @@ class BudgetTableRow extends React.Component {
     return (
       <div className="two-col last-col no-margin-bottom">
         <div className="budget-table__edit">
-          <juju.components.GenericButton
+          <GenericButton
             action={this._toggle.bind(this)}
             disabled={disabled}
             type="neutral">
             Change plan
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>
       </div>);
   }
@@ -321,11 +310,11 @@ class BudgetTableRow extends React.Component {
       return (
         <div className={
           'two-col prepend-five no-margin-bottom budget-table-row__link'}>
-          <juju.components.GenericButton
+          <GenericButton
             action={this._toggleTerms.bind(this)}
             type="base">
             Terms
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>);
     }
   }
@@ -352,7 +341,7 @@ class BudgetTableRow extends React.Component {
       return;
     }
     return (
-      <juju.components.TermsPopup
+      <TermsPopup
         close={this._toggleTerms.bind(this)}
         terms={this.state.terms} />);
   }
@@ -396,7 +385,7 @@ class BudgetTableRow extends React.Component {
     };
     return (
       <div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={classes}
           clickable={false}
           expanded={this.state.expanded}>
@@ -411,7 +400,7 @@ class BudgetTableRow extends React.Component {
           <div>
             {this._generateChangePlan()}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         {this._generateTerms()}
       </div>
     );
@@ -432,13 +421,4 @@ BudgetTableRow.propTypes = {
   withPlans: PropTypes.bool
 };
 
-YUI.add('budget-table-row', function() {
-  juju.components.BudgetTableRow = BudgetTableRow;
-}, '0.1.0', {
-  requires: [
-    'expanding-row',
-    'generic-button',
-    'loading-spinner',
-    'terms-popup'
-  ]
-});
+module.exports = BudgetTableRow;

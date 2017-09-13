@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const Spinner = require('../spinner/spinner');
+const InsetSelect = require('../inset-select/inset-select');
+const GenericInput = require('../generic-input/generic-input');
 
 class AddressForm extends React.Component {
   constructor() {
@@ -134,7 +123,7 @@ class AddressForm extends React.Component {
     }
     const address = this.props.address;
     return (
-      <juju.components.GenericInput
+      <GenericInput
         disabled={this.props.disabled}
         label="Full name"
         ref="name"
@@ -158,7 +147,7 @@ class AddressForm extends React.Component {
     const address = this.props.address;
     return (
       <div className="twelve-col">
-        <juju.components.GenericInput
+        <GenericInput
           disabled={this.props.disabled}
           label="Phone number"
           ref="phoneNumber"
@@ -176,7 +165,7 @@ class AddressForm extends React.Component {
     let content;
     if (this.state.loading) {
       content = (
-        <juju.components.Spinner />);
+        <Spinner />);
     } else {
       const required = {
         regex: /\S+/,
@@ -194,27 +183,27 @@ class AddressForm extends React.Component {
       });
       content = (
         <div>
-          <juju.components.InsetSelect
+          <InsetSelect
             disabled={disabled}
             label="Country"
             options={this._generateCountryOptions()}
             ref="country"
             value={countryCode} />
           {this._generateNameField()}
-          <juju.components.GenericInput
+          <GenericInput
             disabled={disabled}
             label="Address line 1"
             ref="line1"
             required={true}
             validate={[required]}
             value={address.line1}/>
-          <juju.components.GenericInput
+          <GenericInput
             disabled={disabled}
             label="Address line 2 (optional)"
             ref="line2"
             required={false}
             value={address.line2} />
-          <juju.components.GenericInput
+          <GenericInput
             disabled={disabled}
             label="State/province"
             ref="state"
@@ -223,7 +212,7 @@ class AddressForm extends React.Component {
             value={address.county} />
           <div className="twelve-col">
             <div className="six-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={disabled}
                 label="Town/city"
                 ref="city"
@@ -232,7 +221,7 @@ class AddressForm extends React.Component {
                 value={address.city} />
             </div>
             <div className="six-col last-col">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={disabled}
                 label="Postcode"
                 ref="postcode"
@@ -268,12 +257,4 @@ AddressForm.defaultProps = {
   showPhone: true
 };
 
-YUI.add('address-form', function() {
-  juju.components.AddressForm = AddressForm;
-}, '0.1.0', {
-  requires: [
-    'generic-input',
-    'inset-select',
-    'loading-spinner'
-  ]
-});
+module.exports = AddressForm;

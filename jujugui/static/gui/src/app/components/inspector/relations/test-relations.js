@@ -1,35 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const InspectorRelations = require('./relations');
+const CheckListItem = require('../../check-list-item/check-list-item');
+const ButtonRow = require('../../button-row/button-row');
+const OverviewAction = require('../overview-action/overview-action');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('InspectorRelations', function() {
   var acl, service;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-relations', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -73,7 +56,7 @@ describe('InspectorRelations', function() {
       scope: 'global'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={sinon.stub()}
@@ -90,13 +73,13 @@ describe('InspectorRelations', function() {
     });
     var expected = (<div className="inspector-relations">
       <div className="inspector-relations__actions">
-        <juju.components.OverviewAction
+        <OverviewAction
           action={output.props.children[0].props.children.props.action}
           icon="plus_box_16"
           title="Build a relation" />
       </div>
       <ul className="inspector-relations__list">
-        <juju.components.CheckListItem
+        <CheckListItem
           className='select-all'
           disabled={false}
           key='select-all1'
@@ -105,14 +88,14 @@ describe('InspectorRelations', function() {
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
           }/>
-        <juju.components.CheckListItem
+        <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={false}
           label={'django:django'}
           key={relations[0].id}
           ref='CheckListItem-mysql'
           whenChanged={instance._updateActiveCount} />
-        <juju.components.CheckListItem
+        <CheckListItem
           action={output.props.children[1].props.children[2].props.action}
           disabled={false}
           label={'django:django'}
@@ -120,7 +103,7 @@ describe('InspectorRelations', function() {
           ref='CheckListItem-postgresql'
           whenChanged={instance._updateActiveCount} />
       </ul>
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />
     </div>);
     expect(output).toEqualJSX(expected);
@@ -142,7 +125,7 @@ describe('InspectorRelations', function() {
       scope: 'global'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={sinon.stub()}
@@ -185,7 +168,7 @@ describe('InspectorRelations', function() {
         scope: 'global'}
     ];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={sinon.stub()}
@@ -202,13 +185,13 @@ describe('InspectorRelations', function() {
     });
     var expected = (<div className="inspector-relations">
       <div className="inspector-relations__actions">
-        <juju.components.OverviewAction
+        <OverviewAction
           action={output.props.children[0].props.children.props.action}
           icon="plus_box_16"
           title="Build a relation" />
       </div>
       <ul className="inspector-relations__list">
-        <juju.components.CheckListItem
+        <CheckListItem
           className='select-all'
           disabled={true}
           key='select-all1'
@@ -217,14 +200,14 @@ describe('InspectorRelations', function() {
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
           }/>
-        <juju.components.CheckListItem
+        <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={true}
           label={'django:django'}
           key={relations[0].id}
           ref='CheckListItem-mysql'
           whenChanged={instance._updateActiveCount} />
-        <juju.components.CheckListItem
+        <CheckListItem
           action={output.props.children[1].props.children[2].props.action}
           disabled={true}
           label={'django:django'}
@@ -232,7 +215,7 @@ describe('InspectorRelations', function() {
           ref='CheckListItem-postgresql'
           whenChanged={instance._updateActiveCount} />
       </ul>
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />
     </div>);
     expect(output).toEqualJSX(expected);
@@ -240,7 +223,7 @@ describe('InspectorRelations', function() {
 
   it('renders if there are no relations', () => {
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={sinon.stub()}
         destroyRelations={sinon.stub()}
@@ -281,7 +264,7 @@ describe('InspectorRelations', function() {
     ];
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={sinon.stub()}
         destroyRelations={sinon.stub()}
@@ -318,7 +301,7 @@ describe('InspectorRelations', function() {
       }
     ];
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={sinon.stub()}
         destroyRelations={sinon.stub()}
@@ -332,7 +315,7 @@ describe('InspectorRelations', function() {
       disabled: true
     }];
     assert.deepEqual(output.props.children[2],
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
     assert.equal(buttonItems.length, 1);
   });
@@ -380,7 +363,7 @@ describe('InspectorRelations', function() {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={destroyRelations}
@@ -420,7 +403,7 @@ describe('InspectorRelations', function() {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={destroyRelations}
@@ -441,7 +424,7 @@ describe('InspectorRelations', function() {
   it('navigates to show build relation on build-relation click', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorRelations
+      <InspectorRelations
         acl={acl}
         changeState={changeState}
         destroyRelations={sinon.stub()}

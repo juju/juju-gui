@@ -1,35 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentCredential = require('./credential');
+const Spinner = require('../../spinner/spinner');
+const InsetSelect = require('../../inset-select/inset-select');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const DeploymentCredentialAdd = require('./add/add');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentCredential', function() {
   var acl, sendAnalytics, cloud, credentials, regions, credentialNames, user;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-credential', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -47,7 +30,7 @@ describe('DeploymentCredential', function() {
 
   it('can display a loader when loading regions and credentials', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -67,7 +50,7 @@ describe('DeploymentCredential', function() {
     var expected = (
       <div className="clearfix">
         <div className="deployment-credential__loading">
-          <juju.components.Spinner />
+          <Spinner />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -81,7 +64,7 @@ describe('DeploymentCredential', function() {
     const getCloudProviderDetails = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -103,12 +86,12 @@ describe('DeploymentCredential', function() {
     const props = instance.props;
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}
-          <juju.components.DeploymentCredentialAdd
+          <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
@@ -123,7 +106,7 @@ describe('DeploymentCredential', function() {
             setCredential={setCredential}
             user={user}
             validateForm={validateForm}/>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -134,7 +117,7 @@ describe('DeploymentCredential', function() {
     var setRegion = sinon.stub();
     var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -157,13 +140,13 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
             <div className="prepend-two four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Credential"
                 onChange={instance._handleCredentialChange}
@@ -178,7 +161,7 @@ describe('DeploymentCredential', function() {
                 value="lxd_admin@local_default" />
             </div>
             <div className="four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={true}
                 label="Region"
                 onChange={setRegion}
@@ -190,7 +173,7 @@ describe('DeploymentCredential', function() {
             </div>
           </form>
           {undefined}
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -203,7 +186,7 @@ describe('DeploymentCredential', function() {
     const getCloudProviderDetails = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -225,12 +208,12 @@ describe('DeploymentCredential', function() {
     const props = instance.props;
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}
-          <juju.components.DeploymentCredentialAdd
+          <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
@@ -245,7 +228,7 @@ describe('DeploymentCredential', function() {
             setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -254,7 +237,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -275,13 +258,13 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
             <div className="prepend-two four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Credential"
                 onChange={instance._handleCredentialChange}
@@ -296,7 +279,7 @@ describe('DeploymentCredential', function() {
                 value={undefined} />
             </div>
             <div className="four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={false}
                 label="Region"
                 onChange={setRegion}
@@ -308,7 +291,7 @@ describe('DeploymentCredential', function() {
             </div>
           </form>
           {undefined}
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -317,7 +300,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -345,7 +328,7 @@ describe('DeploymentCredential', function() {
       name: 'new@test'
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -376,7 +359,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -397,13 +380,13 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={false}>
           <form className="deployment-credential__form">
             <div className="prepend-two four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={true}
                 label="Credential"
                 onChange={instance._handleCredentialChange}
@@ -418,7 +401,7 @@ describe('DeploymentCredential', function() {
                 value={undefined} />
             </div>
             <div className="four-col">
-              <juju.components.InsetSelect
+              <InsetSelect
                 disabled={true}
                 label="Region"
                 onChange={setRegion}
@@ -430,7 +413,7 @@ describe('DeploymentCredential', function() {
             </div>
           </form>
           {undefined}
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -440,7 +423,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -460,7 +443,7 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="four-col">
-        <juju.components.InsetSelect
+        <InsetSelect
           disabled={false}
           label="Region"
           onChange={setRegion}
@@ -481,7 +464,7 @@ describe('DeploymentCredential', function() {
     const getCloudProviderDetails = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -504,12 +487,12 @@ describe('DeploymentCredential', function() {
     const props = instance.props;
     var expected = (
       <div className="clearfix">
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
           expanded={true}>
           {undefined}
-          <juju.components.DeploymentCredentialAdd
+          <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
@@ -524,7 +507,7 @@ describe('DeploymentCredential', function() {
             setCredential={setCredential}
             user={user}
             validateForm={validateForm}/>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -537,7 +520,7 @@ describe('DeploymentCredential', function() {
     const getCloudProviderDetails = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={updateCloudCredential}
@@ -564,7 +547,7 @@ describe('DeploymentCredential', function() {
     const setCredential = sinon.stub();
     const credential = 'test-credential';
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
@@ -604,7 +587,7 @@ describe('DeploymentCredential', function() {
   it('can handle errors when getting credential names', () => {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={addNotification}
         updateCloudCredential={sinon.stub()}
@@ -631,7 +614,7 @@ describe('DeploymentCredential', function() {
   it('can handle errors when getting credentials', () => {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentCredential
+      <DeploymentCredential
         acl={acl}
         addNotification={addNotification}
         updateCloudCredential={sinon.stub()}

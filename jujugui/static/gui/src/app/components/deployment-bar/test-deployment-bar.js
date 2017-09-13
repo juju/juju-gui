@@ -1,52 +1,32 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentBar = require('./deployment-bar');
+const DeploymentBarNotification = require('./notification/notification');
+const GenericButton = require('../generic-button/generic-button');
+const Panel = require('../panel/panel');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-bar', function() { done(); });
-  });
-
   beforeEach(function() {
-    var DeploymentBar = juju.components.DeploymentBar;
     previousNotifications = DeploymentBar.prototype.previousNotifications;
-    juju.components.DeploymentBar.prototype.previousNotifications = [];
+    DeploymentBar.prototype.previousNotifications = [];
     acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   afterEach(function() {
-    var DeploymentBar = juju.components.DeploymentBar;
     DeploymentBar.prototype.previousNotifications = previousNotifications;
   });
 
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -57,22 +37,22 @@ describe('DeploymentBar', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.Panel
+      <Panel
         instanceName="deployment-bar-panel"
         visible={true}>
         <div className="deployment-bar">
-          <juju.components.DeploymentBarNotification
+          <DeploymentBarNotification
             change={null} />
           <div className="deployment-bar__deploy">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._deployAction}
               type="inline-deployment"
               disabled={false}>
               Deploy changes (2)
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-      </juju.components.Panel>);
+      </Panel>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -80,7 +60,7 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -97,7 +77,7 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -114,7 +94,7 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -135,7 +115,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -147,7 +127,7 @@ describe('DeploymentBar', function() {
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -158,7 +138,7 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
   });
@@ -170,7 +150,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -182,7 +162,7 @@ describe('DeploymentBar', function() {
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -193,14 +173,14 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
     change = {change: 'added-unit-1'};
     currentChangeSet['added-unit-1'] = 'added-unit-change';
     generateChangeDescription.returns(change);
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -211,7 +191,7 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
   });
 
@@ -221,7 +201,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -233,7 +213,7 @@ describe('DeploymentBar', function() {
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -244,14 +224,14 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
     change = {change: 'added-unit-1'};
     currentChangeSet['added-unit-1'] = 'added-unit-change';
     generateChangeDescription.returns(change);
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -262,13 +242,13 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
     delete currentChangeSet['added-unit-1'];
     generateChangeDescription.returns('add-services-change');
     renderer.render(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -280,7 +260,7 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
     expect(output.props.children.props.children[0]).toEqualJSX(
-      <juju.components.DeploymentBarNotification
+      <DeploymentBarNotification
         change={change} />);
   });
 
@@ -288,7 +268,7 @@ describe('DeploymentBar', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -308,7 +288,7 @@ describe('DeploymentBar', function() {
     const sendAnalytics = sinon.stub();
     const changeState = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBar
+      <DeploymentBar
         acl={acl}
         changeState={changeState}
         currentChangeSet={{}}

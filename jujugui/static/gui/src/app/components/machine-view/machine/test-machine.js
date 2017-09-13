@@ -1,38 +1,26 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const ButtonRow = require('../../button-row/button-row');
+const Constraints = require('../../constraints/constraints');
+const MachineViewMachine = require('./machine');
+const MoreMenu = require('../../more-menu/more-menu');
+const MachineViewMachineUnit = require('../machine-unit/machine-unit');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachine', function() {
   let acl, applications, generateMachineDetails, genericConstraints,
       machineUnitACL, parseConstraints;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view-machine', function() { done(); });
-  });
-
   beforeEach(function () {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     machineUnitACL = acl.reshape(
-      juju.components.MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
+      MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
     generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
     parseConstraints = sinon.stub().returns({mem: '2048'});
     genericConstraints = [
@@ -83,7 +71,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -114,7 +102,7 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <juju.components.MoreMenu
+        <MoreMenu
           items={[{
             label: 'Destroy',
             action: instance._destroyMachine
@@ -126,7 +114,7 @@ describe('MachineViewMachine', function() {
           2 units, zesty, mem: 2GB
         </div>
         <ul className="machine-view__machine-units">
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/0"
             machineType="machine"
@@ -136,7 +124,7 @@ describe('MachineViewMachine', function() {
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
@@ -181,7 +169,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -228,7 +216,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -273,7 +261,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -374,7 +362,7 @@ describe('MachineViewMachine', function() {
     const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -399,7 +387,7 @@ describe('MachineViewMachine', function() {
     const expected = (
       <ul className="machine-view__machine-units">
         {[
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
@@ -441,7 +429,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -471,7 +459,7 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <juju.components.MoreMenu
+        <MoreMenu
           items={[{
             label: 'Destroy',
             action: instance._destroyMachine
@@ -481,7 +469,7 @@ describe('MachineViewMachine', function() {
         </div>
         {undefined}
         <ul className="machine-view__machine-units">
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/0"
             machineType="machine"
@@ -491,7 +479,7 @@ describe('MachineViewMachine', function() {
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/1"
             machineType="machine"
@@ -530,7 +518,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -558,7 +546,7 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <juju.components.MoreMenu
+        <MoreMenu
           items={[{
             label: 'Destroy',
             action: instance._destroyMachine
@@ -568,7 +556,7 @@ describe('MachineViewMachine', function() {
         </div>
         {undefined}
         <ul className="machine-view__machine-units">
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/0"
             machineType="container"
@@ -578,7 +566,7 @@ describe('MachineViewMachine', function() {
               'agent_state': 'started',
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
-          <juju.components.MachineViewMachineUnit
+          <MachineViewMachineUnit
             acl={machineUnitACL}
             key="wordpress/1"
             machineType="container"
@@ -617,7 +605,7 @@ describe('MachineViewMachine', function() {
     const output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -663,7 +651,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -718,7 +706,7 @@ describe('MachineViewMachine', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -744,7 +732,7 @@ describe('MachineViewMachine', function() {
       />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.MoreMenu
+      <MoreMenu
         items={[{
           label: 'Destroy',
           action: false
@@ -763,7 +751,7 @@ describe('MachineViewMachine', function() {
       series: 'wily'
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -799,7 +787,7 @@ describe('MachineViewMachine', function() {
         <h4 className="add-machine__title">
           Update constraints
         </h4>
-        <juju.components.Constraints
+        <Constraints
           constraints={{mem: '2048'}}
           currentSeries={machine.series}
           disabled={false}
@@ -807,7 +795,7 @@ describe('MachineViewMachine', function() {
           providerType="aws"
           series={['wily']}
           valuesChanged={instance._updateConstraints} />
-        <juju.components.ButtonRow
+        <ButtonRow
           buttons={[{
             title: 'Cancel',
             action: instance._toggleForm,
@@ -833,7 +821,7 @@ describe('MachineViewMachine', function() {
     const updateMachineConstraints = sinon.stub();
     const updateMachineSeries = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine.DecoratedComponent
+      <MachineViewMachine.DecoratedComponent
         acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}

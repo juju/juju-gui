@@ -1,41 +1,23 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+const ReactDOM = require('react-dom');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const NotificationListItem = require('./item');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('NotificationListItem', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('notification-list-item', function() { done(); });
-  });
 
   it('renders a notification list item', () => {
     var message = 'notification message';
     var classes = 'notification-list-item notification-list-item--info ' +
       'notification-list-item--visible';
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationListItem
+      <NotificationListItem
         message={message}
         removeNotification={sinon.stub()}
         timestamp="123"
@@ -48,7 +30,7 @@ describe('NotificationListItem', function() {
         <span tabIndex="0" role="button"
           className="notification-list-item__hide"
           onClick={instance.hide}>
-          <juju.components.SvgIcon name="close_16"
+          <SvgIcon name="close_16"
             size="16" />
         </span>
       </li>);
@@ -59,7 +41,7 @@ describe('NotificationListItem', function() {
     var classes = 'notification-list-item notification-list-item--error ' +
       'notification-list-item--visible';
     var output = jsTestUtils.shallowRender(
-      <juju.components.NotificationListItem
+      <NotificationListItem
         message="message"
         removeNotification={sinon.stub()}
         timestamp="123"
@@ -75,7 +57,7 @@ describe('NotificationListItem', function() {
       done();
     };
     var component = testUtils.renderIntoDocument(
-      <juju.components.NotificationListItem
+      <NotificationListItem
         message="message"
         removeNotification={removeNotification}
         timestamp={timestamp}

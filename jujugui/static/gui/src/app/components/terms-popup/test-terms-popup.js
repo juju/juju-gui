@@ -1,34 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Popup = require('../popup/popup');
+const Spinner = require('../spinner/spinner');
+const TermsPopup = require('./terms-popup');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('TermsPopup', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('terms-popup', function() { done(); });
-  });
 
   it('can render', function() {
     const close = sinon.stub();
@@ -37,12 +18,12 @@ describe('TermsPopup', function() {
       {content: 'Apache2 terms.', name: 'apache2'}
     ];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.TermsPopup
+      <TermsPopup
         close={close}
         terms={terms} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <Popup
         close={close}
         type="wide">
         <div className="terms-popup__container">
@@ -59,29 +40,29 @@ describe('TermsPopup', function() {
             </li>
           </ul>
         </div>
-      </juju.components.Popup>);
+      </Popup>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can display the loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.TermsPopup
+      <TermsPopup
         close={sinon.stub()}
         terms={[]} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <Popup
         close={close}
         type="wide">
-        <juju.components.Spinner />
-      </juju.components.Popup>);
+        <Spinner />
+      </Popup>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can close the popup', function() {
     const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.TermsPopup
+      <TermsPopup
         close={close}
         terms={[]} />, true);
     const output = renderer.getRenderOutput();

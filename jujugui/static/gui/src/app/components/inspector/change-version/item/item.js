@@ -1,22 +1,9 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const GenericButton = require('../../../generic-button/generic-button');
 
 class InspectorChangeVersionItem extends React.Component {
   /**
@@ -39,13 +26,13 @@ class InspectorChangeVersionItem extends React.Component {
         <span title={path} className="inspector-current-version__title">
           version {props.url.revision}
         </span>
-        <juju.components.GenericButton
+        <GenericButton
           disabled={props.acl.isReadOnly()}
           key={path}
           type='inline-neutral'
           action={props.buttonAction}>
           {this._generateButtonLabel()}
-        </juju.components.GenericButton>
+        </GenericButton>
       </li>
     );
   }
@@ -59,8 +46,4 @@ InspectorChangeVersionItem.propTypes = {
   url: PropTypes.object.isRequired
 };
 
-YUI.add('inspector-change-version-item', function() {
-  juju.components.InspectorChangeVersionItem = InspectorChangeVersionItem;
-}, '0.1.0', { requires: [
-  'generic-button'
-]});
+module.exports = InspectorChangeVersionItem;

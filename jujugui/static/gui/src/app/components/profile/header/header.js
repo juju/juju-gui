@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
 
 /** Header React component for use in the Profile component. */
 class ProfileHeader extends React.Component {
@@ -16,8 +17,4 @@ class ProfileHeader extends React.Component {
 
 ProfileHeader.propTypes = {};
 
-YUI.add('profile-header', function() {
-  juju.components.ProfileHeader = ProfileHeader;
-}, '', {
-  requires: []
-});
+module.exports = ProfileHeader;

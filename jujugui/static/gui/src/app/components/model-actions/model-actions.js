@@ -1,28 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-
-Copyright (C) 2015 Canonical Ltd.
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
+
+const React = require('react');
+
+const SvgIcon = require('../svg-icon/svg-icon');
 
 class ModelActions extends React.Component {
   /**
     Export the env when the button is clicked.
-
-    @method _handleExport
   */
   _handleExport() {
     this.props.exportEnvironmentFile();
@@ -30,8 +16,6 @@ class ModelActions extends React.Component {
 
   /**
     Open a file picker when the button is clicked.
-
-    @method _handleImportClick
   */
   _handleImportClick() {
     var input = this.refs['file-input'];
@@ -43,8 +27,6 @@ class ModelActions extends React.Component {
   /**
     When file is submitted the drag over animation is triggered and the file
     is passed to the utils function.
-
-    @method _handleImportFile
   */
   _handleImportFile() {
     var inputFile = this.refs['file-input'].files[0];
@@ -58,7 +40,6 @@ class ModelActions extends React.Component {
 
   /**
     Returns the classes for the button based on the provided props.
-    @method _generateClasses
     @returns {String} The collection of class names.
   */
   _generateClasses() {
@@ -90,7 +71,7 @@ class ModelActions extends React.Component {
           onClick={props.sharingVisibility}
           role="button"
           tabIndex="0">
-          <juju.components.SvgIcon name="share_16"
+          <SvgIcon name="share_16"
             className="model-actions__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -109,7 +90,7 @@ class ModelActions extends React.Component {
             onClick={this._handleExport.bind(this)}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="export_16"
+            <SvgIcon name="export_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -122,7 +103,7 @@ class ModelActions extends React.Component {
             onClick={!isReadOnly && this._handleImportClick.bind(this)}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="import_16"
+            <SvgIcon name="import_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -164,8 +145,4 @@ ModelActions.defaultProps = {
   userIsAuthenticated: false
 };
 
-YUI.add('model-actions', function() {
-  juju.components.ModelActions = ModelActions;
-}, '0.1.0', { requires: [
-  'svg-icon'
-]});
+module.exports = ModelActions;

@@ -1,7 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
+const React = require('react');
+
+const ButtonDropdown = require('../button-dropdown/button-dropdown');
 /**
   Generates a button dropdown component with help items.
 */
@@ -54,7 +56,7 @@ class HeaderHelp extends React.Component {
 
   render() {
     return (
-      <juju.components.ButtonDropdown
+      <ButtonDropdown
         classes={['header-help']}
         ref="buttonDropdown"
         icon="help_16"
@@ -83,8 +85,4 @@ HeaderHelp.propTypes = {
   user: PropTypes.object
 };
 
-YUI.add('header-help', function() {
-  juju.components.HeaderHelp = HeaderHelp;
-}, '0.1.0', { requires: [
-  'button-dropdown'
-]});
+module.exports = HeaderHelp;

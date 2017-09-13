@@ -43,7 +43,7 @@ const DeployerMixin = (superclass) => class extends superclass {
     const charmId = charm.get('id');
     if (charm.get('id').indexOf('local:') === -1) {
       this.modelAPI.addCharm(
-        charmId, this.get('charmstore'),
+        charmId, this.charmstoreAPI,
         this._addCharmCallbackHandler.bind(this, charm),
         // Options used by ECS, ignored by environment.
         {applicationId: ghostServiceId});
@@ -195,7 +195,7 @@ const DeployerMixin = (superclass) => class extends superclass {
       constraints: {}
     });
 
-    var topo = this.views.environment.instance.topo; // XXX MISSING
+    var topo = this.topology.topo;
     // Without this following code on a real environment the service icons
     // would disappear and then re-appear when deploying services.
     const boxModel = topo.service_boxes[ghostId];

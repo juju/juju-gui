@@ -1,22 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const CreateModelButton = require('../../create-model-button/create-model-button');
+const DateDisplay = require('../../date-display/date-display');
+const Popup = require('../../popup/popup');
+const Spinner = require('../../spinner/spinner');
+const UserProfileEntity = require('../entity/entity');
 
 class UserProfileModelList extends React.Component {
   constructor() {
@@ -133,11 +124,11 @@ class UserProfileModelList extends React.Component {
       + ' All the applications and units included in the model will be'
       + ' destroyed. This action cannot be undone.';
     return (
-      <juju.components.Popup
+      <Popup
         buttons={buttons}
         title="Destroy model">
         <p>{message}</p>
-      </juju.components.Popup>);
+      </Popup>);
   }
 
   /**
@@ -267,7 +258,7 @@ class UserProfileModelList extends React.Component {
     }
 
     return (
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         acl={props.acl}
         addNotification={this.props.addNotification}
         displayConfirmation={this._displayConfirmation.bind(this, model)}
@@ -293,11 +284,11 @@ class UserProfileModelList extends React.Component {
           {permission}
         </span>
         <span className="user-profile__list-col two-col last-col">
-          <juju.components.DateDisplay
+          <DateDisplay
             date={model.lastConnection || '--'}
             relative={true} />
         </span>
-      </juju.components.UserProfileEntity>);
+      </UserProfileEntity>);
   }
 
   /**
@@ -335,7 +326,7 @@ class UserProfileModelList extends React.Component {
     if (this.state.loadingModels) {
       return (
         <div className="user-profile__model-list twelve-col">
-          <juju.components.Spinner />
+          <Spinner />
         </div>
       );
     }
@@ -347,7 +338,7 @@ class UserProfileModelList extends React.Component {
     //if (acl && acl.canAddModels()) {
     if (props.userInfo.isCurrent) {
       createNewButton = (
-        <juju.components.CreateModelButton
+        <CreateModelButton
           changeState={props.changeState}
           switchModel={props.switchModel} />
       );
@@ -410,16 +401,4 @@ UserProfileModelList.propTypes = {
   userInfo: PropTypes.object.isRequired
 };
 
-YUI.add('user-profile-model-list', function() {
-  juju.components.UserProfileModelList = UserProfileModelList;
-}, '', {
-  requires: [
-    'create-model-button',
-    'date-display',
-    'generic-button',
-    'generic-input',
-    'loading-spinner',
-    'popup',
-    'user-profile-entity'
-  ]
-});
+module.exports = UserProfileModelList;

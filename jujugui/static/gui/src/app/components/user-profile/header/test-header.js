@@ -1,32 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const GenericButton = require('../../generic-button/generic-button');
+const UserProfileHeader = require('./header');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileHeader', () => {
   var links;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('user-profile-header', () => { done(); });
-  });
 
   beforeEach(() => {
     const action = sinon.stub();
@@ -43,7 +26,7 @@ describe('UserProfileHeader', () => {
     const interactiveLogin = sinon.stub();
     const userInfo = {profile: 'who'};
     const output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader
+      <UserProfileHeader
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
@@ -51,11 +34,11 @@ describe('UserProfileHeader', () => {
       />);
     const expected = (
       <div className="user-profile-header twelve-col">
-        <juju.components.GenericButton
+        <GenericButton
           type="inline-neutral"
           action={interactiveLogin}>
           Log in to the charm store
-        </juju.components.GenericButton>
+        </GenericButton>
         <img alt="who"
           className="user-profile-header__avatar"
           src="avatar.png" />
@@ -84,7 +67,7 @@ describe('UserProfileHeader', () => {
   it('hides the login button when authenticated to charm store', () => {
     const userInfo = {external: 'who-ext', profile: 'who'};
     const output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader
+      <UserProfileHeader
         avatar="avatar.png"
         interactiveLogin={sinon.stub()}
         links={links}
@@ -97,18 +80,18 @@ describe('UserProfileHeader', () => {
     const interactiveLogin = sinon.stub();
     const userInfo = {profile: 'who'};
     const output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader
+      <UserProfileHeader
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
         userInfo={userInfo}
       />);
     const expected = (
-      <juju.components.GenericButton
+      <GenericButton
         type="inline-neutral"
         action={interactiveLogin}>
         Log in to the charm store
-      </juju.components.GenericButton>
+      </GenericButton>
     );
     expect(output.props.children[0]).toEqualJSX(expected);
   });
@@ -116,7 +99,7 @@ describe('UserProfileHeader', () => {
   it('can render with a default avatar', () => {
     const userInfo = {external: 'who-ext', profile: 'who'};
     const output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader
+      <UserProfileHeader
         avatar=""
         interactiveLogin={undefined}
         links={links}

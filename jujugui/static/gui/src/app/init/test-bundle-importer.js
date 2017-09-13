@@ -1,33 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-describe('Bundle Importer', function() {
-  let bundleImporter, BundleImporter, charmstore, db, getBundleChanges,
+const BundleImporter = require('./bundle-importer');
+
+describe('BundleImporter', () => {
+  let bundleImporter, charmstore, db, getBundleChanges,
       modelAPI, models, utils, yui;
 
-  before(function(done) {
+  beforeAll(done => {
     const requires = [
-      'bundle-importer', 'juju-tests-utils', 'juju-models', 'juju-env-api',
+      'juju-tests-utils', 'juju-models', 'juju-env-api',
       'juju-tests-factory', 'environment-change-set', 'jujulib-utils'];
-    YUI(GlobalConfig).use(requires, function(Y) {
-      BundleImporter = Y.juju.BundleImporter;
+    YUI(GlobalConfig).use(requires, Y => {
       utils = Y['juju-tests'].utils;
       models = Y.namespace('juju.models');
       yui = Y;
@@ -35,8 +19,8 @@ describe('Bundle Importer', function() {
     });
   });
 
-  beforeEach(function() {
-    const getMockStorage = function() {
+  beforeEach(() => {
+    const getMockStorage = () => {
       return new function() {
         return {
           store: {},
@@ -45,8 +29,7 @@ describe('Bundle Importer', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     db = new models.Database();
     modelAPI = new yui.juju.environments.GoEnvironment({
@@ -66,166 +49,160 @@ describe('Bundle Importer', function() {
     });
   });
 
-  afterEach(function() {
+  afterEach(() => {
     db.destroy();
     modelAPI.destroy();
   });
 
-  it('can be instantiated', function() {
+  it('can be instantiated', () => {
     assert.equal(bundleImporter instanceof BundleImporter, true);
     assert.equal(typeof bundleImporter.modelAPI === 'object', true);
     assert.equal(typeof bundleImporter.db === 'object', true);
     assert.equal(typeof bundleImporter.charmstore === 'object', true);
   });
 
-  describe('Public methods', function() {
-
-    describe('importBundleYAML', function() {
-      it('calls fetchDryRun with yaml', function() {
-        var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
-        var notify = sinon.stub(
-          bundleImporter.db.notifications, 'add');
-        this._cleanups.concat([fetch.restore, notify.restore]);
-        bundleImporter.importBundleYAML('foo: bar');
-        assert.equal(fetch.callCount, 1);
-        var args = fetch.lastCall.args;
-        assert.equal(args.length, 2);
-        assert.equal(args[0], 'foo: bar');
-        assert.strictEqual(args[1], null);
-        assert.equal(notify.callCount, 1);
-        assert.deepEqual(notify.lastCall.args[0], {
-          title: 'Fetching bundle data',
-          message: 'Fetching detailed bundle data, this may take some time',
-          level: 'important'
-        });
-      });
-    });
-
-    describe('importBundleFile', function() {
-
-      it('sets up and loads the FileReader', function() {
-        var asText = sinon.stub();
-        var generate = sinon.stub(
-          bundleImporter, '_generateFileReader').returns({
-          onload: '',
-          readAsText: asText
-        });
-        var hideNotification = sinon.stub();
-        bundleImporter.hideDragOverNotification = hideNotification;
-        var onload = sinon.stub(bundleImporter, '_fileReaderOnload');
-        this._cleanups.concat([generate.restore, onload.restore]);
-        var reader = bundleImporter.importBundleFile('path/to/file');
-        assert.equal(generate.callCount, 1);
-        assert.equal(asText.callCount, 1);
-        reader.onload();
-        assert.equal(onload.callCount, 1);
-        // Make sure we hide the bundle drag over notification.
-        assert.equal(hideNotification.callCount, 1);
-      });
-
-      describe('FileReader onload callback', function() {
-        it('calls fetchDryRun if yaml file', function() {
-          var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
-          var yamlFile = { name: 'path/to/file.yaml' };
-          bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
-          assert.equal(fetch.callCount, 1);
-          var args = fetch.lastCall.args;
-          assert.equal(args.length, 2);
-          assert.equal(args[0], 'foo');
-          assert.strictEqual(args[1], null);
-        });
-      });
-    });
-
-    describe('importBundleDryRun', function() {
-      var unsortedRecords = [
-        { id: '2', requires: []},
-        { id: '5', requires: ['3']},
-        // The order of the following records (id:6) requires is important.
-        // The sorter must check that all requires are resolved before
-        // adding it to the changeSet.
-        { id: '6', requires: ['2', '5']},
-        { id: '4', requires: ['2']},
-        { id: '3', requires: []}
-      ];
-
-      var sortedRecords = [
-        { id: '2', requires: []},
-        { id: '4', requires: ['2']},
-        { id: '3', requires: []},
-        { id: '5', requires: ['3']},
-        { id: '6', requires: ['2', '5']}
-      ];
-
-      it('sorts the records then calls to execute', function() {
-        var execute = sinon.stub(bundleImporter, '_executeDryRun');
-        this._cleanups.push(execute.restore);
-        bundleImporter.importBundleDryRun(unsortedRecords);
-        assert.deepEqual(bundleImporter.recordSet, sortedRecords);
-        assert.equal(execute.callCount, 1);
-        assert.deepEqual(execute.lastCall.args[0], sortedRecords);
-      });
-    });
-
-    describe('fetchDryRun', function() {
-
-      it('calls to modelAPI to get bundle changes from a YAML', function() {
-        const yaml = '{"services":{}}';
-        bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount, 1);
-        const args = getBundleChanges.lastCall.args;
-        assert.equal(args.length, 3);
-        assert.equal(args[0], yaml);
-        assert.strictEqual(args[1], null);
-      });
-
-      it('ensures v4 format on import', function() {
-        const yaml = '{"bundle":{"services":{}}}';
-        bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount, 1);
-        const args = getBundleChanges.lastCall.args;
-        assert.equal(args.length, 3);
-        assert.equal(args[0], '{"services":{}}');
-        assert.strictEqual(args[1], null);
-      });
-
-      it('can import v4 bundles with applications key', function() {
-        const yaml = '{"applications":{}}';
-        bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount, 1);
-        const args = getBundleChanges.lastCall.args;
-        assert.equal(args.length, 3);
-        assert.equal(args[0], '{"applications":{}}');
-        assert.strictEqual(args[1], null);
-      });
-
-      it('calls to modelAPI to get bundle changes from a token', function() {
-        const token = 'foo';
-        bundleImporter.fetchDryRun(null, token);
-        assert.equal(getBundleChanges.callCount, 1);
-        const args = getBundleChanges.lastCall.args;
-        assert.equal(args.length, 3);
-        assert.strictEqual(args[0], null);
-        assert.equal(args[1], token);
-      });
-
-      it('has a callback which calls to import the dry run', function() {
-        const yaml = 'foo';
-        const dryRun = sinon.stub(
-          bundleImporter, 'importBundleDryRun');
-        const changes = [{foo: 'bar'}];
-        bundleImporter.fetchDryRun(yaml);
-        const callback = getBundleChanges.lastCall.args[2];
-        callback([], changes);
-        assert.equal(dryRun.callCount, 1);
-        assert.deepEqual(dryRun.lastCall.args[0], changes);
+  describe('importBundleYAML', () => {
+    it('calls fetchDryRun with yaml', () => {
+      const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
+      const notify = sinon.stub(
+        bundleImporter.db.notifications, 'add');
+      bundleImporter.importBundleYAML('foo: bar');
+      assert.equal(fetch.callCount, 1);
+      const args = fetch.lastCall.args;
+      assert.equal(args.length, 2);
+      assert.equal(args[0], 'foo: bar');
+      assert.strictEqual(args[1], null);
+      assert.equal(notify.callCount, 1);
+      assert.deepEqual(notify.lastCall.args[0], {
+        title: 'Fetching bundle data',
+        message: 'Fetching detailed bundle data, this may take some time',
+        level: 'important'
       });
     });
   });
 
-  describe('Changeset generation methods', function() {
-    it('calls to execute supplied records', function() {
-      var called = {
+  describe('importBundleFile', () => {
+
+    it('sets up and loads the FileReader', () => {
+      const asText = sinon.stub();
+      const generate = sinon.stub(
+        bundleImporter, '_generateFileReader').returns({
+        onload: '',
+        readAsText: asText
+      });
+      const hideNotification = sinon.stub();
+      bundleImporter.hideDragOverNotification = hideNotification;
+      const onload = sinon.stub(bundleImporter, '_fileReaderOnload');
+      const reader = bundleImporter.importBundleFile('path/to/file');
+      assert.equal(generate.callCount, 1);
+      assert.equal(asText.callCount, 1);
+      reader.onload();
+      assert.equal(onload.callCount, 1);
+      // Make sure we hide the bundle drag over notification.
+      assert.equal(hideNotification.callCount, 1);
+    });
+
+    describe('FileReader onload callback', () => {
+      it('calls fetchDryRun if yaml file', () => {
+        const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
+        const yamlFile = { name: 'path/to/file.yaml' };
+        bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
+        assert.equal(fetch.callCount, 1);
+        const args = fetch.lastCall.args;
+        assert.equal(args.length, 2);
+        assert.equal(args[0], 'foo');
+        assert.strictEqual(args[1], null);
+      });
+    });
+  });
+
+  describe('importBundleDryRun', () => {
+    const unsortedRecords = [
+      { id: '2', requires: []},
+      { id: '5', requires: ['3']},
+      // The order of the following records (id:6) requires is important.
+      // The sorter must check that all requires are resolved before
+      // adding it to the changeSet.
+      { id: '6', requires: ['2', '5']},
+      { id: '4', requires: ['2']},
+      { id: '3', requires: []}
+    ];
+
+    const sortedRecords = [
+      { id: '2', requires: []},
+      { id: '4', requires: ['2']},
+      { id: '3', requires: []},
+      { id: '5', requires: ['3']},
+      { id: '6', requires: ['2', '5']}
+    ];
+
+    it('sorts the records then calls to execute', () => {
+      const execute = sinon.stub(bundleImporter, '_executeDryRun');
+      bundleImporter.importBundleDryRun(unsortedRecords);
+      assert.deepEqual(bundleImporter.recordSet, sortedRecords);
+      assert.equal(execute.callCount, 1);
+      assert.deepEqual(execute.lastCall.args[0], sortedRecords);
+    });
+  });
+
+  describe('fetchDryRun', () => {
+
+    it('calls to modelAPI to get bundle changes from a YAML', () => {
+      const yaml = '{"services":{}}';
+      bundleImporter.fetchDryRun(yaml, null);
+      assert.equal(getBundleChanges.callCount, 1);
+      const args = getBundleChanges.lastCall.args;
+      assert.equal(args.length, 3);
+      assert.equal(args[0], yaml);
+      assert.strictEqual(args[1], null);
+    });
+
+    it('ensures v4 format on import', () => {
+      const yaml = '{"bundle":{"services":{}}}';
+      bundleImporter.fetchDryRun(yaml, null);
+      assert.equal(getBundleChanges.callCount, 1);
+      const args = getBundleChanges.lastCall.args;
+      assert.equal(args.length, 3);
+      assert.equal(args[0], '{"services":{}}');
+      assert.strictEqual(args[1], null);
+    });
+
+    it('can import v4 bundles with applications key', () => {
+      const yaml = '{"applications":{}}';
+      bundleImporter.fetchDryRun(yaml, null);
+      assert.equal(getBundleChanges.callCount, 1);
+      const args = getBundleChanges.lastCall.args;
+      assert.equal(args.length, 3);
+      assert.equal(args[0], '{"applications":{}}');
+      assert.strictEqual(args[1], null);
+    });
+
+    it('calls to modelAPI to get bundle changes from a token', () => {
+      const token = 'foo';
+      bundleImporter.fetchDryRun(null, token);
+      assert.equal(getBundleChanges.callCount, 1);
+      const args = getBundleChanges.lastCall.args;
+      assert.equal(args.length, 3);
+      assert.strictEqual(args[0], null);
+      assert.equal(args[1], token);
+    });
+
+    it('has a callback which calls to import the dry run', () => {
+      const yaml = 'foo';
+      const dryRun = sinon.stub(
+        bundleImporter, 'importBundleDryRun');
+      const changes = [{foo: 'bar'}];
+      bundleImporter.fetchDryRun(yaml);
+      const callback = getBundleChanges.lastCall.args[2];
+      callback([], changes);
+      assert.equal(dryRun.callCount, 1);
+      assert.deepEqual(dryRun.lastCall.args[0], changes);
+    });
+  });
+
+  describe('Changeset generation methods', () => {
+    it('calls to execute supplied records', () => {
+      const called = {
         addCharm: false,
         addMachines: false,
         deploy: false,
@@ -244,7 +221,7 @@ describe('Bundle Importer', function() {
       bundleImporter._execute_addRelation = executor;
       bundleImporter._execute_setAnnotations = executor;
 
-      var sortedRecords = [
+      const sortedRecords = [
         { method: 'addCharm' },
         { method: 'addMachines' },
         { method: 'deploy' },
@@ -263,11 +240,11 @@ describe('Bundle Importer', function() {
       });
     });
 
-    it('properly sorts a recordSet', function() {
-      var data = utils.loadFixture(
+    it('properly sorts a recordSet', () => {
+      const data = utils.loadFixture(
         'data/wordpress-bundle-recordset.json', true);
-      var sorted = bundleImporter._sortDryRunRecords(data);
-      var order = [
+      const sorted = bundleImporter._sortDryRunRecords(data);
+      const order = [
         'addCharm-0', 'deploy-1', 'setAnnotations-2',
         'addCharm-3', 'deploy-4', 'setAnnotations-5',
         'addCharm-6', 'deploy-7', 'expose-8', 'deploy-99', 'setAnnotations-9',
@@ -282,14 +259,13 @@ describe('Bundle Importer', function() {
       });
     });
 
-    it('stops but does not fail if unknown record type', function() {
-      var sortedRecords = [
+    it('stops but does not fail if unknown record type', () => {
+      const sortedRecords = [
         { method: 'badMethod' }
       ];
-      var execute = sinon.stub(bundleImporter, '_executeRecord');
-      var notification = sinon.stub(
+      const execute = sinon.stub(bundleImporter, '_executeRecord');
+      const notification = sinon.stub(
         bundleImporter.db.notifications, 'add');
-      this._cleanups.push(notification.restore);
       bundleImporter._executeDryRun(sortedRecords);
       const args = execute.lastCall.args;
       execute.restore();
@@ -301,15 +277,15 @@ describe('Bundle Importer', function() {
     });
   });
 
-  describe('Changeset execution', function() {
+  describe('Changeset execution', () => {
 
-    it('sets up the correct model (v5 Integration)', function(done) {
+    it('sets up the correct model (v5 Integration)', done => {
       let getCanonicalIdCount = 0;
       charmstore.getCanonicalId = (entityId, callback) => {
         getCanonicalIdCount += 1;
         callback(null, entityId);
       };
-      var data = utils.loadFixture(
+      const data = utils.loadFixture(
         'data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
@@ -375,12 +351,12 @@ describe('Bundle Importer', function() {
       bundleImporter.importBundleDryRun(data);
     });
 
-    it('handles conflicts with existing service names', function(done) {
+    it('handles conflicts with existing service names', done => {
       db.services.add(new yui.juju.models.Service({
         id: 'haproxy',
         charm: 'cs:precise/haproxy-35'
       }));
-      var data = utils.loadFixture(
+      const data = utils.loadFixture(
         'data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
@@ -392,8 +368,8 @@ describe('Bundle Importer', function() {
       bundleImporter.importBundleDryRun(data);
     });
 
-    it('sets up the correct model (v3 colocation)', function() {
-      var data = utils.loadFixture(
+    it('sets up the correct model (v3 colocation)', () => {
+      const data = utils.loadFixture(
         'data/wordpress-bundle-v3-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
       assert.equal(db.services.size(), 2);
@@ -403,7 +379,7 @@ describe('Bundle Importer', function() {
     });
   });
 
-  describe('_execute_deploy', function() {
+  describe('_execute_deploy', () => {
     it('properly merges bundle config with defaults', () => {
       const id = 'cs:trusty/haproxy-10';
       const name = 'haproxy';
@@ -473,4 +449,5 @@ describe('Bundle Importer', function() {
       assert.deepEqual(actualConfig, expectedConfig);
     });
   });
+
 });

@@ -1,47 +1,27 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const EntityContentDescription = require('./description');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityContentDescription', function() {
+  let marked = function(val) { return val; };
   let mockEntity;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('entity-content-description', function() { done(); });
-  });
 
   it('can render markdown in the description', () => {
     let mockEntity = jsTestUtils.makeEntity();
-    // Note that this functional test is just a sanity check, not a
-    // comprehensive test of the markdown syntax.
-    mockEntity.set('description', 'A simple [link](http://google.com/).');
+    const description = 'A simple [link](http://google.com/).';
+    mockEntity.set('description', description);
     const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContentDescription
+      <EntityContentDescription
         changeState={sinon.stub()}
         entityModel={mockEntity}
         renderMarkdown={marked} />);
-    const markupObject = output.props.children[1]
-      .props.dangerouslySetInnerHTML;
-    assert.equal(markupObject.__html,
-      '<p>A simple <a href="http://google.com/">link</a>.</p>\n');
+    const markupObject = output.props.children[1].props.dangerouslySetInnerHTML;
+    assert.equal(markupObject.__html, description);
   });
 
   describe('bundle', () => {
@@ -56,7 +36,7 @@ describe('EntityContentDescription', function() {
     it('can render without description', () => {
       mockEntity.set('description', null);
       const output = jsTestUtils.shallowRender(
-        <juju.components.EntityContentDescription
+        <EntityContentDescription
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
@@ -65,9 +45,8 @@ describe('EntityContentDescription', function() {
     });
 
     it('can render with a description', () => {
-
       const output = jsTestUtils.shallowRender(
-        <juju.components.EntityContentDescription
+        <EntityContentDescription
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
@@ -75,7 +54,7 @@ describe('EntityContentDescription', function() {
       expect(output).toEqualJSX(
         <div className="entity-content__description">
           <div className="entity-content__description-content"
-            dangerouslySetInnerHTML={{__html:'<p>HA Django cluster.</p>\n'}} />
+            dangerouslySetInnerHTML={{__html:'HA Django cluster.'}} />
         </div>
       );
     });
@@ -93,7 +72,7 @@ describe('EntityContentDescription', function() {
     it('can render without description', () => {
       mockEntity.set('description', null);
       const output = jsTestUtils.shallowRender(
-        <juju.components.EntityContentDescription
+        <EntityContentDescription
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
@@ -104,7 +83,7 @@ describe('EntityContentDescription', function() {
     it('can render with a description', () => {
 
       const output = jsTestUtils.shallowRender(
-        <juju.components.EntityContentDescription
+        <EntityContentDescription
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
@@ -112,7 +91,7 @@ describe('EntityContentDescription', function() {
       expect(output).toEqualJSX(
         <div className="entity-content__description">
           <div className="entity-content__description-content"
-            dangerouslySetInnerHTML={{__html: '<p>Django framework.</p>\n'}} />
+            dangerouslySetInnerHTML={{__html: 'Django framework.'}} />
         </div>
       );
     });

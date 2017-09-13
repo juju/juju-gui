@@ -1555,16 +1555,17 @@ YUI.add('juju-view-utils', function(Y) {
       - credential: the name of the cloud credential to use for managing the
         model's resources.
   */
-  utils.deploy = function(app, callback, autoplace=true, modelName, args) {
-    const env = app.env;
+  utils.deploy = function(
+    app, autoPlaceUnits, createSocketURL, callback, autoplace=true, modelName, args) {
+    const modelAPI = app.modelAPI;
     const controllerAPI = app.controllerAPI;
     const user = app.user;
     if (autoplace) {
-      app._autoPlaceUnits();
+      autoPlaceUnits();
     }
     // If we're in a model which exists then just commit the ecs and return.
-    if (env.get('connected')) {
-      env.get('ecs').commit(env);
+    if (modelAPI.get('connected')) {
+      modelAPI.get('ecs').commit(modelAPI);
       callback(null);
       return;
     }
@@ -1576,12 +1577,12 @@ YUI.add('juju-view-utils', function(Y) {
         return;
       }
       const commit = args => {
-        env.get('ecs').commit(env);
+        modelAPI.get('ecs').commit(modelAPI);
         // After committing then update state to update the url. This is done
         // after committing because changing state will change models and we
         // won't have visibility on when we're connected again and can
         // commit the changes.
-        utils._switchModel.call(app, env, {
+        utils._switchModel.call(app, modelAPI, {
           id: model.uuid,
           name: model.name,
           owner: model.owner
@@ -1600,9 +1601,14 @@ YUI.add('juju-view-utils', function(Y) {
         // Cleanup the direct deploy state so that we don't dispatch it again.
         app.state.changeState({special: {dd: null}});
       }
-      app.set('modelUUID', model.uuid);
-      const socketUrl = app.createSocketURL(
-        app.get('socketTemplate'), model.uuid);
+      app.modelUUID = model.uuid;
+      const config = app.applicationConfig;
+      const socketUrl = createSocketURL({
+        apiAddress: config.apiAddress,
+        template: config.socketTemplate,
+        protocol: config.socket_protocol,
+        uuid: model.uuid
+      });
       app.switchEnv(socketUrl, null, null, commit, true, false);
     };
     controllerAPI.createModel(
@@ -2118,8 +2124,6 @@ YUI.add('juju-view-utils', function(Y) {
     'base-build',
     'escape',
     'node',
-    'view',
-    'panel',
-    'popup'
+    'view'
   ]
 });

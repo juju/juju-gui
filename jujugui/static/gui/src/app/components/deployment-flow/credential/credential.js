@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const Spinner = require('../../spinner/spinner');
+const InsetSelect = require('../../inset-select/inset-select');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const DeploymentCredentialAdd = require('./add/add');
 
 class DeploymentCredential extends React.Component {
   constructor(props) {
@@ -249,7 +239,7 @@ class DeploymentCredential extends React.Component {
     return (
       <form className="deployment-credential__form">
         <div className="prepend-two four-col">
-          <juju.components.InsetSelect
+          <InsetSelect
             disabled={disabled}
             label="Credential"
             onChange={this._handleCredentialChange.bind(this)}
@@ -258,7 +248,7 @@ class DeploymentCredential extends React.Component {
             value={this.props.credential} />
         </div>
         <div className="four-col">
-          <juju.components.InsetSelect
+          <InsetSelect
             disabled={disabled || !this.props.editable}
             label="Region"
             onChange={this.props.setRegion}
@@ -279,7 +269,7 @@ class DeploymentCredential extends React.Component {
       return;
     }
     return (
-      <juju.components.DeploymentCredentialAdd
+      <DeploymentCredentialAdd
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         close={this._toggleAdd.bind(this)}
@@ -307,18 +297,18 @@ class DeploymentCredential extends React.Component {
     if (this.state.credentialsLoading) {
       return (
         <div className="deployment-credential__loading">
-          <juju.components.Spinner />
+          <Spinner />
         </div>);
     }
     return (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{'twelve-col': true, 'no-margin-bottom': true}}
         clickable={false}
         expanded={this.state.showAdd}>
         {this._generateSelect()}
         {this._generateAdd()}
 
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
   }
 
   render() {
@@ -350,13 +340,4 @@ DeploymentCredential.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-credential', function() {
-  juju.components.DeploymentCredential = DeploymentCredential;
-}, '0.1.0', {
-  requires: [
-    'deployment-credential-add',
-    'expanding-row',
-    'inset-select',
-    'loading-spinner'
-  ]
-});
+module.exports = DeploymentCredential;
