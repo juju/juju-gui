@@ -1,10 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-class ChangesUtils {
-  constructor() {
-    this.removeBrackets = /^\(?(.{0,}?)\)?$/;
-  }
+const removeBrackets = /^\(?(.{0,}?)\)?$/;
+
+const changesUtils = {
 
   /**
     Filter a changeset by a parent change.
@@ -12,7 +11,7 @@ class ChangesUtils {
     @param {String} parentId The id of the parent change to filter by.
     @returns {Object} The filtered changes.
   */
-  filterByParent(changeSet, parentId) {
+  filterByParent: (changeSet, parentId) => {
     let changes = {};
     Object.keys(changeSet).forEach((key) => {
       const change = changeSet[key];
@@ -22,14 +21,14 @@ class ChangesUtils {
       }
     }, this);
     return changes;
-  }
+  },
 
   /**
     Return the counts for each type of ecs change.
     @param {Object} services The list of services from the db.
     @returns {Object} The ecs change counts.
   */
-  getChangeCounts(changeSet) {
+  getChangeCounts: changeSet => {
     let counts = {};
     let total = 0;
     Object.keys(changeSet).forEach(key => {
@@ -46,14 +45,14 @@ class ChangesUtils {
     }, this);
     counts.total = total;
     return counts;
-  }
+  },
 
   /**
     Group the ecs changes by method type.
     @param {Object} changeSet The current environment change set.
     @returns {Object} The grouped ecs changes.
   */
-  getGroupedChanges(changeSet) {
+  getGroupedChanges: changeSet => {
     let changes = {};
     Object.keys(changeSet).forEach((key) => {
       const change = changeSet[key];
@@ -66,7 +65,7 @@ class ChangesUtils {
       }
     }, this);
     return changes;
-  }
+  },
 
   /**
     Sorts the supplied descriptions by their applications.
@@ -79,7 +78,7 @@ class ChangesUtils {
       the application associated with the description and each value is an
       array of descriptions.
   */
-  sortDescriptionsByApplication(getServiceById, changeset, descriptions) {
+  sortDescriptionsByApplication: (getServiceById, changeset, descriptions) => {
     // ECS methods to blacklist for description sorting.
     const methodBlacklist = [
       'addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys', 'destroyMachines'];
@@ -143,7 +142,7 @@ class ChangesUtils {
       }
     });
     return grouped;
-  }
+  },
 
   /**
     Return a list of all change descriptions.
@@ -151,18 +150,18 @@ class ChangesUtils {
     @param {Object} units The list of units from the db.
     @param {Object} changeSet The current environment change set.
   */
-  generateAllChangeDescriptions(services, units, changeSet) {
+  generateAllChangeDescriptions: (services, units, changeSet) => {
     let changes = [],
         change;
     Object.keys(changeSet).forEach(key => {
-      change = this.generateChangeDescription(
+      change = changesUtils.generateChangeDescription(
         services, units, changeSet[key]);
       if (change) {
         changes.push(change);
       }
     }, this);
     return changes;
-  }
+  },
 
   /**
     Return a description of an ecs change for the summary.
@@ -171,7 +170,7 @@ class ChangesUtils {
     @param {Object} change The environment change.
     @param {Bool} skipTime optional, used for testing, don't generate time.
   */
-  generateChangeDescription(services, units, change, skipTime) {
+  generateChangeDescription: (services, units, change, skipTime) => {
     let changeItem = {};
 
     if (change && change.command) {
@@ -221,7 +220,7 @@ class ChangesUtils {
               ' will be destroyed.';
           break;
         case '_add_unit':
-          const service = this.getServiceByUnitId(
+          const service = changesUtils.getServiceByUnitId(
             change.command.options.modelId, services, units);
           changeItem.icon = 'changes-units-added';
           const unitCount = change.command.args[1];
@@ -251,7 +250,7 @@ class ChangesUtils {
             ' will be unexposed';
           break;
         case '_add_relation':
-          const serviceList = this.getRealRelationEndpointNames(
+          const serviceList = changesUtils.getRealRelationEndpointNames(
             change.command.args, services);
           changeItem.icon = 'changes-relation-added';
           changeItem.description = change.command.args[0][1].name +
@@ -288,7 +287,7 @@ class ChangesUtils {
           const cfgServ = services.getById(change.command.args[0]);
           changeItem.icon = 'changes-config-changed';
           changeItem.description = 'Configuration values will be changed for ' +
-              cfgServ.get('displayName').match(this.removeBrackets)[1] + '.';
+              cfgServ.get('displayName').match(removeBrackets)[1] + '.';
           break;
         case '_addKeys':
           changeItem.icon = 'changes-unknown';
@@ -304,16 +303,16 @@ class ChangesUtils {
     if (skipTime || !change) {
       changeItem.time = '-';
     } else {
-      changeItem.time = this._formatAMPM(new Date(change.timestamp));
+      changeItem.time = changesUtils._formatAMPM(new Date(change.timestamp));
     }
     return changeItem;
-  }
+  },
 
   /**
     Return formatted time for display.
     @param {Date} date The current date.
   */
-  _formatAMPM(date) {
+  _formatAMPM: date => {
     let hours = date.getHours();
     let minutes = date.getMinutes();
     var ampm = hours >= 12 ? 'pm' : 'am';
@@ -321,7 +320,7 @@ class ChangesUtils {
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
     return hours + ':' + minutes + ' ' + ampm;
-  }
+  },
 
   /**
     Loops through the services in the db to find ones which have id's which
@@ -329,20 +328,20 @@ class ChangesUtils {
     @param {Array} args The arguments array from the ecs add relations call.
     @return {Array} An array of the service names involved in the relation.
   */
-  getRealRelationEndpointNames(args, services) {
+  getRealRelationEndpointNames: (args, services) => {
     let serviceList = [],
         serviceId;
     services.each(service => {
       serviceId = service.get('id');
       args.forEach(arg => {
         if (serviceId === arg[0]) {
-          const matches = service.get('displayName').match(this.removeBrackets);
+          const matches = service.get('displayName').match(removeBrackets);
           serviceList.push(matches[matches.length - 1]);
         }
       });
     });
     return serviceList;
-  }
+  },
 
   /**
     Return the service for a unit with the supplied id.
@@ -352,7 +351,7 @@ class ChangesUtils {
     @param {Object} units The list of units from the db.
     @return {Model} The service model instance.
   */
-  getServiceByUnitId(unitId, services, units) {
+  getServiceByUnitId: (unitId, services, units) => {
     const unit = units.getById(unitId);
     if (!unit) {
       // This should never happen in the deployer panel context.
@@ -360,6 +359,6 @@ class ChangesUtils {
     }
     return services.getById(unit.service);
   }
-}
+};
 
-module.exports = ChangesUtils;
+module.exports = changesUtils;

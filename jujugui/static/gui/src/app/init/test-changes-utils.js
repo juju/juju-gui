@@ -1,10 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const ChangesUtils = require('./changes-utils');
+const changesUtils = require('./changes-utils');
 
 describe('ChangesUtils', () => {
-  let cleanups, db, ECS, ecs, models, changesUtils, Y;
+  let cleanups, db, ECS, ecs, models, Y;
 
   beforeAll(done => {
     let requirements = [
@@ -16,7 +16,6 @@ describe('ChangesUtils', () => {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
-      changesUtils = new ChangesUtils;
       done();
     });
   });
