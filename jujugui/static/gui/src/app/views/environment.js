@@ -244,7 +244,6 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'environment',
     'juju-topology',
     'node',
     'view'

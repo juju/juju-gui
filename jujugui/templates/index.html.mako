@@ -373,8 +373,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'bundle-import-notifications',
             'node',
             'model',
-            'app-cookies-extension',
-            'app-renderer-extension',
             'cookie',
             'querystring',
             'event-key',

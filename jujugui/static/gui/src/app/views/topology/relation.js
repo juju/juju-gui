@@ -1225,14 +1225,12 @@ YUI.add('juju-topology-relation', function(Y) {
   views.RelationModule = RelationModule;
 }, '0.1.0', {
   requires: [
-    'ambiguous-relation-menu',
     'd3',
     'd3-components',
     'node',
     'event',
     'juju-models',
     'juju-topology-utils',
-    'relation-menu',
     'relation-utils'
   ]
 });

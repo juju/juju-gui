@@ -50,8 +50,6 @@ const MODULES = [
   'bundle-import-notifications',
   'node',
   'model',
-  'app-cookies-extension',
-  'app-renderer-extension',
   'cookie',
   'querystring',
   'event-key',
