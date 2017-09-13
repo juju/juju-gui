@@ -28,6 +28,7 @@ class EmptyUserProfile extends React.Component {
         {isCurrentUser ? (
           <CreateModelButton
             changeState={props.changeState}
+            clearPostDeployment={this.props.clearPostDeployment}
             switchModel={props.switchModel}
             title="Start building"
             type="inline-positive" />) : null}
@@ -38,6 +39,7 @@ class EmptyUserProfile extends React.Component {
 
 EmptyUserProfile.propTypes = {
   changeState: PropTypes.func.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   isCurrentUser: PropTypes.bool,
   staticURL: PropTypes.string,
   switchModel: PropTypes.func.isRequired

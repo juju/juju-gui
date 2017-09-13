@@ -206,6 +206,7 @@ class SearchResultsItem extends React.Component {
   */
   _handleDeploy(id) {
     this.props.deployTarget(id);
+    this.props.setStagedEntity(id);
     // Close the search results so that the deployed entity is visible on the
     // canvas.
     this.props.changeState({
@@ -311,7 +312,8 @@ SearchResultsItem.propTypes = {
   changeState: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
-  item: PropTypes.object.isRequired
+  item: PropTypes.object.isRequired,
+  setStagedEntity: PropTypes.func.isRequired
 };
 
 module.exports = SearchResultsItem;

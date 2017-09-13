@@ -1448,6 +1448,10 @@ class GUIApp {
     }
   }
 
+  _setStagedEntity(entityId) {
+    this.stagedEntity = entityId;
+  }
+
   /**
     Calls the necessary methods to setup the GUI and put the user in the
     Deployment Flow when they have used Direct Deploy.
@@ -1463,6 +1467,7 @@ class GUIApp {
       return;
     }
     this.deployTarget(this.charmstore, ddData.id);
+    this._setStagedEntity(ddData.id);
     this.state.changeState({
       gui: {
         deploy: JSON.stringify(ddData)

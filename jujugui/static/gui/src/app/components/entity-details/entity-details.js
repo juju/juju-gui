@@ -82,6 +82,7 @@ class EntityDetails extends React.Component {
               pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
               urllib={this.props.urllib}
+              setStagedEntity={this.props.setStagedEntity}
             />
             <EntityContent
               addNotification={this.props.addNotification}
@@ -270,6 +271,7 @@ EntityDetails.propTypes = {
   scrollPosition: PropTypes.number.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   urllib: PropTypes.func.isRequired
 };
 

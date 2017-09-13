@@ -260,6 +260,7 @@ class ProfileModelList extends React.Component {
           <CreateModelButton
             title="Start a new model"
             changeState={props.changeState}
+            clearPostDeployment={this.props.clearPostDeployment}
             switchModel={props.switchModel} /> : null}
       </li>);
   }
@@ -347,6 +348,7 @@ ProfileModelList.propTypes = {
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,

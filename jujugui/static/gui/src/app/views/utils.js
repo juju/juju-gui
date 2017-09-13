@@ -1614,6 +1614,7 @@ YUI.add('juju-view-utils', function(Y) {
         uuid: model.uuid
       });
       app.switchEnv(socketUrl, null, null, commit, true, false);
+      app._displayPostDeployment();
     };
     controllerAPI.createModel(
       modelName, user.controller.user, args, handler);

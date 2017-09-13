@@ -145,6 +145,7 @@ class EnvList extends React.Component {
         title="Start a new model"
         disabled={!canAddModels}
         changeState={this.props.changeState}
+        clearPostDeployment={this.props.clearPostDeployment}
         switchModel={this.props.switchModel}
         action={this._handleNewModelClick.bind(this)}
       />;
@@ -163,6 +164,7 @@ class EnvList extends React.Component {
 EnvList.propTypes = {
   acl: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
+  clearPostDeployment: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   envs: PropTypes.array.isRequired,
   handleModelClick: PropTypes.func.isRequired,

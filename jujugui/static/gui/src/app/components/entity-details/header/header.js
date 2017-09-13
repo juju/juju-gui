@@ -47,6 +47,7 @@ class EntityHeader extends React.Component {
       var id = entity.id.replace('cs:', '');
       this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
     }
+    this.props.setStagedEntity(entity.id);
     this._closeEntityDetails();
   }
 
@@ -451,6 +452,7 @@ EntityHeader.propTypes = {
   plans: PropTypes.array,
   pluralize: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
+  setStagedEntity: PropTypes.func.isRequired,
   urllib: PropTypes.func.isRequired
 };
 

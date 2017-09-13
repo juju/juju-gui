@@ -25,6 +25,7 @@ describe('Profile', function() {
           list: sinon.stub(),
           url: '/charmstore'
         }}
+        clearPostDeployment={options.clearPostDeployment || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
@@ -51,6 +52,7 @@ describe('Profile', function() {
             addNotification={instance.props.addNotification}
             baseURL={instance.props.baseURL}
             changeState={instance.props.changeState}
+            clearPostDeployment={instance.props.clearPostDeployment}
             facadesExist={instance.props.facadesExist}
             destroyModels={instance.props.destroyModels}
             listModelsWithInfo={instance.props.listModelsWithInfo}

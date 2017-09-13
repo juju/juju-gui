@@ -13,6 +13,8 @@ describe('HeaderBreadcrumb', () => {
       listModelsWithInfo, showProfile, switchModel;
   const acl = {};
 
+  const clearPostDeployment = sinon.stub();
+
   beforeEach(function() {
     appState = {
       current: {},
@@ -37,6 +39,7 @@ describe('HeaderBreadcrumb', () => {
         appState={appState}
         user={attrs.user}
         changeState={changeState}
+        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={humanizeTimestamp}
         loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
@@ -88,6 +91,7 @@ describe('HeaderBreadcrumb', () => {
               addNotification={addNotification}
               user={{username: 'who@external', displayName: 'who'}}
               changeState={changeState}
+              clearPostDeployment={clearPostDeployment}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
@@ -129,6 +133,7 @@ describe('HeaderBreadcrumb', () => {
               addNotification={addNotification}
               user={{username: 'dalek@external', displayName: 'dalek'}}
               changeState={changeState}
+              clearPostDeployment={clearPostDeployment}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}

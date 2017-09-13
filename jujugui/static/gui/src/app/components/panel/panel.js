@@ -25,6 +25,7 @@ class Panel extends React.Component {
     return classNames(
       'panel-component',
       this.props.instanceName,
+      this.props.extraClasses || null,
       {
         hidden: !this.props.visible
       }
@@ -76,6 +77,7 @@ Panel.propTypes = {
     PropTypes.array
   ]),
   clickAction: PropTypes.func,
+  extraClasses: PropTypes.string,
   focus: PropTypes.bool,
   instanceName: PropTypes.string.isRequired,
   visible: PropTypes.bool.isRequired
