@@ -10,6 +10,7 @@ const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
+const ChangesUtils = require('./init/changes-utils');
 
 const newBakery = require('./utils/bakery-utils');
 
@@ -63,7 +64,7 @@ class GUIApp {
       Reference to the changesUtils utilities.
       @type {Object}
     */
-    this.changesUtils = window.juju.utils.ChangesUtils;
+    this.changesUtils = new ChangesUtils;
     /**
       Reference to the relationUtils utilities.
       @type {Object}

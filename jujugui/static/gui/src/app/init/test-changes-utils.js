@@ -1,29 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const ChangesUtils = require('./changes-utils');
 
-describe('ChangesUtils', function() {
-  var db, ECS, ecs, models, changesUtils, Y;
+describe('ChangesUtils', () => {
+  let cleanups, db, ECS, ecs, models, changesUtils, Y;
 
-  before(function(done) {
-    var requirements = [
+  beforeAll(done => {
+    let requirements = [
       'changes-utils',
       'environment-change-set',
       'juju-models',
@@ -32,46 +16,49 @@ describe('ChangesUtils', function() {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
-      changesUtils = window.juju.utils.ChangesUtils;
+      changesUtils = new ChangesUtils;
       done();
     });
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
+    cleanups = [];
     db = new models.Database();
     ecs = new ECS({db: db});
   });
 
-  afterEach(function() {
+  afterEach(() => {
+    cleanups.forEach(cleanup => cleanup());
+    cleanups = null;
     window.clearTimeout(ecs.descriptionTimer);
     ecs.destroy();
   });
 
   // Add a service and a unit to the given database.
-  var addEntities = function(db) {
+  const addEntities = db => {
     db.services.add({
       id: 'django', charm: 'cs:trusty/django-1', icon: 'django.svg'});
     db.addUnits({id: 'django/0'});
   };
 
-  describe('getServiceByUnitId', function() {
-    it('returns the service', function() {
+  describe('getServiceByUnitId', () => {
+    it('returns the service', () => {
       addEntities(db);
-      var service = changesUtils.getServiceByUnitId('django/0',
+      const service = changesUtils.getServiceByUnitId('django/0',
         db.services, db.units);
       assert.strictEqual(service.get('id'), 'django');
     });
 
-    it('raises an error if the service is not found', function() {
-      assert.throw(function() {
+    it('raises an error if the service is not found', () => {
+      assert.throw(() => {
         changesUtils.getServiceByUnitId('no-such/42', db.services, db.units);
       }, 'unit no-such/42 not found');
     });
   });
 
-  it('can convert relation endpoints to their real names', function() {
-    var services = new Y.ModelList();
-    var args = [
+  it('can convert relation endpoints to their real names', () => {
+    let services = new Y.ModelList();
+    const args = [
       ['wordpress', {
         name: 'db',
         role: 'server'
@@ -80,20 +67,20 @@ describe('ChangesUtils', function() {
         name: 'db',
         role: 'client'
       }],
-      function() {}
+      () => {}
     ];
     services.add([
-      { id: 'foobar' },
-      { id: '84882221$', displayName: '(mysql)' },
-      { id: 'wordpress', displayName: 'wordpress' }
+      {id: 'foobar'},
+      {id: '84882221$', displayName: '(mysql)'},
+      {id: 'wordpress', displayName: 'wordpress'}
     ]);
-    var services = changesUtils.getRealRelationEndpointNames(args, services);
+    services = changesUtils.getRealRelationEndpointNames(args, services);
     assert.deepEqual(services, ['mysql', 'wordpress']);
   });
 
-  it('can generate descriptions for any change type', function() {
+  it('can generate descriptions for any change type', () => {
     addEntities(db);
-    var tests = [{
+    const tests = [{
       icon: 'django.svg',
       msg: ' cs:trusty/django-1 will be added to the controller.',
       change: {
@@ -161,7 +148,7 @@ describe('ChangesUtils', function() {
         command: {
           method: '_add_relation',
           args: [
-            ['foo', { name: 'bar' }],
+            ['foo', {name: 'bar'}],
             ['baz']
           ]
         }
@@ -172,7 +159,7 @@ describe('ChangesUtils', function() {
       change: {
         command: {
           method: '_addMachines',
-          args: [[{ parentId: 1 }]]
+          args: [[{parentId: 1}]]
         }
       }
     }, {
@@ -181,7 +168,7 @@ describe('ChangesUtils', function() {
       change: {
         command: {
           method: '_addMachines',
-          args: [[{ parentId: 1 }, { parentId: 1 }]]
+          args: [[{parentId: 1}, {parentId: 1}]]
         }
       }
     }, {
@@ -221,11 +208,11 @@ describe('ChangesUtils', function() {
       }
     }];
     // This method needs to be stubbed out for the add relation path.
-    var endpointNames = sinon.stub(
+    const endpointNames = sinon.stub(
       changesUtils, 'getRealRelationEndpointNames').returns(['foo', 'baz']);
-    this._cleanups.push(endpointNames.restore);
-    tests.forEach(function(test) {
-      var change = changesUtils.generateChangeDescription(
+    cleanups.push(endpointNames.restore);
+    tests.forEach(test => {
+      const change = changesUtils.generateChangeDescription(
         db.services, db.units, test.change, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
@@ -237,19 +224,19 @@ describe('ChangesUtils', function() {
     });
   });
 
-  it('can generate descriptions for all the changes in the ecs', function() {
-    var stubDescription = sinon.stub(
+  it('can generate descriptions for all the changes in the ecs', () => {
+    const stubDescription = sinon.stub(
       changesUtils,
       'generateChangeDescription');
-    this._cleanups.push(stubDescription.restore);
-    ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
+    cleanups.push(stubDescription.restore);
+    ecs.changeSet = {foo: {index: 0}, bar: {index: 0}};
     changesUtils.generateAllChangeDescriptions(
       db.services, db.units, ecs.changeSet);
     assert.equal(stubDescription.callCount, 2);
   });
 
-  it('can get the counts of each type of ecs change', function() {
-    var changeSet = {
+  it('can get the counts of each type of ecs change', () => {
+    const changeSet = {
       one: {command: {method: 'addMachine'}},
       two: {command: {method: 'addUnit'}},
       three: {command: {method: 'addMachine'}}
@@ -261,8 +248,8 @@ describe('ChangesUtils', function() {
     });
   });
 
-  it('can group the ecs change by type', function() {
-    var changeSet = {
+  it('can group the ecs change by type', () => {
+    const changeSet = {
       one: {command: {method: 'addMachine'}},
       two: {command: {method: 'addUnit'}},
       three: {command: {method: 'addMachine'}}
@@ -278,8 +265,8 @@ describe('ChangesUtils', function() {
     });
   });
 
-  it('can filter the changeset by parent', function() {
-    var changeSet = {
+  it('can filter the changeset by parent', () => {
+    const changeSet = {
       one: {parents: ['parent1']},
       two: {parents: ['parent2']},
       three: {parents: ['parent1', 'parent2']}
@@ -290,11 +277,11 @@ describe('ChangesUtils', function() {
     });
   });
 
-  describe('sortDescriptionsByApplication', function() {
+  describe('sortDescriptionsByApplication', () => {
     const getServiceById = sinon.stub();
     const descriptionsJSON = '[{"id":"addPendingResources-458","icon":"https://api.jujucharms.com/charmstore/v5/~containers/easyrsa-12/icon.svg","description":" easyrsa resources will be added.","time":"8:49 am"},{"id":"service-220","icon":"https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-35/icon.svg","description":" kubernetes-master will be added to the model.","time":"8:49 am"},{"id":"expose-102","icon":"exposed_16","description":"kubernetes-master will be exposed","time":"8:49 am"},{"id":"addRelation-83","icon":"changes-relation-added","description":"kube-api-endpoint relation will be added between kubernetes-master and kubernetes-worker.","time":"8:49 am"},{"id":"addUnits-256","icon":"changes-units-added","description":" 1 easyrsa unit will be added.","time":"8:49 am"}]'; // eslint-disable-line max-len
 
-    it('sorts additive descriptions by application', function() {
+    it('sorts additive descriptions by application', () => {
       const descriptions = JSON.parse(descriptionsJSON);
       const changeSet = {
         'addPendingResources-458': {
@@ -358,7 +345,7 @@ describe('ChangesUtils', function() {
       assert.deepEqual(sorted, expected);
     });
 
-    it('skips methods in the blacklist', function() {
+    it('skips methods in the blacklist', () => {
       const descriptions = [
         {id: 'addCharm-123'},
         {id: 'addMachines-123'},
@@ -372,7 +359,7 @@ describe('ChangesUtils', function() {
       assert.deepEqual(sorted, {});
     });
 
-    it('does not error for removal commands', function() {
+    it('does not error for removal commands', () => {
       const descriptions = [
         JSON.parse('{"id":"removeUnit-376","icon":"changes-units-removed","description":"1 unit will be removed from elasticsearch","time":"3:18 pm"}'), // eslint-disable-line max-len
         JSON.parse('{"id":"removeRelation-281","icon":"changes-relation-removed","description":"rest relation will be removed between kibana and elasticsearch.","time":"3:21 pm"}') // eslint-disable-line max-len

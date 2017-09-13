@@ -1,62 +1,40 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-YUI.add('changes-utils', function(Y) {
-
-  var ChangesUtils = {};
-
-  var removeBrackets = /^\(?(.{0,}?)\)?$/;
+class ChangesUtils {
+  constructor() {
+    this.removeBrackets = /^\(?(.{0,}?)\)?$/;
+  }
 
   /**
     Filter a changeset by a parent change.
-
-    @method filterByParent
     @param {Object} changeSet The change set to apply the filter to.
     @param {String} parentId The id of the parent change to filter by.
     @returns {Object} The filtered changes.
   */
-  ChangesUtils.filterByParent = function(changeSet, parentId) {
-    var changes = {};
+  filterByParent(changeSet, parentId) {
+    let changes = {};
     Object.keys(changeSet).forEach((key) => {
-      var change = changeSet[key];
-      var parents = change.parents || [];
+      const change = changeSet[key];
+      const parents = change.parents || [];
       if (parents.indexOf(parentId) >= 0) {
         changes[key] = change;
       }
     }, this);
     return changes;
-  };
+  }
 
   /**
     Return the counts for each type of ecs change.
-
-    @method getChangeCounts
     @param {Object} services The list of services from the db.
     @returns {Object} The ecs change counts.
   */
-  ChangesUtils.getChangeCounts = function(changeSet) {
-    var counts = {};
-    var total = 0;
-    Object.keys(changeSet).forEach(function(key) {
-      var change = changeSet[key];
-      var method = change.command && change.command.method;
+  getChangeCounts(changeSet) {
+    let counts = {};
+    let total = 0;
+    Object.keys(changeSet).forEach(key => {
+      const change = changeSet[key];
+      const method = change.command && change.command.method;
       if (method) {
         if (counts[method]) {
           counts[method] = counts[method] += 1;
@@ -68,20 +46,18 @@ YUI.add('changes-utils', function(Y) {
     }, this);
     counts.total = total;
     return counts;
-  };
+  }
 
   /**
     Group the ecs changes by method type.
-
-    @method getGroupedChanges
     @param {Object} changeSet The current environment change set.
     @returns {Object} The grouped ecs changes.
   */
-  ChangesUtils.getGroupedChanges = function(changeSet) {
-    var changes = {};
+  getGroupedChanges(changeSet) {
+    let changes = {};
     Object.keys(changeSet).forEach((key) => {
-      var change = changeSet[key];
-      var method = change.command && change.command.method;
+      const change = changeSet[key];
+      const method = change.command && change.command.method;
       if (method) {
         if (!changes[method]) {
           changes[method] = {};
@@ -90,7 +66,7 @@ YUI.add('changes-utils', function(Y) {
       }
     }, this);
     return changes;
-  };
+  }
 
   /**
     Sorts the supplied descriptions by their applications.
@@ -98,12 +74,12 @@ YUI.add('changes-utils', function(Y) {
       by their ids.
     @param {Object} changeset The ECS changeset.
     @param {Ojbect} descriptions The generated descriptions from the
-      ChangesUtils.generateAllChangeDescriptions method.
+      generateAllChangeDescriptions method.
     @return {Object} The supplied descriptions in an object where the key is
       the application associated with the description and each value is an
       array of descriptions.
   */
-  ChangesUtils.sortDescriptionsByApplication = (getServiceById, changeset, descriptions) => { // eslint-disable-line max-len
+  sortDescriptionsByApplication(getServiceById, changeset, descriptions) {
     // ECS methods to blacklist for description sorting.
     const methodBlacklist = [
       'addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys', 'destroyMachines'];
@@ -167,21 +143,18 @@ YUI.add('changes-utils', function(Y) {
       }
     });
     return grouped;
-  };
+  }
 
   /**
     Return a list of all change descriptions.
-
-    @method generateAllChangeDescriptions
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
     @param {Object} changeSet The current environment change set.
   */
-  ChangesUtils.generateAllChangeDescriptions = function(services, units,
-    changeSet) {
-    var changes = [],
+  generateAllChangeDescriptions(services, units, changeSet) {
+    let changes = [],
         change;
-    Object.keys(changeSet).forEach(function(key) {
+    Object.keys(changeSet).forEach(key => {
       change = this.generateChangeDescription(
         services, units, changeSet[key]);
       if (change) {
@@ -189,36 +162,35 @@ YUI.add('changes-utils', function(Y) {
       }
     }, this);
     return changes;
-  };
+  }
 
   /**
     Return a description of an ecs change for the summary.
-
-    @method generateChangeDescription
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
     @param {Object} change The environment change.
     @param {Bool} skipTime optional, used for testing, don't generate time.
   */
-  ChangesUtils.generateChangeDescription = function(services, units, change,
-    skipTime) {
-    var changeItem = {};
+  generateChangeDescription(services, units, change, skipTime) {
+    let changeItem = {};
 
     if (change && change.command) {
+      let ghostService;
+      let machineType;
       changeItem.id = change.id;
       // XXX: The add_unit is just the same as the service because adding
       // the service also adds the unit. We need to look at the UX for
       // units as follow up.
       switch (change.command.method) {
         case '_addCharm':
-          var command = change.command;
+          const command = change.command;
           changeItem.description = ' ' + command.args[0] +
             ' will be added to the controller.';
           // TODO frankban: retrieve the icon from the charm itself. We cannot
           // always pass applicationId as an option, and maybe we should never
           // do that, and just get what we need from the charm.
           changeItem.icon = 'charm-added';
-          var appId = command.options && command.options.applicationId;
+          const appId = command.options && command.options.applicationId;
           if (appId) {
             changeItem.icon = services.getById(appId).get('icon');
           }
@@ -237,7 +209,7 @@ YUI.add('changes-utils', function(Y) {
             // bar.
             return;
           }
-          var ghostService = services.getById(
+          ghostService = services.getById(
             change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
           changeItem.description = ' ' + ghostService.get('name') +
@@ -249,25 +221,25 @@ YUI.add('changes-utils', function(Y) {
               ' will be destroyed.';
           break;
         case '_add_unit':
-          var service = this.getServiceByUnitId(
+          const service = this.getServiceByUnitId(
             change.command.options.modelId, services, units);
           changeItem.icon = 'changes-units-added';
-          var units = change.command.args[1];
-          changeItem.description = ` ${units} ${service.get('name')} ` +
-            `unit${units === 1 ? '' : 's'} will be added.`;
+          const unitCount = change.command.args[1];
+          changeItem.description = ` ${unitCount} ${service.get('name')} ` +
+            `unit${unitCount === 1 ? '' : 's'} will be added.`;
           break;
         case '_remove_units':
           changeItem.icon = 'changes-units-removed';
           /*jslint -W004*/
-          var units = change.command.args[0];
-          changeItem.description = units.length + ' unit' +
-              (units.length === 1 ? '' : 's') +
-              ' will be removed from ' + units[0].split('/')[0];
+          const unitList = change.command.args[0];
+          changeItem.description = unitList.length + ' unit' +
+              (unitList.length === 1 ? '' : 's') +
+              ' will be removed from ' + unitList[0].split('/')[0];
           break;
         case '_expose':
-          var name = change.command.args[0];
+          let name = change.command.args[0];
           if (name.indexOf('$') > -1) {
-            var ghostService = services.getById(name);
+            ghostService = services.getById(name);
             name = ghostService.get('name');
           }
           changeItem.icon = 'exposed_16';
@@ -279,7 +251,7 @@ YUI.add('changes-utils', function(Y) {
             ' will be unexposed';
           break;
         case '_add_relation':
-          var serviceList = this.getRealRelationEndpointNames(
+          const serviceList = this.getRealRelationEndpointNames(
             change.command.args, services);
           changeItem.icon = 'changes-relation-added';
           changeItem.description = change.command.args[0][1].name +
@@ -295,7 +267,7 @@ YUI.add('changes-utils', function(Y) {
               change.command.args[1][0] + '.';
           break;
         case '_addMachines':
-          var machineType = change.command.args[0][0].parentId ?
+          machineType = change.command.args[0][0].parentId ?
             'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-created';
           changeItem.description = change.command.args[0].length +
@@ -304,7 +276,7 @@ YUI.add('changes-utils', function(Y) {
               ' will be added.';
           break;
         case '_destroyMachines':
-          var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
+          machineType = change.command.args[0][0].indexOf('/') !== -1 ?
             'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-destroyed';
           changeItem.description = change.command.args[0].length +
@@ -313,10 +285,10 @@ YUI.add('changes-utils', function(Y) {
               ' will be destroyed.';
           break;
         case '_set_config':
-          var cfgServ = services.getById(change.command.args[0]);
+          const cfgServ = services.getById(change.command.args[0]);
           changeItem.icon = 'changes-config-changed';
           changeItem.description = 'Configuration values will be changed for ' +
-              cfgServ.get('displayName').match(removeBrackets)[1] + '.';
+              cfgServ.get('displayName').match(this.removeBrackets)[1] + '.';
           break;
         case '_addKeys':
           changeItem.icon = 'changes-unknown';
@@ -335,67 +307,59 @@ YUI.add('changes-utils', function(Y) {
       changeItem.time = this._formatAMPM(new Date(change.timestamp));
     }
     return changeItem;
-  };
+  }
 
   /**
     Return formatted time for display.
-
-    @method _formatAMPM
     @param {Date} date The current date.
   */
-  ChangesUtils._formatAMPM = function(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
+  _formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
     var ampm = hours >= 12 ? 'pm' : 'am';
     hours = hours % 12;
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-  };
+    return hours + ':' + minutes + ' ' + ampm;
+  }
 
   /**
     Loops through the services in the db to find ones which have id's which
     match the temporary id's assigned to the add relation call.
-
-    @method getRealRelationEndpointNames
     @param {Array} args The arguments array from the ecs add relations call.
     @return {Array} An array of the service names involved in the relation.
   */
-  ChangesUtils.getRealRelationEndpointNames = function(args, services) {
-    var serviceList = [],
+  getRealRelationEndpointNames(args, services) {
+    let serviceList = [],
         serviceId;
-    services.each(function(service) {
+    services.each(service => {
       serviceId = service.get('id');
-      args.forEach(function(arg) {
+      args.forEach(arg => {
         if (serviceId === arg[0]) {
-          var matches = service.get('displayName').match(removeBrackets);
+          const matches = service.get('displayName').match(this.removeBrackets);
           serviceList.push(matches[matches.length - 1]);
         }
       });
     });
     return serviceList;
-  };
+  }
 
   /**
     Return the service for a unit with the supplied id.
     Raise an error if the unit is not found.
-
-    @method getServiceByUnitId
     @param {String} unitId The unit identifier in the database.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
     @return {Model} The service model instance.
   */
-  ChangesUtils.getServiceByUnitId = function(unitId, services, units) {
-    var unit = units.getById(unitId);
+  getServiceByUnitId(unitId, services, units) {
+    const unit = units.getById(unitId);
     if (!unit) {
       // This should never happen in the deployer panel context.
       throw 'unit ' + unitId + ' not found';
     }
     return services.getById(unit.service);
-  };
+  }
+}
 
-  window.juju.utils.ChangesUtils = ChangesUtils;
-
-}, '0.0.1', {requires: []});
+module.exports = ChangesUtils;

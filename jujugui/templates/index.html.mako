@@ -348,7 +348,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         YUI(GlobalConfig).use([
             'acl',
             'analytics',
-            'changes-utils',
             'juju-charm-models',
             'juju-bundle-models',
             'juju-controller-api',
