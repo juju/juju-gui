@@ -77,9 +77,11 @@ YUI.add('juju-view-environment', function(Y) {
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
+        /* eslint-disable no-undef */
         ReactDOM.render(
           <juju.components.Environment />,
           container);
+        /* eslint-enable */
         this._rendered = true;
       }
 
@@ -244,7 +246,6 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'environment',
     'juju-topology',
     'node',
     'view'

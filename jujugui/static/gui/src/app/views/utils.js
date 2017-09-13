@@ -1383,6 +1383,7 @@ YUI.add('juju-view-utils', function(Y) {
       action: action,
       type: 'destructive'
     }];
+    /* eslint-disable no-undef */
     ReactDOM.render(
       <window.juju.components.Popup
         buttons={buttons}
@@ -1393,6 +1394,7 @@ YUI.add('juju-view-utils', function(Y) {
         </p>
       </window.juju.components.Popup>,
       document.getElementById('popup-container'));
+    /* eslint-enable */
   };
 
   /**
@@ -1401,8 +1403,10 @@ YUI.add('juju-view-utils', function(Y) {
     @method _hidePopup
   */
   utils._hidePopup = function() {
+    /* eslint-disable no-undef */
     ReactDOM.unmountComponentAtNode(
       document.getElementById('popup-container'));
+    /* eslint-enable */
   };
 
   /**

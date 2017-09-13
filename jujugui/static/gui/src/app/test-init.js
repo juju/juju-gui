@@ -10,7 +10,6 @@ describe('init', () => {
   const createApp = config => {
     const defaults = {
       apiAddress: 'http://api.example.com/',
-      bundleServiceURL: 'http://examle.com/bundleservice',
       controllerSocketTemplate: 'wss://$server:$port/api',
       socket_protocol: 'wss',
       baseUrl: 'http://example.com/',
@@ -44,7 +43,7 @@ describe('init', () => {
     app = createApp();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     app.destructor();
     container.remove();
   });

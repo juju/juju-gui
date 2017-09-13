@@ -21,7 +21,13 @@ window.jsyaml = require('js-yaml');
 // Required for the envionment.js file.
 window.ReactDOM = ReactDOM;
 window.React = React;
-juju.components.Environment = require('./components/environment/environment');
+juju.components.AmbiguousRelationMenu = require(
+  './components/relation-menu/ambiguous-relation-menu');
+juju.components.Environment = require(
+  './components/environment/environment');
+juju.components.Popup = require('./components/popup/popup');
+juju.components.RelationMenu = require(
+  './components/relation-menu/relation-menu');
 
 const yui = window.yui;
 
@@ -134,7 +140,6 @@ class GUIApp {
       config, window.jujulib.bundleservice);
 
     this.ecs = this._setupEnvironmentChangeSet();
-
     const modelOptions = {
       user: this.user,
       ecs: this.ecs,
