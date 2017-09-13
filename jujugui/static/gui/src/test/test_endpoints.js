@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const createApp = (JujuGUI, config) => {
+const createApp = (JujuGUI, config = {}) => {
   const defaults = {
     apiAddress: 'http://api.example.com/',
     controllerSocketTemplate: 'wss://$server:$port/api',
@@ -22,7 +22,8 @@ const createApp = (JujuGUI, config) => {
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', () => {
-  let container, utils, db, app, models, sample_endpoints, sample_env, JujuGUI;
+  let container, utils, db, app, models, sample_endpoints,
+      sample_env, JujuGUI;
 
   before(done => {
     YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils']), Y => {
@@ -53,18 +54,12 @@ describe('Relation endpoints logic', () => {
     const userClass = new window.jujugui.User(
       {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
-    window.juju_config = {
-      flags: {},
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
-    };
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);
     db = app.db;
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     app.destructor();
     container.remove();
   });
@@ -538,6 +533,7 @@ describe('Application config handlers', () => {
     container = utils.makeAppContainer();
     app = createApp(JujuGUI, {conn: new utils.SocketStub()});
     app.modelAPI.set('facades', {Application: [1], Charms: [2]});
+    app.modelAPI.connect();
     conn = app.modelAPI.get('conn');
   });
 
@@ -548,14 +544,6 @@ describe('Application config handlers', () => {
     conn = null;
   });
 
-  // Ensure the last message in the connection is a ServiceGet request.
-  var assertServiceGetCalled = function() {
-    assert.equal(1, conn.messages.length);
-    var msg = conn.last_message();
-    assert.strictEqual(msg.type, 'Application');
-    assert.strictEqual(msg.request, 'Get');
-  };
-
   it('should not call Application.Get when a pending service is added',
     function() {
       var charmUrl = 'cs:precise/wordpress-2';
@@ -563,7 +551,12 @@ describe('Application config handlers', () => {
         id: 'wordpress',
         pending: true,
         charm: charmUrl});
-      assert.equal(0, conn.messages.length);
+      assert.equal(conn.messages.length, 1);
+      // This is irrelevant, just confirming that it didn't try and make
+      // the request for the application info.
+      const msg = conn.last_message();
+      assert.equal(msg.type, 'Admin');
+      assert.equal(msg.request, 'Login');
     });
 
   it('should call Application.Get when non-pending services are added',
@@ -577,7 +570,10 @@ describe('Application config handlers', () => {
         id: applicationName,
         pending: false,
         charm: charmUrl});
-      assertServiceGetCalled();
+      assert.equal(conn.messages.length, 2);
+      var msg = conn.last_message();
+      assert.strictEqual(msg.type, 'Application');
+      assert.strictEqual(msg.request, 'Get');
     });
 
   it('should call Application.Get when a charm changes', function() {
@@ -590,13 +586,19 @@ describe('Application config handlers', () => {
       id: applicationName,
       pending: false,
       charm: charmUrl});
-    assertServiceGetCalled();
+    assert.equal(conn.messages.length, 2);
+    var msg = conn.last_message();
+    assert.strictEqual(msg.type, 'Application');
+    assert.strictEqual(msg.request, 'Get');
     var svc = app.db.services.getById(applicationName);
     charmUrl = 'cs:precise/wordpress-3';
     var charm2 = app.db.charms.add({id: charmUrl, loaded: true});
     destroyMe.push(charm2);
     svc.set('charm', charmUrl);
-    assertServiceGetCalled();
+    assert.equal(conn.messages.length, 2);
+    var msg = conn.last_message();
+    assert.strictEqual(msg.type, 'Application');
+    assert.strictEqual(msg.request, 'Get');
   });
 
 });
