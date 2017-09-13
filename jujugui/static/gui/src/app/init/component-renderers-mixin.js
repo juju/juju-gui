@@ -11,6 +11,7 @@ const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
+const changesUtils = require('./changes-utils');
 
 const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
@@ -815,7 +816,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       });
       return;
     }
-    const changesUtils = this.changesUtils;
     const controllerAPI = this.controllerAPI;
     const services = db.services;
     // Auto place the units. This is probably not the best UX, but is required
@@ -949,7 +949,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     var servicesArray = services.toArray();
     var machines = db.machines.toArray();
     var units = db.units;
-    var changesUtils = this.changesUtils;
     ReactDOM.render(
       <DeploymentBar
         acl={this.acl}

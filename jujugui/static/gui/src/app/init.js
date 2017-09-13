@@ -60,11 +60,6 @@ class GUIApp {
     */
     this.anonymousMode = false;
     /**
-      Reference to the changesUtils utilities.
-      @type {Object}
-    */
-    this.changesUtils = window.juju.utils.ChangesUtils;
-    /**
       Reference to the relationUtils utilities.
       @type {Object}
     */

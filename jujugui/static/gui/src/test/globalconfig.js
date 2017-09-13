@@ -24,7 +24,6 @@ var GlobalConfig = {
 const MODULES = [
   'acl',
   'analytics',
-  'changes-utils',
   'juju-charm-models',
   'juju-bundle-models',
   'juju-controller-api',
