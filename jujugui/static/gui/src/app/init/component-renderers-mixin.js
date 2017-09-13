@@ -350,16 +350,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {String} entityId The entity ID of the charm or bundle.
   */
   _displayPostDeployment(entityId) {
-    if (!window.juju_config.flags.postDeployment) {
-      return;
-    }
     entityId = entityId || this.stagedEntity;
 
     this._clearPostDeployment();
 
-    const charmstore = this.get('charmstore');
+    const charmstore = this.charmstore;
 
-    const showEntityDefault = (id) => {
+    const showEntityDetails = (id) => {
       let url;
       try {
         url = window.jujulib.URL.fromString(id);
@@ -382,7 +379,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
         getFile={charmstore.getFile.bind(charmstore)}
-        makeEntityModel={Y.juju.makeEntityModel}
+        makeEntityModel={yui.juju.makeEntityModel}
         marked={marked}
         showEntityDetails={showEntityDetails.bind(this, entityId)} />,
       document.getElementById('post-deployment')
@@ -511,6 +508,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         makeEntityModel={yui.juju.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
+        setStagedEntity={this._setStagedEntity.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         urllib={window.jujulib.URL}
       />,
