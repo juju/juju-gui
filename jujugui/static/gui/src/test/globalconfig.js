@@ -46,7 +46,6 @@ const MODULES = [
   'app-base',
   'app-transitions',
   'base',
-  'bundle-importer',
   'bundle-import-notifications',
   'node',
   'model',

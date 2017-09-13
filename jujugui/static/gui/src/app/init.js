@@ -140,7 +140,6 @@ class GUIApp {
       config, window.jujulib.bundleservice);
 
     this.ecs = this._setupEnvironmentChangeSet();
-
     const modelOptions = {
       user: this.user,
       ecs: this.ecs,

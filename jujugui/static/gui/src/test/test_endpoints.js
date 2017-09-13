@@ -1,41 +1,41 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const createApp = (JujuGUI, config) => {
+  const defaults = {
+    apiAddress: 'http://api.example.com/',
+    controllerSocketTemplate: 'wss://$server:$port/api',
+    socket_protocol: 'wss',
+    baseUrl: 'http://example.com/',
+    charmstoreURL: 'http://1.2.3.4/',
+    flags: {},
+    gisf: false,
+    plansURL: 'http://plans.example.com/',
+    termsURL: 'http://terms.example.com/'
+  };
+  // Overwrite any default values with those provided.
+  const initConfig = Object.assign(defaults, config);
+  return new JujuGUI(initConfig);
+};
 
 // These are nominally based on improv sample.json delta stream with
 // the addition of puppet subordinate relations.
 
-describe('Relation endpoints logic', function() {
-  var Y, container, juju, jujuConfig, utils, db, app, models, sample_endpoints,
-      env, ecs, sample_env;
+describe('Relation endpoints logic', () => {
+  let container, utils, db, app, models, sample_endpoints, sample_env, JujuGUI;
 
-  before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-tests-utils', 'juju-models', 'juju-gui',
-      'juju-controllers', 'environment-change-set'],
-    function(Y) {
+  before(done => {
+    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils']), Y => {
       utils = Y.namespace('juju-tests.utils');
-      juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
-      sinon.stub(Y.juju.App.prototype, '_renderComponents');
+      // init.js requires the window to contain the YUI object.
+      window.yui = Y;
+      // The gui version is required to be set by component-renderers-mixin.js.
+      window.GUI_VERSION = {version: '1.2.3'};
+      // The require needs to be after the yui modules have been loaded.
+      JujuGUI = require('../app/init');
       done();
     });
   });
@@ -53,7 +53,6 @@ describe('Relation endpoints logic', function() {
     const userClass = new window.jujugui.User(
       {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
-    jujuConfig = window.juju_config;
     window.juju_config = {
       flags: {},
       charmstoreURL: 'http://1.2.3.4/',
@@ -61,39 +60,13 @@ describe('Relation endpoints logic', function() {
       termsURL: 'http://terms.example.com/'
     };
     container = utils.makeAppContainer();
-    var conn = new utils.SocketStub();
-    ecs = new juju.EnvironmentChangeSet();
-    env = new juju.environments.GoEnvironment({
-      conn: conn,
-      ecs: ecs,
-      user: userClass
-    });
-    env.connect();
-    app = new Y.juju.App({
-      baseUrl: 'http://example.com/',
-      controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub(),
-        user: userClass
-      }),
-      env: env,
-      socketTemplate: '/model/$uuid/api',
-      controllerSocketTemplate: '/api',
-      jujuCoreVersion: '2.0.0',
-      user: userClass
-    });
-    app.navigate = function() { return true; };
-    app.showView(new Y.View());
+    app = createApp(JujuGUI);
     db = app.db;
-    db.fireEvent = sinon.stub();
   });
 
   afterEach(function(done) {
-    window.juju_config = jujuConfig;
-    env.close(() => {
-      app.destroy();
-      container.remove(true);
-      done();
-    });
+    app.destructor();
+    container.remove();
   });
 
   function loadDelta(relations) {
@@ -248,7 +221,7 @@ describe('Endpoints map', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-models', 'juju-tests-utils',
-      'juju-endpoints-controller', 'juju-controllers'],
+      'juju-endpoints-controller'],
     function(Y) {
       models = Y.namespace('juju.models');
       EndpointsController = Y.namespace('juju.EndpointsController');
@@ -399,86 +372,37 @@ describe('Endpoints map', function() {
 
 
 describe('Endpoints map handlers', function() {
-  var app, conn, container, controller, destroyMe, ecs,
-      env, factory, juju, jujuConfig, utils, Y, _renderComponents;
+  let app, container, controller, destroyMe, factory, JujuGUI, utils;
 
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',
+  before(done => {
+    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils',
       'juju-tests-factory', 'juju-endpoints-controller',
-      'juju-controllers', 'datasource-local'],
-    function(Y) {
-      juju = Y.namespace('juju');
+      'datasource-local']),
+    Y => {
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
+      // init.js requires the window to contain the YUI object.
+      window.yui = Y;
+      // The gui version is required to be set by component-renderers-mixin.js.
+      window.GUI_VERSION = {version: '1.2.3'};
+      // The require needs to be after the yui modules have been loaded.
+      JujuGUI = require('../app/init');
       done();
     });
   });
 
-  beforeEach(function() {
-    const getMockStorage = function() {
-      return new function() {
-        return {
-          store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
-        };
-      };
-    };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
-    jujuConfig = window.juju_config;
-    window.juju_config = {
-      flags: {},
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
-    };
+  beforeEach(() => {
     destroyMe = [];
     container = utils.makeAppContainer();
-    conn = new utils.SocketStub();
-    ecs = new juju.EnvironmentChangeSet();
-    env = new juju.environments.GoEnvironment({
-      user: userClass,
-      ecs: ecs,
-      conn: conn
-    });
-    env.connect();
-    _renderComponents = sinon.stub(
-      Y.juju.App.prototype, '_renderComponents');
-    app = new Y.juju.App({
-      baseUrl: 'http://example.com/',
-      env: env,
-      apiAddress: 'wss://1.2.3.4:1234',
-      controllerAPI: new juju.ControllerAPI({
-        conn: utils.SocketStub(),
-        user: userClass
-      }),
-      user: userClass,
-      consoleEnabled: true,
-      charmstore: factory.makeFakeCharmstore(),
-      jujuCoreVersion: '2.0.0',
-      socketTemplate: '/model/$uuid/api',
-      controllerSocketTemplate: '/api'
-    });
-    app.showView(new Y.View());
-    destroyMe.push(app);
+    app = createApp(JujuGUI);
     controller = app.endpointsController;
     controller.endpointsMap = {};
-    destroyMe.push(controller);
   });
 
   afterEach(function(done) {
-    window.juju_config = jujuConfig;
-    env.close(() => {
-      app.destroy();
-      destroyMe.forEach(thing => {
-        thing.destroy();
-      });
-      container.remove(true);
-      done();
-    });
-    _renderComponents.restore();
+    app.destructor();
+    container.remove();
+    destroyMe = null;
   });
 
   it('should update endpoints map when pending services are added',
@@ -591,83 +515,37 @@ describe('Endpoints map handlers', function() {
 });
 
 
-describe('Application config handlers', function() {
-  var Y, container, juju, jujuConfig, utils, app, conn, env, controller,
-      destroyMe;
+describe('Application config handlers', () => {
+  let JujuGUI, app, conn, container, destroyMe, utils;
 
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',
-      'juju-endpoints-controller', 'juju-controllers',
-      'datasource-local', 'environment-change-set'],
-    function(Y) {
-      juju = Y.namespace('juju');
+  before(done => {
+    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils',
+      'environment-change-set']),
+    Y => {
       utils = Y.namespace('juju-tests.utils');
-
-      sinon.stub(Y.juju.App.prototype, '_renderComponents');
+      // init.js requires the window to contain the YUI object.
+      window.yui = Y;
+      // The gui version is required to be set by component-renderers-mixin.js.
+      window.GUI_VERSION = {version: '1.2.3'};
+      // The require needs to be after the yui modules have been loaded.
+      JujuGUI = require('../app/init');
       done();
     });
   });
 
-  beforeEach(function() {
-    const getMockStorage = function() {
-      return new function() {
-        return {
-          store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
-        };
-      };
-    };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
-    userClass.controller = {user: 'user', password: 'password'};
-    jujuConfig = window.juju_config;
-    window.juju_config = {
-      flags: {},
-      charmstoreURL: 'http://1.2.3.4/',
-      plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
-    };
+  beforeEach(() => {
     destroyMe = [];
     container = utils.makeAppContainer();
-    conn = new utils.SocketStub();
-    var ecs = new juju.EnvironmentChangeSet();
-    env = new juju.environments.GoEnvironment({
-      conn: conn,
-      ecs: ecs,
-      user: userClass
-    });
-    env.connect();
-    env.set('facades', {Application: [1]});
-    app = new Y.juju.App({
-      baseUrl: 'http://example.com/',
-      controllerAPI: new juju.ControllerAPI({
-        conn: new utils.SocketStub(),
-        user: userClass
-      }),
-      user: userClass,
-      env: env,
-      socketTemplate: '/model/$uuid/api',
-      controllerSocketTemplate: '/api',
-      consoleEnabled: true,
-      jujuCoreVersion: '2.0.0'
-    });
-    app.showView(new Y.View());
-    controller = app.endpointsController;
-    destroyMe.push(controller);
+    app = createApp(JujuGUI, {conn: new utils.SocketStub()});
+    app.modelAPI.set('facades', {Application: [1], Charms: [2]});
+    conn = app.modelAPI.get('conn');
   });
 
-  afterEach(function(done) {
-    window.juju_config = jujuConfig;
-    env.close(() => {
-      app.destroy();
-      destroyMe.forEach(thing => {
-        thing.destroy();
-      });
-      container.remove(true);
-      done();
-    });
-
+  afterEach(() => {
+    app.destructor();
+    container.remove();
+    destroyMe = null;
+    conn = null;
   });
 
   // Ensure the last message in the connection is a ServiceGet request.
