@@ -262,4 +262,8 @@ EnvSwitcher.propTypes = {
   user: PropTypes.object
 };
 
+EnvSwitcher.defaultProps = {
+  environmentName: 'untitled-model'
+};
+
 module.exports = enhanceWithClickOutside(EnvSwitcher);
