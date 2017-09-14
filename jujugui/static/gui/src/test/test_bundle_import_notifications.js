@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('bundle-import-notifications', function() {
     var db, env, ns;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(
         'bundle-import-notifications',
         function(Y) {
@@ -128,7 +128,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var bundleNotifications, db;
     var requirements = ['bundle-import-notifications'];
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         bundleNotifications = Y.namespace('juju').BundleNotifications;
         done();
