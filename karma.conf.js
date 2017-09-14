@@ -67,7 +67,9 @@ module.exports = function(config) {
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/globalconfig.js',
       'jujugui/static/gui/src/app/test-*.js',
-      'jujugui/static/gui/src/app/init/test-*.js'
+      'jujugui/static/gui/src/app/init/test-*.js',
+
+      'jujugui/static/gui/src/test/test_viewport_module.js'
     ],
 
     // list of files to exclude
@@ -79,6 +81,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/test/test_*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify']
     },
 
