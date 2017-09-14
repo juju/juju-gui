@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Entity Extension', function() {
   var Y, EntityModel, entityModel, jujuConfig, models, utils;
 
-  before(function(done) {
+  beforeAll(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils'

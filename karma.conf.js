@@ -71,6 +71,7 @@ module.exports = function(config) {
 
       'jujugui/static/gui/src/test/test_bundle_import_notifications.js',
       'jujugui/static/gui/src/test/test_d3_components.js',
+      'jujugui/static/gui/src/test/test_entity_extension.js',
       'jujugui/static/gui/src/test/test_viewport_module.js'
     ],
 
