@@ -18,6 +18,7 @@ const DeployerMixin = require('./init/deployer-mixin');
 
 // Hacks untill all of the global references have been removed.
 window.jsyaml = require('js-yaml');
+window.juju.utils.RelationUtils = require('./init/relation-utils');
 // Required for the envionment.js file.
 window.ReactDOM = ReactDOM;
 window.React = React;
@@ -65,11 +66,6 @@ class GUIApp {
       @type {Boolean}
     */
     this.anonymousMode = false;
-    /**
-      Reference to the relationUtils utilities.
-      @type {Object}
-    */
-    this.relationUtils = window.juju.utils.RelationUtils;
     /**
       Stores the custom event handlers for the application.
       @type {Object}

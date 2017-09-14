@@ -12,6 +12,7 @@ const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
+const relationUtils = require('./relation-utils');
 
 const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
@@ -661,7 +662,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderInspector(state, next) {
-    const relationUtils = this.relationUtils;
     const utils = yui.juju.views.utils;
     const instance = this.topology;
     if (!instance) {
@@ -710,7 +710,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           createRelation={relationUtils.createRelation.bind(this, db, model)}
           destroyService={utils.destroyService.bind(
             this, db, model, service)}
-          destroyRelations={this.relationUtils.destroyRelations.bind(
+          destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
           destroyUnits={utils.destroyUnits.bind(this, model)}
           displayPlans={utils.compareSemver(
