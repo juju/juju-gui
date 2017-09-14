@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('Base Environment', function() {
     var environments, juju;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use('juju-env-base', function(Y) {
         juju = Y.namespace('juju');
         environments = juju.environments;
@@ -167,7 +167,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     const requires = ['juju-env-base'];
     let tags;
 
-    before(done => {
+    beforeAll(done => {
       YUI(GlobalConfig).use(requires, function(Y) {
         const module = Y.namespace('juju').environments;
         tags = module.tags;
