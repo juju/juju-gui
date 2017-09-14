@@ -73,7 +73,6 @@ YUI.add('juju-view-environment', function(Y) {
       const container = this.getContainer();
       let topo = this.topo;
       const db = this.get('db');
-
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
@@ -98,6 +97,9 @@ YUI.add('juju-view-environment', function(Y) {
       topo.render();
       this.boundRenderedHandler = this.updateHelpIndicator.bind(this);
       document.addEventListener('topo.rendered', this.boundRenderedHandler);
+
+      this.updateHelpIndicator();
+
       return this;
     },
 
