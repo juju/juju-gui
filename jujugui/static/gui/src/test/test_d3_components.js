@@ -22,7 +22,7 @@ describe('d3-components', function() {
   let NS, TestModule, modA, state,
       container, comp, utils, viewUtils;
 
-  before(function(done) {
+  beforeAll(function(done) {
     YUI(GlobalConfig).use(['d3-components',
       'juju-tests-utils',
       'juju-view-utils',
@@ -72,6 +72,7 @@ describe('d3-components', function() {
   });
 
   afterEach(function() {
+    container.remove();
     if (comp) {
       comp.unbind();
     }
@@ -120,7 +121,7 @@ describe('d3-components', function() {
     // These require a bound DOM element however
     comp.render();
     document.querySelector('.thing').click();
-    state.thing.should.equal('decorated');
+    assert.equal(state.thing, 'decorated');
   });
 
   it('should allow event bindings through the use of a declarative object',
@@ -146,7 +147,7 @@ describe('d3-components', function() {
       comp.render();
 
       document.querySelector('.thing').click();
-      state.clicked.should.equal(true);
+      assert.equal(state.clicked, true);
 
       const event = new MouseEvent('dblclick', {
         'view': window,
