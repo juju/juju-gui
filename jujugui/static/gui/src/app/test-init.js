@@ -11,6 +11,7 @@ describe('init', () => {
     const defaults = {
       apiAddress: 'http://api.example.com/',
       controllerSocketTemplate: 'wss://$server:$port/api',
+      socketTemplate: '/model/$uuid/api',
       socket_protocol: 'wss',
       baseUrl: 'http://example.com/',
       charmstoreURL: 'http://1.2.3.4/',
@@ -64,6 +65,27 @@ describe('init', () => {
     const shortcuts = document.getElementById('modal-shortcuts');
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
+  });
+
+  describe('_switchModelToUUID', function() {
+    it('switches to the provided uuid', () => {
+      app.switchEnv = sinon.stub();
+      app._switchModelToUUID('my-uuid');
+      assert.equal(app.modelUUID, 'my-uuid');
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.equal(
+        app.switchEnv.args[0][0].endsWith('/model/my-uuid/api'), true);
+    });
+
+    it('switches to disconnected if none provided', () => {
+      app.switchEnv = sinon.stub();
+      app.createSocketURL = sinon.stub();
+      app._switchModelToUUID();
+      assert.strictEqual(app.modelUUID, null);
+      assert.equal(app.createSocketURL.callCount, 0);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.deepEqual(app.switchEnv.args[0], [undefined]);
+    });
   });
 
   describe('anonymous mode', function() {
