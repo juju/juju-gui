@@ -5,7 +5,7 @@ const keysim = require('keysim');
 const utils = require('../test/utils');
 
 describe('init', () => {
-  let app, container, JujuGUI;
+  let app, container, getMockStorage, JujuGUI;
 
   const createApp = config => {
     const defaults = {
@@ -41,6 +41,15 @@ describe('init', () => {
   beforeEach(() => {
     container = utils.makeAppContainer();
     app = createApp();
+    getMockStorage = () => {
+      return new function() {
+        return {
+          store: {},
+          setItem: function(name, val) { this.store[name] = val; },
+          getItem: function(name) { return this.store[name] || null; }
+        };
+      };
+    };
   });
 
   afterEach(() => {
@@ -55,6 +64,188 @@ describe('init', () => {
     const shortcuts = document.getElementById('modal-shortcuts');
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
+  });
+
+  describe('anonymous mode', function() {
+    let userClass;
+
+    // Set up the mocks required for these tests.
+    const setupApp = (config) => {
+      // Clean up the old app.
+      app.destructor();
+      app = createApp(config);
+      app._displayLogin = sinon.stub();
+      app._renderLogin = sinon.stub();
+      app._renderUserMenu = sinon.stub();
+      app.maskVisibility = sinon.stub();
+      app.loginToAPIs = sinon.stub();
+    };
+
+    beforeEach(() => {
+      userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {};
+      setupApp();
+    });
+
+    // Report whether the application canvas is visible.
+    const appIsVisible = () => {
+      if (!app.maskVisibility.called) {
+        return false;
+      }
+      const args = app.maskVisibility.args[0];
+      return !args[0];
+    };
+
+    it('is disabled when the app is created', () => {
+      assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+    });
+
+    it('is enabled when the controller connects in gisf mode', done => {
+      setupApp({gisf: true, user: userClass});
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when the controller connects but not in gisf', done => {
+      setupApp({gisf: false, user: userClass});
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when credentials are available', done => {
+      setupApp({gisf: true, user: userClass});
+      app.controllerAPI.get('user').controller = {macaroons: 'macaroons'};
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, true, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when not in /new', done => {
+      setupApp({gisf: true, user: userClass});
+      app.state = {current: {root: 'store'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when in the homepage', done => {
+      setupApp({gisf: true, user: userClass});
+      app.state = {current: {root: null}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is kept enabled when previously enabled', done => {
+      setupApp({gisf: true, user: userClass});
+      app.anonymousMode = true;
+      app.state = {current: {root: 'store'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is kept enabled when previously enabled and in homepage', done => {
+      setupApp({gisf: true, user: userClass});
+      app.anonymousMode = true;
+      app.state = {current: {root: null}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is ignored when enabled but navigating to the login page', done => {
+      setupApp({gisf: true, user: userClass});
+      app.anonymousMode = true;
+      app.state = {current: {root: 'login'}, changeState: () => {}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled after successful login', done => {
+      const listener = evt => {
+        document.removeEventListener('login', listener);
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(
+          app._renderUserMenu.called, true, '_renderUserMenu');
+        assert.equal(app.state.changeState.called, true, 'changeState');
+        const args = app.state.changeState.args[0];
+        assert.equal(args.length, 1, 'changeState num args');
+        assert.deepEqual(args[0], {root: null}, 'changeState args');
+        done();
+      };
+      app.controllerAPI.after('connectedChange', evt => {
+        document.addEventListener('login', listener);
+        app.anonymousMode = true;
+        app.state = {current: {root: 'login'}, changeState: sinon.stub()};
+        document.dispatchEvent(new CustomEvent('login', {
+          detail: {err: null}
+        }));
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled after failed login', done => {
+      app.anonymousMode = true;
+      app.state = {current: {root: null}};
+      const listener = evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
+        document.removeEventListener('login', listener);
+        done();
+      };
+      document.addEventListener('login', listener);
+      document.dispatchEvent(new CustomEvent('login', {
+        detail: {err: 'bad wolf'}
+      }));
+    });
   });
 
   describe('setPageTitle', function () {
