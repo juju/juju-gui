@@ -42,7 +42,7 @@ describe('init', () => {
   beforeEach(() => {
     container = utils.makeAppContainer();
     app = createApp();
-    getMockStorage = () => {
+    getMockStorage = function() {
       return new function() {
         return {
           store: {},
@@ -67,7 +67,54 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
-  describe('_switchModelToUUID', function() {
+  describe('_fetchEntityFromUserState', () => {
+    it('returns a promise for an entity', done => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.charmstore = charmstore;
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.equal(legacyPath.callCount, 1, 'legacy path not called');
+      assert.equal(charmstore.getEntity.callCount, 1, 'getEntity not called');
+      assert.equal(charmstore.getEntity.args[0][0], '~hatch/ghost');
+      // Call the callback to make sure it properly resolves the promise.
+      charmstore.getEntity.args[0][1](null, {});
+      entityPromise.then(() => {
+        done();
+      });
+    });
+
+    it('caches the entity promises', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.charmstore = charmstore;
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.deepEqual(app._userPaths.get('hatch/ghost'), {
+        promise: entityPromise
+      });
+    });
+
+    it('returns a cached promise', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.charmstore = charmstore;
+      const response = {promise: 'its a promise'};
+      app._userPaths.set('hatch/ghost', response);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      // hacking the userPaths cache so that we can tell if it pulls from there.
+      assert.deepEqual(entityPromise, response.promise);
+    });
+  });
+
+  describe('_switchModelToUUID', () => {
     it('switches to the provided uuid', () => {
       app.switchEnv = sinon.stub();
       app._switchModelToUUID('my-uuid');
@@ -88,7 +135,7 @@ describe('init', () => {
     });
   });
 
-  describe('anonymous mode', function() {
+  describe('anonymous mode', () => {
     let userClass;
 
     // Set up the mocks required for these tests.
@@ -270,7 +317,7 @@ describe('init', () => {
     });
   });
 
-  describe('setPageTitle', function () {
+  describe('setPageTitle', () => {
     it('can set the page title', () => {
       document.title = 'Test';
       app.setPageTitle('Testing');
