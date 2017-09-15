@@ -949,11 +949,4 @@ describe('RelationUtils', () => {
       assert.equal(args[2], callback);
     });
   });
-
-
-
-
-
-
-
 });
