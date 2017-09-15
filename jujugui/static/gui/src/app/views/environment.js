@@ -87,9 +87,10 @@ YUI.add('juju-view-environment', function(Y) {
       topo = this.createTopology();
       topo.recordSubscription(
         'ServiceModule',
-        db.services.after('remove',
-          this.updateHelpIndicator.bind(this)));
-
+        db.services.after('reset', this.updateHelpIndicator.bind(this)));
+      topo.recordSubscription(
+        'ServiceModule',
+        db.services.after('remove', this.updateHelpIndicator.bind(this)));
       topo.recordSubscription(
         'ServiceModule',
         db.services.after('add', this.updateHelpIndicator.bind(this)));
