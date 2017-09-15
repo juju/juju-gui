@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('Juju API utilities', function() {
     var environments;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(['juju-env-api'], function(Y) {
         environments = Y.namespace('juju.environments');
         done();
@@ -98,7 +98,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
 
-    before(function(done) {
+    beforeAll(function(done) {
       Y = YUI(GlobalConfig).use([
         'environment-change-set',
         'juju-tests-utils',
@@ -145,8 +145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Resources: [4, 7]
       });
       env.set('modelUUID', 'this-is-a-uuid');
-      this._cleanups.push(env.close.bind(env));
-      cleanups = [];
+      cleanups = [env.close.bind(env)];
     });
 
     afterEach(function() {
@@ -167,7 +166,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('stops the pinger', function(done) {
         const originalClearInterval = clearInterval;
         clearInterval = sinon.stub();
-        this._cleanups.push(() => {
+        cleanups.push(() => {
           clearInterval = originalClearInterval;
         });
         env._pinger = 'I am the pinger';
@@ -2585,7 +2584,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('calls the ecs remove relation', function() {
       var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveRelation');
-      this._cleanups.push(lazy.restore);
+      cleanups.push(lazy.restore);
       env.remove_relation([], [], function() {});
       assert.equal(lazy.calledOnce, true);
     });
@@ -2628,7 +2627,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('calls the ecs remove unit', function() {
       var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveUnit');
-      this._cleanups.push(lazy.restore);
+      cleanups.push(lazy.restore);
       env.remove_units([], function() {});
       assert.equal(lazy.calledOnce, true);
     });
@@ -3194,7 +3193,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('addKeys', function() {
       it('calls the ecs add keys', function() {
         var lazy = sinon.stub(env.get('ecs'), 'lazyAddSSHKeys');
-        this._cleanups.push(lazy.restore);
+        cleanups.push(lazy.restore);
         env.addKeys([], [], function() {});
         assert.equal(lazy.calledOnce, true);
       });
@@ -3328,7 +3327,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('importKeys', function() {
       it('calls the ecs import keys', function() {
         var lazy = sinon.stub(env.get('ecs'), 'lazyImportSSHKeys');
-        this._cleanups.push(lazy.restore);
+        cleanups.push(lazy.restore);
         env.importKeys([], [], function() {});
         assert.equal(lazy.calledOnce, true);
       });

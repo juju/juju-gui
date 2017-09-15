@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Controller API', function() {
   var cleanups, conn, controllerAPI, juju, utils, Y;
 
-  before(function(done) {
+  beforeAll(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-controller-api',
       'juju-tests-utils'
@@ -62,8 +62,7 @@ describe('Controller API', function() {
       UserManager: [1]
     });
     controllerAPI.userIsAuthenticated = true;
-    this._cleanups.push(controllerAPI.close.bind(controllerAPI));
-    cleanups = [];
+    cleanups = [controllerAPI.close.bind(controllerAPI)];
   });
 
   afterEach(function() {

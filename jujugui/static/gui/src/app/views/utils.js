@@ -155,48 +155,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
   utils.removeSVGClass = removeSVGClass;
 
-  var consoleManager = function() {
-    var noop = function() {};
-    var winConsole = window.console,
-        // These are the available methods.
-        // Add more to this list if necessary.
-        consoleNoop = {
-          group: noop,
-          groupEnd: noop,
-          groupCollapsed: noop,
-          time: noop,
-          timeEnd: noop,
-          log: noop,
-          info: noop,
-          error: noop,
-          debug: noop,
-          warn: noop
-        };
-
-    if (winConsole === undefined) {
-      window.console = consoleNoop;
-      winConsole = consoleNoop;
-    }
-    return {
-      native: function() {
-        window.console = winConsole;
-      },
-      noop: function() {
-        window.console = consoleNoop;
-      },
-      console: function(x) {
-        if (!arguments.length) {
-          return consoleNoop;
-        }
-        consoleNoop = x;
-        return x;
-      }
-    };
-  };
-  utils.consoleManager = consoleManager;
-  // Also assign globally to manage the actual console.
-  window.consoleManager = consoleManager();
-
   /**
     Convert a UNIX timestamp to a human readable version of approximately how
     long ago it was from now.

@@ -26,14 +26,6 @@ const testUtils = {
       container.style.top = '-10000px';
       container.style.left = '-10000px';
     }
-
-    // Add the destroy ability to the test hook context to be run on
-    // afterEach automatically.
-    ctx._cleanups.push(function() {
-      container.remove(true);
-      container.remove();
-    });
-
     return container;
   },
 

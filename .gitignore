@@ -33,6 +33,7 @@ pip-selfcheck.json
 *.pyc
 python-shelltoolbox
 releases
+serve_pid
 share
 Session.vim
 .*.swp
