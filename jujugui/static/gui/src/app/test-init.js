@@ -4,7 +4,7 @@
 const keysim = require('keysim');
 const utils = require('../test/utils');
 
-describe('init', () => {
+xdescribe('init', () => {
   let app, container, getMockStorage, JujuGUI;
 
   const createApp = config => {
