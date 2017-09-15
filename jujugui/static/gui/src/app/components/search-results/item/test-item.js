@@ -10,7 +10,7 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('SearchResultsItem', function() {
-  let acl, item, generatePath, setStagedEntity;
+  let acl, item, generatePath;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -32,7 +32,6 @@ describe('SearchResultsItem', function() {
       ]
     };
     generatePath = sinon.stub().returns('/u/spinach/apache2');
-    setStagedEntity = sinon.stub();
   });
 
   it('can render an item', function() {
@@ -43,8 +42,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
     const series = output.props.children[2].props.children.props.children;
     const icons = output.props.children[3].props.children.props.children;
@@ -154,8 +152,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
@@ -247,8 +244,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
@@ -341,8 +337,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     output.props.children[0].props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
@@ -362,8 +357,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     const series = output.props.children[2].props.children.props.children;
     series[0].props.children.props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
@@ -392,8 +386,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     output.props.children[1].props.children[1].props.children[0].props.children
       .props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
@@ -420,8 +413,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     output.props.children[4].props.children.props.children[1]
       .props.onClick({preventDefault: preventDefault});
     assert.equal(changeState.callCount, 1);
@@ -439,8 +431,7 @@ describe('SearchResultsItem', function() {
         changeState={sinon.stub()}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
 
     const seriesClass = output.props.children[2].props.className;
     const iconsClass = output.props.children[3].props.className;
@@ -457,8 +448,7 @@ describe('SearchResultsItem', function() {
         changeState={sinon.stub()}
         deployTarget={sinon.stub()}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
 
     const seriesClass = output.props.children[2].props.className;
     const iconsClass = output.props.children[3].props.className;
@@ -476,8 +466,7 @@ describe('SearchResultsItem', function() {
         changeState={changeState}
         deployTarget={deployTarget}
         generatePath={generatePath}
-        item={item}
-        setStagedEntity={setStagedEntity} />);
+        item={item} />);
     output.props.children[5].props.children.props.action();
     assert.equal(changeState.callCount, 1);
     assert.equal(deployTarget.callCount, 1);

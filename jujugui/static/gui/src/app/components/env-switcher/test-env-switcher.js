@@ -84,7 +84,7 @@ describe('EnvSwitcher', function() {
     const expected = (
       <span className="env-switcher__name"
         ref="name">
-        MyEnv
+        untitled-model
       </span>);
     expect(output.props.children[0].props.children[0]).toEqualJSX(expected);
   });

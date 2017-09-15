@@ -34,7 +34,6 @@ describe('Charmbrowser', function() {
     const importBundleYAML = sinon.stub();
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
-    const setStagedEntity = sinon.stub();
     const makeEntityModel = sinon.spy();
     const utils = {getName: sinon.stub()};
     const renderer = jsTestUtils.shallowRender(
@@ -61,7 +60,6 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={series}
         setPageTitle={setPageTitle}
-        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);
@@ -91,7 +89,6 @@ describe('Charmbrowser', function() {
             series={undefined}
             seriesList={series}
             setPageTitle={setPageTitle}
-            setStagedEntity={setStagedEntity}
             sort={undefined}
             tags={undefined}
             type={undefined} />
@@ -103,7 +100,6 @@ describe('Charmbrowser', function() {
   it('displays the store when the app state calls for it', function() {
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
-    const setStagedEntity = sinon.stub();
     const utils = {getName: sinon.stub()};
     const makeEntityModel = sinon.spy();
     const seriesList = {};
@@ -131,7 +127,6 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={seriesList}
         setPageTitle={setPageTitle}
-        setStagedEntity={setStagedEntity}
         showTerms={sinon.stub()}
         staticURL='surl'
         urllib={sinon.stub()}
@@ -182,7 +177,6 @@ describe('Charmbrowser', function() {
       pluralize: sinon.spy()
     };
     const setPageTitle = sinon.spy();
-    const setStagedEntity = sinon.stub();
     const urllib = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <Charmbrowser
@@ -211,7 +205,6 @@ describe('Charmbrowser', function() {
         renderMarkdown={renderMarkdown}
         series={{}}
         setPageTitle={setPageTitle}
-        setStagedEntity={setStagedEntity}
         showTerms={showTerms}
         staticURL="http://example.com"
         urllib={urllib}
@@ -251,7 +244,6 @@ describe('Charmbrowser', function() {
             pluralize={utils.pluralize}
             scrollCharmbrowser={instance._scrollCharmbrowser}
             setPageTitle={setPageTitle}
-            setStagedEntity={setStagedEntity}
             showTerms={showTerms}
             urllib={urllib}
           />
@@ -289,7 +281,6 @@ describe('Charmbrowser', function() {
         renderMarkdown={sinon.stub()}
         series={{}}
         setPageTitle={sinon.stub()}
-        setStagedEntity={sinon.stub()}
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);

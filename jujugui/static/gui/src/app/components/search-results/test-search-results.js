@@ -39,8 +39,7 @@ describe('SearchResults', function() {
           makeEntityModel={sinon.stub()}
           query={query}
           seriesList={{}}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />);
+          setPageTitle={sinon.stub()} />);
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
@@ -62,8 +61,7 @@ describe('SearchResults', function() {
           makeEntityModel={sinon.stub()}
           query="nothing here"
           seriesList={{}}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -99,8 +97,7 @@ describe('SearchResults', function() {
           makeEntityModel={sinon.stub()}
           query="nothing here"
           seriesList={{}}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -156,8 +153,7 @@ describe('SearchResults', function() {
           makeEntityModel={makeEntityModel}
           query={query}
           seriesList={series}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       shallowRenderer.getRenderOutput();
@@ -312,16 +308,14 @@ describe('SearchResults', function() {
                       deployTarget={deployTarget}
                       generatePath={generatePath}
                       item={results[0]}
-                      key="~test-owner/mysql-one"
-                      setStagedEntity={sinon.stub()} />
+                      key="~test-owner/mysql-one" />
                     <SearchResultsItem
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
                       generatePath={generatePath}
                       item={results[1]}
-                      key="~test-owner/mysql-two"
-                      setStagedEntity={sinon.stub()} />
+                      key="~test-owner/mysql-two" />
                   </ul>
                 </div>
                 <div className="clearfix community-results">
@@ -344,16 +338,14 @@ describe('SearchResults', function() {
                         deployTarget={deployTarget}
                         generatePath={generatePath}
                         item={results[2]}
-                        key="~test-owner/mysql-three"
-                        setStagedEntity={sinon.stub()} />
+                        key="~test-owner/mysql-three" />
                       <SearchResultsItem
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
                         generatePath={generatePath}
                         item={results[3]}
-                        key="~test-owner/mysql-four"
-                        setStagedEntity={sinon.stub()} />
+                        key="~test-owner/mysql-four" />
                     </ul>
                   </div>
                 </div>
@@ -378,7 +370,6 @@ describe('SearchResults', function() {
           series="wily"
           seriesList={series}
           setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()}
           sort="-name"
           type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
@@ -403,7 +394,6 @@ describe('SearchResults', function() {
           series="wily"
           seriesList={series}
           setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()}
           sort="-name"
           type="charm" />, true);
       const instance = shallowRenderer.getMountedInstance();
@@ -429,8 +419,7 @@ describe('SearchResults', function() {
           makeEntityModel={makeEntityModel}
           query="apache2"
           seriesList={series}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()} />, true);
       const instance = renderer.getMountedInstance();
       instance.componentDidMount();
       assert.equal(abort.callCount, 0);
@@ -445,8 +434,7 @@ describe('SearchResults', function() {
           makeEntityModel={makeEntityModel}
           query="apache2"
           seriesList={series}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />);
+          setPageTitle={sinon.stub()} />);
       renderer.getRenderOutput();
       assert.equal(abort.callCount, 1);
     });
@@ -750,8 +738,7 @@ describe('SearchResults', function() {
           makeEntityModel={sinon.stub()}
           query={query}
           seriesList={{}}
-          setPageTitle={sinon.stub()}
-          setStagedEntity={sinon.stub()} />, true);
+          setPageTitle={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);

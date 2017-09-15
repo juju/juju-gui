@@ -118,7 +118,9 @@ describe('CreateModelButton', () => {
     // Call the action passed to the GenericButton
     output.props.children.props.action();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0], [{profile: null, hash: null}]);
+    assert.deepEqual(changeState.args[0], [
+      {profile: null, hash: null, postDeploymentPanel: null}
+    ]);
     assert.equal(switchModel.callCount, 1);
     assert.deepEqual(switchModel.args[0], [null]);
   });

@@ -345,10 +345,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   /**
     Display post deployment help.
 
-    @param {String} entityId The entity ID of the charm or bundle.
+    @param {Object} state The entity ID of the charm or bundle.
+    @param {Function} next Run the next handler.
   */
-  _displayPostDeployment(entityId) {
-    entityId = entityId || this.stagedEntity;
+  _displayPostDeployment(state, next) {
+    console.log(state);
+    if (!state.postDeploymentPanel.show) {
+      next();
+      return;
+    }
+    const entityId = state.postDeploymentPanel.entityId;
 
     this.state.changeState({
       'postDeploymentPanel': null
@@ -383,6 +389,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         showEntityDetails={showEntityDetails.bind(this, entityId)} />,
       document.getElementById('post-deployment')
     );
+
+    next();
   }
 
   /**
@@ -411,10 +419,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   /**
     The cleanup dispatcher for the post deployment screen.
   */
-  _clearPostDeployment() {
+  _clearPostDeployment(state, next) {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('post-deployment')
     );
+    next();
   }
 
   _renderHeaderLogo() {
@@ -507,7 +516,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         makeEntityModel={yui.juju.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
-        setStagedEntity={this._setStagedEntity.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         urllib={window.jujulib.URL}
       />,

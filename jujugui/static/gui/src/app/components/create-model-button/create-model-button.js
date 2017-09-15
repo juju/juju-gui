@@ -15,15 +15,13 @@ class CreateModelButton extends React.Component {
     // model to resolve a race condition with the new model setup.
     props.changeState({
       profile: null,
-      hash: null
+      hash: null,
+      postDeploymentPanel: null
     });
     props.switchModel(null);
     if (this.props.action) {
       this.props.action();
     }
-    this.props.changeState({
-      'postDeploymentPanel': null
-    });
   }
 
   render() {
