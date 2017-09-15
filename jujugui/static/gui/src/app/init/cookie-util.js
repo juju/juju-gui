@@ -81,7 +81,7 @@ function _renderNotification(doc) {
   ReactDOM.render(
     <Notification
       content={content}
-      dismiss={close}
+      dismiss={close.bind(this, doc)}
       extraClasses="p-notification--center-bottom" />,
     doc.getElementById('cookie-container'));
 }
