@@ -56,4 +56,19 @@ describe('init', () => {
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
   });
+
+  describe('setPageTitle', function () {
+    it('can set the page title', () => {
+      document.title = 'Test';
+      app.setPageTitle('Testing');
+      assert.equal(document.title, 'Testing - Juju GUI');
+    });
+
+    it('can set the default page title', () => {
+      document.title = 'Test';
+      app.defaultPageTitle = 'Juju GUI';
+      app.setPageTitle();
+      assert.equal(document.title, 'Juju GUI');
+    });
+  });
 });
