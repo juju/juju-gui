@@ -1,42 +1,23 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentSection = require('./section');
+const ButtonRow = require('../../button-row/button-row');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentSection', function() {
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-section', function() { done(); });
-  });
-
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSection
+      <DeploymentSection
         disabled={false}
         title="Model changes">
         <span>content</span>
-      </juju.components.DeploymentSection>, true);
+      </DeploymentSection>, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-section twelve-col deployment-section--active">
@@ -61,7 +42,7 @@ describe('DeploymentSection', function() {
       type: 'neutral'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSection
+      <DeploymentSection
         buttons={buttons}
         completed={true}
         disabled={true}
@@ -70,7 +51,7 @@ describe('DeploymentSection', function() {
         showCheck={true}
         title="Model changes">
         <span>content</span>
-      </juju.components.DeploymentSection>, true);
+      </DeploymentSection>, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className={
@@ -82,11 +63,11 @@ describe('DeploymentSection', function() {
               <div className="deployment-section__extra">
                 <span>extra</span>
               </div>
-              <juju.components.ButtonRow
+              <ButtonRow
                 buttons={buttons} />
             </div>
             <h3 className="deployment-section__title">
-              <juju.components.SvgIcon
+              <SvgIcon
                 className="deployment-section__title-checkmark"
                 name="complete"
                 size="24" />

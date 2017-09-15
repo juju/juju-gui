@@ -1,27 +1,22 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AccordionSection = require('./accordion-section');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('AccordionSection', () => {
-  beforeAll(done => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('accordion-section', () => {
-      done();
-    });
-  });
 
   function render(props) {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccordionSection
+      <AccordionSection
         startOpen={props.startOpen}
         title={props.title}>
         {props.children}
-      </juju.components.AccordionSection>
+      </AccordionSection>
       , true);
 
     return {
@@ -43,7 +38,7 @@ describe('AccordionSection', () => {
           role="button"
           onClick={comp.instance._toggle.bind(comp.instance)}>
           <span className="accordion-section__title-content">My title!</span>
-          <juju.components.SvgIcon className="right" name="chevron_down_16"
+          <SvgIcon className="right" name="chevron_down_16"
             size="16" />
         </div>
         <div className="accordion-section__content" ref={sinon.stub()}
@@ -67,7 +62,7 @@ describe('AccordionSection', () => {
           role="button"
           onClick={instance._toggle.bind(instance)}>
           <span className="accordion-section__title-content">My title!</span>
-          <juju.components.SvgIcon className="right" name="chevron_up_16"
+          <SvgIcon className="right" name="chevron_up_16"
             size="16" />
         </div>
         <div className="accordion-section__content" ref={sinon.stub()}

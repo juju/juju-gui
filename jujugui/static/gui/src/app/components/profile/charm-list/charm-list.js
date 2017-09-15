@@ -1,6 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
+
+const shapeup = require('shapeup');
 
 /**
   Charm list React component used to display a list of the users charms in
@@ -142,8 +145,4 @@ ProfileCharmList.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('profile-charm-list', function() {
-  juju.components.ProfileCharmList = ProfileCharmList;
-}, '', {
-  requires: []
-});
+module.exports = ProfileCharmList;

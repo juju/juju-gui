@@ -1,33 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
+
+const UnitList = require('./unit-list');
+const ButtonRow = require('../../button-row/button-row');
+const CheckListItem = require('../../check-list-item/check-list-item');
+const OverviewAction = require('../overview-action/overview-action');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('UnitList', () => {
   var acl, service;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('unit-list', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -43,7 +28,7 @@ describe('UnitList', () => {
 
   it('renders if there are no units', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -56,7 +41,7 @@ describe('UnitList', () => {
     var expected = (
       <div className="unit-list">
         <div className="unit-list__actions">
-          <juju.components.OverviewAction
+          <OverviewAction
             action={instance._navigate}
             icon="plus_box_16"
             title="Scale application" />
@@ -78,7 +63,7 @@ describe('UnitList', () => {
       id: 'mysql/1'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -95,7 +80,7 @@ describe('UnitList', () => {
     ];
     const expected = (
       <ul className="unit-list__units">
-        {[<juju.components.CheckListItem
+        {[<CheckListItem
           disabled={false}
           ref="select-all"
           key="select-all"
@@ -103,7 +88,7 @@ describe('UnitList', () => {
           label="Select all units"
           aside="2"
           whenChanged={children[0].props.whenChanged}/>,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={false}
           key={units[0].displayName}
           ref={refs[0]}
@@ -112,7 +97,7 @@ describe('UnitList', () => {
           extraInfo={undefined}
           id="mysql/0"
           whenChanged={instance._updateActiveCount} />,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={false}
           key={units[1].displayName}
           ref={refs[1]}
@@ -136,7 +121,7 @@ describe('UnitList', () => {
       agent_state_info: 'hook failed: config-changed'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -154,7 +139,7 @@ describe('UnitList', () => {
     ];
     const expected = (
       <ul className="unit-list__units">
-        {[<juju.components.CheckListItem
+        {[<CheckListItem
           aside="1"
           disabled={false}
           ref="select-all-0"
@@ -162,7 +147,7 @@ describe('UnitList', () => {
           label="hook failed: install"
           className="select-all"
           whenChanged={children[0].props.whenChanged}/>,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={false}
           key={units[0].displayName}
           ref={refs[0]}
@@ -171,7 +156,7 @@ describe('UnitList', () => {
           extraInfo={undefined}
           id="mysql/0"
           whenChanged={instance._updateActiveCount} />,
-        <juju.components.CheckListItem
+        <CheckListItem
           aside="1"
           disabled={false}
           ref="select-all-1"
@@ -179,7 +164,7 @@ describe('UnitList', () => {
           label="hook failed: config-changed"
           className="select-all"
           whenChanged={children[2].props.whenChanged}/>,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={false}
           key={units[1].displayName}
           ref={refs[1]}
@@ -195,7 +180,7 @@ describe('UnitList', () => {
   it('displays the provided count', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.CheckListItem
+      <CheckListItem
         aside="5"
         label="label"
         whenChanged={sinon.stub()} />);
@@ -209,7 +194,7 @@ describe('UnitList', () => {
     }];
 
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -219,7 +204,7 @@ describe('UnitList', () => {
         whenChanged={sinon.stub()} />);
     var child = output.props.children[0].props.children;
     const expected = (
-      <juju.components.OverviewAction
+      <OverviewAction
         action={child.props.action}
         icon="plus_box_16"
         title="Scale application" />);
@@ -231,7 +216,7 @@ describe('UnitList', () => {
       displayName: 'mysql/0'
     }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -262,7 +247,7 @@ describe('UnitList', () => {
       }
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -289,7 +274,7 @@ describe('UnitList', () => {
     }];
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -315,7 +300,7 @@ describe('UnitList', () => {
     }];
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={changeState}
         destroyUnits={sinon.stub()}
@@ -351,7 +336,7 @@ describe('UnitList', () => {
     }];
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={changeState}
         destroyUnits={sinon.stub()}
@@ -384,7 +369,7 @@ describe('UnitList', () => {
       displayName: 'mysql/0'
     }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -400,7 +385,7 @@ describe('UnitList', () => {
       disabled: true
     }];
     const expected = (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
     expect(output.props.children[2]).toEqualJSX(expected);
   });
@@ -410,7 +395,7 @@ describe('UnitList', () => {
       displayName: 'mysql/0'
     }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -437,7 +422,7 @@ describe('UnitList', () => {
       disabled: true
     }];
     const expected = (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
     expect(output.props.children[2]).toEqualJSX(expected);
   });
@@ -462,7 +447,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -502,7 +487,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -536,7 +521,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -564,7 +549,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
@@ -603,7 +588,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={sinon.stub()}
         unitStatus='error'
@@ -644,7 +629,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     const output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={sinon.stub()}
         unitStatus='error'
@@ -684,7 +669,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={sinon.stub()}
         unitStatus='error'
@@ -726,7 +711,7 @@ describe('UnitList', () => {
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         destroyUnits={sinon.stub()}
         unitStatus='error'
@@ -757,7 +742,7 @@ describe('UnitList', () => {
       id: 'mysql/1'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UnitList
+      <UnitList
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
@@ -774,7 +759,7 @@ describe('UnitList', () => {
     ];
     const list = (
       <ul className="unit-list__units">
-        {[<juju.components.CheckListItem
+        {[<CheckListItem
           disabled={true}
           ref="select-all"
           key="select-all"
@@ -782,7 +767,7 @@ describe('UnitList', () => {
           label="Select all units"
           aside="2"
           whenChanged={children[0].props.whenChanged}/>,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={true}
           key={units[0].displayName}
           ref={refs[0]}
@@ -791,7 +776,7 @@ describe('UnitList', () => {
           extraInfo={undefined}
           id="mysql/0"
           whenChanged={instance._updateActiveCount} />,
-        <juju.components.CheckListItem
+        <CheckListItem
           disabled={true}
           key={units[1].displayName}
           ref={refs[1]}
@@ -811,7 +796,7 @@ describe('UnitList', () => {
       disabled: true
     }];
     const expected = (
-      <juju.components.ButtonRow
+      <ButtonRow
         buttons={buttons} />);
     expect(output.props.children[2]).toEqualJSX(expected);
   });

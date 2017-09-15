@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const DeploymentBarNotification = require('./notification/notification');
+const GenericButton = require('../generic-button/generic-button');
+const Panel = require('../panel/panel');
 
 class DeploymentBar extends React.Component {
   constructor() {
@@ -96,26 +85,26 @@ class DeploymentBar extends React.Component {
     }
     return (
       <div className="deployment-bar__deploy">
-        <juju.components.GenericButton
+        <GenericButton
           action={this._deployAction.bind(this)}
           type="inline-deployment"
           disabled={changeCount === 0}>
           {this._getDeployButtonLabel()}
-        </juju.components.GenericButton>
+        </GenericButton>
       </div>);
   }
 
   render() {
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="deployment-bar-panel"
         visible={true}>
         <div className="deployment-bar">
-          <juju.components.DeploymentBarNotification
+          <DeploymentBarNotification
             change={this.state.latestChangeDescription} />
           {this._generateButton()}
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -130,10 +119,4 @@ DeploymentBar.propTypes = {
   sendAnalytics: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-bar', function() {
-  juju.components.DeploymentBar = DeploymentBar;
-}, '0.1.0', { requires: [
-  'deployment-bar-notification',
-  'generic-button',
-  'panel-component'
-]});
+module.exports = DeploymentBar;

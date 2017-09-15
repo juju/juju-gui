@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
+YUI.add('juju-tests-factory', function(Y) {
   var tests = Y.namespace('juju-tests');
 
   tests.factory = {
@@ -78,7 +78,6 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'charmstore-api',
     'juju-tests-utils'
   ]
 });

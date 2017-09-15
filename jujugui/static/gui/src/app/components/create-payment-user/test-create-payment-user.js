@@ -1,35 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const CreatePaymentUser = require('./create-payment-user');
+const GenericInput = require('../generic-input/generic-input');
+const GenericButton = require('../generic-button/generic-button');
+const CardForm = require('../card-form/card-form');
+const AddressForm = require('../address-form/address-form');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('CreatePaymentUser', function() {
   let acl, getCountries, onUserCreated, refs;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('create-payment-user', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -65,7 +48,7 @@ describe('CreatePaymentUser', function() {
     const validateForm = sinon.stub();
     const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
         createCardElement={createCardElement}
@@ -112,7 +95,7 @@ describe('CreatePaymentUser', function() {
               Name and address
             </h2>
             {null}
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Email address"
               ref="emailAddress"
@@ -121,7 +104,7 @@ describe('CreatePaymentUser', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
-            <juju.components.AddressForm
+            <AddressForm
               addNotification={addNotification}
               disabled={false}
               getCountries={getCountries}
@@ -130,7 +113,7 @@ describe('CreatePaymentUser', function() {
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
-            <juju.components.CardForm
+            <CardForm
               acl={acl}
               createCardElement={createCardElement}
               ref="cardForm"
@@ -157,12 +140,12 @@ describe('CreatePaymentUser', function() {
             {null}
           </div>
           <div className="create-payment-user__add">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._handleAddUser}
               disabled={false}
               type="inline-neutral">
               Add payment details
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </form>
       </div>);
@@ -174,7 +157,7 @@ describe('CreatePaymentUser', function() {
     const validateForm = sinon.stub();
     const createCardElement = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
         createCardElement={createCardElement}
@@ -220,7 +203,7 @@ describe('CreatePaymentUser', function() {
               </li>
             </ul>
             <div className="create-payment-user__vat">
-              <juju.components.GenericInput
+              <GenericInput
                 disabled={false}
                 label="VAT number (optional)"
                 ref="VATNumber"
@@ -229,7 +212,7 @@ describe('CreatePaymentUser', function() {
             <h2 className="create-payment-user__title">
               Name and address
             </h2>
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Business name"
               ref="businessName"
@@ -238,7 +221,7 @@ describe('CreatePaymentUser', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
-            <juju.components.GenericInput
+            <GenericInput
               disabled={false}
               label="Email address"
               ref="emailAddress"
@@ -247,7 +230,7 @@ describe('CreatePaymentUser', function() {
                 regex: /\S+/,
                 error: 'This field is required.'
               }]} />
-            <juju.components.AddressForm
+            <AddressForm
               addNotification={addNotification}
               disabled={false}
               getCountries={getCountries}
@@ -256,7 +239,7 @@ describe('CreatePaymentUser', function() {
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
-            <juju.components.CardForm
+            <CardForm
               acl={acl}
               createCardElement={createCardElement}
               ref="cardForm"
@@ -283,12 +266,12 @@ describe('CreatePaymentUser', function() {
             {null}
           </div>
           <div className="create-payment-user__add">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._handleAddUser}
               disabled={false}
               type="inline-neutral">
               Add payment details
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </form>
       </div>);
@@ -299,7 +282,7 @@ describe('CreatePaymentUser', function() {
     const addNotification = sinon.stub();
     const validateForm = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
@@ -322,7 +305,7 @@ describe('CreatePaymentUser', function() {
         <h2 className="create-payment-user__title">
           Card address
         </h2>
-        <juju.components.AddressForm
+        <AddressForm
           addNotification={addNotification}
           disabled={false}
           getCountries={getCountries}
@@ -334,7 +317,7 @@ describe('CreatePaymentUser', function() {
         <h2 className="create-payment-user__title">
           Billing address
         </h2>
-        <juju.components.AddressForm
+        <AddressForm
           addNotification={addNotification}
           disabled={false}
           getCountries={getCountries}
@@ -347,7 +330,7 @@ describe('CreatePaymentUser', function() {
     const abort = sinon.stub();
     const createToken = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -368,7 +351,7 @@ describe('CreatePaymentUser', function() {
   it('does not add the user if there is a validation error', function() {
     const createToken = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -386,7 +369,7 @@ describe('CreatePaymentUser', function() {
   it('can create the token using the correct data', function() {
     const createToken = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -416,7 +399,7 @@ describe('CreatePaymentUser', function() {
   it('can create the token using the card address', function() {
     const createToken = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -462,7 +445,7 @@ describe('CreatePaymentUser', function() {
   it('can handle errors when trying to create the token', function() {
     const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
@@ -487,7 +470,7 @@ describe('CreatePaymentUser', function() {
   it('can create the user using the correct data', function() {
     const createUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -536,7 +519,7 @@ describe('CreatePaymentUser', function() {
   it('can create a business user using the correct data', function() {
     const createUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -572,7 +555,7 @@ describe('CreatePaymentUser', function() {
   it('can create the user with a different billing address', function() {
     const createUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -637,7 +620,7 @@ describe('CreatePaymentUser', function() {
   it('can handle errors when trying to create the user', function() {
     const addNotification = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
@@ -661,7 +644,7 @@ describe('CreatePaymentUser', function() {
 
   it('reloads the user after the user is created', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.CreatePaymentUser
+      <CreatePaymentUser
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}

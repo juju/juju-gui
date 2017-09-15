@@ -26,7 +26,8 @@ describe('pan zoom module', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-tests-utils'],
+      'juju-tests-utils',
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');

@@ -1,22 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const ReceiptPopup = require('./receipt-popup/receipt-popup');
+const DateDisplay = require('../../../date-display/date-display');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const GenericButton = require('../../../generic-button/generic-button');
+const Spinner = require('../../../spinner/spinner');
 
 class AccountPaymentCharges extends React.Component {
   constructor() {
@@ -134,7 +125,7 @@ class AccountPaymentCharges extends React.Component {
   */
   _generateCharges() {
     if (this.state.loading) {
-      return <juju.components.Spinner />;
+      return <Spinner />;
     }
     const charges = this.state.charges;
     if (!charges || !charges.length) {
@@ -145,7 +136,7 @@ class AccountPaymentCharges extends React.Component {
     }
     let list = charges.map(charge => {
       return (
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{
             'twelve-col': true,
             'user-profile__list-row': true
@@ -157,7 +148,7 @@ class AccountPaymentCharges extends React.Component {
               {charge.statementId}
             </div>
             <div className="two-col no-margin-bottom">
-              <juju.components.DateDisplay
+              <DateDisplay
                 date={charge.for}
                 relative={true} />
             </div>
@@ -171,18 +162,18 @@ class AccountPaymentCharges extends React.Component {
               {(charge.price + charge.vat) / 100} {charge.currency}
             </div>
             <div className="two-col last-col no-margin-bottom">
-              <juju.components.GenericButton
+              <GenericButton
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
                 type="inline-neutral">
                 Show receipt
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className="twelve-col">
             {this._generateLineItems(charge.lineItems)}
           </div>
-        </juju.components.ExpandingRow>);
+        </ExpandingRow>);
     });
     return (
       <ul className="user-profile__list twelve-col">
@@ -218,7 +209,7 @@ class AccountPaymentCharges extends React.Component {
       return null;
     }
     return (
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={this.props.addNotification}
         close={this._togglePopup}
         chargeId={charge}
@@ -248,14 +239,4 @@ AccountPaymentCharges.propTypes = {
   username: PropTypes.string.isRequired
 };
 
-YUI.add('account-payment-charges', function() {
-  juju.components.AccountPaymentCharges = AccountPaymentCharges;
-}, '0.1.0', {
-  requires: [
-    'date-display',
-    'expanding-row',
-    'generic-button',
-    'loading-spinner',
-    'receipt-popup'
-  ]
-});
+module.exports = AccountPaymentCharges;

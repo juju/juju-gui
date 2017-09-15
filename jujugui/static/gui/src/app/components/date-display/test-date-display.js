@@ -1,32 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const DateDisplay = require('./date-display');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('DateDisplay', () => {
   var date, instance, relative, renderer, timers;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('date-display', () => { done(); });
-  });
 
   beforeEach(() => {
     // Replace setInterval etc. with mocks.
@@ -37,7 +19,7 @@ describe('DateDisplay', () => {
     // method and then rerender the component with the correct params in the
     // test.
     renderer = jsTestUtils.shallowRender(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative} />, true);
     instance = renderer.getMountedInstance();
     sinon.stub(instance, '_getNow').returns(date);
@@ -50,7 +32,7 @@ describe('DateDisplay', () => {
 
   it('can display a date in the correct format', () => {
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative} />);
     var expected = (
       <time dateTime="19/01/2020"
@@ -62,7 +44,7 @@ describe('DateDisplay', () => {
 
   it('can parse a date from a string', () => {
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date='Mon, 19 Jan 2020 21:07:24 GMT' />);
     var expected = (
       <time dateTime="19/01/2020"
@@ -75,7 +57,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is less than a minute ago', () => {
     relative.setSeconds(date.getSeconds() + 10);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -89,7 +71,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is a minute ago', () => {
     relative.setMinutes(date.getMinutes() - 1);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -103,7 +85,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is minutes ago', () => {
     relative.setMinutes(date.getMinutes() - 19);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -117,7 +99,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is an hour ago', () => {
     relative.setHours(date.getHours() - 1);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -131,7 +113,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is hours ago', () => {
     relative.setHours(date.getHours() - 11);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -145,7 +127,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is a day ago', () => {
     relative.setUTCDate(date.getUTCDate() - 1);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -159,7 +141,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is days ago', () => {
     relative.setUTCDate(date.getUTCDate() - 6);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -173,7 +155,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is a week ago', () => {
     relative.setUTCDate(date.getUTCDate() - 8);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -187,7 +169,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is weeks ago', () => {
     relative.setUTCDate(date.getUTCDate() - 25);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -201,7 +183,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is a month ago', () => {
     relative.setUTCDate(date.getUTCDate() - 32);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -215,7 +197,7 @@ describe('DateDisplay', () => {
   it('can display a relative date that is months ago', () => {
     relative.setUTCDate(date.getUTCDate() - 100);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -229,7 +211,7 @@ describe('DateDisplay', () => {
   it('can display a relative date as regular that is years ago', () => {
     relative.setUTCDate(date.getUTCDate() - 450);
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -242,7 +224,7 @@ describe('DateDisplay', () => {
 
   it('does not set a timer if the date is not relative', () => {
     renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={false} />);
     var forceUpdate = sinon.stub(instance, 'forceUpdate');
@@ -254,7 +236,7 @@ describe('DateDisplay', () => {
 
   it('updates relative dates every minute', () => {
     renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     var forceUpdate = sinon.stub(instance, 'forceUpdate');
@@ -266,7 +248,7 @@ describe('DateDisplay', () => {
 
   it('handles non-date strings passed in', () => {
     var output = renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date='today'
         relative={true} />);
     var expected = (
@@ -277,7 +259,7 @@ describe('DateDisplay', () => {
 
   it('clears the timer when it unmounts', () => {
     renderer.render(
-      <juju.components.DateDisplay
+      <DateDisplay
         date={relative}
         relative={true} />);
     instance.componentDidMount();

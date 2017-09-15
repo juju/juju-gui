@@ -1,35 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentCloud = require('./cloud');
+const Spinner = require('../../spinner/spinner');
+const SvgIcon = require('../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentCloud', function() {
   let acl, cloudList, getCloudProviderDetails;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-cloud', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -77,7 +58,7 @@ describe('DeploymentCloud', function() {
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={sinon.stub()}
         cloud={null}
@@ -96,7 +77,7 @@ describe('DeploymentCloud', function() {
             role="button"
             tabIndex="0">
             <span className="deployment-cloud__cloud-logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={33}
                 name="google"
                 width={256} />
@@ -108,7 +89,7 @@ describe('DeploymentCloud', function() {
             role="button"
             tabIndex="0">
             <span className="deployment-cloud__cloud-logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={24}
                 name="azure"
                 width={204} />
@@ -120,7 +101,7 @@ describe('DeploymentCloud', function() {
             role="button"
             tabIndex="0">
             <span className="deployment-cloud__cloud-logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={48}
                 name="aws"
                 width={120} />
@@ -134,7 +115,7 @@ describe('DeploymentCloud', function() {
 
   it('can display the loading state', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={sinon.stub()}
         cloud={null}
@@ -146,7 +127,7 @@ describe('DeploymentCloud', function() {
     var expected = (
       <div>
         <div className="deployment-cloud__loading">
-          <juju.components.Spinner />
+          <Spinner />
         </div>
         {undefined}
       </div>);
@@ -155,7 +136,7 @@ describe('DeploymentCloud', function() {
 
   it('can render with a chosen cloud', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
@@ -168,7 +149,7 @@ describe('DeploymentCloud', function() {
       <div>
         {undefined}
         <div className="deployment-cloud__chosen">
-          <juju.components.SvgIcon
+          <SvgIcon
             height={33}
             name="google"
             width={256} />
@@ -183,7 +164,7 @@ describe('DeploymentCloud', function() {
     };
     const setCloud = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={sinon.stub()}
         cloud={null}
@@ -200,7 +181,7 @@ describe('DeploymentCloud', function() {
   it('can select a cloud', function() {
     var setCloud = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={sinon.stub()}
         cloud={null}
@@ -220,7 +201,7 @@ describe('DeploymentCloud', function() {
   it('can handle errors getting clouds', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
+      <DeploymentCloud
         acl={acl}
         addNotification={addNotification}
         cloud={null}

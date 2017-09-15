@@ -1,32 +1,28 @@
-/* Copyright (C) 2015 Canonical Ltd. */
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Lightbox = require('./lightbox');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Lightbox', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('lightbox', function() { done(); });
-  });
 
   it('renders', () => {
     const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Lightbox
+      <Lightbox
         caption="Test caption"
         close={close}>
         Hi
-      </juju.components.Lightbox>, true);
+      </Lightbox>, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="lightbox" onClick={close}>
         <button className="lightbox__close">
-          <juju.components.SvgIcon name="close_16_white" width="16" />
+          <SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__content">
           <div className="lightbox__content-image">
@@ -44,15 +40,15 @@ describe('Lightbox', function() {
   it('renders without a caption', () => {
     const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Lightbox
+      <Lightbox
         close={close}>
         Hi
-      </juju.components.Lightbox>, true);
+      </Lightbox>, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="lightbox" onClick={close}>
         <button className="lightbox__close">
-          <juju.components.SvgIcon name="close_16_white" width="16" />
+          <SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__content">
           <div className="lightbox__content-image">

@@ -1,22 +1,22 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const InspectorChangeVersion = require('./change-version/change-version');
+const InspectorExpose = require('./expose/expose');
+const InspectorHeader = require('./header/header');
+const Configuration = require('./config/config');
+const InspectorPlan = require('./plan/plan');
+const InspectorRelateTo = require('./relate-to/relate-to');
+const InspectorRelateToEndpoint = require('./relate-to/endpoint/endpoint');
+const InspectorRelations = require('./relations/relations');
+const InspectorRelationDetails = require('./relations/details/details');
+const InspectorResourcesList = require('./resources/list/list');
+const ScaleService = require('./scale-service/scale-service');
+const ServiceOverview = require('./service-overview/service-overview');
+const UnitDetails = require('./unit-details/unit-details');
+const UnitList = require('./unit-list/unit-list');
 
 class Inspector extends React.Component {
   constructor(props) {
@@ -69,7 +69,7 @@ class Inspector extends React.Component {
         state.activeChild = {
           title: service.get('name'),
           icon: service.get('icon'),
-          component: <juju.components.ServiceOverview
+          component: <ServiceOverview
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             changeState={changeState}
@@ -98,7 +98,7 @@ class Inspector extends React.Component {
           count: units.length,
           headerType: unitStatus,
           component:
-            <juju.components.UnitList
+            <UnitList
               acl={this.props.acl}
               service={service}
               unitStatus={unitStatus}
@@ -146,7 +146,7 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           headerType: unit.agent_state || 'uncommitted',
           component:
-            <juju.components.UnitDetails
+            <UnitDetails
               acl={this.props.acl}
               destroyUnits={this.props.destroyUnits}
               service={service}
@@ -167,7 +167,7 @@ class Inspector extends React.Component {
           title: 'Scale',
           icon: service.get('icon'),
           component:
-            <juju.components.ScaleService
+            <ScaleService
               acl={this.props.acl}
               addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
               changeState={changeState}
@@ -186,7 +186,7 @@ class Inspector extends React.Component {
           title: 'Configure',
           icon: service.get('icon'),
           component:
-            <juju.components.Configuration
+            <Configuration
               acl={this.props.acl}
               service={service}
               charm={nextProps.charm}
@@ -211,7 +211,7 @@ class Inspector extends React.Component {
           title: 'Expose',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorExpose
+            <InspectorExpose
               acl={this.props.acl}
               changeState={changeState}
               exposeService={this.props.exposeService}
@@ -230,7 +230,7 @@ class Inspector extends React.Component {
           title: 'Relations',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorRelations
+            <InspectorRelations
               acl={this.props.acl}
               service={service}
               destroyRelations={this.props.destroyRelations}
@@ -251,7 +251,7 @@ class Inspector extends React.Component {
           title: (serviceName + ':' + relationName),
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorRelationDetails
+            <InspectorRelationDetails
               relation={relation} />,
           backState: {
             gui: {
@@ -266,7 +266,7 @@ class Inspector extends React.Component {
             title: this.props.getServiceById(spouse).get('name'),
             icon: service.get('icon'),
             component:
-              <juju.components.InspectorRelateToEndpoint
+              <InspectorRelateToEndpoint
                 backState={{
                   gui: {
                     inspector: {
@@ -287,7 +287,7 @@ class Inspector extends React.Component {
           title: 'Relate to',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorRelateTo
+            <InspectorRelateTo
               changeState={changeState}
               application={service}
               relatableApplications={this.props.relatableApplications}/>,
@@ -306,7 +306,7 @@ class Inspector extends React.Component {
           title: 'Change version',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorChangeVersion
+            <InspectorChangeVersion
               acl={this.props.acl}
               changeState={changeState}
               addNotification={this.props.addNotification}
@@ -327,7 +327,7 @@ class Inspector extends React.Component {
           title: 'Resources',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorResourcesList
+            <InspectorResourcesList
               acl={this.props.acl}
               resources={this.props.charm.get('resources')} />,
           backState: {
@@ -341,7 +341,7 @@ class Inspector extends React.Component {
           title: 'Plan',
           icon: service.get('icon'),
           component:
-            <juju.components.InspectorPlan
+            <InspectorPlan
               acl={this.props.acl}
               currentPlan={this.props.service.get('activePlan')} />,
           backState: {
@@ -361,7 +361,7 @@ class Inspector extends React.Component {
   render() {
     return (
       <div className="inspector-view">
-        <juju.components.InspectorHeader
+        <InspectorHeader
           backCallback={this._backCallback.bind(this)}
           activeComponent={this.state.activeComponent}
           type={this.state.activeChild.headerType}
@@ -413,23 +413,4 @@ Inspector.propTypes = {
   updateServiceUnitsDisplayname: PropTypes.func.isRequired
 };
 
-YUI.add('inspector-component', function() {
-  juju.components.Inspector = Inspector;
-}, '0.1.0', {
-  requires: [
-    'inspector-change-version',
-    'inspector-expose',
-    'inspector-header',
-    'inspector-config',
-    'inspector-plan',
-    'inspector-relate-to',
-    'inspector-relate-to-endpoint',
-    'inspector-relations',
-    'inspector-relation-details',
-    'inspector-resources-list',
-    'scale-service',
-    'service-overview',
-    'unit-details',
-    'unit-list'
-  ]
-});
+module.exports = Inspector;

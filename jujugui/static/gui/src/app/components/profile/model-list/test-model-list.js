@@ -1,8 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const ProfileModelList = require('./model-list');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const CreateModelButton = require('../../create-model-button/create-model-button');
+const DateDisplay = require('../../date-display/date-display');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Model List', function() {
   let listModelsWithInfo;
@@ -140,19 +146,12 @@ describe('Profile Model List', function() {
     "lastConnection": "2017-07-05T01:42:05.000Z"
   }]`;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile-model-list', function() {
-      done();
-    });
-  });
-
   function renderComponent(options={}) {
     listModelsWithInfo = (cb) => {
       cb(null, JSON.parse(rawModelData));
     };
     return jsTestUtils.shallowRender(
-      <juju.components.ProfileModelList
+      <ProfileModelList
         acl={{}}
         addNotification={sinon.stub()}
         baseURL="/gui/"
@@ -175,7 +174,7 @@ describe('Profile Model List', function() {
             <span className="profile-model-list__header-title">
               My models (2)
             </span>
-            <juju.components.CreateModelButton
+            <CreateModelButton
               title="Start a new model"
               changeState={instance.props.changeState}
               switchModel={instance.props.switchModel} />
@@ -195,7 +194,7 @@ describe('Profile Model List', function() {
                 mymodel</a></span>
             <span>0 EC2/EU-WEST-1</span>
             <span>
-              <juju.components.DateDisplay
+              <DateDisplay
                 date="2017-07-06T14:47:03.000Z"
                 relative={true} />
             </span>
@@ -224,7 +223,7 @@ describe('Profile Model List', function() {
                 mymodel2</a></span>
             <span>0 GCE/US-CENTRAL1</span>
             <span>
-              <juju.components.DateDisplay
+              <DateDisplay
                 date="2017-07-06T16:26:47.000Z"
                 relative={true} />
             </span>

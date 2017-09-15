@@ -1,38 +1,21 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentDirectDeploy = require('./direct-deploy');
+const GenericButton = require('../../generic-button/generic-button');
+const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
+const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
+const DeploymentSection = require('../section/section');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DirectDeploy', function() {
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-direct-deploy', function() { done(); });
-  });
-
   it('can show a message for an invalid bundle', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
+      <DeploymentDirectDeploy
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
@@ -42,7 +25,7 @@ describe('DirectDeploy', function() {
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-direct-deploy">
         <div>
           This {'bundle'} could not be found.
@@ -55,13 +38,13 @@ describe('DirectDeploy', function() {
           </span>&nbsp;
           to find more charms and bundles.
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output).toEqualJSX(expected);
   });
 
   it('can show a message for an invalid charm', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
+      <DeploymentDirectDeploy
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
@@ -71,7 +54,7 @@ describe('DirectDeploy', function() {
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-direct-deploy">
         <div>
           This {'charm'} could not be found.
@@ -84,7 +67,7 @@ describe('DirectDeploy', function() {
           </span>&nbsp;
           to find more charms and bundles.
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -97,7 +80,7 @@ describe('DirectDeploy', function() {
     };
     const renderMarkdown = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
+      <DeploymentDirectDeploy
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
@@ -108,7 +91,7 @@ describe('DirectDeploy', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-direct-deploy">
         <div>
           <div className="deployment-direct-deploy__description six-col">
@@ -116,7 +99,7 @@ describe('DirectDeploy', function() {
             <h2 className="deployment-direct-deploy__title">
               Apache 2
             </h2>
-            <juju.components.EntityContentDescription
+            <EntityContentDescription
               entityModel={charm}
               renderMarkdown={renderMarkdown} />
             <ul>
@@ -141,15 +124,15 @@ describe('DirectDeploy', function() {
               </div>
             </div>
             <div className="deployment-direct-deploy__edit-model">
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._handleClose.bind(this)}
                 type="inline-neutral">
                 Edit model
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -163,7 +146,7 @@ describe('DirectDeploy', function() {
     const renderMarkdown = sinon.stub();
     const getDiagramURL = sinon.stub().returns('imageLink');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentDirectDeploy
+      <DeploymentDirectDeploy
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
@@ -174,7 +157,7 @@ describe('DirectDeploy', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-direct-deploy">
         <div>
           <div className="deployment-direct-deploy__description six-col">
@@ -182,7 +165,7 @@ describe('DirectDeploy', function() {
             <h2 className="deployment-direct-deploy__title">
               Kubernetes core
             </h2>
-            <juju.components.EntityContentDescription
+            <EntityContentDescription
               entityModel={bundle}
               renderMarkdown={renderMarkdown} />
             <ul>
@@ -199,19 +182,19 @@ describe('DirectDeploy', function() {
           </div>
           <div className="six-col last-col no-margin-bottom">
             <div className="deployment-direct-deploy__image">
-              <juju.components.EntityContentDiagram
+              <EntityContentDiagram
                 diagramUrl="imageLink" />
             </div>
             <div className="deployment-direct-deploy__edit-model">
-              <juju.components.GenericButton
+              <GenericButton
                 action={instance._handleClose.bind(this)}
                 type="inline-neutral">
                 Edit model
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
     expect(output).toEqualJSX(expected);
   });
 });

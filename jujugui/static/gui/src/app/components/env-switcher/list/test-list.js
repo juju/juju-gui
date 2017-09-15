@@ -1,38 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
+const React = require('react');
+const ReactDOM = require('react-dom');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const EnvList = require('./list');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('EnvList', function() {
 
   const humanizeTimestamp = sinon.stub().returns('less than a minute ago');
   const acl = {canAddModels: sinon.stub().returns(true)};
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('env-list', function() { done(); });
-  });
 
   it('renders a list of models', function() {
     const models = [
@@ -50,7 +30,7 @@ describe('EnvList', function() {
       }
     ];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         environmentName="model-name-1"
@@ -113,7 +93,7 @@ describe('EnvList', function() {
       }
     ];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         environmentName="model-name-1"
@@ -192,7 +172,7 @@ describe('EnvList', function() {
       }
     ];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         environmentName="model-name-1"
@@ -230,7 +210,7 @@ describe('EnvList', function() {
 
   it('displays only the create new button if there are no models', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         envs={[]}
@@ -249,7 +229,7 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-name').returns('the name');
     getAttribute.withArgs('data-owner').returns('who@external');
     const output = jsTestUtils.shallowRender(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         envs={models}
@@ -269,7 +249,7 @@ describe('EnvList', function() {
     const switchModel = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const component = testUtils.renderIntoDocument(
-      <juju.components.EnvList
+      <EnvList
         acl={acl}
         changeState={sinon.stub()}
         envs={models}
@@ -288,7 +268,7 @@ describe('EnvList', function() {
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const _acl = {canAddModels: sinon.stub().returns(false)};
     const component = testUtils.renderIntoDocument(
-      <juju.components.EnvList
+      <EnvList
         acl={_acl}
         changeState={sinon.stub()}
         envs={models}
