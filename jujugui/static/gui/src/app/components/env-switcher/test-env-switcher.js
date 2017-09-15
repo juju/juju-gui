@@ -10,7 +10,6 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EnvSwitcher', function() {
-  const clearPostDeployment = sinon.stub();
 
   it('renders the closed switcher component', () => {
     const renderer = jsTestUtils.shallowRender(
@@ -20,7 +19,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
@@ -76,8 +74,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
-        environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         modelCommitted={true}
@@ -110,7 +106,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
@@ -138,7 +133,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
@@ -164,8 +158,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
-        environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         setModelName={sinon.stub()}
@@ -203,7 +195,6 @@ describe('EnvSwitcher', function() {
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
         setModelName={sinon.stub()}
@@ -220,7 +211,6 @@ describe('EnvSwitcher', function() {
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         environmentName=""
         humanizeTimestamp={humanizeTimestamp}
         listModelsWithInfo={sinon.stub()}
@@ -234,7 +224,6 @@ describe('EnvSwitcher', function() {
     const expected = <EnvList
       acl={acl}
       changeState={changeState}
-      clearPostDeployment={clearPostDeployment}
       environmentName=""
       envs={[]}
       handleModelClick={instance.handleModelClick}
@@ -252,7 +241,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -277,7 +265,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -314,7 +301,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         setModelName={sinon.stub()}
@@ -341,7 +327,6 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={clearPostDeployment}
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}

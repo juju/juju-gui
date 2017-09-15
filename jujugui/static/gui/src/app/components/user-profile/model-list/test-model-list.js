@@ -51,13 +51,11 @@ describe('UserProfileModelList', () => {
       canAddModels: () => true
     };
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -80,7 +78,6 @@ describe('UserProfileModelList', () => {
           <div className="right">
             <CreateModelButton
               changeState={changeState}
-              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </div>
         </div>
@@ -97,13 +94,11 @@ describe('UserProfileModelList', () => {
     };
     userInfo = {external: 'who-ext', profile: 'who', isCurrent: false};
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -138,7 +133,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -162,13 +156,11 @@ describe('UserProfileModelList', () => {
     };
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <UserProfileModelList
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -192,7 +184,6 @@ describe('UserProfileModelList', () => {
           <div className="right">
             <CreateModelButton
               changeState={changeState}
-              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </div>
         </div>
@@ -320,7 +311,6 @@ describe('UserProfileModelList', () => {
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
-        clearPostDeployment={sinon.stub()}
         currentModel={null}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -443,7 +433,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -483,7 +472,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -519,7 +507,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -554,7 +541,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -587,7 +573,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -616,7 +601,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -649,7 +633,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -678,7 +661,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={destroyModels}
         facadesExist={true}
@@ -710,7 +692,6 @@ describe('UserProfileModelList', () => {
       <UserProfileModelList
         addNotification={addNotification}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}

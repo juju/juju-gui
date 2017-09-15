@@ -56,7 +56,6 @@ Profile.sectionsMap = new Map([
           addNotification={component.props.addNotification}
           baseURL={component.props.baseURL}
           changeState={component.props.changeState}
-          clearPostDeployment={component.props.clearPostDeployment}
           facadesExist={component.props.facadesExist}
           destroyModels={component.props.destroyModels}
           listModelsWithInfo={component.props.listModelsWithInfo}
@@ -103,7 +102,6 @@ Profile.propTypes = {
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
-  clearPostDeployment: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,

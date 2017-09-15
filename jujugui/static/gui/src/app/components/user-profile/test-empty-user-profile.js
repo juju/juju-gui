@@ -13,11 +13,9 @@ describe('EmptyUserProfile', () => {
   it('renders the empty state for the current user', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <EmptyUserProfile
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         isCurrentUser={true}
         switchModel={sinon.stub()}
         staticURL={staticURL} />, true);
@@ -39,7 +37,6 @@ describe('EmptyUserProfile', () => {
         </p>
         <CreateModelButton
           changeState={changeState}
-          clearPostDeployment={clearPostDeployment}
           switchModel={instance.props.switchModel}
           title="Start building"
           type="inline-positive" />
@@ -51,11 +48,9 @@ describe('EmptyUserProfile', () => {
   it('renders the empty state for another user', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
-    const clearPostDeployment = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <EmptyUserProfile
         changeState={changeState}
-        clearPostDeployment={clearPostDeployment}
         isCurrentUser={false}
         switchModel={sinon.stub()}
         staticURL={staticURL} />, true);
@@ -84,7 +79,6 @@ describe('EmptyUserProfile', () => {
     const output = jsTestUtils.shallowRender(
       <EmptyUserProfile
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()}
         staticURL='test' />);
     assert.equal(

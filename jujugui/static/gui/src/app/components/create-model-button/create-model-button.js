@@ -21,7 +21,9 @@ class CreateModelButton extends React.Component {
     if (this.props.action) {
       this.props.action();
     }
-    this.props.clearPostDeployment();
+    this.props.changeState({
+      'postDeploymentPanel': null
+    });
   }
 
   render() {
@@ -42,7 +44,6 @@ class CreateModelButton extends React.Component {
 CreateModelButton.propTypes = {
   action: PropTypes.func,
   changeState: PropTypes.func.isRequired,
-  clearPostDeployment: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   switchModel: PropTypes.func.isRequired,
   title: PropTypes.string,

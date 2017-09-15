@@ -1613,7 +1613,11 @@ YUI.add('juju-view-utils', function(Y) {
         protocol: config.socket_protocol,
         uuid: model.uuid
       });
-      app._displayPostDeployment();
+      app.state.changeState({
+        'postDeploymentPanel': {
+          show: true
+        }
+      });
       app.switchEnv(socketUrl, null, null, commit, true, false);
     };
     controllerAPI.createModel(

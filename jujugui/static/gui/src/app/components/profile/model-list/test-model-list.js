@@ -156,7 +156,6 @@ describe('Profile Model List', function() {
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
-        clearPostDeployment={options.clearPostDeployment || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
         destroyModels={sinon.stub()}
@@ -165,9 +164,7 @@ describe('Profile Model List', function() {
   }
 
   it('can render', () => {
-    const clearPostDeployment = sinon.stub();
     const renderer = renderComponent({
-      clearPostDeployment: clearPostDeployment
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
@@ -181,7 +178,6 @@ describe('Profile Model List', function() {
             <CreateModelButton
               title="Start a new model"
               changeState={instance.props.changeState}
-              clearPostDeployment={clearPostDeployment}
               switchModel={instance.props.switchModel} />
           </li>
           <li className="profile-model-list__table-header">

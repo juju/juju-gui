@@ -14,7 +14,6 @@ describe('CreateModelButton', () => {
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
@@ -38,7 +37,6 @@ describe('CreateModelButton', () => {
         title="test"
         disabled={false}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
@@ -62,7 +60,6 @@ describe('CreateModelButton', () => {
         title="test"
         disabled={true}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
@@ -87,7 +84,6 @@ describe('CreateModelButton', () => {
         title="test"
         disabled={false}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const instance = component.getMountedInstance();
     instance._createNewModel();
@@ -103,7 +99,6 @@ describe('CreateModelButton', () => {
         title="test"
         disabled={true}
         changeState={sinon.stub()}
-        clearPostDeployment={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     const instance = component.getMountedInstance();
     instance._createNewModel();
@@ -118,7 +113,6 @@ describe('CreateModelButton', () => {
         type="positive"
         title="test"
         changeState={changeState}
-        clearPostDeployment={sinon.stub()}
         switchModel={switchModel} />, true);
     const output = component.getRenderOutput();
     // Call the action passed to the GenericButton
