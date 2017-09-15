@@ -1379,9 +1379,7 @@ describe('State', () => {
         seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: 'i/machines'}
       });
-      const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       const stub1 = sinon.stub();
       state.register([
         ['test', stub1 ]
