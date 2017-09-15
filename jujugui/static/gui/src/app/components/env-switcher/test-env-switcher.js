@@ -90,6 +90,16 @@ describe('EnvSwitcher', function() {
     expect(output.props.children[0].props.children[0]).toEqualJSX(expected);
   });
 
+  it('defaults to "untitled-model"', () => {
+    // Shallow rendering a wrapped component doesn't appear to apply the
+    // defaultProps. Because other tests test that the environmentName is
+    // correctly applied. This check to see that a default is defined should
+    // suffice.
+    assert.deepEqual(EnvSwitcher.WrappedComponent.defaultProps, {
+      environmentName: 'untitled-model'
+    });
+  });
+
   it('can change the model name', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(

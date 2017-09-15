@@ -45,7 +45,7 @@ class GUIApp {
       portion of the application has set this value prior to switching models.
       @type {String}
     */
-    this.modelUUID = config.jujuEnvUUID;
+    this.modelUUID = config.jujuEnvUUID || null;
     /**
       The default web page title.
       @type {String}
