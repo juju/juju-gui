@@ -4,10 +4,10 @@
 /**
   Helper functions for creating and working with the bakery.
 */
-
-const Notification = require('../components/notification/notification');
 const React = require('react');
 const ReactDOM = require('react-dom');
+
+const Notification = require('../../components/notification/notification');
 
 /**
   Implement the bakery storage store interface by using the user local

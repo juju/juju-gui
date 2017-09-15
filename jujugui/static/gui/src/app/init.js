@@ -11,7 +11,7 @@ const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 
-const newBakery = require('./utils/bakery-utils');
+const newBakery = require('./init/utils/bakery-utils');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
