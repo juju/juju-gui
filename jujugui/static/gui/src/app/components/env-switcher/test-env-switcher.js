@@ -74,6 +74,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        environmentName="MyEnv"
         humanizeTimestamp={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         modelCommitted={true}
@@ -84,7 +85,7 @@ describe('EnvSwitcher', function() {
     const expected = (
       <span className="env-switcher__name"
         ref="name">
-        untitled-model
+        MyEnv
       </span>);
     expect(output.props.children[0].props.children[0]).toEqualJSX(expected);
   });
@@ -158,6 +159,7 @@ describe('EnvSwitcher', function() {
         acl={{}}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        environmentName="MyEnv"
         listModelsWithInfo={sinon.stub()}
         humanizeTimestamp={sinon.stub()}
         setModelName={sinon.stub()}
