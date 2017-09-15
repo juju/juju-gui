@@ -164,8 +164,7 @@ describe('Profile Model List', function() {
   }
 
   it('can render', () => {
-    const renderer = renderComponent({
-    });
+    const renderer = renderComponent();
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expected = (

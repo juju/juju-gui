@@ -314,7 +314,7 @@ SearchResultsItem.propTypes = {
   changeState: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
-  item: PropTypes.object.isRequired,
+  item: PropTypes.object.isRequired
 };
 
 module.exports = SearchResultsItem;
