@@ -67,6 +67,93 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('_listAndSwitchModel', function() {
+    let modelList;
+
+    beforeEach(function() {
+      modelList = [{
+        'id':'fe9a2845-4829-4d61-8653-248b7052204e',
+        'name':'latta',
+        'series':'xenial',
+        'provider':'gce',
+        'uuid':'fe9a2845-4829-4d61-8653-248b7052204e',
+        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner':'frankban@external',
+        'life':'alive',
+        'isAlive':true,
+        'isController':false,
+        'lastConnection':null
+      },{
+        'id':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'name':'jujugui-org',
+        'series':'xenial',
+        'provider':'gce',
+        'uuid':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner':'uros-jovanovic@external',
+        'life':'alive',
+        'isAlive':true,
+        'isController':false,
+        'lastConnection':null
+      }];
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = sinon.stub();
+      app.controllerAPI.listModelsWithInfo = function(callback) {
+        callback.call(app, null, modelList);
+      };
+    });
+
+    it('switches to a supplied model path', () => {
+      app._listAndSwitchModel('frankban/latta', null);
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        model: {
+          path: 'frankban/latta',
+          uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
+        },
+        user: null, root: null
+      }]);
+    });
+
+    it('switches to a supplied model uuid', () => {
+      app._listAndSwitchModel(null, '509f6e4c-4da4-49c8-8f18-537c33b4d3a0');
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        model: {
+          path: 'uros-jovanovic/jujugui-org',
+          uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
+        },
+        user: null, root: null
+      }]);
+    });
+
+    it('switches to disconnected state if no model is found via uuid', () => {
+      app._listAndSwitchModel(null, 'bad-uuid');
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        root: null, store: null, model: null, user: null,
+        profile: 'dalek'
+      }]);
+    });
+
+    it('switches to disconnected state if no model found via path', () => {
+      app._listAndSwitchModel('bad/path', null);
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        root: null, store: null, model: null, user: null,
+        profile: 'dalek'
+      }]);
+    });
+  });
+
   describe('_fetchEntityFromUserState', () => {
     it('returns a promise for an entity', done => {
       const legacyPath = sinon.stub().returns('~hatch/ghost');
