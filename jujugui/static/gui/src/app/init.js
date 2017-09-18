@@ -1611,7 +1611,7 @@ class GUIApp {
       clearTimeout(this._dbChangedTimer);
     }
     // Destroy YUI classes.
-    this.modelAPI.destroy();
+    this.modelAPI && this.modelAPI.destroy();
     this.controllerAPI.destroy();
     this.db.destroy();
     this.endpointsController.destroy();
