@@ -354,7 +354,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return;
     }
     const entityId = state.postDeploymentPanel.entityId;
-
     this.state.changeState({
       'postDeploymentPanel': null
     });
@@ -380,6 +379,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
     ReactDOM.render(
       <PostDeployment
+        changeState={this.state.changeState.bind(this.state)}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
         getFile={charmstore.getFile.bind(charmstore)}

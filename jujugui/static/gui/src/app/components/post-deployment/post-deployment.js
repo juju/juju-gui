@@ -186,6 +186,12 @@ class PostDeployment extends React.Component {
     this.props.showEntityDetails();
   }
 
+  _closePostDeployment(evt) {
+    this.props.changeState({
+      postDeploymentPanel: null
+    });
+  }
+
   render() {
     let classes = [
       'post-deployment'
@@ -197,7 +203,7 @@ class PostDeployment extends React.Component {
           instanceName="post-deployment"
           visible={true}>
           <span className="close" tabIndex="0" role="button"
-            onClick={this.props.closePostDeployment}>
+            onClick={this._closePostDeployment.bind(this)}>
             <SvgIcon name="close_16"
               size="16" />
           </span>
@@ -232,7 +238,7 @@ class PostDeployment extends React.Component {
 }
 
 PostDeployment.propTypes = {
-  closePostDeployment: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,
   getFile: PropTypes.func.isRequired,
