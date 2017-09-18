@@ -67,6 +67,149 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('loginToAPIs', () => {
+    // Create and return a mock API connection.
+    // The API is connected if connected is true.
+    const makeAPIConnection = connected => {
+      return {
+        destroy: sinon.stub(),
+        name: 'test-api',
+        get: sinon.stub().withArgs('connected').returns(connected),
+        login: sinon.stub(),
+        loginWithMacaroon: sinon.stub()
+      };
+    };
+
+    // Check whether the given API connection mock (see makeAPIConnection) is
+    // authenticated, and if it is, check that the given credentials have been
+    // set as an attribute of the connection object.
+    const checkLoggedInWithCredentials = (api, loggedIn, credentials) => {
+      if (credentials) {
+        // Credentials have been set on the API.
+        // Adding the macaroons to the credentials for comparison purposes.
+        if (credentials.macaroons === undefined) {
+          credentials.macaroons = null;
+        }
+        assert.deepEqual(app.user.controller, credentials);
+      } else {
+        // No credentials have been set.
+        const expected = {
+          user: '',
+          password: '',
+          macaroons: null
+        };
+        assert.deepEqual(app.user.controller, expected);
+      }
+      if (loggedIn) {
+        // The API has been authenticated with credentials.
+        assert.strictEqual(api.login.calledOnce, true);
+        assert.strictEqual(api.login.getCall(0).args.length, 0);
+      } else {
+        // Login has not been called.
+        assert.strictEqual(api.login.called, false);
+      }
+    };
+
+    // Check whether the given API connection mock (see makeAPIConnection) is
+    // authenticated with macaroons.
+    const checkLoggedInWithMacaroons = (api, loggedIn) => {
+      if (loggedIn) {
+        // The API has been authenticated with macaroons.
+        assert.strictEqual(api.loginWithMacaroon.calledOnce, true);
+        // The loginWithMacaroon method receives the bakery instance and a
+        // callback.
+        assert.strictEqual(api.loginWithMacaroon.getCall(0).args.length, 2);
+        return;
+      }
+      // The loginWithMacaroon method has not been called.
+      assert.strictEqual(api.loginWithMacaroon.called, false);
+    };
+
+    it('logs into all connected API backends', () => {
+      const credentials = {user: 'user-who@local', password: 'passwd'};
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithCredentials(controller, true, credentials);
+      checkLoggedInWithCredentials(model, true, credentials);
+    });
+
+    it('logs into all default API backends', () => {
+      const credentials = {user: 'user-who@local', password: 'passwd'};
+      const useMacaroons = false;
+      app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.modelAPI.destroy();
+      app.modelAPI = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithCredentials(app.controllerAPI, true, credentials);
+      checkLoggedInWithCredentials(app.modelAPI, true, credentials);
+    });
+
+    it('only logs into APIs if they are connected', () => {
+      const credentials = {user: 'user-who@local', password: 'passwd'};
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(false);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithCredentials(controller, true, credentials);
+      checkLoggedInWithCredentials(model, false, credentials);
+    });
+
+    it('sets credentials even if no API is connected', () => {
+      const credentials = {user: 'user-who@local', password: 'passwd'};
+      const useMacaroons = false;
+      app.controllerAPI = makeAPIConnection(false);
+      // Clean up the old env before assigning a new env.
+      app.modelAPI.destroy();
+      app.modelAPI = null;
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
+    });
+
+    it('does not set credentials if they are not provided', () => {
+      app.user.controller = null;
+      const credentials = null;
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller]);
+      checkLoggedInWithCredentials(controller, true, null);
+    });
+
+    it('logs into all connected API backends (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithMacaroons(controller, true);
+      checkLoggedInWithMacaroons(model, true);
+    });
+
+    it('logs into all default API backends (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      app.controllerAPI = makeAPIConnection(true);
+      // Clean up the old env before assigning a new env.
+      app.modelAPI.destroy();
+      app.modelAPI = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithMacaroons(app.controllerAPI, true);
+      checkLoggedInWithMacaroons(app.modelAPI, true);
+    });
+
+    it('only logs into APIs if they are connected (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(false);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithMacaroons(controller, true);
+      checkLoggedInWithMacaroons(model, false);
+    });
+  });
+
   describe('_ensureControllerConnection', () => {
     it('connects to the controller if it needs to', () => {
       app.controllerAPI.connect = sinon.stub();
@@ -168,7 +311,7 @@ describe('init', () => {
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         root: null, store: null, model: null, user: null,
-        profile: 'dalek'
+        profile: ''
       }]);
     });
 
@@ -179,7 +322,7 @@ describe('init', () => {
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         root: null, store: null, model: null, user: null,
-        profile: 'dalek'
+        profile: ''
       }]);
     });
   });
