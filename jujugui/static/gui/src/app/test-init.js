@@ -240,6 +240,34 @@ describe('init', () => {
     });
   });
 
+  describe('_disambiguateUserState', function() {
+    it('properly handles a rejected entity promise', done => {
+      const userState = {user: 'hatch'};
+      const entityPromise = Promise.reject(userState);
+      app.controllerAPI.userIsAuthenticated = true;
+      app._listAndSwitchModel = args => {
+        assert.deepEqual(args, userState);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+
+    it('properly handles a resolved entity promise', done => {
+      const userState = 'hatch';
+      const entityPromise = Promise.resolve(userState);
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = state => {
+        assert.deepEqual(app.maskVisibility.args[0], [false]);
+        assert.deepEqual({
+          store: 'u/hatch',
+          user: null
+        }, state);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+  });
+
   describe('_controllerIsReady', function() {
     beforeEach(() => {
       app._displayLogin = sinon.stub();
