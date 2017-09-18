@@ -234,7 +234,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={this.acl}
         addNotification={this._bound.addNotification}
         charmstore={charmstore}
-        clearPostDeployment={this._clearPostDeployment.bind(this)}
         currentModel={currentModel}
         d3={yui.d3}
         facadesExist={facadesExist}
@@ -265,7 +264,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
           charmstore={charmstore}
-          clearPostDeployment={this._clearPostDeployment.bind(this)}
           facadesExist={facadesExist}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
@@ -517,7 +515,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         makeEntityModel={yui.juju.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
-        setStagedEntity={this._setStagedEntity.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         urllib={window.jujulib.URL}
       />,
@@ -1167,7 +1164,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
-        clearPostDeployment={this._clearPostDeployment.bind(this)}
         humanizeTimestamp={yui.juju.views.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
