@@ -240,6 +240,33 @@ describe('init', () => {
     });
   });
 
+  describe('_controllerIsReady', function() {
+    beforeEach(() => {
+      app._displayLogin = sinon.stub();
+    });
+
+    it('reports true when the controller API is ready', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = true;
+      assert.strictEqual(app._controllerIsReady(), true);
+    });
+
+    it('reports false when the controller API is not ready', () => {
+      const controllerAPI = app.controllerAPI;
+      controllerAPI.set('connected', false);
+      controllerAPI.userIsAuthenticated = false;
+      // Without a controller API object the controller is not ready.
+      app.controllerAPI = null;
+      assert.strictEqual(app._controllerIsReady(), false, 'no controller');
+      // Before the API is connected the controller is not ready.
+      app.controllerAPI = controllerAPI;
+      assert.strictEqual(app._controllerIsReady(), false, 'not connected');
+      // Before the API is properly logged in the controller is not ready.
+      app.controllerAPI.set('connected', true);
+      assert.strictEqual(app._controllerIsReady(), false, 'not authenticated');
+    });
+  });
+
   describe('_listAndSwitchModel', function() {
     let modelList;
 
