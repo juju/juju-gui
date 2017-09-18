@@ -1,8 +1,11 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
+const React = require('react');
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const ProfileBundleList = require('./bundle-list');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Bundle List', function() {
 
@@ -46,20 +49,13 @@ describe('Profile Bundle List', function() {
     "unitCount": 5
   }]`;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile-bundle-list', function() {
-      done();
-    });
-  });
-
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'lazypower@external');
       cb(null, JSON.parse(rawBundleData));
     };
     return jsTestUtils.shallowRender(
-      <juju.components.ProfileBundleList
+      <ProfileBundleList
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}

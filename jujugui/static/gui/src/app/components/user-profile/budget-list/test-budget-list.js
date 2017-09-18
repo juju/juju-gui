@@ -1,32 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const Spinner = require('../../spinner/spinner');
+const UserProfileBudgetList = require('./budget-list');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileBudgetList', () => {
   var users;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('user-profile-budget-list', () => { done(); });
-  });
 
   beforeEach(() => {
     users = {charmstore: {
@@ -37,7 +20,7 @@ describe('UserProfileBudgetList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
+      <UserProfileBudgetList
         addNotification={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
@@ -47,14 +30,14 @@ describe('UserProfileBudgetList', () => {
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
+      <UserProfileBudgetList
         addNotification={sinon.stub()}
         listBudgets={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(output, (
       <div className="user-profile__budget-list twelve-col">
-        <juju.components.Spinner />
+        <Spinner />
       </div>
     ));
   });
@@ -71,7 +54,7 @@ describe('UserProfileBudgetList', () => {
     }]};
     var listBudgets = sinon.stub().callsArgWith(0, null, data);
     var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
+      <UserProfileBudgetList
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
@@ -130,7 +113,7 @@ describe('UserProfileBudgetList', () => {
     var listBudgetsAbort = sinon.stub();
     var listBudgets = sinon.stub().returns({abort: listBudgetsAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
+      <UserProfileBudgetList
         addNotification={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
@@ -141,7 +124,7 @@ describe('UserProfileBudgetList', () => {
   it('broadcasts error status', function() {
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.UserProfileBudgetList
+      <UserProfileBudgetList
         addNotification={addNotification}
         listBudgets={sinon.stub().callsArgWith(0, 'error', null)}
         user={users.charmstore} />);

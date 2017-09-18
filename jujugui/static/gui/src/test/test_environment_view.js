@@ -1,22 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
+const React = require('react');
+const ReactDOM = require('react-dom');
+
+// Required for the envionment.js file.
+window.ReactDOM = ReactDOM;
+window.React = React;
+juju.components.AmbiguousRelationMenu = require(
+  '../app/components/relation-menu/ambiguous-relation-menu');
+juju.components.Environment = require(
+  '../app/components/environment/environment');
+juju.components.Popup = require('../app/components/popup/popup');
+juju.components.RelationMenu = require(
+  '../app/components/relation-menu/relation-menu');
 
 (function() {
 

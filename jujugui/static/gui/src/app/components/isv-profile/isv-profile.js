@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 /*
 The ISV profile component renders a venders profile with stats based on there
@@ -22,6 +6,11 @@ charms and bundles. You can only see this page is you have access.
 */
 
 'use strict';
+
+const React = require('react');
+
+const Panel = require('../panel/panel');
+const PlansUsage = require('./plans-usage/plans-usage');
 
 class ISVProfile extends React.Component {
   /**
@@ -48,7 +37,7 @@ class ISVProfile extends React.Component {
 
   render() {
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="isv-profile"
         visible={true}>
         <div className="row-hero">
@@ -132,7 +121,7 @@ class ISVProfile extends React.Component {
                     </h3>
                     <p className="isv-profile__box-stat">$500.00</p>
                   </div>
-                  <juju.components.PlansUsage
+                  <PlansUsage
                     d3={this.props.d3}
                     dataset={this.getDataSet()} />
                 </div>
@@ -140,7 +129,7 @@ class ISVProfile extends React.Component {
             </main>
           </div>
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -149,11 +138,4 @@ ISVProfile.propTypes = {
   d3: PropTypes.object.isRequired
 };
 
-YUI.add('isv-profile', function() {
-  juju.components.ISVProfile = ISVProfile;
-}, '', {
-  requires: [
-    'panel-component',
-    'plans-usage'
-  ]
-});
+module.exports = ISVProfile;

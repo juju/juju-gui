@@ -1,35 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const GenericButton = require('../generic-button/generic-button');
+const SearchResults = require('./search-results');
+const SearchResultsItem = require('./item/item');
+const SearchResultsSelectFilter = require('./select-filter/select-filter');
+const SearchResultsTypeFilter = require('./type-filter/type-filter');
+const Spinner = require('../spinner/spinner');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('SearchResults', function() {
   let series, acl, deployTarget, generatePath;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('search-results', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -45,7 +29,7 @@ describe('SearchResults', function() {
     it('can initially show the spinner', function() {
       var query = 'spinach';
       var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={sinon.stub()}
@@ -59,7 +43,7 @@ describe('SearchResults', function() {
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
-            <juju.components.Spinner />
+            <Spinner />
           </div>
         </div>);
     });
@@ -67,7 +51,7 @@ describe('SearchResults', function() {
     it('can display a message if there are no results', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
       var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
@@ -103,7 +87,7 @@ describe('SearchResults', function() {
     it('can display a message if there is a loading error', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
       var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
@@ -159,7 +143,7 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
 
       var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
@@ -288,19 +272,19 @@ describe('SearchResults', function() {
               results.
             </div>
             <div className="list-block__filters">
-              <juju.components.SearchResultsTypeFilter
+              <SearchResultsTypeFilter
                 changeState={changeState}
                 currentType="charm" />
               <div className="six-col last-col">
                 <div className="list-block__filters--selects">
                   <form>
-                    <juju.components.SearchResultsSelectFilter
+                    <SearchResultsSelectFilter
                       changeState={changeState}
                       label="Sort by"
                       filter='sort'
                       items={sortItems}
                       currentValue="-name" />
-                    <juju.components.SearchResultsSelectFilter
+                    <SearchResultsSelectFilter
                       changeState={changeState}
                       label="Series"
                       filter='series'
@@ -318,14 +302,14 @@ describe('SearchResults', function() {
                     <span className="count">({2})</span>
                   </h4>
                   <ul className="list-block__list">
-                    <juju.components.SearchResultsItem
+                    <SearchResultsItem
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
                       generatePath={generatePath}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
-                    <juju.components.SearchResultsItem
+                    <SearchResultsItem
                       acl={acl}
                       changeState={changeState}
                       deployTarget={deployTarget}
@@ -336,26 +320,26 @@ describe('SearchResults', function() {
                 </div>
                 <div className="clearfix community-results">
                   <div className="button-wrapper--ruled">
-                    <juju.components.GenericButton
+                    <GenericButton
                       action={sinon.stub()}
                       extraClasses="show-community-button"
                       type="inline-neutral">
                       {(showCommunity ? 'Hide' : `Show ${2}`) +
                         ' community results'}
-                    </juju.components.GenericButton>
+                    </GenericButton>
                   </div>
                   <div
                     className={'clearfix' + (showCommunity ? '' : ' hidden')}>
                     <h4>Community{' '}<span className="count">({2})</span></h4>
                     <ul className="list-block__list">
-                      <juju.components.SearchResultsItem
+                      <SearchResultsItem
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
                         generatePath={generatePath}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
-                      <juju.components.SearchResultsItem
+                      <SearchResultsItem
                         acl={acl}
                         changeState={changeState}
                         deployTarget={deployTarget}
@@ -374,7 +358,7 @@ describe('SearchResults', function() {
 
     it('can render the promulgated search results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
@@ -398,7 +382,7 @@ describe('SearchResults', function() {
 
     it('will show community results', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
@@ -425,7 +409,7 @@ describe('SearchResults', function() {
       const abort = sinon.stub();
       const charmstoreSearch = sinon.stub().returns({abort: abort});
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
@@ -440,7 +424,7 @@ describe('SearchResults', function() {
       instance.componentDidMount();
       assert.equal(abort.callCount, 0);
       renderer.render(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
@@ -460,7 +444,7 @@ describe('SearchResults', function() {
     var searchResults;
 
     beforeEach(function() {
-      searchResults = new juju.components.SearchResults({});
+      searchResults = new SearchResults({});
     });
 
     afterEach(function() {
@@ -744,7 +728,7 @@ describe('SearchResults', function() {
       mockModel.toEntity = sinon.stub().returns(result);
       var charmstoreSearch = sinon.stub().returns({abort: abort});
       var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.SearchResults
+        <SearchResults
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}

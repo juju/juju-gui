@@ -1,35 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const ModelActions = require('./model-actions');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('ModelActions', function() {
   var acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('model-actions', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -37,7 +17,7 @@ describe('ModelActions', function() {
 
   it('can render and pass the correct props', function() {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -57,7 +37,7 @@ describe('ModelActions', function() {
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="export_16"
+            <SvgIcon name="export_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -70,7 +50,7 @@ describe('ModelActions', function() {
             onClick={instance._handleImportClick}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="import_16"
+            <SvgIcon name="import_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -83,7 +63,7 @@ describe('ModelActions', function() {
             onClick={instance.props.sharingVisibility}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="share_16"
+            <SvgIcon name="share_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -105,7 +85,7 @@ describe('ModelActions', function() {
   it('can export the env', function() {
     var exportEnvironmentFile = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -127,7 +107,7 @@ describe('ModelActions', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -151,7 +131,7 @@ describe('ModelActions', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -175,7 +155,7 @@ describe('ModelActions', function() {
   it('can disable importing when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -195,7 +175,7 @@ describe('ModelActions', function() {
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="export_16"
+            <SvgIcon name="export_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -208,7 +188,7 @@ describe('ModelActions', function() {
             onClick={false}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="import_16"
+            <SvgIcon name="import_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -221,7 +201,7 @@ describe('ModelActions', function() {
             onClick={instance.props.sharingVisibility}
             role="button"
             tabIndex="0">
-            <juju.components.SvgIcon name="share_16"
+            <SvgIcon name="share_16"
               className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -242,7 +222,7 @@ describe('ModelActions', function() {
 
   it('disables sharing when not connected', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -260,7 +240,7 @@ describe('ModelActions', function() {
 
   it('disables sharing when creating a new model', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {root: 'new'}}}
         changeState={sinon.stub()}
@@ -279,7 +259,7 @@ describe('ModelActions', function() {
   it('can trigger the sharing UI', function() {
     const sharingVisibility = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -298,7 +278,7 @@ describe('ModelActions', function() {
 
   it('applies the correct class when model is loading', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
@@ -318,7 +298,7 @@ describe('ModelActions', function() {
 
   it('applies the correct class when on a user profile', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {profile: 'foo'}}}
         changeState={sinon.stub()}
@@ -338,7 +318,7 @@ describe('ModelActions', function() {
 
   it('applies the correct class when on a user account page', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelActions
+      <ModelActions
         acl={acl}
         appState={{current: {root: 'account'}}}
         changeState={sinon.stub()}

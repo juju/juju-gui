@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const DateDisplay = require('../../date-display/date-display');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const UserProfileEntityKPI = require('../kpi/kpi');
 
 class UserProfileEntity extends React.Component {
   constructor() {
@@ -269,7 +259,7 @@ class UserProfileEntity extends React.Component {
           {this.props.permission}
         </div>
         <div className="two-col last-col">
-          <juju.components.DateDisplay
+          <DateDisplay
             date={model.lastConnection || '--'}
             relative={true} />
         </div>
@@ -301,11 +291,11 @@ class UserProfileEntity extends React.Component {
       return null;
     }
     return (
-      <juju.components.GenericButton
+      <GenericButton
         action={props.displayConfirmation}
         type="inline-neutral">
         Destroy model
-      </juju.components.GenericButton>
+      </GenericButton>
     );
   }
 
@@ -376,7 +366,7 @@ class UserProfileEntity extends React.Component {
   */
   _showMetrics() {
     return (
-      <juju.components.UserProfileEntityKPI
+      <UserProfileEntityKPI
         d3={this.props.d3}
         metrics={this.state.metrics}
         metricTypes={this.state.metricTypes} />);
@@ -404,10 +394,10 @@ class UserProfileEntity extends React.Component {
     if (this.props.type === 'charm') {
       return (
         <div>
-          <juju.components.GenericButton
+          <GenericButton
             action={this._toggleKpiVisibility.bind(this)}>
             {this.state.kpiMetrics ? 'Hide KPI Metrics' : 'Show KPI Metrics'}
-          </juju.components.GenericButton>
+          </GenericButton>
           {this.state.kpiVisible ? this._showMetrics() : undefined}
         </div>
       );
@@ -470,7 +460,7 @@ class UserProfileEntity extends React.Component {
       'user-profile__list-row': true
     };
     return (
-      <juju.components.ExpandingRow classes={classes}
+      <ExpandingRow classes={classes}
         key={entity.id}
         expanded={props.expanded}>
         {props.children}
@@ -482,11 +472,11 @@ class UserProfileEntity extends React.Component {
             <div className={'expanding-row__expanded-header-action ' +
               'six-col last-col no-margin-bottom'}>
               {destroyButton}
-              <juju.components.GenericButton
+              <GenericButton
                 action={buttonAction}
                 type="inline-neutral">
                 {isModel ? 'Manage' : 'View'}
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
@@ -501,7 +491,7 @@ class UserProfileEntity extends React.Component {
             {this._generateMetrics()}
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
   }
 };
 
@@ -524,13 +514,4 @@ UserProfileEntity.propTypes = {
   type: PropTypes.string.isRequired
 };
 
-YUI.add('user-profile-entity', function() {
-  juju.components.UserProfileEntity = UserProfileEntity;
-}, '', {
-  requires: [
-    'date-display',
-    'expanding-row',
-    'generic-button',
-    'user-profile-entity-kpi'
-  ]
-});
+module.exports = UserProfileEntity;

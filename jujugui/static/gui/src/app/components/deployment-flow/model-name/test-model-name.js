@@ -1,35 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentModelName = require('./model-name');
+const GenericInput = require('../../generic-input/generic-input');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentModelName', () => {
   let acl;
-
-  beforeAll(done => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-model-name', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -37,7 +17,7 @@ describe('DeploymentModelName', () => {
 
   it('can render', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={null}
         modelName="mymodel"
@@ -45,7 +25,7 @@ describe('DeploymentModelName', () => {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="six-col no-margin-bottom">
-        <juju.components.GenericInput
+        <GenericInput
           disabled={false}
           key="modelName"
           label="Model name"
@@ -69,7 +49,7 @@ describe('DeploymentModelName', () => {
   it('can render when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={null}
         modelName="mymodel"
@@ -77,7 +57,7 @@ describe('DeploymentModelName', () => {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="six-col no-margin-bottom">
-        <juju.components.GenericInput
+        <GenericInput
           disabled={true}
           key="modelName"
           label="Model name"
@@ -100,7 +80,7 @@ describe('DeploymentModelName', () => {
 
   it('can derive the model name from the DD entity name', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={{get: sinon.stub().returns('snazzy-bundle')}}
         modelName="mymodel"
@@ -111,7 +91,7 @@ describe('DeploymentModelName', () => {
 
   it('focuses on the model name field when loaded', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={null}
         modelName="mymodel"
@@ -125,7 +105,7 @@ describe('DeploymentModelName', () => {
   it('can update the model name on blur', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={null}
         modelName="mymodel"
@@ -143,7 +123,7 @@ describe('DeploymentModelName', () => {
   it('does not update the model name if there is no value', () => {
     const setModelName = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentModelName
+      <DeploymentModelName
         acl={acl}
         ddEntity={null}
         modelName="mymodel"

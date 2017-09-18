@@ -1,22 +1,12 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const GenericInput = require('../generic-input/generic-input');
+const GenericButton = require('../generic-button/generic-button');
+const CardForm = require('../card-form/card-form');
+const AddressForm = require('../address-form/address-form');
 
 class CreatePaymentUser extends React.Component {
   constructor() {
@@ -180,7 +170,7 @@ class CreatePaymentUser extends React.Component {
         <h2 className="create-payment-user__title">
           Card address
         </h2>
-        <juju.components.AddressForm
+        <AddressForm
           disabled={this.props.acl.isReadOnly()}
           addNotification={this.props.addNotification}
           getCountries={this.props.getCountries}
@@ -203,7 +193,7 @@ class CreatePaymentUser extends React.Component {
         <h2 className="create-payment-user__title">
           Billing address
         </h2>
-        <juju.components.AddressForm
+        <AddressForm
           disabled={this.props.acl.isReadOnly()}
           addNotification={this.props.addNotification}
           getCountries={this.props.getCountries}
@@ -223,7 +213,7 @@ class CreatePaymentUser extends React.Component {
     }
     return (
       <div className="create-payment-user__vat">
-        <juju.components.GenericInput
+        <GenericInput
           disabled={this.props.acl.isReadOnly()}
           label="VAT number (optional)"
           ref="VATNumber"
@@ -241,7 +231,7 @@ class CreatePaymentUser extends React.Component {
       return null;
     }
     return (
-      <juju.components.GenericInput
+      <GenericInput
         disabled={this.props.acl.isReadOnly()}
         label="Business name"
         ref="businessName"
@@ -299,13 +289,13 @@ class CreatePaymentUser extends React.Component {
               Name and address
             </h2>
             {this._generateBusinessNameField()}
-            <juju.components.GenericInput
+            <GenericInput
               disabled={disabled}
               label="Email address"
               ref="emailAddress"
               required={true}
               validate={[required]} />
-            <juju.components.AddressForm
+            <AddressForm
               addNotification={this.props.addNotification}
               disabled={disabled}
               getCountries={this.props.getCountries}
@@ -314,7 +304,7 @@ class CreatePaymentUser extends React.Component {
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
-            <juju.components.CardForm
+            <CardForm
               acl={this.props.acl}
               createCardElement={this.props.createCardElement}
               ref="cardForm"
@@ -341,12 +331,12 @@ class CreatePaymentUser extends React.Component {
             {this._generateBillingAddressFields()}
           </div>
           <div className="create-payment-user__add">
-            <juju.components.GenericButton
+            <GenericButton
               action={this._handleAddUser.bind(this)}
               disabled={disabled}
               type="inline-neutral">
               Add payment details
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </form>
       </div>
@@ -366,15 +356,4 @@ CreatePaymentUser.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('create-payment-user', function() {
-  juju.components.CreatePaymentUser = CreatePaymentUser;
-}, '0.1.0', {
-  requires: [
-    'account-payment-method-card',
-    'address-form',
-    'card-form',
-    'generic-button',
-    'generic-input',
-    'inset-select'
-  ]
-});
+module.exports = CreatePaymentUser;

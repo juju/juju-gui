@@ -1,31 +1,34 @@
-// /* Copyright (C) 2017 Canonical Ltd. */
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-/*
-  In an effort to develop this init.js along side with the rest of the
-  app here are the changes you'll have to manually change to continue
-  working on the new system.
-
-  index.html.mako
-    - Uncomment the init-pkg.js script tags lines 300, 308.
-    - Uncomment the initialization code lines 353, 354.
-    - Comment the old init code lines 352, 357.
-  Makefile
-    - Uncomment the hack to generate the init-pkg file Line 221.
-
-  Code to still move over from app.js
-    - Y.juju.Cookies Line 50.
-    - widgets.AutodeployExtension Line 49.
-*/
-
+const React = require('react');
+const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
+const cookieUtil = require('./init/cookie-util');
+const BundleImporter = require('./init/bundle-importer');
+
+const newBakery = require('./init/utils/bakery-utils');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
+
+// Hacks untill all of the global references have been removed.
+window.jsyaml = require('js-yaml');
+window.juju.utils.RelationUtils = require('./init/relation-utils');
+// Required for the envionment.js file.
+window.ReactDOM = ReactDOM;
+window.React = React;
+juju.components.AmbiguousRelationMenu = require(
+  './components/relation-menu/ambiguous-relation-menu');
+juju.components.Environment = require(
+  './components/environment/environment');
+juju.components.Popup = require('./components/popup/popup');
+juju.components.RelationMenu = require(
+  './components/relation-menu/relation-menu');
 
 const yui = window.yui;
 
@@ -43,7 +46,7 @@ class GUIApp {
       portion of the application has set this value prior to switching models.
       @type {String}
     */
-    this.modelUUID = config.jujuEnvUUID;
+    this.modelUUID = config.jujuEnvUUID || null;
     /**
       The default web page title.
       @type {String}
@@ -64,16 +67,6 @@ class GUIApp {
     */
     this.anonymousMode = false;
     /**
-      Reference to the changesUtils utilities.
-      @type {Object}
-    */
-    this.changesUtils = window.juju.utils.ChangesUtils;
-    /**
-      Reference to the relationUtils utilities.
-      @type {Object}
-    */
-    this.relationUtils = window.juju.utils.RelationUtils;
-    /**
       Stores the custom event handlers for the application.
       @type {Object}
     */
@@ -83,11 +76,6 @@ class GUIApp {
       @type {Integer}
     */
     this._dragLeaveTimer = null;
-    /**
-      Reference to the juju.Cookies instance.
-      @type {juju.Cookies}
-    */
-    this._cookieHandler = null;
     /**
       The keydown event listener from the hotkey activation.
       @type {Object}
@@ -131,7 +119,7 @@ class GUIApp {
       Used to perform requests on a macaroon authenticated endpoints.
       @type {Object}
     */
-    this.bakery = yui.juju.bakeryutils.newBakery(
+    this.bakery = newBakery(
       config, this.user, stateGetter, cookieSetter, webHandler);
     /**
       A charm store API client instance.
@@ -148,7 +136,6 @@ class GUIApp {
       config, window.jujulib.bundleservice);
 
     this.ecs = this._setupEnvironmentChangeSet();
-
     const modelOptions = {
       user: this.user,
       ecs: this.ecs,
@@ -249,7 +236,7 @@ class GUIApp {
       Application instance of the bundle importer.
       @type {Object}
     */
-    this.bundleImporter = new yui.juju.BundleImporter({
+    this.bundleImporter = new BundleImporter({
       db: this.db,
       modelAPI: this.modelAPI,
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
@@ -319,7 +306,10 @@ class GUIApp {
     */
     this.topology = this._renderTopology();
     this._renderComponents();
-    this.state.bootstrap();
+    const result = this.state.bootstrap();
+    if (result.error) {
+      console.error(result.error);
+    }
   }
 
   /**
@@ -342,7 +332,7 @@ class GUIApp {
     // Bind switchModel separately to include the already bound
     // addNotifications.
     this._bound.switchModel = yui.juju.views.utils.switchModel.bind(
-      this, this.env, this._bound.addNotification);
+      this, this.modelAPI, this._bound.addNotification);
   }
 
   /**
@@ -427,10 +417,8 @@ class GUIApp {
     @param {Function} next - The next route handler.
   */
   authorizeCookieUse(state, next) {
-    var GTM_enabled = this.GTM_enabled;
-    if (GTM_enabled) {
-      this._cookieHandler = this._cookieHandler || new yui.juju.Cookies();
-      this._cookieHandler.check();
+    if (this.applicationConfig.GTM_enabled) {
+      cookieUtil.check(document);
     }
     next();
   }
@@ -489,6 +477,7 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
+      ['*', this._renderComponents.bind(this)],
       ['root',
         this._rootDispatcher.bind(this),
         this._clearRoot.bind(this)],
@@ -1164,7 +1153,7 @@ class GUIApp {
           uuid: this.modelUUID,
           server: publicHost.value,
           port: publicHost.port
-        }, null, null, null, true, false));
+        }), null, null, null, true, false);
     });
   }
 
@@ -1626,10 +1615,11 @@ class GUIApp {
     this.controllerAPI.destroy();
     this.db.destroy();
     this.endpointsController.destroy();
+    this.topology.destroy();
     // Detach event listeners.
-    const remove = document.removeEventListener;
+    const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;
-    this._hotkeyListener.detach();
+    this._hotkeyListener.deactivate();
     const ecsListener = handlers['renderDeploymentBarListener'];
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);

@@ -1,35 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const EntityFiles = require('./files');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('EntityFiles', function() {
   var mockEntity;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-files', function() { done(); });
-  });
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity(
@@ -43,7 +23,7 @@ describe('EntityFiles', function() {
   it('renders a list of files', function() {
     var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityFiles
+      <EntityFiles
         apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.stub().returns('files')} />, true);
@@ -116,7 +96,7 @@ describe('EntityFiles', function() {
   it('renders for an empty/null list of files', function() {
     mockEntity.set('files', []);
     var output = testUtils.renderIntoDocument(
-      <juju.components.EntityFiles
+      <EntityFiles
         apiUrl="http://example.com/"
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
@@ -127,7 +107,7 @@ describe('EntityFiles', function() {
   it('excludes the code link when url is not present', function() {
     mockEntity.set('code_source', null);
     var output = testUtils.renderIntoDocument(
-      <juju.components.EntityFiles
+      <EntityFiles
         apiUrl="http://example.com/"
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
@@ -143,7 +123,7 @@ describe('EntityFiles', function() {
     const apiUrl = 'https://api.jujucharms.com/charmstore/v5';
     const expectedURL = apiUrl + expectedPath;
     const output = testUtils.renderIntoDocument(
-      <juju.components.EntityFiles
+      <EntityFiles
         apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
@@ -174,7 +154,7 @@ describe('EntityFiles', function() {
   it('properly builds a tree structure from file paths', function() {
     // Since there's recursion logic in this function, test it
     // directly for easier debugging.
-    var component = new juju.components.EntityFiles();
+    var component = new EntityFiles();
     var files = [
       '/foo/bar/baz.zip',
       '/foo/bar/slo.tar.gz',

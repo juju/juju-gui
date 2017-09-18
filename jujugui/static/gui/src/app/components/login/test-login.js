@@ -1,31 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const Login = require('./login');
+const SvgIcon = require('../svg-icon/svg-icon');
+const GenericButton = require('../generic-button/generic-button');
+const USSOLoginLink = require('../usso-login-link/usso-login-link');
+
+const jsTestUtils = require('../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('LoginComponent', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('login-component', function() { done(); });
-  });
 
   afterEach(function() {
     // Clear any timeouts created when rendering the component.
@@ -40,7 +26,7 @@ describe('LoginComponent', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
+      <Login
         addNotification={addNotification}
         controllerIsConnected={controllerIsConnected}
         gisf={false}
@@ -52,7 +38,7 @@ describe('LoginComponent', function() {
     var expected = (
       <div className="login">
         <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -81,12 +67,12 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
+            <GenericButton
               submit={true}
               type="positive">
               Login
-            </juju.components.GenericButton>
-            <juju.components.USSOLoginLink
+            </GenericButton>
+            <USSOLoginLink
               addNotification={addNotification}
               displayType="button"
               loginToController={loginToControllerStub}
@@ -114,7 +100,7 @@ describe('LoginComponent', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
+      <Login
         addNotification={addNotification}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
@@ -126,7 +112,7 @@ describe('LoginComponent', function() {
     var expected = (
       <div className="login hidden">
         <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -155,12 +141,12 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
+            <GenericButton
               submit={true}
               type="positive">
               Login
-            </juju.components.GenericButton>
-            <juju.components.USSOLoginLink
+            </GenericButton>
+            <USSOLoginLink
               addNotification={addNotification}
               displayType="button"
               loginToController={loginToControllerStub}
@@ -185,7 +171,7 @@ describe('LoginComponent', function() {
 
   it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.Login
+      <Login
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
@@ -199,7 +185,7 @@ describe('LoginComponent', function() {
   it('calls to log the user in on submit', function() {
     var loginToAPIs = sinon.stub();
     var component = testUtils.renderIntoDocument(
-      <juju.components.Login
+      <Login
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
@@ -221,7 +207,7 @@ describe('LoginComponent', function() {
     const loginToController = sinon.stub().callsArg(0);
     const controllerIsConnected = sinon.stub().returns(true);
     testUtils.renderIntoDocument(
-      <juju.components.Login
+      <Login
         addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
@@ -235,7 +221,7 @@ describe('LoginComponent', function() {
     var loginToController = sinon.stub();
     var controllerIsConnected = sinon.stub().returns(false);
     testUtils.renderIntoDocument(
-      <juju.components.Login
+      <Login
         addNotification={sinon.stub()}
         controllerIsConnected={controllerIsConnected}
         gisf={true}
@@ -248,7 +234,7 @@ describe('LoginComponent', function() {
   it('can focus on the username field', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
+      <Login
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}

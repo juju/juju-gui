@@ -1,32 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const AccountPaymentDetails = require('./details');
+const GenericButton = require('../../../generic-button/generic-button');
+const GenericInput = require('../../../generic-input/generic-input');
+const AccountPaymentDetailsAddress = require('./address/address');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('AccountPaymentDetails', () => {
   let acl;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment-details', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -71,7 +56,7 @@ describe('AccountPaymentDetails', () => {
       }]
     };
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentDetails
+      <AccountPaymentDetails
         acl={acl}
         addAddress={addAddress}
         addBillingAddress={addBillingAddress}
@@ -94,34 +79,34 @@ describe('AccountPaymentDetails', () => {
         </h2>
         <div className="account__payment-details-view twelve-col">
           <div className="account__payment-details-fields">
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="Name"
               value="Geoffrey Spinach" />
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="Email address"
               value="spinach@example.com" />
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="VAT number (optional)"
               value="1234" />
-            <juju.components.GenericInput
+            <GenericInput
               disabled={true}
               label="Business name"
               value="Spinachy business" />
           </div>
           <h4>
             Addresses
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAddressEdit}
               disabled={false}
               type="inline-neutral">
               Edit
-            </juju.components.GenericButton>
+            </GenericButton>
           </h4>
           <ul className="account__payment-details-addresses">
-            {[<juju.components.AccountPaymentDetailsAddress
+            {[<AccountPaymentDetailsAddress
               acl={acl}
               addNotification={addNotification}
               addAddress={addAddress}
@@ -147,15 +132,15 @@ describe('AccountPaymentDetails', () => {
           </ul>
           <h4>
             Billing addresses
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleBillingAddressEdit}
               disabled={false}
               type="inline-neutral">
               Edit
-            </juju.components.GenericButton>
+            </GenericButton>
           </h4>
           <ul className="account__payment-details-addresses">
-            {[<juju.components.AccountPaymentDetailsAddress
+            {[<AccountPaymentDetailsAddress
               acl={acl}
               addNotification={addNotification}
               addAddress={addBillingAddress}

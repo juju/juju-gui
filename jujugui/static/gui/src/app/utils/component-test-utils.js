@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var testUtils = require('react-dom/test-utils');
+
 var jsTestUtils = {
 
   /**
@@ -408,3 +410,5 @@ var jsTestUtils = {
     assert.deepEqual(output, expected, source);
   }
 };
+
+module.exports = jsTestUtils;

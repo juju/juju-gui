@@ -1,36 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const NotificationList = require('./notification-list');
+const NotificationListItem = require('./item/item');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('NotificationList', function() {
 
   let clock;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('notification-list', function() { done(); });
-  });
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -47,13 +27,13 @@ describe('NotificationList', function() {
       level: 'info'
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         notification={notification}/>, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const children = output.props.children;
     const items = [
-      <juju.components.NotificationListItem
+      <NotificationListItem
         key={notification.timestamp}
         timestamp={notification.timestamp}
         ref={'NotificationListItem' + notification.timestamp}
@@ -73,14 +53,14 @@ describe('NotificationList', function() {
 
   it('can render with no notifications', () => {
     const output = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         notification={null}/>);
     assert.strictEqual(output.props.children[0], undefined);
   });
 
   it('can render notifications after rendering none', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         notification={null}/>, true);
     const output = renderer.getRenderOutput();
     assert.strictEqual(output.props.children[0], undefined);
@@ -90,7 +70,7 @@ describe('NotificationList', function() {
       level: 'info'
     };
     renderer.render(
-      <juju.components.NotificationList
+      <NotificationList
         notification={notification}/>);
     const instance = renderer.getMountedInstance();
     // Updates to state don't re-render when using the shallow renderer
@@ -115,7 +95,7 @@ describe('NotificationList', function() {
     };
     const timeout = 500;
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         timeout={timeout}
         notification={notification}/>, this);
     const instance = renderer.getMountedInstance();
@@ -138,7 +118,7 @@ describe('NotificationList', function() {
     };
     const timeout = 500;
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         timeout={timeout}
         notification={notification}/>, this);
     const instance = renderer.getMountedInstance();
@@ -160,7 +140,7 @@ describe('NotificationList', function() {
       level: 'info'
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.NotificationList
+      <NotificationList
         notification={notification}
         timeout={longTimeout} />, this);
     const instance = renderer.getMountedInstance();

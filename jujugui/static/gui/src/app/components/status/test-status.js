@@ -1,21 +1,21 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const Status = require('./status');
+const BasicTable = require('../basic-table/basic-table');
+const Panel = require('../panel/panel');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Status', function() {
   let changeState;
   let defaultModel;
   let emptyDB;
   let generatePath;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('status', () => {
-      done();
-    });
-  });
 
   beforeEach(() => {
     changeState = sinon.stub();
@@ -48,9 +48,9 @@ describe('Status', function() {
   // Render the component with the given db and optional model.
   // Return an object with the instance and the output.
   const render = (db, model=defaultModel) => {
-    const propTypes = window.juju.components.Status.propTypes;
+    const propTypes = Status.propTypes;
     const renderer = jsTestUtils.shallowRender(
-      <window.juju.components.Status
+      <Status
         changeState={changeState}
         db={shapeup.fromShape(db, propTypes.db)}
         generatePath={generatePath}
@@ -68,9 +68,9 @@ describe('Status', function() {
   // Wrap the given element into the shared component boilerplate.
   const wrap = element => {
     return (
-      <juju.components.Panel instanceName="status-view" visible={true}>
+      <Panel instanceName="status-view" visible={true}>
         {element}
-      </juju.components.Panel>
+      </Panel>
     );
   };
 
@@ -326,7 +326,7 @@ describe('Status', function() {
               </select>
             </div>
           </div>
-          <juju.components.BasicTable
+          <BasicTable
             headers={[{
               content: 'Cloud/Region',
               columnSize: 2
@@ -442,7 +442,7 @@ describe('Status', function() {
               </select>
             </div>
           </div>
-          <juju.components.BasicTable
+          <BasicTable
             headers={[{
               content: 'Cloud/Region',
               columnSize: 2
@@ -497,7 +497,7 @@ describe('Status', function() {
               key: 'model'
             }]} />
         </div>
-        <juju.components.BasicTable
+        <BasicTable
           filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
@@ -552,7 +552,7 @@ describe('Status', function() {
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
-        <juju.components.BasicTable
+        <BasicTable
           changeState={changeState}
           filterPredicate={sinon.stub()}
           generatePath={generatePath}
@@ -678,7 +678,7 @@ describe('Status', function() {
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
-        <juju.components.BasicTable
+        <BasicTable
           changeState={changeState}
           filterPredicate={sinon.stub()}
           generatePath={generatePath}
@@ -822,7 +822,7 @@ describe('Status', function() {
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
-        <juju.components.BasicTable
+        <BasicTable
           changeState={changeState}
           filterPredicate={sinon.stub()}
           generatePath={generatePath}
@@ -917,7 +917,7 @@ describe('Status', function() {
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />
-        <juju.components.BasicTable
+        <BasicTable
           filterPredicate={sinon.stub()}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
