@@ -17,7 +17,7 @@ describe('PostDeployment', () => {
     const defaultParsedMarkdown =
       '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>';
     const _props = {
-      closePostDeployment: props.closePostDeployment || sinon.stub(),
+      changeState: props.changeState || sinon.stub(),
       entityId: props.entityId || 'test',
       getEntity: props.getEntity
         || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}]),
@@ -36,7 +36,7 @@ describe('PostDeployment', () => {
 
     const renderer = jsTestUtils.shallowRender(
       <PostDeployment
-        closePostDeployment={_props.closePostDeployment}
+        changeState={_props.changeState}
         entityId={_props.entityId}
         getEntity={_props.getEntity}
         getFile={_props.getFile}
@@ -71,7 +71,7 @@ describe('PostDeployment', () => {
         instanceName="post-deployment"
         visible={true}>
         <span className="close" tabIndex="0" role="button"
-          onClick={props.closePostDeployment}>
+          onClick={instance._closePostDeployment}>
           <SvgIcon name="close_16"
             size="16" />
         </span>
@@ -101,7 +101,7 @@ describe('PostDeployment', () => {
         extraClasses="post-deployment"
         visible={true}>
         <span className="close" tabIndex="0" role="button"
-          onClick={props.closePostDeployment}>
+          onClick={instance._closePostDeployment}>
           <SvgIcon name="close_16"
             size="16" />
         </span>
