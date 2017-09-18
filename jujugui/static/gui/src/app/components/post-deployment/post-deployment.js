@@ -219,7 +219,7 @@ class PostDeployment extends React.Component {
           instanceName="post-deployment"
           visible={true}>
           <span className="close" tabIndex="0" role="button"
-            onClick={this.props.closePostDeployment}>
+            onClick={this._closePostDeployment.bind(this)}>
             <SvgIcon name="close_16"
               size="16" />
           </span>
