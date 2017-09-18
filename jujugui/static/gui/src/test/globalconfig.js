@@ -1,8 +1,9 @@
-var juju = {
+window.juju = {
   utils: {},
   components: {}
 };
-var GlobalConfig = {
+window.juju.utils.RelationUtils = require('../app/init/relation-utils');
+window.GlobalConfig = {
   combine: true,
   base: '/dev/combo?/app/assets/javascripts/yui/',
   comboBase: '/dev/combo?',
@@ -21,7 +22,7 @@ var GlobalConfig = {
   },
   test_url: window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/"
 };
-const MODULES = [
+window.MODULES = [
   'acl',
   'analytics',
   'juju-charm-models',
@@ -57,6 +58,5 @@ const MODULES = [
   'FileSaver',
   'ghost-deployer-extension',
   'environment-change-set',
-  'relation-utils',
   'yui-patches'
 ];

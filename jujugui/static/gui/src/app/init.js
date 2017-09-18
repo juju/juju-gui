@@ -1615,6 +1615,7 @@ class GUIApp {
     this.controllerAPI.destroy();
     this.db.destroy();
     this.endpointsController.destroy();
+    this.topology.destroy();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;
