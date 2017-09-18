@@ -57,6 +57,5 @@ const MODULES = [
   'FileSaver',
   'ghost-deployer-extension',
   'environment-change-set',
-  'relation-utils',
   'yui-patches'
 ];
