@@ -2,7 +2,6 @@ var flags = {};
 var zip = {};
 var origBeforeEach = Mocha.Suite.prototype.beforeEach;
 var origAfterEach = Mocha.Suite.prototype.afterEach;
-window.juju.utils.RelationUtils = require('../app/init/relation-utils');
 Mocha.Suite.prototype.beforeEach = function(title, fn) {
   this.ctx._cleanups = [];
   origBeforeEach.call(this, title, fn);
