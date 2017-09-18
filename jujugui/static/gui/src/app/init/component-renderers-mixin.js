@@ -1113,7 +1113,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
         switchModel={this._bound.switchModel}
-        loadingModel={this.modelAPI.loading} />,
+        loadingModel={modelAPI.loading}
+        modelCommitted={!!modelAPI.get('modelUUID')} />,
       document.getElementById('header-breadcrumb'));
   }
   /**
