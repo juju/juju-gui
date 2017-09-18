@@ -31,8 +31,7 @@ YUI.add('juju-topology-relation', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
       d3 = Y.namespace('d3'),
-      components = Y.namespace('d3-components'),
-      relationUtils = window.juju.utils.RelationUtils;
+      components = Y.namespace('d3-components');
 
   /**
    * Manage relation rendering and events.
@@ -248,6 +247,7 @@ YUI.add('juju-topology-relation', function(Y) {
     decorateRelations: function(relations) {
       var self = this;
       var decorated = [];
+      const relationUtils = window.juju.utils.RelationUtils;
       relations.forEach(relation => {
         var pair = self.processRelation(relation);
 
@@ -295,7 +295,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var service = evt.service;
       var topo = self.get('component');
       var parentId = topo._yuid;
-
+      const relationUtils = window.juju.utils.RelationUtils;
       if (!service.relations || service.relations.size() === 0) {
         return;
       }
@@ -335,7 +335,7 @@ YUI.add('juju-topology-relation', function(Y) {
           function(r) {
             return r.compositeId;
           });
-
+      const relationUtils = window.juju.utils.RelationUtils;
       // If this is the initial creation of the relation group, add all of the
       // elements involved.
       var enter = g.enter()
@@ -1062,6 +1062,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * @return undefined Side-effects only.
      */
     addRelationEnd: function(endpoints, module) {
+      const relationUtils = window.juju.utils.RelationUtils;
       // Redisplay all services
       module.cancelRelationBuild();
       module.clearRelationSettings();
@@ -1145,6 +1146,7 @@ YUI.add('juju-topology-relation', function(Y) {
     relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
+      const relationUtils = window.juju.utils.RelationUtils;
       const relationId = this.closest('.relation-container').getAttribute(
         'data-relationid');
       var relation = db.relations.getById(relationId);
