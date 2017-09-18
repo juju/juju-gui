@@ -51,7 +51,7 @@ class UserProfile extends React.Component {
         console.log('cannot retrieve charm store macaroon:', err);
         return;
       }
-      props.storeUser('charmstore');
+      props.storeUser('charmstore', true);
     };
     // TODO frankban: should pass an user object as prop here instead.
     const macaroon = props.charmstore.bakery.storage.get('charmstore');
@@ -83,9 +83,10 @@ class UserProfile extends React.Component {
           staticURL={props.staticURL}
           switchModel={props.switchModel} />);
     }
-    // All possible components, that can be rendered on the profile page;
-    // these may be filtered down to a smaller list depending on the context.
-    const lists = [
+    // The list of models is always included, even if the profile is not for
+    // the current user, in which case we'll display only the models owned
+    // by that profile.
+    const toRender = [
       <UserProfileModelList
         acl={props.acl}
         addNotification={props.addNotification}
@@ -99,53 +100,40 @@ class UserProfile extends React.Component {
         models={this.state.models}
         setEntities={this._setEntities.bind(this, 'models')}
         switchModel={props.switchModel}
-        userInfo={props.userInfo} />,
-      <UserProfileEntityList
-        key='bundleList'
-        ref='bundleList'
-        addNotification={props.addNotification}
-        changeState={props.changeState}
-        charmstore={props.charmstore}
-        entities={this.state.bundles}
-        getDiagramURL={props.getDiagramURL}
-        setEntities={this._setEntities.bind(this, 'bundles')}
-        type='bundle'
-        user={props.userInfo.external} />,
-      <UserProfileEntityList
-        key='charmList'
-        ref='charmList'
-        addNotification={props.addNotification}
-        changeState={props.changeState}
-        charmstore={props.charmstore}
-        d3={props.d3}
-        entities={this.state.charms}
-        getDiagramURL={props.getDiagramURL}
-        getKpiMetrics={props.getKpiMetrics}
-        setEntities={this._setEntities.bind(this, 'charms')}
-        type='charm'
-        user={props.userInfo.external} />
+        userInfo={props.userInfo} />
     ];
-    // The list of models is always included, even if the profile is not for
-    // the current user, in which case we'll display only the models owned
-    // by that profile.
-    const toRender = ['modelList'];
-    // Exclude/include sections only displayed to the current user.
-    if (props.userInfo.isCurrent) {
-      toRender.push('agreementList');
-    }
     // Exclude/include sections that require a charm store user.
     if (props.userInfo.external) {
-      toRender.push('bundleList');
-      toRender.push('charmList');
+      toRender.push(
+        <UserProfileEntityList
+          key='bundleList'
+          ref='bundleList'
+          addNotification={props.addNotification}
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          entities={this.state.bundles}
+          getDiagramURL={props.getDiagramURL}
+          setEntities={this._setEntities.bind(this, 'bundles')}
+          type='bundle'
+          user={props.userInfo.external} />);
+      toRender.push(
+        <UserProfileEntityList
+          key='charmList'
+          ref='charmList'
+          addNotification={props.addNotification}
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          d3={props.d3}
+          entities={this.state.charms}
+          getDiagramURL={props.getDiagramURL}
+          getKpiMetrics={props.getKpiMetrics}
+          setEntities={this._setEntities.bind(this, 'charms')}
+          type='charm'
+          user={props.userInfo.external} />);
     }
-    // Filter the original list of components based on which sections are in
-    // and which are out.
-    const componentsToRender = lists.filter(list => {
-      return toRender.indexOf(list.key) >= 0;
-    });
     return (
       <div>
-        {componentsToRender}
+        {toRender}
       </div>);
   }
 
