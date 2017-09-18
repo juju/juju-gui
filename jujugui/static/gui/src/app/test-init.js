@@ -240,6 +240,70 @@ describe('init', () => {
     });
   });
 
+  describe('checkUserCredentials', () => {
+    // Ensure next is called and the login view is not displayed when
+    // dispatching the given state.
+    const checkNext = state => {
+      const next = sinon.stub().withArgs();
+      const displayLogin = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials(state, next);
+      assert.equal(next.callCount, 1, 'next not called');
+      assert.equal(displayLogin.callCount, 0, '_displayLogin called');
+    };
+
+    it('calls next and returns if root state is new', () => {
+      checkNext({root: 'new'});
+    });
+
+    it('calls next and returns if root state is store', () => {
+      checkNext({root: 'store'});
+    });
+
+    it('does not display login if one of the apis is still connecting', () => {
+      app.controllerAPI.set('connecting', true);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+
+    it('does not login if all apis are not connected', () => {
+      app.controllerAPI.set('connected', false);
+      app.modelAPI.set('connected', false);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+
+    it('displays login if one of the apis is not authenticated', () => {
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 2);
+    });
+
+    it('displays login if one of the apis is not authd and not gisf', () => {
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 2);
+    });
+
+    it('does not login if all apis are authenticated', () => {
+      app.controllerAPI.userIsAuthenticated = true;
+      app.modelAPI.userIsAuthenticated = true;
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+  });
+
   describe('_disambiguateUserState', function() {
     it('properly handles a rejected entity promise', done => {
       const userState = {user: 'hatch'};
@@ -268,7 +332,7 @@ describe('init', () => {
     });
   });
 
-  describe('_controllerIsReady', function() {
+  describe('_controllerIsReady', () => {
     beforeEach(() => {
       app._displayLogin = sinon.stub();
     });
@@ -295,10 +359,10 @@ describe('init', () => {
     });
   });
 
-  describe('_listAndSwitchModel', function() {
+  describe('_listAndSwitchModel', () => {
     let modelList;
 
-    beforeEach(function() {
+    beforeEach(() => {
       modelList = [{
         'id':'fe9a2845-4829-4d61-8653-248b7052204e',
         'name':'latta',
@@ -326,7 +390,7 @@ describe('init', () => {
       }];
       app.maskVisibility = sinon.stub();
       app.state.changeState = sinon.stub();
-      app.controllerAPI.listModelsWithInfo = function(callback) {
+      app.controllerAPI.listModelsWithInfo = callback => {
         callback.call(app, null, modelList);
       };
     });
