@@ -380,7 +380,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'FileSaver',
             'ghost-deployer-extension',
             'environment-change-set',
-            'relation-utils', 'yui-patches'], function(Y) {
+            'yui-patches'], function(Y) {
           window.yui = Y;
           if (!juju_config.flags) {
             juju_config.flags = {};

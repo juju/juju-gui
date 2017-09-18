@@ -108,8 +108,7 @@ describe('test_model.js', function() {
     const cleanups = [];
     var requirements = [
       'juju-models',
-      'juju-charm-models',
-      'relation-utils'
+      'juju-charm-models'
     ];
 
     before(function(done) {

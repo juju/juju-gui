@@ -73,7 +73,6 @@ YUI.add('juju-view-environment', function(Y) {
       const container = this.getContainer();
       let topo = this.topo;
       const db = this.get('db');
-
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
@@ -88,9 +87,10 @@ YUI.add('juju-view-environment', function(Y) {
       topo = this.createTopology();
       topo.recordSubscription(
         'ServiceModule',
-        db.services.after('remove',
-          this.updateHelpIndicator.bind(this)));
-
+        db.services.after('reset', this.updateHelpIndicator.bind(this)));
+      topo.recordSubscription(
+        'ServiceModule',
+        db.services.after('remove', this.updateHelpIndicator.bind(this)));
       topo.recordSubscription(
         'ServiceModule',
         db.services.after('add', this.updateHelpIndicator.bind(this)));
@@ -98,6 +98,9 @@ YUI.add('juju-view-environment', function(Y) {
       topo.render();
       this.boundRenderedHandler = this.updateHelpIndicator.bind(this);
       document.addEventListener('topo.rendered', this.boundRenderedHandler);
+
+      this.updateHelpIndicator();
+
       return this;
     },
 

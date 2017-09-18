@@ -166,6 +166,5 @@ YUI.add('juju-endpoints', function(Y) {
 
 }, '', {
   requires: [
-    'relation-utils'
   ]
 });
