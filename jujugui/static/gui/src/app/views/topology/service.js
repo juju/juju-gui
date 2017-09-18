@@ -1941,7 +1941,6 @@ YUI.add('juju-topology-service', function(Y) {
     'd3',
     'd3-components',
     'juju-models',
-    'relation-utils',
     'zip-utils'
   ]
 });

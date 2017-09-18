@@ -212,7 +212,7 @@ juju.components.RelationMenu = require(
         'juju-views', 'juju-tests-utils', 'charmstore-api',
         'd3', 'juju-models', 'juju-view-environment',
         'landscape', 'dump', 'juju-view-utils',
-        'juju-charm-models', 'environment-change-set', 'relation-utils'
+        'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         const getMockStorage = function() {
           return new function() {
