@@ -58,7 +58,6 @@ describe('PostDeployment', () => {
     const rendered = renderComponent();
     const instance = rendered.instance;
     const output = rendered.output;
-    const props = rendered.props;
 
     const classes = [
       'post-deployment',
@@ -88,7 +87,6 @@ describe('PostDeployment', () => {
 
   it('renders with getstarted.md', () => {
     const rendered = renderComponent();
-    const props = rendered.props;
     const instance = rendered.instance;
 
     instance._getEntityCallback(null, [{id: 'test', files: ['getstarted.md']}]);
