@@ -67,6 +67,36 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('_ensureControllerConnection', () => {
+    it('connects to the controller if it needs to', () => {
+      app.controllerAPI.connect = sinon.stub();
+      app.controllerAPI.set('connecting', false);
+      app.controllerAPI.set('connected', false);
+      app._ensureControllerConnection({root: 'store'}, sinon.stub());
+      assert.strictEqual(app.controllerAPI.connect.callCount, 1, 'controller');
+    });
+
+    it('does not connect to the controller if it is already connected', () => {
+      app._displayLogin = sinon.stub();
+      app.controllerAPI.connect = sinon.stub();
+      app.controllerAPI.set('connecting', false);
+      // setting connected to true will trigger login, so stub that out.
+      app.controllerAPI.login = sinon.stub();
+      app.controllerAPI.set('connected', true);
+      app._ensureControllerConnection({root: 'store'}, sinon.stub());
+      assert.strictEqual(
+        app.controllerAPI.connect.callCount, 0, 'controller');
+    });
+
+    it('does not connect to the controller if it is already connecting', () => {
+      app.controllerAPI.connect = sinon.stub();
+      app.controllerAPI.set('connecting', true);
+      app.controllerAPI.set('connected', false);
+      app._ensureControllerConnection({root: 'store'}, sinon.stub());
+      assert.strictEqual(app.controllerAPI.connect.callCount, 0, 'controller');
+    });
+  });
+
   describe('_listAndSwitchModel', function() {
     let modelList;
 
