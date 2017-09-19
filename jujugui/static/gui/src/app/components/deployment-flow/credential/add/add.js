@@ -277,7 +277,8 @@ class DeploymentCredentialAdd extends React.Component {
               label={credentialName}
               required={true}
               ref="credentialName"
-              validate={nameValidators} />
+              validate={nameValidators}
+              value={this.props.credentialName} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -299,6 +300,7 @@ DeploymentCredentialAdd.propTypes = {
   addNotification: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
   cloud: PropTypes.object,
+  credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,
   generateCloudCredentialName: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,

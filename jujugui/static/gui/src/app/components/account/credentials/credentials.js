@@ -3,12 +3,13 @@
 
 const React = require('react');
 
+const ButtonRow = require('../../button-row/button-row');
 const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
 const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
-const GenericButton = require('../../generic-button/generic-button');
 
 // Define the name of the lxd cloud.
 const LOCAL_CLOUD = 'localhost';
@@ -23,6 +24,7 @@ class AccountCredentials extends React.Component {
       clouds: [],
       credentials: [],
       loading: false,
+      editCredential: null,
       removeCredential: null,
       showAdd: false
     };
@@ -109,8 +111,12 @@ class AccountCredentials extends React.Component {
 
     @param credential {String} A credential id.
   */
-  _handleDeleteCredential(credential=null) {
-    this.setState({'removeCredential': credential});
+  _handleDeleteCredential(credential = null) {
+    this.setState({removeCredential: credential});
+  }
+
+  _handleEditCredential(credentialId = null) {
+    this.setState({editCredential: credentialId});
   }
 
   /**
@@ -186,25 +192,30 @@ class AccountCredentials extends React.Component {
     const credentialsList = credentials.map(credential => {
       const cloud = this.props.getCloudProviderDetails(credential.cloud);
       const title = cloud ? cloud.title : credential.cloud;
+      const buttons = [{
+        title: 'Remove',
+        type: 'neutral',
+        disabled: credential.cloud === LOCAL_CLOUD,
+        action: this._handleDeleteCredential.bind(this, credential.id)
+      }, {
+        title: 'Edit',
+        type: 'neutral',
+        disabled: credential.cloud === LOCAL_CLOUD,
+        action: this._handleEditCredential.bind(this, credential.id)
+      }];
       return (
         <li className="user-profile__list-row twelve-col"
           key={credential.id}>
           <span className="six-col user-profile__list-col">
             {credential.name}
           </span>
-          <span className="four-col user-profile__list-col">
+          <span className="three-col user-profile__list-col">
             {title}
           </span>
-          <span className="two-col last-col user-profile__list-col
-              no-margin-bottom">
-            <GenericButton
-              action={
-                this._handleDeleteCredential.bind(this, credential.id)}
-              disabled={credential.cloud === LOCAL_CLOUD}
-              type="neutral">
-              Remove
-            </GenericButton>
+          <span className="three-col last-col user-profile__list-col no-margin-bottom">
+            <ButtonRow buttons={buttons}/>
           </span>
+          {this._generateEditCredentials(credential)}
         </li>);
     });
     if (credentialsList.length > 0) {
@@ -269,22 +280,7 @@ class AccountCredentials extends React.Component {
     let addForm = null;
     let chooseCloud = null;
     if (this.state.showAdd && this.state.cloud) {
-      addForm = (
-        <DeploymentCredentialAdd
-          acl={this.props.acl}
-          addNotification={this.props.addNotification}
-          close={this._toggleAdd.bind(this)}
-          cloud={this.state.cloud}
-          credentials={this.state.credentials.map(credential =>
-            credential.name)}
-          getCloudProviderDetails={this.props.getCloudProviderDetails}
-          generateCloudCredentialName={this.props.generateCloudCredentialName}
-          getCredentials={this._getClouds.bind(this)}
-          sendAnalytics={this.props.sendAnalytics}
-          setCredential={this._setCredential.bind(this)}
-          updateCloudCredential={this.props.updateCloudCredential}
-          user={this.props.username}
-          validateForm={this.props.validateForm} />);
+      addForm = this._generateDeploymentCredentialAdd();
       chooseCloud = (
         <div className="account__credentials-choose-cloud">
           <GenericButton
@@ -298,14 +294,7 @@ class AccountCredentials extends React.Component {
       content = (
         <div>
           {chooseCloud}
-          <DeploymentCloud
-            acl={this.props.acl}
-            addNotification={this.props.addNotification}
-            cloud={this.state.cloud}
-            controllerIsReady={this.props.controllerIsReady}
-            listClouds={this.props.listClouds}
-            getCloudProviderDetails={this.props.getCloudProviderDetails}
-            setCloud={this._setCloud.bind(this)} />
+          {this._generateDeploymentCloud()}
           {addForm}
         </div>);
     }
@@ -319,6 +308,59 @@ class AccountCredentials extends React.Component {
           {content}
         </div>
       </ExpandingRow>);
+  }
+
+  _generateDeploymentCloud(overrides = {}) {
+    const props = this.props;
+    return (
+      <DeploymentCloud
+        key="deployment-cloud"
+        acl={props.acl}
+        addNotification={props.addNotification}
+        cloud={overrides.cloud || this.state.cloud}
+        controllerIsReady={props.controllerIsReady}
+        listClouds={props.listClouds}
+        getCloudProviderDetails={props.getCloudProviderDetails}
+        setCloud={this._setCloud.bind(this)} />);
+  }
+
+  _generateEditCredentials(credential) {
+    const credentialId = this.state.editCredential;
+    if (credentialId && credentialId === credential.id) {
+      const cloud = {
+        cloudType: credential.cloud,
+        name: credential.cloud
+      };
+      return ([
+        this._generateDeploymentCloud({cloud}),
+        this._generateDeploymentCredentialAdd({
+          cloud,
+          name: credential.name,
+          close: this._handleEditCredential.bind(this)
+        })
+      ]);
+    }
+  }
+
+  _generateDeploymentCredentialAdd(overrides = {}) {
+    return (
+      <DeploymentCredentialAdd
+        key="deployment-credential-add"
+        acl={this.props.acl}
+        addNotification={this.props.addNotification}
+        close={overrides.close || this._toggleAdd.bind(this)}
+        cloud={overrides.cloud || this.state.cloud}
+        credentialName={overrides.name}
+        credentials={this.state.credentials.map(credential =>
+          credential.name)}
+        getCloudProviderDetails={this.props.getCloudProviderDetails}
+        generateCloudCredentialName={this.props.generateCloudCredentialName}
+        getCredentials={this._getClouds.bind(this)}
+        sendAnalytics={this.props.sendAnalytics}
+        setCredential={this._setCredential.bind(this)}
+        updateCloudCredential={this.props.updateCloudCredential}
+        user={this.props.username}
+        validateForm={this.props.validateForm} />);
   }
 
   render() {
