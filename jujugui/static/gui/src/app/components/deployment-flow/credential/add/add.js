@@ -60,7 +60,11 @@ class DeploymentCredentialAdd extends React.Component {
       return;
     }
     let fields = info.forms[this.state.authType].map(field => field.id);
-    fields.push('credentialName');
+    // If a credentialName was provided then we're editing credentials so it
+    // is ok to have a duplicate.
+    if (!props.credentialName) {
+      fields.push('credentialName');
+    }
     var valid = props.validateForm(fields, this.refs);
     if (!valid) {
       // If there are any form validation errors then stop adding the
@@ -219,27 +223,29 @@ class DeploymentCredentialAdd extends React.Component {
   }
 
   render() {
+    const props = this.props;
+    // If a name was provided then we're editing, not adding.
+    const prefix = props.credentialName ? 'Edit' : 'Add';
     let buttons = [{
       action: this._handleAddCredentials.bind(this),
       submit: true,
-      title: 'Add cloud credential',
+      title: `${prefix} cloud credential`,
       type: 'inline-positive'
     }];
-    if (!this.props.hideCancel) {
+    if (!props.hideCancel) {
       buttons.unshift({
-        action: () => { this.props.close(true); },
+        action: () => { props.close(true); },
         title: 'Cancel',
         type: 'inline-neutral'
       });
     }
     // If no cloud has been selected we set a default so that the disabled
     // form will display correctly as the next step.
-    var isReadOnly = this.props.acl.isReadOnly();
-    const cloud = this.props.cloud;
+    const cloud = props.cloud;
     const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
     const info = this._getInfo();
-    var title = info && info.title || cloud.name;
-    var credentialName = id === 'gce' ?
+    const title = info && info.title || cloud.name;
+    const credentialNameLabel = id === 'gce' ?
       'Project ID (credential name)' : 'Credential name';
     const nameValidators = [{
       regex: /\S+/,
@@ -250,13 +256,14 @@ class DeploymentCredentialAdd extends React.Component {
         'letters, numbers, and hyphens. It must not start or ' +
         'end with a hyphen.'
     }];
-    const credentials = this.props.credentials || [];
+    const credentials = props.credentials || [];
     if (credentials.length > 0) {
       nameValidators.push({
         check: value => credentials.indexOf(value.toLowerCase()) > -1,
         error: 'You already have a credential with this name.'
       });
     }
+    const credentialName = props.credentialName;
     return (
       <div className="deployment-credential-add twelve-col">
         <h4>{`Create new ${title} credential`}</h4>
@@ -273,12 +280,12 @@ class DeploymentCredentialAdd extends React.Component {
         <form className="twelve-col">
           <div className="six-col last-col">
             <GenericInput
-              disabled={isReadOnly}
-              label={credentialName}
+              disabled={props.acl.isReadOnly() || !!credentialName}
+              label={credentialNameLabel}
               required={true}
               ref="credentialName"
               validate={nameValidators}
-              value={this.props.credentialName} />
+              value={credentialName} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
