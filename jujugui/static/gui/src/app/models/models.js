@@ -29,8 +29,7 @@ YUI.add('juju-models', function(Y) {
   var models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
       environments = Y.namespace('juju.environments'),
-      handlers = models.handlers,
-      relationUtils = window.juju.utils.RelationUtils;
+      handlers = models.handlers;
 
   // Define strings representing juju-core entities' Life state.
   var ALIVE = 'alive';
@@ -2734,6 +2733,7 @@ YUI.add('juju-models', function(Y) {
         of service names.
     */
     findRelatedServices: function(service, asArray) {
+      const relationUtils = window.juju.utils.RelationUtils;
       var relationData = relationUtils.getRelationDataForService(this, service);
       var related = [service.get('name')]; // Add own name to related list.
       // Compile the list of related services.

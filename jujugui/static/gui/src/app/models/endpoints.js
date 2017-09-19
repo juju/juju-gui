@@ -28,7 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-endpoints', function(Y) {
 
   const models = Y.namespace('juju.models');
-  const relationUtils = window.juju.utils.RelationUtils;
 
   /**
     Get the series for a service. Pending subordinates should return all the
@@ -122,6 +121,7 @@ YUI.add('juju-endpoints', function(Y) {
         const endpoint = convert(targetId, rdata);
         // Subordinate relations are handled differently because they can be
         // installed on the target machine depending on the defined scope.
+        const relationUtils = window.juju.utils.RelationUtils;
         if (targetIsSubordinate && relationUtils.isSubordinateRelation(rdata)) {
           // In addition to checking if the relation is of type `subordinate`
           // The `isSubordinateRelation` function also checks that the
