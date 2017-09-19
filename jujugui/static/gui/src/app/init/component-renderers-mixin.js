@@ -1,8 +1,49 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
+const ReactDOM = require('react-dom');
+
 const shapeup = require('shapeup');
 const yui = window.yui;
+
+const autodeploy = require('./autodeploy');
+const initUtils = require('./utils');
+const hotkeys = require('./hotkeys');
+const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
+const changesUtils = require('./changes-utils');
+const relationUtils = require('./relation-utils');
+
+const Account = require('../components/account/account');
+const AddedServicesList = require('../components/added-services-list/added-services-list');
+const Charmbrowser = require('../components/charmbrowser/charmbrowser');
+const DeploymentBar = require('../components/deployment-bar/deployment-bar');
+const DeploymentFlow = require('../components/deployment-flow/deployment-flow');
+const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
+const HeaderLogo = require('../components/header-logo/header-logo');
+const HeaderHelp = require('../components/header-help/header-help');
+const HeaderSearch = require('../components/header-search/header-search');
+const Inspector = require('../components/inspector/inspector');
+const ISVProfile = require('../components/isv-profile/isv-profile');
+const Lightbox = require('../components/lightbox/lightbox');
+const LocalInspector = require('../components/local-inspector/local-inspector');
+const Login = require('../components/login/login');
+const Logout = require('../components/logout/logout');
+const MachineView = require('../components/machine-view/machine-view');
+const ModelActions = require('../components/model-actions/model-actions');
+const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
+const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
+const NotificationList = require('../components/notification-list/notification-list');
+const Panel = require('../components/panel/panel');
+const Profile = require('../components/profile/profile');
+const Sharing = require('../components/sharing/sharing');
+const Status = require('../components/status/status');
+const SvgIcon = require('../components/svg-icon/svg-icon');
+const UserMenu = require('../components/user-menu/user-menu');
+const UserProfile = require('../components/user-profile/user-profile');
+const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
+const Zoom = require('../components/zoom/zoom');
 
 /**
     A mixin for the JujuGUI class.
@@ -42,10 +83,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ServiceModule.deselectNodes();
     const db = this.db;
     ReactDOM.render(
-      <window.juju.components.Panel
+      <Panel
         instanceName="inspector-panel"
         visible={db.services.size() > 0}>
-        <window.juju.components.AddedServicesList
+        <AddedServicesList
           services={db.services}
           hoveredId={hoveredId}
           updateUnitFlags={db.updateUnitFlags.bind(db)}
@@ -55,7 +96,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
           changeState={this.state.changeState.bind(this.state)} />
-      </window.juju.components.Panel>,
+      </Panel>,
       document.getElementById('inspector-container'));
   }
   /**
@@ -66,7 +107,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderEnvSizeDisplay(serviceCount=0, machineCount=0) {
     ReactDOM.render(
-      <window.juju.components.EnvSizeDisplay
+      <EnvSizeDisplay
         appState={this.state}
         machineCount={machineCount}
         pluralize={yui.juju.views.utils.pluralize.bind(this)}
@@ -83,7 +124,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const utils = yui.juju.views.utils;
     const modelAPI = this.modelAPI;
     ReactDOM.render(
-      <window.juju.components.ModelActions
+      <ModelActions
         acl={this.acl}
         appState={this.state}
         changeState={this.state.changeState.bind(this.state)}
@@ -110,22 +151,22 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       ReactDOM.unmountComponentAtNode(sharing);
       return;
     }
-    const env = this.env;
+    const modelAPI = this.modelAPI;
     const grantRevoke = (action, username, access, callback) => {
-      if (this.get('gisf') && username.indexOf('@') === -1) {
+      if (this.applicationConfig.gisf && username.indexOf('@') === -1) {
         username += '@external';
       }
-      action(env.get('modelUUID'), [username], access, callback);
+      action(modelAPI.get('modelUUID'), [username], access, callback);
     };
     const controllerAPI = this.controllerAPI;
     const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI);
     const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
     ReactDOM.render(
-      <window.juju.components.Sharing
+      <Sharing
         addNotification={this._bound.addNotification}
         canShareModel={this.acl.canShareModel()}
         closeHandler={this._sharingVisibility.bind(this, false)}
-        getModelUserInfo={env.modelUserInfo.bind(env)}
+        getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
         humanizeTimestamp={yui.juju.views.utils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
@@ -136,7 +177,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderISVProfile() {
     ReactDOM.render(
-      <window.juju.components.ISVProfile
+      <ISVProfile
         d3={yui.d3} />,
       document.getElementById('top-page-container'));
     // The model name should not be visible when viewing the profile.
@@ -189,7 +230,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
     let profile = (
-      <window.juju.components.UserProfile
+      <UserProfile
         acl={this.acl}
         addNotification={this._bound.addNotification}
         charmstore={charmstore}
@@ -216,7 +257,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
     if (this.applicationConfig.flags.profile) {
       profile =
-        <window.juju.components.Profile
+        <Profile
           acl={this.acl}
           activeSection={state.hash}
           addNotification={this._bound.addNotification}
@@ -248,7 +289,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderHeaderSearch() {
     ReactDOM.render(
-      <window.juju.components.HeaderSearch appState={this.state} />,
+      <HeaderSearch appState={this.state} />,
       document.getElementById('header-search-container'));
   }
 
@@ -257,7 +298,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderHeaderHelp() {
     ReactDOM.render(
-      <window.juju.components.HeaderHelp
+      <HeaderHelp
         appState={this.state}
         gisf={this.applicationConfig.gisf}
         displayShortcutsModal={this._displayShortcutsModal.bind(this)}
@@ -270,16 +311,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _displayShortcutsModal() {
     ReactDOM.render(
-      <window.juju.components.ModalShortcuts
+      <ModalShortcuts
         closeModal={this._clearShortcutsModal.bind(this)}
         guiVersion={window.GUI_VERSION.version}
-        keybindings={this.keybindings} />,
+        keybindings={hotkeys.keyBindings} />,
       document.getElementById('modal-shortcuts'));
   }
 
   _displaySettingsModal() {
     ReactDOM.render(
-      <window.juju.components.ModalGUISettings
+      <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
@@ -293,11 +334,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _displayLightbox(content, caption) {
     ReactDOM.render(
-      <window.juju.components.Lightbox
+      <Lightbox
         caption={caption}
         close={this._clearLightbox.bind(this)}>
         {content}
-      </window.juju.components.Lightbox>,
+      </Lightbox>,
       document.getElementById('lightbox'));
   }
 
@@ -340,7 +381,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         user: null
       });
     ReactDOM.render(
-      <window.juju.components.HeaderLogo
+      <HeaderLogo
         gisf={gisf}
         homePath={homePath}
         showProfile={showProfile}
@@ -385,7 +426,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     };
     const getModelName = () => this.modelAPI.get('environmentName');
     ReactDOM.render(
-      <window.juju.components.Charmbrowser
+      <Charmbrowser
         acl={this.acl}
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
@@ -453,7 +494,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // connected to any model.
     this.modelUUID = null;
     ReactDOM.render(
-      <window.juju.components.Account
+      <Account
         acl={this.acl}
         addAddress={
           this.payment && this.payment.addAddress.bind(this.payment)}
@@ -538,10 +579,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const modelAPI = this.modelAPI;
     const ecs = modelAPI.get('ecs');
     const utils = yui.juju.views.utils;
-    const decorated = window.juju.components.MachineView.DecoratedComponent;
+    const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
     ReactDOM.render(
-      <window.juju.components.MachineView
+      <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
         changeState={this.state.changeState.bind(this.state)}
         dbAPI={shapeup.addReshape({
@@ -556,8 +597,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           utils, modelAPI.genericConstraints, db.units)}
         machine={this.state.current.gui.machines}
         modelAPI={shapeup.addReshape({
-          autoPlaceUnits: this._autoPlaceUnits.bind(this),
-          createMachine: this._createMachine.bind(this),
+          autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
+          createMachine: autodeploy.createMachine.bind(this),
           destroyMachines: modelAPI.destroyMachines.bind(modelAPI),
           placeUnit: modelAPI.placeUnit.bind(modelAPI),
           providerType: modelAPI.get('providerType') || '',
@@ -590,9 +631,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderStatusView(state, next) {
-    const propTypes = window.juju.components.Status.propTypes;
+    const propTypes = Status.propTypes;
     ReactDOM.render(
-      <window.juju.components.Status
+      <Status
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
@@ -621,7 +662,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next - Call to continue dispatching.
   */
   _renderInspector(state, next) {
-    const relationUtils = this.relationUtils;
     const utils = yui.juju.views.utils;
     const instance = this.topology;
     if (!instance) {
@@ -656,7 +696,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         model.addCharm(url, charmstore, callback, options);
       };
       inspector = (
-        <window.juju.components.Inspector
+        <Inspector
           acl={this.acl}
           addCharm={addCharm}
           addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
@@ -670,7 +710,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           createRelation={relationUtils.createRelation.bind(this, db, model)}
           destroyService={utils.destroyService.bind(
             this, db, model, service)}
-          destroyRelations={this.relationUtils.destroyRelations.bind(
+          destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
           destroyUnits={utils.destroyUnits.bind(this, model)}
           displayPlans={utils.compareSemver(
@@ -708,9 +748,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       // drag over notification which needs to be closed when the inspector
       // is opened.
       this._hideDragOverNotification();
-      const localCharmHelpers = juju.localCharmHelpers;
       inspector = (
-        <window.juju.components.LocalInspector
+        <LocalInspector
           acl={this.acl}
           changeState={this.state.changeState.bind(this.state)}
           file={window.localCharmFile}
@@ -730,11 +769,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return;
     }
     ReactDOM.render(
-      <window.juju.components.Panel
+      <Panel
         instanceName="inspector-panel"
         visible={true}>
         {inspector}
-      </window.juju.components.Panel>,
+      </Panel>,
       document.getElementById('inspector-container'));
     next();
   }
@@ -777,12 +816,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       });
       return;
     }
-    const changesUtils = this.changesUtils;
     const controllerAPI = this.controllerAPI;
     const services = db.services;
     // Auto place the units. This is probably not the best UX, but is required
     // to display the machines in the deployment flow.
-    this._autoPlaceUnits();
+    autodeploy.autoPlaceUnits(db, modelAPI);
     let cloud = modelAPI.get('providerType');
     if (cloud) {
       cloud = {
@@ -797,8 +835,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       controllerAPI, this.bakery);
     const charmstore = this.charmstore;
     const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
+    const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
     ReactDOM.render(
-      <window.juju.components.DeploymentFlow
+      <DeploymentFlow
         acl={this.acl}
         addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={this._bound.addNotification}
@@ -819,7 +858,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         credential={modelAPI.get('credential')}
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
-        deploy={utils.deploy.bind(utils, this)}
+        deploy={utils.deploy.bind(utils, this, autoPlaceUnits, initUtils.createSocketURL)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={utils.formatConstraints.bind(utils)}
@@ -910,9 +949,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     var servicesArray = services.toArray();
     var machines = db.machines.toArray();
     var units = db.units;
-    var changesUtils = this.changesUtils;
     ReactDOM.render(
-      <window.juju.components.DeploymentBar
+      <DeploymentBar
         acl={this.acl}
         changeState={this.state.changeState.bind(this.state)}
         currentChangeSet={ecs.getCurrentChangeSet()}
@@ -941,7 +979,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return this.controllerAPI && this.controllerAPI.get('connected');
     };
     ReactDOM.render(
-      <window.juju.components.Login
+      <Login
         addNotification={this._bound.addNotification}
         controllerIsConnected={controllerIsConnected}
         errorMessage={err}
@@ -976,8 +1014,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
     const charmstore = this.charmstore;
     const bakery = this.bakery;
-    const USSOLoginLink = (
-      <window.juju.components.USSOLoginLink
+    const _USSOLoginLink = (
+      <USSOLoginLink
         addNotification={this._bound.addNotification}
         displayType="text"
         loginToController={
@@ -990,7 +1028,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const doCharmstoreLogout = () => {
       return this.getUser('charmstore') && !this.get('gisf');
     };
-    const LogoutLink = (<window.juju.components.Logout
+    const LogoutLink = (<Logout
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
       doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
@@ -1018,12 +1056,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         this.state.changeState.bind(this.state));
     };
 
-    ReactDOM.render(<window.juju.components.UserMenu
+    ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
-      USSOLoginLink={USSOLoginLink}
+      USSOLoginLink={_USSOLoginLink}
     />, linkContainer);
   }
 
@@ -1059,7 +1097,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       showEnvSwitcher = false;
     }
     ReactDOM.render(
-      <juju.components.HeaderBreadcrumb
+      <HeaderBreadcrumb
         acl={this.acl}
         addNotification={this._bound.addNotification}
         appState={this.state}
@@ -1075,7 +1113,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
         switchModel={this._bound.switchModel}
-        loadingModel={this.modelAPI.loading} />,
+        loadingModel={modelAPI.loading}
+        modelCommitted={!!modelAPI.get('modelUUID')} />,
       document.getElementById('header-breadcrumb'));
   }
   /**
@@ -1112,7 +1151,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
     ReactDOM.render(
       <div className={classes}>
-        <window.juju.components.SvgIcon
+        <SvgIcon
           height={providerDetails.svgHeight * scale}
           name={providerDetails.id || ''}
           width={providerDetails.svgWidth * scale} />
@@ -1123,12 +1162,12 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     Renders the notification component to the page in the designated element.
   */
   _renderNotifications(e) {
-    var notification = null;
+    let notification = null;
     if (e && e.details) {
       notification = e.details[0].model.getAttrs();
     }
     ReactDOM.render(
-      <window.juju.components.NotificationList
+      <NotificationList
         notification={notification}/>,
       document.getElementById('notifications-container'));
   }
@@ -1140,7 +1179,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderDragOverNotification(showIndicator = true) {
     this.topology.fadeHelpIndicator(showIndicator);
     ReactDOM.render(
-      <window.juju.components.ExpandingProgress />,
+      <ExpandingProgress />,
       document.getElementById('drag-over-notification-container'));
   }
 
@@ -1150,7 +1189,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderZoom() {
     ReactDOM.render(
-      <window.juju.components.Zoom
+      <Zoom
         topo={this.topology.topo} />,
       document.getElementById('zoom-container'));
   }

@@ -278,7 +278,7 @@ def _instantiation_exp(names):
     """
     return re.compile(r"""
         <  # Tag opening.
-        [\w\._]+?  # Any non-newline character.
+        (?:[\w\._]+\.)?  # Any optional non-newline char with a trailing dot.
         (?=  # Until the following happens.
             ({})[\n\ ]  # Component name.
             ([\s\S]*?)  # Any character.

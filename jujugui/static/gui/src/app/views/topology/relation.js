@@ -31,8 +31,7 @@ YUI.add('juju-topology-relation', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
       d3 = Y.namespace('d3'),
-      components = Y.namespace('d3-components'),
-      relationUtils = window.juju.utils.RelationUtils;
+      components = Y.namespace('d3-components');
 
   /**
    * Manage relation rendering and events.
@@ -248,6 +247,7 @@ YUI.add('juju-topology-relation', function(Y) {
     decorateRelations: function(relations) {
       var self = this;
       var decorated = [];
+      const relationUtils = window.juju.utils.RelationUtils;
       relations.forEach(relation => {
         var pair = self.processRelation(relation);
 
@@ -295,7 +295,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var service = evt.service;
       var topo = self.get('component');
       var parentId = topo._yuid;
-
+      const relationUtils = window.juju.utils.RelationUtils;
       if (!service.relations || service.relations.size() === 0) {
         return;
       }
@@ -335,7 +335,7 @@ YUI.add('juju-topology-relation', function(Y) {
           function(r) {
             return r.compositeId;
           });
-
+      const relationUtils = window.juju.utils.RelationUtils;
       // If this is the initial creation of the relation group, add all of the
       // elements involved.
       var enter = g.enter()
@@ -985,10 +985,12 @@ YUI.add('juju-topology-relation', function(Y) {
     _renderAmbiguousRelationMenu: function(endpoints) {
       const container = this.getContainer();
       var menu = container.querySelector('#ambiguous-relation-menu');
+      /* eslint-disable no-undef */
       ReactDOM.render(
         <juju.components.AmbiguousRelationMenu
           endpoints={endpoints} />,
         menu.querySelector('#ambiguous-relation-menu-content'));
+      /* eslint-enable */
       return menu;
     },
 
@@ -1060,6 +1062,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * @return undefined Side-effects only.
      */
     addRelationEnd: function(endpoints, module) {
+      const relationUtils = window.juju.utils.RelationUtils;
       // Redisplay all services
       module.cancelRelationBuild();
       module.clearRelationSettings();
@@ -1106,10 +1109,12 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     showRelationMenu: function(relation) {
       const menu = document.querySelector('#relation-menu');
+      /* eslint-disable no-undef */
       ReactDOM.render(
         <juju.components.RelationMenu
           relations={relation.relations} />,
         menu);
+      /* eslint-enable */
       menu.classList.add('active');
       this.set('relationMenuActive', true);
       this.set('relationMenuRelation', relation);
@@ -1141,6 +1146,7 @@ YUI.add('juju-topology-relation', function(Y) {
     relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
+      const relationUtils = window.juju.utils.RelationUtils;
       const relationId = this.closest('.relation-container').getAttribute(
         'data-relationid');
       var relation = db.relations.getById(relationId);
@@ -1225,14 +1231,11 @@ YUI.add('juju-topology-relation', function(Y) {
   views.RelationModule = RelationModule;
 }, '0.1.0', {
   requires: [
-    'ambiguous-relation-menu',
     'd3',
     'd3-components',
     'node',
     'event',
     'juju-models',
-    'juju-topology-utils',
-    'relation-menu',
-    'relation-utils'
+    'juju-topology-utils'
   ]
 });

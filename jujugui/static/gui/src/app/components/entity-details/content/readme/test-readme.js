@@ -1,32 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const EntityContentReadme = require('./readme');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('EntityContentReadme', function() {
   let mockEntity, renderMarkdown;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('entity-content-readme', function() { done(); });
-  });
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
@@ -43,7 +26,7 @@ describe('EntityContentReadme', function() {
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={changeState}
         renderMarkdown={renderMarkdown}
@@ -74,7 +57,7 @@ describe('EntityContentReadme', function() {
     var getFile = sinon.stub().returns({abort: abort});
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         getFile={getFile}
@@ -93,7 +76,7 @@ describe('EntityContentReadme', function() {
 
   it('can display a message if there is no readme file', function() {
     var component = testUtils.renderIntoDocument(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={sinon.spy()}
@@ -108,7 +91,7 @@ describe('EntityContentReadme', function() {
     var getFile = sinon.stub().callsArgWith(2, 'No file');
     var mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     var component = testUtils.renderIntoDocument(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
@@ -128,7 +111,7 @@ describe('EntityContentReadme', function() {
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
@@ -149,7 +132,7 @@ describe('EntityContentReadme', function() {
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
@@ -169,7 +152,7 @@ describe('EntityContentReadme', function() {
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
@@ -190,7 +173,7 @@ describe('EntityContentReadme', function() {
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const scrollCharmbrowser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}
@@ -208,7 +191,7 @@ describe('EntityContentReadme', function() {
     const getFile = sinon.stub().callsArgWith(2, 'Uh oh!', null);
     const mockEntity = jsTestUtils.makeEntity(false, {files: ['Readme.md']});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentReadme
+      <EntityContentReadme
         addNotification={addNotification}
         changeState={sinon.stub()}
         renderMarkdown={renderMarkdown}

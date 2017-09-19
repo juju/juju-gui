@@ -1,33 +1,21 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const AccountCredentials = require('./credentials');
+const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
+const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const Popup = require('../../popup/popup');
+const Spinner = require('../../spinner/spinner');
+const GenericButton = require('../../generic-button/generic-button');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AccountCredentials', () => {
   let acl, controllerIsReady, getCloudCredentialNames, getCloudProviderDetails,
       listClouds;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-credentials', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -51,7 +39,7 @@ describe('AccountCredentials', () => {
   it('can display a spinner when loading credentials', () => {
     getCloudCredentialNames = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -73,14 +61,14 @@ describe('AccountCredentials', () => {
             Cloud credentials
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={false}>
@@ -88,8 +76,8 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             {null}
           </div>
-        </juju.components.ExpandingRow>
-        <juju.components.Spinner />
+        </ExpandingRow>
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -101,7 +89,7 @@ describe('AccountCredentials', () => {
       displayNames: ['localcred']
     }]);
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -124,7 +112,7 @@ describe('AccountCredentials', () => {
           </div>
           <div className="right" />
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={false}>
@@ -132,7 +120,7 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             {null}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
             <span className="six-col user-profile__list-col">
@@ -153,14 +141,14 @@ describe('AccountCredentials', () => {
               </span>
               <span className="two-col last-col user-profile__list-col
                 no-margin-bottom">
-                <juju.components.GenericButton
+                <GenericButton
                   action={
                     credentials[0].props.children[2].props.children
                       .props.action}
                   disabled={true}
                   type="neutral">
                   Remove
-                </juju.components.GenericButton>
+                </GenericButton>
               </span>
             </li>
           ]}
@@ -171,7 +159,7 @@ describe('AccountCredentials', () => {
 
   it('can render', () => {
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -194,14 +182,14 @@ describe('AccountCredentials', () => {
             Cloud credentials
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={false}>
@@ -209,7 +197,7 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             {null}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
             <span className="six-col user-profile__list-col">
@@ -230,14 +218,14 @@ describe('AccountCredentials', () => {
               </span>
               <span className="two-col last-col user-profile__list-col
                 no-margin-bottom">
-                <juju.components.GenericButton
+                <GenericButton
                   action={
                     credentials[0].props.children[2].props.children
                       .props.action}
                   disabled={false}
                   type="neutral">
                   Remove
-                </juju.components.GenericButton>
+                </GenericButton>
               </span>
             </li>,
             <li className="user-profile__list-row twelve-col"
@@ -250,14 +238,14 @@ describe('AccountCredentials', () => {
               </span>
               <span className="two-col last-col user-profile__list-col
                   no-margin-bottom">
-                <juju.components.GenericButton
+                <GenericButton
                   action={
                     credentials[1].props.children[2].props.children
                       .props.action}
                   disabled={false}
                   type="neutral">
                   Remove
-                </juju.components.GenericButton>
+                </GenericButton>
               </span>
             </li>]}
         </ul>
@@ -268,7 +256,7 @@ describe('AccountCredentials', () => {
   it('can render when there are no credentials', () => {
     getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -290,14 +278,14 @@ describe('AccountCredentials', () => {
             Cloud credentials
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={false}>
@@ -305,7 +293,7 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             {null}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         <div>
           No credentials available.
         </div>
@@ -317,7 +305,7 @@ describe('AccountCredentials', () => {
     const addNotification = sinon.stub();
     listClouds.callsArgWith(0, 'Uh oh!', null);
     jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}
@@ -343,7 +331,7 @@ describe('AccountCredentials', () => {
     getCloudCredentialNames = sinon.stub().callsArgWith(
       1, 'Uh oh!', null);
     jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}
@@ -367,7 +355,7 @@ describe('AccountCredentials', () => {
   it('can display a remove credentials confirmation', () => {
     const revokeCloudCredential = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -386,7 +374,7 @@ describe('AccountCredentials', () => {
       .children[2].props.children.props.action();
     output = component.getRenderOutput();
     const expected = (
-      <window.juju.components.Popup
+      <Popup
         buttons={[{
           title: 'Cancel',
           action: instance._handleDeleteCredential,
@@ -400,14 +388,14 @@ describe('AccountCredentials', () => {
         <p>
           Are you sure you want to remove these credentials?
         </p>
-      </window.juju.components.Popup>);
+      </Popup>);
     expect(output.props.children[3]).toEqualJSX(expected);
   });
 
   it('can remove credentials', () => {
     const revokeCloudCredential = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -434,7 +422,7 @@ describe('AccountCredentials', () => {
     const addNotification = sinon.stub();
     const revokeCloudCredential = sinon.stub().callsArgWith(1, 'Uh oh!');
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}
@@ -463,7 +451,7 @@ describe('AccountCredentials', () => {
   it('removes the credential from the list', () => {
     const revokeCloudCredential = sinon.stub().callsArgWith(1, null);
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -491,14 +479,14 @@ describe('AccountCredentials', () => {
             Cloud credentials
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={false}>
@@ -506,7 +494,7 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             {null}
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
             <span className="six-col user-profile__list-col">
@@ -526,14 +514,14 @@ describe('AccountCredentials', () => {
             </span>
             <span className="two-col last-col  user-profile__list-col
                 no-margin-bottom">
-              <juju.components.GenericButton
+              <GenericButton
                 action={
                   credentials[0].props.children[2].props.children
                     .props.action}
                 disabled={false}
                 type="neutral">
                 Remove
-              </juju.components.GenericButton>
+              </GenericButton>
             </span>
           </li>]}
         </ul>
@@ -545,7 +533,7 @@ describe('AccountCredentials', () => {
     const abort = sinon.stub();
     getCloudCredentialNames = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={sinon.stub()}
         controllerIsReady={controllerIsReady}
@@ -566,7 +554,7 @@ describe('AccountCredentials', () => {
     getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}
@@ -590,14 +578,14 @@ describe('AccountCredentials', () => {
             Cloud credentials
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Cancel
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-        <juju.components.ExpandingRow
+        <ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
           expanded={true}>
@@ -605,7 +593,7 @@ describe('AccountCredentials', () => {
           <div className="twelve-col">
             <div>
               {null}
-              <juju.components.DeploymentCloud
+              <DeploymentCloud
                 acl={acl}
                 addNotification={addNotification}
                 cloud={null}
@@ -616,7 +604,7 @@ describe('AccountCredentials', () => {
               {null}
             </div>
           </div>
-        </juju.components.ExpandingRow>
+        </ExpandingRow>
         <div>
           No credentials available.
         </div>
@@ -631,7 +619,7 @@ describe('AccountCredentials', () => {
     const validateForm = sinon.stub();
     const sendAnalytics = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}
@@ -650,7 +638,7 @@ describe('AccountCredentials', () => {
     instance._setCloud({title: 'aws'});
     output = component.getRenderOutput();
     const expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{'twelve-col': true}}
         clickable={false}
         expanded={true}>
@@ -658,15 +646,15 @@ describe('AccountCredentials', () => {
         <div className="twelve-col">
           <div>
             <div className="account__credentials-choose-cloud">
-              <juju.components.GenericButton
+              <GenericButton
                 action={
                   output.props.children[1].props.children[1].props.children
                     .props.children[0].props.children.props.action}
                 type="inline-neutral">
                 Change cloud
-              </juju.components.GenericButton>
+              </GenericButton>
             </div>
-            <juju.components.DeploymentCloud
+            <DeploymentCloud
               acl={acl}
               addNotification={addNotification}
               cloud={{title: 'aws'}}
@@ -674,7 +662,7 @@ describe('AccountCredentials', () => {
               listClouds={listClouds}
               getCloudProviderDetails={getCloudProviderDetails}
               setCloud={instance._setCloud} />
-            <juju.components.DeploymentCredentialAdd
+            <DeploymentCredentialAdd
               acl={acl}
               addNotification={addNotification}
               close={instance._toggleAdd}
@@ -690,7 +678,7 @@ describe('AccountCredentials', () => {
               validateForm={validateForm} />
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 
@@ -701,7 +689,7 @@ describe('AccountCredentials', () => {
     const updateCloudCredential = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountCredentials
+      <AccountCredentials
         acl={acl}
         addNotification={addNotification}
         controllerIsReady={controllerIsReady}

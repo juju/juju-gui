@@ -17,16 +17,16 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'chai-sinon'],
+    frameworks: ['browserify', 'mocha', 'chai-sinon'],
 
     // List of files / patterns to load in the browser; Karma is smart enough,
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'node_modules/keysim/dist/keysim.js',
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/assets/chai.js',
 
+      'jujugui/static/gui/src/test/test-setup.js',
       'jujugui/static/gui/src/test/globalconfig.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
@@ -50,35 +50,20 @@ module.exports = function(config) {
 
       // It's possible we can remove some or all of these below.
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',
       'jujugui/static/gui/build/app/assets/javascripts/classnames.js',
       'jujugui/static/gui/build/app/assets/javascripts/marked.js',
       'jujugui/static/gui/build/app/assets/javascripts/clipboard.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-click-outside.js',
-      'jujugui/static/gui/build/app/assets/javascripts/ReactDnD.min.js',
-      'jujugui/static/gui/build/app/assets/javascripts/ReactDnDHTML5Backend.min.js',
       'jujugui/static/gui/build/app/assets/javascripts/diff.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism.js',
       'jujugui/static/gui/build/app/assets/javascripts/prism-languages.js',
       'jujugui/static/gui/build/app/assets/javascripts/prop-types.js',
-      'jujugui/static/gui/build/app/assets/javascripts/shapeup-legacy.js',
-      'jujugui/static/gui/build/app/utils/component-test-utils.js',
 
       'jujugui/static/gui/build/app/utils/jujulib-conversion-utils.js',
       // It's possible we can remove some or all of these above.
 
-      'jujugui/static/gui/src/test/test_app_hotkeys.js',
-      'jujugui/static/gui/src/test/test_app.js',
-      'jujugui/static/gui/src/test/test_autodeploy_extension.js',
-      'jujugui/static/gui/src/test/test_app_renderer_extension.js',
       'jujugui/static/gui/src/test/test_bundle_import_notifications.js',
-      'jujugui/static/gui/src/test/test_bundle_importer.js',
-      'jujugui/static/gui/src/test/test_changes_utils.js',
       'jujugui/static/gui/src/test/test_console.js',
-      'jujugui/static/gui/src/test/test_cookies_app_extension.js',
       'jujugui/static/gui/src/test/test_d3_components.js',
-      'jujugui/static/gui/src/test/test_endpoints.js',
       'jujugui/static/gui/src/test/test_entity_extension.js',
       'jujugui/static/gui/src/test/test_env_change_set.js',
       'jujugui/static/gui/src/test/test_env_api.js',
@@ -93,7 +78,6 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test_model_handlers.js',
       'jujugui/static/gui/src/test/test_model.js',
       'jujugui/static/gui/src/test/test_panzoom.js',
-      'jujugui/static/gui/src/test/test_relation_utils.js',
       'jujugui/static/gui/src/test/test_service_module.js',
       // test_startup.js was skipped in the old suite.
       //'jujugui/static/gui/src/test/test_startup.js',
@@ -104,6 +88,9 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test_viewport_module.js',
       'jujugui/static/gui/src/test/test_web_handler.js',
       'jujugui/static/gui/src/test/test_zip_utils.js',
+      // This goes here, out of order because otherwise it causes cascading
+      // failures...
+      'jujugui/static/gui/src/test/test_endpoints.js',
 
       // Test Assets
       {
@@ -125,6 +112,19 @@ module.exports = function(config) {
     exclude: [
       'jujugui/static/gui/build/app/components/**/*-min.js'
     ],
+
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+      'jujugui/static/gui/src/test/test_*.js': ['browserify'],
+      'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
+      'jujugui/static/gui/src/test/utils.js': ['browserify'],
+    },
+
+    browserify: {
+      debug: true,
+      transform: ['babelify']
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

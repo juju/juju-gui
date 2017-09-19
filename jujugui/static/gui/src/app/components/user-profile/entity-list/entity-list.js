@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const Spinner = require('../../spinner/spinner');
+const UserProfileEntity = require('../entity/entity');
 
 class UserProfileEntityList extends React.Component {
   constructor() {
@@ -181,7 +169,7 @@ class UserProfileEntityList extends React.Component {
     });
     const unitCount = bundle.unitCount || <span>&nbsp;</span>;
     return (
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         addNotification={this.props.addNotification}
         changeState={this.props.changeState}
         entity={bundle}
@@ -201,7 +189,7 @@ class UserProfileEntityList extends React.Component {
           'last-col'}>
           {unitCount}
         </span>
-      </juju.components.UserProfileEntity>);
+      </UserProfileEntity>);
   }
 
   /**
@@ -239,7 +227,7 @@ class UserProfileEntityList extends React.Component {
     // Ensure the icon is set.
     charm.icon = charm.icon || this._getIcon(id);
     return (
-      <juju.components.UserProfileEntity
+      <UserProfileEntity
         addNotification={this.props.addNotification}
         changeState={this.props.changeState}
         d3={this.props.d3}
@@ -262,7 +250,7 @@ class UserProfileEntityList extends React.Component {
           'last-col'}>
           {this._generateSeries(charm.series, id)}
         </span>
-      </juju.components.UserProfileEntity>);
+      </UserProfileEntity>);
   }
 
   /**
@@ -293,7 +281,7 @@ class UserProfileEntityList extends React.Component {
     if (this.state.loadingEntities) {
       return (
         <div className={classes}>
-          <juju.components.Spinner />
+          <Spinner />
         </div>
       );
     }
@@ -345,11 +333,4 @@ UserProfileEntityList.propTypes = {
   user: PropTypes.string
 };
 
-YUI.add('user-profile-entity-list', function() {
-  juju.components.UserProfileEntityList = UserProfileEntityList;
-}, '', {
-  requires: [
-    'loading-spinner',
-    'user-profile-entity'
-  ]
-});
+module.exports = UserProfileEntityList;

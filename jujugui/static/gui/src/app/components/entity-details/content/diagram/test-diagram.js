@@ -1,34 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const EntityContentDiagram = require('./diagram');
+const SvgIcon = require('../../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityContentDiagram', function() {
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('entity-content-diagram', function() { done(); });
-  });
 
   it('can display a diagram', function() {
     const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContentDiagram
+      <EntityContentDiagram
         diagramUrl="example.com/diagram.svg" />);
     expect(output).toEqualJSX(
       <div className="entity-content__diagram">
@@ -40,7 +24,7 @@ describe('EntityContentDiagram', function() {
 
   it('can display a diagram as a row', () => {
     const output = jsTestUtils.shallowRender(
-      <juju.components.EntityContentDiagram
+      <EntityContentDiagram
         diagramUrl="example.com/diagram.svg"
         isRow={true} />);
     assert.equal(output.props.className,
@@ -49,7 +33,7 @@ describe('EntityContentDiagram', function() {
 
   it('can display a diagram expand button', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentDiagram
+      <EntityContentDiagram
         diagramUrl="example.com/diagram.svg"
         isExpandable={true}
         title="example" />, true);
@@ -61,7 +45,7 @@ describe('EntityContentDiagram', function() {
           title="example" className="entity-content__diagram-image" />
         <button role="button" className="entity-content__diagram-expand"
           onClick={instance._handleExpand.bind(instance)}>
-          <juju.components.SvgIcon name="fullscreen-grey_16" size="12" />
+          <SvgIcon name="fullscreen-grey_16" size="12" />
         </button>
       </div>
     );
@@ -70,7 +54,7 @@ describe('EntityContentDiagram', function() {
   it('_handleExpand calls the displayLightbox prop', () => {
     const displayLightbox = sinon.spy();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityContentDiagram
+      <EntityContentDiagram
         diagramUrl="example.com/diagram.svg"
         displayLightbox={displayLightbox}
         isExpandable={true}

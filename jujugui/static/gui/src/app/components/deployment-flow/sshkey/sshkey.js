@@ -1,6 +1,13 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
+
+const InsetSelect = require('../../inset-select/inset-select');
+const SvgIcon = require('../../svg-icon/svg-icon');
+const GenericButton = require('../../generic-button/generic-button');
+const GenericInput = require('../../generic-input/generic-input');
+const Notification = require('../../notification/notification');
 
 /**
   This component allows users to provide their public SSH keys.
@@ -239,7 +246,7 @@ class DeploymentSSHKey extends React.Component {
               <span className="added-keys__key-remove right" title="Remove key"
                 role="button"
                 onClick={this._removeKey.bind(this, key.id)}>
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="close_16" size="16" />
               </span>
             </div>
@@ -269,7 +276,7 @@ class DeploymentSSHKey extends React.Component {
                 title="Remove username"
                 role="button"
                 onClick={this._removeLPUsername.bind(this, username)}>
-                <juju.components.SvgIcon
+                <SvgIcon
                   name="close_16" size="16" />
               </span>
             </div>
@@ -308,7 +315,7 @@ class DeploymentSSHKey extends React.Component {
     if (this.state.addSource === 'github') {
       return (
         <div className="three-col last-col no-margin-bottom">
-          <juju.components.GenericInput
+          <GenericInput
             label="GitHub username"
             key="githubUsername"
             ref="githubUsername"
@@ -320,7 +327,7 @@ class DeploymentSSHKey extends React.Component {
     } else if (this.state.addSource === 'manual') {
       return (
         <div className="seven-col no-margin-bottom">
-          <juju.components.GenericInput
+          <GenericInput
             label="Enter your SSH key (typically found at ~/.ssh/id_rsa.pub)"
             key="sshKey"
             ref="sshKey"
@@ -332,7 +339,7 @@ class DeploymentSSHKey extends React.Component {
     } else if (this.state.addSource === 'launchpad') {
       return (
         <div className="three-col last-col no-margin-bottom">
-          <juju.components.GenericInput
+          <GenericInput
             label="Launchpad username"
             key="launchpadUsername"
             ref="launchpadUsername"
@@ -354,12 +361,12 @@ class DeploymentSSHKey extends React.Component {
     const title = this.state.addSource === 'manual' ? 'Add Key' : 'Add Keys';
     const disabled = this.state.buttonDisabled;
     return (<div className="right">
-      <juju.components.GenericButton
+      <GenericButton
         action={this._handleAddMoreKeys.bind(this)}
         disabled={disabled}
         type="positive">
         {title}
-      </juju.components.GenericButton>
+      </GenericButton>
     </div>);
   }
 
@@ -393,7 +400,7 @@ class DeploymentSSHKey extends React.Component {
   _generateError() {
     if (this.state.error) {
       const content = <span><b>Error:</b> {this.state.error}</span>;
-      return (<juju.components.Notification
+      return (<Notification
         content={content}
         type="negative" />);
     }
@@ -433,7 +440,7 @@ class DeploymentSSHKey extends React.Component {
         {this._generateError()}
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
-            <juju.components.InsetSelect
+            <InsetSelect
               ref="sshSource"
               disabled={false}
               label="Source"
@@ -458,14 +465,4 @@ DeploymentSSHKey.propTypes = {
   username: PropTypes.string
 };
 
-YUI.add('deployment-ssh-key', function() {
-  juju.components.DeploymentSSHKey = DeploymentSSHKey;
-}, '0.1.0', {
-  requires: [
-    'inset-select',
-    'notification',
-    'generic-input',
-    'generic-button',
-    'svg-icon'
-  ]
-});
+module.exports = DeploymentSSHKey;

@@ -1,40 +1,22 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const DeploymentSSHKey = require('./sshkey');
+const InsetSelect = require('../../inset-select/inset-select');
+const SvgIcon = require('../../svg-icon/svg-icon');
+const GenericButton = require('../../generic-button/generic-button');
+const GenericInput = require('../../generic-input/generic-input');
+const Notification = require('../../notification/notification');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentSSHKey', function() {
   let addNotification;
   let setSSHKeys;
   let setLaunchpadUsernames;
   let getGithubSSHKeys;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-ssh-key', function() {
-      done();
-    });
-  });
 
   beforeEach(() => {
     addNotification = sinon.stub();
@@ -50,7 +32,7 @@ describe('DeploymentSSHKey', function() {
       cloud = {cloudType: cloudType};
     }
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSSHKey
+      <DeploymentSSHKey
         WebHandler={sinon.stub()}
         addNotification={addNotification}
         cloud={cloud}
@@ -83,7 +65,7 @@ describe('DeploymentSSHKey', function() {
         {false}
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={false}
               ref="sshSource"
               label="Source"
@@ -104,7 +86,7 @@ describe('DeploymentSSHKey', function() {
               ]} />
           </div>
           <div className="three-col last-col no-margin-bottom">
-            <juju.components.GenericInput
+            <GenericInput
               ref="githubUsername"
               autocomplete
               key="githubUsername"
@@ -114,10 +96,10 @@ describe('DeploymentSSHKey', function() {
               type="text" />
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              type="positive">Add Keys</juju.components.GenericButton>
+              type="positive">Add Keys</GenericButton>
           </div>
         </div>
       </div>
@@ -143,7 +125,7 @@ describe('DeploymentSSHKey', function() {
         {false}
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
-            <juju.components.InsetSelect
+            <InsetSelect
               disabled={false}
               ref="sshSource"
               label="Source"
@@ -164,7 +146,7 @@ describe('DeploymentSSHKey', function() {
               ]} />
           </div>
           <div className="three-col last-col no-margin-bottom">
-            <juju.components.GenericInput
+            <GenericInput
               ref="launchpadUsername"
               autocomplete
               key="launchpadUsername"
@@ -175,9 +157,9 @@ describe('DeploymentSSHKey', function() {
               type="text" />
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
-              type="positive">Add Keys</juju.components.GenericButton>
+              type="positive">Add Keys</GenericButton>
           </div>
         </div>
       </div>
@@ -196,7 +178,7 @@ describe('DeploymentSSHKey', function() {
         {false}
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
-            <juju.components.InsetSelect
+            <InsetSelect
               ref="sshSource"
               label="Source"
               onChange={comp.instance._handleSourceChange.bind(comp.instance)}
@@ -216,7 +198,7 @@ describe('DeploymentSSHKey', function() {
               ]} />
           </div>
           <div className="three-col last-col no-margin-bottom">
-            <juju.components.GenericInput
+            <GenericInput
               ref="githubUsername"
               autocomplete
               label="GitHub username"
@@ -225,10 +207,10 @@ describe('DeploymentSSHKey', function() {
               type="text" />
           </div>
           <div className="right">
-            <juju.components.GenericButton
+            <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              type="positive">Add Keys</juju.components.GenericButton>
+              type="positive">Add Keys</GenericButton>
           </div>
         </div>
       </div>
@@ -254,7 +236,7 @@ describe('DeploymentSSHKey', function() {
       comp.instance._addGithubKeysCallback(null, []);
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[2]).toEqualJSX(
-        <juju.components.Notification
+        <Notification
           content={<span><b>Error:</b>
             <span>No keys found.
               <a className="link" href="https://github.com/settings/keys"
@@ -271,7 +253,7 @@ describe('DeploymentSSHKey', function() {
       });
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[2]).toEqualJSX(
-        <juju.components.Notification
+        <Notification
           content={(<span><b>Error:</b> Not Found</span>)}
           type="negative" />);
     });
@@ -306,7 +288,7 @@ describe('DeploymentSSHKey', function() {
                   onClick={comp.instance._removeKey.bind(comp.instance)}
                   role="button"
                   title="Remove key">
-                  <juju.components.SvgIcon name="close_16" size="16" />
+                  <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
             </li>
@@ -386,7 +368,7 @@ describe('DeploymentSSHKey', function() {
                   onClick={comp.instance._removeLPUsername.bind(comp.instance)}
                   role="button"
                   title="Remove username">
-                  <juju.components.SvgIcon name="close_16" size="16" />
+                  <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
             </li>
@@ -421,7 +403,7 @@ describe('DeploymentSSHKey', function() {
                   onClick={comp.instance._removeKey.bind(comp.instance)}
                   role="button"
                   title="Remove key">
-                  <juju.components.SvgIcon name="close_16" size="16" />
+                  <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
             </li>
@@ -439,7 +421,7 @@ describe('DeploymentSSHKey', function() {
                   onClick={comp.instance._removeLPUsername.bind(comp.instance)}
                   role="button"
                   title="Remove username">
-                  <juju.components.SvgIcon name="close_16" size="16" />
+                  <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
             </li>
@@ -497,7 +479,7 @@ describe('DeploymentSSHKey', function() {
                   onClick={comp.instance._removeKey.bind(comp.instance)}
                   role="button"
                   title="Remove key">
-                  <juju.components.SvgIcon name="close_16" size="16" />
+                  <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
             </li>

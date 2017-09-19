@@ -1,32 +1,19 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const GenericButton = require('../../../generic-button/generic-button');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const CardForm = require('../../../card-form/card-form');
+const AddressForm = require('../../../address-form/address-form');
+const AccountPaymentMethod = require('./method/method');
+const AccountPaymentMethods = require('./methods');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('AccountPaymentMethods', () => {
   let acl, user;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment-methods', () => { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -57,7 +44,7 @@ describe('AccountPaymentMethods', () => {
     const getCountries = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={addNotification}
         createCardElement={sinon.stub()}
@@ -77,7 +64,7 @@ describe('AccountPaymentMethods', () => {
           Payment details
         </h2>
         <ul className="user-profile__list twelve-col">
-          {[<juju.components.AccountPaymentMethod
+          {[<AccountPaymentMethod
             acl={acl}
             addNotification={addNotification}
             getCountries={getCountries}
@@ -95,7 +82,7 @@ describe('AccountPaymentMethods', () => {
 
   it('can render when there are no payment methods', () => {
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -117,21 +104,21 @@ describe('AccountPaymentMethods', () => {
         </h2>
         <div className="account__payment-no-methods">
           You do not have a payment method.
-          <juju.components.GenericButton
+          <GenericButton
             action={instance._toggleAdd}
             type="inline-neutral">
             Add payment method
-          </juju.components.GenericButton>
+          </GenericButton>
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
 
-  it('can cancel the requests when unmounting', () => {
+  it('can cancel the requests when unmounting (methods)', () => {
     const abort = sinon.stub();
     const createToken = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={sinon.stub()}
@@ -165,7 +152,7 @@ describe('AccountPaymentMethods', () => {
     const createCardElement = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={createCardElement}
@@ -183,14 +170,14 @@ describe('AccountPaymentMethods', () => {
     output.props.children[1].props.children[1].props.action();
     output = component.getRenderOutput();
     const expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{'twelve-col': true}}
         clickable={false}
         expanded={true}>
         <div></div>
         <div className="account__payment-form">
           <div className="account__payment-form-fields">
-            <juju.components.CardForm
+            <CardForm
               acl={acl}
               createCardElement={createCardElement}
               ref="cardForm"
@@ -208,19 +195,19 @@ describe('AccountPaymentMethods', () => {
             {null}
           </div>
           <div className="twelve-col account__payment-form-buttons">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Cancel
-            </juju.components.GenericButton>
-            <juju.components.GenericButton
+            </GenericButton>
+            <GenericButton
               action={instance._createToken}
               type="inline-positive">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 
@@ -230,7 +217,7 @@ describe('AccountPaymentMethods', () => {
     const validateForm = sinon.stub();
     const getCountries = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={addNotification}
         createCardElement={createCardElement}
@@ -255,14 +242,14 @@ describe('AccountPaymentMethods', () => {
       });
     output = component.getRenderOutput();
     const expected = (
-      <juju.components.ExpandingRow
+      <ExpandingRow
         classes={{'twelve-col': true}}
         clickable={false}
         expanded={true}>
         <div></div>
         <div className="account__payment-form">
           <div className="account__payment-form-fields">
-            <juju.components.CardForm
+            <CardForm
               acl={acl}
               createCardElement={createCardElement}
               ref="cardForm"
@@ -277,7 +264,7 @@ describe('AccountPaymentMethods', () => {
                 type="checkbox" />
               Credit or debit card address is the same as default address.
             </label>
-            <juju.components.AddressForm
+            <AddressForm
               disabled={false}
               addNotification={addNotification}
               getCountries={getCountries}
@@ -287,19 +274,19 @@ describe('AccountPaymentMethods', () => {
               validateForm={validateForm} />
           </div>
           <div className="twelve-col account__payment-form-buttons">
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Cancel
-            </juju.components.GenericButton>
-            <juju.components.GenericButton
+            </GenericButton>
+            <GenericButton
               action={instance._createToken}
               type="inline-positive">
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
-      </juju.components.ExpandingRow>);
+      </ExpandingRow>);
     expect(output.props.children[1]).toEqualJSX(expected);
   });
 
@@ -307,7 +294,7 @@ describe('AccountPaymentMethods', () => {
     const createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
     const createPaymentMethod = sinon.stub().callsArg(2, null, null);
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={createPaymentMethod}
@@ -341,7 +328,7 @@ describe('AccountPaymentMethods', () => {
     const createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={createPaymentMethod}
@@ -391,7 +378,7 @@ describe('AccountPaymentMethods', () => {
     const createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         createCardElement={createPaymentMethod}
@@ -460,7 +447,7 @@ describe('AccountPaymentMethods', () => {
     const createPaymentMethod = sinon.stub().callsArg(2, null, null);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={addNotification}
         createCardElement={createPaymentMethod}
@@ -499,7 +486,7 @@ describe('AccountPaymentMethods', () => {
     const createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPaymentMethods
+      <AccountPaymentMethods
         acl={acl}
         addNotification={addNotification}
         createCardElement={createPaymentMethod}

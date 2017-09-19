@@ -1,19 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const BasicTable = require('./basic-table');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('BasicTable', function() {
   let headers, rows;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('basic-table', function() { done(); });
-  });
 
   beforeEach(() => {
     headers = [{
@@ -56,7 +51,7 @@ describe('BasicTable', function() {
 
   it('can render the table', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         headers={headers}
         rows={rows} />, true);
     const output = renderer.getRenderOutput();
@@ -113,7 +108,7 @@ describe('BasicTable', function() {
   it('can apply extra classes', function() {
     rows[1].classes = ['second-row-class'];
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         headerClasses={['header-class']}
         headerColumnClasses={['header-column']}
         headers={headers}
@@ -181,7 +176,7 @@ describe('BasicTable', function() {
       return 0;
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         headers={headers}
         rows={rows}
         sort={sort} />, true);
@@ -197,7 +192,7 @@ describe('BasicTable', function() {
     rows[1].extraData = 20;
     rows[2].extraData = 5;
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         headers={headers}
         filterPredicate={row => row.extraData > 10}
         rows={rows} />, true);
@@ -207,11 +202,11 @@ describe('BasicTable', function() {
     assert.equal(rowItems[0].key, 'row-two-key');
   });
 
-  it('display row links', function() {
+  it('displays row links', function() {
     rows[0].clickState = {another: 'state'};
     const generatePath = sinon.stub().returns('http://example.com');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         changeState={sinon.stub()}
         generatePath={generatePath}
         headers={headers}
@@ -242,7 +237,7 @@ describe('BasicTable', function() {
     const preventDefault = sinon.stub();
     const generatePath = sinon.stub().returns('http://example.com');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.BasicTable
+      <BasicTable
         changeState={changeState}
         generatePath={generatePath}
         headers={headers}

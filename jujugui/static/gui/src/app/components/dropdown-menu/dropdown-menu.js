@@ -1,6 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
+const React = require('react');
+const enhanceWithClickOutside = require('../../init/react-click-outside');
+
+const Panel = require('../panel/panel');
 
 /**
   Creates a dropdown menu with the supplied children as items.
@@ -22,11 +26,11 @@ class DropdownMenu extends React.Component {
       this.props.classes
     );
     return (
-      <juju.components.Panel instanceName={instanceName} visible={true}>
+      <Panel instanceName={instanceName} visible={true}>
         <ul className="dropdown-menu__list">
           {this.props.children}
         </ul>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -41,10 +45,4 @@ DropdownMenu.propTypes = {
   handleClickOutside: PropTypes.func
 };
 
-YUI.add('dropdown-menu', function() {
-  juju.components.DropdownMenu = enhanceWithClickOutside(DropdownMenu);
-}, '', {
-  requires: [
-    'panel-component'
-  ]
-});
+module.exports = enhanceWithClickOutside(DropdownMenu);
