@@ -58,6 +58,9 @@ class AccountCredentials extends React.Component {
           console.error(message, error);
           return;
         }
+        // Add the cloud name into the clouds object so it can be used
+        // by other components.
+        Object.keys(clouds).forEach(name => clouds[name].name = name);
         this._getCloudCredentialNames(clouds);
       });
       this.xhrs.push(xhr);
