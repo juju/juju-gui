@@ -225,7 +225,7 @@ class DeploymentCredentialAdd extends React.Component {
   render() {
     const props = this.props;
     // If a name was provided then we're editing, not adding.
-    const prefix = props.credentialName ? 'Edit' : 'Add';
+    const prefix = props.credentialName ? 'Update' : 'Add';
     let buttons = [{
       action: this._handleAddCredentials.bind(this),
       submit: true,

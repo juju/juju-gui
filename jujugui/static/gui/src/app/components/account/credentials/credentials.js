@@ -342,10 +342,7 @@ class AccountCredentials extends React.Component {
   _generateEditCredentials(credential) {
     const credentialId = this.state.editCredential;
     if (credentialId && credentialId === credential.id) {
-      const cloud = {
-        cloudType: credential.cloud,
-        name: credential.cloud
-      };
+      const cloud = this.state.clouds[credential.cloud];
       return ([
         this._generateDeploymentCloud({cloud}),
         this._generateDeploymentCredentialAdd({
