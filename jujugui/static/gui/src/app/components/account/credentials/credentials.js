@@ -108,13 +108,16 @@ class AccountCredentials extends React.Component {
 
   /**
     Handle deleting a credential.
-
     @param credential {String} A credential id.
   */
   _handleDeleteCredential(credential = null) {
     this.setState({removeCredential: credential});
   }
 
+  /**
+    Sets the state for editCredential using the supplied credentialId.
+    @param {String} credentialId The credential ID to edit.
+  */
   _handleEditCredential(credentialId = null) {
     this.setState({editCredential: credentialId});
   }
@@ -310,6 +313,12 @@ class AccountCredentials extends React.Component {
       </ExpandingRow>);
   }
 
+  /**
+    Generates the cloud logo element.
+    @param {Object} overrides Any overrides that need to be passed in depending
+      on where the component is being used.
+    @return {Object} React component for DeploymentCloud.
+  */
   _generateDeploymentCloud(overrides = {}) {
     const props = this.props;
     return (
@@ -324,6 +333,12 @@ class AccountCredentials extends React.Component {
         setCloud={this._setCloud.bind(this)} />);
   }
 
+  /**
+    Generates the edit credential UI elements.
+    @param {Object} credential The credential details of the credential being
+      edited.
+    @return {Array} The elements for the edit credential UI.
+  */
   _generateEditCredentials(credential) {
     const credentialId = this.state.editCredential;
     if (credentialId && credentialId === credential.id) {
@@ -342,6 +357,12 @@ class AccountCredentials extends React.Component {
     }
   }
 
+  /**
+    Generate the add credentials UI with any supplied overrides depending
+    on where it is to be rendered.
+    @param {Object} overrides The overrides for the default props.
+    @return {Object} React component for DeploymentCredentialAdd
+  */
   _generateDeploymentCredentialAdd(overrides = {}) {
     return (
       <DeploymentCredentialAdd
