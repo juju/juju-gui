@@ -24,6 +24,7 @@ const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcr
 const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
+const Help = require('../components/help/help');
 const Inspector = require('../components/inspector/inspector');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const Lightbox = require('../components/lightbox/lightbox');
@@ -300,6 +301,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <HeaderHelp
         appState={this.state}
+        changeState={this.state.changeState.bind(this.state)}
         gisf={this.applicationConfig.gisf}
         displayShortcutsModal={this._displayShortcutsModal.bind(this)}
         user={this.user} />,
@@ -343,6 +345,26 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
+    Opens the help overlay.
+  */
+  _renderHelp(state, next) {
+    ReactDOM.render(<Help
+      changeState={this.state.changeState.bind(this.state)} />,
+      document.getElementById('help'));
+    next();
+  }
+
+  /**
+    Remove the help overla.
+  */
+  _clearHelp(state, next) {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('help')
+    );
+    next();
+  }
+
+  /**
     The cleanup dispatcher keyboard shortcuts modal.
   */
   _clearShortcutsModal() {
@@ -364,6 +386,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('lightbox')
     );
   }
+
+  /**
+    Remove the help overlay.
+  */
 
   _renderHeaderLogo() {
     const userName = this.user.displayName;

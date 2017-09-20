@@ -47,11 +47,20 @@ class HeaderHelp extends React.Component {
   }
 
   /**
-   Click the button, get the help.
+   Click the button, get the shortcuts.
   */
   _handleShortcutsLink() {
     this.refs.buttonDropdown._toggleDropdown();
     this.props.displayShortcutsModal();
+  }
+
+  /**
+    Click the button, get help.
+  */
+  _handleHelpClick() {
+    this.props.changeState({
+      help: true
+    });
   }
 
   render() {
@@ -61,6 +70,10 @@ class HeaderHelp extends React.Component {
         ref="buttonDropdown"
         icon="help_16"
         listItems={[
+          <li className="dropdown-menu__list-item" role="menuItem" key="help"
+            tabIndex="0" onClick={this._handleHelpClick.bind(this)}>
+            <span className="dropdown-menu__list-item-link">GUI help</span>
+          </li>,
           this._generateDocsLink(),
           this._generateIssuesLink(),
           <li className="dropdown-menu__list-item" role="menuItem" key="shortcuts"
@@ -80,6 +93,7 @@ class HeaderHelp extends React.Component {
 
 HeaderHelp.propTypes = {
   appState: PropTypes.object.isRequired,
+  changeState: PropTypes.func.isRequired,
   displayShortcutsModal: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
   user: PropTypes.object
