@@ -78,27 +78,37 @@ describe('DeploymentCredentialAdd', function() {
     });
   });
 
-  it('can render without a cloud', function() {
-    var cloud = getCloudProviderDetails('gce');
-    var renderer = jsTestUtils.shallowRender(
+  function renderComponent(options = {}) {
+    const renderer = jsTestUtils.shallowRender(
       <DeploymentCredentialAdd
         acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
+        addNotification={options.addNotification || sinon.stub()}
+        updateCloudCredential={options.updateCloudCredential || sinon.stub()}
         close={sinon.stub()}
-        cloud={null}
-        credentials={[]}
+        cloud={options.cloud || null}
+        credentialName={options.credentialName || undefined}
+        credentials={options.credentials || []}
         getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
+        generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
+        getCredentials={options.getCredentials || sinon.stub()}
+        hideCancel={options.hideCancel || false}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    const buttons = output.props.children[3].props.children.props.buttons;
-    var expected = (
+        validateForm={options.validateForm || sinon.stub()} />, true);
+    return {
+      renderer,
+      instance: renderer.getMountedInstance(),
+      output: renderer.getRenderOutput()
+    };
+  }
+
+  it('can render without a cloud', function() {
+    const cloud = getCloudProviderDetails('gce');
+    const comp = renderComponent();
+    const instance = comp.instance;
+    const buttons = comp.output.props.children[3].props.children.props.buttons;
+    const expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
@@ -118,6 +128,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               required={true}
               ref="credentialName"
+              value={undefined}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -226,28 +237,14 @@ describe('DeploymentCredentialAdd', function() {
             buttons={buttons} />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    expect(comp.output).toEqualJSX(expected);
   });
 
   it('can render without a cancel button', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        close={sinon.stub()}
-        cloud={null}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        hideCancel={true}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    const buttons = output.props.children[3].props.children.props.buttons;
+    const comp = renderComponent({
+      hideCancel: true
+    });
+    const buttons = comp.output.props.children[3].props.children.props.buttons;
     assert.deepEqual(buttons, [{
       action: buttons[0].action,
       submit: true,
@@ -257,23 +254,8 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can update to a new cloud', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        close={sinon.stub()}
-        cloud={null}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    let output = renderer.getRenderOutput();
-    renderer.render(
+    const comp = renderComponent();
+    comp.renderer.render(
       <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
@@ -289,7 +271,7 @@ describe('DeploymentCredentialAdd', function() {
         user="user-admin"
         validateForm={sinon.stub()} />);
     const cloud = getCloudProviderDetails('ec2');
-    output = renderer.getRenderOutput();
+    const output = comp.renderer.getRenderOutput();
     const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
       <div className="deployment-credential-add twelve-col">
@@ -311,6 +293,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Credential name"
               required={true}
               ref="credentialName"
+              value={undefined}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -380,26 +363,15 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render credential fields for a cloud', function() {
-    var cloud = getCloudProviderDetails('gce');
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={['cred1']}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const cloud = getCloudProviderDetails('gce');
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'},
+      credentials: ['cred1']
+    });
+    const instance = comp.instance;
+    const output = comp.output;
     const buttons = output.props.children[3].props.children.props.buttons;
-    var expected = (
+    const expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
@@ -419,6 +391,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               required={true}
               ref="credentialName"
+              value={undefined}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -534,27 +507,15 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render a cloud with a json field', function() {
-    var cloud = getCloudProviderDetails('gce');
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
+    const cloud = getCloudProviderDetails('gce');
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'}
+    });
+    const instance = comp.instance;
     instance.setState({authType: 'jsonfile'});
-    var output = renderer.getRenderOutput();
+    const output = comp.renderer.getRenderOutput();
     const buttons = output.props.children[3].props.children.props.buttons;
-    var expected = (
+    const expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
@@ -574,6 +535,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               required={true}
               ref="credentialName"
+              value={undefined}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -637,26 +599,14 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var cloud = getCloudProviderDetails('gce');
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const cloud = getCloudProviderDetails('gce');
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'}
+    });
+    const instance = comp.instance;
+    const output = comp.output;
     const buttons = output.props.children[3].props.children.props.buttons;
-    var expected = (
+    const expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
@@ -676,6 +626,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               required={true}
               ref="credentialName"
+              value={undefined}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -788,24 +739,16 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can add the credentials', function() {
-    var updateCloudCredential = sinon.stub().callsArg(3);
+    const updateCloudCredential = sinon.stub().callsArg(3);
     const getCredentials = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub().returns('new@test')}
-        getCredentials={getCredentials}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub().returns(true)} />, true);
-    var instance = renderer.getMountedInstance();
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'},
+      getCredentials,
+      updateCloudCredential,
+      generateCloudCredentialName: sinon.stub().returns('new@test'),
+      validateForm: sinon.stub().returns(true)
+    });
+    const instance = comp.instance;
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -831,10 +774,10 @@ describe('DeploymentCredentialAdd', function() {
       }
     };
     instance._handleAddCredentials();
-    assert.equal(sendAnalytics.callCount, 1);
+    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
       ['Button click', 'Add credentials']);
-    assert.equal(updateCloudCredential.callCount, 1);
+    assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'new@test');
     assert.equal(args[1], 'oauth2');
@@ -845,28 +788,18 @@ describe('DeploymentCredentialAdd', function() {
       'project-id': 'project id',
       'password': 'password'
     });
-    assert.equal(getCredentials.callCount, 1);
+    assert.equal(getCredentials.callCount, 1, 'getCredentials not called');
     assert.equal(getCredentials.args[0][0], 'new@test');
   });
 
   it('properly unescapes necessary fields', function() {
     const updateCloudCredential = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = renderer.getMountedInstance();
+    const comp = renderComponent({
+      updateCloudCredential,
+      cloud: {name: 'google', cloudType: 'gce'},
+      validateForm: sinon.stub().returns(true)
+    });
+    const instance = comp.instance;
     instance.setState({authType: 'oauth2'});
     instance.refs = {
       'credentialName': {
@@ -900,24 +833,13 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('does not submit the form if there are validation errors', function() {
-    var updateCloudCredential = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub().returns(false)} />, true);
-    var instance = renderer.getMountedInstance();
-    instance._handleAddCredentials();
+    const updateCloudCredential = sinon.stub();
+    const comp = renderComponent({
+      updateCloudCredential,
+      cloud: {name: 'google', cloudType: 'gce'},
+      validateForm: sinon.stub().returns(false)
+    });
+    comp.instance._handleAddCredentials();
     assert.equal(updateCloudCredential.callCount, 0);
   });
 
@@ -925,22 +847,14 @@ describe('DeploymentCredentialAdd', function() {
     const error = 'Bad wolf';
     const updateCloudCredential = sinon.stub().callsArgWith(3, error);
     const addNotification = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={addNotification}
-        updateCloudCredential={updateCloudCredential}
-        close={sinon.stub()}
-        cloud={{name: 'google', cloudType: 'gce'}}
-        credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
-        generateCloudCredentialName={sinon.stub().returns('new@test')}
-        getCredentials={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub().returns(true)} />, true);
-    var instance = renderer.getMountedInstance();
+    const comp = renderComponent({
+      addNotification,
+      updateCloudCredential,
+      cloud: {name: 'google', cloudType: 'gce'},
+      generateCloudCredentialName: sinon.stub().returns('new@test'),
+      validateForm: sinon.stub().returns(true)
+    });
+    const instance = comp.instance;
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
