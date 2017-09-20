@@ -20,6 +20,7 @@ const Charmbrowser = require('../components/charmbrowser/charmbrowser');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
 const DeploymentFlow = require('../components/deployment-flow/deployment-flow');
 const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
+const ExpandingProgress = require('../components/expanding-progress/expanding-progress');
 const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
 const HeaderHelp = require('../components/header-help/header-help');
@@ -1182,8 +1183,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <ExpandingProgress />,
       document.getElementById('drag-over-notification-container'));
   }
-
-  _hideDragOverNotification() {}
+  /**
+    Hide the drag notifications.
+  */
+  _hideDragOverNotification() {
+    this.topology.fadeHelpIndicator(false);
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('drag-over-notification-container'));
+  }
   /**
     Renders the zoom component to the page in the designated element.
   */

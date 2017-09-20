@@ -3,6 +3,7 @@
 
 const keysim = require('keysim');
 const utils = require('../test/utils');
+const ReactDOM = require('react-dom');
 
 describe('init', () => {
   let app, cleanups, container, getMockStorage, JujuGUI;
@@ -66,6 +67,156 @@ describe('init', () => {
     const shortcuts = document.getElementById('modal-shortcuts');
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
+  });
+
+  describe('File drag over notification system', () => {
+    describe('drag event attach and detach', () => {
+      it('binds the drag handlers', () => {
+        app.destructor();
+        const stub = sinon.stub(document, 'addEventListener');
+        cleanups.push(stub.restore);
+        app = createApp();
+        assert.equal(stub.callCount >= 3, true);
+        const args = stub.args;
+        assert.equal(args[8][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[9][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[10][0], 'dragleave');
+        assert.isFunction(args[2][1]);
+      });
+
+      it('removes the drag handlers', () => {
+        // This test causes cascading failures as the event listeners are not
+        // removed as the method is stubbed out, so stub out addEventListener
+        // as well so we don't need to clean them up.
+        const addStub = sinon.stub(document, 'addEventListener');
+        const stub = sinon.stub(document, 'removeEventListener');
+        cleanups.push(addStub.restore);
+        cleanups.push(stub.restore);
+        app.destructor();
+        assert.equal(stub.callCount >= 3, true);
+        const args = stub.args;
+        assert.equal(args[9][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[10][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[11][0], 'dragleave');
+        assert.isFunction(args[2][1]);
+      });
+    });
+
+    describe('_determineFileType', () => {
+      it('returns false if it\'s not a file being dragged', () => {
+        const result = app._determineFileType({
+          types: ['foo']
+        });
+        // It should have returned false if it's not a file because then it is
+        // something being dragged inside the browser.
+        assert.equal(result, false);
+      });
+
+      it('returns "zip" for zip files', () => {
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/zip' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "zip" for zip files in IE', () => {
+        // IE uses a different mime type than other browsers.
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-zip-compressed' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "yaml" for the yaml mime type', () => {
+        // At the moment we cannot determine between folders and yaml files
+        // across browser so we respond with yaml for now.
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-yaml' }]
+        });
+        assert.equal(result, 'yaml');
+      });
+
+      it('returns "" if the browser does not support "items"', () => {
+        // IE10 and 11 do not have the dataTransfer.items property during hover
+        // so we cannot tell what type of file is being hovered over the canvas.
+        // So we will just return the default which is "yaml".
+        const result = app._determineFileType({
+          types: ['Files']
+        });
+        assert.equal(result, '');
+      });
+    });
+
+    describe('UI notifications', () => {
+      it('_renderDragOverNotification renders drop UI', () => {
+        const fade = sinon.stub();
+        const reactdom = sinon.stub(ReactDOM, 'render');
+        cleanups.push(reactdom.restore);
+        app.topology.fadeHelpIndicator = fade;
+        app._renderDragOverNotification();
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], true);
+        assert.equal(reactdom.callCount, 1);
+      });
+
+      it('_hideDragOverNotification hides drop UI', () => {
+        const fade = sinon.stub();
+        const reactdom = sinon.stub(
+          ReactDOM, 'unmountComponentAtNode');
+        cleanups.push(reactdom.restore);
+        app.topology.fadeHelpIndicator = fade;
+        app._hideDragOverNotification();
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], false);
+        assert.equal(reactdom.callCount, 1);
+      });
+    });
+
+    it('dispatches drag events properly: _appDragOverHandler', () => {
+      const determineFileTypeStub = sinon.stub(
+        app, '_determineFileType').returns('zip');
+      const renderDragOverStub = sinon.stub(
+        app, '_renderDragOverNotification');
+      const dragTimerControlStub = sinon.stub(
+        app, '_dragleaveTimerControl');
+      cleanups = cleanups.concat([
+        determineFileTypeStub.restore,
+        renderDragOverStub.restore,
+        dragTimerControlStub
+      ]);
+
+      const noop = () => {};
+      const ev1 = {
+        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
+      const ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
+      const ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+
+      app._appDragOverHandler(ev1);
+      app._appDragOverHandler(ev2);
+      app._appDragOverHandler(ev3);
+
+      assert.equal(determineFileTypeStub.callCount, 3);
+      assert.equal(renderDragOverStub.calledOnce, true);
+      assert.equal(dragTimerControlStub.callCount, 3);
+      const args = dragTimerControlStub.args;
+      assert.equal(args[0][0], 'start');
+      assert.equal(args[1][0], 'start');
+      assert.equal(args[2][0], 'stop');
+    });
+
+    it('can start and stop the drag timer: _dragLeaveTimerControl', () => {
+      app._dragleaveTimerControl('start');
+      assert.equal(app._dragLeaveTimer !== undefined, true);
+      app._dragleaveTimerControl('stop');
+      assert.equal(app._dragLeaveTimer === null, true);
+    });
   });
 
   xdescribe('Application authentication', () => {
