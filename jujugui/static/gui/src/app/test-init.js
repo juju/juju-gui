@@ -67,6 +67,19 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('clearUser', () => {
+    it('clears the set user for the supplied service', () => {
+      const charmstoreUser = {
+        name: 'foo'
+      };
+      app.users = {
+        'charmstore': charmstoreUser
+      };
+      app.clearUser('charmstore');
+      assert.equal(app.users.charmstore, undefined);
+    });
+  });
+
   describe('storeUser', () => {
     beforeEach(() => {
       app.charmstore.whoami = sinon.stub();
