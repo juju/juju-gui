@@ -67,6 +67,36 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('storeUser', () => {
+    beforeEach(() => {
+      app.charmstore.whoami = sinon.stub();
+    });
+
+    it('calls charmstore whoami for charmstore users', () => {
+      const user = {user: 'test'};
+      app.storeUser('charmstore');
+      assert.equal(app.charmstore.whoami.callCount, 1);
+      const cb = app.charmstore.whoami.lastCall.args[0];
+      cb(null, user);
+      const users = app.users;
+      assert.deepEqual(users['charmstore'], user);
+    });
+
+    it('renders the profile and breadcrumb if told to', () => {
+      const user = {user: 'test'};
+      const state = {test: 'state'};
+      app.state._appStateHistory.push(state);
+      app._renderBreadcrumb = sinon.stub();
+      app._renderUserProfile = sinon.stub();
+      app.storeUser('charmstore', true, true);
+      assert.equal(app.charmstore.whoami.callCount, 1);
+      app.charmstore.whoami.lastCall.args[0](null, user);
+      assert.equal(app._renderBreadcrumb.callCount, 1);
+      assert.equal(app._renderUserProfile.callCount, 1);
+      assert.deepEqual(app.users['charmstore'], user);
+    });
+  });
+
   describe('loginToAPIs', () => {
     // Create and return a mock API connection.
     // The API is connected if connected is true.
