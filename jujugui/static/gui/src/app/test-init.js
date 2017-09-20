@@ -67,6 +67,18 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  describe('getUser', () => {
+    it('gets the set user for the supplied service', () => {
+      const charmstoreUser = {
+        name: 'foo'
+      };
+      app.users = {
+        'charmstore': charmstoreUser
+      };
+      assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
+    });
+  });
+
   describe('clearUser', () => {
     it('clears the set user for the supplied service', () => {
       const charmstoreUser = {
