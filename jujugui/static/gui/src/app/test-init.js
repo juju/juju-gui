@@ -68,6 +68,109 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+
+  describe('Application Connection State', () => {
+    it('should be able to handle env connection status changes', () => {
+      const conn = new utils.SocketStub();
+      app.destructor();
+      app = createApp({conn: conn});
+      app.db.reset = sinon.stub();
+      app.modelAPI.login = sinon.stub();
+      app.modelAPI.connect();
+      conn.open();
+      // We need to fake the connection event.
+      assert.equal(app.db.reset.callCount, 0);
+      assert.equal(app.modelAPI.login.calledOnce, true);
+
+      // Trigger a second time and verify.
+      conn.transient_close();
+      conn.open();
+      assert.equal(app.db.reset.callCount, 0);
+    });
+
+
+    describe('logout', () => {
+      it('logs out from API connections and then reconnects', () => {
+        let controllerClosed = false;
+        let modelClosed = false;
+        let controllerConnected = false;
+        let modelConnected = false;
+        app.db.reset = sinon.stub();
+        app.db.fireEvent = sinon.stub();
+        const ecs = {
+          clear: sinon.stub()
+        };
+        // Mock the API connections for the resulting application.
+        app.controllerAPI.destroy();
+        app.controllerAPI = {
+          close: callback => {
+            assert.strictEqual(
+              modelClosed, true,
+              'controller: close called before model close');
+            controllerClosed = true;
+            callback();
+          },
+          connect: () => {
+            assert.strictEqual(
+              controllerClosed, true,
+              'controller: connect called before close');
+            controllerConnected = true;
+          },
+          destroy: sinon.stub()
+        };
+        app.modelAPI.destroy();
+        app.modelAPI = {
+          close: callback => {
+            modelClosed = true;
+            callback();
+          },
+          connect: () => {
+            assert.strictEqual(
+              modelClosed, true, 'model: connect called before close');
+            modelConnected = true;
+          },
+          destroy: sinon.stub(),
+          get: sinon.stub().returns(ecs)
+        };
+        app.state.changeState = sinon.stub();
+        // Log out from the app.
+        app._handleLogout();
+        // The API connections have been properly closed.
+        assert.strictEqual(controllerClosed, true, 'controller close');
+        assert.strictEqual(modelClosed, true, 'model closed');
+        assert.strictEqual(controllerConnected, true, 'controller connect');
+        assert.strictEqual(modelConnected, false, 'model connect');
+        // The database has been reset and updated.
+        assert.strictEqual(app.db.reset.calledOnce, true, 'db.reset');
+        assert.strictEqual(app.db.fireEvent.calledOnce, true, 'db.fireEvent');
+        assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
+        assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
+        assert.equal(app.state.changeState.callCount, 1);
+        assert.deepEqual(app.state.changeState.args[0], [{
+          model: null,
+          profile: null,
+          root: null,
+          store: null
+        }]);
+      });
+
+      it('clears the db changed timer when the app is destroyed', () => {
+        app._dbChangedTimer = 'I am the timer!';
+        // Mock the clearTimeout builtin function.
+        const original = clearTimeout;
+        clearTimeout = sinon.stub();
+        cleanups.push(() => {
+          clearTimeout = original;
+        });
+        // Destroy the application.
+        app.destructor();
+        // The timer has been canceled.
+        assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
+        assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
+      });
+    });
+  });
+
   describe('switchEnv', () => {
     let ecs;
 
