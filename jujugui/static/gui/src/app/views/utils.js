@@ -1614,7 +1614,7 @@ YUI.add('juju-view-utils', function(Y) {
         uuid: model.uuid
       });
       app.state.changeState({
-        'postDeploymentPanel': {
+        postDeploymentPanel: {
           show: true
         }
       });

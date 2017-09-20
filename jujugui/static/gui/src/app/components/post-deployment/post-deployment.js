@@ -27,6 +27,7 @@ class PostDeployment extends React.Component {
           'target="_blank">Juju CLI client</a>'
       }
     };
+
     this.state= {
       content: null,
       displayName: null,
@@ -49,6 +50,7 @@ class PostDeployment extends React.Component {
     if (error) {
       console.error(error);
       console.error(`Entity not found with id: ${this.props.entityId}`);
+      return;
     }
 
     const entity = this.props.makeEntityModel(entityData[0]).toEntity();

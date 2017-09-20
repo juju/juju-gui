@@ -47,11 +47,6 @@ class EntityHeader extends React.Component {
       var id = entity.id.replace('cs:', '');
       this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
     }
-    this.props.changeState({
-      'postDeploymentPanel': {
-        entityId: entity.id
-      }
-    });
     this._closeEntityDetails();
   }
 
@@ -63,7 +58,10 @@ class EntityHeader extends React.Component {
   _closeEntityDetails() {
     this.props.changeState({
       hash: null,
-      store: null
+      store: null,
+      postDeploymentPanel: {
+        entityId: this.props.entityModel.toEntity().id
+      }
     });
   }
 
