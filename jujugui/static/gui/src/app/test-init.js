@@ -68,6 +68,116 @@ describe('init', () => {
       'The shortcuts component did not render');
   });
 
+  xdescribe('Application authentication', () => {
+    let conn;
+
+    beforeEach(() => {
+      conn = new utils.SocketStub();
+      app.destructor();
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      app = createApp({
+        conn: conn,
+        user: userClass
+      });
+    });
+
+    // Ensure the given message is a login request.
+    const assertIsLogin = function(message) {
+      assert.equal(message.type, 'Admin');
+      assert.equal(message.request, 'Login');
+    };
+
+    it('avoids trying to login if the env is not connected', () => {
+      assert.equal(0, conn.messages.length);
+    });
+
+    it('tries to login if the env connection is established', () => {
+      app.modelAPI.connect();
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
+    });
+
+    it('avoids trying to login without credentials', () => {
+      sessionStorage.clear();
+      app.modelAPI.get('user').controller = null;
+      app.navigate = () => { return; };
+      assert.deepEqual(
+        app.user.controller, {user: '', password: '', macaroons: null});
+      assert.equal(conn.messages.length, 0);
+    });
+
+    it('tries to log in on first connection', () => {
+      // This is the case when credential are stashed.
+      app.modelAPI.connect();
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login on disconnections', () => {
+      // This is the case when credential are stashed.
+      app.modelAPI.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login with macaroons on disconnections', () => {
+      sessionStorage.clear();
+      app.modelAPI.setAttrs({jujuCoreVersion: '2.0.0'});
+      app.modelAPI.get('user').controller = ({macaroons: ['macaroon']});
+      app.modelAPI.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      // Equals 2 because it hasn't been reset since the first connection
+      // This is a direct result of getting the notification to allow popups
+      // click a link to login working which essentially allows multiple login
+      // attempts without waiting for a timeout. 02/05/2017 Luke
+      assert.equal(2, conn.messages.length, 'no login messages sent');
+      const msg = conn.last_message();
+      assert.strictEqual(msg.type, 'Admin');
+      assert.strictEqual(msg.request, 'Login');
+      assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
+    });
+
+    it('should allow closing the connection', done => {
+      app.modelAPI.connect();
+      app.modelAPI.close(() => {
+        assert.strictEqual(app.modelAPI.userIsAuthenticated, false);
+        let creds = app.modelAPI.get('user').sessionStorage.store.modelCredentials;
+        creds = JSON.parse(creds);
+        assert.deepEqual(creds, null);
+        done();
+      });
+
+    });
+
+    it('normally uses window.location', () => {
+      // A lot of the app's authentication dance uses window.location,
+      // both for redirects after login and for authtokens.  For tests,
+      // the app copies window.location to app.location, so that we
+      // can easily override it.  This test verifies that the initialization
+      // actually does stash window.location as we expect.
+      assert.strictEqual(window.location, app.location);
+    });
+
+    it('sends a post to storefront after controller connection in GISF', () => {
+      app.destructor();
+      app = createApp({conn: conn, gisf: true});
+      sinon.stub(app, 'maskVisibility');
+      sinon.stub(app, 'navigate');
+      sinon.stub(app, 'dispatch');
+      sinon.stub(app.state, 'changeState');
+      sinon.stub(app, '_sendGISFPostBack');
+      sinon.stub(app, '_ensureLoggedIntoCharmstore');
+      document.dispatchEvent(new Event('login'));
+      assert.equal(app._sendGISFPostBack.callCount, 1);
+      assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
+    });
+  });
 
   describe('Application Connection State', () => {
     it('should be able to handle env connection status changes', () => {
