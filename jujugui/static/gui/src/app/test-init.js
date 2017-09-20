@@ -60,13 +60,107 @@ describe('init', () => {
     container.remove();
   });
 
-  it('activates the listeners for keyboard events', () => {
-    const keyboard = keysim.Keyboard.US_ENGLISH;
-    const keystroke = new keysim.Keystroke(keysim.Keystroke.SHIFT, 191);
-    keyboard.dispatchEventsForKeystroke(keystroke, container);
-    const shortcuts = document.getElementById('modal-shortcuts');
-    assert.equal(shortcuts.children.length > 0, true,
-      'The shortcuts component did not render');
+  describe('Application basics', () => {
+    it('should produce a valid index', () => {
+      container.getAttribute('id').should.equal('test-container');
+      container.getAttribute('class').should.include('container');
+    });
+
+    it('activates the listeners for keyboard events', () => {
+      const keyboard = keysim.Keyboard.US_ENGLISH;
+      const keystroke = new keysim.Keystroke(keysim.Keystroke.SHIFT, 191);
+      keyboard.dispatchEventsForKeystroke(keystroke, container);
+      const shortcuts = document.getElementById('modal-shortcuts');
+      assert.equal(shortcuts.children.length > 0, true,
+        'The shortcuts component did not render');
+    });
+
+    describe('MAAS support', () => {
+      let env, maasNode;
+
+      beforeEach(() => {
+        // Set up the MAAS link node.
+        maasNode = document.createElement('div');
+        maasNode.setAttribute('id', 'maas-server');
+        maasNode.classList.add('hidden');
+        const link = document.createElement('a');
+        const content = document.createTextNode('MAAS UI');
+        link.appendChild(content);
+        maasNode.appendChild(link);
+        container.appendChild(maasNode);
+      });
+
+      afterEach(() => {
+        container.querySelector('#maas-server').remove(true);
+      });
+
+      // Ensure the given MAAS node is shown and includes a link to the given
+      // address.
+      const assertMaasLinkExists = function(node, address) {
+        assert.strictEqual(node.classList.contains('hidden'), false);
+        assert.strictEqual(node.querySelector('a').href, address);
+      };
+
+      it('shows a link to the MAAS server if provider is MAAS', () => {
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        // Once the MAAS server becomes available, the node is activated and
+        // includes a link to the server.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        app.modelAPI.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('shows a link to the MAAS server if already in the env', () => {
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        // The link to the MAAS server should be already activated.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        app.modelAPI.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('does not show the MAAS link if provider is not MAAS', () => {
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        app.modelAPI.set('maasServer', null);
+        // The MAAS node is still hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        // Further changes to the maasServer attribute don't activate the link.
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+      });
+
+    });
+
+    describe('_setupCharmstore', () => {
+      it('is called on application instantiation', () => {
+        assert.isNotNull(app.charmstore);
+      });
+
+      it('is idempotent', () => {
+        // The charmstore attribute is undefined by default
+        assert.equal(typeof app.charmstore, 'object');
+        assert.equal(app.charmstore.url, 'http://1.2.3.4/v5');
+        app._setupCharmstore(
+          {charmstoreURL: 'it broke'}, window.jujulib.charmstore);
+        assert.equal(
+          app.charmstore.url,
+          'http://1.2.3.4/v5',
+          'It should only ever create a single instance of the charmstore');
+      });
+    });
+
+    describe('romulus services', () => {
+      it('sets up API clients', () => {
+        assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
+        assert.strictEqual(app.plans.url, 'http://plans.example.com/v3');
+        assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
+        assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
+      });
+    });
   });
 
   describe('File drag over notification system', () => {
