@@ -867,7 +867,7 @@ class GUIApp {
         !newState.profile &&
         newState.root !== 'account' &&
         (isLogin || !current.root) &&
-        this.gisf
+        this.applicationConfig.gisf
       ) {
         newState.profile = this.user.displayName;
       }
