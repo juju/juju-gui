@@ -5,14 +5,13 @@ const keysim = require('keysim');
 const utils = require('../test/utils');
 
 describe('init', () => {
-  let app, container, getMockStorage, JujuGUI;
+  let app, cleanups, container, getMockStorage, JujuGUI;
 
   const createApp = config => {
     const defaults = {
       apiAddress: 'http://api.example.com/',
       controllerSocketTemplate: 'wss://$server:$port/api',
       socketTemplate: '/model/$uuid/api',
-      socket_protocol: 'wss',
       baseUrl: 'http://example.com/',
       charmstoreURL: 'http://1.2.3.4/',
       flags: {},
@@ -40,6 +39,7 @@ describe('init', () => {
   });
 
   beforeEach(() => {
+    cleanups = [];
     container = utils.makeAppContainer();
     app = createApp();
     getMockStorage = function() {
@@ -54,6 +54,7 @@ describe('init', () => {
   });
 
   afterEach(() => {
+    cleanups.forEach(cleanup => cleanup());
     app.destructor();
     container.remove();
   });
@@ -65,6 +66,58 @@ describe('init', () => {
     const shortcuts = document.getElementById('modal-shortcuts');
     assert.equal(shortcuts.children.length > 0, true,
       'The shortcuts component did not render');
+  });
+
+  describe('switchEnv', () => {
+    let ecs;
+
+    beforeEach(() => {
+      ecs = app.modelAPI.get('ecs');
+      ecs.clear = sinon.stub();
+      app.modelAPI.close = sinon.stub();
+      app.db.reset = sinon.stub();
+      app.db.fireEvent = sinon.stub();
+    });
+
+    it('can connect to an env even if not currently connected', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password');
+      assert.isTrue(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isTrue(app.db.reset.called, 'db was not reset.');
+      assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
+      const topo = app.topology.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.');
+    });
+
+    it('clears and resets the env, db, and ecs on change', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password');
+      assert.isTrue(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isTrue(app.db.reset.called, 'db was not reset.');
+      assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
+      const topo = app.topology.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.');
+    });
+
+    it('can not clear and reset the db, and ecs on change', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password', null, true, false);
+      assert.isFalse(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isFalse(app.db.reset.called, 'db was not reset.');
+      assert.isFalse(app.db.fireEvent.called);
+    });
+
+    it('skips the reconnect when necessary', () => {
+      const connect = sinon.stub(app.modelAPI, 'connect');
+      cleanups.push(connect.restore);
+      // Try calling switchEnv both with explicit false and with socketUrl not
+      // set (implicit).
+      app.switchEnv('', '', '', false);
+      app.switchEnv();
+      assert.equal(connect.callCount, 0);
+    });
   });
 
   describe('getUser', () => {
