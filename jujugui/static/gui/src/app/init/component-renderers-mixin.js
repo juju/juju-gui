@@ -354,9 +354,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       return;
     }
     const entityId = state.postDeploymentPanel.entityId;
-    // this.state.changeState({
-    //   postDeploymentPanel: null
-    // });
 
     const charmstore = this.charmstore;
 

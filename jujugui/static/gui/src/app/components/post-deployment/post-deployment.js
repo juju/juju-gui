@@ -28,7 +28,7 @@ class PostDeployment extends React.Component {
       }
     };
 
-    this.state= {
+    this.state = {
       content: null,
       displayName: null,
       metadata: {}
