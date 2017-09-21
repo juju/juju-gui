@@ -3,16 +3,16 @@
 
 const keysim = require('keysim');
 const utils = require('../test/utils');
+const ReactDOM = require('react-dom');
 
 describe('init', () => {
-  let app, container, getMockStorage, JujuGUI;
+  let app, cleanups, container, getMockStorage, JujuGUI;
 
   const createApp = config => {
     const defaults = {
       apiAddress: 'http://api.example.com/',
       controllerSocketTemplate: 'wss://$server:$port/api',
       socketTemplate: '/model/$uuid/api',
-      socket_protocol: 'wss',
       baseUrl: 'http://example.com/',
       charmstoreURL: 'http://1.2.3.4/',
       flags: {},
@@ -40,6 +40,7 @@ describe('init', () => {
   });
 
   beforeEach(() => {
+    cleanups = [];
     container = utils.makeAppContainer();
     app = createApp();
     getMockStorage = function() {
@@ -54,17 +55,581 @@ describe('init', () => {
   });
 
   afterEach(() => {
+    cleanups.forEach(cleanup => cleanup());
     app.destructor();
     container.remove();
   });
 
-  it('activates the listeners for keyboard events', () => {
-    const keyboard = keysim.Keyboard.US_ENGLISH;
-    const keystroke = new keysim.Keystroke(keysim.Keystroke.SHIFT, 191);
-    keyboard.dispatchEventsForKeystroke(keystroke, container);
-    const shortcuts = document.getElementById('modal-shortcuts');
-    assert.equal(shortcuts.children.length > 0, true,
-      'The shortcuts component did not render');
+  describe('Application basics', () => {
+    it('should produce a valid index', () => {
+      container.getAttribute('id').should.equal('test-container');
+      container.getAttribute('class').should.include('container');
+    });
+
+    it('activates the listeners for keyboard events', () => {
+      const keyboard = keysim.Keyboard.US_ENGLISH;
+      const keystroke = new keysim.Keystroke(keysim.Keystroke.SHIFT, 191);
+      keyboard.dispatchEventsForKeystroke(keystroke, container);
+      const shortcuts = document.getElementById('modal-shortcuts');
+      assert.equal(shortcuts.children.length > 0, true,
+        'The shortcuts component did not render');
+    });
+
+    describe('MAAS support', () => {
+      let maasNode;
+
+      beforeEach(() => {
+        // Set up the MAAS link node.
+        maasNode = document.createElement('div');
+        maasNode.setAttribute('id', 'maas-server');
+        maasNode.classList.add('hidden');
+        const link = document.createElement('a');
+        const content = document.createTextNode('MAAS UI');
+        link.appendChild(content);
+        maasNode.appendChild(link);
+        container.appendChild(maasNode);
+      });
+
+      afterEach(() => {
+        container.querySelector('#maas-server').remove(true);
+      });
+
+      // Ensure the given MAAS node is shown and includes a link to the given
+      // address.
+      const assertMaasLinkExists = function(node, address) {
+        assert.strictEqual(node.classList.contains('hidden'), false);
+        assert.strictEqual(node.querySelector('a').href, address);
+      };
+
+      it('shows a link to the MAAS server if provider is MAAS', () => {
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        // Once the MAAS server becomes available, the node is activated and
+        // includes a link to the server.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        app.modelAPI.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('shows a link to the MAAS server if already in the env', () => {
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        // The link to the MAAS server should be already activated.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        app.modelAPI.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('does not show the MAAS link if provider is not MAAS', () => {
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        app.modelAPI.set('maasServer', null);
+        // The MAAS node is still hidden.
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+        // Further changes to the maasServer attribute don't activate the link.
+        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
+        assert.strictEqual(maasNode.classList.contains('hidden'), true);
+      });
+
+    });
+
+    describe('_setupCharmstore', () => {
+      it('is called on application instantiation', () => {
+        assert.isNotNull(app.charmstore);
+      });
+
+      it('is idempotent', () => {
+        // The charmstore attribute is undefined by default
+        assert.equal(typeof app.charmstore, 'object');
+        assert.equal(app.charmstore.url, 'http://1.2.3.4/v5');
+        app._setupCharmstore(
+          {charmstoreURL: 'it broke'}, window.jujulib.charmstore);
+        assert.equal(
+          app.charmstore.url,
+          'http://1.2.3.4/v5',
+          'It should only ever create a single instance of the charmstore');
+      });
+    });
+
+    describe('romulus services', () => {
+      it('sets up API clients', () => {
+        assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
+        assert.strictEqual(app.plans.url, 'http://plans.example.com/v3');
+        assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
+        assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
+      });
+    });
+  });
+
+  describe('File drag over notification system', () => {
+    describe('drag event attach and detach', () => {
+      it('binds the drag handlers', () => {
+        app.destructor();
+        const stub = sinon.stub(document, 'addEventListener');
+        cleanups.push(stub.restore);
+        app = createApp();
+        assert.equal(stub.callCount >= 3, true);
+        const args = stub.args;
+        assert.equal(args[8][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[9][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[10][0], 'dragleave');
+        assert.isFunction(args[2][1]);
+      });
+
+      it('removes the drag handlers', () => {
+        // This test causes cascading failures as the event listeners are not
+        // removed as the method is stubbed out, so stub out addEventListener
+        // as well so we don't need to clean them up.
+        const addStub = sinon.stub(document, 'addEventListener');
+        const stub = sinon.stub(document, 'removeEventListener');
+        cleanups.push(addStub.restore);
+        cleanups.push(stub.restore);
+        app.destructor();
+        assert.equal(stub.callCount >= 3, true);
+        const args = stub.args;
+        assert.equal(args[9][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[10][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[11][0], 'dragleave');
+        assert.isFunction(args[2][1]);
+      });
+    });
+
+    describe('_determineFileType', () => {
+      it('returns false if it\'s not a file being dragged', () => {
+        const result = app._determineFileType({
+          types: ['foo']
+        });
+        // It should have returned false if it's not a file because then it is
+        // something being dragged inside the browser.
+        assert.equal(result, false);
+      });
+
+      it('returns "zip" for zip files', () => {
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/zip' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "zip" for zip files in IE', () => {
+        // IE uses a different mime type than other browsers.
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-zip-compressed' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "yaml" for the yaml mime type', () => {
+        // At the moment we cannot determine between folders and yaml files
+        // across browser so we respond with yaml for now.
+        const result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-yaml' }]
+        });
+        assert.equal(result, 'yaml');
+      });
+
+      it('returns "" if the browser does not support "items"', () => {
+        // IE10 and 11 do not have the dataTransfer.items property during hover
+        // so we cannot tell what type of file is being hovered over the canvas.
+        // So we will just return the default which is "yaml".
+        const result = app._determineFileType({
+          types: ['Files']
+        });
+        assert.equal(result, '');
+      });
+    });
+
+    describe('UI notifications', () => {
+      it('_renderDragOverNotification renders drop UI', () => {
+        const fade = sinon.stub();
+        const reactdom = sinon.stub(ReactDOM, 'render');
+        cleanups.push(reactdom.restore);
+        app.topology.fadeHelpIndicator = fade;
+        app._renderDragOverNotification();
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], true);
+        assert.equal(reactdom.callCount, 1);
+      });
+
+      it('_hideDragOverNotification hides drop UI', () => {
+        const fade = sinon.stub();
+        const reactdom = sinon.stub(
+          ReactDOM, 'unmountComponentAtNode');
+        cleanups.push(reactdom.restore);
+        app.topology.fadeHelpIndicator = fade;
+        app._hideDragOverNotification();
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], false);
+        assert.equal(reactdom.callCount, 1);
+      });
+    });
+
+    it('dispatches drag events properly: _appDragOverHandler', () => {
+      const determineFileTypeStub = sinon.stub(
+        app, '_determineFileType').returns('zip');
+      const renderDragOverStub = sinon.stub(
+        app, '_renderDragOverNotification');
+      const dragTimerControlStub = sinon.stub(
+        app, '_dragleaveTimerControl');
+      cleanups = cleanups.concat([
+        determineFileTypeStub.restore,
+        renderDragOverStub.restore,
+        dragTimerControlStub
+      ]);
+
+      const noop = () => {};
+      const ev1 = {
+        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
+      const ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
+      const ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+
+      app._appDragOverHandler(ev1);
+      app._appDragOverHandler(ev2);
+      app._appDragOverHandler(ev3);
+
+      assert.equal(determineFileTypeStub.callCount, 3);
+      assert.equal(renderDragOverStub.calledOnce, true);
+      assert.equal(dragTimerControlStub.callCount, 3);
+      const args = dragTimerControlStub.args;
+      assert.equal(args[0][0], 'start');
+      assert.equal(args[1][0], 'start');
+      assert.equal(args[2][0], 'stop');
+    });
+
+    it('can start and stop the drag timer: _dragLeaveTimerControl', () => {
+      app._dragleaveTimerControl('start');
+      assert.equal(app._dragLeaveTimer !== undefined, true);
+      app._dragleaveTimerControl('stop');
+      assert.equal(app._dragLeaveTimer === null, true);
+    });
+  });
+
+  describe('Application authentication', () => {
+    let conn;
+
+    beforeEach(() => {
+      conn = new utils.SocketStub();
+      app.destructor();
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      app = createApp({
+        conn: conn,
+        user: userClass
+      });
+    });
+
+    afterEach(() => {
+      conn = null;
+    });
+
+    // Ensure the given message is a login request.
+    const assertIsLogin = function(message) {
+      assert.equal(message.type, 'Admin');
+      assert.equal(message.request, 'Login');
+    };
+
+    it('avoids trying to login if the env is not connected', () => {
+      assert.equal(0, conn.messages.length);
+    });
+
+    it('tries to login if the env connection is established', () => {
+      app.modelAPI.connect();
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
+    });
+
+    it('avoids trying to login without credentials', () => {
+      app.modelAPI.get('user').controller = null;
+      app.navigate = () => { return; };
+      assert.deepEqual(
+        app.user.controller, {user: '', password: '', macaroons: null});
+      assert.equal(conn.messages.length, 0);
+    });
+
+    it('tries to log in on first connection', () => {
+      // This is the case when credential are stashed.
+      app.modelAPI.connect();
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login on disconnections', () => {
+      // This is the case when credential are stashed.
+      app.modelAPI.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login with macaroons on disconnections', () => {
+      app.modelAPI.setAttrs({jujuCoreVersion: '2.0.0'});
+      app.modelAPI.get('user').controller = ({macaroons: ['macaroon']});
+      app.modelAPI.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      // Equals 2 because it hasn't been reset since the first connection
+      // This is a direct result of getting the notification to allow popups
+      // click a link to login working which essentially allows multiple login
+      // attempts without waiting for a timeout. 02/05/2017 Luke
+      assert.equal(2, conn.messages.length, 'no login messages sent');
+      const msg = conn.last_message();
+      assert.strictEqual(msg.type, 'Admin');
+      assert.strictEqual(msg.request, 'Login');
+      assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
+    });
+
+    it('should allow closing the connection', done => {
+      app.modelAPI.connect();
+      app.modelAPI.close(() => {
+        assert.strictEqual(app.modelAPI.userIsAuthenticated, false);
+        let creds = app.modelAPI.get('user').sessionStorage.store.modelCredentials;
+        creds = JSON.parse(creds);
+        assert.deepEqual(creds, null);
+        done();
+      });
+    });
+
+    it('sends a post to storefront after controller connection in GISF', () => {
+      app.destructor();
+      app = createApp({conn: conn, gisf: true});
+      sinon.stub(app, 'maskVisibility');
+      sinon.stub(app, 'navigate');
+      sinon.stub(app, 'dispatch');
+      sinon.stub(app.state, 'changeState');
+      sinon.stub(app, '_sendGISFPostBack');
+      sinon.stub(app, '_ensureLoggedIntoCharmstore');
+      document.dispatchEvent(new Event('login'));
+      assert.equal(app._sendGISFPostBack.callCount, 1);
+      assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
+    });
+  });
+
+  describe('Application Connection State', () => {
+    it('should be able to handle env connection status changes', () => {
+      const conn = new utils.SocketStub();
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
+      app.destructor();
+      app = createApp({
+        conn: conn,
+        user: userClass
+      });
+      app.db.reset = sinon.stub();
+      app.modelAPI.login = sinon.stub();
+      app.modelAPI.connect();
+      conn.open();
+      // We need to fake the connection event.
+      assert.equal(app.db.reset.callCount, 0);
+      assert.equal(app.modelAPI.login.calledOnce, true);
+
+      // Trigger a second time and verify.
+      conn.transient_close();
+      conn.open();
+      assert.equal(app.db.reset.callCount, 0);
+    });
+
+
+    describe('logout', () => {
+      it('logs out from API connections and then reconnects', () => {
+        let controllerClosed = false;
+        let modelClosed = false;
+        let controllerConnected = false;
+        let modelConnected = false;
+        app.db.reset = sinon.stub();
+        app.db.fireEvent = sinon.stub();
+        const ecs = {
+          clear: sinon.stub()
+        };
+        // Mock the API connections for the resulting application.
+        app.controllerAPI.destroy();
+        app.controllerAPI = {
+          close: callback => {
+            assert.strictEqual(
+              modelClosed, true,
+              'controller: close called before model close');
+            controllerClosed = true;
+            callback();
+          },
+          connect: () => {
+            assert.strictEqual(
+              controllerClosed, true,
+              'controller: connect called before close');
+            controllerConnected = true;
+          },
+          destroy: sinon.stub()
+        };
+        app.modelAPI.destroy();
+        app.modelAPI = {
+          close: callback => {
+            modelClosed = true;
+            callback();
+          },
+          connect: () => {
+            assert.strictEqual(
+              modelClosed, true, 'model: connect called before close');
+            modelConnected = true;
+          },
+          destroy: sinon.stub(),
+          get: sinon.stub().returns(ecs)
+        };
+        app.state.changeState = sinon.stub();
+        // Log out from the app.
+        app._handleLogout();
+        // The API connections have been properly closed.
+        assert.strictEqual(controllerClosed, true, 'controller close');
+        assert.strictEqual(modelClosed, true, 'model closed');
+        assert.strictEqual(controllerConnected, true, 'controller connect');
+        assert.strictEqual(modelConnected, false, 'model connect');
+        // The database has been reset and updated.
+        assert.strictEqual(app.db.reset.calledOnce, true, 'db.reset');
+        assert.strictEqual(app.db.fireEvent.calledOnce, true, 'db.fireEvent');
+        assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
+        assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
+        assert.equal(app.state.changeState.callCount, 1);
+        assert.deepEqual(app.state.changeState.args[0], [{
+          model: null,
+          profile: null,
+          root: null,
+          store: null
+        }]);
+      });
+
+      it('clears the db changed timer when the app is destroyed', () => {
+        app._dbChangedTimer = 'I am the timer!';
+        // Mock the clearTimeout builtin function.
+        const original = clearTimeout;
+        clearTimeout = sinon.stub();
+        cleanups.push(() => {
+          clearTimeout = original;
+        });
+        // Destroy the application.
+        app.destructor();
+        // The timer has been canceled.
+        assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
+        assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
+      });
+    });
+  });
+
+  describe('switchEnv', () => {
+    let ecs;
+
+    beforeEach(() => {
+      ecs = app.modelAPI.get('ecs');
+      ecs.clear = sinon.stub();
+      app.modelAPI.close = sinon.stub();
+      app.db.reset = sinon.stub();
+      app.db.fireEvent = sinon.stub();
+    });
+
+    it('can connect to an env even if not currently connected', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password');
+      assert.isTrue(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isTrue(app.db.reset.called, 'db was not reset.');
+      assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
+      const topo = app.topology.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.');
+    });
+
+    it('clears and resets the env, db, and ecs on change', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password');
+      assert.isTrue(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isTrue(app.db.reset.called, 'db was not reset.');
+      assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
+      const topo = app.topology.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.');
+    });
+
+    it('can not clear and reset the db, and ecs on change', () => {
+      app.switchEnv('wss://example.com/ws', 'user', 'password', null, true, false);
+      assert.isFalse(ecs.clear.called, 'ecs was not cleared.');
+      assert.isTrue(app.modelAPI.close.called, 'env was not closed.');
+      assert.isFalse(app.db.reset.called, 'db was not reset.');
+      assert.isFalse(app.db.fireEvent.called);
+    });
+
+    it('skips the reconnect when necessary', () => {
+      const connect = sinon.stub(app.modelAPI, 'connect');
+      cleanups.push(connect.restore);
+      // Try calling switchEnv both with explicit false and with socketUrl not
+      // set (implicit).
+      app.switchEnv('', '', '', false);
+      app.switchEnv();
+      assert.equal(connect.callCount, 0);
+    });
+  });
+
+  describe('getUser', () => {
+    it('gets the set user for the supplied service', () => {
+      const charmstoreUser = {
+        name: 'foo'
+      };
+      app.users = {
+        'charmstore': charmstoreUser
+      };
+      assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
+    });
+  });
+
+  describe('clearUser', () => {
+    it('clears the set user for the supplied service', () => {
+      const charmstoreUser = {
+        name: 'foo'
+      };
+      app.users = {
+        'charmstore': charmstoreUser
+      };
+      app.clearUser('charmstore');
+      assert.equal(app.users.charmstore, undefined);
+    });
+  });
+
+  describe('storeUser', () => {
+    beforeEach(() => {
+      app.charmstore.whoami = sinon.stub();
+    });
+
+    it('calls charmstore whoami for charmstore users', () => {
+      const user = {user: 'test'};
+      app.storeUser('charmstore');
+      assert.equal(app.charmstore.whoami.callCount, 1);
+      const cb = app.charmstore.whoami.lastCall.args[0];
+      cb(null, user);
+      const users = app.users;
+      assert.deepEqual(users['charmstore'], user);
+    });
+
+    it('renders the profile and breadcrumb if told to', () => {
+      const user = {user: 'test'};
+      const state = {test: 'state'};
+      app.state._appStateHistory.push(state);
+      app._renderBreadcrumb = sinon.stub();
+      app._renderUserProfile = sinon.stub();
+      app.storeUser('charmstore', true, true);
+      assert.equal(app.charmstore.whoami.callCount, 1);
+      app.charmstore.whoami.lastCall.args[0](null, user);
+      assert.equal(app._renderBreadcrumb.callCount, 1);
+      assert.equal(app._renderUserProfile.callCount, 1);
+      assert.deepEqual(app.users['charmstore'], user);
+    });
   });
 
   describe('loginToAPIs', () => {

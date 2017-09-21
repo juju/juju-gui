@@ -775,15 +775,6 @@ class GUIApp {
       }));
   }
 
-  /**
-    Hide the drag notifications.
-  */
-  _hideDragOverNotification() {
-    this.topology.fadeHelpIndicator(false);
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('drag-over-notification-container'));
-  }
-
   _controllerLoginHandler(entityPromise, evt) {
     const state = this.state;
     this.anonymousMode = false;

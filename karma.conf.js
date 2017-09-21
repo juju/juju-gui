@@ -66,7 +66,8 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/globalconfig.js',
-      'jujugui/static/gui/src/app/test-*.js'
+      'jujugui/static/gui/src/app/test-*.js',
+      'jujugui/static/gui/src/app/init/test-utils.js'
     ],
 
     // list of files to exclude
