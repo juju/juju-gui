@@ -76,7 +76,7 @@ describe('init', () => {
     });
 
     describe('MAAS support', () => {
-      let env, maasNode;
+      let maasNode;
 
       beforeEach(() => {
         // Set up the MAAS link node.
@@ -313,7 +313,7 @@ describe('init', () => {
     });
   });
 
-  xdescribe('Application authentication', () => {
+  describe('Application authentication', () => {
     let conn;
 
     beforeEach(() => {
@@ -321,10 +321,15 @@ describe('init', () => {
       app.destructor();
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       app = createApp({
         conn: conn,
         user: userClass
       });
+    });
+
+    afterEach(() => {
+      conn = null;
     });
 
     // Ensure the given message is a login request.
@@ -344,7 +349,6 @@ describe('init', () => {
     });
 
     it('avoids trying to login without credentials', () => {
-      sessionStorage.clear();
       app.modelAPI.get('user').controller = null;
       app.navigate = () => { return; };
       assert.deepEqual(
@@ -370,7 +374,6 @@ describe('init', () => {
     });
 
     it('tries to re-login with macaroons on disconnections', () => {
-      sessionStorage.clear();
       app.modelAPI.setAttrs({jujuCoreVersion: '2.0.0'});
       app.modelAPI.get('user').controller = ({macaroons: ['macaroon']});
       app.modelAPI.connect();
@@ -427,8 +430,14 @@ describe('init', () => {
   describe('Application Connection State', () => {
     it('should be able to handle env connection status changes', () => {
       const conn = new utils.SocketStub();
+      const userClass = new window.jujugui.User(
+        {sessionStorage: getMockStorage()});
+      userClass.controller = {user: 'user', password: 'password'};
       app.destructor();
-      app = createApp({conn: conn});
+      app = createApp({
+        conn: conn,
+        user: userClass
+      });
       app.db.reset = sinon.stub();
       app.modelAPI.login = sinon.stub();
       app.modelAPI.connect();
