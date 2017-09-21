@@ -400,16 +400,6 @@ describe('init', () => {
         assert.deepEqual(creds, null);
         done();
       });
-
-    });
-
-    it('normally uses window.location', () => {
-      // A lot of the app's authentication dance uses window.location,
-      // both for redirects after login and for authtokens.  For tests,
-      // the app copies window.location to app.location, so that we
-      // can easily override it.  This test verifies that the initialization
-      // actually does stash window.location as we expect.
-      assert.strictEqual(window.location, app.location);
     });
 
     it('sends a post to storefront after controller connection in GISF', () => {

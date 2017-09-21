@@ -78,7 +78,7 @@ module.exports = function(config) {
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/init/*.js': ['browserify'],
+      'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify']
     },

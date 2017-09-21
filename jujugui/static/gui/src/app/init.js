@@ -35,11 +35,6 @@ const yui = window.yui;
 class GUIApp {
   constructor(config) {
     /**
-      Stash the location object so that tests can override it.
-      @type {Object}
-    */
-    this.location = window.location;
-    /**
       The supplied application configuration object on instantiation. Stored
       here to avoid having to pass it around.
       @type {Object}
