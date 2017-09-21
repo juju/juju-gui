@@ -188,7 +188,13 @@ class PostDeployment extends React.Component {
     this.props.showEntityDetails();
   }
 
+  /**
+    Close the panel.
+
+    @param {Object} evt The click event.
+  */
   _closePostDeployment(evt) {
+    evt.stopPropagation();
     this.props.changeState({
       postDeploymentPanel: null
     });

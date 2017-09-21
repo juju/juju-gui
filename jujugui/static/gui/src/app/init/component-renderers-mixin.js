@@ -345,7 +345,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   /**
     Display post deployment help.
 
-    @param {Object} state The entity ID of the charm or bundle.
+    @param {Object} state The current state.
     @param {Function} next Run the next handler.
   */
   _displayPostDeployment(state, next) {
@@ -413,7 +413,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
-    The cleanup dispatcher for the post deployment screen.
+    Remove post deployment help.
+
+    @param {Object} state The current state.
+    @param {Function} next Run the next handler.
   */
   _clearPostDeployment(state, next) {
     ReactDOM.unmountComponentAtNode(
