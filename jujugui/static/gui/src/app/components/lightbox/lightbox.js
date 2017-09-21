@@ -70,6 +70,24 @@ class Lightbox extends React.Component {
     );
   }
 
+  _generateContent() {
+    if (this.props.children.length === 1) {
+      return this.props.children;
+    }
+
+    return this.props.children.map((child, index) => {
+      const classes = classNames(
+        'lightbox__slide',
+        {
+          'is-active': this.state.activeSlide === index
+        }
+      );
+      return (
+        <div className={classes}>{child}</div>
+      )
+    });
+  }
+
   render() {
     let caption;
 
@@ -81,17 +99,7 @@ class Lightbox extends React.Component {
       );
     }
 
-    const content = this.props.children.map((child, index) => {
-      const classes = classNames(
-        'lightbox__slide',
-        {
-          'is-active': this.state.activeSlide === index
-        }
-      );
-      return (
-        <div className="lightbox__slide"
-      )
-    });
+
     return (
       <div className="lightbox" onClick={this.props.close}>
         <button className="lightbox__close">
@@ -99,7 +107,7 @@ class Lightbox extends React.Component {
         </button>
         <div className="lightbox__wrapper">
           <div className="lightbox__content">
-            {this.props.children}
+            {this._generateContent()}
             {this._generateNavigation()}
           </div>
           {caption}
