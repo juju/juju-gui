@@ -13,6 +13,7 @@ describe('HeaderBreadcrumb', () => {
       listModelsWithInfo, showProfile, switchModel;
   const acl = {};
 
+
   beforeEach(function() {
     appState = {
       current: {},

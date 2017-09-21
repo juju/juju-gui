@@ -210,7 +210,10 @@ class SearchResultsItem extends React.Component {
     // canvas.
     this.props.changeState({
       search: null,
-      profile: null
+      profile: null,
+      'postDeploymentPanel': {
+        entityId: id
+      }
     });
   }
 

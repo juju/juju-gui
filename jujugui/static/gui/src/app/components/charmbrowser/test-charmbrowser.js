@@ -23,20 +23,20 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the search results when the app state calls for it', function() {
-    var query = 'django';
+    const query = 'django';
     appState.current.search = {text: query};
     appState.generatePath = sinon.stub();
-    var series = {};
+    const series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
     const deployTarget = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var makeEntityModel = sinon.spy();
-    var utils = {getName: sinon.stub()};
-    var renderer = jsTestUtils.shallowRender(
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const makeEntityModel = sinon.spy();
+    const utils = {getName: sinon.stub()};
+    const renderer = jsTestUtils.shallowRender(
       <Charmbrowser
         acl={acl}
         addNotification={addNotification}
@@ -63,10 +63,10 @@ describe('Charmbrowser', function() {
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const searchResults = output.props.children.props.children.props;
-    var expected = (
+    const expected = (
       <Panel
         instanceName="white-box"
         clickAction={instance._close}
@@ -98,12 +98,12 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the store when the app state calls for it', function() {
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var utils = {getName: sinon.stub()};
-    var makeEntityModel = sinon.spy();
-    var seriesList = {};
-    var renderer = jsTestUtils.shallowRender(
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const utils = {getName: sinon.stub()};
+    const makeEntityModel = sinon.spy();
+    const seriesList = {};
+    const renderer = jsTestUtils.shallowRender(
       <Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
@@ -131,9 +131,9 @@ describe('Charmbrowser', function() {
         staticURL='surl'
         urllib={sinon.stub()}
         utils={utils} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <Panel
         instanceName="white-box"
         clickAction={instance._close}

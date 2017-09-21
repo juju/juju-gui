@@ -36,6 +36,7 @@ const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-set
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const NotificationList = require('../components/notification-list/notification-list');
 const Panel = require('../components/panel/panel');
+const PostDeployment = require('../components/post-deployment/post-deployment');
 const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
@@ -343,6 +344,53 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
+    Display post deployment help.
+
+    @param {Object} state The current state.
+    @param {Function} next Run the next handler.
+  */
+  _displayPostDeployment(state, next) {
+    if (!state.postDeploymentPanel.show) {
+      next();
+      return;
+    }
+    const entityId = state.postDeploymentPanel.entityId;
+
+    const charmstore = this.charmstore;
+
+    const showEntityDetails = (id) => {
+      let url;
+      try {
+        url = window.jujulib.URL.fromString(id);
+      } catch (_) {
+        url = window.jujulib.URL.fromLegacyString(id);
+      }
+
+      const storeState = {
+        profile: null,
+        search: null,
+        store: url.path()
+      };
+
+      this.state.changeState(storeState);
+    };
+
+    ReactDOM.render(
+      <PostDeployment
+        changeState={this.state.changeState.bind(this.state)}
+        entityId={entityId}
+        getEntity={charmstore.getEntity.bind(charmstore)}
+        getFile={charmstore.getFile.bind(charmstore)}
+        makeEntityModel={yui.juju.makeEntityModel}
+        marked={marked}
+        showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+      document.getElementById('post-deployment')
+    );
+
+    next();
+  }
+
+  /**
     The cleanup dispatcher keyboard shortcuts modal.
   */
   _clearShortcutsModal() {
@@ -363,6 +411,19 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('lightbox')
     );
+  }
+
+  /**
+    Remove post deployment help.
+
+    @param {Object} state The current state.
+    @param {Function} next Run the next handler.
+  */
+  _clearPostDeployment(state, next) {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('post-deployment')
+    );
+    next();
   }
 
   _renderHeaderLogo() {

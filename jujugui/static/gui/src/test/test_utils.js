@@ -1238,16 +1238,9 @@ describe('utilities', function() {
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [null]);
       // Check to make sure that the state was changed.
-      assert.equal(app.state.changeState.callCount, 1);
+      assert.equal(app.state.changeState.callCount, 2);
       assert.deepEqual(app.state.changeState.args[0], [{
-        profile: null,
-        gui: {status: null},
-        hash: null,
-        root: null,
-        model: {
-          path: 'foo/model-name',
-          uuid: 'the-uuid'
-        }
+        postDeploymentPanel: {show: true}
       }]);
     });
 
@@ -1272,10 +1265,13 @@ describe('utilities', function() {
       // Call the handler for the createModel callCount
       app.controllerAPI.createModel.args[0][3](null, modelData);
       // Check to make sure that the state was changed.
-      assert.equal(app.state.changeState.callCount, 2);
+      assert.equal(app.state.changeState.callCount, 3);
       assert.deepEqual(app.state.changeState.args, [
         [{root: null}],
-        [{special: {dd: null}}]
+        [{special: {dd: null}}],
+        [{postDeploymentPanel: {
+          show: true
+        }}]
       ]);
     });
 

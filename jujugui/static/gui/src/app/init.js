@@ -515,6 +515,9 @@ class GUIApp {
       ['gui.deploy',
         this._renderDeployment.bind(this),
         this._clearDeployment.bind(this)],
+      ['postDeploymentPanel',
+        this._displayPostDeployment.bind(this),
+        this._clearPostDeployment.bind(this)],
       // Nothing needs to be done at the top level when the hash changes.
       ['hash'],
       // special dd is handled by the root dispatcher as it requires /new
@@ -1462,6 +1465,9 @@ class GUIApp {
     this.state.changeState({
       gui: {
         deploy: JSON.stringify(ddData)
+      },
+      postDeploymentPanel: {
+        entityId: ddData.id
       }
     });
   }
