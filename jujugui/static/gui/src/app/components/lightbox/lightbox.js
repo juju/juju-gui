@@ -48,7 +48,7 @@ class Lightbox extends React.Component {
       const classes = classNames(
         'lightbox__navigation-bullet',
         {
-          'is-active': this.state.activeSlide === index
+          'is-active': this.state.activeSlide === i
         }
       );
 
@@ -83,7 +83,7 @@ class Lightbox extends React.Component {
         }
       );
       return (
-        <div className={classes}>{child}</div>
+        <div className={classes} key={index}>{child}</div>
       )
     });
   }
