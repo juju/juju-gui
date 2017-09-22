@@ -50,7 +50,7 @@ describe('utilities', function() {
   var views, models, utils;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-views', 'juju-models'], function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju.views.utils');

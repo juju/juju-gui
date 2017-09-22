@@ -15,11 +15,6 @@ describe('USSOLoginLink', () => {
         in the address bar above, please allow popups
         from ${window.location.origin}.`;
 
-  beforeAll(done => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('usso-login-link', () => { done(); });
-  });
-
   it('can render a text link', () => {
     const output = jsTestUtils.shallowRender(
       <USSOLoginLink
