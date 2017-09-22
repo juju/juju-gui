@@ -25,8 +25,7 @@ describe('Landscape integration', function() {
   before(function(done) {
     YUI(GlobalConfig).use(['node',
       'juju-landscape',
-      'juju-models',
-      'juju-views'], function(Y) {
+      'juju-models'], function(Y) {
       var envAnno;
 
       views = Y.namespace('juju.views');

@@ -11,11 +11,6 @@ const jsTestUtils = require('../../utils/component-test-utils');
 describe('HeaderHelp', function() {
   let appState;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('header-help', function() { done(); });
-  });
-
   beforeEach(function() {
     appState = {
       current: {},

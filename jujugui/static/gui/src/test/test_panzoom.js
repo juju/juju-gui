@@ -24,8 +24,6 @@ describe('pan zoom module', function() {
   before(function(done) {
     YUI(GlobalConfig).use(['node',
       'juju-models',
-      'juju-views',
-      'juju-gui',
       'juju-tests-utils',
       'juju-view-environment'],
     function(Y) {

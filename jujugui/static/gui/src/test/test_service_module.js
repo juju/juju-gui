@@ -24,10 +24,8 @@ describe('service module annotations', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use([
-      'juju-gui',
       'juju-models',
       'juju-tests-utils',
-      'juju-views',
       'juju-view-environment',
       'node'],
     function(Y) {
@@ -123,10 +121,8 @@ describe('service updates', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use([
-      'juju-gui',
       'juju-models',
       'juju-tests-utils',
-      'juju-views',
       'juju-view-environment',
       'node'],
     function(Y) {
@@ -200,8 +196,6 @@ describe.skip('service module events', function() {
       'juju-landscape',
       'charmstore-api',
       'juju-models',
-      'juju-views',
-      'juju-gui',
       'juju-view-environment',
       'juju-topology-service'],
     function(Y) {

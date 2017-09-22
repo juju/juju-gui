@@ -12,11 +12,6 @@ const jsTestUtils = require('../../utils/component-test-utils');
 describe('EntityDetails', function() {
   var acl, mockEntity, urllib;
 
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-details', 'jujulib-utils', function() { done(); });
-  });
-
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();

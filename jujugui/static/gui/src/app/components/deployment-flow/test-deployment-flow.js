@@ -129,11 +129,6 @@ const createDeploymentFlow = (props = {}) => {
 describe('DeploymentFlow', function() {
   let applications;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-flow', function() { done(); });
-  });
-
   beforeEach(() => {
     window.juju_config = {flags: {}};
     applications = [
