@@ -408,22 +408,6 @@ utils.compareSemver = (a, b) => {
 */
 utils.switchModel = function(
   modelAPI, addNotification, model, confirmUncommitted=true) {
-  // XXX if app.js is gone then this appconfig check can be removed.
-  if (this.applicationConfig) {
-    if (model && model.id === this.modelUUID) {
-      // There is nothing to be done as we are already connected to the model.
-      // Note that this check is always false when switching models from the
-      // profile view, as the "modelUUID" is set to null in that case.
-      return;
-    }
-  }
-  // XXX If app.js is gone the this.get('modelUUID') || can be removed.
-  else if (model && model.id === this.get('modelUUID')) {
-    // There is nothing to be done as we are already connected to this model.
-    // Note that this check is always false when switching models from the
-    // profile view, as the "modelUUID" is set to null in that case.
-    return;
-  }
   if (modelAPI.get('ecs').isCommitting()) {
     const message = 'cannot switch models while deploying.';
     addNotification({

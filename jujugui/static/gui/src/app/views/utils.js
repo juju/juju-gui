@@ -126,7 +126,7 @@ utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
 };
 
 /**
-  Callback for the env add_unit call from tne addGhostAndEcsUnit method.
+  Callback for the env add_unit call from the addGhostAndEcsUnit method.
 
   @method removeGhostAndUnitCallback
   @param {Object} ghostUnit the ghost unit created in the db which this fn
