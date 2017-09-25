@@ -1,8 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const yui = window.yui;
-const utils = yui.juju.views.utils;
+const utils = require('../views/utils');
 
 /**
   Place all the unplaced units on new machines.

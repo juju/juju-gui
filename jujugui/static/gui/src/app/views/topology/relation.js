@@ -1236,7 +1236,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'node',
     'event',
     'juju-models',
-    'juju-environment-utils-utils',
+    'juju-environment-utils',
     'juju-topology-utils'
   ]
 });

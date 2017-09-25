@@ -36,4 +36,28 @@ describe('init utils', () => {
       assert.equal(url, 'wss://my.example.com:17070/model/1234-1234/api');
     });
   });
+
+  describe('unloadWindow', function() {
+    it('does not block when no uncommitted changes', function() {
+      const context = {
+        ecs: {
+          getCurrentChangeSet: sinon.stub().returns({})
+        }
+      };
+      const result = utils.unloadWindow.call(context);
+      assert.strictEqual(result, undefined);
+    });
+
+    it('does block when has uncommitted changes', function() {
+      const context = {
+        ecs: {
+          getCurrentChangeSet: sinon.stub().returns({foo: 'bar'})
+        }
+      };
+      const expected = 'You have uncommitted changes to your model. You will ' +
+        'lose these changes if you continue.';
+      const result = utils.unloadWindow.call(context);
+      assert.strictEqual(result, expected);
+    });
+  });
 });

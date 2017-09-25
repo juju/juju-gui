@@ -3,7 +3,7 @@
 
 const ReactDOM = require('react-dom');
 
-const yui = window.yui;
+const utils = require('../views/utils');
 
 const keyBindings = {
   'A-s': {
@@ -70,7 +70,7 @@ const keyBindings = {
 
   'S-d': {
     callback: function(evt) {
-      yui.juju.views.utils.exportEnvironmentFile(this.db);
+      utils.exportEnvironmentFile(this.db);
     },
     help: 'Export the model',
     label: 'Shift + d'

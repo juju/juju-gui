@@ -43,7 +43,6 @@ globals:
   chai: true
   classNames: true
   Clipboard: true
-  consoleManager: true
   dataLayer: true
   describe: true
   Exception: true
