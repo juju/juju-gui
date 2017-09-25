@@ -31,7 +31,6 @@ YUI.add('juju-topology-service', function(Y) {
       models = Y.namespace('juju.models'),
       relationUtils = window.juju.utils.RelationUtils,
       topoUtils = Y.namespace('juju.topology.utils'),
-      utils = Y.namespace('juju.views.utils'),
       views = Y.namespace('juju.views'),
       ziputils = Y.namespace('juju.ziputils');
 
