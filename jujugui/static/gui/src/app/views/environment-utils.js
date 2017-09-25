@@ -6,6 +6,12 @@ YUI.add('juju-environment-utils', function(Y) {
   const views = Y.namespace('juju.views');
   const utils = Y.namespace('juju.views.utils');
 
+  /*
+   * snapToPoles if set to true will snap the relation lines to the
+   * closest top, left, bottom or right edge of the service block.
+   */
+  utils.snapToPoles = false;
+
   /**
    * Utility object that encapsulates Y.Models and keeps their position
    * state within an SVG canvas.
@@ -303,6 +309,38 @@ YUI.add('juju-environment-utils', function(Y) {
         result[id].icon = service.get('icon');
       }
     );
+    return result;
+  };
+
+  views.getEffectiveViewportSize = function(primary, minwidth, minheight) {
+    // Attempt to get the viewport height minus the navbar at top and
+    // control bar at the bottom.
+    var containerHeight,
+        bottomNavbar = document.querySelector('.bottom-navbar'),
+        navbar = document.querySelector('.header-banner'),
+        viewport = document.querySelector('#viewport'),
+        result = {height: minheight || 0, width: minwidth || 0};
+    if (primary) {
+      containerHeight = document.documentElement.clientHeight;
+    } else {
+      const body = document.body;
+      const html = document.documentElement;
+      containerHeight = Math.max(body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight);
+    }
+    // If all elements are present and the viewport is not set to display none
+    const viewportHeight = viewport && window.getComputedStyle(
+      viewport).getPropertyValue('width');
+    if (containerHeight && navbar && viewport && viewportHeight !== 'auto') {
+      result.height = containerHeight -
+          (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
+
+      result.width = Math.floor(parseFloat(viewportHeight));
+
+      // Make sure we don't get sized any smaller than the minimum.
+      result.height = Math.max(result.height, minheight || 0);
+      result.width = Math.max(result.width, minwidth || 0);
+    }
     return result;
   };
 

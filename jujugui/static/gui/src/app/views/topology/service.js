@@ -1082,7 +1082,11 @@ YUI.add('juju-topology-service', function(Y) {
         // The entiy (charm or bundle) data was JSON encoded because the
         // dataTransfer mechanism only allows for string values.
         var entityData = JSON.parse(dragData.data);
-        if (utils.determineEntityDataType(entityData) === 'charm') {
+        let entityType = 'charm';
+        if (entityData && entityData.id && entityData.id.indexOf('bundle') > -1) {
+          entityType = 'bundle';
+        }
+        if (entityType === 'charm') {
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
           var charm = new models.Charm(entityData);

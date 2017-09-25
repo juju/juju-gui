@@ -95,7 +95,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           updateUnitFlags={db.updateUnitFlags.bind(db)}
           findRelatedServices={db.findRelatedServices.bind(db)}
           findUnrelatedServices={db.findUnrelatedServices.bind(db)}
-          getUnitStatusCounts={viewUtils.getUnitStatusCounts}
+          getUnitStatusCounts={initUtils.getUnitStatusCounts}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
           changeState={this.state.changeState.bind(this.state)} />
@@ -113,7 +113,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <EnvSizeDisplay
         appState={this.state}
         machineCount={machineCount}
-        pluralize={viewUtils.pluralize.bind(this)}
+        pluralize={initUtils.pluralize.bind(this)}
         serviceCount={serviceCount}
       />,
       document.getElementById('env-size-display-container'));
@@ -131,7 +131,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         changeState={this.state.changeState.bind(this.state)}
         exportEnvironmentFile={
-          viewUtils.exportEnvironmentFile.bind(viewUtils, db)}
+          initUtils.exportEnvironmentFile.bind(initUtils, db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
@@ -170,7 +170,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
-        humanizeTimestamp={viewUtils.humanizeTimestamp}
+        humanizeTimestamp={initUtils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
       />, sharing);
   }
@@ -248,7 +248,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         getAgreements={this.terms.getAgreements.bind(this.terms)}
         getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
         interactiveLogin={this.applicationConfig.interactiveLogin}
-        pluralize={viewUtils.pluralize.bind(this)}
+        pluralize={initUtils.pluralize.bind(this)}
         setPageTitle={this.setPageTitle}
         staticURL={this.applicationConfig.staticURL}
         storeUser={this.storeUser.bind(this)}
@@ -507,7 +507,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         renderMarkdown={marked}
         deployService={this.deployService.bind(this)}
         appState={this.state}
-        utils={viewUtils}
+        utils={initUtils}
         staticURL={window.juju_config.staticURL}
         charmstoreURL={
           viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
@@ -570,15 +570,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         createUser={
           this.payment && this.payment.createUser.bind(this.payment)}
         generateCloudCredentialName={
-          viewUtils.generateCloudCredentialName}
+          initUtils.generateCloudCredentialName}
         getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getCharges={
           this.payment && this.payment.getCharges.bind(this.payment)}
         getCloudCredentialNames={
           controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
         getCloudProviderDetails={
-          viewUtils.getCloudProviderDetails.bind(
-            viewUtils)}
+          initUtils.getCloudProviderDetails.bind(
+            initUtils)}
         getCountries={
           this.payment && this.payment.getCountries.bind(this.payment)}
         getReceipt={
@@ -607,7 +607,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         user={this.user.controller.user}
         userInfo={this._getUserInfo(state)}
         validateForm={
-          viewUtils.validateForm.bind(viewUtils)} />,
+          initUtils.validateForm.bind(initUtils)} />,
       document.getElementById('top-page-container'));
     next();
   }
@@ -652,8 +652,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           machines: db.machines,
           units: db.units
         })}
-        generateMachineDetails={viewUtils.generateMachineDetails.bind(
-          viewUtils, modelAPI.genericConstraints, db.units)}
+        generateMachineDetails={initUtils.generateMachineDetails.bind(
+          initUtils, modelAPI.genericConstraints, db.units)}
         machine={this.state.current.gui.machines}
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
@@ -665,8 +665,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           updateMachineConstraints: ecs.updateMachineConstraints.bind(ecs),
           updateMachineSeries: ecs.updateMachineSeries.bind(ecs)
         })}
-        parseConstraints={viewUtils.parseConstraints.bind(
-          viewUtils, modelAPI.genericConstraints)}
+        parseConstraints={initUtils.parseConstraints.bind(
+          initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         series={window.jujulib.CHARM_SERIES}
       />,
@@ -762,20 +762,20 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          clearState={viewUtils.clearState.bind(this, topo)}
+          clearState={initUtils.clearState.bind(this, topo)}
           createMachinesPlaceUnits={viewUtils.createMachinesPlaceUnits.bind(
             this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
-          destroyService={viewUtils.destroyService.bind(
+          destroyService={initUtils.destroyService.bind(
             this, db, model, service)}
           destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
-          destroyUnits={viewUtils.destroyUnits.bind(this, model)}
-          displayPlans={viewUtils.compareSemver(
+          destroyUnits={model.remove_units.bind(model)}
+          displayPlans={initUtils.compareSemver(
             this.applicationConfig.jujuCoreVersion, '2') > -1}
           getCharm={model.get_charm.bind(model)}
-          getUnitStatusCounts={viewUtils.getUnitStatusCounts}
-          getYAMLConfig={viewUtils.getYAMLConfig.bind(this)}
+          getUnitStatusCounts={initUtils.getUnitStatusCounts}
+          getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
@@ -784,7 +784,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
             charmstore)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
-          linkify={viewUtils.linkify}
+          linkify={initUtils.linkify}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
           relatableApplications={relatableApplications}
@@ -915,7 +915,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         credential={modelAPI.get('credential')}
         changes={currentChangeSet}
         charmsGetById={db.charms.getById.bind(db.charms)}
-        deploy={viewUtils.deploy.bind(
+        deploy={initUtils.deploy.bind(
           viewUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
@@ -923,10 +923,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
             changesUtils, services, db.units)}
-        generateCloudCredentialName={viewUtils.generateCloudCredentialName}
+        generateCloudCredentialName={initUtils.generateCloudCredentialName}
         generateMachineDetails={
-          viewUtils.generateMachineDetails.bind(
-            viewUtils, modelAPI.genericConstraints, db.units)}
+          initUtils.generateMachineDetails.bind(
+            initUtils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
@@ -939,7 +939,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
         getCloudCredentialNames={
           controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
-        getCloudProviderDetails={viewUtils.getCloudProviderDetails.bind(viewUtils)}
+        getCloudProviderDetails={initUtils.getCloudProviderDetails.bind(initUtils)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getCountries={
           this.payment && this.payment.getCountries.bind(this.payment)
@@ -968,7 +968,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         username={this.user ? this.user.displayName : undefined}
-        validateForm={viewUtils.validateForm.bind(viewUtils)}
+        validateForm={initUtils.validateForm.bind(initUtils)}
         WebHandler={yui.juju.environments.web.WebHandler}
         withPlans={false} />,
       document.getElementById('deployment-container'));
@@ -1099,7 +1099,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       if (!username) {
         return;
       }
-      viewUtils.showProfile(
+      initUtils.showProfile(
         this.modelAPI && this.modelAPI.get('ecs'),
         this.state.changeState.bind(this.state),
         username);
@@ -1109,7 +1109,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       if (!username) {
         return;
       }
-      viewUtils.showAccount(
+      initUtils.showAccount(
         this.modelAPI && this.modelAPI.get('ecs'),
         this.state.changeState.bind(this.state));
     };
@@ -1160,13 +1160,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
-        humanizeTimestamp={viewUtils.humanizeTimestamp}
+        humanizeTimestamp={initUtils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showEnvSwitcher={showEnvSwitcher}
-        showProfile={viewUtils.showProfile.bind(
+        showProfile={initUtils.showProfile.bind(
           this, modelAPI && ecs,
           this.state.changeState.bind(this.state))}
         switchModel={this._bound.switchModel}
@@ -1180,7 +1180,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderProviderLogo() {
     const container = document.getElementById('provider-logo-container');
     const cloudProvider = this.modelAPI.get('providerType');
-    let providerDetails = viewUtils.getCloudProviderDetails(cloudProvider);
+    let providerDetails = initUtils.getCloudProviderDetails(cloudProvider);
     const currentState = this.state.current || {};
     const isDisabled = (
       // There is no provider.

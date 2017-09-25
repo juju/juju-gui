@@ -67,6 +67,7 @@ const testUtils = {
       'machine-view',
       'main',
       'notifications-container',
+      'popup-container',
       'profile-link-container',
       'provider-logo-container',
       'sharing-container',

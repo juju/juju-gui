@@ -3,7 +3,7 @@
 
 const ReactDOM = require('react-dom');
 
-const utils = require('../views/utils');
+const utils = require('./utils');
 
 const keyBindings = {
   'A-s': {

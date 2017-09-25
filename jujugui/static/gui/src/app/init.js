@@ -27,7 +27,6 @@ juju.components.AmbiguousRelationMenu = require(
   './components/relation-menu/ambiguous-relation-menu');
 juju.components.Environment = require(
   './components/environment/environment');
-juju.components.Popup = require('./components/popup/popup');
 juju.components.RelationMenu = require(
   './components/relation-menu/relation-menu');
 
@@ -332,7 +331,7 @@ class GUIApp {
     };
     // Bind switchModel separately to include the already bound
     // addNotifications.
-    this._bound.switchModel = viewUtils.switchModel.bind(
+    this._bound.switchModel = utils.switchModel.bind(
       this, this.modelAPI, this._bound.addNotification);
   }
 
