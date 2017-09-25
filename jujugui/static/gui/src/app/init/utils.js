@@ -21,7 +21,7 @@ let utils = {};
     option.
   @return {String} The resulting fully qualified WebSocket URL.
 */
-utils.createSocketURL = function(data) {
+utils.createSocketURL = data => {
   let apiAddress = data.apiAddress;
   let template = data.template;
   let protocol = data.protocol;
@@ -98,8 +98,8 @@ const timestrings = {
   @param {Number} t The timestamp.
   @return {String} The presentation of the timestamp.
 */
-utils.humanizeTimestamp = function(t) {
-  var l = timestrings,
+utils.humanizeTimestamp = t => {
+  const l = timestrings,
       prefix = l.prefixAgo,
       suffix = l.suffixAgo,
       distanceMillis = new Date().getTime() - t,
@@ -117,14 +117,14 @@ utils.humanizeTimestamp = function(t) {
     Internal helper function to humanizeTimestamp, intentionally not
     formatted to be included in exported docs.
   */
-  function substitute(stringOrFunction, number) {
-    var string = typeof stringOrFunction === 'function' ?
+  const substitute = (stringOrFunction, number) => {
+    const string = typeof stringOrFunction === 'function' ?
           stringOrFunction(number, distanceMillis) : stringOrFunction,
         value = (l.numbers && l.numbers[number]) || number;
     return string.replace(/%d/i, value);
-  }
+  };
 
-  var words = seconds < 45 && substitute(l.seconds, Math.round(seconds)) ||
+  const words = seconds < 45 && substitute(l.seconds, Math.round(seconds)) ||
       seconds < 90 && substitute(l.minute, 1) ||
       minutes < 45 && substitute(l.minutes, Math.round(minutes)) ||
       minutes < 90 && substitute(l.hour, 1) ||
@@ -145,24 +145,24 @@ utils.humanizeTimestamp = function(t) {
 
   @param {Object} db The application database.
 */
-utils.exportEnvironmentFile = function(db) {
+utils.exportEnvironmentFile = db => {
   const apps = db.services.toArray();
   const idMap = new Map();
   // Store a map of all the temporary app ids to the real ids.
   apps.forEach(app => {
     idMap.set(app.get('id'), app.get('name'));
   });
-  var result = db.exportBundle();
-  var exportData = jsyaml.dump(result);
+  const result = db.exportBundle();
+  let exportData = jsyaml.dump(result);
   // Replace the temporary app ids with the real ids.
   idMap.forEach((name, id) => {
     exportData = exportData.split(id).join(name);
   });
   // In order to support Safari 7 the type of this blob needs
   // to be text/plain instead of it's actual type of application/yaml.
-  var exportBlob = new Blob([exportData],
+  const exportBlob = new Blob([exportData],
     {type: 'text/plain;charset=utf-8'});
-  var envName = db.environment.get('name');
+  const envName = db.environment.get('name');
   saveAs(exportBlob, utils._generateBundleExportFileName(envName));
 };
 
@@ -173,8 +173,8 @@ utils.exportEnvironmentFile = function(db) {
   @param {String} Enviroment name
   @param {Date} date object
 */
-utils._generateBundleExportFileName = function(envName, date=new Date()) {
-  var fileExtension = '.yaml';
+utils._generateBundleExportFileName = (envName, date=new Date()) => {
+  const fileExtension = '.yaml';
   return [envName,
     date.getFullYear(),
     ('0' + (date.getMonth() + 1)).slice(-2),
@@ -189,8 +189,8 @@ utils._generateBundleExportFileName = function(envName, date=new Date()) {
   @param {Function} callback The function to call when the file loads.
   @param {Object} e The load event.
 */
-utils._onYAMLConfigLoaded = function(filename, callback, e) {
-  var config = jsyaml.safeLoad(e.target.result);
+utils._onYAMLConfigLoaded = (filename, callback, e) => {
+  const config = jsyaml.safeLoad(e.target.result);
   callback(config);
 };
 
@@ -199,8 +199,8 @@ utils._onYAMLConfigLoaded = function(filename, callback, e) {
   @param {Object} file The config YAML file.
   @param {Function} callback The function to call when the file loads.
 */
-utils.getYAMLConfig = function(file, callback) {
-  var reader = new FileReader();
+utils.getYAMLConfig = (file, callback) => {
+  const reader = new FileReader();
   reader.onload = utils._onYAMLConfigLoaded.bind(this, file.name, callback);
   reader.readAsText(file);
 };
@@ -213,10 +213,10 @@ Return the name from the given charm ID.
   "cs:trusty/django-42" or "cs:~frankban/utopic/juju-gui-0"
 @return {String} The charm name.
 */
-utils.getName = function(id) {
-  var parts = id.split('/');
+utils.getName = id => {
+  const parts = id.split('/');
   // The last part will be the name and version number e.g. juju-gui-0.
-  var idParts = parts[parts.length - 1].split('-');
+  const idParts = parts[parts.length - 1].split('-');
   // If the last part is numeric, it's the version number; remove it.
   if (!isNaN(idParts[idParts.length - 1])) {
     idParts.pop();
@@ -235,8 +235,8 @@ By default, if pluralization is needed, an 's' is appended to the
 string. This handles the regular case (e.g. cat => cats). Irregular
 cases are handled by passing in a plural form (e.g. octopus => ocotopi).
 */
-utils.pluralize = function(word, object, plural_word, options) {
-  var plural = false;
+utils.pluralize = (word, object, plural_word, options) => {
+  let plural = false;
   if (typeof(object) === 'number') {
     plural = (object !== 1);
   }
@@ -265,7 +265,7 @@ utils.pluralize = function(word, object, plural_word, options) {
   @param {Object} env Reference to the app env.
   @param {Object} service Reference to the service model to add units to.
 */
-utils.destroyService = function(db, env, service, callback) {
+utils.destroyService = (db, env, service, callback) => {
   if (service.name === 'service') {
     env.destroyApplication(service.get('id'),
       utils._destroyServiceCallback.bind(this, service, db, callback),
@@ -285,7 +285,7 @@ utils.destroyService = function(db, env, service, callback) {
   @param {Object} evt The event describing the destruction (or lack
     thereof).
 */
-utils._destroyServiceCallback = function(service, db, callback, evt) {
+utils._destroyServiceCallback = (service, db, callback, evt) => {
   if (evt.err) {
     // If something bad happend we need to alert the user.
     db.notifications.add({
@@ -314,7 +314,7 @@ utils._destroyServiceCallback = function(service, db, callback, evt) {
   Fire the clearState event.
   @param {Object} topo The topology object.
 */
-utils.clearState = function(topo) {
+utils.clearState = topo => {
   document.dispatchEvent(new Event('topo.clearState'));
 };
 
@@ -323,15 +323,15 @@ utils.clearState = function(topo) {
   @param {Array} units An array of units.
   @returns {Object} The unit statuses.
 */
-utils.getUnitStatusCounts = function(units) {
-  var unitStatuses = {
+utils.getUnitStatusCounts = units => {
+  const unitStatuses = {
     uncommitted: { priority: 3, size: 0 },
     started: { priority: 2, size: 0 },
     pending: { priority: 1, size: 0 },
     error: { priority: 0, size: 0 }
   };
-  var agentState;
-  units.forEach(function(unit) {
+  let agentState;
+  units.forEach(unit => {
     agentState = unit.agent_state || 'uncommitted';
     // If we don't have it in our status list then add it to the end
     // with a very low priority.
@@ -347,23 +347,23 @@ utils.getUnitStatusCounts = function(units) {
 // escaped the forward slashes and removed the negative-lookbehind, which JS
 // does not support. See line 46 in Gruber's gist; that's the line/feature
 // I had to take out.
-var URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/ig; // eslint-disable-line max-len
+const URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/ig; // eslint-disable-line max-len
 
 /**
   Convert plain text links to anchor tags.
   @param {String} str a string that may have a plain text link or URL in it
   @returns {String} the string with HTML anchor tags for the link
 */
-utils.linkify = function(str) {
+utils.linkify = str => {
   // Sanitize any malicious HTML or Javascript.
-  var sanitizedStr = str.replace(/&/g, '&amp;')
+  let sanitizedStr = str.replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
-  var links = sanitizedStr.match(URL_RE);
+  const links = sanitizedStr.match(URL_RE);
   if (links) {
-    links.forEach(function(link) {
+    links.forEach(link => {
       // Sanitize any attempts to escape an href attribute.
-      var href = link.replace(/"/g, '&quot;');
+      const href = link.replace(/"/g, '&quot;');
       // Replace the text-only link with an anchor element.
       sanitizedStr = sanitizedStr.replace(link,
         `<a href="${href}" target="_blank">${link}</a>`);
@@ -380,14 +380,14 @@ utils.linkify = function(str) {
   @param {Integer} returns -1 if a is older than b, 0 if a is equal to b,
     and 1 if a is newer than b.
 */
-utils.compareSemver = function(a, b) {
+utils.compareSemver = (a, b) => {
   a = a.split('-')[0];
   b = b.split('-')[0];
-  var pa = a.split('.');
-  var pb = b.split('.');
-  for (var i = 0; i < 3; i++) {
-    var na = Number(pa[i]);
-    var nb = Number(pb[i]);
+  const pa = a.split('.');
+  const pb = b.split('.');
+  for (let i = 0; i < 3; i++) {
+    const na = Number(pa[i]);
+    const nb = Number(pb[i]);
     if (na > nb) return 1;
     if (nb > na) return -1;
     if (!isNaN(na) && isNaN(nb)) return 1;
@@ -449,8 +449,8 @@ utils.switchModel = function(
   Show the a confirmation popup for when there are uncommitted changes.
   @param {Function} action The method to call if the user continues.
 */
-utils._showUncommittedConfirm = function(action) {
-  var buttons = [{
+utils._showUncommittedConfirm = action => {
+  const buttons = [{
     title: 'Cancel',
     action: utils._hidePopup.bind(this),
     type: 'inline-neutral'
@@ -476,7 +476,7 @@ utils._showUncommittedConfirm = function(action) {
 /**
   Hide the confirmation popup.
 */
-utils._hidePopup = function() {
+utils._hidePopup = () => {
   /* eslint-disable no-undef */
   ReactDOM.unmountComponentAtNode(
     document.getElementById('popup-container'));
@@ -537,7 +537,7 @@ utils._switchModel = function(env, model) {
   @param {Function} changeState The method for changing the app state.
   @param {String} username The username of the profile to display.
 */
-utils.showProfile = function(ecs, changeState, username) {
+utils.showProfile = (ecs, changeState, username) => {
   const currentChangeSet = ecs.getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (Object.keys(currentChangeSet).length > 0) {
@@ -557,7 +557,7 @@ utils.showProfile = function(ecs, changeState, username) {
   @param {String} username The username of the profile to display.
   @param {Boolean} clear Whether to clear the ecs.
 */
-utils._showProfile = function(ecs, changeState, username, clear=false) {
+utils._showProfile = (ecs, changeState, username, clear=false) => {
   utils._hidePopup();
   if (clear) {
     // Have to go ahead and clear the ECS otherwise future navigation will
@@ -579,7 +579,7 @@ utils._showProfile = function(ecs, changeState, username, clear=false) {
   @param {Object} ecs Reference to the ecs.
   @param {Function} changeState The method for changing the app state.
 */
-utils.showAccount = function(ecs, changeState) {
+utils.showAccount = (ecs, changeState) => {
   const currentChangeSet = ecs.getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (Object.keys(currentChangeSet).length > 0) {
@@ -598,7 +598,7 @@ utils.showAccount = function(ecs, changeState) {
   @param {Function} changeState The method for changing the app state.
   @param {Boolean} clear Whether to clear the ecs.
 */
-utils._showAccount = function(ecs, changeState, clear=false) {
+utils._showAccount = (ecs, changeState, clear=false) => {
   utils._hidePopup();
   if (clear) {
     // Have to go ahead and clear the ECS otherwise future navigation will
@@ -705,18 +705,18 @@ utils.deploy = function(
     (TODO frankban: WTF!? We already have that? This is so confusing).
   @return A cloud credential name
 */
-utils.generateCloudCredentialName = function(cloudName, user, credName) {
+utils.generateCloudCredentialName = (cloudName, user, credName) => {
   return `${cloudName}_${user}_${credName}`;
 };
 
 /**
-  Get the extra info for a cloud provided that is required by various parts of
+  Get the extra info for a cloud provided that is required by constious parts of
   the GUI.
   @param {String} providerName Name of the provider.
   @return {Object} The details for the provider.
 */
 
-utils.getCloudProviderDetails = function(providerName) {
+utils.getCloudProviderDetails = providerName => {
   const providers = {
     'gce': {
       id: 'google',
@@ -976,7 +976,7 @@ utils.getCloudProviderDetails = function(providerName) {
   @param {Object} refs The refs for a component.
   @returns {Boolean} Whether the form is valid.
 */
-utils.validateForm = function(fields, refs) {
+utils.validateForm = (fields, refs) => {
   let formValid = true;
   fields.forEach(field => {
     const ref = refs[field];

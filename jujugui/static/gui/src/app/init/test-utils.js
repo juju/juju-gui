@@ -38,8 +38,8 @@ describe('init utils', () => {
     });
   });
 
-  describe('unloadWindow', function() {
-    it('does not block when no uncommitted changes', function() {
+  describe('unloadWindow', () => {
+    it('does not block when no uncommitted changes', () => {
       const context = {
         ecs: {
           getCurrentChangeSet: sinon.stub().returns({})
@@ -49,7 +49,7 @@ describe('init utils', () => {
       assert.strictEqual(result, undefined);
     });
 
-    it('does block when has uncommitted changes', function() {
+    it('does block when has uncommitted changes', () => {
       const context = {
         ecs: {
           getCurrentChangeSet: sinon.stub().returns({foo: 'bar'})
@@ -62,8 +62,8 @@ describe('init utils', () => {
     });
   });
 
-  describe('humanizeTimestamp', function() {
-    it('must be able to display humanize time ago messages', function() {
+  describe('humanizeTimestamp', () => {
+    it('must be able to display humanize time ago messages', () => {
       const now = new Date().getTime();
       // Javascript timestamps are in milliseconds
       utils.humanizeTimestamp(now).should.equal('less than a minute ago');
@@ -71,47 +71,47 @@ describe('init utils', () => {
     });
   });
 
-  describe('_generateBundleExportFileName', function() {
-    it('generates the correct export file name', function() {
-      var envName = 'foobar';
-      var date = new Date('October 13, 2014 11:13:00');
-      var exportFilename =
+  describe('_generateBundleExportFileName', () => {
+    it('generates the correct export file name', () => {
+      let envName = 'foobar';
+      let date = new Date('October 13, 2014 11:13:00');
+      let exportFilename =
         utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
 
-      var envName = 'foo-bar';
-      var date = new Date('January 13, 2014 11:13:00');
-      var exportFilename =
+      envName = 'foo-bar';
+      date = new Date('January 13, 2014 11:13:00');
+      exportFilename =
         utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
     });
   });
 
-  describe('getName', function() {
-    it('returns the name of a charm', function() {
-      var name = utils.getName('cs:~uros/precise/rails-server-47');
+  describe('getName', () => {
+    it('returns the name of a charm', () => {
+      const name = utils.getName('cs:~uros/precise/rails-server-47');
       assert.strictEqual(name, 'rails-server');
     });
 
-    it('returns the name of a charm when version is missing', function() {
-      var name = utils.getName('cs:~uros/precise/rails-server');
+    it('returns the name of a charm when version is missing', () => {
+      const name = utils.getName('cs:~uros/precise/rails-server');
       assert.strictEqual(name, 'rails-server');
     });
   });
 
-  describe('destroyService', function() {
-    it('responds to service removal failure by alerting the user', function() {
-      var notificationAdded;
-      var APPNAME = 'the name of the application being removed';
-      var evt = {
+  describe('destroyService', () => {
+    it('responds to service removal failure by alerting the user', () => {
+      let notificationAdded;
+      const APPNAME = 'the name of the application being removed';
+      const evt = {
         err: true,
         applicationName: APPNAME
       };
-      var service = ['service', 'mediawiki'];
+      const service = ['service', 'mediawiki'];
 
-      var db = {
+      const db = {
         notifications: {
-          add: function(notification) {
+          add: notification => {
             // The notification has the required attributes.
             assert.isOk(notification.title);
             assert.isOk(notification.message);
@@ -128,22 +128,20 @@ describe('init utils', () => {
       assert.isTrue(notificationAdded);
     });
 
-    it('removes the relations when the service is destroyed', function() {
-      var notificationAdded = false;
-      var APPNAME = 'the name of the application being removed';
-      var evt = {
+    it('removes the relations when the service is destroyed', () => {
+      let notificationAdded = false;
+      const APPNAME = 'the name of the application being removed';
+      const evt = {
         err: false,
         applicationName: APPNAME
       };
-      var service = {
-        get: function () {
-          return [];
-        }
+      const service = {
+        get: () => []
       };
 
-      var db = {
+      const db = {
         notifications: {
-          add: function(attrs) {
+          add: attrs => {
             // The notification has the required attributes.
             assert.equal(attrs.hasOwnProperty('title'), true,
               'Does not have a title');
@@ -168,9 +166,9 @@ describe('init utils', () => {
     });
   });
 
-  describe('getUnitStatusCounts', function() {
-    it('generate a list of status by unit counts', function() {
-      var units = [
+  describe('getUnitStatusCounts', () => {
+    it('generate a list of status by unit counts', () => {
+      const units = [
         {id: 1, agent_state: 'started'},
         {id: 2, agent_state: 'pending'},
         {id: 3, agent_state: 'error'},
@@ -190,7 +188,7 @@ describe('init utils', () => {
     });
   });
 
-  describe('linkify', function() {
+  describe('linkify', () => {
     const testLinks = [
       {
         text: 'google.com',
@@ -238,16 +236,16 @@ describe('init utils', () => {
       }
     ];
 
-    testLinks.forEach(function(test) {
-      it('correctly linkifies: ' + test.text, function() {
-        var actual = utils.linkify(test.text);
+    testLinks.forEach(test => {
+      it('correctly linkifies: ' + test.text, () => {
+        const actual = utils.linkify(test.text);
         assert.equal(actual, test.expected);
       });
     });
   });
 
-  describe('compareSemver', function() {
-    it('properly compares semver values', function() {
+  describe('compareSemver', () => {
+    it('properly compares semver values', () => {
       const versions = [
         '1.2.3',
         '2.0-alpha-foo-bar',
@@ -283,10 +281,10 @@ describe('init utils', () => {
     });
   });
 
-  describe('switchModel', function() {
+  describe('switchModel', () => {
     let _hidePopup, _showUncommittedConfirm, originalSwitchModel;
 
-    beforeEach(function() {
+    beforeEach(() => {
       originalSwitchModel = utils._switchModel;
       _hidePopup = utils._hidePopup;
       utils._hidePopup = sinon.stub();
@@ -295,13 +293,13 @@ describe('init utils', () => {
       utils._getAuth = sinon.stub().returns({rootUserName: 'animal'});
     });
 
-    afterEach(function() {
+    afterEach(() => {
       utils._hidePopup = _hidePopup;
       utils._showUncommittedConfirm = _showUncommittedConfirm;
       utils._switchModel = originalSwitchModel;
     });
 
-    it('can switch directly if there are no uncommitted changes', function() {
+    it('can switch directly if there are no uncommitted changes', () => {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
       };
@@ -319,7 +317,7 @@ describe('init utils', () => {
       assert.deepEqual(switchArgs, [env, model]);
     });
 
-    it('does not switch to the current model', function() {
+    it('does not switch to the current model', () => {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid-1')
       };
@@ -336,7 +334,7 @@ describe('init utils', () => {
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
-    it('can show a confirmation if there are uncommitted changes', function() {
+    it('can show a confirmation if there are uncommitted changes', () => {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
       };
@@ -353,7 +351,7 @@ describe('init utils', () => {
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
-    it('does not switch when committing', function() {
+    it('does not switch when committing', () => {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
       };
@@ -371,7 +369,7 @@ describe('init utils', () => {
       assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
-    it('allows switching to disconnected state', function() {
+    it('allows switching to disconnected state', () => {
       const app = {
         get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
       };
@@ -385,11 +383,10 @@ describe('init utils', () => {
       utils.switchModel.call(app, env, sinon.stub(), null);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      console.log(switchArgs);
       assert.deepEqual(switchArgs, [env, null]);
     });
 
-    it('can switch models', function() {
+    it('can switch models', () => {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
         state: {changeState: sinon.stub(), current: {}}
@@ -412,7 +409,7 @@ describe('init utils', () => {
       assert.deepEqual(app.set.args[0], ['modelUUID', 'my-uuid']);
     });
 
-    it('changes to disconnected mode if model is missing', function() {
+    it('changes to disconnected mode if model is missing', () => {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
         state: {changeState: sinon.stub(), current: {}}
@@ -428,7 +425,7 @@ describe('init utils', () => {
       }]);
     });
 
-    it('does not set root state to new if profile state exists', function() {
+    it('does not set root state to new if profile state exists', () => {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
         state: {current: {profile: 'animal'}, changeState: sinon.stub()}
@@ -444,7 +441,7 @@ describe('init utils', () => {
       }]);
     });
 
-    it('does not close the status pane when switching to a model', function() {
+    it('does not close the status pane when switching to a model', () => {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
         state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
@@ -461,7 +458,7 @@ describe('init utils', () => {
       }]);
     });
 
-    it('closes the status pane when switching to a new model', function() {
+    it('closes the status pane when switching to a new model', () => {
       const app = {
         set: sinon.stub().withArgs('modelUUID'),
         state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
@@ -478,10 +475,10 @@ describe('init utils', () => {
     });
   });
 
-  describe('showProfile', function() {
+  describe('showProfile', () => {
     let container, _showUncommittedConfirm, _hidePopup;
 
-    beforeEach(function() {
+    beforeEach(() => {
       container = testUtils.makeAppContainer();
       _hidePopup = utils._hidePopup;
       utils._hidePopup = sinon.stub();
@@ -489,38 +486,38 @@ describe('init utils', () => {
       utils._showUncommittedConfirm = sinon.stub();
     });
 
-    afterEach(function() {
+    afterEach(() => {
       container.remove();
       utils._hidePopup = _hidePopup;
       utils._showUncommittedConfirm = _showUncommittedConfirm;
     });
 
-    it('can show the profile if there are no uncommitted changes', function() {
-      var ecs = {
+    it('can show the profile if there are no uncommitted changes', () => {
+      const ecs = {
         getCurrentChangeSet: sinon.stub().returns({})
       };
-      var changeState = sinon.stub();
+      const changeState = sinon.stub();
       utils.showProfile(ecs, changeState, 'spinach');
       assert.deepEqual(changeState.callCount, 1);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 0);
     });
 
-    it('can show a confirmation if there are uncommitted changes', function() {
-      var ecs = {
+    it('can show a confirmation if there are uncommitted changes', () => {
+      const ecs = {
         getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
-      var changeState = sinon.stub();
+      const changeState = sinon.stub();
       utils.showProfile(ecs, changeState, 'spinach');
       assert.deepEqual(changeState.callCount, 0);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
     });
 
-    it('can show a confirmation and clear changes', function() {
-      var ecs = {
+    it('can show a confirmation and clear changes', () => {
+      const ecs = {
         clear: sinon.stub(),
         getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
-      var changeState = sinon.stub();
+      const changeState = sinon.stub();
       utils._showProfile(ecs, changeState, 'spinach', true);
       assert.deepEqual(changeState.callCount, 1);
       assert.deepEqual(changeState.lastCall.args[0], {
@@ -534,12 +531,12 @@ describe('init utils', () => {
     });
   });
 
-  describe('deploy util', function() {
+  describe('deploy util', () => {
     let app, callback, commit, envGet, container;
 
-    beforeEach(function() {
+    beforeEach(() => {
       container = testUtils.makeAppContainer();
-      const getMockStorage = function() {
+      const getMockStorage = () => {
         return new function() {
           return {
             store: {},
@@ -594,26 +591,26 @@ describe('init utils', () => {
       container.remove();
     });
 
-    it('can auto place when requested', function() {
+    it('can auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
       utils.deploy(app, autoPlaceUnits, sinon.stub(), callback, true);
       assert.equal(autoPlaceUnits.callCount, 1);
     });
 
-    it('does not auto place when requested', function() {
+    it('does not auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
       utils.deploy(app, autoPlaceUnits, sinon.stub(), callback, false);
       assert.equal(app._autoPlaceUnits.callCount, 0);
     });
 
-    it('can commit to an existing model', function() {
+    it('can commit to an existing model', () => {
       utils.deploy(app, sinon.stub(), sinon.stub(), callback);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.equal(app.controllerAPI.createModel.callCount, 0);
     });
 
-    it('can create a new model', function() {
+    it('can create a new model', () => {
       envGet.withArgs('connected').returns(false);
       utils.deploy(
         app, sinon.stub(), sinon.stub(), callback, true, 'new-model', {
@@ -635,7 +632,7 @@ describe('init utils', () => {
       assert.isFunction(args[3]);
     });
 
-    it('can create, connect, and commit to the new model', function() {
+    it('can create, connect, and commit to the new model', () => {
       const modelData = {
         id: 'abc123',
         name: 'model-name',
@@ -711,7 +708,7 @@ describe('init utils', () => {
       ]);
     });
 
-    it('can display an error notification', function() {
+    it('can display an error notification', () => {
       const modelData = {uuid: 'the-uuid'};
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
@@ -732,23 +729,23 @@ describe('init utils', () => {
     });
   });
 
-  describe('generateCloudCredentialName', function() {
-    it('can generate a cloud credential name', function() {
+  describe('generateCloudCredentialName', () => {
+    it('can generate a cloud credential name', () => {
       assert.equal(
         utils.generateCloudCredentialName('azure', 'spinach', 'super-cred'),
         'azure_spinach_super-cred');
     });
   });
 
-  describe('getCloudProviderDetails', function() {
-    it('can get details for a provider', function() {
+  describe('getCloudProviderDetails', () => {
+    it('can get details for a provider', () => {
       const provider = utils.getCloudProviderDetails('gce');
       assert.equal(provider.id, 'google');
     });
   });
 
-  describe('validateForm', function() {
-    it('can validate a form with an invalid field', function() {
+  describe('validateForm', () => {
+    it('can validate a form with an invalid field', () => {
       const refs = {
         one: {validate: sinon.stub().returns(false)},
         two: {validate: sinon.stub().returns(true)}
@@ -757,7 +754,7 @@ describe('init utils', () => {
       assert.isFalse(utils.validateForm(fields, refs));
     });
 
-    it('can validate a form with valid fields', function() {
+    it('can validate a form with valid fields', () => {
       const refs = {
         one: {validate: sinon.stub().returns(true)},
         two: {validate: sinon.stub().returns(true)}
@@ -766,7 +763,7 @@ describe('init utils', () => {
       assert.isTrue(utils.validateForm(fields, refs));
     });
 
-    it('validates all fields even if one field is invalid', function() {
+    it('validates all fields even if one field is invalid', () => {
       const refs = {
         one: {validate: sinon.stub().returns(false)},
         two: {validate: sinon.stub().returns(true)}
