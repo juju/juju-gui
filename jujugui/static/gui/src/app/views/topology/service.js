@@ -646,7 +646,7 @@ YUI.add('juju-topology-service', function(Y) {
       var node = this.getServiceNode(id);
       if (node) {
         if (hover) {
-          utils.addSVGClass(node, 'hover');
+          topoUtils.addSVGClass(node, 'hover');
         } else {
           this.unhoverServices();
         }
@@ -680,7 +680,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     selectNode: function(node) {
       this.deselectNodes();
-      utils.addSVGClass(node, 'is-selected');
+      topoUtils.addSVGClass(node, 'is-selected');
     },
 
     /**
@@ -792,7 +792,7 @@ YUI.add('juju-topology-service', function(Y) {
         detail: {id: box.id}
       }));
       var rect = this.closest('.service');
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+      if (!topoUtils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
       document.dispatchEvent(new CustomEvent('topo.snapToService', {
@@ -1941,6 +1941,7 @@ YUI.add('juju-topology-service', function(Y) {
     'd3',
     'd3-components',
     'juju-environment-utils',
+    'juju-topology-utils',
     'juju-models',
     'zip-utils'
   ]
