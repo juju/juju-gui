@@ -319,7 +319,7 @@ describe('init utils', () => {
 
     it('does not switch to the current model', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid-1')
+        modelUUID: 'model-uuid-1'
       };
       const env = {
         get: sinon.stub().returns({
@@ -388,7 +388,7 @@ describe('init utils', () => {
 
     it('can switch models', () => {
       const app = {
-        set: sinon.stub().withArgs('modelUUID'),
+        modelUUID: 'uu-id',
         state: {changeState: sinon.stub(), current: {}}
       };
       const env = {set: sinon.stub()};
@@ -405,8 +405,7 @@ describe('init utils', () => {
       }]);
       assert.equal(env.set.callCount, 1, 'env.set');
       assert.deepEqual(env.set.args[0], ['environmentName', 'mymodel']);
-      assert.equal(app.set.callCount, 1, 'app.set');
-      assert.deepEqual(app.set.args[0], ['modelUUID', 'my-uuid']);
+      assert.equal(app.modelUUID, 'my-uuid');
     });
 
     it('changes to disconnected mode if model is missing', () => {

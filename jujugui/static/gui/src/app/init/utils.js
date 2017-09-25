@@ -408,6 +408,12 @@ utils.compareSemver = (a, b) => {
 */
 utils.switchModel = function(
   modelAPI, addNotification, model, confirmUncommitted=true) {
+  if (model && model.id === this.modelUUID) {
+    // There is nothing to be done as we are already connected to the model.
+    // Note that this check is always false when switching models from the
+    // profile view, as the "modelUUID" is set to null in that case.
+    return;
+  }
   if (modelAPI.get('ecs').isCommitting()) {
     const message = 'cannot switch models while deploying.';
     addNotification({
@@ -504,13 +510,8 @@ utils._switchModel = function(env, model) {
   }
   this.state.changeState(newState);
   env.set('environmentName', name);
-  if (this.applicationConfig) {
-    // It is the new init.
-    this.modelUUID = uuid;
-  } else {
-    // Delete this conditional if app.js is gone.
-    this.set('modelUUID', uuid);
-  }
+  // It is the new init.
+  this.modelUUID = uuid;
 };
 
 /**
