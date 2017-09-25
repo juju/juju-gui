@@ -321,7 +321,7 @@ describe('Environment Change Set', function() {
         assert.strictEqual(prepare.calledOnce, true);
         // The database object is passed to the prepare callable.
         var args = prepare.lastCall.args;
-        assert.deepEqual(args, [db]);
+        assert.deepEqual(args, [db, ecs]);
       });
     });
 
@@ -1321,7 +1321,7 @@ describe('Environment Change Set', function() {
         command.prepare({
           units: units,
           services: services
-        });
+        }, ecs);
         // The series is now set for the new machine call.
         assert.strictEqual(command.args[0][0].series, 'utopic');
       });
@@ -2157,4 +2157,28 @@ describe('Environment Change Set', function() {
 
   });
 
+  describe('_getUnitSeries', function() {
+    let db;
+
+    beforeEach(function() {
+      db = {
+        services: {
+          getServiceByName: function(name) {
+            assert.equal(name, 'rails');
+            return {
+              get: function(arg) {
+                assert.equal(arg, 'series');
+                return 'precise';
+              }
+            };
+          }
+        }
+      };
+    });
+
+    it('returns the series of a charmstore charm', function() {
+      const series = ecs._getUnitSeries({id: 'rails/47'}, db);
+      assert.strictEqual(series, 'precise');
+    });
+  });
 });

@@ -29,13 +29,40 @@ YUI.add('juju-view-environment', function(Y) {
 
   let views = Y.namespace('juju.views');
 
+  var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
+
+    bindModelView: function(model) {
+      model = model || this.get('model');
+      // If this view has a model, bubble model events to the view.
+      if (model) {
+        model.addTarget(this);
+      }
+
+      // If the model gets swapped out, reset targets accordingly and rerender.
+      this.after('modelChange', function(ev) {
+        if (ev.prevVal) {
+          ev.prevVal.removeTarget(this);
+        }
+        if (ev.newVal) {
+          ev.newVal.addTarget(this);
+        }
+        this.render();
+      });
+
+      // Re-render this view when the model changes, and after it is loaded,
+      // to support "loaded" flags.
+      this.after(['*:change', '*:load'], this.render, this);
+    }
+
+  });
+
   /**
    * Display an environment.
    *
    * @class EnvironmentView
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [
-    views.JujuBaseView
+    JujuBaseView
   ], {
 
     events: {

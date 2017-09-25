@@ -1474,7 +1474,8 @@ juju.components.RelationMenu = require(
 
     before(function(done) {
       YUI(GlobalConfig).use(
-        ['juju-models', 'charmstore-api', 'juju-view-utils'],
+        ['juju-models', 'charmstore-api', 'juju-view-utils',
+          'juju-environment-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');

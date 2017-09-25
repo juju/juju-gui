@@ -518,7 +518,7 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       this.set('potential_drop_point_service', d);
       this.set('potential_drop_point_rect', rect);
-      utils.addSVGClass(rect, 'hover');
+      topoUtils.addSVGClass(rect, 'hover');
 
       // If we have an active dragline, stop redrawing it on mousemove
       // and draw the line between the two nearest connector points of
@@ -1236,6 +1236,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'node',
     'event',
     'juju-models',
+    'juju-environment-utils',
     'juju-topology-utils'
   ]
 });

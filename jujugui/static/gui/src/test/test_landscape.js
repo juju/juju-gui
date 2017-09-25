@@ -87,7 +87,6 @@ describe('Landscape integration', function() {
         'environment:test+unit:mysql-0/');
   });
 
-
   it('should summarize landscape annotations at object parents', function() {
     var unit1, unit2;
     var env = db.environment;

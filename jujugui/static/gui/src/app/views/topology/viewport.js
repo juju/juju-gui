@@ -129,7 +129,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       document.dispatchEvent(new Event('beforePageSizeRecalculation'));
       // This sets the minimum viewport size - y was reduced to 200 to render
       // properly on 7" tablets in horizontal view.
-      var dimensions = utils.getEffectiveViewportSize(true, 800, 200);
+      var dimensions = views.getEffectiveViewportSize(true, 800, 200);
       this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
       document.dispatchEvent(new Event('afterPageSizeRecalculation'));
     }
@@ -145,6 +145,8 @@ YUI.add('juju-topology-viewport', function(Y) {
 }, '0.1.0', {
   requires: [
     'd3-components',
+    'juju-environment-utils',
+    'juju-view-utils',
     'node',
     'event'
   ]
