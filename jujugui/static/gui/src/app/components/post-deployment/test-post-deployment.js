@@ -16,6 +16,9 @@ describe('PostDeployment', () => {
     props = props || {};
     const defaultParsedMarkdown =
       '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>';
+    let marked = sinon.stub().returns(defaultParsedMarkdown);
+    Object.defineProperty(marked, 'Renderer', {value: sinon.stub()});
+
     const _props = {
       changeState: props.changeState || sinon.stub(),
       entityId: props.entityId || 'test',
@@ -30,7 +33,7 @@ describe('PostDeployment', () => {
           displayName: 'Test Name'
         })
       }),
-      marked: props.marked || sinon.stub().returns(defaultParsedMarkdown),
+      marked: props.marked || marked,
       showEntityDetails: props.showEntityDetails || sinon.stub()
     };
 

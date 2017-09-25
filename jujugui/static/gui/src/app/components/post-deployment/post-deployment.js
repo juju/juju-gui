@@ -87,10 +87,16 @@ class PostDeployment extends React.Component {
       this.setState({
         metadata: frontmatterAndMarkdown.metadata
       });
+      let renderer = new this.props.marked.Renderer();
+      renderer.link = (href, title, text) => {
+        console.log('hi');
+        return `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
+      };
       const markdown = this.props.marked(
         this.replaceTemplateTags(
           frontmatterAndMarkdown.markdown
-        )
+        ),
+        {renderer: renderer}
       );
 
       this.setState({
