@@ -344,6 +344,25 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('lightbox'));
   }
 
+  _sendPostDeploymentAnalytics(nowMillis, entityId, openTime) {
+    const action = 'Close post deployment panel';
+
+    // Round it to the nearest second.
+    let timeOpen = Math.round(
+      (nowMillis - openTime) / 1000
+    );
+    let args = [
+      `${timeOpen}s`,
+      entityId
+    ];
+
+    this.sendAnalytics(
+      'Deployment Flow',
+      action,
+      args.join(' - ')
+    );
+  }
+
   /**
     Display post deployment help.
 
@@ -355,7 +374,25 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       next();
       return;
     }
+
     const entityId = state.postDeploymentPanel.entityId;
+    const nowMillis = new Date().getTime();
+
+    // If someone does not close the panel but adds and deploys a second charm
+    // with a getstarted.md we need to stop the current time, send the data
+    // and start a new one.
+    if (state.postDeploymentPanel.openTime) {
+      this._sendPostDeploymentAnalytics(
+        nowMillis,
+        entityId,
+        state.postdeploymentPanel.openTime);
+    }
+
+    this.setState({
+      postDeploymentPanel: {
+        openTime: nowMillis
+      }
+    });
 
     const charmstore = this.charmstore;
 
@@ -421,6 +458,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next Run the next handler.
   */
   _clearPostDeployment(state, next) {
+    const nowMillis = new Date().getTime();
+
+    if (state.postDeploymentPanel.openTime) {
+      this._sendPostDeploymentAnalytics(
+        nowMillis,
+        entityId,
+        state.postdeploymentPanel.openTime);
+    }
     ReactDOM.unmountComponentAtNode(
       document.getElementById('post-deployment')
     );
