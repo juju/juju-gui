@@ -1165,7 +1165,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         appState={this.state}
         user={this.user}
         changeState={this.state.changeState.bind(this.state)}
-        humanizeTimestamp={yui.juju.views.humanizeTimestamp}
+        humanizeTimestamp={yui.juju.views.utils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}

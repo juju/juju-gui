@@ -1940,6 +1940,7 @@ YUI.add('juju-topology-service', function(Y) {
   requires: [
     'd3',
     'd3-components',
+    'juju-environment-utils',
     'juju-models',
     'zip-utils'
   ]

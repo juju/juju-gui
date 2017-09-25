@@ -1,20 +1,4 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
 
@@ -47,11 +31,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 }) ();
 
 describe('utilities', function() {
-  var views, models, utils;
+  var models, utils;
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju.views.utils');
       done();
@@ -61,8 +44,8 @@ describe('utilities', function() {
   it('must be able to display humanize time ago messages', function() {
     var now = new Date().getTime();
     // Javascript timestamps are in milliseconds
-    views.humanizeTimestamp(now).should.equal('less than a minute ago');
-    views.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
+    utils.humanizeTimestamp(now).should.equal('less than a minute ago');
+    utils.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
   });
 
   it('generate a list of status by unit counts', function() {
