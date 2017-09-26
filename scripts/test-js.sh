@@ -11,6 +11,12 @@ else
   PORT=8888
 fi
 
+# Modify the karma.conf.js to have the port for the proxy. This allows us to
+# use different ports in CI.
+# This needs to be placed before pserve starts or else the server will not
+# start properly.
+cp karma.conf.js.tmpl karma.conf.js
+sed -i -e 's/{TEST_PORT}/'$PORT'/' karma.conf.js
 # Start the Xvfb to run chromium in for the tests.
 Xvfb :99 & echo $! > $XVFB_PID
 # Start the asset server.
