@@ -65,6 +65,7 @@ globals:
   sinon: true
   Stripe: true
   testUtils: true
+  xdescribe: true
   xit: true
   YUI: true
   zip: true

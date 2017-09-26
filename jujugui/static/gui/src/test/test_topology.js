@@ -25,7 +25,7 @@ describe('topology', function() {
       utils, views, viewUtils;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-topology', 'd3', 'd3-components',
+    YUI(GlobalConfig).use(['juju-topology', 'd3-components',
       'juju-tests-utils', 'juju-view-utils', 'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
@@ -33,7 +33,6 @@ describe('topology', function() {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       viewUtils = Y.namespace('juju.views.utils');
-      window.d3 = Y.namespace('d3');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {
         events: {
