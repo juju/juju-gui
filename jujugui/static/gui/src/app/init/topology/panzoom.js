@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const d3 = require('../../assets/javascripts/d3');
+
 /**
   Handle PanZoom within a Topology.
 */
@@ -29,7 +31,7 @@ class PanZoomModule {
 
   componentBound() {
     const options = this.topo.options;
-    this.toScale = window.d3.scale.linear()
+    this.toScale = d3.scale.linear()
       .domain([options.minZoom, options.maxZoom])
       .range([options.minZoom, options.maxZoom])
       .clamp(true);

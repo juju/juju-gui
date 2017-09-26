@@ -234,7 +234,6 @@ window.views = {
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         d3 = Y.namespace('d3');
-        window.d3 = d3;
         juju = Y.namespace('juju');
         done();
       });

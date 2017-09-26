@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const PanZoomModule = require('./panzoom.js');
+const PanZoomModule = require('./panzoom');
 
 describe('pan zoom module', () => {
   let pz, topo, vis;

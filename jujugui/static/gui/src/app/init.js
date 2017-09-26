@@ -34,7 +34,6 @@ window.views = {
 };
 
 const yui = window.yui;
-window.d3 = yui.namespace('d3');
 
 class GUIApp {
   constructor(config) {
