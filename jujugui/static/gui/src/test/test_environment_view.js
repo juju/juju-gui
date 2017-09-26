@@ -15,6 +15,10 @@ juju.components.Popup = require('../app/components/popup/popup');
 juju.components.RelationMenu = require(
   '../app/components/relation-menu/relation-menu');
 
+window.views = {
+  PanZoomModule: require('../app/init/topology/panzoom.js')
+};
+
 (function() {
 
   describe('juju environment view', function() {

@@ -29,6 +29,9 @@ juju.components.Environment = require(
   './components/environment/environment');
 juju.components.RelationMenu = require(
   './components/relation-menu/relation-menu');
+window.views = {
+  PanZoomModule: require('./init/topology/panzoom.js')
+};
 
 const yui = window.yui;
 
