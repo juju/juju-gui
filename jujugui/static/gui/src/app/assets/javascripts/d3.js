@@ -22,7 +22,7 @@ d3.extent = function(array, f) {
 };
 var d3_arraySlice = [].slice,
     d3_array = function(list) { return d3_arraySlice.call(list); }; // conversion for NodeLists
-var d3_document = this.document;
+var d3_document = document;
 
 function d3_documentElement(node) {
   return node
