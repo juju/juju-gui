@@ -27,6 +27,8 @@ rules:
   react/jsx-no-duplicate-props: 2
   react/prop-types: 2
   react/sort-prop-types: 2
+  react/jsx-uses-react: 2
+  react/jsx-uses-vars: 2
   semi: [2, "always"]
   space-before-blocks: 2
   strict: [2, "global"]
@@ -41,10 +43,8 @@ globals:
   chai: true
   classNames: true
   Clipboard: true
-  consoleManager: true
   dataLayer: true
   describe: true
-  enhanceWithClickOutside: true
   Exception: true
   expect: true
   fail: true
@@ -55,17 +55,11 @@ globals:
   jsyaml: true
   juju: true
   jujulib: true
-  Keysim: true
   marked: true
+  MODULES: true
   nacl: true
   Prism: true
   PropTypes: true
-  queryComponentSelector: true
-  React: true
-  ReactDnD: true
-  ReactDnDHTML5Backend: true
-  ReactDOM: true
-  renderIntoDocument: true
   saveAs: true
   shapeup: true
   sinon: true

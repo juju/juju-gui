@@ -1,7 +1,4 @@
-YUI.add('d3', function(Y) {
-  Y.namespace('d3');
-  Y.d3 = (function(){
-    var d3 = {version: "3.5.16"}; // semver
+var d3 = {version: "3.5.16"}; // semver
 d3.extent = function(array, f) {
   var i = -1,
       n = array.length,
@@ -25,7 +22,7 @@ d3.extent = function(array, f) {
 };
 var d3_arraySlice = [].slice,
     d3_array = function(list) { return d3_arraySlice.call(list); }; // conversion for NodeLists
-var d3_document = this.document;
+var d3_document = document;
 
 function d3_documentElement(node) {
   return node
@@ -5861,8 +5858,18 @@ function d3_layout_packPlace(a, b, c) {
     c.y = a.y;
   }
 }
-return d3;
-  })();
-}, '3.5.16', {
-  requires: []
-});
+
+try {
+  module.exports = d3;
+} catch (e) {}
+
+if (YUI) {
+  YUI.add('d3', function(Y) {
+    Y.namespace('d3');
+    Y.d3 = (function() {
+      return d3;
+    })();
+  }, '3.5.16', {
+    requires: []
+  });
+}

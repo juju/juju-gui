@@ -1,7 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const yui = window.yui;
+const ReactDOM = require('react-dom');
+
+const utils = require('./utils');
 
 const keyBindings = {
   'A-s': {
@@ -68,7 +70,7 @@ const keyBindings = {
 
   'S-d': {
     callback: function(evt) {
-      yui.juju.views.utils.exportEnvironmentFile(this.db);
+      utils.exportEnvironmentFile(this.db);
     },
     help: 'Export the model',
     label: 'Shift + d'
@@ -78,16 +80,16 @@ const keyBindings = {
 /**
   Activate the key listeners.
   @param {Object} context The context to execute the hotkey callbacks under.
-  @return {Object} The keydown event listener.
+  @return {Object} A reference to deactivate the listeners.
 */
-const activate = function(context) {
+const activate = context => {
   const key_map = {
     '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
     enter: 13, esc: 27, backspace: 8,
     tab: 9, pageup: 33, pagedown: 34};
   const code_map = {};
   Object.keys(key_map).forEach(k => code_map[key_map[k]] = k);
-  return document.addEventListener('keydown', evt => {
+  const listener = evt => {
     // Normalize key-code
     // This gets triggered by different types of elements some YUI some
     // React. So try and use the native tagName property first, if that
@@ -150,7 +152,20 @@ const activate = function(context) {
       // If we handled the event nothing else has to.
       evt.stopPropagation();
     }
-  });
+  };
+  const boundListener = listener.bind(this);
+  document.addEventListener('keydown', boundListener);
+  return {
+    deactivate: deactivate.bind(this, boundListener)
+  };
 };
 
-module.exports = {activate};
+/**
+  Deactivate the key listeners.
+  @param {Object} context The context to execute the hotkey callbacks under.
+*/
+const deactivate = listener => {
+  document.removeEventListener('keydown', listener);
+};
+
+module.exports = {activate, keyBindings};

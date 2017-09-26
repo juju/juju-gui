@@ -1,22 +1,14 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+const ReactDnD = require('react-dnd');
+const shapeup = require('shapeup');
+
+const ButtonRow = require('../../button-row/button-row');
+const Constraints = require('../../constraints/constraints');
+const MoreMenu = require('../../more-menu/more-menu');
+const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 const MachineViewMachineGlobals = {};
 
@@ -131,7 +123,7 @@ class MachineViewMachine extends React.Component {
         <h4 className="add-machine__title">
           Update constraints
         </h4>
-        <juju.components.Constraints
+        <Constraints
           constraints={this.props.parseConstraints(machine.constraints)}
           currentSeries={machine.series}
           disabled={disabled}
@@ -139,7 +131,7 @@ class MachineViewMachine extends React.Component {
           providerType={this.props.modelAPI.providerType}
           series={this.props.machineAPI.series}
           valuesChanged={this._updateConstraints.bind(this)} />
-        <juju.components.ButtonRow
+        <ButtonRow
           buttons={buttons}
           key="buttons" />
       </div>);
@@ -189,9 +181,9 @@ class MachineViewMachine extends React.Component {
         return;
       }
       const propTypes = (
-        juju.components.MachineViewMachineUnit.DecoratedComponent.propTypes);
+        MachineViewMachineUnit.DecoratedComponent.propTypes);
       components.push(
-        <juju.components.MachineViewMachineUnit
+        <MachineViewMachineUnit
           acl={props.acl.reshape(propTypes.acl)}
           key={unit.id}
           machineType={props.type}
@@ -268,7 +260,7 @@ class MachineViewMachine extends React.Component {
         onClick={this._handleSelectMachine.bind(this)}
         role="button"
         tabIndex="0">
-        <juju.components.MoreMenu
+        <MoreMenu
           items={menuItems} />
         <div className="machine-view__machine-name">
           {this.props.machineAPI.machine.displayName}
@@ -318,13 +310,6 @@ MachineViewMachine.propTypes = {
   type: PropTypes.string.isRequired
 };
 
-YUI.add('machine-view-machine', function() {
-  juju.components.MachineViewMachine = ReactDnD.DropTarget(
-    'unit', MachineViewMachineGlobals.dropTarget,
-    MachineViewMachineGlobals.collect)(MachineViewMachine);
-}, '0.1.0', {
-  requires: [
-    'machine-view-machine-unit',
-    'more-menu'
-  ]
-});
+module.exports = ReactDnD.DropTarget(
+  'unit', MachineViewMachineGlobals.dropTarget,
+  MachineViewMachineGlobals.collect)(MachineViewMachine);

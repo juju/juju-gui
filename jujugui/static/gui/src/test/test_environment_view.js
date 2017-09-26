@@ -1,22 +1,23 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2017 Canonical Ltd. */
 
 'use strict';
+const React = require('react');
+const ReactDOM = require('react-dom');
+
+// Required for the envionment.js file.
+window.ReactDOM = ReactDOM;
+window.React = React;
+juju.components.AmbiguousRelationMenu = require(
+  '../app/components/relation-menu/ambiguous-relation-menu');
+juju.components.Environment = require(
+  '../app/components/environment/environment');
+juju.components.Popup = require('../app/components/popup/popup');
+juju.components.RelationMenu = require(
+  '../app/components/relation-menu/relation-menu');
+
+window.views = {
+  PanZoomModule: require('../app/init/topology/panzoom.js')
+};
 
 (function() {
 
@@ -212,10 +213,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-views', 'juju-tests-utils', 'charmstore-api',
+        'juju-tests-utils', 'charmstore-api',
         'd3', 'juju-models', 'juju-view-environment',
         'landscape', 'dump', 'juju-view-utils',
-        'juju-charm-models', 'environment-change-set', 'relation-utils'
+        'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         const getMockStorage = function() {
           return new function() {
@@ -1477,7 +1478,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       YUI(GlobalConfig).use(
-        ['juju-views', 'juju-models', 'charmstore-api', 'juju-view-utils'],
+        ['juju-models', 'charmstore-api', 'juju-view-utils',
+          'juju-environment-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');

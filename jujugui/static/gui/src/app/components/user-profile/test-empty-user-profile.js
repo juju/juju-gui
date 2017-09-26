@@ -1,36 +1,20 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const CreateModelButton = require('../create-model-button/create-model-button');
+const EmptyUserProfile = require('./empty-user-profile');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EmptyUserProfile', () => {
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('empty-user-profile', () => { done(); });
-  });
 
   it('renders the empty state for the current user', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.EmptyUserProfile
+      <EmptyUserProfile
         changeState={changeState}
         isCurrentUser={true}
         switchModel={sinon.stub()}
@@ -51,7 +35,7 @@ describe('EmptyUserProfile', () => {
           {'Your'} models, bundles, and charms will appear here
           when {'you'} create them.
         </p>
-        <juju.components.CreateModelButton
+        <CreateModelButton
           changeState={changeState}
           switchModel={instance.props.switchModel}
           title="Start building"
@@ -65,7 +49,7 @@ describe('EmptyUserProfile', () => {
     const staticURL = 'test-url';
     const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <juju.components.EmptyUserProfile
+      <EmptyUserProfile
         changeState={changeState}
         isCurrentUser={false}
         switchModel={sinon.stub()}
@@ -93,7 +77,7 @@ describe('EmptyUserProfile', () => {
 
   it('displays the empty_profile asset with a staticURL provided', () => {
     const output = jsTestUtils.shallowRender(
-      <juju.components.EmptyUserProfile
+      <EmptyUserProfile
         changeState={sinon.stub()}
         switchModel={sinon.stub()}
         staticURL='test' />);

@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const GenericButton = require('../generic-button/generic-button');
+const SvgIcon = require('../svg-icon/svg-icon');
+const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 class Login extends React.Component {
   componentDidMount() {
@@ -92,7 +81,7 @@ class Login extends React.Component {
 
   _generateUSSOLink () {
     return (
-      <juju.components.USSOLoginLink
+      <USSOLoginLink
         addNotification={this.props.addNotification}
         displayType="button"
         loginToController={this.props.loginToController}
@@ -107,7 +96,7 @@ class Login extends React.Component {
     return (
       <div className={this._generateClassnames()}>
         <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -136,11 +125,11 @@ class Login extends React.Component {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
+            <GenericButton
               submit={true}
               type="positive">
               Login
-            </juju.components.GenericButton>
+            </GenericButton>
             {this._generateUSSOLink()}
           </form>
         </div>
@@ -166,12 +155,4 @@ Login.propTypes = {
   loginToController: PropTypes.func.isRequired
 };
 
-YUI.add('login-component', function() {
-  juju.components.Login = Login;
-}, '0.1.0', {
-  requires: [
-    'generic-button',
-    'usso-login-link',
-    'svg-icon'
-  ]
-});
+module.exports = Login;

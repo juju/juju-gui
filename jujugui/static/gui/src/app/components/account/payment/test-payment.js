@@ -1,35 +1,20 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const AccountPayment = require('./payment');
+const Spinner = require('../../spinner/spinner');
+const AccountPaymentCharges = require('./charges/charges');
+const AccountPaymentDetails = require('./details/details');
+const AccountPaymentMethods = require('./methods/methods');
+const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const GenericButton = require('../../generic-button/generic-button');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AccountPayment', function() {
   let acl, getCountries, getUser, user;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('account-payment', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -48,7 +33,7 @@ describe('AccountPayment', function() {
 
   it('can display a loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={sinon.stub()}
         addBillingAddress={sinon.stub()}
@@ -72,7 +57,7 @@ describe('AccountPayment', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="account-payment">
-        <juju.components.Spinner />
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -95,7 +80,7 @@ describe('AccountPayment', function() {
     const getCharges = sinon.stub();
     const getReceipt = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={addAddress}
         addBillingAddress={addBillingAddress}
@@ -122,7 +107,7 @@ describe('AccountPayment', function() {
     const expected = (
       <div className="account-payment">
         <div>
-          <juju.components.AccountPaymentMethods
+          <AccountPaymentMethods
             acl={acl}
             addNotification={addNotification}
             createCardElement={createCardElement}
@@ -135,7 +120,7 @@ describe('AccountPayment', function() {
             updateUser={instance._getUser}
             username="spinach"
             validateForm={validateForm} />
-          <juju.components.AccountPaymentDetails
+          <AccountPaymentDetails
             acl={acl}
             addAddress={addAddress}
             addBillingAddress={addBillingAddress}
@@ -149,7 +134,7 @@ describe('AccountPayment', function() {
             updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
-          <juju.components.AccountPaymentCharges
+          <AccountPaymentCharges
             acl={acl}
             addNotification={addNotification}
             getCharges={getCharges}
@@ -164,7 +149,7 @@ describe('AccountPayment', function() {
     getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={sinon.stub()}
         addBillingAddress={sinon.stub()}
@@ -200,7 +185,7 @@ describe('AccountPayment', function() {
     const createToken = sinon.stub();
     getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={sinon.stub()}
         addBillingAddress={sinon.stub()}
@@ -231,11 +216,11 @@ describe('AccountPayment', function() {
           </h2>
           <div className="account-payment__no-user">
             You are not set up to make payments.
-            <juju.components.GenericButton
+            <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
               Set up payments
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
         </div>
       </div>);
@@ -250,7 +235,7 @@ describe('AccountPayment', function() {
     const createCardElement = sinon.stub();
     getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={sinon.stub()}
         addBillingAddress={sinon.stub()}
@@ -282,7 +267,7 @@ describe('AccountPayment', function() {
             Payment details
           </h2>
           <div className="twelve-col">
-            <juju.components.CreatePaymentUser
+            <CreatePaymentUser
               acl={acl}
               addNotification={addNotification}
               createCardElement={createCardElement}
@@ -302,7 +287,7 @@ describe('AccountPayment', function() {
     const abort = sinon.stub();
     getUser = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <juju.components.AccountPayment
+      <AccountPayment
         acl={acl}
         addAddress={sinon.stub()}
         addBillingAddress={sinon.stub()}

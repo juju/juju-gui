@@ -1,45 +1,26 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const ReceiptPopup = require('./receipt-popup');
+const Spinner = require('../../../../spinner/spinner');
+const Popup = require('../../../../popup/popup');
+
+const jsTestUtils = require('../../../../../utils/component-test-utils');
 
 describe('ReceiptPopup', function() {
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('receipt-popup', function() { done(); });
-  });
-
   it('can display the loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={sinon.stub()}
         chargeId="charge123"
         close={close}
         getReceipt={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Spinner />);
+      <Spinner />);
     expect(output.props.children).toEqualJSX(expected);
   });
 
@@ -47,14 +28,14 @@ describe('ReceiptPopup', function() {
     const close = sinon.stub();
     const getReceipt = sinon.stub().callsArgWith(1, null, '<html>...</html>');
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={sinon.stub()}
         chargeId="charge123"
         close={close}
         getReceipt={getReceipt} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <Popup
         className="receipt-popup"
         close={close}
         type="wide">
@@ -64,7 +45,7 @@ describe('ReceiptPopup', function() {
             width="100%">
           </iframe>
         </div>
-      </juju.components.Popup>);
+      </Popup>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -72,7 +53,7 @@ describe('ReceiptPopup', function() {
     const addNotification = sinon.stub();
     const getReceipt = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     jsTestUtils.shallowRender(
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={addNotification}
         chargeId="charge123"
         close={sinon.stub()}
@@ -88,7 +69,7 @@ describe('ReceiptPopup', function() {
   it('can close the popup', function() {
     const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={sinon.stub()}
         chargeId="charge123"
         close={close}
@@ -102,7 +83,7 @@ describe('ReceiptPopup', function() {
     const abort = sinon.stub();
     const getReceipt = sinon.stub().returns({abort: abort});
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.ReceiptPopup
+      <ReceiptPopup
         addNotification={sinon.stub()}
         chargeId="charge123"
         close={sinon.stub()}

@@ -113,7 +113,52 @@ YUI.add('juju-landscape', function(Y) {
      * @return {String} URL to access model entity in landscape.
      */
     getLandscapeURL: function(model, intent) {
-      return utils.getLandscapeURL(this.get('db').environment, model, intent);
+      const environment = this.get('db').environment;
+      const serviceOrUnit = model;
+      var envAnnotations = environment.get('annotations');
+      var url = envAnnotations['landscape-url'];
+
+      if (!url) {
+        // If this environment annotation doesn't exist we cannot generate URLs.
+        return undefined;
+      }
+      url += envAnnotations['landscape-computers'];
+
+      if (serviceOrUnit) {
+        var annotation;
+        if (serviceOrUnit.name === 'service') {
+          annotation = serviceOrUnit.get('annotations')['landscape-computers'];
+          if (!annotation) {
+            console.warn('Service missing the landscape-computers annotation!');
+            return undefined;
+          }
+          url += utils.ensureTrailingSlash(annotation);
+        } else if (serviceOrUnit.name === 'serviceUnit') {
+          var serviceUnitAnnotation;
+          if (serviceOrUnit.get) {
+            serviceUnitAnnotation = serviceOrUnit.get('annotations');
+          } else {
+            serviceUnitAnnotation = serviceOrUnit.annotations;
+          }
+          annotation = (
+            serviceUnitAnnotation &&
+              serviceUnitAnnotation['landscape-computer']
+          );
+          if (!annotation) {
+            console.warn('Unit missing the landscape-computer annotation!');
+            return undefined;
+          }
+          url += utils.ensureTrailingSlash(annotation);
+        }
+      }
+
+      if (!intent) {
+        return utils.ensureTrailingSlash(url);
+      } else if (intent === 'reboot') {
+        return url + envAnnotations['landscape-reboot-alert-url'];
+      } else if (intent === 'security') {
+        return url + envAnnotations['landscape-security-alert-url'];
+      }
     },
 
     /**

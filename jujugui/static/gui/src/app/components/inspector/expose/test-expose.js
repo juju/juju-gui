@@ -1,35 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const InspectorExpose = require('./expose');
+const BooleanConfig = require('../../boolean-config/boolean-config');
+const InspectorExposeUnit = require('./unit/unit');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('InspectorExpose', function() {
   var acl;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-expose', function() { done(); });
-  });
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -42,7 +23,7 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var toggle = {key: 'expose-toggle'};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -54,7 +35,7 @@ describe('InspectorExpose', function() {
     assert.deepEqual(output,
       <div className="inspector-expose">
         <div className="inspector-expose__control">
-          <juju.components.BooleanConfig
+          <BooleanConfig
             disabled={false}
             key={toggle.key}
             ref={toggle.key}
@@ -83,7 +64,7 @@ describe('InspectorExpose', function() {
     ];
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -95,7 +76,7 @@ describe('InspectorExpose', function() {
     assert.deepEqual(output,
       <div className="inspector-expose">
         <div className="inspector-expose__control">
-          <juju.components.BooleanConfig
+          <BooleanConfig
             disabled={false}
             key={toggle.key}
             ref={toggle.key}
@@ -109,11 +90,11 @@ describe('InspectorExpose', function() {
               the web
         </p>
         <ul className="inspector-expose__units">
-          <juju.components.InspectorExposeUnit
+          <InspectorExposeUnit
             key={unitList[0].id}
             action={output.props.children[2].props.children[0].props.action}
             unit={unitList[0]} />
-          <juju.components.InspectorExposeUnit
+          <InspectorExposeUnit
             key={unitList[1].id}
             action={output.props.children[2].props.children[1].props.action}
             unit={unitList[1]} />
@@ -130,7 +111,7 @@ describe('InspectorExpose', function() {
     var unitList = [{id: 'django/1'}];
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -163,7 +144,7 @@ describe('InspectorExpose', function() {
     getStub.withArgs('exposed').returns(false);
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -186,7 +167,7 @@ describe('InspectorExpose', function() {
     var unitList = [{id: 'django/1'}];
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
@@ -208,7 +189,7 @@ describe('InspectorExpose', function() {
     getStub.withArgs('exposed').returns(false);
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={addNotification}
         changeState={changeState}
@@ -229,7 +210,7 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var toggle = {key: 'expose-toggle'};
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorExpose
+      <InspectorExpose
         acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
@@ -239,7 +220,7 @@ describe('InspectorExpose', function() {
         units={{}} />);
     var toggleItem = output.props.children[0].props.children;
     var expected = (
-      <juju.components.BooleanConfig
+      <BooleanConfig
         disabled={true}
         key={toggle.key}
         ref={toggle.key}

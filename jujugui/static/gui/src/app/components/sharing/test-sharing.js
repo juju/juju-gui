@@ -1,36 +1,21 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Sharing = require('./sharing');
+const GenericButton = require('../generic-button/generic-button');
+const GenericInput = require('../generic-input/generic-input');
+const InsetSelect = require('../inset-select/inset-select');
+const Spinner = require('../spinner/spinner');
+const Popup = require('../popup/popup');
+const SvgIcon = require('../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Sharing', () => {
   const humanizeTimestamp = sinon.stub().returns('9 minutes ago');
   let users;
-
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('sharing', () => { done(); });
-  });
 
   beforeEach(() => {
     users = [
@@ -60,7 +45,7 @@ describe('Sharing', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
     const closeHandler = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         canShareModel={false}
         closeHandler={closeHandler}
         getModelUserInfo={getModelUserInfo}
@@ -69,7 +54,7 @@ describe('Sharing', () => {
         revokeModelAccess={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <juju.components.Popup
+      <Popup
         className="sharing__popup"
         close={closeHandler}
         title="Share">
@@ -81,13 +66,13 @@ describe('Sharing', () => {
         <div className="sharing__users">
           {undefined}
         </div>
-        <juju.components.GenericButton
+        <GenericButton
           action={closeHandler}
           type="inline-neutral"
           extraClasses="right">
           Done
-        </juju.components.GenericButton>
-      </juju.components.Popup>
+        </GenericButton>
+      </Popup>
     );
     expect(output).toEqualJSX(expected);
   });
@@ -95,7 +80,7 @@ describe('Sharing', () => {
   it('can render with a spinner', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         canShareModel={false}
         getModelUserInfo={getModelUserInfo}
         grantModelAccess={sinon.stub()}
@@ -106,7 +91,7 @@ describe('Sharing', () => {
     const spinner = output.props.children[2].props.children;
     const expected = (
       <div className="sharing__loading">
-        <juju.components.Spinner />
+        <Spinner />
       </div>
     );
     expect(spinner).toEqualJSX(expected);
@@ -115,7 +100,7 @@ describe('Sharing', () => {
   it('can render with users', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         canShareModel={false}
         getModelUserInfo={getModelUserInfo}
         grantModelAccess={sinon.stub()}
@@ -179,7 +164,7 @@ describe('Sharing', () => {
     const addNotification = sinon.stub();
     const closeHandler = sinon.stub();
     jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         addNotification={addNotification}
         canShareModel={false}
         closeHandler={closeHandler}
@@ -198,7 +183,7 @@ describe('Sharing', () => {
   it('can render the invitation form', () => {
     const grantModelAccess = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         addNotification={sinon.stub()}
         canShareModel={true}
         closeHandler={sinon.stub()}
@@ -222,7 +207,7 @@ describe('Sharing', () => {
         <div className="sharing__invite--header">Add a user</div>
         <form onSubmit={instance._grantModelAccess}>
           <div className="sharing__invite--username">
-            <juju.components.GenericInput
+            <GenericInput
               inlineErrorIcon={true}
               label="Username"
               placeholder="Username"
@@ -231,20 +216,20 @@ describe('Sharing', () => {
               required={true} />
           </div>
           <div className="sharing__invite--access">
-            <juju.components.InsetSelect
+            <InsetSelect
               label="Access"
               ref="access"
               options={expectedOptions} />
           </div>
           <div className="sharing__invite--grant-button">
-            <juju.components.GenericButton
+            <GenericButton
               submit={true}
               tooltip="Add user"
               ref="grantButton"
               type="positive"
               disabled={true}>
               Add
-            </juju.components.GenericButton>
+            </GenericButton>
           </div>
           {undefined}
         </form>
@@ -257,7 +242,7 @@ describe('Sharing', () => {
   it('can grant user access', () => {
     const grantModelAccess = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         addNotification={sinon.stub()}
         canShareModel={true}
         closeHandler={sinon.stub()}
@@ -284,7 +269,7 @@ describe('Sharing', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
     const revokeModelAccess = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         addNotification={sinon.stub()}
         canShareModel={true}
         closeHandler={sinon.stub()}
@@ -299,13 +284,13 @@ describe('Sharing', () => {
     const revokeAction = revokeMarkup.props.children.props.action;
     const expectedMarkup = (
       <div className="sharing__user-revoke">
-        <juju.components.GenericButton
+        <GenericButton
           action={revokeAction}
           tooltip="Remove user">
-          <juju.components.SvgIcon
+          <SvgIcon
             name="close_16"
             size="16" />
-        </juju.components.GenericButton>
+        </GenericButton>
       </div>
     );
     expect(revokeMarkup).toEqualJSX(expectedMarkup);
@@ -319,7 +304,7 @@ describe('Sharing', () => {
 
   it('handles revoke/grant errors', () => {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Sharing
+      <Sharing
         addNotification={sinon.stub()}
         canShareModel={true}
         closeHandler={sinon.stub()}
@@ -340,7 +325,7 @@ describe('Sharing', () => {
   describe('add button states', () => {
     function makeSharingEle(state) {
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.Sharing
+        <Sharing
           addNotification={sinon.stub()}
           canShareModel={true}
           closeHandler={sinon.stub()}
@@ -357,14 +342,14 @@ describe('Sharing', () => {
     }
     it('shows a disabled button with "add" text by default', () => {
       const expected = (
-        <juju.components.GenericButton
+        <GenericButton
           submit={true}
           tooltip="Add user"
           ref="grantButton"
           type="positive"
           disabled={true}>
           Add
-        </juju.components.GenericButton>
+        </GenericButton>
       );
       expect(makeSharingEle()).toEqualJSX(expected);
     });
@@ -374,14 +359,14 @@ describe('Sharing', () => {
         canAdd: true
       });
       const expected = (
-        <juju.components.GenericButton
+        <GenericButton
           submit={true}
           tooltip="Add user"
           ref="grantButton"
           type="positive"
           disabled={false}>
           Add
-        </juju.components.GenericButton>
+        </GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });
@@ -391,14 +376,14 @@ describe('Sharing', () => {
         sending: true
       });
       const expected = (
-        <juju.components.GenericButton
+        <GenericButton
           submit={true}
           tooltip="Add user"
           ref="grantButton"
           type="positive"
           disabled={true}>
           Add
-        </juju.components.GenericButton>
+        </GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });
@@ -408,16 +393,16 @@ describe('Sharing', () => {
         sent: true
       });
       const expected = (
-        <juju.components.GenericButton
+        <GenericButton
           submit={true}
           tooltip="Add user"
           ref="grantButton"
           type="positive"
           disabled={true}>
-          <juju.components.SvgIcon
+          <SvgIcon
             name="tick_16"
             size="16" />
-        </juju.components.GenericButton>
+        </GenericButton>
       );
       expect(output).toEqualJSX(expected);
     });

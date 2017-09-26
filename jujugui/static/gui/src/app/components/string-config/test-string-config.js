@@ -1,35 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const StringConfig = require('./string-config');
+const StringConfigInput = require('./input/input');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('StringConfig', function() {
   let option;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('string-config', function() { done(); });
-  });
 
   beforeEach(() => {
     option = {
@@ -42,7 +22,7 @@ describe('StringConfig', function() {
   it('renders a string config', function() {
     var config = 'the value';
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config={config}
         option={option} />, true);
     const instance = renderer.getMountedInstance();
@@ -52,7 +32,7 @@ describe('StringConfig', function() {
       <div className="string-config">
         <span className="string-config__label">{option.key}{typeString}</span>
         <div className="string-config--value">
-          <juju.components.StringConfigInput
+          <StringConfigInput
             config={config}
             disabled={false}
             ref="editableInput"
@@ -67,14 +47,14 @@ describe('StringConfig', function() {
 
   it('can handle a string config without a config value', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config={undefined}
         option={option} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="string-config--value">
-        <juju.components.StringConfigInput
+        <StringConfigInput
           config={undefined}
           disabled={false}
           ref="editableInput"
@@ -89,7 +69,7 @@ describe('StringConfig', function() {
       description: 'test config for strings'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config="initial"
         option={option} />);
     assert.deepEqual(
@@ -99,7 +79,7 @@ describe('StringConfig', function() {
   it('can be disabled', function() {
     var config = 'the value';
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config={config}
         disabled={true}
         option={option} />, true);
@@ -107,7 +87,7 @@ describe('StringConfig', function() {
     const output = renderer.getRenderOutput();
     var expected = (
       <div className="string-config--value string-config--disabled">
-        <juju.components.StringConfigInput
+        <StringConfigInput
           config={config}
           disabled={true}
           ref="editableInput"
@@ -118,7 +98,7 @@ describe('StringConfig', function() {
 
   it('can display a changed value', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config="the value"
         option={option} />, true);
     const instance = renderer.getMountedInstance();
@@ -131,7 +111,7 @@ describe('StringConfig', function() {
 
   it('correctly compares existing numbers', function() {
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.StringConfig
+      <StringConfig
         config={123}
         option={option} />, true);
     const instance = renderer.getMountedInstance();

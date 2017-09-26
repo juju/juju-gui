@@ -29,8 +29,7 @@ YUI.add('juju-models', function(Y) {
   var models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
       environments = Y.namespace('juju.environments'),
-      handlers = models.handlers,
-      relationUtils = window.juju.utils.RelationUtils;
+      handlers = models.handlers;
 
   // Define strings representing juju-core entities' Life state.
   var ALIVE = 'alive';
@@ -682,6 +681,78 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Convert the number passed in into a alphabet representation. Starting
+      from 1, 0 will return ?Z.
+      ex) 2 = B, 27 = AA, 38 = AL ...
+      @param {Integer} num The number to convert to an alphabet.
+      @returns {String} The alphabet representation.
+    */
+    _numToLetter: function(num) {
+      // Because num can be more than 26 we need to reduce it down to a value
+      // between 0 and 26 to match alphabets.
+      var remainder = num % 26;
+      // Reduce it down to the number of characters we need, since we only have
+      // 26 characters any multiple of that will require us to add more.
+      var multiple = num / 26 | 0;
+      var char = '';
+      // remainder will be 0 if number is 26 (Z)
+      if (remainder) {
+        // 96 is the start of lower case alphabet.
+        char = String.fromCharCode(96 + remainder);
+      } else {
+        // subtract 1 from the multiple if remainder is 0 and add a Z;
+        multiple--;
+        char = 'z';
+      }
+      // If there are multiple characters required then recurse else
+      // return the value of char.
+      return multiple ? this._numToLetter(multiple) + char : char;
+    },
+
+    /**
+      Convert the string passed in into a number representation.
+      ex) B = 2, AA = 27, AL = 38 ...
+      @returns {String} str The string to convert to a number.
+      @returns {Integer} The number representation.
+    */
+    _letterToNum: function(str) {
+      var num = 0;
+      var characters = str.split('');
+      var characterLength = characters.length;
+      characters.forEach((letter, characterPosition) => {
+        // Use the character position to calculate the base for this character.
+        // The last character needs to have a base of 0 so we subtract one from
+        // the position.
+        var base = Math.pow(26, characterLength - characterPosition - 1);
+        // Use the character code to get the number value for the letter. 96 is
+        // the start of lower case alphabet.
+        num += base * (str.charCodeAt(characterPosition) - 96);
+      });
+      return num;
+    },
+
+    /**
+      Generate a name for a service with an incremented number if needed.
+      @param {String} charmName The charm name.
+      @param {Object} services the list of services.
+      @param {Integer} counter The optional increment counter.
+      @returns {String} The name for the service.
+    */
+    _generateServiceName: function(charmName, services, counter = 0) {
+      // There should only be a counter in the charm name after the first one.
+      var name = counter > 0 ?
+        charmName + '-' + this._numToLetter(counter) : charmName;
+      // Check each service to see if this counter is being used.
+      var match = services.some(service => {
+        return service.get('name') === name;
+      });
+      // If there is no match return the new name, otherwise check the next
+      // counter.
+      return match ? this._generateServiceName(
+        charmName, services, counter += 1) : name;
+    },
+
+    /**
      Add a ghost (pending) service to the
      database. The canvas should pick this up
      independently.
@@ -711,7 +782,7 @@ YUI.add('juju-models', function(Y) {
       if (!charmName) {
         charmName = charm.get('package_name');
       }
-      var name = utils.generateServiceName(charmName, this);
+      var name = this._generateServiceName(charmName, this);
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
         id: randomId,
@@ -1195,6 +1266,44 @@ YUI.add('juju-models', function(Y) {
       });
     },
 
+    /*
+      Given one of the many agent states returned by juju-core,
+      return a simplified version.
+      @param {Object} unit A service unit.
+      @param {String} life The life status of the units service.
+      @return {String} the filtered agent state of the unit.
+    */
+    _simplifyState: function(unit, life) {
+      var state = unit.agent_state,
+          inError = (/-?error$/).test(state);
+      if (!state) {
+        //Uncommitted units don't have state.
+        return 'uncommitted';
+      }
+      if (life === 'dying' && !inError) {
+        return 'dying';
+      } else {
+        if (state === 'started') { return 'running'; }
+        if (inError) { return 'error'; }
+        // "pending", "installed", and "stopped", plus anything unforeseen
+        return state;
+      }
+    },
+
+    /**
+      Determines the category type for the unit status list of the inspector.
+      @param {String} category The category name to test.
+      @return {String} The category type
+        'error', 'landscape', 'pending', 'running'
+    */
+    _determineCategoryType: function(category) {
+      if ((/fail|error/).test(category)) { return 'error'; }
+      if ((/landscape/).test(category)) { return 'landscape'; }
+      if (category === 'running') { return 'running'; }
+      if (category === 'uncommitted') { return 'uncommitted'; }
+      return 'pending';
+    },
+
     /**
       Returns information about the state of the set of units for a given
       service in the form of a map of agent states.
@@ -1210,8 +1319,8 @@ YUI.add('juju-models', function(Y) {
           serviceLife = service.get('life');
 
       units_for_service.each(function(unit) {
-        var state = utils.determineCategoryType(
-          utils.simplifyState(unit, serviceLife));
+        var state = units_for_service._determineCategoryType(
+          units_for_service._simplifyState(unit, serviceLife));
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         } else {
@@ -2734,6 +2843,7 @@ YUI.add('juju-models', function(Y) {
         of service names.
     */
     findRelatedServices: function(service, asArray) {
+      const relationUtils = window.juju.utils.RelationUtils;
       var relationData = relationUtils.getRelationDataForService(this, service);
       var related = [service.get('name')]; // Add own name to related list.
       // Compile the list of related services.
@@ -2876,7 +2986,6 @@ YUI.add('juju-models', function(Y) {
     'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models',
-    'juju-env-api',
-    'relation-utils'
+    'juju-env-api'
   ]
 });

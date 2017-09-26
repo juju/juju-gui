@@ -29,13 +29,40 @@ YUI.add('juju-view-environment', function(Y) {
 
   let views = Y.namespace('juju.views');
 
+  var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
+
+    bindModelView: function(model) {
+      model = model || this.get('model');
+      // If this view has a model, bubble model events to the view.
+      if (model) {
+        model.addTarget(this);
+      }
+
+      // If the model gets swapped out, reset targets accordingly and rerender.
+      this.after('modelChange', function(ev) {
+        if (ev.prevVal) {
+          ev.prevVal.removeTarget(this);
+        }
+        if (ev.newVal) {
+          ev.newVal.addTarget(this);
+        }
+        this.render();
+      });
+
+      // Re-render this view when the model changes, and after it is loaded,
+      // to support "loaded" flags.
+      this.after(['*:change', '*:load'], this.render, this);
+    }
+
+  });
+
   /**
    * Display an environment.
    *
    * @class EnvironmentView
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [
-    views.JujuBaseView
+    JujuBaseView
   ], {
 
     events: {
@@ -73,22 +100,24 @@ YUI.add('juju-view-environment', function(Y) {
       const container = this.getContainer();
       let topo = this.topo;
       const db = this.get('db');
-
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
+        /* eslint-disable no-undef */
         ReactDOM.render(
           <juju.components.Environment />,
           container);
+        /* eslint-enable */
         this._rendered = true;
       }
 
       topo = this.createTopology();
       topo.recordSubscription(
         'ServiceModule',
-        db.services.after('remove',
-          this.updateHelpIndicator.bind(this)));
-
+        db.services.after('reset', this.updateHelpIndicator.bind(this)));
+      topo.recordSubscription(
+        'ServiceModule',
+        db.services.after('remove', this.updateHelpIndicator.bind(this)));
       topo.recordSubscription(
         'ServiceModule',
         db.services.after('add', this.updateHelpIndicator.bind(this)));
@@ -96,6 +125,9 @@ YUI.add('juju-view-environment', function(Y) {
       topo.render();
       this.boundRenderedHandler = this.updateHelpIndicator.bind(this);
       document.addEventListener('topo.rendered', this.boundRenderedHandler);
+
+      this.updateHelpIndicator();
+
       return this;
     },
 
@@ -142,7 +174,7 @@ YUI.add('juju-view-environment', function(Y) {
         });
         // Bind all the behaviors we need as modules.
         topo.addModule(views.ServiceModule, {useTransitions: true});
-        topo.addModule(views.PanZoomModule);
+        topo.addModule(window.views.PanZoomModule);
         topo.addModule(views.ViewportModule);
         topo.addModule(views.RelationModule);
 
@@ -244,7 +276,6 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'environment',
     'juju-topology',
     'node',
     'view'

@@ -1,22 +1,10 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const BudgetTable = require('../../budget-table/budget-table');
+const DeploymentChangeItem = require('../change-item/change-item');
 
 class DeploymentServices extends React.Component {
 
@@ -31,7 +19,7 @@ class DeploymentServices extends React.Component {
     const infos = {};
     for (let key in changes) {
       const items = changes[key].map(change =>
-        <juju.components.DeploymentChangeItem
+        <DeploymentChangeItem
           change={change}
           key={change.id}
           showTime={false} />);
@@ -71,7 +59,7 @@ class DeploymentServices extends React.Component {
       props.generateAllChangeDescriptions(currentChangeSet));
     return (
       <div>
-        <juju.components.BudgetTable
+        <BudgetTable
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           allocationEditable={true}
@@ -107,11 +95,4 @@ DeploymentServices.propTypes = {
   withPlans: PropTypes.bool
 };
 
-YUI.add('deployment-services', function() {
-  juju.components.DeploymentServices = DeploymentServices;
-}, '0.1.0', {
-  requires: [
-    'budget-table',
-    'deployment-change-item'
-  ]
-});
+module.exports = DeploymentServices;

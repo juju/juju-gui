@@ -31,7 +31,6 @@ YUI.add('juju-topology-service', function(Y) {
       models = Y.namespace('juju.models'),
       relationUtils = window.juju.utils.RelationUtils,
       topoUtils = Y.namespace('juju.topology.utils'),
-      utils = Y.namespace('juju.views.utils'),
       views = Y.namespace('juju.views'),
       ziputils = Y.namespace('juju.ziputils');
 
@@ -646,7 +645,7 @@ YUI.add('juju-topology-service', function(Y) {
       var node = this.getServiceNode(id);
       if (node) {
         if (hover) {
-          utils.addSVGClass(node, 'hover');
+          topoUtils.addSVGClass(node, 'hover');
         } else {
           this.unhoverServices();
         }
@@ -680,7 +679,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     selectNode: function(node) {
       this.deselectNodes();
-      utils.addSVGClass(node, 'is-selected');
+      topoUtils.addSVGClass(node, 'is-selected');
     },
 
     /**
@@ -792,7 +791,7 @@ YUI.add('juju-topology-service', function(Y) {
         detail: {id: box.id}
       }));
       var rect = this.closest('.service');
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+      if (!topoUtils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
       document.dispatchEvent(new CustomEvent('topo.snapToService', {
@@ -1082,7 +1081,11 @@ YUI.add('juju-topology-service', function(Y) {
         // The entiy (charm or bundle) data was JSON encoded because the
         // dataTransfer mechanism only allows for string values.
         var entityData = JSON.parse(dragData.data);
-        if (utils.determineEntityDataType(entityData) === 'charm') {
+        let entityType = 'charm';
+        if (entityData && entityData.id && entityData.id.indexOf('bundle') > -1) {
+          entityType = 'bundle';
+        }
+        if (entityType === 'charm') {
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
           var charm = new models.Charm(entityData);
@@ -1940,8 +1943,9 @@ YUI.add('juju-topology-service', function(Y) {
   requires: [
     'd3',
     'd3-components',
+    'juju-environment-utils',
+    'juju-topology-utils',
     'juju-models',
-    'relation-utils',
     'zip-utils'
   ]
 });

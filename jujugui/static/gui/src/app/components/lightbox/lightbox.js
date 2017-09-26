@@ -2,6 +2,10 @@
 
 'use strict';
 
+const React = require('react');
+
+const SvgIcon = require('../svg-icon/svg-icon');
+
 /**
   Renders a modal like overlay with a darkened background.
   A caption is displayed in white below the content if present.
@@ -20,7 +24,7 @@ class Lightbox extends React.PureComponent {
     return (
       <div className="lightbox" onClick={this.props.close}>
         <button className="lightbox__close">
-          <juju.components.SvgIcon name="close_16_white" width="16" />
+          <SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__content">
           <div className="lightbox__content-image">
@@ -39,10 +43,4 @@ Lightbox.propTypes = {
   close: PropTypes.func.isRequired
 };
 
-YUI.add('lightbox', function() {
-  juju.components.Lightbox = Lightbox;
-}, '0.1.0', {
-  requires: [
-    'svg-icon'
-  ]
-});
+module.exports = Lightbox;

@@ -2,7 +2,11 @@
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const ProfileCharmList = require('./charm-list');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Charm List', function() {
 
@@ -32,20 +36,13 @@ describe('Profile Charm List', function() {
     "name": "privghost"
   }]`;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('profile-charm-list', function() {
-      done();
-    });
-  });
-
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'hatch@external');
       cb(null, JSON.parse(rawCharmData));
     };
     return jsTestUtils.shallowRender(
-      <juju.components.ProfileCharmList
+      <ProfileCharmList
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}

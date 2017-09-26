@@ -1,22 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const SvgIcon = require('../../../svg-icon/svg-icon');
+const InsetSelect = require('../../../inset-select/inset-select');
+const GenericInput = require('../../../generic-input/generic-input');
+const ButtonRow = require('../../../button-row/button-row');
+const FileField = require('../../../file-field/file-field');
 
 class DeploymentCredentialAdd extends React.Component {
   constructor(props) {
@@ -69,7 +60,11 @@ class DeploymentCredentialAdd extends React.Component {
       return;
     }
     let fields = info.forms[this.state.authType].map(field => field.id);
-    fields.push('credentialName');
+    // If a credentialName was provided then we're editing credentials so it
+    // is ok to have a duplicate.
+    if (!props.credentialName) {
+      fields.push('credentialName');
+    }
     var valid = props.validateForm(fields, this.refs);
     if (!valid) {
       // If there are any form validation errors then stop adding the
@@ -144,7 +139,7 @@ class DeploymentCredentialAdd extends React.Component {
       };
     });
     return (
-      <juju.components.InsetSelect
+      <InsetSelect
         disabled={this.props.acl.isReadOnly()}
         label="Authentication type"
         onChange={this._handleAuthChange.bind(this)}
@@ -182,7 +177,7 @@ class DeploymentCredentialAdd extends React.Component {
         return (
           <div className="deployment-credential-add__upload"
             key={field.id}>
-            <juju.components.FileField
+            <FileField
               accept=".json"
               disabled={isReadOnly}
               key={field.id}
@@ -192,7 +187,7 @@ class DeploymentCredentialAdd extends React.Component {
           </div>);
       }
       return (
-        <juju.components.GenericInput
+        <GenericInput
           autocomplete={field.autocomplete}
           disabled={isReadOnly}
           key={field.id}
@@ -215,7 +210,7 @@ class DeploymentCredentialAdd extends React.Component {
         </div>
         <div className="deployment-flow__notice six-col last-col">
           <p className="deployment-flow__notice-content">
-            <juju.components.SvgIcon
+            <SvgIcon
               name="general-action-blue"
               size="16" />
             Credentials are stored securely on our servers and we will
@@ -228,27 +223,29 @@ class DeploymentCredentialAdd extends React.Component {
   }
 
   render() {
+    const props = this.props;
+    // If a name was provided then we're editing, not adding.
+    const prefix = props.credentialName ? 'Update' : 'Add';
     let buttons = [{
       action: this._handleAddCredentials.bind(this),
       submit: true,
-      title: 'Add cloud credential',
+      title: `${prefix} cloud credential`,
       type: 'inline-positive'
     }];
-    if (!this.props.hideCancel) {
+    if (!props.hideCancel) {
       buttons.unshift({
-        action: () => { this.props.close(true); },
+        action: () => { props.close(true); },
         title: 'Cancel',
         type: 'inline-neutral'
       });
     }
     // If no cloud has been selected we set a default so that the disabled
     // form will display correctly as the next step.
-    var isReadOnly = this.props.acl.isReadOnly();
-    const cloud = this.props.cloud;
+    const cloud = props.cloud;
     const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
     const info = this._getInfo();
-    var title = info && info.title || cloud.name;
-    var credentialName = id === 'gce' ?
+    const title = info && info.title || cloud.name;
+    const credentialNameLabel = id === 'gce' ?
       'Project ID (credential name)' : 'Credential name';
     const nameValidators = [{
       regex: /\S+/,
@@ -259,13 +256,14 @@ class DeploymentCredentialAdd extends React.Component {
         'letters, numbers, and hyphens. It must not start or ' +
         'end with a hyphen.'
     }];
-    const credentials = this.props.credentials || [];
+    const credentials = props.credentials || [];
     if (credentials.length > 0) {
       nameValidators.push({
         check: value => credentials.indexOf(value.toLowerCase()) > -1,
         error: 'You already have a credential with this name.'
       });
     }
+    const credentialName = props.credentialName;
     return (
       <div className="deployment-credential-add twelve-col">
         <h4>{`Create new ${title} credential`}</h4>
@@ -274,19 +272,20 @@ class DeploymentCredentialAdd extends React.Component {
             target="_blank">
             Sign up for {title}
             &nbsp;
-            <juju.components.SvgIcon
+            <SvgIcon
               name="external-link-16"
               size="12" />
           </a>
         </div>
         <form className="twelve-col">
           <div className="six-col last-col">
-            <juju.components.GenericInput
-              disabled={isReadOnly}
-              label={credentialName}
+            <GenericInput
+              disabled={props.acl.isReadOnly() || !!credentialName}
+              label={credentialNameLabel}
               required={true}
               ref="credentialName"
-              validate={nameValidators} />
+              validate={nameValidators}
+              value={credentialName} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -295,7 +294,7 @@ class DeploymentCredentialAdd extends React.Component {
         </form>
         <div className={
           'deployment-credential-add__buttons twelve-col last-col'}>
-          <juju.components.ButtonRow
+          <ButtonRow
             buttons={buttons} />
         </div>
       </div>
@@ -308,6 +307,7 @@ DeploymentCredentialAdd.propTypes = {
   addNotification: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
   cloud: PropTypes.object,
+  credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,
   generateCloudCredentialName: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,
@@ -320,14 +320,4 @@ DeploymentCredentialAdd.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-YUI.add('deployment-credential-add', function() {
-  juju.components.DeploymentCredentialAdd = DeploymentCredentialAdd;
-}, '0.1.0', {
-  requires: [
-    'button-row',
-    'file-field',
-    'generic-input',
-    'inset-select',
-    'svg-icon'
-  ]
-});
+module.exports = DeploymentCredentialAdd;

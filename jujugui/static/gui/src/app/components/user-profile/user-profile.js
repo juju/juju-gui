@@ -1,22 +1,13 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const EmptyUserProfile = require('./empty-user-profile');
+const Panel = require('../panel/panel');
+const UserProfileEntityList = require('./entity-list/entity-list');
+const UserProfileModelList = require('./model-list/model-list');
+const UserProfileHeader = require('./header/header');
 
 class UserProfile extends React.Component {
   constructor() {
@@ -60,7 +51,7 @@ class UserProfile extends React.Component {
         console.log('cannot retrieve charm store macaroon:', err);
         return;
       }
-      props.storeUser('charmstore');
+      props.storeUser('charmstore', true);
     };
     // TODO frankban: should pass an user object as prop here instead.
     const macaroon = props.charmstore.bakery.storage.get('charmstore');
@@ -86,16 +77,17 @@ class UserProfile extends React.Component {
     if (bundles && bundles.length === 0 && charms && charms.length === 0 &&
       models && models.length === 0) {
       return (
-        <juju.components.EmptyUserProfile
+        <EmptyUserProfile
           changeState={props.changeState}
           isCurrentUser={props.userInfo.isCurrent}
           staticURL={props.staticURL}
           switchModel={props.switchModel} />);
     }
-    // All possible components, that can be rendered on the profile page;
-    // these may be filtered down to a smaller list depending on the context.
-    const lists = [
-      <juju.components.UserProfileModelList
+    // The list of models is always included, even if the profile is not for
+    // the current user, in which case we'll display only the models owned
+    // by that profile.
+    const toRender = [
+      <UserProfileModelList
         acl={props.acl}
         addNotification={props.addNotification}
         changeState={props.changeState}
@@ -108,53 +100,40 @@ class UserProfile extends React.Component {
         models={this.state.models}
         setEntities={this._setEntities.bind(this, 'models')}
         switchModel={props.switchModel}
-        userInfo={props.userInfo} />,
-      <juju.components.UserProfileEntityList
-        key='bundleList'
-        ref='bundleList'
-        addNotification={props.addNotification}
-        changeState={props.changeState}
-        charmstore={props.charmstore}
-        entities={this.state.bundles}
-        getDiagramURL={props.getDiagramURL}
-        setEntities={this._setEntities.bind(this, 'bundles')}
-        type='bundle'
-        user={props.userInfo.external} />,
-      <juju.components.UserProfileEntityList
-        key='charmList'
-        ref='charmList'
-        addNotification={props.addNotification}
-        changeState={props.changeState}
-        charmstore={props.charmstore}
-        d3={props.d3}
-        entities={this.state.charms}
-        getDiagramURL={props.getDiagramURL}
-        getKpiMetrics={props.getKpiMetrics}
-        setEntities={this._setEntities.bind(this, 'charms')}
-        type='charm'
-        user={props.userInfo.external} />
+        userInfo={props.userInfo} />
     ];
-    // The list of models is always included, even if the profile is not for
-    // the current user, in which case we'll display only the models owned
-    // by that profile.
-    const toRender = ['modelList'];
-    // Exclude/include sections only displayed to the current user.
-    if (props.userInfo.isCurrent) {
-      toRender.push('agreementList');
-    }
     // Exclude/include sections that require a charm store user.
     if (props.userInfo.external) {
-      toRender.push('bundleList');
-      toRender.push('charmList');
+      toRender.push(
+        <UserProfileEntityList
+          key='bundleList'
+          ref='bundleList'
+          addNotification={props.addNotification}
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          entities={this.state.bundles}
+          getDiagramURL={props.getDiagramURL}
+          setEntities={this._setEntities.bind(this, 'bundles')}
+          type='bundle'
+          user={props.userInfo.external} />);
+      toRender.push(
+        <UserProfileEntityList
+          key='charmList'
+          ref='charmList'
+          addNotification={props.addNotification}
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          d3={props.d3}
+          entities={this.state.charms}
+          getDiagramURL={props.getDiagramURL}
+          getKpiMetrics={props.getKpiMetrics}
+          setEntities={this._setEntities.bind(this, 'charms')}
+          type='charm'
+          user={props.userInfo.external} />);
     }
-    // Filter the original list of components based on which sections are in
-    // and which are out.
-    const componentsToRender = lists.filter(list => {
-      return toRender.indexOf(list.key) >= 0;
-    });
     return (
       <div>
-        {componentsToRender}
+        {toRender}
       </div>);
   }
 
@@ -163,12 +142,12 @@ class UserProfile extends React.Component {
     // counts functionality here.
     const links = [];
     return (
-      <juju.components.Panel
+      <Panel
         instanceName="user-profile"
         visible={true}>
         <div className="twelve-col">
           <div className="inner-wrapper">
-            <juju.components.UserProfileHeader
+            <UserProfileHeader
               avatar=""
               interactiveLogin={this._interactiveLogin.bind(this)}
               links={links}
@@ -176,7 +155,7 @@ class UserProfile extends React.Component {
             {this._generateContent()}
           </div>
         </div>
-      </juju.components.Panel>
+      </Panel>
     );
   }
 };
@@ -212,19 +191,4 @@ UserProfile.propTypes = {
   userInfo: PropTypes.object.isRequired
 };
 
-YUI.add('user-profile', function() {
-  juju.components.UserProfile = UserProfile;
-}, '', {
-  requires: [
-    'empty-user-profile',
-    'generic-input',
-    'loading-spinner',
-    'panel-component',
-    'user-profile-agreement-list',
-    'user-profile-budget-list',
-    'user-profile-entity',
-    'user-profile-entity-list',
-    'user-profile-model-list',
-    'user-profile-header'
-  ]
-});
+module.exports = UserProfile;

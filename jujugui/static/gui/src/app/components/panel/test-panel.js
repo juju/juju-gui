@@ -1,39 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Panel = require('./panel');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('PanelComponent', function() {
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('panel-component', function() { done(); });
-  });
 
   it('generates a visible panel when visible flag is provided', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName={instanceName}
         visible={true} />, true);
     var instance = renderer.getMountedInstance();
@@ -54,7 +33,7 @@ describe('PanelComponent', function() {
   it('generates a hidden panel if visible flag is falsey', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName={instanceName}
         visible={false} />, true);
     var instance = renderer.getMountedInstance();
@@ -75,11 +54,11 @@ describe('PanelComponent', function() {
   it('renders provided children components', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName={instanceName}
         visible={true}>
         <div>child</div>
-      </juju.components.Panel>, true);
+      </Panel>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     const expected = (
@@ -99,7 +78,7 @@ describe('PanelComponent', function() {
     var instanceName = 'custom-instance-name';
     var clickAction = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName={instanceName}
         clickAction={clickAction}
         visible={true} />, true);
@@ -113,7 +92,7 @@ describe('PanelComponent', function() {
     var clickAction = sinon.stub();
     var stopPropagation = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName={instanceName}
         clickAction={clickAction}
         visible={true} />, true);
@@ -126,7 +105,7 @@ describe('PanelComponent', function() {
   it('sets the keyboard focus when it loads', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName="my-panel"
         visible={true} />, true);
     var instance = renderer.getMountedInstance();
@@ -138,7 +117,7 @@ describe('PanelComponent', function() {
   it('can not set the keyboard focus on load', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.Panel
+      <Panel
         instanceName="my-panel"
         focus={false}
         visible={true} />, true);

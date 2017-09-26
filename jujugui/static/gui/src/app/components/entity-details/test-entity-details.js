@@ -1,35 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const EntityDetails = require('./entity-details');
+const EntityContent = require('./content/content');
+const EntityHeader = require('./header/header');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EntityDetails', function() {
   var acl, mockEntity, urllib;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-details', 'jujulib-utils', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -62,7 +43,7 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -103,7 +84,7 @@ describe('EntityDetails', function() {
         ref="content"
         tabIndex="0">
         <div>
-          <juju.components.EntityHeader
+          <EntityHeader
             acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
@@ -119,7 +100,7 @@ describe('EntityDetails', function() {
             urllib={urllib}
           />
           {undefined}
-          <juju.components.EntityContent
+          <EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
@@ -154,7 +135,7 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
@@ -220,7 +201,7 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -261,7 +242,7 @@ describe('EntityDetails', function() {
         ref="content"
         tabIndex="0">
         <div>
-          <juju.components.EntityHeader
+          <EntityHeader
             acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
@@ -276,7 +257,7 @@ describe('EntityDetails', function() {
             scrollPosition={100}
             urllib={urllib}
           />
-          <juju.components.EntityContent
+          <EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
@@ -311,7 +292,7 @@ describe('EntityDetails', function() {
     const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
@@ -346,7 +327,7 @@ describe('EntityDetails', function() {
   it('sets the focus when rendered', function() {
     const focus = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
@@ -400,7 +381,7 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
@@ -441,7 +422,7 @@ describe('EntityDetails', function() {
         ref="content"
         tabIndex="0">
         <div>
-          <juju.components.EntityHeader
+          <EntityHeader
             acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
@@ -457,7 +438,7 @@ describe('EntityDetails', function() {
             urllib={urllib}
           />
           {undefined}
-          <juju.components.EntityContent
+          <EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
@@ -504,7 +485,7 @@ describe('EntityDetails', function() {
     const showTerms = sinon.stub();
     const scrollCharmbrowser = sinon.stub();
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
@@ -545,7 +526,7 @@ describe('EntityDetails', function() {
         ref="content"
         tabIndex="0">
         <div>
-          <juju.components.EntityHeader
+          <EntityHeader
             acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
@@ -561,7 +542,7 @@ describe('EntityDetails', function() {
             urllib={urllib}
           />
           {undefined}
-          <juju.components.EntityContent
+          <EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
             changeState={changeState}
@@ -591,7 +572,7 @@ describe('EntityDetails', function() {
     const getEntity = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl="http://example.com"
@@ -634,7 +615,7 @@ describe('EntityDetails', function() {
     const listPlansForCharm = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const makeEntityModel = sinon.stub().returns(mockEntity);
     const shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
+      <EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl="http://example.com"

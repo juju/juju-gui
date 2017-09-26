@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('environment login support', function() {
-    const requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    const requires = [
+      'node', 'juju-tests-utils', 'juju-env-api'];
     let conn, env, utils, juju;
 
     before(function(done) {

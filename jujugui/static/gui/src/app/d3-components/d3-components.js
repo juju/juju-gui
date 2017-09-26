@@ -126,19 +126,31 @@ YUI.add('d3-components', function(Y) {
       if (!(ModClassOrInstance instanceof Module)) {
         module = new ModClassOrInstance();
       }
-      config.component = this;
-      module.setAttrs(config);
+      let isYUIModule = false;
+      if (module instanceof Module) {
+        isYUIModule = true;
+      }
+
+      if (isYUIModule) {
+        config.component = this;
+        module.setAttrs(config);
+      } else {
+        module.topo = this;
+      }
 
       this.modules[module.name] = module;
 
-      modEvents = Y.merge(module.events);
+      // The events object may contain functions so can't JSON.stringify here.
+      modEvents = Object.assign({}, module.events);
       this.events[module.name] = modEvents;
 
       this.bind(module.name);
       module.componentBound();
 
-      // Add Module as an event target of Component
-      this.addTarget(module);
+      if (isYUIModule) {
+        // Add the module as an event target of Component
+        this.addTarget(module);
+      }
       return this;
     },
 
@@ -247,16 +259,18 @@ YUI.add('d3-components', function(Y) {
       this.unbind(modName);
 
       // Bind 'scene' events
-      Object.keys(modEvents.scene).forEach(selector => {
-        const handlers = modEvents.scene[selector];
-        Object.keys(handlers).forEach(trigger => {
-          const handler = self._normalizeHandler(
-            handlers[trigger], module, selector);
-          if (utils.isValue(handler)) {
-            _bindEvent(trigger, handler.callback, selector, handler.context);
-          }
+      if (modEvents.scene) {
+        Object.keys(modEvents.scene).forEach(selector => {
+          const handlers = modEvents.scene[selector];
+          Object.keys(handlers).forEach(trigger => {
+            const handler = self._normalizeHandler(
+              handlers[trigger], module, selector);
+            if (utils.isValue(handler)) {
+              _bindEvent(trigger, handler.callback, selector, handler.context);
+            }
+          });
         });
-      });
+      }
       if (modEvents.topo) {
         subscriptions = subscriptions.concat(
           this._attachEvents(module, modEvents.topo, 'topo'));

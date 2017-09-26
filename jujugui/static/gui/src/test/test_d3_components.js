@@ -133,12 +133,17 @@ describe('d3-components', function() {
       // and also shows an inline callback (which is discouraged but allowed)
       modA = new TestModule();
       modA.events.scene['.thing'] = {
-        click: {phase: 'after',
-          callback: 'afterThing'},
-        dblclick: {phase: 'on',
+        click: {
+          phase: 'after',
+          callback: 'afterThing'
+        },
+        dblclick: {
+          phase: 'on',
           callback: function(evt) {
             state.dbldbl = true;
-          }}};
+          }
+        }
+      };
       modA.afterThing = function(evt) {
         state.clicked = true;
       };
@@ -146,7 +151,7 @@ describe('d3-components', function() {
       comp.render();
 
       document.querySelector('.thing').click();
-      state.clicked.should.equal(true);
+      assert.strictEqual(state.clicked, true);
 
       const event = new MouseEvent('dblclick', {
         'view': window,
@@ -154,8 +159,7 @@ describe('d3-components', function() {
         'cancelable': true
       });
       document.querySelector('.thing').dispatchEvent(event);
-      state.dbldbl.should.equal(true);
-
+      assert.strictEqual(state.dbldbl, true);
     });
 
   it('should correctly handle synthetic event bindings', function(done) {

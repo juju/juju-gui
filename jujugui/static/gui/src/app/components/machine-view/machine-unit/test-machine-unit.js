@@ -1,32 +1,17 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
+
+const shapeup = require('shapeup');
+
+const MachineViewMachineUnit = require('./machine-unit');
+const MoreMenu = require('../../more-menu/more-menu');
+
+const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachineUnit', function() {
   let acl, service, unit;
-
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('machine-view-machine-unit', function() { done(); });
-  });
 
   beforeEach(function () {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -56,7 +41,7 @@ describe('MachineViewMachineUnit', function() {
     const renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
@@ -85,7 +70,7 @@ describe('MachineViewMachineUnit', function() {
   it('can render a container', function() {
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
@@ -105,7 +90,7 @@ describe('MachineViewMachineUnit', function() {
             title="django/7" />
         </span>
         {'django/7'}
-        <juju.components.MoreMenu
+        <MoreMenu
           items={[{
             label: 'Destroy',
             action: output.props.children[2].props.items[0].action
@@ -118,7 +103,7 @@ describe('MachineViewMachineUnit', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => true});
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
@@ -128,7 +113,7 @@ describe('MachineViewMachineUnit', function() {
         service={service}
         unit={unit} />);
     const expected = (
-      <juju.components.MoreMenu
+      <MoreMenu
         items={[{
           label: 'Destroy',
           action: false
@@ -139,7 +124,7 @@ describe('MachineViewMachineUnit', function() {
   it('can display in dragged mode', function() {
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
@@ -161,7 +146,7 @@ describe('MachineViewMachineUnit', function() {
     unit.deleted = true;
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
@@ -181,7 +166,7 @@ describe('MachineViewMachineUnit', function() {
   it('can display in draggable mode', function() {
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         connectDragSource={jsTestUtils.connectDragSource}
         canDrag={true}
@@ -202,7 +187,7 @@ describe('MachineViewMachineUnit', function() {
   it('can remove a unit', function() {
     const removeUnit = sinon.stub();
     const output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachineUnit.DecoratedComponent
+      <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}

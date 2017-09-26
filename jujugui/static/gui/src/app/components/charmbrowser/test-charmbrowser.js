@@ -1,37 +1,18 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const Charmbrowser = require('./charmbrowser');
+const EntityDetails = require('../entity-details/entity-details');
+const Panel = require('../panel/panel');
+const SearchResults = require('../search-results/search-results');
+const Store = require('../store/store');
+
+const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Charmbrowser', function() {
   var acl, appState;
-
-  beforeAll(function(done) {
-    // Mock these out since we just do shallow renders.
-    juju.components.Panel = function() {};
-    // By loading this file it adds the component to the juju components.
-    YUI().use('charmbrowser-component', function() { done(); });
-  });
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -42,21 +23,21 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the search results when the app state calls for it', function() {
-    var query = 'django';
+    const query = 'django';
     appState.current.search = {text: query};
     appState.generatePath = sinon.stub();
-    var series = {};
+    const series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
     const deployTarget = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var makeEntityModel = sinon.spy();
-    var utils = {getName: sinon.stub()};
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const makeEntityModel = sinon.spy();
+    const utils = {getName: sinon.stub()};
+    const renderer = jsTestUtils.shallowRender(
+      <Charmbrowser
         acl={acl}
         addNotification={addNotification}
         apiUrl="http://example.com/"
@@ -82,18 +63,18 @@ describe('Charmbrowser', function() {
         showTerms={sinon.stub()}
         urllib={sinon.stub()}
         utils={utils} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     const searchResults = output.props.children.props.children.props;
-    var expected = (
-      <juju.components.Panel
+    const expected = (
+      <Panel
         instanceName="white-box"
         clickAction={instance._close}
         focus={false}
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
-          <juju.components.SearchResults
+          <SearchResults
             acl={acl}
             changeState={searchResults.changeState}
             charmstoreSearch={charmstoreSearch}
@@ -112,18 +93,18 @@ describe('Charmbrowser', function() {
             tags={undefined}
             type={undefined} />
         </div>
-      </juju.components.Panel>);
+      </Panel>);
     expect(output).toEqualJSX(expected);
   });
 
   it('displays the store when the app state calls for it', function() {
-    var charmstoreSearch = sinon.stub();
-    var setPageTitle = sinon.stub();
-    var utils = {getName: sinon.stub()};
-    var makeEntityModel = sinon.spy();
-    var seriesList = {};
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
+    const charmstoreSearch = sinon.stub();
+    const setPageTitle = sinon.stub();
+    const utils = {getName: sinon.stub()};
+    const makeEntityModel = sinon.spy();
+    const seriesList = {};
+    const renderer = jsTestUtils.shallowRender(
+      <Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
@@ -150,17 +131,17 @@ describe('Charmbrowser', function() {
         staticURL='surl'
         urllib={sinon.stub()}
         utils={utils} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <juju.components.Panel
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <Panel
         instanceName="white-box"
         clickAction={instance._close}
         focus={false}
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
-          <juju.components.Store
+          <Store
             staticURL='surl'
             apiVersion="v5"
             charmstoreURL="http://1.2.3.4/"
@@ -169,7 +150,7 @@ describe('Charmbrowser', function() {
             gisf={true}
             setPageTitle={setPageTitle} />
         </div>
-      </juju.components.Panel>);
+      </Panel>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -198,7 +179,7 @@ describe('Charmbrowser', function() {
     const setPageTitle = sinon.spy();
     const urllib = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
+      <Charmbrowser
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
@@ -231,14 +212,14 @@ describe('Charmbrowser', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
-      <juju.components.Panel
+      <Panel
         instanceName="white-box"
         clickAction={instance._close}
         focus={false}
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
-          <juju.components.EntityDetails
+          <EntityDetails
             acl={acl}
             apiUrl={apiUrl}
             importBundleYAML={importBundleYAML}
@@ -267,7 +248,7 @@ describe('Charmbrowser', function() {
             urllib={urllib}
           />
         </div>
-      </juju.components.Panel>);
+      </Panel>);
     expect(output).toEqualJSX(expectedOutput);
   });
 
@@ -277,7 +258,7 @@ describe('Charmbrowser', function() {
       pluralize: sinon.stub()
     };
     const renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
+      <Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com"

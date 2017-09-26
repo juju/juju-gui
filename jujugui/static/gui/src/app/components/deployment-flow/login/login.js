@@ -1,22 +1,11 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2017 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
+const React = require('react');
+
+const DeploymentSection = require('../section/section');
+const SvgIcon = require('../../svg-icon/svg-icon');
+const USSOLoginLink = require('../../usso-login-link/usso-login-link');
 
 class DeploymentLogin extends React.Component {
   /**
@@ -26,7 +15,7 @@ class DeploymentLogin extends React.Component {
   */
   _generateTick() {
     return (
-      <juju.components.SvgIcon
+      <SvgIcon
         className="deployment-login__tick"
         name="task-done_16"
         size="16" />);
@@ -39,7 +28,7 @@ class DeploymentLogin extends React.Component {
   */
   _generateLogin() {
     return (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-login"
         showCheck={true}
         title="You're almost ready to deploy!">
@@ -71,28 +60,28 @@ class DeploymentLogin extends React.Component {
             </div>
           </div>
           <div className="deployment-login__login">
-            <juju.components.USSOLoginLink
+            <USSOLoginLink
               addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="button"
               loginToController={this.props.loginToController}>
               Login
-            </juju.components.USSOLoginLink>
+            </USSOLoginLink>
           </div>
           <div className="deployment-login__signup">
             Do not have an account?
-            <juju.components.USSOLoginLink
+            <USSOLoginLink
               addNotification={this.props.addNotification}
               gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="text"
               loginToController={this.props.loginToController}>
               Sign up
-            </juju.components.USSOLoginLink>
+            </USSOLoginLink>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
   }
 
   _getLoginLinks() {
@@ -100,33 +89,33 @@ class DeploymentLogin extends React.Component {
       return null;
     }
     return (
-      <juju.components.DeploymentSection
+      <DeploymentSection
         instance="deployment-login-signup">
         <span className="deployment-login-signup__message">
             Sign up to start deploying to your favourite cloud
         </span>
-        <juju.components.USSOLoginLink
+        <USSOLoginLink
           addNotification={this.props.addNotification}
           gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="button"
           loginToController={this.props.loginToController}>
           Sign up
-        </juju.components.USSOLoginLink>
+        </USSOLoginLink>
         or&nbsp;
-        <juju.components.USSOLoginLink
+        <USSOLoginLink
           addNotification={this.props.addNotification}
           gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="text"
           loginToController={this.props.loginToController}>
           log in
-        </juju.components.USSOLoginLink>
+        </USSOLoginLink>
         to get started with&nbsp;
         <a href="http://jujucharms.com/jaas">
           JAAS
         </a>
-      </juju.components.DeploymentSection>);
+      </DeploymentSection>);
   }
 
   /**
@@ -141,7 +130,7 @@ class DeploymentLogin extends React.Component {
     return (
       <div>
         {this._getLoginLinks()}
-        <juju.components.DeploymentSection
+        <DeploymentSection
           instance="deployment-login-features">
           <div className="six-col">
             <h3>JAAS gives you Juju, as a service</h3>
@@ -160,19 +149,19 @@ class DeploymentLogin extends React.Component {
           </div>
           <div className="six-col last-col">
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={Math.round(44 * awsScale)}
                 name="aws-light"
                 width={Math.round(117 * awsScale)} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={Math.round(23 * gceScale)}
                 name="google-light"
                 width={Math.round(256 * gceScale)} />
             </div>
             <div className="deployment-login-features__logo">
-              <juju.components.SvgIcon
+              <SvgIcon
                 height={Math.round(24 * azureScale)}
                 name="azure"
                 width={Math.round(204 * azureScale)} />
@@ -228,7 +217,7 @@ class DeploymentLogin extends React.Component {
               </ul>
             </div>
           </div>
-        </juju.components.DeploymentSection>
+        </DeploymentSection>
       </div>);
   }
 
@@ -250,12 +239,4 @@ DeploymentLogin.propTypes = {
   showLoginLinks: PropTypes.bool.isRequired
 };
 
-YUI.add('deployment-login', function() {
-  juju.components.DeploymentLogin = DeploymentLogin;
-}, '0.1.0', {
-  requires: [
-    'deployment-section',
-    'svg-icon',
-    'usso-login-link'
-  ]
-});
+module.exports = DeploymentLogin;

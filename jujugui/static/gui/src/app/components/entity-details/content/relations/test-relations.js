@@ -1,35 +1,16 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const React = require('react');
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const EntityContentRelations = require('./relations');
+const SvgIcon = require('../../../svg-icon/svg-icon');
+
+const jsTestUtils = require('../../../../utils/component-test-utils');
+const testUtils = require('react-dom/test-utils');
 
 describe('EntityContentRelations', function() {
   var mockEntity;
-
-  beforeAll(function(done) {
-    // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-content-relations', function() { done(); });
-  });
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
@@ -42,7 +23,7 @@ describe('EntityContentRelations', function() {
   it('can render a list of relations', function() {
     var changeState = sinon.spy();
     var output = jsTestUtils.shallowRender(
-      <juju.components.EntityContentRelations
+      <EntityContentRelations
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
     var expected = (
@@ -51,7 +32,7 @@ describe('EntityContentRelations', function() {
           Relations
           <a href="https://jujucharms.com/docs/stable/charms-relations"
             target="_blank">
-            <juju.components.SvgIcon name="help_16" size="16" />
+            <SvgIcon name="help_16" size="16" />
           </a>
         </h3>
         <ul className="section__list" ref="list">
@@ -82,7 +63,7 @@ describe('EntityContentRelations', function() {
     });
     var changeState = sinon.spy();
     var output = testUtils.renderIntoDocument(
-      <juju.components.EntityContentRelations
+      <EntityContentRelations
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
     var expectedLength = Object.keys(provides).length;
@@ -94,7 +75,7 @@ describe('EntityContentRelations', function() {
   it('can navigate to a relation', function() {
     var changeState = sinon.spy();
     var output = testUtils.renderIntoDocument(
-      <juju.components.EntityContentRelations
+      <EntityContentRelations
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
     var item = output.refs.list.getElementsByClassName('section__list-item')[0];
@@ -118,7 +99,7 @@ describe('EntityContentRelations', function() {
         interface: 'http2'
       };
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityContentRelations
+        <EntityContentRelations
           changeState={changeState}
           relations={mockEntity.get('relations')} />, true);
       const output = renderer.getRenderOutput();
@@ -129,7 +110,7 @@ describe('EntityContentRelations', function() {
             Relations
             <a href="https://jujucharms.com/docs/stable/charms-relations"
               target="_blank">
-              <juju.components.SvgIcon name="help_16" size="16" />
+              <SvgIcon name="help_16" size="16" />
             </a>
           </h3>
           <ul className="section__list" ref="list">
@@ -174,7 +155,7 @@ describe('EntityContentRelations', function() {
         interface: 'http2'
       };
       const renderer = jsTestUtils.shallowRender(
-        <juju.components.EntityContentRelations
+        <EntityContentRelations
           changeState={changeState}
           relations={mockEntity.get('relations')} />, true);
       const instance = renderer.getMountedInstance();
@@ -186,7 +167,7 @@ describe('EntityContentRelations', function() {
             Relations
             <a href="https://jujucharms.com/docs/stable/charms-relations"
               target="_blank">
-              <juju.components.SvgIcon name="help_16" size="16" />
+              <SvgIcon name="help_16" size="16" />
             </a>
           </h3>
           <ul className="section__list" ref="list">
