@@ -393,7 +393,6 @@ YUI.add('juju-topology', function(Y) {
     'event',
     'juju-topology-service',
     'juju-topology-relation',
-    'juju-topology-panzoom',
     'juju-topology-viewport',
     'juju-topology-utils'
   ]

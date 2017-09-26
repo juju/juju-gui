@@ -41,6 +41,7 @@ window.MODULES = [
   'juju-view-environment',
   'juju-landscape',
   // end juju-views group
+  'd3',
   'io',
   'json-parse',
   'app-base',

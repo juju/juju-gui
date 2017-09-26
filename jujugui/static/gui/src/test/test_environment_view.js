@@ -15,6 +15,10 @@ juju.components.Popup = require('../app/components/popup/popup');
 juju.components.RelationMenu = require(
   '../app/components/relation-menu/relation-menu');
 
+window.views = {
+  PanZoomModule: require('../app/init/topology/panzoom.js')
+};
+
 (function() {
 
   describe('juju environment view', function() {
@@ -230,6 +234,7 @@ juju.components.RelationMenu = require(
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         d3 = Y.namespace('d3');
+        window.d3 = d3;
         juju = Y.namespace('juju');
         done();
       });

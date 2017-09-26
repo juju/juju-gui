@@ -29,10 +29,12 @@ const testUtils = {
 
     // Add the destroy ability to the test hook context to be run on
     // afterEach automatically.
-    ctx._cleanups.push(function() {
-      container.remove(true);
-      container.remove();
-    });
+    if (ctx._cleanups) {
+      ctx._cleanups.push(function() {
+        container.remove(true);
+        container.remove();
+      });
+    }
 
     return container;
   },
