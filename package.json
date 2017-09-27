@@ -24,7 +24,8 @@
     "react-dnd": "2.4.0",
     "react-dnd-html5-backend": "2.4.1",
     "react-dom": "15.6.1",
-    "shapeup": "0.2.4",
+    "shapeup": "^0.2.4",
+    "xterm": "^2.9.2",
     "yui": "3.11.0"
   },
   "devDependencies": {
