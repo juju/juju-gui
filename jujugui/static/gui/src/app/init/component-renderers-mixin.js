@@ -50,6 +50,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -1137,6 +1138,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       next();
     }
   }
+
+  _renderTerminal() {
+    const container = document.getElementById('profile-link-container');
+    ReactDOM.render(<Terminal
+      address={'localhost:8047'}
+      creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
+    />, container);
+  }
+
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.

@@ -1,0 +1,23 @@
+/*body {
+    font-family: helvetica, sans-serif, arial;
+    font-size: 1em;
+    color: #111;
+}
+
+h1 {
+    text-align: center;
+}*/
+
+#juju-shell {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 2px;
+}
+
+#juju-shell .terminal {
+    background-color: #111;
+    color: #fafafa;
+    padding: 2px;
+    height: 100%;
+}
