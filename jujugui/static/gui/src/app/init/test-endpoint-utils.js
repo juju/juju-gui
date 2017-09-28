@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const endpointUtils = require('./endpoint-utils');
+
 const createApp = (JujuGUI, config = {}) => {
   const defaults = {
     apiAddress: 'http://api.example.com/',
@@ -22,13 +24,12 @@ const createApp = (JujuGUI, config = {}) => {
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', () => {
-  let container, utils, db, app, models, sample_endpoints,
+  let container, utils, db, app, sample_endpoints,
       sample_env, JujuGUI;
 
   beforeAll(done => {
     YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils']), Y => {
       utils = Y.namespace('juju-tests.utils');
-      models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       // init.js requires the window to contain the YUI object.
@@ -83,7 +84,7 @@ describe('Relation endpoints logic', () => {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mediawiki'),
-        available_svcs = Object.keys(models.getEndpoints(
+        available_svcs = Object.keys(endpointUtils.getEndpoints(
           service, app.endpointsController));
     available_svcs.sort();
     available_svcs.should.eql(
@@ -94,7 +95,7 @@ describe('Relation endpoints logic', () => {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('memcached'),
-        available = models.getEndpoints(service, app.endpointsController),
+        available = endpointUtils.getEndpoints(service, app.endpointsController),
         available_svcs;
     available_svcs = Object.keys(available);
     available_svcs.sort();
@@ -118,7 +119,7 @@ describe('Relation endpoints logic', () => {
     app.db.services.getById('rsyslog-forwarder-ha').set('series', 'precise');
     let service = db.services.getById('memcached');
     service.set('series', 'trusty');
-    const available = models.getEndpoints(service, app.endpointsController);
+    const available = endpointUtils.getEndpoints(service, app.endpointsController);
     const available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
@@ -140,7 +141,7 @@ describe('Relation endpoints logic', () => {
       is_subordinate: true
     });
     charm.set('series', ['xenial', 'trusty']);
-    const available = models.getEndpoints(service, app.endpointsController);
+    const available = endpointUtils.getEndpoints(service, app.endpointsController);
     const available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['mediawiki', 'wordpress']);
@@ -151,7 +152,7 @@ describe('Relation endpoints logic', () => {
     // Mysql already has both subordinates related.
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mysql'),
-        available = models.getEndpoints(service, app.endpointsController),
+        available = endpointUtils.getEndpoints(service, app.endpointsController),
         available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['mediawiki']);
@@ -165,7 +166,7 @@ describe('Relation endpoints logic', () => {
     ]);
 
     // Demonstrate the inverse retrieval of the same.
-    available = models.getEndpoints(
+    available = endpointUtils.getEndpoints(
       db.services.getById('mediawiki'), app.endpointsController);
     available.mysql.should.eql([
       [{name: 'slave', service: 'mediawiki', type: 'mysql'},
@@ -181,7 +182,7 @@ describe('Relation endpoints logic', () => {
     // ..the picture is wrong.. wordpress only has one subordinate
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('wordpress');
-    var available = models.getEndpoints(service, app.endpointsController);
+    var available = endpointUtils.getEndpoints(service, app.endpointsController);
     var available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['memcached', 'rsyslog-forwarder-ha']);
@@ -191,7 +192,7 @@ describe('Relation endpoints logic', () => {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('puppet');
-    var available = models.getEndpoints(service, app.endpointsController);
+    var available = endpointUtils.getEndpoints(service, app.endpointsController);
     var available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
@@ -199,7 +200,7 @@ describe('Relation endpoints logic', () => {
         'rsyslog-forwarder-ha', 'wordpress']);
 
     service = db.services.getById('rsyslog-forwarder-ha');
-    available = models.getEndpoints(service, app.endpointsController);
+    available = endpointUtils.getEndpoints(service, app.endpointsController);
     available_svcs = Object.keys(available);
 
     available_svcs.sort();

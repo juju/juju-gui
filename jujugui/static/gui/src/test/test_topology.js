@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const PanZoomModule = require('../app/init/topology/panzoom.js');
+const RelationModule = require('../app/init/topology/relation.js');
 
 describe('topology', function() {
   var NS, TestModule, container, db, models, state, topo,
@@ -95,7 +96,7 @@ describe('topology', function() {
     topo = new views.Topology();
     topo.setAttrs({container: container, db: db});
     topo.addModule(views.ServiceModule);
-    topo.addModule(views.RelationModule);
+    topo.addModule(RelationModule);
     topo.addModule(PanZoomModule);
     topo.addModule(views.ViewportModule);
     return topo;

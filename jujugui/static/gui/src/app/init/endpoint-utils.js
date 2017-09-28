@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const relationUtils = require('./relation-utils');
+
 /**
   Get the series for a service. Pending subordinates should return all the
   available series from the charm.
@@ -93,7 +95,6 @@ const getEndpoints = (application, controller) => {
       const endpoint = convert(targetId, rdata);
       // Subordinate relations are handled differently because they can be
       // installed on the target machine depending on the defined scope.
-      const relationUtils = window.juju.utils.RelationUtils;
       if (targetIsSubordinate && relationUtils.isSubordinateRelation(rdata)) {
         // In addition to checking if the relation is of type `subordinate`
         // The `isSubordinateRelation` function also checks that the

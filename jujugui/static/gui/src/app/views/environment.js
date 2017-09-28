@@ -176,7 +176,7 @@ YUI.add('juju-view-environment', function(Y) {
         topo.addModule(views.ServiceModule, {useTransitions: true});
         topo.addModule(window.views.PanZoomModule);
         topo.addModule(views.ViewportModule);
-        topo.addModule(views.RelationModule);
+        topo.addModule(window.views.RelationModule);
 
         topo.addTarget(this);
         this.topo = topo;

@@ -392,7 +392,6 @@ YUI.add('juju-topology', function(Y) {
     'node',
     'event',
     'juju-topology-service',
-    'juju-topology-relation',
     'juju-topology-viewport',
     'juju-topology-utils'
   ]

@@ -23,17 +23,16 @@ window.juju.utils.RelationUtils = require('./init/relation-utils');
 // Required for the envionment.js file.
 window.ReactDOM = ReactDOM;
 window.React = React;
-juju.components.AmbiguousRelationMenu = require(
-  './components/relation-menu/ambiguous-relation-menu');
+window.viewsUtils = viewUtils;
 juju.components.Environment = require(
   './components/environment/environment');
-juju.components.RelationMenu = require(
-  './components/relation-menu/relation-menu');
 window.views = {
-  PanZoomModule: require('./init/topology/panzoom.js')
+  PanZoomModule: require('./init/topology/panzoom.js'),
+  RelationModule: require('./init/topology/relation.js')
 };
 
 const yui = window.yui;
+window.d3 = yui.namespace('d3');
 
 class GUIApp {
   constructor(config) {

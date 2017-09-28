@@ -145,7 +145,9 @@ YUI.add('d3-components', function(Y) {
       this.events[module.name] = modEvents;
 
       this.bind(module.name);
-      module.componentBound();
+      if (module.componentBound) {
+        module.componentBound();
+      }
 
       if (isYUIModule) {
         // Add the module as an event target of Component

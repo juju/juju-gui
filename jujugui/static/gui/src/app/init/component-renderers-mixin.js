@@ -780,7 +780,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
-            this, this.endpointsController, db, yui.juju.models.getEndpoints)}
+            this, this.endpointsController, db, endpointUtils.getEndpoints)}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
           getServiceById={db.services.getById.bind(db.services)}

@@ -51,7 +51,7 @@ YUI.add('juju-topology-service', function(Y) {
     var env = topo.get('env');
 
     var visibleServices = db.services.visible();
-    views.toBoundingBoxes(
+    views.utils.toBoundingBoxes(
       this, visibleServices, topo.service_boxes, env);
     // Store the size of the visibleServices model list because it gets
     // reset below.
