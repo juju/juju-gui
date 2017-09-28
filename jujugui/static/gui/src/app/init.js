@@ -24,6 +24,7 @@ window.juju.utils.RelationUtils = require('./init/relation-utils');
 window.ReactDOM = ReactDOM;
 window.React = React;
 window.viewsUtils = viewUtils;
+window.zipUtils = require('./init/zip-utils');
 juju.components.Environment = require(
   './components/environment/environment');
 window.views = {

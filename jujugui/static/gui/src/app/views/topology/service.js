@@ -31,8 +31,7 @@ YUI.add('juju-topology-service', function(Y) {
       models = Y.namespace('juju.models'),
       relationUtils = window.juju.utils.RelationUtils,
       topoUtils = Y.namespace('juju.topology.utils'),
-      views = Y.namespace('juju.views'),
-      ziputils = Y.namespace('juju.ziputils');
+      views = Y.namespace('juju.views');
 
   var ServiceModuleCommon = function() {
     // Default to true, once centered this will be set to false.
@@ -935,7 +934,7 @@ YUI.add('juju-topology-service', function(Y) {
       @return {Object} The charm metadata.
     */
     _extractCharmMetadata: function(file, topo, env, db) {
-      ziputils.getEntries(
+      window.zipUtils.getEntries(
         file,
         this._findCharmEntries.bind(this, file, topo, env, db),
         this._zipExtractionError.bind(this, db, topo, file));
@@ -953,7 +952,7 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} allEntries all of the file contents.
     */
     _findCharmEntries: function(file, topo, env, db, allEntries) {
-      var entries = ziputils.findCharmEntries(allEntries);
+      var entries = window.zipUtils.findCharmEntries(allEntries);
       // We strictly need only the charm's metadata: see
       // juju-core/state/apiserver/charms.go:findArchiveRootDir.
       if (!entries.metadata) {
@@ -971,7 +970,7 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-      Calls the ziputils.readCharmEntries method to get the contents of the
+      Calls the zipUtils.readCharmEntries method to get the contents of the
       necessary charm files.
 
       @method _readCharmEntries
@@ -982,7 +981,7 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} entries parsed file entries from the zip.
     */
     _readCharmEntries: function(file, topo, env, db, entries) {
-      ziputils.readCharmEntries(
+      window.zipUtils.readCharmEntries(
         entries,
         this._checkForExistingServices.bind(this, file, topo, env, db),
         this._zipExtractionError.bind(this, db, topo, file));
@@ -992,7 +991,7 @@ YUI.add('juju-topology-service', function(Y) {
       Checks to see if there are any deployed services which were deployed
       from the same charm that is being dropped.
 
-      Callback from the ziputils.getEntries() call
+      Callback from the zipUtils.getEntries() call
 
       @method _checkForExistingServices
       @param {Object} file The dropped charm zip.
@@ -1945,7 +1944,6 @@ YUI.add('juju-topology-service', function(Y) {
     'd3-components',
     'juju-environment-utils',
     'juju-topology-utils',
-    'juju-models',
-    'zip-utils'
+    'juju-models'
   ]
 });
