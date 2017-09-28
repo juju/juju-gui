@@ -1484,14 +1484,13 @@ window.views = {
   });
 
   describe('view model support infrastructure', function() {
-    var views, models, module, service, viewUtils;
+    var models, module, service, viewUtils;
 
     before(function(done) {
       YUI(GlobalConfig).use(
         ['juju-models', 'juju-view-utils',
           'juju-environment-utils'],
         function(Y) {
-          views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
           viewUtils = Y.namespace('juju.views.utils');
           window.yui = Y;
