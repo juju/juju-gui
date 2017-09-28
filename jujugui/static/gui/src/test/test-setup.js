@@ -1,5 +1,4 @@
 var flags = {};
-var zip = {};
 var origBeforeEach = Mocha.Suite.prototype.beforeEach;
 var origAfterEach = Mocha.Suite.prototype.afterEach;
 Mocha.Suite.prototype.beforeEach = function(title, fn) {

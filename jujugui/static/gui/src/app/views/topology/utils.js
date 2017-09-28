@@ -1,27 +1,8 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-YUI.add('juju-topology-utils', function(Y) {
-
-  var utils = Y.namespace('juju.topology.utils'),
-      d3 = Y.namespace('d3');
+function createUtils(d3) {
+  let topologyUtils = {};
 
   /**
     Safely find the convex hull of a set of vertices - it is a TypeError to
@@ -31,7 +12,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @param {array} vertices A list of vertices.
     @return {array} The convex hull of vertices.
   */
-  utils.safeHull = function(vertices) {
+  topologyUtils.safeHull = function(vertices) {
     var hull;
     try {
       hull = d3.geom.hull(vertices);
@@ -50,7 +31,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @param {number} padding An integer to use in padding.
     @return {array} An x/y coordinate pair.
   */
-  utils.pointOutside = function(vertices, padding) {
+  topologyUtils.pointOutside = function(vertices, padding) {
     /**
       Helper function to return a point outside of the convex hull
       of collected vertices.
@@ -61,7 +42,7 @@ YUI.add('juju-topology-utils', function(Y) {
       @return {array} An x/y coordinate pair.
     */
     function _exteriorToHull(vertices, padding) {
-      var hull = utils.safeHull(vertices);
+      var hull = topologyUtils.safeHull(vertices);
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
@@ -111,7 +92,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @param {object} serviceBoxes An object of service boxes built in the env.
     @return {array} A list of coordinate pairs.
   */
-  utils.serviceBoxesToVertices = function(serviceBoxes) {
+  topologyUtils.serviceBoxesToVertices = function(serviceBoxes) {
     return Object.keys(serviceBoxes).map(k => serviceBoxes[k]).map(box => {
       var center = box.center || [false, false];
       // Default undefined x/y attributes to 0.
@@ -126,7 +107,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @param {array} vertices A list of vertices in the form [x, y].
     @return {array} an x/y coordinate pair for the centroid.
   */
-  utils.centroid = function(vertices) {
+  topologyUtils.centroid = function(vertices) {
     var centroid = [];
     switch (vertices.length) {
       case 0:
@@ -142,7 +123,7 @@ YUI.add('juju-topology-utils', function(Y) {
         ];
         break;
       default:
-        centroid = d3.geom.polygon(utils.safeHull(vertices)).centroid();
+        centroid = d3.geom.polygon(topologyUtils.safeHull(vertices)).centroid();
         // In the case of services being deployed in a line, centroid will be
         // [NaN, NaN]; in this case, find the outermost two services and
         // generate the centroid using the two-vertex case above.
@@ -156,13 +137,13 @@ YUI.add('juju-topology-utils', function(Y) {
               max = vertex;
             }
           });
-          centroid = utils.centroid([min, max]);
+          centroid = topologyUtils.centroid([min, max]);
         }
     }
     return centroid;
   };
 
-  utils.getBoundingBox = function(vertices, boxWidth, boxHeight) {
+  topologyUtils.getBoundingBox = function(vertices, boxWidth, boxHeight) {
     var minX = Infinity, maxX = -Infinity,
         minY = Infinity, maxY = -Infinity;
 
@@ -186,7 +167,7 @@ YUI.add('juju-topology-utils', function(Y) {
    * @return {Array} The x,y of the center of the line between the two points.
    *
    */
-  utils.findCenterPoint = function(one, two) {
+  topologyUtils.findCenterPoint = function(one, two) {
     var points = [
       Math.max(one[0], two[0]) - Math.abs((one[0] - two[0]) / 2),
       Math.max(one[1], two[1]) - Math.abs((one[1] - two[1]) / 2)
@@ -204,7 +185,7 @@ YUI.add('juju-topology-utils', function(Y) {
    * @param {Array} scale The canvas current scale.
    *
    */
-  utils.locateRelativePointOnCanvas = function(endpoint, offset, scale) {
+  topologyUtils.locateRelativePointOnCanvas = function(endpoint, offset, scale) {
     // Return in x,y point form. X being the left value and Y being the top
     // position.
     var updatedPoint = [
@@ -223,7 +204,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @return {Object} An object literal that can be passed to D3's classed
         method.
   */
-  utils.getVisibilityClasses = function(visibility) {
+  topologyUtils.getVisibilityClasses = function(visibility) {
     var visibilities = [
       'show',
       'fade',
@@ -253,7 +234,7 @@ YUI.add('juju-topology-utils', function(Y) {
     }
     return classes.indexOf(class_name) !== -1;
   };
-  utils.hasSVGClass = hasSVGClass;
+  topologyUtils.hasSVGClass = hasSVGClass;
 
   /**
     Add a CSS class name to a SVG node or to all the nodes matching the
@@ -285,7 +266,7 @@ YUI.add('juju-topology-utils', function(Y) {
       }
     }
   };
-  utils.addSVGClass = addSVGClass;
+  topologyUtils.addSVGClass = addSVGClass;
 
   /**
     Remove a CSS class name from a SVG node or from all the nodes matching the
@@ -312,10 +293,22 @@ YUI.add('juju-topology-utils', function(Y) {
       selector.setAttribute('class', classes.replace(class_name, ''));
     }
   };
-  utils.removeSVGClass = removeSVGClass;
+  topologyUtils.removeSVGClass = removeSVGClass;
 
-}, '0.1.0', {
-  requires: [
-    'd3'
-  ]
-});
+  return topologyUtils;
+}
+
+if (module) {
+  const d3 = require('../../assets/javascripts/d3');
+  module.exports = createUtils(d3);
+}
+
+if (YUI) {
+  YUI.add('juju-topology-utils', function(Y) {
+    Y.namespace('juju.topology').utils = createUtils(Y.namespace('d3'));
+  }, '0.1.0', {
+    requires: [
+      'd3'
+    ]
+  });
+}

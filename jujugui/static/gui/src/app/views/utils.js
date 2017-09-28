@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = {};
+var viewsUtils = {};
 
 /**
    Get a list of all the supported series.
@@ -9,7 +9,7 @@ const utils = {};
    @method getSeriesList
    @return {Object} A collection of series.
  */
-utils.getSeriesList = function() {
+viewsUtils.getSeriesList = function() {
   // For a list of supported series in Juju see:
   // https://github.com/juju/charmstore/blob/v5-unstable/internal/
   // series/series.go#L37
@@ -31,7 +31,7 @@ utils.getSeriesList = function() {
  * @param {String} text The input string to check.
  * @return {String} The output string with trailing slash.
  */
-utils.ensureTrailingSlash = function(text) {
+viewsUtils.ensureTrailingSlash = function(text) {
   if (text.lastIndexOf('/') !== text.length - 1) {
     text += '/';
   }
@@ -49,7 +49,7 @@ utils.ensureTrailingSlash = function(text) {
   @param {Integer} numUnits The unit count from the form input.
   @param {Object} constraints The constraints to create the new machines with.
 */
-utils.createMachinesPlaceUnits = function(
+viewsUtils.createMachinesPlaceUnits = function(
   db, env, service, numUnits, constraints) {
   let machine;
   let parentId = null;
@@ -57,14 +57,14 @@ utils.createMachinesPlaceUnits = function(
   for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
     machine = db.machines.addGhost(
       parentId, containerType,
-      {constraints: utils.formatConstraints(constraints)});
+      {constraints: viewsUtils.formatConstraints(constraints)});
     env.addMachines([{
       constraints: constraints
     }], function(machine) {
       db.machines.remove(machine);
     }.bind(this, machine), { modelId: machine.id});
     env.placeUnit(
-      utils.addGhostAndEcsUnits(db, env, service, 1)[0],
+      viewsUtils.addGhostAndEcsUnits(db, env, service, 1)[0],
       machine.id);
   }
 };
@@ -82,7 +82,7 @@ utils.createMachinesPlaceUnits = function(
   @param {Function} callback optional The callback to call after the units
     have been added to the env.
 */
-utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
+viewsUtils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
   var serviceName = service.get('id'),
       unitCount = parseInt(unitCount, 10),
       units = [],
@@ -145,7 +145,7 @@ function removeGhostAddUnitCallback(ghostUnit, db, callback, e) {
     callback(e, db, ghostUnit);
   }
 }
-utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
+viewsUtils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
 
 /**
   Returns the icon path result from either the Juju environment (for local
@@ -156,12 +156,12 @@ utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
   @param {String} charmId The id of the charm to fetch the icon for.
   @param {Boolean} isBundle Whether or not this is an icon for a bundle.
 */
-utils.getIconPath = function(charmId, isBundle, env) {
+viewsUtils.getIconPath = function(charmId, isBundle, env) {
   var cfg = window.juju_config,
       charmstoreURL = (cfg && cfg.charmstoreURL) || '',
       localIndex = charmId.indexOf('local:'),
       path;
-  charmstoreURL = utils.ensureTrailingSlash(charmstoreURL);
+  charmstoreURL = viewsUtils.ensureTrailingSlash(charmstoreURL);
 
   if (localIndex > -1 && env) {
     path = env.getLocalCharmIcon(charmId);
@@ -204,7 +204,7 @@ utils.getIconPath = function(charmId, isBundle, env) {
   @param {String} error The error string returned from the api server.
   @return {Boolean} Whether it is a redirect error or not.
 */
-utils.isRedirectError = function(error) {
+viewsUtils.isRedirectError = function(error) {
   return error === 'authentication failed: redirection required';
 };
 
@@ -215,7 +215,7 @@ utils.isRedirectError = function(error) {
   @param {Any} value The value to check.
   @returns {Boolean} Whether the value is not undefined, null or NaN.
 */
-utils.isValue = value => {
+viewsUtils.isValue = value => {
   return value !== undefined && value !== null;
 };
 
@@ -226,7 +226,7 @@ utils.isValue = value => {
   @param {Any} value The value to check.
   @returns {Boolean} Whether the value is an object.
 */
-utils.isObject = value => {
+viewsUtils.isObject = value => {
   return typeof(value) === 'object' && value !== null &&
     !Array.isArray(value);
 };
@@ -237,7 +237,7 @@ utils.isObject = value => {
   @method arrayDedupe
   @returns {Array} An array with no duplicates.
 */
-utils.arrayDedupe = function(array) {
+viewsUtils.arrayDedupe = function(array) {
   // Sets can only contain unique values, so use that to do the dedupe and
   // then turn it back into an array.
   return [...new Set(array)];
@@ -249,12 +249,12 @@ utils.arrayDedupe = function(array) {
   @method arrayFlatten
   @returns {Array} A single depth array.
 */
-utils.arrayFlatten = function(array) {
+viewsUtils.arrayFlatten = function(array) {
   return array.reduce((flattened, current) => {
     return flattened.concat(
       // If this is an array then flatten it before concat, otherwise concat
       // the current value.
-      Array.isArray(current) ? utils.arrayFlatten(current) : current);
+      Array.isArray(current) ? viewsUtils.arrayFlatten(current) : current);
   }, []);
 };
 
@@ -265,7 +265,7 @@ utils.arrayFlatten = function(array) {
   @param constraints {Object} A collection of constraints.
   @returns {String} A formatted constraints string.
 */
-utils.formatConstraints = constraints => {
+viewsUtils.formatConstraints = constraints => {
   return Object.keys(constraints || {}).reduce((collected, key) => {
     const value = constraints[key];
     if (value) {
@@ -276,11 +276,11 @@ utils.formatConstraints = constraints => {
 };
 
 if (module && module.exports) {
-  module.exports = utils;
+  module.exports = viewsUtils;
 }
 if (YUI) {
   YUI.add('juju-view-utils', function(Y) {
-    Y.namespace('juju.views').utils = utils;
+    Y.namespace('juju.views').utils = viewsUtils;
   }, '0.1.0', {
     requires: [
     ]

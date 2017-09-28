@@ -3,6 +3,7 @@ window.juju = {
   components: {}
 };
 window.juju.utils.RelationUtils = require('../app/init/relation-utils');
+window.zipUtils = require('../app/init/zip-utils');
 window.GlobalConfig = {
   combine: true,
   base: '/dev/combo?/app/assets/javascripts/yui/',
@@ -41,6 +42,7 @@ window.MODULES = [
   'juju-view-environment',
   'juju-landscape',
   // end juju-views group
+  'd3',
   'io',
   'json-parse',
   'app-base',

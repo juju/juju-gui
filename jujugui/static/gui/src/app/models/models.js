@@ -2983,7 +2983,6 @@ YUI.add('juju-models', function(Y) {
     'io-base',
     'json-parse',
     'juju-delta-handlers',
-    'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models',
     'juju-env-api'

@@ -14,6 +14,7 @@ const localCharmHelpers = require('../components/local-inspector/local-charm-imp
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
 const viewUtils = require('../views/utils');
+const endpointUtils = require('./endpoint-utils');
 
 const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
@@ -748,7 +749,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       topo.modules.ServiceModule.selectService(service.get('id'));
       const charm = db.charms.getById(service.get('charm'));
       const relatableApplications = relationUtils.getRelatableApplications(
-        db, yui.juju.models.getEndpoints(service, this.endpointsController));
+        db, endpointUtils.getEndpoints(service, this.endpointsController));
       const ecs = model.get('ecs');
       const addCharm = (url, callback, options) => {
         model.addCharm(url, charmstore, callback, options);
@@ -779,7 +780,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
-            this, this.endpointsController, db, yui.juju.models.getEndpoints)}
+            this, this.endpointsController, db, endpointUtils.getEndpoints)}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
           getServiceById={db.services.getById.bind(db.services)}
