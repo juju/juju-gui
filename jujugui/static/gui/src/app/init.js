@@ -783,7 +783,6 @@ class GUIApp {
       return;
     }
     this._renderUserMenu();
-    this._renderTerminal();
     console.log('successfully logged into controller');
 
     // If the GUI is embedded in storefront, we need to share login
