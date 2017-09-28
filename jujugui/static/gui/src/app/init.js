@@ -280,6 +280,9 @@ class GUIApp {
     this.db.environment.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
+    this.db.environment.after(
+      ['add', 'remove', '*:change'],
+      this._renderTerminal, this);
     this.db.units.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
@@ -786,7 +789,6 @@ class GUIApp {
       return;
     }
     this._renderUserMenu();
-    this._renderTerminal();
     console.log('successfully logged into controller');
 
     // If the GUI is embedded in storefront, we need to share login
