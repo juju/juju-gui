@@ -98,14 +98,18 @@ YUI.add('juju-delta-handlers', function(Y) {
 
     handleGUIServices: (unit, db) => {
       const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
-      if (url.name !== 'jujushell' || url.user !== 'yellow' ) {
+      if (url.name !== 'jujushell' || (url.user && url.user !== 'yellow')) {
         return;
       }
       let address = null;
       const app = db.services.getById(unit.service);
       if (unit.agent_state === 'started' && app.get('exposed')) {
-        const config = app.get('config');
-        address = `${unit.public_address}:${config.port}`;
+        let port = app.get('config').port;
+        if (!port) {
+          const charm = db.charms.getById(app.charm);
+          port = charm.get('options').port.default;
+        }
+        address = `${unit.public_address}:${port}`;
       }
       db.environment.set('jujushellAddress', address);
     },
