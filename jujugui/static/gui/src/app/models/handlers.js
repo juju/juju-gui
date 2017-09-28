@@ -96,6 +96,20 @@ YUI.add('juju-delta-handlers', function(Y) {
       return result;
     },
 
+    handleGUIServices: (unit, db) => {
+      const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
+      if (url.name !== 'jujushell' || url.user !== 'yellow' ) {
+        return;
+      }
+      let address = null;
+      const app = db.services.getById(unit.service);
+      if (unit.agent_state === 'started' && app.get('exposed')) {
+        const config = app.get('config');
+        address = `${unit.public_address}:${config.port}`;
+      }
+      db.environment.set('jujushellAddress', address);
+    },
+
     /**
       Translates the new JujuStatus and WorkloadStatus's to the legacy Juju 1
       values.
@@ -252,6 +266,9 @@ YUI.add('juju-delta-handlers', function(Y) {
         unitData.agent_state_data = agentStatus.data;
       }
 
+      // Handle GUI additional services.
+      utils.handleGUIServices(unitData, db);
+
       // The units model list included in the corresponding application is
       // automatically kept in sync by db.units.process_delta().
       db.units.process_delta(action, unitData, db);
@@ -301,11 +318,17 @@ YUI.add('juju-delta-handlers', function(Y) {
       // Process the stream.
       db.services.process_delta(action, data);
       if (action !== 'remove') {
-        db.services.getById(change.name).updateConfig(change.config || {});
+        const app = db.services.getById(change.name);
+        // TODO frankban: what is this for?
+        app.updateConfig(change.config || {});
         // Execute the registered application hooks.
         var hooks = applicationChangedHooks[change.name] || [];
         hooks.forEach(function(hook) {
           hook();
+        });
+        // Handle GUI additional services.
+        app.get('units').each(unit => {
+          utils.handleGUIServices(unit, db);
         });
       }
       // Delete the application hooks for this application.
