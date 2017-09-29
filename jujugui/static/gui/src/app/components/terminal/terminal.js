@@ -10,6 +10,8 @@ require('xterm/lib/addons/terminado/terminado')
 const GenericButton = require('../generic-button/generic-button');
 const Lightbox = require('../lightbox/lightbox');
 
+const SvgIcon = require('../svg-icon/svg-icon');
+
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
 
@@ -86,12 +88,25 @@ class Terminal extends React.Component {
       );
     }
     const props = this.props;
+    const address = props.address;
+    let classes = 'model-actions__import model-actions__button'
+    if (!address) {
+      classes += ' model-actions__button-disabled';
+    }
     return (
-      <GenericButton
-        action={this.setOpened.bind(this, true)}
-        disabled={!props.address}>
-        <span>$_</span>
-      </GenericButton>
+      <span className={classes}
+        onClick={!address && this.setOpened.bind(this, true)}
+        role="button"
+        tabIndex="0">
+        <SvgIcon name="code-snippet_24"
+          className="model-actions__icon"
+          size="16" />
+        <span className="tooltip__tooltip--below">
+          <span className="tooltip__inner tooltip__inner--up">
+            Juju shell
+          </span>
+        </span>
+      </span>
     );
   }
 
