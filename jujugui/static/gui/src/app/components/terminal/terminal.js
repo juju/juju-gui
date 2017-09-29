@@ -95,7 +95,7 @@ class Terminal extends React.Component {
     }
     return (
       <span className={classes}
-        onClick={!address && this.setOpened.bind(this, true)}
+        onClick={address && this.setOpened.bind(this, true)}
         role="button"
         tabIndex="0">
         <SvgIcon name="code-snippet_24"

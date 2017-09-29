@@ -106,8 +106,11 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (unit.agent_state === 'started' && app.get('exposed')) {
         let port = app.get('config').port;
         if (!port) {
-          const charm = db.charms.getById(app.charm);
-          port = charm.get('options').port.default;
+          if (!unit.portRanges.length) {
+            // Nothing to do then, let's wait.
+            return;
+          }
+          port = unit.portRanges[0].to;
         }
         address = `${unit.public_address}:${port}`;
       }
