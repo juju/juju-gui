@@ -14,7 +14,8 @@ window.viewsUtils = require('../app/views/utils');
 window.views = {
   PanZoomModule: require('../app/init/topology/panzoom'),
   RelationModule: require('../app/init/topology/relation'),
-  ServiceModule: require('../app/init/topology/service')
+  ServiceModule: require('../app/init/topology/service'),
+  ViewportModule: require('../app/init/topology/viewport')
 };
 
 (function() {

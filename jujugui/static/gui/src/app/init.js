@@ -29,7 +29,8 @@ juju.components.Environment = require(
 window.views = {
   PanZoomModule: require('./init/topology/panzoom'),
   RelationModule: require('./init/topology/relation'),
-  ServiceModule: require('./init/topology/service')
+  ServiceModule: require('./init/topology/service'),
+  ViewportModule: require('./init/topology/viewport')
 };
 
 const yui = window.yui;

@@ -1,41 +1,15 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-describe('views.ViewportModule (Topology module)', function() {
-  var views, testUtils;
-  before(function(done) {
-    var modules = ['node', 'juju-tests-utils',
-      'juju-topology-viewport'];
-    YUI(GlobalConfig).use(modules,
-      function(Y) {
-        views = Y.namespace('juju.views');
-        testUtils = Y.namespace('juju-tests').utils;
-        done();
-      });
-  });
+const ViewportModule = require('./viewport');
+const testUtils = require('../../../test/utils');
 
+describe('ViewportModule (Topology module)', function() {
   it('aborts a resize if the canvas is not available', function() {
     var container = {
       querySelector: testUtils.getter({'.topology-canvas': undefined}, {})
     };
-    var view = new views.ViewportModule();
+    var view = new ViewportModule();
     view.getContainer = function() {return container;};
     // Since we do not provide most of the environment needed by "resized" we
     // know that it takes an early out if calling it does not raise an
@@ -47,7 +21,7 @@ describe('views.ViewportModule (Topology module)', function() {
     var container = {
       querySelector: testUtils.getter({'.the-canvas': undefined}, {})
     };
-    var view = new views.ViewportModule();
+    var view = new ViewportModule();
     view.getContainer = function() {return container;};
     // Since we do not provide most of the environment needed by "resized" we
     // know that it takes an early out if calling it does not raise an
@@ -74,7 +48,7 @@ describe('views.ViewportModule (Topology module)', function() {
         });
       });
 
-    var view = new views.ViewportModule();
+    var view = new ViewportModule();
     // Provide a test container that likes to return empty objects.
     view.getContainer = function() {return container;};
     // Ignore setting dimensions, we're not testing that bit.  However, we
@@ -85,7 +59,7 @@ describe('views.ViewportModule (Topology module)', function() {
       events.push('setAllTheDimensions called');
     };
     // Inject a topology component that records events.
-    view.set('component', topo);
+    view.topo = topo;
     view.resized();
     events.should.eql(
       ['beforePageSizeRecalculation',
@@ -94,19 +68,9 @@ describe('views.ViewportModule (Topology module)', function() {
   });
 });
 
-describe('views.ViewportModule.setAllTheDimensions', function() {
-  var views, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
+describe('ViewportModule.setAllTheDimensions', function() {
+  let view, width, height, canvas, svg, topo, zoomPlane,
       dimentions;
-  before(function(done) {
-    var modules = ['node', 'juju-tests-utils',
-      'juju-topology-viewport'];
-    YUI(GlobalConfig).use(modules,
-      function(Y) {
-        views = Y.namespace('juju.views');
-        testUtils = Y.namespace('juju-tests').utils;
-        done();
-      });
-  });
 
   beforeEach(function() {
     height = Math.floor(Math.random() * 1000);
@@ -124,7 +88,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     };
     topo.set = testUtils.setter(topo);
     topo.vis.attr = testUtils.setter(topo.vis);
-    view = new views.ViewportModule();
+    view = new ViewportModule();
     canvas = {style: {}};
     zoomPlane = {};
     zoomPlane.setAttribute = testUtils.setter(zoomPlane);

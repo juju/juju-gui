@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const PanZoomModule = require('../app/init/topology/panzoom');
 const RelationModule = require('../app/init/topology/relation');
 const ServiceModule = require('../app/init/topology/service');
+const ViewportModule = require('../app/init/topology/viewport');
 
 describe('topology', function() {
   var NS, TestModule, container, db, models, state, topo,
@@ -99,7 +100,7 @@ describe('topology', function() {
     topo.addModule(ServiceModule);
     topo.addModule(RelationModule);
     topo.addModule(PanZoomModule);
-    topo.addModule(views.ViewportModule);
+    topo.addModule(ViewportModule);
     return topo;
   }
 

@@ -390,7 +390,6 @@ YUI.add('juju-topology', function(Y) {
     'd3-components',
     'node',
     'event',
-    'juju-topology-viewport',
     'juju-topology-utils'
   ]
 });
