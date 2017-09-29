@@ -133,11 +133,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderModelActions() {
     const db = this.db;
     const modelAPI = this.modelAPI;
+    const address = this.db.environment.get('jujushellAddress');
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
+        address={address}
         appState={this.state}
         changeState={this._bound.changeState}
+        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
