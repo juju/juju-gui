@@ -124,7 +124,7 @@ YUI.add('d3-components', function(Y) {
         throw 'undefined Module in addModule call';
       }
       if (!(ModClassOrInstance instanceof Module)) {
-        module = new ModClassOrInstance();
+        module = new ModClassOrInstance(options);
       }
       let isYUIModule = false;
       if (module instanceof Module) {

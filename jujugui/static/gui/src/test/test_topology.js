@@ -18,15 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const PanZoomModule = require('../app/init/topology/panzoom.js');
-const RelationModule = require('../app/init/topology/relation.js');
+const PanZoomModule = require('../app/init/topology/panzoom');
+const RelationModule = require('../app/init/topology/relation');
+const ServiceModule = require('../app/init/topology/service');
 
 describe('topology', function() {
   var NS, TestModule, container, db, models, state, topo,
       utils, views, viewUtils;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-topology', 'd3-components',
+    YUI(GlobalConfig).use(['juju-topology', 'd3-components', 'juju-models',
       'juju-tests-utils', 'juju-view-utils', 'node'],
     function(Y) {
       NS = Y.namespace('d3-components');
@@ -95,7 +96,7 @@ describe('topology', function() {
     db = new models.Database();
     topo = new views.Topology();
     topo.setAttrs({container: container, db: db});
-    topo.addModule(views.ServiceModule);
+    topo.addModule(ServiceModule);
     topo.addModule(RelationModule);
     topo.addModule(PanZoomModule);
     topo.addModule(views.ViewportModule);

@@ -1,3 +1,4 @@
+
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -382,8 +383,6 @@ YUI.add('juju-topology', function(Y) {
   /*
    * Some additional flags used in dragging.
    */
-  views.DRAG_START = 1;
-  views.DRAG_ACTIVE = 2;
   views.DRAG_ENDING = 3;
 }, '0.1.0', {
   requires: [
@@ -391,7 +390,6 @@ YUI.add('juju-topology', function(Y) {
     'd3-components',
     'node',
     'event',
-    'juju-topology-service',
     'juju-topology-viewport',
     'juju-topology-utils'
   ]

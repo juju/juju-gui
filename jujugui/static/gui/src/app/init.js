@@ -24,16 +24,17 @@ window.juju.utils.RelationUtils = require('./init/relation-utils');
 window.ReactDOM = ReactDOM;
 window.React = React;
 window.viewsUtils = viewUtils;
-window.zipUtils = require('./init/zip-utils');
 juju.components.Environment = require(
   './components/environment/environment');
 window.views = {
-  PanZoomModule: require('./init/topology/panzoom.js'),
-  RelationModule: require('./init/topology/relation.js')
+  PanZoomModule: require('./init/topology/panzoom'),
+  RelationModule: require('./init/topology/relation'),
+  ServiceModule: require('./init/topology/service')
 };
 
 const yui = window.yui;
 window.d3 = yui.namespace('d3');
+window.models = yui.namespace('juju.models');
 
 class GUIApp {
   constructor(config) {

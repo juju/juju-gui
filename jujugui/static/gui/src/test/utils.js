@@ -51,6 +51,7 @@ const testUtils = {
   */
   makeAppContainer: () => {
     const elements = [
+      'ambiguous-relation-menu-content',
       'charmbrowser-container',
       'deployment-bar-container',
       'deployment-container',
@@ -61,20 +62,21 @@ const testUtils = {
       'header-help',
       'header-logo',
       'header-search-container',
-      'model-actions-container',
       'inspector-container',
       'lightbox',
       'loading-message',
       'login-container',
       'machine-view',
       'main',
+      'modal-gui-settings',
+      'modal-shortcuts',
+      'model-actions-container',
       'notifications-container',
       'popup-container',
       'profile-link-container',
       'provider-logo-container',
+      'relation-menu',
       'sharing-container',
-      'modal-shortcuts',
-      'modal-gui-settings',
       'status-container',
       'top-page-container',
       'zoom-container'
