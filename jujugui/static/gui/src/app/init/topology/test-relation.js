@@ -1,16 +1,16 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const RelationModule = require('./relation.js');
+const RelationModule = require('./relation');
+const utils = require('../../../test/utils');
 
 describe('topology relation module', function() {
-  var cleanups, Y, utils, view, container, topo, models;
+  var cleanups, Y, view, container, topo, models;
 
   beforeAll(function(done) {
     Y = YUI(GlobalConfig).use(
-      ['juju-tests-utils', 'juju-topology', 'node', 'juju-models'],
+      ['juju-models'],
       function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         models = Y.namespace('juju.models');
         done();
       });
@@ -19,7 +19,7 @@ describe('topology relation module', function() {
   beforeEach(function() {
     cleanups = [];
     container = utils.makeContainer(this);
-    view = new RelationModule({container: container});
+    view = new RelationModule();
   });
 
   afterEach(function() {

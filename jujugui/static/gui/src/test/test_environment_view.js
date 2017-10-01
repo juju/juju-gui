@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
-
 'use strict';
+
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -12,8 +12,10 @@ juju.components.Environment = require(
 
 window.viewsUtils = require('../app/views/utils');
 window.views = {
-  PanZoomModule: require('../app/init/topology/panzoom.js'),
-  RelationModule: require('../app/init/topology/relation.js')
+  PanZoomModule: require('../app/init/topology/panzoom'),
+  RelationModule: require('../app/init/topology/relation'),
+  ServiceModule: require('../app/init/topology/service'),
+  ViewportModule: require('../app/init/topology/viewport')
 };
 
 (function() {
@@ -882,7 +884,7 @@ window.views = {
       db.reset();
       view.createTopology();
       // For testing position isn't testable with transitions on.
-      view.topo.modules.ServiceModule.set('useTransitions', false);
+      view.topo.modules.ServiceModule.useTransitions = false;
       view.render();
 
       db.onDelta({detail: { data: tmp_data }});
@@ -916,7 +918,7 @@ window.views = {
       var node, match;
       view.createTopology();
       // For testing position isn't testable with transitions on.
-      view.topo.modules.ServiceModule.set('useTransitions', false);
+      view.topo.modules.ServiceModule.useTransitions = false;
       view.render();
 
       // Test values from initial load.

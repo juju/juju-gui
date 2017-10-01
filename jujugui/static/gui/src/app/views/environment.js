@@ -173,9 +173,9 @@ YUI.add('juju-view-environment', function(Y) {
           staticURL: this.get('staticURL')
         });
         // Bind all the behaviors we need as modules.
-        topo.addModule(views.ServiceModule, {useTransitions: true});
+        topo.addModule(window.views.ServiceModule, {useTransitions: true});
         topo.addModule(window.views.PanZoomModule);
-        topo.addModule(views.ViewportModule);
+        topo.addModule(window.views.ViewportModule);
         topo.addModule(window.views.RelationModule);
 
         topo.addTarget(this);
