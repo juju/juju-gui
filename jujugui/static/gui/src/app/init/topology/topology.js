@@ -208,7 +208,7 @@ class Topology extends Component {
           // Don't allow the click if the element is being dragged.
           return;
         }
-        self.get('state').changeState({
+        self.state.changeState({
           root: 'store'
         });
         // Pass the wheel events to the canvas so that it can be zoomed.
