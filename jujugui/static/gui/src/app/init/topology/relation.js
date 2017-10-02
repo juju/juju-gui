@@ -4,7 +4,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const d3 = window.d3;
+const d3 = require('../../assets/javascripts/d3');
 const endpointUtils = require('../endpoint-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');

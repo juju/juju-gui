@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const d3 = window.d3;
+const d3 = require('../assets/javascripts/d3');
 const viewUtils = require('../views/utils');
 
 class Component {

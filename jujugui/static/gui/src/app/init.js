@@ -26,7 +26,6 @@ const DeployerMixin = require('./init/deployer-mixin');
 window.juju.utils.RelationUtils = require('./init/relation-utils');
 
 const yui = window.yui;
-window.d3 = yui.namespace('d3');
 window.models = yui.namespace('juju.models');
 
 class GUIApp {

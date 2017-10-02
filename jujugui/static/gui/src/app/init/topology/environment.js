@@ -1,33 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-// var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
-//
-//   bindModelView: function(model) {
-//     model = model || this.get('model');
-//     // If this view has a model, bubble model events to the view.
-//     if (model) {
-//       model.addTarget(this);
-//     }
-//
-//     // If the model gets swapped out, reset targets accordingly and rerender.
-//     this.after('modelChange', function(ev) {
-//       if (ev.prevVal) {
-//         ev.prevVal.removeTarget(this);
-//       }
-//       if (ev.newVal) {
-//         ev.newVal.addTarget(this);
-//       }
-//       this.render();
-//     });
-//
-//     // Re-render this view when the model changes, and after it is loaded,
-//     // to support "loaded" flags.
-//     this.after(['*:change', '*:load'], this.render, this);
-//   }
-//
-// });
-
 const React = require('react');
 const ReactDOM = require('react-dom');
 

@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const d3 = require('../../assets/javascripts/d3');
 const environmentUtils = require('./environment-utils');
 const EnvironmentView = require('./environment');
 const testUtils = require('../../../test/utils');
@@ -8,7 +9,7 @@ const testUtils = require('../../../test/utils');
 (function() {
 
   describe('juju environment view', function() {
-    var view, models, Y, container, d3, db, conn, juju, jujuConfig,
+    var view, models, Y, container, db, conn, juju, jujuConfig,
         charm, click, ecs, env, relationUtils, fakeStore;
 
     var environment_delta = {
@@ -199,7 +200,7 @@ const testUtils = require('../../../test/utils');
 
     beforeAll(function(done) {
       Y = YUI(GlobalConfig).use([
-        'd3', 'juju-models',
+        'juju-models',
         'dump',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
@@ -216,10 +217,8 @@ const testUtils = require('../../../test/utils');
           {sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
         models = Y.namespace('juju.models');
-        d3 = Y.namespace('d3');
         juju = Y.namespace('juju');
         window.yui = Y;
-        window.d3 = d3;
         done();
       });
     });
