@@ -958,12 +958,10 @@ class RelationModule {
   _renderAmbiguousRelationMenu(endpoints) {
     const container = this.getContainer();
     const menu = container.querySelector('#ambiguous-relation-menu');
-    /* eslint-disable no-undef */
     ReactDOM.render(
       <AmbiguousRelationMenu
         endpoints={endpoints} />,
       menu.querySelector('#ambiguous-relation-menu-content'));
-    /* eslint-enable */
     return menu;
   }
 
@@ -1080,12 +1078,10 @@ class RelationModule {
    */
   showRelationMenu(relation) {
     const menu = document.querySelector('#relation-menu');
-    /* eslint-disable no-undef */
     ReactDOM.render(
       <RelationMenu
         relations={relation.relations} />,
       menu);
-    /* eslint-enable */
     menu.classList.add('active');
     this.relationMenuActive = true;
     this.relationMenuRelation = relation;

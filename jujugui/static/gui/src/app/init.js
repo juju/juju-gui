@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
@@ -18,25 +17,13 @@ const EndpointsController = require('./init/endpoints-controller');
 const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
+const EnvironmentView = require('./init/topology/environment');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
 // Hacks until all of the global references have been removed.
 window.juju.utils.RelationUtils = require('./init/relation-utils');
-// Required for the envionment.js file.
-window.ReactDOM = ReactDOM;
-window.React = React;
-window.viewsUtils = viewUtils;
-juju.components.Environment = require(
-  './components/environment/environment');
-window.views = {
-  PanZoomModule: require('./init/topology/panzoom'),
-  RelationModule: require('./init/topology/relation'),
-  ServiceModule: require('./init/topology/service'),
-  Topology: require('./init/topology/topology'),
-  ViewportModule: require('./init/topology/viewport')
-};
 
 const yui = window.yui;
 window.d3 = yui.namespace('d3');
@@ -1550,7 +1537,7 @@ class GUIApp {
     @return {Object} Reference to the rendered topology.
   */
   _renderTopology() {
-    const topology = new yui.juju.views.environment({
+    const topology = new EnvironmentView({
       endpointsController: this.endpointsController,
       db: this.db,
       env: this.modelAPI,
@@ -1560,7 +1547,8 @@ class GUIApp {
       state: this.state,
       staticURL: this.applicationConfig.staticURL,
       sendAnalytics: this.sendAnalytics,
-      container: this.applicationConfig.container || '#main'
+      container: document.querySelector(
+        this.applicationConfig.container || '#main')
     });
     topology.render();
     // Trigger the resized method so that the topology fills the viewport.
@@ -1622,11 +1610,11 @@ class GUIApp {
     this.controllerAPI.destroy();
     this.db.destroy();
     this.endpointsController.destructor();
-    this.topology.destroy();
+    this.topology.destructor();
+    this._hotkeyListener.deactivate();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;
-    this._hotkeyListener.deactivate();
     const ecsListener = handlers['renderDeploymentBarListener'];
     remove('ecs.changeSetModified', ecsListener);
     remove('ecs.currentCommitFinished', ecsListener);

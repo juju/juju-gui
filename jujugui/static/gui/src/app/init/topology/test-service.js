@@ -1,37 +1,17 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const ServiceModule = require('./service');
 const utils = require('../../../test/utils');
-const React = require('react');
-const ReactDOM = require('react-dom');
 
-// Required for the envionment.js file.
-window.ReactDOM = ReactDOM;
-window.React = React;
-juju.components.Environment = require(
-  '../../components/environment/environment');
-
-window.viewsUtils = require('../../views/utils');
-window.views = {
-  PanZoomModule: require('./panzoom'),
-  RelationModule: require('./relation'),
-  ServiceModule: ServiceModule,
-  Topology: require('./topology'),
-  ViewportModule: require('./viewport')
-};
+const EnvironmentView = require('./environment');
 
 describe('service module annotations', function() {
-  var db, models, viewContainer, views, serviceModule;
+  var db, models, view, viewContainer, serviceModule;
   var called, location;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-view-environment'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
@@ -48,7 +28,7 @@ describe('service module annotations', function() {
         location['gui-x'] = data['gui-x'];
         location['gui-y'] = data['gui-y'];},
       get: function() {}};
-    const view = new views.environment({
+    view = new EnvironmentView({
       container: viewContainer,
       db: db,
       env: env,
@@ -58,6 +38,11 @@ describe('service module annotations', function() {
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
     serviceModule.useTransitions = false;
+  });
+
+  afterEach(function() {
+    view.destructor();
+    viewContainer.remove();
   });
 
   // Test the drag end handler.
@@ -109,15 +94,11 @@ describe('service module annotations', function() {
 });
 
 describe('service updates', function() {
-  var db, models, viewContainer, views, serviceModule;
+  var db, models, view, viewContainer, serviceModule;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-view-environment'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
@@ -126,7 +107,7 @@ describe('service updates', function() {
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database();
-    var view = new views.environment(
+    view = new EnvironmentView(
       { container: viewContainer,
         db: db,
         env: {
@@ -137,6 +118,11 @@ describe('service updates', function() {
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
+  });
+
+  afterEach(function() {
+    view.destructor();
+    viewContainer.remove();
   });
 
   it('should resize when subordinate status changes', function() {
@@ -178,16 +164,14 @@ describe('service updates', function() {
 // until we can revisit and dedicate time to tracking down the issue.
 xdescribe('service module events', function() {
   var cleanups, db, charm, fakeStore, models, serviceModule, topo,
-      view, viewContainer, views, Y;
+      view, viewContainer, Y;
 
   beforeAll(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-landscape',
-      'juju-models',
-      'juju-view-environment'],
+      'juju-models'],
     function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
@@ -205,7 +189,7 @@ xdescribe('service module events', function() {
     db = new models.Database();
     db.services.add({id: 'haproxy', charm: 'cs:precise/haproxy-18'});
     db.charms.add(charm);
-    view = new views.environment({
+    view = new EnvironmentView({
       container: viewContainer,
       db: db,
       env: {
@@ -227,7 +211,8 @@ xdescribe('service module events', function() {
     charm.destroy();
     db.destroy();
     topo.destroy();
-    view.destroy();
+    view.destructor();
+    viewContainer.remove();
   });
 
   it('should notify modules when service type is changed', function(done) {
@@ -794,29 +779,25 @@ xdescribe('service module events', function() {
 });
 
 describe('canvasDropHandler', function() {
-  var views, models, serviceModule;
+  var models, serviceModule, view, viewContainer;
 
   // Requiring this much setup (beforeAll() and beforeEach() to call a single
   // method on a single object is obscene.
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-view-environment'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
   });
 
   beforeEach(function() {
-    var viewContainer = utils.makeContainer(this);
+    viewContainer = utils.makeContainer(this);
     var db = new models.Database();
     var env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};
-    var view = new views.environment({
+    view = new EnvironmentView({
       container: viewContainer,
       db: db,
       env: env,
@@ -826,6 +807,11 @@ describe('canvasDropHandler', function() {
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
     serviceModule.useTransitions = false;
+  });
+
+  afterEach(function() {
+    view.destructor();
+    viewContainer.remove();
   });
 
   it('defers its implementatino to _canvasDropHandler', function() {
@@ -852,29 +838,25 @@ describe('canvasDropHandler', function() {
 });
 
 describe('_canvasDropHandler', function() {
-  var views, models, serviceModule;
+  var models, serviceModule, view, viewContainer;
 
   // Requiring this much setup (beforeAll() and beforeEach() to call a single
   // method on a single object is obscene.
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-view-environment'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
   });
 
   beforeEach(function() {
-    var viewContainer = utils.makeContainer(this);
+    viewContainer = utils.makeContainer(this);
     var db = new models.Database();
     var env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};
-    var view = new views.environment({
+    view = new EnvironmentView({
       container: viewContainer,
       db: db,
       env: env,
@@ -884,6 +866,11 @@ describe('_canvasDropHandler', function() {
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
     serviceModule.useTransitions = false;
+  });
+
+  afterEach(function() {
+    view.destructor();
+    viewContainer.remove();
   });
 
   it('ignores drop events that contain more than one file', function() {
@@ -919,15 +906,11 @@ describe('_canvasDropHandler', function() {
 });
 
 describe('updateElementVisibility', function() {
-  let cleanups, views, models, serviceModule;
+  let cleanups, models, serviceModule, view, viewContainer;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-view-environment'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
       window.yui = Y;
       done();
     });
@@ -935,12 +918,12 @@ describe('updateElementVisibility', function() {
 
   beforeEach(function() {
     cleanups = [];
-    var viewContainer = utils.makeContainer(this);
+    viewContainer = utils.makeContainer(this);
     var db = new models.Database();
     var env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};
-    var view = new views.environment({
+    view = new EnvironmentView({
       container: viewContainer,
       db: db,
       env: env,
@@ -955,6 +938,8 @@ describe('updateElementVisibility', function() {
   afterEach(() => {
     cleanups.forEach(cleanup => cleanup());
     cleanups = null;
+    view.destructor();
+    viewContainer.remove();
   });
 
   it('is called on update', function() {

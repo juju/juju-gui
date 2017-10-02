@@ -449,7 +449,6 @@ utils._showUncommittedConfirm = action => {
     action: action,
     type: 'destructive'
   }];
-  /* eslint-disable no-undef */
   ReactDOM.render(
     <Popup
       buttons={buttons}
@@ -460,17 +459,14 @@ utils._showUncommittedConfirm = action => {
       </p>
     </Popup>,
     document.getElementById('popup-container'));
-  /* eslint-enable */
 };
 
 /**
   Hide the confirmation popup.
 */
 utils._hidePopup = () => {
-  /* eslint-disable no-undef */
   ReactDOM.unmountComponentAtNode(
     document.getElementById('popup-container'));
-  /* eslint-enable */
 };
 
 /**

@@ -77,6 +77,13 @@ class Component {
     return this;
   }
 
+  /**
+    Remove and unbind all modules.
+  */
+  removeModules() {
+    Object.keys(this.modules).forEach(module => this.removeModule(module));
+  }
+
   // Return a resolved handler object in the form
   // {phase: str, callback: function}
   _normalizeHandler(handler, module, selector) {
@@ -483,7 +490,7 @@ class Component {
   }
 
   destructor() {
-    Object.keys(this.modules).forEach(module => this.removeModule(module));
+    this.removeModules();
   }
 };
 

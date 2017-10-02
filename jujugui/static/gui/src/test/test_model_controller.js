@@ -25,7 +25,7 @@ describe('Model Controller Promises', function() {
   before(function(done) {
     YUI(GlobalConfig).use(
       'juju-charm-models', 'juju-models', 'juju-tests-factory',
-      'juju-tests-utils', 'juju-view-environment', 'model-controller',
+      'juju-tests-utils', 'model-controller',
       function(Y) {
         var goenv = Y.juju.environments.GoEnvironment;
         yui = Y;
