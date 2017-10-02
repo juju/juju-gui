@@ -680,7 +680,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
         changeState={this.state.changeState.bind(this.state)}
         dbAPI={shapeup.addReshape({
-          addGhostAndEcsUnits: viewUtils.addGhostAndEcsUnits.bind(
+          addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
             this, db, modelAPI),
           applications: db.services,
           modelName: db.environment.get('name') || '',
@@ -792,13 +792,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         <Inspector
           acl={this.acl}
           addCharm={addCharm}
-          addGhostAndEcsUnits={viewUtils.addGhostAndEcsUnits.bind(
+          addGhostAndEcsUnits={initUtils.addGhostAndEcsUnits.bind(
             this, db, model, service)}
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
           clearState={initUtils.clearState.bind(this, topo)}
-          createMachinesPlaceUnits={viewUtils.createMachinesPlaceUnits.bind(
+          createMachinesPlaceUnits={initUtils.createMachinesPlaceUnits.bind(
             this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
           destroyService={initUtils.destroyService.bind(
