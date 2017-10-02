@@ -341,17 +341,4 @@ environmentUtils.getEffectiveViewportSize = function(primary, minwidth, minheigh
   return result;
 };
 
-if (module) {
-  module.exports = environmentUtils;
-}
-
-if (YUI) {
-  YUI.add('juju-environment-utils', function(Y) {
-    Y.namespace('juju.views').utils = Object.assign(
-      Y.namespace('juju.views.utils'), environmentUtils);
-  }, '0.1.0', {
-    requires: [
-      'juju-view-utils'
-    ]
-  });
-}
+module.exports = environmentUtils;

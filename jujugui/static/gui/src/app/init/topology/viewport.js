@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const environmentUtils = require('../../views/environment-utils');
+const environmentUtils = require('./environment-utils');
 const viewUtils = require('../../views/utils');
 
 /**

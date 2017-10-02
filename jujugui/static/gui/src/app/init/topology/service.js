@@ -2,7 +2,7 @@
 'use strict';
 
 const d3 = window.d3;
-const environmentUtils = require('../../views/environment-utils');
+const environmentUtils = require('./environment-utils');
 const models = window.models;
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');

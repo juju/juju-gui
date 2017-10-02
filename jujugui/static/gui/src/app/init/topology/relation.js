@@ -8,7 +8,7 @@ const d3 = window.d3;
 const endpointUtils = require('../endpoint-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
-const environmentUtils = require('../../views/environment-utils');
+const environmentUtils = require('./environment-utils');
 const utils = require('../../views/utils');
 
 const AmbiguousRelationMenu = require(
