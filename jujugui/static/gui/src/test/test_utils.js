@@ -1,17 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const utils = require('../app/views/utils');
+
 (function() {
   describe('utils.ensureTrailingSlash', function() {
-    var utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('adds a trailing slash if not already there', function() {
       var text = utils.ensureTrailingSlash('/foo/bar');
       assert.strictEqual(text, '/foo/bar/');
@@ -21,18 +14,10 @@
       var text = utils.ensureTrailingSlash('/foo/bar/');
       assert.strictEqual(text, '/foo/bar/');
     });
-
   });
 
   describe('getIconPath', function() {
-    let jujuConfig, utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
+    let jujuConfig;
 
     beforeEach(() => {
       jujuConfig = window.juju_config;
@@ -77,15 +62,6 @@
   });
 
   describe('isRedirectError', function() {
-    let utils;
-
-    before(function(done) {
-      YUI().use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('returns true if it is a redirect error', function() {
       assert.equal(
         utils.isRedirectError('authentication failed: redirection required'),
@@ -100,15 +76,6 @@
   });
 
   describe('isValue', function() {
-    let utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('can check a value is set and not null', function() {
       assert.equal(utils.isValue('string'), true);
       assert.equal(utils.isValue(''), true);
@@ -124,15 +91,6 @@
   });
 
   describe('isObject', function() {
-    let utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('can check a value is an object', function() {
       assert.equal(utils.isObject({key: 'value'}), true);
       assert.equal(utils.isObject({}), true);
@@ -143,15 +101,6 @@
   });
 
   describe('arrayDedupe', function() {
-    let utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('can remove duplicates from an array', function() {
       assert.deepEqual(
         utils.arrayDedupe(
@@ -161,15 +110,6 @@
   });
 
   describe('arrayFlatten', function() {
-    let utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('can flatten an array of arrays', function() {
       assert.deepEqual(
         utils.arrayFlatten(
@@ -186,15 +126,6 @@
   });
 
   describe('formatConstraints', function() {
-    let utils;
-
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
     it('can format constraints', function() {
       assert.equal(
         utils.formatConstraints({
