@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const ServiceModule = require('./service.js');
+const ServiceModule = require('./service');
 const utils = require('../../../test/utils');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -16,7 +16,9 @@ window.viewsUtils = require('../../views/utils');
 window.views = {
   PanZoomModule: require('./panzoom'),
   RelationModule: require('./relation'),
-  ServiceModule: ServiceModule
+  ServiceModule: ServiceModule,
+  Topology: require('./topology'),
+  ViewportModule: require('./viewport')
 };
 
 describe('service module annotations', function() {
@@ -89,7 +91,7 @@ describe('service module annotations', function() {
   it('should clear the state when the event is fired', function() {
     const topo = serviceModule.topo;
     const changeState = sinon.stub();
-    topo.set('state', {changeState: changeState});
+    topo.state = {changeState: changeState};
     serviceModule.clearStateHandler();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -112,8 +114,7 @@ describe('service updates', function() {
   beforeAll(function(done) {
     YUI(GlobalConfig).use([
       'juju-models',
-      'juju-view-environment',
-      'node'],
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
@@ -180,11 +181,10 @@ xdescribe('service module events', function() {
       view, viewContainer, views, Y;
 
   beforeAll(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
+    Y = YUI(GlobalConfig).use([
       'juju-landscape',
       'juju-models',
-      'juju-view-environment',
-      'juju-topology-service'],
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
@@ -416,17 +416,17 @@ xdescribe('service module events', function() {
           }
         };
 
-    view.topo.set('charmstore', {
+    view.topo.charmstore = {
       getBundleYAML: function(id, callback) {
         callback({target: {responseText: 'bundle: BUNDLE DATA'}});
       }
-    });
-    view.topo.set('bundleImporter', {
+    };
+    view.topo.bundleImporter = {
       importBundleYAML: function(e) {
         assert.equal(e.target.responseText, 'bundle: BUNDLE DATA');
         done();
       }
-    });
+    };
     serviceModule.topo = view.topo;
     serviceModule.canvasDropHandler(fakeEventObject);
   });
@@ -442,12 +442,12 @@ xdescribe('service module events', function() {
         }
       }
     };
-    view.topo.set('bundleImporter', {
+    view.topo.bundleImporter = {
       importBundleFile: function(files) {
         assert.deepEqual(files, file);
         done();
       }
-    });
+    };
     serviceModule.topo = view.topo;
     serviceModule.canvasDropHandler(fakeEventObject);
   });
@@ -481,8 +481,8 @@ xdescribe('service module events', function() {
     var args = extractCharmMetadata.lastCall.args;
     assert.deepEqual(args[0], fakeFile);
     assert.deepEqual(args[1], topo);
-    assert.deepEqual(args[2], topo.get('env'));
-    assert.deepEqual(args[3], topo.get('db'));
+    assert.deepEqual(args[2], topo.env);
+    assert.deepEqual(args[3], topo.db);
   });
 
   it('calls to extract local charm on .zip file drop events (IE)', function() {
@@ -514,8 +514,8 @@ xdescribe('service module events', function() {
     var args = extractCharmMetadata.lastCall.args;
     assert.deepEqual(args[0], fakeFile);
     assert.deepEqual(args[1], topo);
-    assert.deepEqual(args[2], topo.get('env'));
-    assert.deepEqual(args[3], topo.get('db'));
+    assert.deepEqual(args[2], topo.env);
+    assert.deepEqual(args[3], topo.db);
   });
 
   // XXX: can't stub internal module.
@@ -992,7 +992,7 @@ describe('updateElementVisibility', function() {
     }, {
       id: 'foo4'
     }]);
-    serviceModule.topo.get('db').services = serviceList;
+    serviceModule.topo.db.services = serviceList;
     serviceModule.updateElementVisibility();
     assert.equal(fade.callCount, 1);
     assert.deepEqual(fade.lastCall.args[0], { serviceNames: ['foo1'] });

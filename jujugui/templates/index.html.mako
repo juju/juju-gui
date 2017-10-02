@@ -354,8 +354,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-env-api',
             'juju-models',
             // juju-views group
-            'd3-components',
-            'juju-topology',
             'juju-view-environment',
             'juju-landscape',
             // end juju-views group

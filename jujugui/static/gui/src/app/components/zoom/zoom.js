@@ -14,7 +14,7 @@ class Zoom extends React.Component {
   _zoomIn() {
     var topo = this.props.topo;
     var panZoomModule = topo.modules.PanZoomModule;
-    var currentScale = topo.get('scale');
+    var currentScale = topo.getScale();
     var newScale = currentScale + this.props.scaleJump;
     panZoomModule._fire_zoom(newScale);
   }
@@ -27,7 +27,7 @@ class Zoom extends React.Component {
   _zoomOut() {
     var topo = this.props.topo;
     var panZoomModule = topo.modules.PanZoomModule;
-    var currentScale = topo.get('scale');
+    var currentScale = topo.getScale();
     var newScale = currentScale - this.props.scaleJump;
     panZoomModule._fire_zoom(newScale);
   }

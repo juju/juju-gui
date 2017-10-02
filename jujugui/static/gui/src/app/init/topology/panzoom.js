@@ -30,10 +30,10 @@ class PanZoomModule {
   }
 
   componentBound() {
-    const options = this.topo.options;
+    const topo = this.topo;
     this.toScale = d3.scale.linear()
-      .domain([options.minZoom, options.maxZoom])
-      .range([options.minZoom, options.maxZoom])
+      .domain([topo.minZoom, topo.maxZoom])
+      .range([topo.minZoom, topo.maxZoom])
       .clamp(true);
   }
 
@@ -41,14 +41,14 @@ class PanZoomModule {
     Handler for 'zoom_in' event.
   */
   zoom_in() {
-    this._fire_zoom(this.topo.get('scale') + this.STEP);
+    this._fire_zoom(this.topo.getScale() + this.STEP);
   }
 
   /**
     Handler for 'zoom_out' event.
   */
   zoom_out() {
-    this._fire_zoom(this.topo.get('scale') - this.STEP);
+    this._fire_zoom(this.topo.getScale() - this.STEP);
   }
 
   /**
@@ -94,11 +94,11 @@ class PanZoomModule {
   _fire_zoom(scale) {
     var topo = this.topo,
         zoom = topo.zoom,
-        size = topo.get('size'),
+        size = topo.size,
         delta,
         evt = {};
 
-    delta = scale - topo.get('scale');
+    delta = scale - topo.getScale();
 
     // Build a temporary event that rescale can use of a similar
     // construction to d3.event.
@@ -136,21 +136,21 @@ class PanZoomModule {
     evt.scale = this.toScale(evt.scale);
 
     // Store the current value of scale so that it can be restored later.
-    topo.set('scale', evt.scale);
+    topo.setScale(evt.scale);
     // Store the current value of translate as well, by copying the event
     // array in order to avoid reference sharing.
-    topo.set('translate', [...evt.translate]);
-    vis.attr('transform', 'translate(' + topo.get('translate') + ')' +
-            ' scale(' + topo.get('scale') + ')');
+    topo.setTranslate([...evt.translate]);
+    vis.attr('transform', 'translate(' + topo.getTranslate() + ')' +
+            ' scale(' + topo.getScale() + ')');
   }
 
   renderedHandler(evt) {
     // Preserve zoom when the scene is updated.
     var topo = this.topo,
         changed = false,
-        currentScale = topo.get('scale'),
-        currentTranslate = topo.get('translate');
-    if (currentTranslate && currentTranslate !== topo.get('translate')) {
+        currentScale = topo.getScale(),
+        currentTranslate = topo.getTranslate();
+    if (currentTranslate && currentTranslate !== topo.getTranslate()) {
       topo.zoom.translate(currentTranslate);
       changed = true;
     }
@@ -172,9 +172,9 @@ class PanZoomModule {
   panToPoint(evt) {
     const point = evt.point,
         topo = this.topo,
-        scale = topo.get('scale'),
+        scale = topo.getScale(),
         size = [window.innerWidth, window.innerHeight],
-        translate = topo.get('translate');
+        translate = topo.getTranslate();
     const offset = topo.zoom.translate();
     const screenWidth = size[0];
     const screenHeight = size[1];

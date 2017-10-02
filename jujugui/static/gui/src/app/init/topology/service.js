@@ -5,12 +5,11 @@ const d3 = window.d3;
 const environmentUtils = require('../../views/environment-utils');
 const models = window.models;
 const relationUtils = require('../relation-utils');
-const topoUtils = require('../../views/topology/utils');
+const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
 
 class ServiceModule {
-  constructor(options) {
-    options = options || {};
+  constructor(options={}) {
     this.name = 'ServiceModule';
     this.useTransitions = options.useTransitions || false;
     this.DRAG_START = 1;
@@ -147,8 +146,8 @@ class ServiceModule {
     //model data
     var topo = this.topo;
     var vis = topo.vis;
-    var db = topo.get('db');
-    var env = topo.get('env');
+    var db = topo.db;
+    var env = topo.env;
 
     var visibleServices = db.services.visible();
     environmentUtils.toBoundingBoxes(
@@ -463,7 +462,7 @@ class ServiceModule {
   */
   getContainer(context) {
     context = context ? context : this;
-    const container = context.topo.get('container');
+    const container = context.topo.container;
     return container.getDOMNode && container.getDOMNode() || container;
   }
 
@@ -809,8 +808,8 @@ class ServiceModule {
     evt.preventDefault();
     var files = evt.dataTransfer.files;
     var topo = this.topo;
-    var env = topo.get('env');
-    var db = topo.get('db');
+    var env = topo.env;
+    var db = topo.db;
     return this._canvasDropHandler(files, topo, env, db, evt);
   }
 
@@ -846,7 +845,7 @@ class ServiceModule {
           // to have it deployed to the charm for changeset bundle
           // deployments we support dropping a changeset export onto
           // the canvas.
-          self.topo.get('bundleImporter').importBundleFile(file);
+          self.topo.bundleImporter.importBundleFile(file);
         }
       });
     } else {
@@ -868,7 +867,7 @@ class ServiceModule {
   _deployLocalCharm(file, env, db) {
     // Store the local file in the global store.
     window.localCharmFile = file;
-    this.topo.get('state').changeState({
+    this.topo.state.changeState({
       gui: {
         inspector: {
           id: null,
@@ -917,7 +916,7 @@ class ServiceModule {
         level: 'error'
       });
       // Hide the file drop overlay.
-      topo.get('environmentView').fadeHelpIndicator(false);
+      topo.environmentView.fadeHelpIndicator(false);
       return;
     }
     this._readCharmEntries(file, topo, env, db, entries);
@@ -984,7 +983,7 @@ class ServiceModule {
     });
     console.error(error);
     // Hide the file drop overlay.
-    topo.get('environmentView').fadeHelpIndicator(false);
+    topo.environmentView.fadeHelpIndicator(false);
   }
 
   /**
@@ -998,7 +997,7 @@ class ServiceModule {
   _showUpgradeOrNewInspector(file, env, db) {
     // Store the local file in the global store.
     window.localCharmFile = file;
-    this.topo.get('state').changeState({
+    this.topo.state.changeState({
       gui: {
         inspector: {
           id: null,
@@ -1018,8 +1017,8 @@ class ServiceModule {
   */
   _deployFromCharmbrowser(evt, topo) {
     var dragData = JSON.parse(evt.dataTransfer.getData('Text'));
-    var translation = topo.get('translate');
-    var scale = topo.get('scale');
+    var translation = topo.getTranslate();
+    var scale = topo.getScale();
     var ghostAttributes = { coordinates: [] };
     // The following magic number 71 is the height of the header and is
     // required to position the service in the proper y position.
@@ -1047,12 +1046,12 @@ class ServiceModule {
           ghostAttributes: ghostAttributes
         }}));
       } else {
-        this.topo.get('db').notifications.add({
+        this.topo.db.notifications.add({
           title: 'Processing File',
           message: 'Changeset processing started.',
           level: 'important'
         });
-        var charmstore = topo.get('charmstore');
+        var charmstore = topo.charmstore;
         charmstore.getBundleYAML(
           entityData.id.replace('cs:', ''),
           function(error, bundleYAML) {
@@ -1060,7 +1059,7 @@ class ServiceModule {
               console.error(error);
               return;
             }
-            topo.get('bundleImporter').importBundleYAML(bundleYAML);
+            topo.bundleImporter.importBundleYAML(bundleYAML);
           }.bind(this));
       }
     }
@@ -1081,7 +1080,7 @@ class ServiceModule {
     });
     this.deselectNodes();
     this.unhoverServices();
-    topo.get('state').changeState({
+    topo.state.changeState({
       root: null,
       user: null,
       gui: {
@@ -1103,7 +1102,7 @@ class ServiceModule {
    @return {Boolean} True if building of relation is allowed.
    */
   allowBuildRelation(topo, service) {
-    var charm = topo.get('db').charms.getById(service.get('charm'));
+    var charm = topo.db.charms.getById(service.get('charm'));
     return charm && charm.loaded;
   }
 
@@ -1292,8 +1291,8 @@ class ServiceModule {
   update() {
     var self = this,
         topo = this.topo,
-        width = topo.get('width'),
-        height = topo.get('height');
+        width = topo.getWidth(),
+        height = topo.getHeight();
 
     // So that we only attach these events once regardless of how many
     // times this module is rendered.
@@ -1542,7 +1541,7 @@ class ServiceModule {
    * @method createServiceNode
    */
   createServiceNode(node, self) {
-    var staticURL = self.topo.get('staticURL') || '';
+    var staticURL = self.topo.staticURL || '';
     if (staticURL) {
       staticURL += '/';
     }
@@ -1680,7 +1679,7 @@ class ServiceModule {
       hide: [],
       show: []
     };
-    var db = this.topo.get('db');
+    var db = this.topo.db;
     var fade, hide, highlight, name;
     db.services.each(function(service) {
       fade = service.get('fade');
@@ -1732,7 +1731,7 @@ class ServiceModule {
     if (evt.highlightRelated) {
       var service = topo.service_boxes[serviceNames[0]].model;
       var relationData = relationUtils.getRelationDataForService(
-        topo.get('db'), service);
+        topo.db, service);
       relationData.forEach(function(relation) {
         serviceNames.push(relation.far.service);
       });
@@ -1762,7 +1761,7 @@ class ServiceModule {
     if (evt.unhighlightRelated) {
       var service = topo.service_boxes[serviceNames[0]].model;
       var relationData = relationUtils.getRelationDataForService(
-        topo.get('db'), service);
+        topo.db, service);
       relationData.forEach(function(relation) {
         serviceNames.push(relation.far.service);
       });
@@ -1858,7 +1857,7 @@ class ServiceModule {
   showServiceDetails(box, topo) {
     // Navigate to the app in the inspector, clearing the state so that the
     // app overview is shown.
-    topo.get('state').changeState({
+    topo.state.changeState({
       gui: {
         inspector: {
           id: box.id,
@@ -1876,7 +1875,7 @@ class ServiceModule {
    */
   show_service(service) {
     var topo = this.topo;
-    var createServiceInspector = topo.get('createServiceInspector');
+    var createServiceInspector = topo.createServiceInspector;
 
     topo.detachContainer();
     createServiceInspector(service);

@@ -30,8 +30,6 @@ window.MODULES = [
   'juju-env-api',
   'juju-models',
   // juju-views group
-  'd3-components',
-  'juju-topology',
   'juju-view-environment',
   'juju-landscape',
   // end juju-views group

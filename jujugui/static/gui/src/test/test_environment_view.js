@@ -15,6 +15,7 @@ window.views = {
   PanZoomModule: require('../app/init/topology/panzoom'),
   RelationModule: require('../app/init/topology/relation'),
   ServiceModule: require('../app/init/topology/service'),
+  Topology: require('../app/init/topology/topology'),
   ViewportModule: require('../app/init/topology/viewport')
 };
 
@@ -1455,7 +1456,7 @@ window.views = {
         charmstore: fakeStore,
         state: {changeState: sinon.stub()}
       }).render();
-      var endpointsController = view.topo.get('endpointsController');
+      var endpointsController = view.topo.endpointsController;
       assert.equal('hidy ho', endpointsController);
       view.destroy();
     });

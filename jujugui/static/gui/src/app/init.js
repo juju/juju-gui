@@ -34,6 +34,7 @@ window.views = {
   PanZoomModule: require('./init/topology/panzoom'),
   RelationModule: require('./init/topology/relation'),
   ServiceModule: require('./init/topology/service'),
+  Topology: require('./init/topology/topology'),
   ViewportModule: require('./init/topology/viewport')
 };
 

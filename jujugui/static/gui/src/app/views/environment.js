@@ -159,8 +159,8 @@ YUI.add('juju-view-environment', function(Y) {
       const container = this.getContainer();
       let topo = this.topo;
       if (!topo) {
-        topo = new views.Topology({includePlus: true});
-        topo.setAttrs({
+        topo = new window.views.Topology({
+          includePlus: true,
           size: [640, 480],
           ecs: this.get('ecs'),
           env: this.get('env'),
@@ -177,8 +177,6 @@ YUI.add('juju-view-environment', function(Y) {
         topo.addModule(window.views.PanZoomModule);
         topo.addModule(window.views.ViewportModule);
         topo.addModule(window.views.RelationModule);
-
-        topo.addTarget(this);
         this.topo = topo;
       }
       return topo;
@@ -276,7 +274,6 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'juju-topology',
     'node',
     'view'
   ]
