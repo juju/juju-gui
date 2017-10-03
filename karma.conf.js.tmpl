@@ -51,9 +51,6 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/user/user.js',
       'jujugui/static/gui/build/app/user/test-user.js',
 
-      'jujugui/static/gui/build/app/store/env/acl.js',
-      'jujugui/static/gui/build/app/store/env/test-acl.js',
-
       'jujugui/static/gui/build/app/utils/jujulib-conversion-utils.js',
       'jujugui/static/gui/build/app/utils/net-utils.js',
       'jujugui/static/gui/build/app/utils/test-net-utils.js',
@@ -71,7 +68,8 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/init/test-endpoint-utils.js',
       'jujugui/static/gui/src/app/init/test-zip-utils.js',
       'jujugui/static/gui/src/app/init/topology/test-*.js',
-      'jujugui/static/gui/src/test/test_topology_utils.js',
+      'jujugui/static/gui/src/app/store/env/test-acl.js',
+      'jujugui/static/gui/src/test/test_topology_utils.js'
     ],
 
     // list of files to exclude
@@ -85,6 +83,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/topology/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
+      'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/views/topology/utils.js': ['browserify'],
       'jujugui/static/gui/src/test/test_topology_utils.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify']

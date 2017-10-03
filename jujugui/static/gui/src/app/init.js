@@ -5,6 +5,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
+const acl = require('./store/env/acl');
 const utils = require('./init/utils');
 const viewUtils = require('./views/utils');
 const hotkeys = require('./init/hotkeys');
@@ -261,7 +262,7 @@ class GUIApp {
       destroying a model.
       @type {Object}
     */
-    this.acl = new yui.juju.generateAcl(this.controllerAPI, this.modelAPI);
+    this.acl = new acl.generateAcl(this.controllerAPI, this.modelAPI);
     // Listen for window unloads and trigger the unloadWindow function.
     window.onbeforeunload = utils.unloadWindow.bind(this);
 
