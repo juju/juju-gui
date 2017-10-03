@@ -344,12 +344,19 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('lightbox'));
   }
 
-  _sendPostDeploymentAnalytics(nowMillis, entityId, openTime) {
+  /**
+    Send post deployment time-to-close analytics.
+
+    @param {Number} closeTime The epox on close.
+    @param {String} entityId The entity the post-deployment panel belongs to.
+    @param {Number} openTime The epox on open.
+  */
+  _sendPostDeploymentAnalytics(closeTime, entityId, openTime) {
     const action = 'Close post deployment panel';
 
     // Round it to the nearest second.
     let timeOpen = Math.round(
-      (nowMillis - openTime) / 1000
+      (closeTime - openTime) / 1000
     );
     let args = [
       `${timeOpen}s`,
