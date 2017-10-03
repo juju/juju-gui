@@ -30,7 +30,6 @@ class PostDeployment extends React.Component {
 
     this.state = {
       content: null,
-      displayName: null,
       metadata: {}
     };
   }
@@ -52,12 +51,6 @@ class PostDeployment extends React.Component {
       console.error(`Entity not found with id: ${this.props.entityId}`);
       return;
     }
-
-    const entity = this.props.makeEntityModel(entityData[0]).toEntity();
-
-    this.setState({
-      displayName: entity.displayName
-    });
 
     const files = entityData[0].files;
     if (files && files.includes('getstarted.md')) {
@@ -222,27 +215,6 @@ class PostDeployment extends React.Component {
           </span>
           <div onClick={this._handleContentClick.bind(this)}
             dangerouslySetInnerHTML={{__html: this.state.content}} />
-        </Panel>
-      );
-    } else if (this.state.displayName) {
-      classes.push('post-deployment--simple');
-      return (
-        <Panel
-          extraClasses={classes.join(' ')}
-          instanceName="post-deployment"
-          visible={true}>
-          <span className="close" tabIndex="0" role="button"
-            onClick={this._closePostDeployment.bind(this)}>
-            <SvgIcon name="close_16"
-              size="16" />
-          </span>
-          <p>
-            {this.state.displayName}
-          &nbsp;</p>
-          <span
-            role="button"
-            className="link"
-            onClick={this._handleViewDetails.bind(this)}>View details</span>
         </Panel>
       );
     }
