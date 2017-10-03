@@ -14,6 +14,7 @@ const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
+const EndpointsController = require('./init/endpoints-controller');
 
 const newBakery = require('./init/utils/bakery-utils');
 
@@ -194,7 +195,7 @@ class GUIApp {
       Application instance of the endpointsController.
       @type {Object}
     */
-    this.endpointsController = new yui.juju.EndpointsController({
+    this.endpointsController = new EndpointsController({
       db: this.db,
       modelController: this.modelController
     });
@@ -1619,7 +1620,7 @@ class GUIApp {
     this.modelAPI && this.modelAPI.destroy();
     this.controllerAPI.destroy();
     this.db.destroy();
-    this.endpointsController.destroy();
+    this.endpointsController.destructor();
     this.topology.destroy();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);

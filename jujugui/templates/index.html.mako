@@ -350,7 +350,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-charm-models',
             'juju-bundle-models',
             'juju-controller-api',
-            'juju-endpoints-controller',
             'juju-env-base',
             'juju-env-api',
             'juju-env-web-handler',

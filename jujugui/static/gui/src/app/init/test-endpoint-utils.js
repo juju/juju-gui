@@ -2,6 +2,9 @@
 'use strict';
 
 const endpointUtils = require('./endpoint-utils');
+const utils = require('../../test/utils');
+
+const EndpointsController = require('./endpoints-controller');
 
 const createApp = (JujuGUI, config = {}) => {
   const defaults = {
@@ -22,14 +25,12 @@ const createApp = (JujuGUI, config = {}) => {
 
 // These are nominally based on improv sample.json delta stream with
 // the addition of puppet subordinate relations.
-
 describe('Relation endpoints logic', () => {
-  let container, utils, db, app, sample_endpoints,
+  let container, db, app, sample_endpoints,
       sample_env, JujuGUI;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils']), Y => {
-      utils = Y.namespace('juju-tests.utils');
+    YUI(GlobalConfig).use(MODULES, Y => {
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       // init.js requires the window to contain the YUI object.
@@ -213,14 +214,11 @@ describe('Relation endpoints logic', () => {
 
 
 describe('Endpoints map', function() {
-  var models, controller, EndpointsController, charm;
+  var models, controller, charm;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models', 'juju-tests-utils',
-      'juju-endpoints-controller'],
-    function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      EndpointsController = Y.namespace('juju.EndpointsController');
       done();
     });
   });
@@ -231,7 +229,7 @@ describe('Endpoints map', function() {
   });
 
   afterEach(function() {
-    controller.destroy();
+    controller.destructor();
     charm.destroy();
   });
 
@@ -369,14 +367,13 @@ describe('Endpoints map', function() {
 // XXX: these tests are failing in the new suite and have sporadically in the
 // old suite so skipping until some investigation can be done.
 xdescribe('Endpoints map handlers', function() {
-  let app, container, controller, destroyMe, factory, JujuGUI, utils;
+  let app, container, controller, destroyMe, factory, JujuGUI;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils',
-      'juju-tests-factory', 'juju-endpoints-controller',
+    YUI(GlobalConfig).use(MODULES.concat([
+      'juju-tests-factory',
       'datasource-local']),
     Y => {
-      utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
@@ -515,13 +512,10 @@ xdescribe('Endpoints map handlers', function() {
 
 
 describe('Application config handlers', () => {
-  let JujuGUI, app, conn, container, destroyMe, utils;
+  let JujuGUI, app, conn, container, destroyMe;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES.concat(['juju-tests-utils',
-      'environment-change-set']),
-    Y => {
-      utils = Y.namespace('juju-tests.utils');
+    YUI(GlobalConfig).use(MODULES.concat(['environment-change-set']), Y => {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
