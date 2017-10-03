@@ -21,8 +21,7 @@ const newBakery = require('./init/utils/bakery-utils');
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
-// Hacks untill all of the global references have been removed.
-window.jsyaml = require('js-yaml');
+// Hacks until all of the global references have been removed.
 window.juju.utils.RelationUtils = require('./init/relation-utils');
 // Required for the envionment.js file.
 window.ReactDOM = ReactDOM;
