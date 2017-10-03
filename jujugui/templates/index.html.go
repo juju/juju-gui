@@ -345,7 +345,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         YUI(GlobalConfig).use([
-            'analytics',
             'juju-charm-models',
             'juju-bundle-models',
             'juju-controller-api',

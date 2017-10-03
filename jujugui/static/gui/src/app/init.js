@@ -6,6 +6,7 @@ const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
+const analytics = require('./init/analytics');
 const utils = require('./init/utils');
 const viewUtils = require('./views/utils');
 const hotkeys = require('./init/hotkeys');
@@ -206,7 +207,7 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.sendAnalytics = yui.juju.sendAnalyticsFactory(
+    this.sendAnalytics = analytics.sendAnalyticsFactory(
       this.controllerAPI,
       window.dataLayer);
 
