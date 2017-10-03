@@ -378,21 +378,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const entityId = state.postDeploymentPanel.entityId;
     const nowMillis = new Date().getTime();
 
-    // If someone does not close the panel but adds and deploys a second charm
-    // with a getstarted.md we need to stop the current time, send the data
-    // and start a new one.
-    if (state.postDeploymentPanel.openTime) {
-      this._sendPostDeploymentAnalytics(
-        nowMillis,
-        entityId,
-        state.postdeploymentPanel.openTime);
-    }
-
-    this.setState({
-      postDeploymentPanel: {
-        openTime: nowMillis
-      }
-    });
+    this.postDeploymentPanel = {
+      openTime: nowMillis,
+      entityId: entityId
+    };
 
     const charmstore = this.charmstore;
 
@@ -460,12 +449,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _clearPostDeployment(state, next) {
     const nowMillis = new Date().getTime();
 
-    if (state.postDeploymentPanel.openTime) {
+    if (this.postDeploymentPanel
+      && this.postDeploymentPanel.openTime
+      && this.postDeploymentPanel.entityId) {
       this._sendPostDeploymentAnalytics(
         nowMillis,
-        entityId,
-        state.postdeploymentPanel.openTime);
+        this.postDeploymentPanel.entityId,
+        this.postDeploymentPanel.openTime);
     }
+
     ReactDOM.unmountComponentAtNode(
       document.getElementById('post-deployment')
     );
