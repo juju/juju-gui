@@ -52,8 +52,6 @@ class PostDeployment extends React.Component {
       return;
     }
 
-    const entity = this.props.makeEntityModel(entityData[0]).toEntity();
-
     const files = entityData[0].files;
     if (files && files.includes('getstarted.md')) {
       this.props.getFile(
