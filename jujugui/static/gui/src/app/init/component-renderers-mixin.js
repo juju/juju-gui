@@ -345,32 +345,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
-    Send post deployment time-to-close analytics.
-
-    @param {Number} closeTime The epox on close.
-    @param {String} entityId The entity the post-deployment panel belongs to.
-    @param {Number} openTime The epox on open.
-  */
-  _sendPostDeploymentAnalytics(closeTime, entityId, openTime) {
-    const action = 'Close post deployment panel';
-
-    // Round it to the nearest second.
-    let timeOpen = Math.round(
-      (closeTime - openTime) / 1000
-    );
-    let args = [
-      `${timeOpen}s`,
-      entityId
-    ];
-
-    this.sendAnalytics(
-      'Deployment Flow',
-      action,
-      args.join(' - ')
-    );
-  }
-
-  /**
     Display post deployment help.
 
     @param {Object} state The current state.
@@ -454,15 +428,29 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     @param {Function} next Run the next handler.
   */
   _clearPostDeployment(state, next) {
-    const nowMillis = new Date().getTime();
+    const closeTime = new Date().getTime();
 
     if (this.postDeploymentPanel
       && this.postDeploymentPanel.openTime
       && this.postDeploymentPanel.entityId) {
-      this._sendPostDeploymentAnalytics(
-        nowMillis,
-        this.postDeploymentPanel.entityId,
-        this.postDeploymentPanel.openTime);
+      const entityId = this.postDeploymentPanel.entityId;
+      const openTime = this.postDeploymentPanel.openTime;
+      const action = 'Close post deployment panel';
+
+      // Round it to the nearest second.
+      let timeOpen = Math.round(
+        (closeTime - openTime) / 1000
+      );
+      let args = [
+        `${timeOpen}s`,
+        entityId
+      ];
+
+      this.sendAnalytics(
+        'Deployment Flow',
+        action,
+        args.join(' - ')
+      );
     }
 
     ReactDOM.unmountComponentAtNode(
