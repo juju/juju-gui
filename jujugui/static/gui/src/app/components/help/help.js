@@ -5,10 +5,11 @@
 const React = require('react');
 
 const Lightbox = require('../lightbox/lightbox');
+const SvgIcon = require('../svg-icon/svg-icon');
 const VanillaCard = require('../vanilla/card/card');
 
 class Help extends React.Component {
-  
+
   _handleClose() {
     this.props.changeState({
       help: null
@@ -24,9 +25,23 @@ class Help extends React.Component {
     );
     return (<Lightbox
       close={this._handleClose.bind(this)}>
-      <header className="help__header">
-        <h1 className="help__header-title">Help</h1>
-        <div className="help__header-search">Search</div>
+      <header className="help__header clearfix">
+        <h2 className="help__header-title">Help</h2>
+        <div className="help__header-search header-search">
+          <form className="header-search__form"
+            target="_blank"
+            action="https://jujucharms.com/docs/search/">
+            <button type="submit"
+              className="header-search__submit">
+              <SvgIcon name="search_16"
+                size="16" />
+            </button>
+            <input type="search" name="text"
+              className="header-search__input"
+              placeholder="Search the store"
+              ref={input => {this.searchDocs = input}} />
+          </form>
+        </div>
       </header>
       <div className="help__content">
         <div className="four-col">

@@ -88,6 +88,14 @@ class Lightbox extends React.Component {
     });
   }
 
+  _handleClose(evt) {
+    this.props.close();
+  }
+
+  _stopPropagation(evt) {
+    evt.stopPropagation();
+  }
+
   render() {
     let caption;
 
@@ -99,13 +107,12 @@ class Lightbox extends React.Component {
       );
     }
 
-
     return (
-      <div className="lightbox" onClick={this.props.close}>
+      <div className="lightbox" onClick={this._handleClose.bind(this)}>
         <button className="lightbox__close">
           <SvgIcon name="close_16_white" width="16" />
         </button>
-        <div className="lightbox__wrapper">
+        <div className="lightbox__wrapper" onClick={this._stopPropagation.bind(this)}>
           <div className="lightbox__content">
             {this._generateContent()}
             {this._generateNavigation()}
