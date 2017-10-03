@@ -1391,7 +1391,7 @@ window.views = {
             endpointsMap = {'service-1': {requires: [], provides: []}};
         var fauxController = new Y.Base();
         fauxController.endpointsMap = endpointsMap;
-        fauxController.set('db', db);
+        fauxController.db = db;
         var view = new views.environment(
           { container: container,
             db: db,

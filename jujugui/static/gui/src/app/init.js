@@ -5,20 +5,24 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
+const acl = require('./store/env/acl');
+const analytics = require('./init/analytics');
 const utils = require('./init/utils');
+const jujulibConversionUtils = require('./init/jujulib-conversion-utils');
 const viewUtils = require('./views/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
+const EndpointsController = require('./init/endpoints-controller');
+const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
 
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
-// Hacks untill all of the global references have been removed.
-window.jsyaml = require('js-yaml');
+// Hacks until all of the global references have been removed.
 window.juju.utils.RelationUtils = require('./init/relation-utils');
 // Required for the envionment.js file.
 window.ReactDOM = ReactDOM;
@@ -114,7 +118,7 @@ class GUIApp {
     */
     this.users = csUser.create();
 
-    const webHandler = new yui.juju.environments.web.WebHandler();
+    const webHandler = new WebHandler();
     const stateGetter = () => this.state.current;
     const cookieSetter = (value, callback) => {
       this.charmstore.setAuthCookie(value, callback);
@@ -150,7 +154,7 @@ class GUIApp {
     };
     const controllerOptions = Object.assign({}, modelOptions);
     const environments = yui.juju.environments;
-    modelOptions.webHandler = new environments.web.WebHandler();
+    modelOptions.webHandler = new WebHandler();
     /**
       An API connection to the Juju model.
       @type {Object}
@@ -191,7 +195,7 @@ class GUIApp {
       Application instance of the endpointsController.
       @type {Object}
     */
-    this.endpointsController = new yui.juju.EndpointsController({
+    this.endpointsController = new EndpointsController({
       db: this.db,
       modelController: this.modelController
     });
@@ -205,7 +209,7 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.sendAnalytics = yui.juju.sendAnalyticsFactory(
+    this.sendAnalytics = analytics.sendAnalyticsFactory(
       this.controllerAPI,
       window.dataLayer);
 
@@ -246,7 +250,7 @@ class GUIApp {
       modelAPI: this.modelAPI,
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI),
-      makeEntityModel: yui.juju.makeEntityModel,
+      makeEntityModel: jujulibConversionUtils.makeEntityModel,
       charmstore: this.charmstore,
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });
@@ -261,7 +265,7 @@ class GUIApp {
       destroying a model.
       @type {Object}
     */
-    this.acl = new yui.juju.generateAcl(this.controllerAPI, this.modelAPI);
+    this.acl = new acl.generateAcl(this.controllerAPI, this.modelAPI);
     // Listen for window unloads and trigger the unloadWindow function.
     window.onbeforeunload = utils.unloadWindow.bind(this);
 
@@ -380,7 +384,7 @@ class GUIApp {
       }
       return new BundleService(
         bundleServiceURL,
-        new yui.juju.environments.web.WebHandler());
+        new WebHandler());
     }
     return this.bundleService;
   }
@@ -1356,7 +1360,7 @@ class GUIApp {
     }
     console.log('sending discharge token to storefront');
     const content = 'discharge-token=' + dischargeToken;
-    const webhandler = new yui.juju.environments.web.WebHandler();
+    const webhandler = new WebHandler();
     webhandler.sendPostRequest(
       '/_login',
       {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -1616,7 +1620,7 @@ class GUIApp {
     this.modelAPI && this.modelAPI.destroy();
     this.controllerAPI.destroy();
     this.db.destroy();
-    this.endpointsController.destroy();
+    this.endpointsController.destructor();
     this.topology.destroy();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);

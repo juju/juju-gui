@@ -35,7 +35,7 @@ const _getSeries = (db, app) => {
 const getEndpoints = (application, controller) => {
   const targets = {};
   const appId = application.get('id');
-  const db = controller.get('db');
+  const db = controller.db;
   const endpointsMap = controller.endpointsMap;
   const appEndpoints = endpointsMap[appId];
   const appIsSubordinate = application.get('subordinate');

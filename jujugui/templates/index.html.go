@@ -345,19 +345,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         YUI(GlobalConfig).use([
-            'acl',
-            'analytics',
             'juju-charm-models',
             'juju-bundle-models',
             'juju-controller-api',
-            'juju-endpoints-controller',
             'juju-env-base',
             'juju-env-api',
-            'juju-env-web-handler',
             'juju-models',
-            'jujulib-utils',
             'bakery-utils',
-            'net-utils',
             // juju-views group
             'd3-components',
             'juju-topology',

@@ -23,18 +23,12 @@ window.GlobalConfig = {
   test_url: window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/"
 };
 window.MODULES = [
-  'acl',
-  'analytics',
   'juju-charm-models',
   'juju-bundle-models',
   'juju-controller-api',
-  'juju-endpoints-controller',
   'juju-env-base',
   'juju-env-api',
-  'juju-env-web-handler',
   'juju-models',
-  'jujulib-utils',
-  'net-utils',
   // juju-views group
   'd3-components',
   'juju-topology',
