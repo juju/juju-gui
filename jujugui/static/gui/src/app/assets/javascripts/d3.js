@@ -5859,17 +5859,4 @@ function d3_layout_packPlace(a, b, c) {
   }
 }
 
-try {
-  module.exports = d3;
-} catch (e) {}
-
-if (YUI) {
-  YUI.add('d3', function(Y) {
-    Y.namespace('d3');
-    Y.d3 = (function() {
-      return d3;
-    })();
-  }, '3.5.16', {
-    requires: []
-  });
-}
+module.exports = d3;

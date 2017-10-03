@@ -1,64 +1,22 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const PanZoomModule = require('../app/init/topology/panzoom');
-const RelationModule = require('../app/init/topology/relation');
-const ServiceModule = require('../app/init/topology/service');
-const ViewportModule = require('../app/init/topology/viewport');
+const PanZoomModule = require('./panzoom');
+const RelationModule = require('./relation');
+const ServiceModule = require('./service');
+const Topology = require('./topology');
+const ViewportModule = require('./viewport');
+
+const utils = require('../../../test/utils');
+const viewUtils = require('../../views/utils');
+
 
 describe('topology', function() {
-  var NS, TestModule, container, db, models, state, topo,
-      utils, views, viewUtils;
+  let TestModule, container, db, models, state, topo;
 
-  before(function(done) {
-    YUI(GlobalConfig).use(['juju-topology', 'd3-components', 'juju-models',
-      'juju-tests-utils', 'juju-view-utils', 'node'],
-    function(Y) {
-      NS = Y.namespace('d3-components');
-      views = Y.namespace('juju.views');
+  beforeAll(function(done) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
-      viewUtils = Y.namespace('juju.views.utils');
-
-      TestModule = Y.Base.create('TestModule', NS.Module, [], {
-        events: {
-          scene: { '.thing': {click: 'decorateThing'}},
-          d3: {'.target': {click: 'targetTarget'}},
-          topo: {
-            cancel: 'cancelHandler'
-          }
-        },
-
-        decorateThing: function(evt) {
-          state.thing = 'decorated';
-        },
-
-        targetTarget: function(evt) {
-          state.targeted = true;
-        },
-
-        cancelHandler: function(evt) {
-          state.cancelled = true;
-        }
-      });
-
       done();
     });
   });
@@ -71,6 +29,33 @@ describe('topology', function() {
     const button2 = document.createElement('button');
     button2.classList.add('target');
     container.appendChild(button2);
+    TestModule = class {
+      constructor(options={}) {
+        this.name = 'TestModule';
+        this.container = container;
+        this.events = {
+          scene: { '.thing': {click: 'decorateThing'}},
+          d3: {'.target': {click: 'targetTarget'}},
+          topo: {
+            cancel: 'cancelHandler'
+          }
+        };
+      }
+
+      decorateThing(evt) {
+        state.thing = 'decorated';
+      }
+
+      targetTarget(evt) {
+        state.targeted = true;
+      }
+
+      cancelHandler(evt) {
+        state.cancelled = true;
+      }
+
+      destroy() {}
+    };
     state = {};
   });
 
@@ -84,8 +69,8 @@ describe('topology', function() {
   });
 
   it('should be able to create a topology with default modules', function() {
-    topo = new views.Topology();
-    topo.setAttrs({container: container});
+    topo = new Topology();
+    topo.container = container;
     topo.addModule(TestModule);
     topo.render();
 
@@ -95,8 +80,9 @@ describe('topology', function() {
 
   function createStandardTopo() {
     db = new models.Database();
-    topo = new views.Topology();
-    topo.setAttrs({container: container, db: db});
+    topo = new Topology();
+    topo.container = container;
+    topo.db = db;
     topo.addModule(ServiceModule);
     topo.addModule(RelationModule);
     topo.addModule(PanZoomModule);
@@ -116,8 +102,9 @@ describe('topology', function() {
     var padding = 200;
 
     beforeEach(function() {
-      topo = new views.Topology();
-      topo.setAttrs({container: container, servicePadding: padding});
+      topo = new Topology();
+      topo.container = container;
+      topo.servicePadding = padding;
     });
 
     it('calculates the proper coordinates with no services', function() {
@@ -161,7 +148,7 @@ describe('topology', function() {
           }
         }
       };
-      topo = new views.Topology({
+      topo = new Topology({
         db: db,
         env: env
       });

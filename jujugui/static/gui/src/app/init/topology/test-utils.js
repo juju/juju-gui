@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('../app/views/topology/utils');
+const utils = require('./utils');
 
 describe('topology utils', () => {
   it('should translate service boxes to vertices', () => {

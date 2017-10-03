@@ -1,28 +1,16 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-
-// Required for the envionment.js file.
-window.ReactDOM = ReactDOM;
-window.React = React;
-juju.components.Environment = require(
-  '../app/components/environment/environment');
-
-window.viewsUtils = require('../app/views/utils');
-window.views = {
-  PanZoomModule: require('../app/init/topology/panzoom'),
-  RelationModule: require('../app/init/topology/relation'),
-  ServiceModule: require('../app/init/topology/service'),
-  ViewportModule: require('../app/init/topology/viewport')
-};
+const d3 = require('../../assets/javascripts/d3');
+const environmentUtils = require('./environment-utils');
+const EnvironmentView = require('./environment');
+const testUtils = require('../../../test/utils');
 
 (function() {
 
   describe('juju environment view', function() {
-    var view, views, models, Y, container, d3, db, conn, juju, jujuConfig,
-        charm, click, ecs, env, relationUtils, testUtils, fakeStore;
+    var view, models, Y, container, db, conn, juju, jujuConfig,
+        charm, click, ecs, env, relationUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -210,11 +198,10 @@ window.views = {
       ]
     ]};
 
-    before(function(done) {
+    beforeAll(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-tests-utils',
-        'd3', 'juju-models', 'juju-view-environment',
-        'dump', 'juju-view-utils',
+        'juju-models',
+        'dump',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         const getMockStorage = function() {
@@ -229,13 +216,9 @@ window.views = {
         const userClass = new window.jujugui.User(
           {sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
-        testUtils = Y.namespace('juju-tests.utils');
-        views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
-        d3 = Y.namespace('d3');
         juju = Y.namespace('juju');
         window.yui = Y;
-        window.d3 = d3;
         done();
       });
     });
@@ -273,7 +256,7 @@ window.views = {
         true);
       charm = new models.Charm(charmData.charm);
       db.charms.add(charm);
-      view = new views.environment({
+      view = new EnvironmentView({
         container: container,
         db: db,
         env: {
@@ -292,14 +275,13 @@ window.views = {
     });
 
     afterEach(function(done) {
+      container.remove();
       db.reset();
       db.destroy();
       charm.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
-      if (!view.get('destroyed')) {
-        view.destroy({remove: true});
-      }
+      view.destructor();
       window.juju_config = jujuConfig;
       env.close(() => {
         env.destroy();
@@ -314,7 +296,7 @@ window.views = {
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
       var db = new models.Database();
-      view.set('db', db);
+      view.db = db;
       view.render().rendered();
 
       // Verify we have help text.
@@ -333,11 +315,11 @@ window.views = {
     it('should handle clicking the plus', function() {
       // Use a db w/o the delta loaded
       var db = new models.Database();
-      view.set('db', db);
+      view.db = db;
       const state = {
         changeState: sinon.stub()
       };
-      view.set('state', state);
+      view.state = state;
       view.render().rendered();
 
       var plus = document.querySelector('.environment-help .plus-service');
@@ -373,7 +355,7 @@ window.views = {
     it('must render services blocks correctly',
       function() {
         // Create an instance of EnvironmentView with custom env
-        view = new views.environment({
+        view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -390,7 +372,7 @@ window.views = {
 
     it('properly renders the create relation icon', function() {
       // Create an instance of EnvironmentView with custom env
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -438,7 +420,7 @@ window.views = {
 
     it('properly renders the create relation icon using staticURL', function() {
       // Create an instance of EnvironmentView with custom env
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -459,7 +441,7 @@ window.views = {
     it('must be able to render service blocks and relations',
       function() {
         // Create an instance of EnvironmentView with custom env
-        var view = new views.environment({
+        var view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -497,7 +479,7 @@ window.views = {
     it('must be able to render subordinate and normal services',
       function(done) {
         // Create an instance of EnvironmentView with custom env
-        var view = new views.environment({
+        var view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -515,7 +497,7 @@ window.views = {
 
     it('must be able to render service icons', function(done) {
       // Create an instance of EnvironmentView with custom env
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -533,7 +515,7 @@ window.views = {
     it('must be able to display service icons as pending deletion', function() {
       db.services.getById('wordpress').set('deleted', true);
       // Create an instance of EnvironmentView with custom env
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -547,7 +529,7 @@ window.views = {
     });
 
     it('must properly count subordinate relations', function() {
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -641,7 +623,7 @@ window.views = {
     });
 
     it('must not duplicate nodes when services are added', function() {
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -682,7 +664,7 @@ window.views = {
 
     it('must resize the service health graph properly when units are added',
       function() {
-        new views.environment({
+        new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -730,7 +712,7 @@ window.views = {
 
     it('must recalculate relation endpoints when services are resized',
       function() {
-        new views.environment({
+        new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -809,7 +791,7 @@ window.views = {
     );
 
     it('must be able to place new services properly', function() {
-      var view = new views.environment({
+      var view = new EnvironmentView({
             container: container,
             db: db,
             env: env,
@@ -959,7 +941,7 @@ window.views = {
 
     it('must be able to render subordinate relation indicators',
       function() {
-        new views.environment({
+        new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -979,7 +961,7 @@ window.views = {
     it('must be able to compute rect sizes based on the svg and' +
        ' viewport size',
     function() {
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -1014,7 +996,7 @@ window.views = {
         viewport.setAttribute('id', 'viewport');
         viewport.style.width = '800px';
         document.body.appendChild(viewport);
-        var view = new views.environment({
+        var view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -1067,9 +1049,9 @@ window.views = {
 
     // XXX: There seems to be some complicated mapping to create for the
     // endpointsController but it not obvious what it should be.
-    it.skip('must be able to add a relation from the service menu',
+    xit('must be able to add a relation from the service menu',
       function() {
-        var newView = new views.environment({
+        var newView = new EnvironmentView({
           container: container,
           db: db,
           endpointsController: {
@@ -1145,7 +1127,7 @@ window.views = {
         assert.equal(4, db.relations.size());
         // restore original getEndpoints function
         models.getEndpoints = existing;
-        newView.destroy();
+        newView.destructor();
       });
 
     it('must be able to remove a relation between services',
@@ -1157,7 +1139,7 @@ window.views = {
           env.remove_relation = oldRemove;
           done();
         };
-        var view = new views.environment({
+        var view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -1178,7 +1160,7 @@ window.views = {
 
     it('builds a menu of relations in a collection', function() {
       db.onDelta({detail: {data: additionalRelations}});
-      view = new views.environment({
+      view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -1274,7 +1256,7 @@ window.views = {
     });
 
     it('uses staticURL config for the relation status assets', function() {
-      view.set('staticURL', 'static');
+      view.staticURL = 'static';
       view.render();
       var reduceImages = function() {
         return view.topo.vis.selectAll('.rel-indicator image')[0]
@@ -1304,7 +1286,7 @@ window.views = {
       const state = {
         changeState: sinon.stub()
       };
-      view = new views.environment({
+      view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -1339,7 +1321,7 @@ window.views = {
 
     it('must not remove a deployed subordinate relation between services',
       function() {
-        view = new views.environment({
+        view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -1364,7 +1346,7 @@ window.views = {
 
     it('should remove a pending subordinate relation between services',
       function() {
-        view = new views.environment({
+        view = new EnvironmentView({
           container: container,
           db: db,
           env: env,
@@ -1392,7 +1374,7 @@ window.views = {
         var fauxController = new Y.Base();
         fauxController.endpointsMap = endpointsMap;
         fauxController.db = db;
-        var view = new views.environment(
+        var view = new EnvironmentView(
           { container: container,
             db: db,
             endpointsController: fauxController,
@@ -1417,14 +1399,14 @@ window.views = {
         // ...clicking on the background causes the relation drag to stop.
         sm.backgroundClicked();
         assert.isFalse(topo.buildingRelation);
-        view.destroy();
+        view.destructor();
         db.destroy();
         fauxController.destroy();
       });
 
     it('stores relations in collections', function() {
       db.onDelta({detail: {data: additionalRelations}});
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         env: env,
@@ -1447,7 +1429,7 @@ window.views = {
     });
 
     it('propagates the endpointsController to the topology', function() {
-      var view = new views.environment({
+      var view = new EnvironmentView({
         container: container,
         db: db,
         endpointsController: 'hidy ho',
@@ -1455,16 +1437,16 @@ window.views = {
         charmstore: fakeStore,
         state: {changeState: sinon.stub()}
       }).render();
-      var endpointsController = view.topo.get('endpointsController');
+      var endpointsController = view.topo.endpointsController;
       assert.equal('hidy ho', endpointsController);
-      view.destroy();
+      view.destructor();
     });
 
     describe('onboarding integration with the environment', function() {
       it('shows/hides the integrated button when a service is added',
         function() {
           db = new models.Database();
-          view.set('db', db);
+          view.db = db;
           view.render().rendered();
           var includedPlus = view.topo.vis.select('.included-plus');
           var helpText = container.querySelector('.environment-help');
@@ -1479,22 +1461,20 @@ window.views = {
 
           assert.equal(true, includedPlus.classed('show'));
           assert.equal(true, helpText.classList.contains('shrink'));
-          view.destroy();
+          view.destructor();
         }
       );
     });
   });
 
   describe('view model support infrastructure', function() {
-    var models, module, service, viewUtils;
+    var models, module, service;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(
-        ['juju-models', 'juju-view-utils',
-          'juju-environment-utils'],
+        ['juju-models'],
         function(Y) {
           models = Y.namespace('juju.models');
-          viewUtils = Y.namespace('juju.views.utils');
           window.yui = Y;
           done();
         });
@@ -1513,11 +1493,11 @@ window.views = {
 
     // XXX: current can't be tested as it modifies an internal module
     // variable (snapToPoles).
-    it.skip('must be able to get us nearest connectors when snapping to poles',
+    xit('must be able to get us nearest connectors when snapping to poles',
       function() {
 
-        var b1 = viewUtils.BoundingBox(module, service),
-            b2 = viewUtils.BoundingBox(module, service);
+        var b1 = environmentUtils.BoundingBox(module, service),
+            b2 = environmentUtils.BoundingBox(module, service);
 
         // raw property access
         b1.x = 0;
@@ -1531,7 +1511,7 @@ window.views = {
         b1.xy.should.eql([0, 0]);
         b2.wh.should.eql([100, 200]);
 
-        viewUtils.snapToPoles = true;
+        environmentUtils.snapToPoles = true;
 
         b1.getNearestConnector([0, 0]);
 
@@ -1549,8 +1529,8 @@ window.views = {
     it('must be able to get us nearest connectors when centering',
       function() {
 
-        var b1 = viewUtils.BoundingBox(module, service),
-            b2 = viewUtils.BoundingBox(module, service);
+        var b1 = environmentUtils.BoundingBox(module, service),
+            b2 = environmentUtils.BoundingBox(module, service);
 
         // raw property access
         b1.x = 0; b1.y = 0;
@@ -1562,7 +1542,7 @@ window.views = {
         b1.xy.should.eql([0, 0]);
         b2.wh.should.eql([100, 200]);
 
-        viewUtils.snapToPoles = false;
+        environmentUtils.snapToPoles = false;
 
         b1.getNearestConnector(b2).should
           .eql(b1.connectors.center);
@@ -1572,7 +1552,7 @@ window.views = {
       });
 
     it('must be able to tell if a point is inside a box', function() {
-      var b = viewUtils.BoundingBox(module, service);
+      var b = environmentUtils.BoundingBox(module, service);
       b.pos = {x: 100, y: 100, w: 50, h: 50};
 
       b.containsPoint([125, 125]).should.equal(true);
@@ -1581,8 +1561,8 @@ window.views = {
 
     it('must be able to save and restore old position information',
       function() {
-        var b1 = viewUtils.BoundingBox(module, service),
-            b2 = viewUtils.BoundingBox(module, service);
+        var b1 = environmentUtils.BoundingBox(module, service),
+            b2 = environmentUtils.BoundingBox(module, service);
 
         // raw property access
         b1.x = 0; b1.y = 0;
@@ -1604,7 +1584,7 @@ window.views = {
       });
 
     it('must be able to access model attributes', function() {
-      var b1 = new viewUtils.BoundingBox(module, service);
+      var b1 = new environmentUtils.BoundingBox(module, service);
 
       b1.modelId.should.equal('service-mediawiki');
 
@@ -1615,7 +1595,7 @@ window.views = {
 
     it('must be able to update position data and not touch model data',
       function() {
-        var b1 = viewUtils.BoundingBox(module, service);
+        var b1 = environmentUtils.BoundingBox(module, service);
         b1.x = 0; b1.y = 0;
         b1.w = 100; b1.h = 200;
         b1.id.should.equal('mediawiki');
@@ -1635,7 +1615,7 @@ window.views = {
           {id: 'wordpress'}]);
 
         services.size().should.equal(4);
-        var boxes = viewUtils.toBoundingBoxes(module, services);
+        var boxes = environmentUtils.toBoundingBoxes(module, services);
         boxes.mysql.id.should.equal('mysql');
         boxes.wordpress.id.should.equal('wordpress');
       });
@@ -1649,14 +1629,14 @@ window.views = {
           {id: 'wordpress'}]);
 
         services.size().should.equal(4);
-        var boxes = viewUtils.toBoundingBoxes(module, services);
+        var boxes = environmentUtils.toBoundingBoxes(module, services);
         var mysql = services.getById('mysql');
 
         boxes.mysql.exposed.should.equal(false);
         mysql.set('exposed', true);
 
         // The third argument here implies an update.
-        viewUtils.toBoundingBoxes(module, services, boxes);
+        environmentUtils.toBoundingBoxes(module, services, boxes);
         boxes.mysql.exposed.should.equal(true);
       });
 
@@ -1671,7 +1651,7 @@ window.views = {
         'memcache': {},
         'wordpress': {}};
 
-      var boxes = viewUtils.toBoundingBoxes(module, services, existing);
+      var boxes = environmentUtils.toBoundingBoxes(module, services, existing);
       // The haproxy is removed from the results since it is no longer in
       // the services list.
       assert.equal(boxes.haproxy, undefined);
@@ -1702,7 +1682,7 @@ window.views = {
           charm: 'cs:mysql-1'
         }
       };
-      var boxes = viewUtils.toBoundingBoxes(module, services, existing, fakeEnv);
+      var boxes = environmentUtils.toBoundingBoxes(module, services, existing, fakeEnv);
       assert.equal(boxes['local:ceph-1'].icon, 'local charm icon');
 
       // The mysql charm has an icon from on the server.

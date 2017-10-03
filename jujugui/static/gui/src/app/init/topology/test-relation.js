@@ -74,7 +74,7 @@ describe('topology relation module', function() {
         changeState: sinon.stub()
       };
       var topo = {
-        get: sinon.stub().withArgs('state').returns(state)
+        state: state
       };
       view.topo = topo;
       const relation = document.createElement('div');
@@ -99,13 +99,12 @@ describe('topology relation module', function() {
         view, 'updateSubordinateRelationsCount');
       cleanups.push(updateSubs.restore);
       view.topo = {
-        get: function() {
-          return {
-            relations: {
-              toArray: function() {}
-            }
-          };
-        }};
+        db: {
+          relations: {
+            toArray: function() {}
+          }
+        }
+      };
       view.update.call(view);
       assert.equal(updateVis.callCount, 1);
     });
@@ -130,11 +129,10 @@ describe('topology relation module', function() {
         hide: true
       }]);
       view.topo = {
-        get: function() {
-          return {
-            services: serviceList
-          };
-        }};
+        db: {
+          services: serviceList
+        }
+      };
       view.updateRelationVisibility();
       assert.equal(fade.callCount, 1);
       assert.equal(hide.callCount, 1);
@@ -244,9 +242,7 @@ describe('topology relation module', function() {
         displayName: 'mysql'
       });
       var topo = {
-        get: function() {
-          return db;
-        }
+        db: db
       };
       var newEndpoints = view._getServiceDisplayName(endpoints, topo);
       assert.deepEqual(newEndpoints, [[{

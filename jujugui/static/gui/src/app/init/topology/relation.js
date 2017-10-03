@@ -4,11 +4,11 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const d3 = window.d3;
+const d3 = require('../../assets/javascripts/d3');
 const endpointUtils = require('../endpoint-utils');
 const relationUtils = require('../relation-utils');
-const topoUtils = require('../../views/topology/utils');
-const environmentUtils = require('../../views/environment-utils');
+const topoUtils = require('./utils');
+const environmentUtils = require('./environment-utils');
 const utils = require('../../views/utils');
 
 const AmbiguousRelationMenu = require(
@@ -163,7 +163,7 @@ class RelationModule {
 
   update() {
     const topo = this.topo;
-    const db = topo.get('db');
+    const db = topo.db;
     const relations = db.relations.toArray();
     this.relations = this.decorateRelations(relations);
     this.updateLinks();
@@ -195,7 +195,7 @@ class RelationModule {
     @return {Object} A DOM node.
   */
   getContainer() {
-    const container = this.topo.get('container');
+    const container = this.topo.container;
     return container.getDOMNode && container.getDOMNode() || container;
   }
 
@@ -297,7 +297,7 @@ class RelationModule {
     // Add a labelgroup.
     const self = this;
     const topo = this.topo;
-    let staticURL = topo.get('staticURL') || '';
+    let staticURL = topo.staticURL || '';
     if (staticURL) {
       staticURL += '/';
     };
@@ -527,7 +527,7 @@ class RelationModule {
     // Only start a new drag line if no an active dragline. Sometimes a line
     // a relation begins while dragging which shouldnt start a new line.
     if (!this.dragline) {
-      let staticURL = this.topo.get('staticURL') || '';
+      let staticURL = this.topo.staticURL || '';
       if (staticURL) {
         staticURL += '/';
       }
@@ -705,7 +705,7 @@ class RelationModule {
     @method updateRelationVisibility
   */
   updateRelationVisibility() {
-    const db = this.topo.get('db');
+    const db = this.topo.db;
     const actions = {
       fade: [],
       show: [],
@@ -819,8 +819,8 @@ class RelationModule {
       detail: [{selection: vis.selectAll('.service')}]
     }));
 
-    const db = topo.get('db');
-    const endpointsController = topo.get('endpointsController');
+    const db = topo.db;
+    const endpointsController = topo.endpointsController;
     const endpoints = endpointUtils.getEndpoints(service, endpointsController);
 
     // Transform endpoints into a list of relatable services (to the
@@ -933,7 +933,7 @@ class RelationModule {
       endpoint.forEach(function(handle) {
         serviceName = handle.service;
         if (serviceName.indexOf('$') > 0) {
-          displayName = topo.get('db').services
+          displayName = topo.db.services
             .getById(serviceName)
             .get('displayName')
             .replace(/^\(/, '').replace(/\)$/, '');
@@ -958,12 +958,10 @@ class RelationModule {
   _renderAmbiguousRelationMenu(endpoints) {
     const container = this.getContainer();
     const menu = container.querySelector('#ambiguous-relation-menu');
-    /* eslint-disable no-undef */
     ReactDOM.render(
       <AmbiguousRelationMenu
         endpoints={endpoints} />,
       menu.querySelector('#ambiguous-relation-menu-content'));
-    /* eslint-enable */
     return menu;
   }
 
@@ -1016,8 +1014,8 @@ class RelationModule {
     menu.style.left = `${locateAt[0]}px`;
     menu.style.top = `${locateAt[1]}px`;
     menu.classList.add('active');
-    topo.set('active_service', m);
-    topo.set('active_context', context);
+    topo.active_service = m;
+    topo.active_context = context;
   }
 
   /*
@@ -1044,7 +1042,7 @@ class RelationModule {
     if (endpoints[0][0] === endpoints[1][0]) {
       return;
     }
-    relationUtils.createRelation(topo.get('db'), topo.get('env'), endpoints);
+    relationUtils.createRelation(topo.db, topo.env, endpoints);
   }
 
   /*
@@ -1080,12 +1078,10 @@ class RelationModule {
    */
   showRelationMenu(relation) {
     const menu = document.querySelector('#relation-menu');
-    /* eslint-disable no-undef */
     ReactDOM.render(
       <RelationMenu
         relations={relation.relations} />,
       menu);
-    /* eslint-enable */
     menu.classList.add('active');
     this.relationMenuActive = true;
     this.relationMenuRelation = relation;
@@ -1116,7 +1112,7 @@ class RelationModule {
    */
   relationRemoveClick(_, self) {
     const topo = self.topo;
-    const db = topo.get('db');
+    const db = topo.db;
     const relationId = this.closest('.relation-container').getAttribute(
       'data-relationid');
     let relation = db.relations.getById(relationId);
@@ -1130,7 +1126,7 @@ class RelationModule {
       });
     } else {
       relationUtils.destroyRelations(
-        topo.get('db'), topo.get('env'), [relationId]);
+        topo.db, topo.env, [relationId]);
     }
     // The state needs to be cleared after the relation is destroyed as well
     // to hide the destroy relation popup.
@@ -1148,7 +1144,7 @@ class RelationModule {
     const topo = self.topo;
     const endpoint = this.getAttribute('data-endpoint');
     const serviceId = endpoint.split(':')[0].trim();
-    topo.get('state').changeState({
+    topo.state.changeState({
       gui: {
         inspector: {
           id: serviceId

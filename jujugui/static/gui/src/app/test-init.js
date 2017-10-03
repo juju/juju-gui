@@ -184,18 +184,20 @@ describe('init', () => {
         // This test causes cascading failures as the event listeners are not
         // removed as the method is stubbed out, so stub out addEventListener
         // as well so we don't need to clean them up.
+        app.destructor();
         const addStub = sinon.stub(document, 'addEventListener');
         const stub = sinon.stub(document, 'removeEventListener');
         cleanups.push(addStub.restore);
         cleanups.push(stub.restore);
-        app.destructor();
+        const newApp = createApp();
+        newApp.destructor();
         assert.equal(stub.callCount >= 3, true);
         const args = stub.args;
-        assert.equal(args[9][0], 'dragenter');
+        assert.equal(args[51][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[10][0], 'dragover');
+        assert.equal(args[52][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[11][0], 'dragleave');
+        assert.equal(args[53][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
     });

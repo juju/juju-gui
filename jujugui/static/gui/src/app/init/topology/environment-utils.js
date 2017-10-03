@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const viewUtils = require('../../views/utils');
+
 let environmentUtils = {};
 
 /*
@@ -59,7 +61,7 @@ Object.defineProperties(_box, {
       return this.topology.serviceForBox(this);
     },
     set: function(value) {
-      if (window.viewsUtils.isValue(value)) {
+      if (viewUtils.isValue(value)) {
         window.yui.mix(this, value.getAttrs(), true);
         this._modelName = value.name;
       }
@@ -221,7 +223,7 @@ Object.defineProperties(_box, {
         const ep = connectors[key];
         // Take the distance of each XY pair
         var d = this._distance(source, ep);
-        if (!window.viewsUtils.isValue(result) || d < shortest_d) {
+        if (!viewUtils.isValue(result) || d < shortest_d) {
           shortest_d = d;
           result = ep;
         }
@@ -248,7 +250,7 @@ Object.defineProperties(_box, {
           const ep2 = oc[key];
           // Take the distance of each XY pair
           var d = this._distance(ep1, ep2);
-          if (!window.viewsUtils.isValue(result) || d < shortest_d) {
+          if (!viewUtils.isValue(result) || d < shortest_d) {
             shortest_d = d;
             result = [ep1, ep2];
           }
@@ -285,7 +287,7 @@ environmentUtils.BoundingBox = BoundingBox;
 environmentUtils.toBoundingBoxes = function(module, services, existing, env) {
   var result = existing || {};
   Object.keys(result).forEach(key => {
-    if (!window.viewsUtils.isValue(services.getById(key))) {
+    if (!viewUtils.isValue(services.getById(key))) {
       delete result[key];
     }
   });
@@ -300,7 +302,7 @@ environmentUtils.toBoundingBoxes = function(module, services, existing, env) {
       if (!service.get('icon') && service.get('charm')) {
         var icon;
         var charmId = service.get('charm');
-        icon = window.viewsUtils.getIconPath(charmId, null, env);
+        icon = viewUtils.getIconPath(charmId, null, env);
         service.set('icon', icon);
       }
       result[id].icon = service.get('icon');
@@ -341,17 +343,4 @@ environmentUtils.getEffectiveViewportSize = function(primary, minwidth, minheigh
   return result;
 };
 
-if (module) {
-  module.exports = environmentUtils;
-}
-
-if (YUI) {
-  YUI.add('juju-environment-utils', function(Y) {
-    Y.namespace('juju.views').utils = Object.assign(
-      Y.namespace('juju.views.utils'), environmentUtils);
-  }, '0.1.0', {
-    requires: [
-      'juju-view-utils'
-    ]
-  });
-}
+module.exports = environmentUtils;

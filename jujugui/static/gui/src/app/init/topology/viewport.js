@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const environmentUtils = require('../../views/environment-utils');
+const environmentUtils = require('./environment-utils');
 const viewUtils = require('../../views/utils');
 
 /**
@@ -30,7 +30,7 @@ class ViewportModule {
   getContainer() {
     // Get the DOM node if the container has been provided by YUI,
     // otherwise the container will be the DOM node already.
-    const container = this.topo.get('container');
+    const container = this.topo.container;
     return container.getDOMNode && container.getDOMNode() || container;
   }
 
@@ -61,8 +61,8 @@ class ViewportModule {
     canvas.style.width = dimensions.width + 'px';
     canvas.style.height = dimensions.height + 'px';
     // Reset the scale parameters
-    var oldSize = topo.get('size');
-    topo.set('size', [dimensions.width, dimensions.height]);
+    var oldSize = topo.size;
+    topo.size = [dimensions.width, dimensions.height];
     // If the size has actually changed (as this method is sometimes called
     // on deltas through the render method), pan to the center; otherwise,
     // leave the pan alone.

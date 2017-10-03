@@ -3,19 +3,13 @@
 
 const React = require('react');
 
+const d3 = require('../../../assets/javascripts/d3');
 const UserProfileEntityMetric = require('./metric');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileEntityMetrics', () => {
-  let d3, metrics, metricTypes;
-
-  beforeAll(done => {
-    YUI().use('d3', Y => {
-      d3 = Y.d3;
-      done();
-    });
-  });
+  let metrics, metricTypes;
 
   beforeEach(() => {
     const today = new Date();

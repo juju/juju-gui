@@ -12,8 +12,10 @@ describe('pan zoom module', () => {
       attr: sinon.stub()
     };
     topo = {
-      get: sinon.stub(),
-      set: sinon.stub(),
+      getTranslate: sinon.stub(),
+      getScale: sinon.stub(),
+      setScale: sinon.stub(),
+      setTranslate: sinon.stub(),
       vis: vis,
       zoom: {
         scale: sinon.stub(),
@@ -25,13 +27,14 @@ describe('pan zoom module', () => {
   });
 
   const checkRescale = evt => {
-    topo.get.withArgs('translate').returns(evt.translate);
-    topo.get.withArgs('scale').returns(evt.scale);
+    topo.getTranslate.returns(evt.translate);
+    topo.getScale.returns(evt.scale);
     pz.toScale.returns(evt.scale);
     pz.rescale(evt);
-    assert.equal(topo.set.callCount, 2);
-    assert.equal(topo.set.args[0][1], evt.scale);
-    assert.deepEqual(topo.set.args[1][1], evt.translate);
+    assert.equal(topo.setScale.callCount, 1);
+    assert.equal(topo.setTranslate.callCount, 1);
+    assert.equal(topo.setScale.args[0][0], evt.scale);
+    assert.deepEqual(topo.setTranslate.args[0][0], evt.translate);
     assert.equal(vis.attr.callCount, 1);
     const expected = `translate(${evt.translate}) scale(${evt.scale})`;
     assert.equal(vis.attr.args[0][1], expected);
@@ -64,8 +67,8 @@ describe('pan zoom module', () => {
   });
 
   it('must be able to handle zoom in events', () => {
-    topo.get.withArgs('scale').returns(1);
-    topo.get.withArgs('size').returns([1, 1]);
+    topo.getScale.returns(1);
+    topo.size = [1, 1];
     topo.zoom.translate.returns([1, 1]);
     pz.rescale = sinon.stub();
     // We're not rendering the app so the events aren't available, so just test
@@ -81,8 +84,8 @@ describe('pan zoom module', () => {
   });
 
   it('must be able to handle zoom out events', () => {
-    topo.get.withArgs('scale').returns(1);
-    topo.get.withArgs('size').returns([1, 1]);
+    topo.getScale.returns(1);
+    topo.size = [1, 1];
     topo.zoom.translate.returns([1, 1]);
     pz.rescale = sinon.stub();
     // We're not rendering the app so the events aren't available, so just test

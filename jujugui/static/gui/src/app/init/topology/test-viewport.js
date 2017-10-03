@@ -70,23 +70,20 @@ describe('ViewportModule (Topology module)', function() {
 
 describe('ViewportModule.setAllTheDimensions', function() {
   let view, width, height, canvas, svg, topo, zoomPlane,
-      dimentions;
+      dimensions;
 
   beforeEach(function() {
     height = Math.floor(Math.random() * 1000);
     width = Math.floor(Math.random() * 1000);
     // Build test doubles that record height and width settings.
     topo = {
-      get: function() {
-        // Default to adding 1 to each width and height so that the size
-        // returned is always different than the size as viewed by the
-        // setAllTheDimensions method; this will cause the viewport to be
-        // centered.
-        return [width + 1, height + 1];
-      },
+      // Default to adding 1 to each width and height so that the size
+      // returned is always different than the size as viewed by the
+      // setAllTheDimensions method; this will cause the viewport to be
+      // centered.
+      size: [width + 1, height + 1],
       vis: {}
     };
-    topo.set = testUtils.setter(topo);
     topo.vis.attr = testUtils.setter(topo.vis);
     view = new ViewportModule();
     canvas = {style: {}};
@@ -94,13 +91,13 @@ describe('ViewportModule.setAllTheDimensions', function() {
     zoomPlane.setAttribute = testUtils.setter(zoomPlane);
     svg = {};
     svg.setAttribute = testUtils.setter(svg);
-    dimentions = {
+    dimensions = {
       height: height,
       width: width
     };
     // Since all of the tests inspect the output of setAllTheDimensions, we can
     // just call it here and the tests will just contain assertions.
-    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
+    view.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
   });
 
   it('should set canvas dimensions', function() {
@@ -135,7 +132,10 @@ describe('ViewportModule.setAllTheDimensions', function() {
       done();
     };
     document.addEventListener('topo.panToCenter', handler);
-    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
+    view.setAllTheDimensions({
+      height: height + 1,
+      width: width + 1
+    }, canvas, svg, topo, zoomPlane);
     assert.equal(called, true);
   });
 
@@ -151,7 +151,7 @@ describe('ViewportModule.setAllTheDimensions', function() {
       called = true;
     };
     document.addEventListener('topo.panToCenter', handler);
-    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
+    view.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
     assert.equal(called, false);
   });
 });

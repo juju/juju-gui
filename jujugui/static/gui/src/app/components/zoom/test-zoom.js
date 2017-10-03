@@ -47,9 +47,7 @@ describe('Zoom', function() {
           _fire_zoom: sinon.stub()
         }
       },
-      get: function() {
-        return 1;
-      }
+      getScale: sinon.stub().returns(1)
     };
     var renderer = jsTestUtils.shallowRender(
       <Zoom
@@ -66,9 +64,7 @@ describe('Zoom', function() {
           _fire_zoom: sinon.stub()
         }
       },
-      get: function() {
-        return 1;
-      }
+      getScale: sinon.stub().returns(1)
     };
     var renderer = jsTestUtils.shallowRender(
       <Zoom
