@@ -6,6 +6,7 @@ bin/
 build-debug
 build-prod
 build-shared
+browserify-cache.json
 classnames.js
 collected-requirements
 dist

@@ -216,7 +216,7 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
 	# Hack for the new init to be built.
-	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
 
 .PHONY: watch
 watch:
