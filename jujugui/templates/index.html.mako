@@ -352,7 +352,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-controller-api',
             'juju-env-base',
             'juju-env-api',
-            'juju-env-web-handler',
             'juju-models',
             // juju-views group
             'd3-components',

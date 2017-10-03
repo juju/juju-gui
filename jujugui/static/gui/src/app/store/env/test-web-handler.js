@@ -18,24 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const WebHandler = require('./web-handler');
+
 (function() {
-
   describe('Web handler', function() {
-    var mockXhr, webHandler, webModule;
-    var requirements = ['juju-env-web-handler'];
-
-    before(function(done) {
-      // Set up the YUI instance, the test utils and the web namespace.
-      YUI(GlobalConfig).use(requirements, function(Y) {
-        webModule = Y.namespace('juju.environments.web');
-        done();
-      });
-    });
+    let mockXhr, webHandler;
 
     beforeEach(function() {
       // Instantiate a web handler and set up an XMLHttpRequest mock.
-      webHandler = new webModule.WebHandler();
-      var context = XMLHttpRequest.prototype;
+      webHandler = new WebHandler();
+      const context = XMLHttpRequest.prototype;
       mockXhr = {
         addEventListener: sinon.stub(context, 'addEventListener'),
         open: sinon.stub(context, 'open'),
@@ -47,7 +39,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
-      webHandler.destroy();
       // Reset all the method mocks.
       Object.keys(mockXhr).forEach(key => {
         mockXhr[key].restore();
@@ -55,12 +46,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     // Ensure the progress event is correctly handled.
-    var assertProgressHandled = function(progressCallback) {
+    const assertProgressHandled = function(progressCallback) {
       // Retrieve the registered progress handler.
-      var args = mockXhr.addEventListener.args;
-      var progressHandler = args[0][1];
+      let args = mockXhr.addEventListener.args;
+      const progressHandler = args[0][1];
       // Set up a progress event and call the progress handler.
-      var evt = {type: 'progress'};
+      const evt = {type: 'progress'};
       progressHandler(evt);
       // The progress callback has been correctly called.
       assert.strictEqual(progressCallback.callCount, 1);
@@ -71,13 +62,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     // Ensure the completed event is correctly handled.
-    var assertCompletedHandled = function(completedCallback) {
+    const assertCompletedHandled = function(completedCallback) {
       // Retrieve the registered handlers.
-      var args = mockXhr.addEventListener.args;
-      var progressHandler = args[0][1];
-      var completedHandler = args[1][1];
+      let args = mockXhr.addEventListener.args;
+      const progressHandler = args[0][1];
+      const completedHandler = args[1][1];
       // Set up a load event and call the completed handler.
-      var evt = {type: 'load'};
+      const evt = {type: 'load'};
       completedHandler(evt);
       // The completion callback has been correctly called.
       assert.strictEqual(completedCallback.callCount, 1);
@@ -91,11 +82,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     describe('sendPostRequest', function() {
-
       it('opens and sends an XHR request with the proper data', function() {
-        var path = '/juju-core/charms?series=trusty';
-        var headers = {'Content-Type': 'application/zip'};
-        var data = 'a zip file object';
+        const path = '/juju-core/charms?series=trusty';
+        const headers = {'Content-Type': 'application/zip'};
+        const data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPostRequest(
           path, headers, data, 'user', 'passwd', false,
@@ -104,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.args;
+        let args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
@@ -125,7 +115,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = sinon.stub();
+        const progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
           '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -133,7 +123,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = sinon.stub();
+        const completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
           '/path/', {}, 'data', 'user', 'passwd', false,
@@ -144,11 +134,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('sendPutRequest', function() {
-
       it('opens and sends an XHR request with the proper data', function() {
-        var path = '/juju-core/charms?series=trusty';
-        var headers = {'Content-Type': 'application/zip'};
-        var data = 'a zip file object';
+        const path = '/juju-core/charms?series=trusty';
+        const headers = {'Content-Type': 'application/zip'};
+        const data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPutRequest(
           path, headers, data, 'user', 'passwd', false,
@@ -157,7 +146,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.args;
+        let args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
@@ -178,7 +167,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = sinon.stub();
+        const progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
           '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -186,7 +175,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = sinon.stub();
+        const completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
           '/path/', {}, 'data', 'user', 'passwd', false,
@@ -199,7 +188,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('sendGetRequest', function() {
 
       it('opens and sends an XHR request with the proper data', function() {
-        var path = '/juju-core/charms?url=local:trusty/django-42';
+        const path = '/juju-core/charms?url=local:trusty/django-42';
         // Make a GET request.
         webHandler.sendGetRequest(
           path, null, 'user', 'passwd', false,
@@ -208,7 +197,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.args;
+        let args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
@@ -228,7 +217,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = sinon.stub();
+        const progressCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
           '/path/', {}, 'user', 'passwd', false, progressCallback);
@@ -236,7 +225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = sinon.stub();
+        const completedCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
           '/path/', {}, 'user', 'passwd', false,
@@ -249,9 +238,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('sendPatchRequest', function() {
 
       it('opens and sends an XHR request with the proper data', function() {
-        var path = '/juju-core/charms?series=trusty';
-        var headers = {'Content-Type': 'application/zip'};
-        var data = 'a zip file object';
+        const path = '/juju-core/charms?series=trusty';
+        const headers = {'Content-Type': 'application/zip'};
+        const data = 'a zip file object';
         // Make a PATCH request.
         webHandler.sendPatchRequest(
           path, headers, data, 'user', 'passwd', false,
@@ -260,7 +249,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.args;
+        let args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
@@ -281,7 +270,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = sinon.stub();
+        const progressCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
           '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -289,7 +278,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = sinon.stub();
+        const completedCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
           '/path/', {}, 'data', 'user', 'passwd', false,
@@ -299,19 +288,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('defines a function which helps creating auth headers', function() {
-      var header = webHandler._createAuthorizationHeader('myuser', 'mypasswd');
+      const header = webHandler._createAuthorizationHeader('myuser', 'mypasswd');
       assert.strictEqual(header, 'Basic bXl1c2VyOm15cGFzc3dk');
     });
 
     describe('getUrl', function() {
       it('returns a complete URL based on the given credentials', function() {
-        var url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
-        var expectedUrl = 'http://myuser:mypassword@' +
+        const url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
+        const expectedUrl = 'http://myuser:mypassword@' +
             window.location.host + '/my/path';
         assert.strictEqual(url, expectedUrl);
       });
     });
-
   });
-
 })();

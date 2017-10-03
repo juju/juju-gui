@@ -15,6 +15,7 @@ const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
+const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
 
@@ -117,7 +118,7 @@ class GUIApp {
     */
     this.users = csUser.create();
 
-    const webHandler = new yui.juju.environments.web.WebHandler();
+    const webHandler = new WebHandler();
     const stateGetter = () => this.state.current;
     const cookieSetter = (value, callback) => {
       this.charmstore.setAuthCookie(value, callback);
@@ -153,7 +154,7 @@ class GUIApp {
     };
     const controllerOptions = Object.assign({}, modelOptions);
     const environments = yui.juju.environments;
-    modelOptions.webHandler = new environments.web.WebHandler();
+    modelOptions.webHandler = new WebHandler();
     /**
       An API connection to the Juju model.
       @type {Object}
@@ -383,7 +384,7 @@ class GUIApp {
       }
       return new BundleService(
         bundleServiceURL,
-        new yui.juju.environments.web.WebHandler());
+        new WebHandler());
     }
     return this.bundleService;
   }
@@ -1359,7 +1360,7 @@ class GUIApp {
     }
     console.log('sending discharge token to storefront');
     const content = 'discharge-token=' + dischargeToken;
-    const webhandler = new yui.juju.environments.web.WebHandler();
+    const webhandler = new WebHandler();
     webhandler.sendPostRequest(
       '/_login',
       {'Content-Type': 'application/x-www-form-urlencoded'},

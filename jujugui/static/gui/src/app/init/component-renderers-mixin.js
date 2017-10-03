@@ -16,6 +16,7 @@ const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
 const viewUtils = require('../views/utils');
 const endpointUtils = require('./endpoint-utils');
+const WebHandler = require('../store/env/web-handler');
 
 const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
@@ -971,7 +972,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         username={this.user ? this.user.displayName : undefined}
         validateForm={initUtils.validateForm.bind(initUtils)}
-        WebHandler={yui.juju.environments.web.WebHandler}
+        WebHandler={WebHandler}
         withPlans={false} />,
       document.getElementById('deployment-container'));
   }
