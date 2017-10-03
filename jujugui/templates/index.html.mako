@@ -356,7 +356,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-env-web-handler',
             'juju-models',
             'jujulib-utils',
-            'net-utils',
             // juju-views group
             'd3-components',
             'juju-topology',

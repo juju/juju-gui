@@ -32,7 +32,6 @@ window.MODULES = [
   'juju-env-web-handler',
   'juju-models',
   'jujulib-utils',
-  'net-utils',
   // juju-views group
   'd3-components',
   'juju-topology',
