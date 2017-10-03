@@ -31,7 +31,6 @@ window.MODULES = [
   'juju-env-api',
   'juju-env-web-handler',
   'juju-models',
-  'jujulib-utils',
   // juju-views group
   'd3-components',
   'juju-topology',

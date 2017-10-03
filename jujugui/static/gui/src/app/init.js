@@ -8,6 +8,7 @@ const mixwith = require('mixwith');
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
 const utils = require('./init/utils');
+const jujulibConversionUtils = require('./init/jujulib-conversion-utils');
 const viewUtils = require('./views/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
@@ -248,7 +249,7 @@ class GUIApp {
       modelAPI: this.modelAPI,
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI),
-      makeEntityModel: yui.juju.makeEntityModel,
+      makeEntityModel: jujulibConversionUtils.makeEntityModel,
       charmstore: this.charmstore,
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });

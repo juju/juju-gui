@@ -10,6 +10,7 @@ const yui = window.yui;
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
+const jujulibConversionUtils = require('./jujulib-conversion-utils');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
@@ -382,7 +383,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
         getFile={charmstore.getFile.bind(charmstore)}
-        makeEntityModel={yui.juju.makeEntityModel}
+        makeEntityModel={jujulibConversionUtils.makeEntityModel}
         marked={marked}
         showEntityDetails={showEntityDetails.bind(this, entityId)} />,
       document.getElementById('post-deployment')
@@ -514,7 +515,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         apiVersion={window.jujulib.charmstoreAPIVersion}
         addNotification={this._bound.addNotification}
-        makeEntityModel={yui.juju.makeEntityModel}
+        makeEntityModel={jujulibConversionUtils.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         urllib={window.jujulib.URL}
@@ -955,7 +956,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         loginToController={loginToController}
-        makeEntityModel={yui.juju.makeEntityModel}
+        makeEntityModel={jujulibConversionUtils.makeEntityModel}
         modelCommitted={connected}
         modelName={modelName}
         ddData={ddData}
