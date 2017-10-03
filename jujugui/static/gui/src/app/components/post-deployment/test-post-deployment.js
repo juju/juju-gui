@@ -57,37 +57,6 @@ describe('PostDeployment', () => {
     };
   };
 
-  it('renders without getstarted.md', () => {
-    const rendered = renderComponent();
-    const instance = rendered.instance;
-    const output = rendered.output;
-
-    const classes = [
-      'post-deployment',
-      'post-deployment--simple'
-    ];
-
-    expect(output).toEqualJSX(
-      <Panel
-        extraClasses={classes.join(' ')}
-        instanceName="post-deployment"
-        visible={true}>
-        <span className="close" tabIndex="0" role="button"
-          onClick={instance._closePostDeployment}>
-          <SvgIcon name="close_16"
-            size="16" />
-        </span>
-        <p>
-          Test Name
-        &nbsp;</p>
-        <span
-          role="button"
-          className="link"
-          onClick={instance._handleViewDetails.bind(this)}>View details</span>
-      </Panel>
-    );
-  });
-
   it('renders with getstarted.md', () => {
     const rendered = renderComponent();
     const instance = rendered.instance;
