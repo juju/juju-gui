@@ -692,7 +692,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         machine={this.state.current.gui.machines}
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
-          createMachine: autodeploy.createMachine.bind(this),
+          createMachine: autodeploy.createMachine.bind(this, db, modelAPI),
           destroyMachines: modelAPI.destroyMachines.bind(modelAPI),
           placeUnit: modelAPI.placeUnit.bind(modelAPI),
           providerType: modelAPI.get('providerType') || '',
