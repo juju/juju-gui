@@ -173,6 +173,15 @@ describe('State', () => {
       }
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/q/u/hatch/?requires=http',
+    state: {
+      profile: 'hatch',
+      search: {
+        requires: 'http'
+      }
+    },
+    error: null
   }];
 
   const guiStateTests = [{
