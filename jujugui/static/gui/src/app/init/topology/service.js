@@ -3,6 +3,7 @@
 
 const d3 = require('../../assets/javascripts/d3');
 const environmentUtils = require('./environment-utils');
+const jsyaml = require('js-yaml');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
@@ -699,7 +700,6 @@ class ServiceModule {
     // on touch events
     if (eType !== 'touch') {
       var mouse_coords = d3.mouse(container.querySelector('.the-canvas'));
-      console.log(mouse_coords);
       if (!box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }

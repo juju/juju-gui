@@ -52,7 +52,6 @@ globals:
   it: true
   JsDiff: true
   jsTestUtils: true
-  jsyaml: true
   juju: true
   jujulib: true
   marked: true

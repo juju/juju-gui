@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const jsyaml = require('js-yaml');
 const utils = require('../../../test/utils');
 
 const EnvironmentView = require('./environment');

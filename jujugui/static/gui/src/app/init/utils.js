@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const jsyaml = require('js-yaml');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
