@@ -3,7 +3,6 @@
 
 const d3 = require('../../assets/javascripts/d3');
 const environmentUtils = require('./environment-utils');
-const models = window.models;
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
@@ -700,6 +699,7 @@ class ServiceModule {
     // on touch events
     if (eType !== 'touch') {
       var mouse_coords = d3.mouse(container.querySelector('.the-canvas'));
+      console.log(mouse_coords);
       if (!box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
@@ -1040,7 +1040,7 @@ class ServiceModule {
       if (entityType === 'charm') {
         // Add the icon url to the ghost attributes for the ghost icon
         ghostAttributes.icon = dragData.iconSrc;
-        var charm = new models.Charm(entityData);
+        var charm = new window.models.Charm(entityData);
         document.dispatchEvent(new CustomEvent('initiateDeploy', {'detail': {
           charm: charm,
           ghostAttributes: ghostAttributes
