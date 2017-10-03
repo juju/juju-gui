@@ -5,6 +5,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactDnD = require('react-dnd');
 const ReactDnDHTML5Backend = require('react-dnd-html5-backend');
+const PropTypes = require('prop-types');
 const shapeup = require('shapeup');
 
 const MachineViewAddMachine = require('./add-machine/add-machine');
@@ -312,7 +313,7 @@ class MachineView extends React.Component {
             <li>Customise placement</li>
             <li>Scale up your model</li>
             <li>Manually place new units</li>
-            <li>Collocate applications</li>
+            <li>Colocate applications</li>
           </ul>
           <span className="link"
             onClick={this._addMachine.bind(this)}

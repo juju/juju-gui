@@ -24,7 +24,8 @@ YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
-REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+# This REACT_ASSETS is simply a canary for the target
+REACT_ASSETS := $(BUILT_JS_ASSETS)/classnames.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python

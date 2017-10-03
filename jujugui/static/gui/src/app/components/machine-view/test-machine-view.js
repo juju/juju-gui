@@ -173,7 +173,7 @@ describe('MachineView', function() {
                 <li>Customise placement</li>
                 <li>Scale up your model</li>
                 <li>Manually place new units</li>
-                <li>Collocate applications</li>
+                <li>Colocate applications</li>
               </ul>
               <span className="link"
                 onClick={instance._addMachine}
@@ -791,7 +791,7 @@ describe('MachineView', function() {
           <li>Customise placement</li>
           <li>Scale up your model</li>
           <li>Manually place new units</li>
-          <li>Collocate applications</li>
+          <li>Colocate applications</li>
         </ul>
         <span className="link"
           onClick={instance._addMachine}
