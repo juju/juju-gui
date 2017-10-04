@@ -48,7 +48,6 @@ globals:
   fail: true
   GlobalConfig: true
   it: true
-  JsDiff: true
   jsTestUtils: true
   juju: true
   jujulib: true
