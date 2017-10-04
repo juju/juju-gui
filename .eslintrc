@@ -60,7 +60,6 @@ globals:
   nacl: true
   Prism: true
   PropTypes: true
-  saveAs: true
   shapeup: true
   sinon: true
   Stripe: true

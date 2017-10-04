@@ -4,6 +4,7 @@
 const jsyaml = require('js-yaml');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const FileSaver = require('file-saver');
 
 const Popup = require('../components/popup/popup');
 const viewUtils = require('../views/utils');
@@ -165,7 +166,7 @@ utils.exportEnvironmentFile = db => {
   const exportBlob = new Blob([exportData],
     {type: 'text/plain;charset=utf-8'});
   const envName = db.environment.get('name');
-  saveAs(exportBlob, utils._generateBundleExportFileName(envName));
+  FileSaver.saveAs(exportBlob, utils._generateBundleExportFileName(envName));
 };
 
 /**
