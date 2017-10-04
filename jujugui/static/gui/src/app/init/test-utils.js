@@ -398,7 +398,7 @@ describe('init utils', () => {
       assert.equal(app.state.changeState.callCount, 1, 'changeState');
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: {status: null},
+        gui: {status: null, inspector: null},
         root: null,
         hash: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
@@ -417,7 +417,7 @@ describe('init utils', () => {
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: {status: null},
+        gui: {status: null, inspector: null},
         root: 'new',
         hash: null,
         model: null
@@ -433,7 +433,7 @@ describe('init utils', () => {
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: {status: null},
+        gui: {status: null, inspector: null},
         hash: null,
         root: null,
         model: null
@@ -450,7 +450,7 @@ describe('init utils', () => {
       utils._switchModel.call(app, env, model);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: {status: ''},
+        gui: {status: '', inspector: null},
         hash: null,
         root: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
@@ -466,7 +466,7 @@ describe('init utils', () => {
       utils._switchModel.call(app, env, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
-        gui: {status: null},
+        gui: {status: null, inspector: null},
         hash: null,
         root: 'new',
         model: null

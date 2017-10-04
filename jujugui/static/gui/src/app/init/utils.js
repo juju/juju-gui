@@ -487,7 +487,10 @@ utils._switchModel = function(env, model) {
   const current = this.state.current;
   const newState = {
     profile: null,
-    gui: {status: null},
+    gui: {
+      status: null,
+      inspector: null
+    },
     root: null,
     hash: null
   };
