@@ -4,6 +4,7 @@
 const React = require('react');
 
 const ModelActions = require('./model-actions');
+const Terminal = require('../terminal/terminal');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../utils/component-test-utils');
@@ -72,6 +73,9 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
+          <Terminal
+            address={undefined}
+            creds={undefined} />
         </div>
         <input className="model-actions__file"
           type="file"
@@ -210,6 +214,9 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
+          <Terminal
+            address={undefined}
+            creds={undefined} />
         </div>
         <input className="model-actions__file"
           type="file"
