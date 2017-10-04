@@ -1,4 +1,6 @@
 .help {
+  text-align: left;
+
   &__header {
     &-title {
       float: left;
@@ -6,6 +8,27 @@
 
     &-search {
       float: right;
+      padding-right: 0;
+    }
+  }
+
+  &__footer {
+    display: block;
+    background: #002834;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2rem;
+    border-radius: 0 0 $border-radius $border-radius;
+
+    a, .link {
+      color: $white;
+
+      &:hover {
+        text-decoration: underline;
+        color: $white;
+      }
     }
   }
 }

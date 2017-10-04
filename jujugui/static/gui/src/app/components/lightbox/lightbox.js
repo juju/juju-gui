@@ -38,7 +38,7 @@ class Lightbox extends React.Component {
   }
 
   _generateNavigation() {
-    if (this.props.children.length === 0) {
+    if (!this.props.children.map) {
       return;
     }
 
@@ -71,7 +71,7 @@ class Lightbox extends React.Component {
   }
 
   _generateContent() {
-    if (this.props.children.length === 1) {
+    if (!this.props.children.map) {
       return this.props.children;
     }
 

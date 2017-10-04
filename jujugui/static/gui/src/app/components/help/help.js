@@ -16,6 +16,10 @@ class Help extends React.Component {
     });
   }
 
+  _startTour() {
+
+  }
+
   render() {
     const gettingStartedContent = (
       <div>
@@ -25,54 +29,82 @@ class Help extends React.Component {
     );
     return (<Lightbox
       close={this._handleClose.bind(this)}>
-      <header className="help__header clearfix">
-        <h2 className="help__header-title">Help</h2>
-        <div className="help__header-search header-search">
-          <form className="header-search__form"
-            target="_blank"
-            action="https://jujucharms.com/docs/search/">
-            <button type="submit"
-              className="header-search__submit">
-              <SvgIcon name="search_16"
-                size="16" />
-            </button>
-            <input type="search" name="text"
-              className="header-search__input"
-              placeholder="Search the store"
-              ref={input => {this.searchDocs = input}} />
-          </form>
+      <div>
+        <header className="help__header clearfix">
+          <h2 className="help__header-title">Help</h2>
+          <div className="help__header-search header-search">
+            <form className="header-search__form"
+              target="_blank"
+              action="https://jujucharms.com/docs/search/">
+              <button type="submit"
+                className="header-search__submit">
+                <SvgIcon name="search_16"
+                  size="16" />
+              </button>
+              <input type="search" name="text"
+                className="header-search__input"
+                placeholder="Search the store"
+                ref={input => {this.searchDocs = input}} />
+            </form>
+          </div>
+        </header>
+        <div className="help__content clearfix">
+          <div className="four-col">
+            <VanillaCard
+              headerContent={gettingStartedContent}
+              title="Got Juju installed?">
+              <p>If you already have Juju, be sure to&nbsp;
+              <a href="" target="_blank" className="external">read the Juju docs</a>
+              .</p>
+            </VanillaCard>
+          </div>
+          <div className="four-col">
+            <VanillaCard
+              title="Tutorials">
+              <p>Learn how to operate production-ready clusters.</p>
+              <p>
+                <a
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                  target="_blank">Kubernetes tutorial</a>
+              </p>
+              <p>
+                <a
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                  target="_blank">Hadoop Spark tutorial</a>
+              </p>
+            </VanillaCard>
+          </div>
+          <div className="four-col last-col">
+            <VanillaCard
+              title="Take a tour">
+              <p>
+                <span role="button" className="link"
+                  onClick={this._startTour.bind(this)}
+                  >Learn how to use the canvas.
+                </span>
+              </p>
+            </VanillaCard>
+          </div>
         </div>
-      </header>
-      <div className="help__content">
-        <div className="four-col">
-          <VanillaCard
-            headerContent={gettingStartedContent}
-            title="Got Juju installed?">
-            <p>If you already have Juju, be sure to&nbsp;
-            <a href="" target="_blank" className="external">read the Juju docs</a>
-            .</p>
-          </VanillaCard>
-        </div>
-        <div className="four-col">
-          <VanillaCard
-            title="Tutorials">
-            <p>Learn how to operate production-ready clusters.</p>
-            <p>Kubernetes tutorial</p>
-            <p>Hadoop Spark tutorial</p>
-          </VanillaCard>
-        </div>
-        <div className="four-col last-col">
-          <VanillaCard
-            title="Take a tour">
-            <p>Learn how to use the canvas.</p>
-          </VanillaCard>
-        </div>
+        <footer className="help__footer clearfix">
+          <div className="four-col">
+            <a href="">Keyboard shortcuts</a>
+            <a href="">FAQs</a>
+            <a href="">Report a bug</a>
+          </div>
+          <div className="four-col">
+            <img src="" />
+            <p>The Juju show</p>
+            <p>#16 - modeling across models</p>
+          </div>
+          <div className="four-col last-col">
+            <p>IRC channels on Freenode</p>
+            <p><a href="">#juju</a></p>
+            <p>Mailing lists</p>
+            <p><a href="">The Juju project</a></p>
+          </div>
+        </footer>
       </div>
-      <footer className="help__footer">
-        <div className="four-col"></div>
-        <div className="four-col"></div>
-        <div className="four-col last-col"></div>
-      </footer>
     </Lightbox>);
   }
 }
