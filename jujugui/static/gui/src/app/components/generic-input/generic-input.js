@@ -172,11 +172,11 @@ class GenericInput extends React.Component {
     );
     if (label) {
       id = label.replace(' ', '-');
-      element =
+      element = (
         <label className={classes}
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,

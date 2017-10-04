@@ -343,13 +343,14 @@ class EntityContent extends React.Component {
       return;
     }
     const entity = entityModel.toEntity();
-    return <EntityContentDiagram
-      clearLightbox={this.props.clearLightbox}
-      displayLightbox={this.props.displayLightbox}
-      diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
-      isExpandable={true}
-      isRow={false}
-      title={entity.displayName}/>;
+    return (
+      <EntityContentDiagram
+        clearLightbox={this.props.clearLightbox}
+        displayLightbox={this.props.displayLightbox}
+        diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
+        isExpandable={true}
+        isRow={false}
+        title={entity.displayName}/>);
   }
 
   /**

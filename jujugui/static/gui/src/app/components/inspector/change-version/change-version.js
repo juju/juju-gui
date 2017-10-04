@@ -145,9 +145,10 @@ class InspectorChangeVersion extends React.Component {
     }
     let components = [];
     if (!versions || versions.length === 1) {
-      components = <li className="inspector-change-version__none">
-            No other versions found.
-      </li>;
+      components = (
+        <li className="inspector-change-version__none">
+          No other versions found.
+        </li>);
     } else {
       const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
       versions.forEach(function(version) {

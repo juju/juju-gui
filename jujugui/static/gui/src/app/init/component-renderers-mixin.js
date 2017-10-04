@@ -264,7 +264,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       />);
 
     if (this.applicationConfig.flags.profile) {
-      profile =
+      profile = (
         <Profile
           acl={this.acl}
           activeSection={state.hash}
@@ -276,7 +276,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
           switchModel={this._bound.switchModel}
-          userInfo={this._getUserInfo(state)} />;
+          userInfo={this._getUserInfo(state)} />);
     }
 
     ReactDOM.render(profile, document.getElementById('top-page-container'));

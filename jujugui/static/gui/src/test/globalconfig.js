@@ -45,7 +45,6 @@ window.MODULES = [
   'event-key',
   'event-touch',
   'model-controller',
-  'FileSaver',
   'ghost-deployer-extension',
   'environment-change-set',
   'yui-patches'

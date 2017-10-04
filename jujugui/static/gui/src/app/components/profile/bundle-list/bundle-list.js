@@ -129,12 +129,12 @@ class ProfileBundleList extends React.Component {
             {labels.map(label => <span key={label}>{label}</span>)}
           </li>
           {this.state.data
-            .map((bundle, idx) =>
+            .map((bundle, idx) => (
               <li className="profile-bundle-list__row" key={idx}>
                 {bundleKeys.map(key =>
                   <span key={key}>{this._processData(bundle, key)}</span>)}
               </li>
-            )}
+            ))}
         </ul>
       </div>);
   }

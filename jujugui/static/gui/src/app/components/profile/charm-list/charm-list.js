@@ -125,11 +125,11 @@ class ProfileCharmList extends React.Component {
             {labels.map(label => <span key={label}>{label}</span>)}
           </li>
           {this.state.data
-            .map((charm, idx) =>
+            .map((charm, idx) => (
               <li className="profile-charm-list__row" key={idx}>
                 {charmKeys.map(key => <span key={key}>{this._processData(charm, key)}</span>)}
               </li>
-            )}
+            ))}
         </ul>
       </div>);
   }

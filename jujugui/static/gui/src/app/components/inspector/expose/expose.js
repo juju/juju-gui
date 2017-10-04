@@ -56,9 +56,10 @@ class InspectorExpose extends React.Component {
     if (!this.props.service.get('exposed')) {
       return;
     }
-    return <ul className="inspector-expose__units">
-      {this._generateUnits()}
-    </ul>;
+    return (
+      <ul className="inspector-expose__units">
+        {this._generateUnits()}
+      </ul>);
   }
 
   /**
