@@ -18,15 +18,15 @@ class DeploymentServices extends React.Component {
   _generateExtraInfo(changes) {
     const infos = {};
     for (let key in changes) {
-      const items = changes[key].map(change =>
+      const items = changes[key].map(change => (
         <DeploymentChangeItem
           change={change}
           key={change.id}
-          showTime={false} />);
-      infos[key] =
+          showTime={false} />));
+      infos[key] = (
         <ul className="deployment-services__changes">
           {items}
-        </ul>;
+        </ul>);
     }
     return infos;
   }

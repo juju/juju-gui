@@ -46,11 +46,11 @@ class InsetSelect extends React.Component {
     var element, id;
     if (label) {
       id = label.replace(' ', '-');
-      element =
+      element = (
         <label className="inset-select__label"
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,

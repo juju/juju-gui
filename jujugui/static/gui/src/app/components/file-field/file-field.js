@@ -107,11 +107,11 @@ class FileField extends React.Component {
       if (contents) {
         label = 'File stored.';
       }
-      element =
+      element = (
         <label className="file-field__label"
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,

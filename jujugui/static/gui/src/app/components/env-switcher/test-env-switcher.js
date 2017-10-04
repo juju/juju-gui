@@ -223,15 +223,16 @@ describe('EnvSwitcher', function() {
     const instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
 
-    const expected = <EnvList
-      acl={acl}
-      changeState={changeState}
-      environmentName=""
-      envs={[]}
-      handleModelClick={instance.handleModelClick}
-      humanizeTimestamp={humanizeTimestamp}
-      switchModel={switchModel}
-      user={user} />;
+    const expected = (
+      <EnvList
+        acl={acl}
+        changeState={changeState}
+        environmentName=""
+        envs={[]}
+        handleModelClick={instance.handleModelClick}
+        humanizeTimestamp={humanizeTimestamp}
+        switchModel={switchModel}
+        user={user} />);
 
     expect(output.props.children[1]).toEqualJSX(expected);
   });

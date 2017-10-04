@@ -25,6 +25,7 @@ rules:
   quotes: [2, "single"]
   react/jsx-key: 2
   react/jsx-no-duplicate-props: 2
+  react/jsx-wrap-multilines: 2
   react/prop-types: 2
   react/sort-prop-types: 2
   react/jsx-uses-react: 2
