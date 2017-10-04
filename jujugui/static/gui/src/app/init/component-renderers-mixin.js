@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const Prism = require('prismjs');
+const prismLanguages = require('prism-languages');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -496,7 +498,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // Configure syntax highlighting for the markdown renderer.
     marked.setOptions({
       highlight: function(code, lang) {
-        const language = Prism.languages[lang];
+        const language = prismLanguages[lang];
         if (language) {
           return Prism.highlight(code, language);
         }

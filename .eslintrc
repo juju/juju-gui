@@ -57,7 +57,6 @@ globals:
   marked: true
   MODULES: true
   nacl: true
-  Prism: true
   PropTypes: true
   saveAs: true
   shapeup: true
