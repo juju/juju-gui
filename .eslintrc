@@ -42,8 +42,6 @@ globals:
   beforeAll: true
   beforeEach: true
   chai: true
-  classNames: true
-  Clipboard: true
   dataLayer: true
   describe: true
   Exception: true
@@ -51,15 +49,11 @@ globals:
   fail: true
   GlobalConfig: true
   it: true
-  JsDiff: true
   jsTestUtils: true
   juju: true
   jujulib: true
-  marked: true
   MODULES: true
   nacl: true
-  Prism: true
-  PropTypes: true
   shapeup: true
   sinon: true
   Stripe: true
@@ -67,4 +61,3 @@ globals:
   xdescribe: true
   xit: true
   YUI: true
-  zip: true

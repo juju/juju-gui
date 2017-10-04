@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const Clipboard = require('clipboard');
+const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
 

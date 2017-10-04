@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const zip = require('../assets/javascripts/zip');
 const zipUtils = require('./zip-utils');
 
 // XXX: disabled until we figure out how to mock required modules.
