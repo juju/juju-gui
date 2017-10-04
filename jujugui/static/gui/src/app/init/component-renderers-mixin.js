@@ -1,13 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
 const marked = require('marked');
 const Prism = require('prismjs');
 const prismLanguages = require('prism-languages');
 const React = require('react');
 const ReactDOM = require('react-dom');
-
 const shapeup = require('shapeup');
+
 const yui = window.yui;
 
 const autodeploy = require('./autodeploy');

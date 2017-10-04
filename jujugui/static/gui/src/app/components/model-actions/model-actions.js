@@ -2,6 +2,7 @@
 
 'use strict';
 
+const classNames = require('classnames');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');

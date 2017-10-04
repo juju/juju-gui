@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
 const React = require('react');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
