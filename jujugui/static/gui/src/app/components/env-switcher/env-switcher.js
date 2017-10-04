@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 
@@ -119,16 +121,16 @@ class EnvSwitcher extends React.Component {
   */
   environmentList() {
     if (this.state.showEnvList) {
-      return <EnvList
-        acl={this.props.acl}
-        user={this.props.user}
-        changeState={this.props.changeState}
-        handleModelClick={this.handleModelClick.bind(this)}
-        humanizeTimestamp={this.props.humanizeTimestamp}
-        environmentName={this.props.environmentName}
-        envs={this.state.envList}
-        switchModel={this.props.switchModel}
-      />;
+      return (
+        <EnvList
+          acl={this.props.acl}
+          user={this.props.user}
+          changeState={this.props.changeState}
+          handleModelClick={this.handleModelClick.bind(this)}
+          humanizeTimestamp={this.props.humanizeTimestamp}
+          environmentName={this.props.environmentName}
+          envs={this.state.envList}
+          switchModel={this.props.switchModel} />);
     }
   }
 

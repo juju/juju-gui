@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 class FileField extends React.Component {
@@ -107,11 +109,11 @@ class FileField extends React.Component {
       if (contents) {
         label = 'File stored.';
       }
-      element =
+      element = (
         <label className="file-field__label"
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,

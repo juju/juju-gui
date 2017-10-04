@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 class EntityContentConfigOption extends React.Component {
@@ -13,9 +14,10 @@ class EntityContentConfigOption extends React.Component {
   */
   _generateDefault(defaultValue) {
     if (defaultValue) {
-      return <dd className="entity-content__config-default">
-        {defaultValue}
-      </dd>;
+      return (
+        <dd className="entity-content__config-default">
+          {defaultValue}
+        </dd>);
     }
     return;
   }

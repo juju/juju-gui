@@ -1,10 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const marked = require('marked');
+const Prism = require('prismjs');
+const prismLanguages = require('prism-languages');
 const React = require('react');
 const ReactDOM = require('react-dom');
-
 const shapeup = require('shapeup');
+
 const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
@@ -260,7 +264,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       />);
 
     if (this.applicationConfig.flags.profile) {
-      profile =
+      profile = (
         <Profile
           acl={this.acl}
           activeSection={state.hash}
@@ -272,7 +276,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
           switchModel={this._bound.switchModel}
-          userInfo={this._getUserInfo(state)} />;
+          userInfo={this._getUserInfo(state)} />);
     }
 
     ReactDOM.render(profile, document.getElementById('top-page-container'));
@@ -496,7 +500,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     // Configure syntax highlighting for the markdown renderer.
     marked.setOptions({
       highlight: function(code, lang) {
-        const language = Prism.languages[lang];
+        const language = prismLanguages[lang];
         if (language) {
           return Prism.highlight(code, language);
         }

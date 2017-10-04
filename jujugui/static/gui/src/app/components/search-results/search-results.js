@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../generic-button/generic-button');
@@ -460,14 +462,14 @@ class SearchResults extends React.Component {
         ({promulgated.length})
       </span></h4>
       <ul className="list-block__list">
-        {promulgated.map((item, i) =>
+        {promulgated.map((item, i) => (
           <SearchResultsItem
             acl={this.props.acl}
             changeState={this.props.changeState}
             deployTarget={this.props.deployTarget}
             generatePath={this.props.generatePath}
             item={item}
-            key={item.storeId + i} />)}
+            key={item.storeId + i} />))}
       </ul>
     </div>);
   }
@@ -512,14 +514,14 @@ class SearchResults extends React.Component {
           ({community.length})
         </span></h4>
         <ul className="list-block__list">
-          {community.map((item, i) =>
+          {community.map((item, i) => (
             <SearchResultsItem
               acl={this.props.acl}
               changeState={this.props.changeState}
               deployTarget={this.props.deployTarget}
               generatePath={this.props.generatePath}
               item={item}
-              key={item.storeId + i} />)}
+              key={item.storeId + i} />))}
         </ul>
       </div>
     </div>);

@@ -21,16 +21,17 @@ describe('USSOLoginLink', () => {
         addNotification={sinon.stub()}
         displayType={'text'}
         loginToController={sinon.stub()} />);
-    const expected = <div className="usso-login">
-      <a className="usso-login__action"
-        onClick={output.props.children[0].props.onClick}
-        target="_blank">
-          Login
-      </a>
-      <div className="usso-login__notification">
-        {notification}
-      </div>
-    </div>;
+    const expected = (
+      <div className="usso-login">
+        <a className="usso-login__action"
+          onClick={output.props.children[0].props.onClick}
+          target="_blank">
+            Login
+        </a>
+        <div className="usso-login__notification">
+          {notification}
+        </div>
+      </div>);
     expect(output).toEqualJSX(expected);
   });
 

@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 /** Basic table React component used to display data in a table structure. */

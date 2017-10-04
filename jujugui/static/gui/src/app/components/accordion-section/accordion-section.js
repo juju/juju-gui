@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
@@ -46,9 +47,10 @@ class AccordionSection extends React.Component {
     }
     const chevron = this.state.open ?
       'chevron_up_16' : 'chevron_down_16';
-    const icon = this.props.children ? <SvgIcon
-      name={chevron}
-      size="16" className="right" /> : null;
+    const icon = this.props.children ? (
+      <SvgIcon
+        name={chevron}
+        size="16" className="right" />) : null;
     const role = this.props.children ? 'button' : null;
     const onClick = this.props.children ? this._toggle.bind(this) : null;
     return (<div

@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const BudgetTable = require('../../budget-table/budget-table');
@@ -18,15 +19,15 @@ class DeploymentServices extends React.Component {
   _generateExtraInfo(changes) {
     const infos = {};
     for (let key in changes) {
-      const items = changes[key].map(change =>
+      const items = changes[key].map(change => (
         <DeploymentChangeItem
           change={change}
           key={change.id}
-          showTime={false} />);
-      infos[key] =
+          showTime={false} />));
+      infos[key] = (
         <ul className="deployment-services__changes">
           {items}
-        </ul>;
+        </ul>);
     }
     return infos;
   }
