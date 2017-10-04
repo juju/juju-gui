@@ -1,7 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const d3 = require('../../assets/javascripts/d3');
+const d3 = require('d3');
+
 const environmentUtils = require('./environment-utils');
 const EnvironmentView = require('./environment');
 const testUtils = require('../../../test/utils');

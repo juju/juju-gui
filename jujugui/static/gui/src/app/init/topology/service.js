@@ -1,9 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const d3 = require('../../assets/javascripts/d3');
-const environmentUtils = require('./environment-utils');
+const d3 = require('d3');
 const jsyaml = require('js-yaml');
+
+const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
