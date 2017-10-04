@@ -1,10 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const d3 = require('d3');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const d3 = require('../../assets/javascripts/d3');
 const endpointUtils = require('../endpoint-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');

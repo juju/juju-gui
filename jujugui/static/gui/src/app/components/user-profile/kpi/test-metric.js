@@ -1,9 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const d3 = require('d3');
 const React = require('react');
 
-const d3 = require('../../../assets/javascripts/d3');
 const UserProfileEntityMetric = require('./metric');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
