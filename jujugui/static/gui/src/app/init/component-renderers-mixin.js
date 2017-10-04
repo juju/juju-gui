@@ -46,6 +46,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -128,11 +129,14 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderModelActions() {
     const db = this.db;
     const modelAPI = this.modelAPI;
+    const address = this.db.environment.get('jujushellAddress');
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
+        address={address}
         appState={this.state}
         changeState={this.state.changeState.bind(this.state)}
+        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
@@ -1093,6 +1097,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       next();
     }
   }
+
+  _renderTerminal() {
+    const container = document.getElementById('profile-link-container');
+    const address = this.db.environment.get('jujushellAddress');
+    ReactDOM.render(<Terminal
+      address={address}
+      creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
+    />, container);
+  }
+
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.
