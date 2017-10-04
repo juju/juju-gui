@@ -54,7 +54,6 @@ globals:
   jsTestUtils: true
   juju: true
   jujulib: true
-  marked: true
   MODULES: true
   nacl: true
   PropTypes: true

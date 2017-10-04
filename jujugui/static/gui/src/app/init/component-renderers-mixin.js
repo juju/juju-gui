@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const marked = require('marked');
 const Prism = require('prismjs');
 const prismLanguages = require('prism-languages');
 const React = require('react');

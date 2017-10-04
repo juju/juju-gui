@@ -160,8 +160,6 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/prop-types/prop-types.js $(BUILT_JS_ASSETS)/prop-types.js
 	cp $(NODE_MODULES)/prop-types/prop-types.min.js $(BUILT_JS_ASSETS)/prop-types.min.js
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
-	cp $(NODE_MODULES)/marked/lib/marked.js $(BUILT_JS_ASSETS)/marked.js
-	cp $(NODE_MODULES)/marked/marked.min.js $(BUILT_JS_ASSETS)/marked.min.js
 	cp $(NODE_MODULES)/clipboard/dist/clipboard.js $(BUILT_JS_ASSETS)/clipboard.js
 	cp $(NODE_MODULES)/clipboard/dist/clipboard.min.js $(BUILT_JS_ASSETS)/clipboard.min.js
 	cp $(NODE_MODULES)/react-dnd/dist/ReactDnD.min.js $(BUILT_JS_ASSETS)/ReactDnD.min.js
