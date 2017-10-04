@@ -54,7 +54,6 @@ globals:
   jujulib: true
   MODULES: true
   nacl: true
-  PropTypes: true
   saveAs: true
   shapeup: true
   sinon: true

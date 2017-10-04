@@ -2,6 +2,7 @@
 'use strict';
 
 const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 /** Navigation React component for use in the Profile component. */

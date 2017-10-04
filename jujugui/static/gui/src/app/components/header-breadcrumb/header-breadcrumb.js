@@ -2,6 +2,7 @@
 'use strict';
 
 const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const EnvSwitcher = require('../env-switcher/env-switcher');

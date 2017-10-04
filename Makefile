@@ -157,8 +157,6 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 $(YUI): $(NODE_MODULES)
 
 $(REACT_ASSETS): $(NODE_MODULES)
-	cp $(NODE_MODULES)/prop-types/prop-types.js $(BUILT_JS_ASSETS)/prop-types.js
-	cp $(NODE_MODULES)/prop-types/prop-types.min.js $(BUILT_JS_ASSETS)/prop-types.min.js
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)

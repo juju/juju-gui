@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const AddressForm = require('../../../../address-form/address-form');

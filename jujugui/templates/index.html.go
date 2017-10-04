@@ -294,7 +294,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     {{if .debug}}
     <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <script src="{{.comboURL}}?app/init-pkg.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/prop-types.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
     <script src="{{.comboURL}}?modules.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon.js"></script>
@@ -302,7 +301,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     {{else}}
     <script src="{{.comboURL}}?app/init-pkg-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/version-min.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/prop-types.min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js"></script>
     <script src="{{.comboURL}}?modules-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon-min.js"></script>
