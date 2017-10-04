@@ -160,8 +160,6 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/prop-types/prop-types.js $(BUILT_JS_ASSETS)/prop-types.js
 	cp $(NODE_MODULES)/prop-types/prop-types.min.js $(BUILT_JS_ASSETS)/prop-types.min.js
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
-	cp $(NODE_MODULES)/clipboard/dist/clipboard.js $(BUILT_JS_ASSETS)/clipboard.js
-	cp $(NODE_MODULES)/clipboard/dist/clipboard.min.js $(BUILT_JS_ASSETS)/clipboard.min.js
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 

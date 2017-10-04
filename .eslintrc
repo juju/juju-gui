@@ -42,7 +42,6 @@ globals:
   beforeEach: true
   chai: true
   classNames: true
-  Clipboard: true
   dataLayer: true
   describe: true
   Exception: true
