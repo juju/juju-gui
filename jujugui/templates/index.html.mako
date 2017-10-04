@@ -294,7 +294,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     % if raw:
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <script src="${convoy_url}?app/init-pkg.js"></script>
-    <script src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon.js"></script>
@@ -302,7 +302,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     % else:
     <script src="${convoy_url}?app/init-pkg-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/version-min.js"></script>
-    <script src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/js-macaroon-min.js"></script>
