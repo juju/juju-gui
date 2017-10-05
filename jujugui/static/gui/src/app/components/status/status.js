@@ -200,7 +200,7 @@ class Status extends React.Component {
     };
     // Model section.
     const model = this.props.model;
-    if (!model.environmentName) {
+    if (!model.modelUUID) {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
@@ -949,6 +949,7 @@ Status.propTypes = {
   model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,
+    modelUUID: PropTypes.string,
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
