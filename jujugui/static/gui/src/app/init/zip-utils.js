@@ -1,9 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const zip = require('../assets/javascripts/zip');
-
-const zipTwo = require('zip');
+const zip = require('zip');
 
 /**
  Helper functions for working on zip files.
@@ -11,19 +9,9 @@ const zipTwo = require('zip');
 
 let zipUtils = {};
 
-// Configure the zip.js library. The workerScriptsPath must point to the
-// location of inflate.zip and deflate.zip.
-if (window.juju_config && window.juju_config.staticURL) {
-  zip.workerScriptsPath = window.juju_config.staticURL +
-      '/combo?app/assets/javascripts/';
-} else {
-  zip.workerScriptsPath = 'static/gui/build/app/assets/javascripts/';
-}
-
 /**
   Get the list of entries included in the given zip file object.
-  Call the given callback passing an array of entry objects
-  (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  Call the given callback passing object of entries.
   If an error occurs, call the given errback function passing the error.
 
   @method getEntries
@@ -36,7 +24,7 @@ var getEntries = function(file, callback, errback) {
   loader.addEventListener('onerror', errback);
   loader.addEventListener('loadend', function(evt) {
     const data = new Buffer(evt.target.result);
-    const reader = zipTwo.Reader(data);
+    const reader = zip.Reader(data);
     const entries = reader.toObject();
     callback(entries);
   });
@@ -66,8 +54,7 @@ zipUtils.splitPath = splitPath;
   see juju-core/state/apiserver/charms.go:findArchiveRootDir.
 
   @method findCharmEntries
-  @param {Array} allEntries The list of all the zip entries
-    (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  @param {Array} allEntries The object of all the zip entries.
   @return {Object} An object mapping entry names to entry objects.
     The resulting map can include the following attributes:
       - metadata: the metadata.yaml entry, containing charm's meta info;
@@ -115,8 +102,7 @@ zipUtils.findCharmEntries = findCharmEntries;
   callback passing an object mapping file names to file contents.
 
   @method readCharmEntries
-  @param {Object} entries An object mapping file names to zip entries
-    (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  @param {Object} entries An object mapping file names to zip entries.
   @param {Function} callback A function to be called when the contents are
     ready.
 */
