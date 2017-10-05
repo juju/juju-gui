@@ -1492,9 +1492,7 @@ const testUtils = require('../../../test/utils');
         }};
     });
 
-    // XXX: current can't be tested as it modifies an internal module
-    // variable (snapToPoles).
-    xit('must be able to get us nearest connectors when snapping to poles',
+    it('must be able to get us nearest connectors when snapping to poles',
       function() {
 
         var b1 = environmentUtils.BoundingBox(module, service),

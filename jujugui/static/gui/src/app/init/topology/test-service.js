@@ -1,10 +1,26 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const jsyaml = require('js-yaml');
+const proxyquire = require('proxyquire');
+
 const utils = require('../../../test/utils');
 
-const EnvironmentView = require('./environment');
+const findCharmEntries = sinon.stub();
+const getEntries = sinon.stub();
+const readCharmEntries = sinon.stub();
+const jsYamlMock = sinon.stub();
+const EnvironmentView = proxyquire('./environment', {
+  './service': proxyquire('./service', {
+    'js-yaml': {
+      safeLoad: jsYamlMock
+    },
+    '../zip-utils': {
+      findCharmEntries: findCharmEntries,
+      getEntries: getEntries,
+      readCharmEntries: readCharmEntries
+    }
+  })
+});
 
 describe('service module annotations', function() {
   let db, models, view, viewContainer, serviceModule;
@@ -163,10 +179,10 @@ describe('service updates', function() {
 
 describe('service module events', function() {
   let cleanups, db, charm, fakeStore, models, serviceModule, topo,
-      view, viewContainer, Y;
+      view, viewContainer;
 
   beforeAll(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models'], function(Y) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
       models = Y.namespace('juju.models');
       window.yui = Y;
       window.models = models;
@@ -481,14 +497,11 @@ describe('service module events', function() {
     assert.deepEqual(args[3], topo.db);
   });
 
-  // XXX: can't stub internal module.
-  xit('_extractCharmMetadata: calls ziputils.getEntries()', function() {
+  it('_extractCharmMetadata: calls ziputils.getEntries()', function() {
     const fileObj = { file: '' },
         topoObj = { topo: '' },
         envObj = { env: '' },
         dbObj = { db: '' };
-    const getEntries = sinon.stub(Y.juju.ziputils, 'getEntries');
-    cleanups.push(getEntries.restore);
     const findCharmEntries = sinon.stub(
       serviceModule, '_findCharmEntries');
     cleanups.push(findCharmEntries.restore);
@@ -533,20 +546,17 @@ describe('service module events', function() {
       };
     });
 
-    // XXX: can't stub internal module.
-    xit('finds the files in the zip', function() {
+    it('finds the files in the zip', function() {
       const entries = { metadata: 'foo' };
-      const findEntries = sinon.stub(
-        Y.juju.ziputils, 'findCharmEntries').returns(entries);
-      cleanups.push(findEntries.restore);
+      findCharmEntries.returns(entries);
       const readEntries = sinon.stub(
         serviceModule, '_readCharmEntries');
       cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-      assert.equal(findEntries.calledOnce, true);
-      assert.deepEqual(findEntries.lastCall.args[0], {});
+      assert.equal(findCharmEntries.calledOnce, true);
+      assert.deepEqual(findCharmEntries.lastCall.args[0], {});
       assert.equal(readEntries.calledOnce, true);
       const readEntriesArgs = readEntries.lastCall.args;
       assert.deepEqual(readEntriesArgs[0], fileObj);
@@ -556,20 +566,20 @@ describe('service module events', function() {
       assert.deepEqual(readEntriesArgs[4], entries);
     });
 
-    // XXX: can't stub internal module.
-    xit('shows an error notification if there is no metadata.yaml', function() {
+    it('shows an error notification if there is no metadata.yaml', function() {
       const entries = { foo: 'bar' };
-      const findEntries = sinon.stub(
-        Y.juju.ziputils, 'findCharmEntries').returns(entries);
-      cleanups.push(findEntries.restore);
+      findCharmEntries.returns(entries);
       const readEntries = sinon.stub(
         serviceModule, '_readCharmEntries');
       cleanups.push(readEntries.restore);
+      topoObj.environmentView = {
+        fadeHelpIndicator: sinon.stub()
+      };
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-      assert.equal(findEntries.calledOnce, true);
-      assert.deepEqual(findEntries.lastCall.args[0], {});
+      assert.equal(findCharmEntries.callCount >= 1, true);
+      assert.deepEqual(findCharmEntries.lastCall.args[0], {});
       assert.deepEqual(notificationParams, {
         title: 'Import failed',
         message: 'Import from "' + fileObj.name + '" failed. Invalid charm ' +
@@ -580,14 +590,11 @@ describe('service module events', function() {
     });
   });
 
-  // XXX: can't stub internal module.
-  xit('_readCharmEntries: calls ziputils.readCharmEntries', function() {
+  it('_readCharmEntries: calls ziputils.readCharmEntries', function() {
     const fileObj = { file: '' },
         topoObj = { topo: '' },
         envObj = { env: '' },
         dbObj = { db: '' };
-    const readEntries = sinon.stub(Y.juju.ziputils, 'readCharmEntries');
-    cleanups.push(readEntries.restore);
     const existingServices = sinon.stub(
       serviceModule, '_checkForExistingServices');
     cleanups.push(existingServices);
@@ -596,8 +603,8 @@ describe('service module events', function() {
 
     serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-    assert.equal(readEntries.calledOnce, true);
-    const readEntriesArgs = readEntries.lastCall.args;
+    assert.equal(readCharmEntries.calledOnce, true);
+    const readEntriesArgs = readCharmEntries.lastCall.args;
     assert.deepEqual(readEntriesArgs[0], {});
     assert.isFunction(readEntriesArgs[1]);
     assert.isFunction(readEntriesArgs[2]);
@@ -613,39 +620,41 @@ describe('service module events', function() {
     readEntriesArgs[2]();
     const zipErrorArgs = extractionError.lastCall.args;
     assert.deepEqual(zipErrorArgs[0], dbObj);
-    assert.deepEqual(zipErrorArgs[1], fileObj);
+    assert.deepEqual(zipErrorArgs[1], topoObj);
+    assert.deepEqual(zipErrorArgs[2], fileObj);
   });
 
   describe('_checkForExistingService', function() {
     let dbObj, deployCharm, contentsObj, envObj, fileObj, getServicesStub,
-        jsYamlMock, showInspector, topochangeState, topoObj;
+        cleanups, topochangeState, topoObj;
 
     beforeEach(function() {
+      cleanups = [];
       fileObj = { name: 'foo' };
       topochangeState = sinon.stub();
-      topoObj = { fire: topochangeState };
+      topoObj = {};
+      view.topo.state.changeState = topochangeState;
       envObj = { env: 'foo' };
       contentsObj = { metadata: 'foo' };
     });
 
+    afterEach(() => {
+      cleanups.forEach(cleanup => cleanup());
+    });
+
     function setup(context) {
-      jsYamlMock = sinon.stub(jsyaml, 'safeLoad').returns({ name: 'ghost' });
-      context._cleanups.push(jsYamlMock.restore);
-      showInspector = sinon.stub(
-        serviceModule, '_showUpgradeOrNewInspector');
-      context._cleanups.push(showInspector.restore);
+      jsYamlMock.returns({name: 'ghost'});
       deployCharm = sinon.stub(serviceModule, '_deployLocalCharm');
-      context._cleanups.push(deployCharm.restore);
+      cleanups.push(deployCharm.restore);
     }
 
     function sharedAssert() {
-      assert.equal(jsYamlMock.calledOnce, true);
+      assert.equal(jsYamlMock.callCount >= 1, true);
       assert.equal(getServicesStub.calledOnce, true);
       assert.equal(topochangeState.calledOnce, true);
     }
 
-    // XXX: can't stub internal module.
-    xit('calls to show the upgrade or new inspector', function() {
+    it('calls to show the upgrade or new inspector', function() {
       setup(this);
 
       getServicesStub = sinon.stub().returns(['service']);
@@ -655,13 +664,10 @@ describe('service module events', function() {
         fileObj, topoObj, envObj, dbObj, contentsObj);
 
       sharedAssert();
-
-      assert.equal(showInspector.calledOnce, true);
       assert.equal(deployCharm.calledOnce, false);
     });
 
-    // XXX: can't stub internal module.
-    xit('calls to deploy the local charm', function() {
+    it('calls to deploy the local charm', function() {
       setup(this);
 
       getServicesStub = sinon.stub().returns(['service']);
@@ -672,7 +678,6 @@ describe('service module events', function() {
 
       sharedAssert();
 
-      assert.equal(showInspector.calledOnce, true);
       assert.equal(deployCharm.calledOnce, false);
     });
   });

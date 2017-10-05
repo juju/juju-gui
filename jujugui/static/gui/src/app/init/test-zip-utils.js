@@ -11,7 +11,7 @@ const ReaderStub = sinon.stub().returns({
 });
 
 const zipUtils = proxyquire('./zip-utils', {
-  'zip': {
+  zip: {
     Reader: ReaderStub
   }
 });
