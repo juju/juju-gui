@@ -1,14 +1,22 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const RelationModule = require('./relation');
+const proxyquire = require('proxyquire');
+
 const utils = require('../../../test/utils');
 
+const locateRelativePointOnCanvas = sinon.stub();
+const RelationModule = proxyquire('./relation', {
+  './utils': {
+    locateRelativePointOnCanvas: locateRelativePointOnCanvas
+  }
+});
+
 describe('topology relation module', function() {
-  var cleanups, Y, view, container, topo, models;
+  var cleanups, view, container, topo, models;
 
   beforeAll(function(done) {
-    Y = YUI(GlobalConfig).use(
+    YUI(GlobalConfig).use(
       ['juju-models'],
       function(Y) {
         models = Y.namespace('juju.models');
@@ -31,7 +39,7 @@ describe('topology relation module', function() {
   });
 
   // XXX: this test fails when the full test suite is run.
-  xit('fires a "clearState" event if a drag line is clicked', function(done) {
+  it('fires a "clearState" event if a drag line is clicked', function(done) {
     let called = false;
     const handler = () => {
       document.removeEventListener('topo.clearState', handler);
@@ -298,10 +306,8 @@ describe('topology relation module', function() {
       assert.equal(addEventListener.callCount, 2);
     });
 
-    // XXX: this test requires stubbing a method from a required module.
-    xit('calls to position the menu to the terminating endpoint', function() {
+    it('calls to position the menu to the terminating endpoint', function() {
       var addClass = sinon.stub();
-      var set = sinon.stub();
       var menu = {
         style: {},
         classList: {
@@ -313,12 +319,10 @@ describe('topology relation module', function() {
           translate: sinon.stub().returns('translate'),
           scale: sinon.stub().returns('scale')
         },
-        set: set
+        active_service: null,
+        active_context: null
       };
-      var locate = sinon.stub(
-        Y.juju.topology.utils, 'locateRelativePointOnCanvas').returns(
-        ['locate1', 'locate2']);
-      cleanups.push(locate.restore);
+      var locate = locateRelativePointOnCanvas.returns(['locate1', 'locate2']);
 
       view._positionAmbiguousRelationMenu(menu, topo, 'm', 'context');
 
@@ -330,11 +334,8 @@ describe('topology relation module', function() {
       });
       assert.equal(addClass.callCount, 1, 'addClass');
       assert.equal(addClass.lastCall.args[0], 'active');
-      assert.equal(set.callCount, 2);
-      assert.deepEqual(set.args, [
-        ['active_service', 'm'],
-        ['active_context', 'context']
-      ]);
+      assert.equal(topo.active_service, 'm');
+      assert.equal(topo.active_context, 'context');
     });
   });
 

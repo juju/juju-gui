@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const zip = require('../assets/javascripts/zip');
+const zip = require('zip');
 
 /**
  Helper functions for working on zip files.
@@ -9,19 +9,9 @@ const zip = require('../assets/javascripts/zip');
 
 let zipUtils = {};
 
-// Configure the zip.js library. The workerScriptsPath must point to the
-// location of inflate.zip and deflate.zip.
-if (window.juju_config && window.juju_config.staticURL) {
-  zip.workerScriptsPath = window.juju_config.staticURL +
-      '/combo?app/assets/javascripts/';
-} else {
-  zip.workerScriptsPath = 'static/gui/build/app/assets/javascripts/';
-}
-
 /**
   Get the list of entries included in the given zip file object.
-  Call the given callback passing an array of entry objects
-  (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  Call the given callback passing object of entries.
   If an error occurs, call the given errback function passing the error.
 
   @method getEntries
@@ -30,16 +20,15 @@ if (window.juju_config && window.juju_config.staticURL) {
   @param {Function} errback A function called if any errors occur.
 */
 var getEntries = function(file, callback, errback) {
-  zip.createReader(
-    new zip.BlobReader(file),
-    function(reader) {
-      reader.getEntries(function(entries) {
-        callback(entries);
-        reader.close();
-      });
-    },
-    errback
-  );
+  const loader = new FileReader();
+  loader.addEventListener('onerror', errback);
+  loader.addEventListener('loadend', function(evt) {
+    const data = new Buffer(evt.target.result);
+    const reader = zip.Reader(data);
+    const entries = reader.toObject();
+    callback(entries);
+  });
+  loader.readAsArrayBuffer(file);
 };
 zipUtils.getEntries = getEntries;
 
@@ -65,8 +54,7 @@ zipUtils.splitPath = splitPath;
   see juju-core/state/apiserver/charms.go:findArchiveRootDir.
 
   @method findCharmEntries
-  @param {Array} allEntries The list of all the zip entries
-    (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  @param {Array} allEntries The object of all the zip entries.
   @return {Object} An object mapping entry names to entry objects.
     The resulting map can include the following attributes:
       - metadata: the metadata.yaml entry, containing charm's meta info;
@@ -84,12 +72,8 @@ var findCharmEntries = function(allEntries) {
     'metadata.yaml': 'metadata',
     'revision': 'revision'
   };
-  allEntries.forEach(function(entry) {
-    if (entry.directory) {
-      // We are not interested in directories.
-      return;
-    }
-    var pathInfo = splitPath(entry.filename);
+  Object.keys(allEntries).forEach(function(entry) {
+    var pathInfo = splitPath(entry);
     if (root !== null && root !== pathInfo.dirname) {
       // If we already know the charm root directory and this entry is not
       // in the root, then we can proceed without any further processing.
@@ -100,13 +84,13 @@ var findCharmEntries = function(allEntries) {
       // An interesting file has been found. This must be the charm's root
       // directory. Include the entry in the entries object.
       root = pathInfo.dirname;
-      entries[attr] = entry;
+      entries[attr] = allEntries[entry];
       return;
     }
     // Check if this looks like a readme file. If so, include it in the
     // entries object.
     if (pathInfo.basename.toLowerCase().slice(0, 6) === 'readme') {
-      entries.readme = entry;
+      entries.readme = allEntries[entry];
     }
   });
   return entries;
@@ -118,34 +102,18 @@ zipUtils.findCharmEntries = findCharmEntries;
   callback passing an object mapping file names to file contents.
 
   @method readCharmEntries
-  @param {Object} entries An object mapping file names to zip entries
-    (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+  @param {Object} entries An object mapping file names to zip entries.
   @param {Function} callback A function to be called when the contents are
     ready.
 */
 var readCharmEntries = function(entries, callback) {
   var contents = Object.create(null);
-  var entriesNum = Object.keys(entries).length;
   Object.keys(entries).forEach(name => {
     const entry = entries[name];
-    // Read the entry's contents.
-    // The zip.TextWriter handler fails silently in Firefox if the text
-    // encoding argument is not explicitly passed.
-    // See https://github.com/gildas-lormeau/zip.js/issues/58.
-    try {
-      entry.getData(new zip.TextWriter('utf-8'), function(text) {
-        contents[name] = text;
-        // If all the files have been processed, call the callback passing the
-        // aggregated results.
-        if (Object.keys(contents).length === entriesNum) {
-          callback(contents);
-        }
-      });
-    } catch (err) {
-      console.error(
-        'zip.TextWriter error reading ' + entry.filename + ': ' + err);
-    }
+    const decoder = new TextDecoder();
+    contents[name] = decoder.decode(entry);
   });
+  callback(contents);
 };
 zipUtils.readCharmEntries = readCharmEntries;
 
