@@ -2,10 +2,23 @@
 'use strict';
 
 const d3 = require('d3');
+const proxyquire = require('proxyquire');
 
 const environmentUtils = require('./environment-utils');
-const EnvironmentView = require('./environment');
 const testUtils = require('../../../test/utils');
+
+const getEndpoints = sinon.stub();
+
+const EnvironmentView = proxyquire('./environment', {
+  './relation': proxyquire('./relation', {
+    'd3': {
+      mouse: sinon.stub().returns([0, 0])
+    },
+    '../endpoint-utils': {
+      getEndpoints: getEndpoints
+    }
+  })
+});
 
 (function() {
 
@@ -1048,21 +1061,19 @@ const testUtils = require('../../../test/utils');
       }));
     });
 
-    // XXX: There seems to be some complicated mapping to create for the
-    // endpointsController but it not obvious what it should be.
-    xit('must be able to add a relation from the service menu',
+    it('must be able to add a relation from the service menu',
       function() {
         var newView = new EnvironmentView({
           container: container,
           db: db,
           endpointsController: {
+            db: db,
             endpointsMap: {
               'mediawiki': {requires: [], provides: []},
               'mysql': {requires: [], provides: []},
               'puppet': {requires: [], provides: []},
               'wordpress': {requires: [], provides: []}
-            },
-            get: sinon.stub().withArgs('db').returns(db)
+            }
           },
           env: env,
           charmstore: fakeStore,
@@ -1092,23 +1103,17 @@ const testUtils = require('../../../test/utils');
         db.charms.add(charm2);
         charm = db.charms.getById(service.charm);
         charm.loaded = true;
-        // Mock endpoints
-        var existing = models.getEndpoints;
-        models.getEndpoints = function() {
-          return endpoints;
-        };
+        getEndpoints.returns(endpoints);
 
         // Toggle the service menu for the Add Relation button.
         var module = newView.topo.modules.RelationModule;
         var sm = newView.topo.modules.ServiceModule;
 
         sm.showServiceDetails(service, {
-          fire: function() {},
-          get: sinon.stub().withArgs('state').returns(
-            {changeState: sinon.stub()})
+          state: {
+            changeState: sinon.stub()
+          }
         });
-        // Mock an event object so that d3.mouse does not throw a NPE.
-        d3.event = {};
         add_rel.dispatchEvent(click);
         container.querySelectorAll('.selectable-service')
           .length
@@ -1126,8 +1131,6 @@ const testUtils = require('../../../test/utils');
           .should.equal(0);
         // The database is initialized with three relations in beforeEach.
         assert.equal(4, db.relations.size());
-        // restore original getEndpoints function
-        models.getEndpoints = existing;
         newView.destructor();
       });
 

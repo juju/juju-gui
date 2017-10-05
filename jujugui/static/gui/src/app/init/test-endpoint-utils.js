@@ -364,9 +364,7 @@ describe('Endpoints map', function() {
 
 });
 
-// XXX: these tests are failing in the new suite and have sporadically in the
-// old suite so skipping until some investigation can be done.
-xdescribe('Endpoints map handlers', function() {
+describe('Endpoints map handlers', function() {
   let app, container, controller, destroyMe, factory, JujuGUI;
 
   beforeAll(done => {
@@ -393,7 +391,7 @@ xdescribe('Endpoints map handlers', function() {
     controller.endpointsMap = {};
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     app.destructor();
     container.remove();
     destroyMe.forEach(destroy => destroy.destroy());

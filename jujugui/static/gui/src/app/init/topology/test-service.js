@@ -11,6 +11,9 @@ const readCharmEntries = sinon.stub();
 const jsYamlMock = sinon.stub();
 const EnvironmentView = proxyquire('./environment', {
   './service': proxyquire('./service', {
+    'd3': {
+      mouse: sinon.stub().returns([0, 0])
+    },
     'js-yaml': {
       safeLoad: jsYamlMock
     },
@@ -239,8 +242,7 @@ describe('service module events', function() {
     serviceModule.update();
   });
 
-  // XXX: d3.mouse does not seem to work correctly inside the test.
-  xit('must not process service clicks after a dragend', function() {
+  it('must not process service clicks after a dragend', function() {
     // Test the work-around that prevents serviceClick from doing its work if
     // called after dragend.  Behaviour-driven testing via a tool such as
     // Selenium will add more coverage.
@@ -254,9 +256,9 @@ describe('service module events', function() {
     serviceModule.currentServiceClickAction = 'fake';
     topo.ignoreServiceClick = true;
     serviceModule.serviceClick(d, serviceModule);
-    assert.equal(called, true);
+    assert.equal(called, false);
     // The flag is reset when encountered and ignored.
-    assert.equal(topo.ignoreServiceClick, true);
+    assert.equal(topo.ignoreServiceClick, false);
   });
 
   it('should show only visible services', function() {

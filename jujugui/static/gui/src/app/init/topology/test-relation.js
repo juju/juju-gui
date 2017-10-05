@@ -39,7 +39,7 @@ describe('topology relation module', function() {
   });
 
   // XXX: this test fails when the full test suite is run.
-  xit('fires a "clearState" event if a drag line is clicked', function(done) {
+  it('fires a "clearState" event if a drag line is clicked', function(done) {
     let called = false;
     const handler = () => {
       document.removeEventListener('topo.clearState', handler);
