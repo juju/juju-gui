@@ -74,9 +74,12 @@ class LocalInspector extends React.Component {
         break;
       case 'update':
         component = (
-          <ul className="local-inspector__list">
-            {this._generateServiceList()}
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              {this._generateServiceList()}
+            </ul>
+          </div>
         );
         break;
     }
