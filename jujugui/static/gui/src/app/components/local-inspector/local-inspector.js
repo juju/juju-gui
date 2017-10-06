@@ -74,9 +74,12 @@ class LocalInspector extends React.Component {
         break;
       case 'update':
         component = (
-          <ul className="local-inspector__list">
-            {this._generateServiceList()}
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              {this._generateServiceList()}
+            </ul>
+          </div>
         );
         break;
     }
@@ -134,23 +137,19 @@ class LocalInspector extends React.Component {
 
   /**
     Handle updating services.
-
-    @method _handleUpdate
   */
   _handleUpdate() {
-    var refs = this.refs;
-    var services = this.props.services;
-    var selectedServices = Object.keys(refs).filter((ref) => {
-      var input = refs[ref];
+    const refs = this.refs;
+    const selectedServices = Object.keys(refs).filter((ref) => {
+      const input = refs[ref];
       if (ref.split('-')[0] === 'service' && input.checked) {
         return true;
       }
       return false;
     });
     if (selectedServices.length > 0) {
-      var serviceList = selectedServices.map((serviceId) => {
-        return services.getById(serviceId.split('-')[1]);
-      });
+      const serviceList = selectedServices.map((serviceId) =>
+        this.props.services.getById(serviceId.split('-').splice(1).join('-')));
       this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
       this._close();
     }
