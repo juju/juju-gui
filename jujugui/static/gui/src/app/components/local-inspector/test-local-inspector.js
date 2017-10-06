@@ -176,24 +176,27 @@ describe('LocalInspector', function() {
               </label>
             </li>
           </ul>
-          <ul className="local-inspector__list">
-            <li key="apache2-2">
-              <label>
-                <input type="checkbox" data-id="apache2-2"
-                  disabled={false}
-                  ref="service-apache2-2" />
-                apache2
-              </label>
-            </li>
-            <li key="mysql-1">
-              <label>
-                <input type="checkbox" data-id="mysql-1"
-                  disabled={false}
-                  ref="service-mysql-1" />
-                mysql
-              </label>
-            </li>
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              <li key="apache2-2">
+                <label>
+                  <input type="checkbox" data-id="apache2-2"
+                    disabled={false}
+                    ref="service-apache2-2" />
+                  apache2
+                </label>
+              </li>
+              <li key="mysql-1">
+                <label>
+                  <input type="checkbox" data-id="mysql-1"
+                    disabled={false}
+                    ref="service-mysql-1" />
+                  mysql
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
         <ButtonRow
           buttons={buttons} />
@@ -238,24 +241,27 @@ describe('LocalInspector', function() {
         <div className="inspector-content local-inspector__section">
           {output.props.children[1].props.children[0]}
           {output.props.children[1].props.children[1]}
-          <ul className="local-inspector__list">
-            <li key="apache2-2">
-              <label>
-                <input type="checkbox" data-id="apache2-2"
-                  disabled={false}
-                  ref="service-apache2-2" />
-                apache2
-              </label>
-            </li>
-            <li key="mysql-1">
-              <label>
-                <input type="checkbox" data-id="mysql-1"
-                  disabled={false}
-                  ref="service-mysql-1" />
-                mysql
-              </label>
-            </li>
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              <li key="apache2-2">
+                <label>
+                  <input type="checkbox" data-id="apache2-2"
+                    disabled={false}
+                    ref="service-apache2-2" />
+                  apache2
+                </label>
+              </li>
+              <li key="mysql-1">
+                <label>
+                  <input type="checkbox" data-id="mysql-1"
+                    disabled={false}
+                    ref="service-mysql-1" />
+                  mysql
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
         {output.props.children[2]}
       </div>);
