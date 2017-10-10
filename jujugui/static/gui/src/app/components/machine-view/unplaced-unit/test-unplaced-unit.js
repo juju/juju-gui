@@ -11,10 +11,11 @@ const MoreMenu = require('../../more-menu/more-menu');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewUnplacedUnit', function() {
-  let acl;
+  let acl, sendAnalytics;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
+    sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {
@@ -34,6 +35,7 @@ describe('MachineViewUnplacedUnit', function() {
           createMachine: sinon.stub(),
           placeUnit: sinon.stub()
         }}
+        sendAnalytics={sendAnalytics}
         unitAPI={{
           icon: 'icon.svg',
           removeUnit: removeUnit,
@@ -79,6 +81,7 @@ describe('MachineViewUnplacedUnit', function() {
           createMachine: sinon.stub(),
           placeUnit: sinon.stub()
         }}
+        sendAnalytics={sendAnalytics}
         unitAPI={{
           icon: 'icon.svg',
           removeUnit: removeUnit,
@@ -111,6 +114,7 @@ describe('MachineViewUnplacedUnit', function() {
           createMachine: sinon.stub(),
           placeUnit: sinon.stub()
         }}
+        sendAnalytics={sendAnalytics}
         unitAPI={{
           icon: 'icon.svg',
           removeUnit: removeUnit,
@@ -141,6 +145,7 @@ describe('MachineViewUnplacedUnit', function() {
           createMachine: sinon.stub(),
           placeUnit: sinon.stub()
         }}
+        sendAnalytics={sendAnalytics}
         unitAPI={{
           icon: 'icon.svg',
           removeUnit: removeUnit,
