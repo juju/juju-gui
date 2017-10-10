@@ -84,6 +84,12 @@ class ModelActions extends React.Component {
         </span>
       );
     }
+    let terminalAction = null;
+    if (true) {
+      terminalAction = (<Terminal
+        address={props.address}
+        creds={props.creds} />);
+    }
     const isReadOnly = props.acl.isReadOnly();
     return (
       <div className={this._generateClasses()}>
@@ -115,9 +121,7 @@ class ModelActions extends React.Component {
             </span>
           </span>
           {shareAction}
-          <Terminal
-            address={props.address}
-            creds={props.creds} />
+          {terminalAction}
         </div>
         <input className="model-actions__file"
           type="file"
