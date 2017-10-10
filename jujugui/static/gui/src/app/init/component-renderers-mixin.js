@@ -707,6 +707,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         parseConstraints={initUtils.parseConstraints.bind(
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
+        sendAnalytics={this.sendAnalytics}
         series={window.jujulib.CHARM_SERIES}
       />,
       document.getElementById('machine-view'));

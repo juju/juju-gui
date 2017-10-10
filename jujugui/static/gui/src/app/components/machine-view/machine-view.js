@@ -177,6 +177,7 @@ class MachineView extends React.Component {
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           key={unit.id}
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
+          sendAnalytics={props.sendAnalytics}
           series={props.series}
           unitAPI={{
             icon: service.get('icon') || '',
@@ -353,6 +354,7 @@ class MachineView extends React.Component {
           modelAPI={modelAPI}
           parseConstraints={props.parseConstraints}
           ref={`machine-${machine.id}`}
+          sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
           type="machine"
@@ -414,6 +416,7 @@ class MachineView extends React.Component {
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={props.parseConstraints}
           ref={`container-${container.id}`}
+          sendAnalytics={props.sendAnalytics}
           type="container"
         />);
     });
@@ -777,6 +780,7 @@ class MachineView extends React.Component {
           <MachineViewColumn
             acl={acl}
             droppable={false}
+            sendAnalytics={props.sendAnalytics}
             title="New units"
             toggle={unplacedToggle}>
             {this._generateScaleUp()}
@@ -789,6 +793,7 @@ class MachineView extends React.Component {
             dropUnit={this._dropUnit.bind(this)}
             menuItems={machineMenuItems}
             ref="machinesColumn"
+            sendAnalytics={props.sendAnalytics}
             title={this._generateMachinesTitle()}
             type="machine">
             {this._generateAddMachine()}
@@ -801,6 +806,7 @@ class MachineView extends React.Component {
             dropUnit={this._dropUnit.bind(this)}
             menuItems={containerMenuItems}
             ref="containersColumn"
+            sendAnalytics={props.sendAnalytics}
             title={this._generateContainersTitle()}
             type="container">
             {this._generateAddContainer()}
@@ -841,6 +847,7 @@ MachineView.propTypes = {
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
   parseMachineName: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array
 };
 

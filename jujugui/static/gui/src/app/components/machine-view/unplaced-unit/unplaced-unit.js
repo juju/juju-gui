@@ -21,6 +21,7 @@ MachineViewUnplacedUnitGlobals.dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
+    props.sendAnalytics('Machine View', 'Drag Target', 'Application Unit');
     return {unit: props.unitAPI.unit};
   },
 
@@ -144,6 +145,7 @@ MachineViewUnplacedUnit.propTypes = {
     placeUnit: PropTypes.func.isRequired,
     providerType: PropTypes.string
   }).isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array,
   unitAPI: shapeup.shape({
     icon: PropTypes.string.isRequired,

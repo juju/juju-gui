@@ -23,6 +23,7 @@ const sendAnalyticsFactory = function(controllerAPI, dataLayer) {
       extra information.
   */
   return function(category, action, label, value) {
+    console.log(category, action, label, value);
     // We want to check for required params to provide good feedback for
     // developers - this is a fail fast way to ensure required fields are
     // set. On the other hand, we don't want to block the execution in case
