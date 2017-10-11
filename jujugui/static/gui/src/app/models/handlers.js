@@ -488,8 +488,5 @@ YUI.add('juju-delta-handlers', function(Y) {
   };
 
 }, '0.1.0', {
-  requires: [
-    'base',
-    'array-extras'
-  ]
+  requires: ['base']
 });

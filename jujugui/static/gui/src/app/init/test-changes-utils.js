@@ -10,8 +10,7 @@ describe('ChangesUtils', () => {
     let requirements = [
       'changes-utils',
       'environment-change-set',
-      'juju-models',
-      'node'
+      'juju-models'
     ];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');

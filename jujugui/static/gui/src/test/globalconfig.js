@@ -32,18 +32,9 @@ window.MODULES = [
   // juju-views group
   'juju-landscape',
   // end juju-views group
-  'io',
-  'json-parse',
-  'app-base',
-  'app-transitions',
   'base',
   'bundle-import-notifications',
-  'node',
   'model',
-  'cookie',
-  'querystring',
-  'event-key',
-  'event-touch',
   'model-controller',
   'ghost-deployer-extension',
   'environment-change-set',

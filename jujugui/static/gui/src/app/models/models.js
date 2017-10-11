@@ -2981,7 +2981,6 @@ YUI.add('juju-models', function(Y) {
     'datasource-io',
     'datasource-jsonschema',
     'io-base',
-    'json-parse',
     'juju-delta-handlers',
     'juju-view-utils',
     'juju-charm-models',

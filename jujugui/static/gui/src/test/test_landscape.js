@@ -23,7 +23,7 @@ describe('Landscape integration', function() {
   var views, models, db, landscape;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use([
       'juju-landscape',
       'juju-models'], function(Y) {
       var envAnno;
