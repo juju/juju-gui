@@ -1574,7 +1574,7 @@ describe('test_model.js', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-        'juju-tests-utils', 'json-stringify'], function(Y) {
+        'juju-tests-utils'], function(Y) {
         models = Y.namespace('juju.models');
         juju = Y.namespace('juju');
         testUtils = Y.namespace('juju-tests.utils');
