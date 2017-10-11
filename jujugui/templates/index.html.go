@@ -294,14 +294,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     {{if .debug}}
     <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <script src="{{.comboURL}}?app/init-pkg.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
     <script src="{{.comboURL}}?modules.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon.js"></script>
     <script src="{{.comboURL}}?app/state/state.js&app/user/user.js&app/utils/github-ssh-keys.js&app/utils/statsd.js&app/jujulib/index.js&app/jujulib/charmstore.js&app/jujulib/bundleservice.js&app/jujulib/plans.js&app/jujulib/payment.js&app/jujulib/stripe.js&app/jujulib/terms.js&app/jujulib/reconnecting-websocket.js&app/jujulib/urls.js&app/jujulib/bakery.js"></script>
     {{else}}
     <script src="{{.comboURL}}?app/init-pkg-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/version-min.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js"></script>
     <script src="{{.comboURL}}?modules-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon-min.js"></script>
     <script src="{{.comboURL}}?app/state/state-min.js&app/user/user-min.js&app/utils/github-ssh-keys-min.js&app/utils/statsd-min.js&app/jujulib/index-min.js&app/jujulib/charmstore-min.js&app/jujulib/bundleservice-min.js&app/jujulib/plans-min.js&app/jujulib/payment-min.js&app/jujulib/stripe-min.js&app/jujulib/terms-min.js&app/jujulib/reconnecting-websocket-min.js&app/jujulib/urls-min.js&app/jujulib/bakery-min.js"></script>
@@ -342,22 +342,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-env-base',
             'juju-env-api',
             'juju-models',
-            'bakery-utils',
             // juju-views group
             'juju-landscape',
             // end juju-views group
-            'io',
-            'json-parse',
-            'app-base',
-            'app-transitions',
             'base',
             'bundle-import-notifications',
-            'node',
             'model',
-            'cookie',
-            'querystring',
-            'event-key',
-            'event-touch',
             'model-controller',
             'ghost-deployer-extension',
             'environment-change-set',
