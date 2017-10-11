@@ -146,7 +146,7 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
-		-not -name "js-macaroon*" \
+		-not -name "js-macaroon*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
 
@@ -195,10 +195,16 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 	mkdir -p $(GUIBUILD)/app/assets/stack/svg
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
+.PHONY: gui-deps
+gui-deps: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
+
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
-	# Hack for the new init to be built.
+gui: gui-deps
 	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+
+.PHONY: prod-gui
+prod-gui: gui-deps
+	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -t [ envify purge --NODE_ENV production --global true ]
 
 .PHONY: watch
 watch:
@@ -338,7 +344,10 @@ version:
 	echo '{"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"}' > $(GUIBUILD)/app/version.json
 
 .PHONY: dist
-dist: clean-all fast-dist
+dist: clean-all deps fast-babel prod-gui test-deps collect-requirements version
+	# We are only minifying the init bundle here because it takes considerable time.
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
+	$(PY) setup.py sdist --formats=bztar\
 
 .PHONY: fast-dist
 fast-dist: deps fast-babel gui test-deps collect-requirements version
