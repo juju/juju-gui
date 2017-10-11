@@ -1726,7 +1726,6 @@ describe('test_model.js', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'io',
         'juju-charm-models',
         'juju-tests-utils'
       ], function(Y) {

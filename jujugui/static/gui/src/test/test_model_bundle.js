@@ -43,7 +43,6 @@ describe('The bundle model', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'io',
       'juju-bundle-models',
       'juju-tests-utils'
     ], function(Y) {
