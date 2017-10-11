@@ -13,10 +13,11 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewHeader', function() {
-  let acl;
+  let acl, sendAnalytics;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
+    sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {
@@ -29,6 +30,7 @@ describe('MachineViewHeader', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={false}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
@@ -52,6 +54,7 @@ describe('MachineViewHeader', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={true}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
@@ -69,6 +72,7 @@ describe('MachineViewHeader', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={false}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
@@ -89,6 +93,7 @@ describe('MachineViewHeader', function() {
         droppable={true}
         isOver={false}
         menuItems={menuItems}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
@@ -115,6 +120,7 @@ describe('MachineViewHeader', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={false}
+        sendAnalytics={sendAnalytics}
         toggle={{
           action: action,
           disabled: false,

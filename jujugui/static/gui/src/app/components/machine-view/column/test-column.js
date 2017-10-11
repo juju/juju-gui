@@ -12,10 +12,11 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewColumn', function() {
-  let acl;
+  let acl, sendAnalytics;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
+    sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {
@@ -34,6 +35,7 @@ describe('MachineViewColumn', function() {
         dropUnit={dropUnit}
         isOver={false}
         menuItems={menuItems}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         toggle={toggle}
         type="machine">
@@ -51,6 +53,7 @@ describe('MachineViewColumn', function() {
           menuItems={menuItems}
           title="Sandbox"
           toggle={toggle}
+          sendAnalytics={sendAnalytics}
           type="machine" />
         <div className="machine-view__column-content">
           <div>contents</div>
@@ -71,6 +74,7 @@ describe('MachineViewColumn', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={true}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
@@ -88,6 +92,7 @@ describe('MachineViewColumn', function() {
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={false}
+        sendAnalytics={sendAnalytics}
         title="Sandbox"
         type="machine" />);
     const expected = (
