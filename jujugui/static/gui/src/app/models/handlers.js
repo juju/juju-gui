@@ -97,6 +97,15 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     handleGUIServices: (unit, db) => {
+      // XXX This is in place for some minor test difficulties. Something about
+      // the way that test data is loaded into the db allows this to be
+      // undefined. This is a problem with tests only and lower priority, so
+      // this will be an issue to be tackled later.
+      // https://github.com/juju/juju-gui/issues/3277
+      // Makyo 2017-10-12
+      if (!unit.charmUrl) {
+        return;
+      }
       const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
       if (url.name !== 'jujushell' || (url.user && url.user !== 'yellow')) {
         return;
