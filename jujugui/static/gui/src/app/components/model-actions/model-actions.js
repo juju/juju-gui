@@ -85,7 +85,7 @@ class ModelActions extends React.Component {
       );
     }
     let terminalAction = null;
-    if (true) {
+    if (false) {
       terminalAction = (<Terminal
         address={props.address}
         creds={props.creds} />);
@@ -138,6 +138,7 @@ ModelActions.propTypes = {
   address: PropTypes.string,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
+  creds: PropTypes.object,
   exportEnvironmentFile: PropTypes.func.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,

@@ -5,9 +5,8 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const shapeup = require('shapeup');
 const XTerm = require('xterm');
-require('xterm/lib/addons/terminado/terminado')
+require('xterm/lib/addons/terminado/terminado');
 
-const GenericButton = require('../generic-button/generic-button');
 const Lightbox = require('../lightbox/lightbox');
 
 const SvgIcon = require('../svg-icon/svg-icon');
@@ -57,10 +56,10 @@ class Terminal extends React.Component {
       console.error('WebSocket error:', err);
     };
     ws.onmessage = evt => {
-      const resp = JSON.parse(evt.data)
+      const resp = JSON.parse(evt.data);
       if (resp.code === 'error') {
         console.error(resp.message);
-        return
+        return;
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
@@ -89,7 +88,7 @@ class Terminal extends React.Component {
     }
     const props = this.props;
     const address = props.address;
-    let classes = 'model-actions__import model-actions__button'
+    let classes = 'model-actions__import model-actions__button';
     if (!address) {
       classes += ' model-actions__button-disabled';
     }

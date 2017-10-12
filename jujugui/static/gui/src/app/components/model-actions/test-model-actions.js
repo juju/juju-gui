@@ -10,10 +10,15 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('ModelActions', function() {
-  var acl;
+  var acl, term;
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    if (false) {
+      term = (<Terminal
+        address={undefined}
+        creds={undefined} />);
+    }
   });
 
   it('can render and pass the correct props', function() {
@@ -22,6 +27,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -73,9 +79,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <Terminal
-            address={undefined}
-            creds={undefined} />
+          {term}
         </div>
         <input className="model-actions__file"
           type="file"
@@ -93,6 +97,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -115,6 +120,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
@@ -139,6 +145,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
@@ -163,6 +170,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -214,9 +222,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <Terminal
-            address={undefined}
-            creds={undefined} />
+          {term}
         </div>
         <input className="model-actions__file"
           type="file"
@@ -233,6 +239,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -251,6 +258,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {root: 'new'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -270,6 +278,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -289,6 +298,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -309,6 +319,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {profile: 'foo'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
@@ -329,6 +340,7 @@ describe('ModelActions', function() {
         acl={acl}
         appState={{current: {root: 'account'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}

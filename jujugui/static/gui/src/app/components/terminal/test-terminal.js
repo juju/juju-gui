@@ -3,13 +3,13 @@
 
 const React = require('react');
 
-const Lightbox = require("../lightbox/lightbox")
-const SvgIcon = require('../svg-icon/svg-icon')
+const Lightbox = require('../lightbox/lightbox');
+const SvgIcon = require('../svg-icon/svg-icon');
 const Terminal = require('./terminal');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
-fdescribe('Terminal', () => {
+describe('Terminal', () => {
 
   it('should display a button', () => {
     const renderer = jsTestUtils.shallowRender(
@@ -79,7 +79,7 @@ fdescribe('Terminal', () => {
       <Lightbox close={instance.setOpened}>
         <div id="juju-shell"></div>
       </Lightbox>
-    )
+    );
     expect(output).toEqualJSX(expected);
   });
 
