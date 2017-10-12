@@ -1124,7 +1124,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       logoutUrl = applicationConfig.baseUrl.replace(/\/?$/, logoutUrl);
     }
     const doCharmstoreLogout = () => {
-      return this.getUser('charmstore') && !this.get('gisf');
+      return this.getUser('charmstore') && !applicationConfig.gisf;
     };
     const LogoutLink = (<Logout
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
