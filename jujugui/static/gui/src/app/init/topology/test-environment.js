@@ -340,7 +340,7 @@ const EnvironmentView = proxyquire('./environment', {
       plus.dispatchEvent(click);
       assert.equal(state.changeState.callCount, 1);
       assert.deepEqual(state.changeState.args[0][0], {
-        root: 'store'
+        store: ''
       });
     });
 

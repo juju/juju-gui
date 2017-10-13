@@ -61,7 +61,6 @@ describe('HeaderSearch', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,
-      root: null,
       store: null,
       search: null
     });
@@ -132,7 +131,8 @@ describe('HeaderSearch', function() {
         .classList.contains('header-search--active'));
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
-      root: 'store',
+      store: '',
+      root: 'new',
       user: null,
       profile: null,
       gui: {
@@ -158,7 +158,7 @@ describe('HeaderSearch', function() {
     assert.equal(blurStub.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
-      root: 'store'
+      store: ''
     });
   });
 
