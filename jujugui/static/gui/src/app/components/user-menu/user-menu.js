@@ -47,6 +47,12 @@ class UserMenu extends React.Component {
               onClick={this._handleAccountClick.bind(this)}>Account</a>
           </li>,
           <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="help">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={this.props.showHelp.bind(this)}>GUI help</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="logout">
             {this.props.LogoutLink}
           </li>
@@ -61,7 +67,8 @@ UserMenu.propTypes = {
   USSOLoginLink: PropTypes.object,
   controllerAPI: PropTypes.object,
   navigateUserAccount: PropTypes.func.isRequired,
-  navigateUserProfile: PropTypes.func.isRequired
+  navigateUserProfile: PropTypes.func.isRequired,
+  showHelp: PropTypes.func.isRequired
 };
 
 module.exports = UserMenu;

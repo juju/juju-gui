@@ -18,5 +18,11 @@
       }
     }
   }
+  .dropdown-menu__list-item:nth-child(3) {
+    display: none;
 
+    @media screen and (max-width: $breakpoint-medium) {
+      display: block;
+    }
+  }
 }

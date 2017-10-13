@@ -349,7 +349,11 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   */
   _renderHelp(state, next) {
     ReactDOM.render(<Help
-      changeState={this.state.changeState.bind(this.state)} />,
+      changeState={this.state.changeState.bind(this.state)}
+      displayShortcutsModal={this._displayShortcutsModal.bind(this)}
+      gisf={this.applicationConfig.gisf}
+      user={this.user}
+      webHandler={new yui.juju.environments.web.WebHandler()} />,
       document.getElementById('help'));
     next();
   }
@@ -1082,11 +1086,18 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         this.state.changeState.bind(this.state));
     };
 
+    const showHelp = () => {
+      this.state.changeState({
+        help: true
+      });
+    };
+
     ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
+      showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink}
     />, linkContainer);
   }

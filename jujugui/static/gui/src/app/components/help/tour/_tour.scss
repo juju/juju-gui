@@ -1,0 +1,130 @@
+.tour {
+  $tour-max-width: 850px;
+
+  &.lightbox {
+    @media screen and (min-width: $tour-max-width) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .lightbox {
+    &__close {
+      @media screen and (max-width: $tour-max-width - 1) {
+        top: .5rem;
+        right: .5rem;
+      }
+    }
+
+    &__wrapper {
+      text-align: left;
+
+      @media screen and (min-width: $tour-max-width) {
+        width: 850px;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+      }
+
+      @media screen and (max-width: $tour-max-width - 1) {
+        top: 2.5rem;
+        left: 0;
+        right: 0;
+        bottom: 2.5rem;
+      }
+    }
+
+    &__content {
+      padding: 0;
+
+      @media screen and (min-width: $tour-max-width) {
+        height: 530px;
+      }
+    }
+
+    &__slide {
+      &:nth-child(2) {
+        .tour__slide-image {
+          margin-top: 4rem;
+        }
+      }
+      &:nth-child(4) {
+        .tour__slide-image {
+          margin-top: 4rem;
+        }
+      }
+    }
+
+    @media screen and (max-width: $tour-max-width - 1) {
+      &__navigation-previous,
+      &__navigation-next {
+        top: auto;
+        margin-top: 0;
+        bottom: -2.75rem;
+        z-index: 1;
+      }
+      &__navigation-previous {
+        left: -.5rem;
+      }
+
+      &__navigation-next {
+        right: -.5rem;
+      }
+
+      &__navigation-bullets {
+        bottom: -4rem;
+      }
+    }
+  }
+
+  &__slide {
+    text-align: center;
+    height: 530px;
+
+    &-image {
+      display: inline-block;
+      padding: 2rem;
+    }
+
+    &-description {
+      background: $dark-header;
+      padding: 2rem;
+      text-align: left;
+      color: $white;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      .ten-col {
+        margin-bottom: 0;
+        font-size: 1.125rem;
+      }
+    }
+  }
+
+  .u-pending {
+    color: $warning;
+  }
+}
+
+.back-to-help {
+  display: flex;
+  position: fixed;
+  color: $white;
+  cursor: pointer;
+  z-index: index($z-indexed-elements, back-to-help);
+  left: 50%;
+  margin-left: -405px;
+  top: 50%;
+  margin-top: -300px;
+  align-items: center;
+
+  &__icon {
+    transform: rotate(90deg);
+    stroke: $white;
+    margin-right: .25rem;
+  }
+}

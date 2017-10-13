@@ -15,36 +15,53 @@ class Lightbox extends React.Component {
     super();
 
     this.state = {
-      activeSlide: 0
+      activeSlide: 0,
+      lastSlide: null
     };
   }
 
+  componentWillMount() {
+    if (this.props.children.map) {
+      this.setState({
+        lastSlide: this.props.children.length - 1
+      });
+    }
+  }
+
   _goToSlide(index) {
+    if (index < 0) {
+      index = 0;
+    }
+    if (index > this.state.lastSlide) {
+      index = this.state.lastSlide;
+    }
     this.setState({
       activeSlide: index
     });
   }
 
   _nextSlide() {
-    this.setState({
-      activeSlide: this.state.activeSlide += 1
-    });
+    const nextSlide = this.state.activeSlide + 1;
+    if (nextSlide <= this.state.lastSlide) {
+      this._goToSlide(nextSlide);
+    }
   }
 
   _previousSlide() {
-    this.setState({
-      activeSlide: this.state.activeSlide -= 1
-    });
+    const nextSlide = this.state.activeSlide - 1;
+    if (nextSlide >= 0) {
+      this._goToSlide(nextSlide);
+    }
   }
 
   _generateNavigation() {
-    if (!this.props.children.map) {
+    if (!this.state.lastSlide) {
       return;
     }
 
     const bullets = [];
 
-    for(let i = 0, ii = this.props.children.length; i < ii; i += 1) {
+    for(let i = 0, ii = this.state.lastSlide; i <= ii; i += 1) {
       const classes = classNames(
         'lightbox__navigation-bullet',
         {
@@ -52,17 +69,39 @@ class Lightbox extends React.Component {
         }
       );
 
-      bullets.push(<li className={classes} key={i}>&bull;</li>);
+      bullets.push(
+        <li
+          className={classes}
+          key={i}
+          onClick={this._goToSlide.bind(this, i)}>&bull;</li>);
     }
+
+    const previousButtonClasses = classNames(
+      'lightbox__navigation-previous',
+      {
+        'is-disabled': this.state.activeSlide === 0
+      }
+    );
+
+    const nextButtonClasses = classNames(
+      'lightbox__navigation-next',
+      {
+        'is-disabled': this.state.activeSlide === this.state.lastSlide
+      }
+    );
 
     return (
       <div className="lightbox__navigation">
-        <span role="button" className="lightbox__navigation-previous">
+        <button
+          onClick={this._previousSlide.bind(this)}
+          className={previousButtonClasses}>
           Previous
-        </span>
-        <span role="button" className="lightbox__navigation-next">
+        </button>
+        <button
+          onClick={this._nextSlide.bind(this)}
+          className={nextButtonClasses}>
           Next
-        </span>
+        </button>
         <ul className="lightbox__navigation-bullets">
           {bullets}
         </ul>
@@ -107,15 +146,21 @@ class Lightbox extends React.Component {
       );
     }
 
+    let classes = ['lightbox'];
+
+    if (this.props.extraClasses) {
+      classes = classes.concat(this.props.extraClasses);
+    }
+
     return (
-      <div className="lightbox" onClick={this._handleClose.bind(this)}>
+      <div className={classes.join(' ')} onClick={this._handleClose.bind(this)}>
         <button className="lightbox__close">
           <SvgIcon name="close_16_white" width="16" />
         </button>
         <div className="lightbox__wrapper" onClick={this._stopPropagation.bind(this)}>
           <div className="lightbox__content">
-            {this._generateContent()}
             {this._generateNavigation()}
+            {this._generateContent()}
           </div>
           {caption}
         </div>
@@ -127,7 +172,8 @@ class Lightbox extends React.Component {
 Lightbox.propTypes = {
   caption: PropTypes.string,
   children: PropTypes.node,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
+  extraClasses: PropTypes.array
 };
 
 module.exports = Lightbox;

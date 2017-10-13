@@ -152,9 +152,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="status-container"></div>
       <div id="login-notification"></div>
       <div id="cookie-container"></div>
+      <div id="help"></div>
       <div id="viewport">
         <div id="content">
-          <div id="help"></div>
           <div id="modal-shortcuts"></div>
           <div id="modal-gui-settings"></div>
           <div id="lightbox"></div>
