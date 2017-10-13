@@ -23,8 +23,7 @@ if (typeof this.jujugui === 'undefined') {
 }
 
 const ROOT_RESERVED = [
-  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store',
-  'account'];
+  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'account'];
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
@@ -516,14 +515,12 @@ const State = class State {
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
-      // If there is anything after this then it's an invalid URL.
-      // Unless it's the store. This is a hack for 2.3.0 release and
-      // should be removed when the store url routing is sorted.
-      // This fixes an issue that even though `/store/u/:user/:model` isn't
-      // a valid url navigating through the search box works, navigating
-      // backwards from an entity doesn't work.
-      if (parts.length > 1 && parts[0] !== 'store') {
+      // If there is anything after this then it's an invalid URL unless it's the store.
+      if (parts.length > 1 && parts[1] !== 'store') {
         error = invalidRootPath;
+      }
+      if (parts[1] === 'store') {
+        state.store = '';
       }
       return {error, state};
     }
@@ -583,6 +580,8 @@ const State = class State {
       // If there are more than 3 parts then this is an invalid url.
       if (partsLength > 3) {
         error = invalidStorePath;
+      } else if (parts[0] === 'store') {
+        state.store = '';
       } else {
         state.store = parts.join('/');
       }
@@ -642,6 +641,9 @@ const State = class State {
     const store = stateObj.store;
     if (store) {
       path.push(store);
+    } else if (store === '') {
+      // The store path is empty so we just show the root store.
+      path.push('store');
     }
     const gui = stateObj.gui;
     if (gui) {
