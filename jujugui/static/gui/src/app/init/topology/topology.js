@@ -210,7 +210,7 @@ class Topology extends Component {
           return;
         }
         self.state.changeState({
-          root: 'store'
+          store: ''
         });
         // Pass the wheel events to the canvas so that it can be zoomed.
       }).on('mousewheel.zoom', this.handleZoom.bind(this))

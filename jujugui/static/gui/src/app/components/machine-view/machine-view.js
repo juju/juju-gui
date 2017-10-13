@@ -112,7 +112,7 @@ class MachineView extends React.Component {
     @method _openStore
   */
   _openStore() {
-    this.props.changeState({root: 'store'});
+    this.props.changeState({store: ''});
   }
 
   /**

@@ -426,7 +426,7 @@ class GUIApp {
   checkUserCredentials(state, next) {
     // If we're in disconnected mode (either "/new" or "/store"), then allow
     // the canvas to be shown.
-    if (state && (state.root === 'new' || state.root === 'store')) {
+    if (state && (state.root === 'new' || (state.root === 'new' && state.store === ''))) {
       next();
       return;
     }
@@ -541,9 +541,6 @@ class GUIApp {
         this._handleLogout();
         this.state.changeState({root: 'login'});
         return;
-        break;
-      case 'store':
-        this._renderCharmbrowser(state, next);
         break;
       case 'account':
         this._renderAccount(state, next);
@@ -826,7 +823,7 @@ class GUIApp {
     // state at this point.
     const current = state.current;
     const modelUUID = this.modelUUID;
-    if (modelUUID && !current.profile && current.root !== 'store') {
+    if (modelUUID && !current.profile && current.store !== '') {
       // A model uuid was defined in the config so attempt to connect to it.
       this._listAndSwitchModel(null, modelUUID);
     } else if (entityPromise !== null) {
