@@ -28,6 +28,10 @@ class UserProfile extends React.Component {
     this.props.setPageTitle();
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.props.setPageTitle(nextProps.userInfo.profile);
+  }
+
   /**
     Set the list of entities, used by the child component.
 
