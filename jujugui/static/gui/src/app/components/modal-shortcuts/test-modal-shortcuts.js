@@ -56,7 +56,7 @@ describe('ModalSortcuts', function() {
   it('renders', function() {
     const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <ModalShortcuts
+      <ModalShortcuts.WrappedComponent
         closeModal={close}
         guiVersion="1.2.3"
         keybindings={keybindings} />, true);

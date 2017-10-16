@@ -6,7 +6,14 @@ const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+const enhanceWithClickOutside = require('../../init/react-click-outside');
+
 class ModalShortcuts extends React.Component {
+
+  handleClickOutside() {
+    this.props.closeModal();
+  }
+
   /**
   @return {Array} An array of the bindings to create ul.
   */
@@ -80,4 +87,4 @@ ModalShortcuts.propTypes = {
   keybindings: PropTypes.object.isRequired
 };
 
-module.exports = ModalShortcuts;
+module.exports = enhanceWithClickOutside(ModalShortcuts);
