@@ -29,9 +29,10 @@ describe('HeaderHelp', function() {
     return jsTestUtils.shallowRender(
       <HeaderHelp
         appState={appState}
+        changeState={sinon.stub()}
         displayShortcutsModal={sinon.stub()}
         gisf={gisf}
-        user={user}/>, true);
+        user={user} />, true);
   }
 
   it('can render', () => {
@@ -44,6 +45,14 @@ describe('HeaderHelp', function() {
         ref="buttonDropdown"
         icon="help_16"
         listItems={[
+          <li key="help"
+            className="dropdown-menu__list-item"
+            onClick={instance._handleHelpClick}
+            role="menuItem" tabIndex="0">
+            <span className="dropdown-menu__list-item-link">
+              GUI help
+            </span>
+          </li>,
           <li className="dropdown-menu__list-item" role="menuitem" tabIndex="0" key="docs">
             <a className="dropdown-menu__list-item-link"
               href="https://jujucharms.com/docs/stable/getting-started-jaas"
@@ -82,6 +91,13 @@ describe('HeaderHelp', function() {
         ref="buttonDropdown"
         icon="help_16"
         listItems={[
+          <li key="help"
+            className="dropdown-menu__list-item"
+            onClick={instance._handleHelpClick} role="menuItem" tabIndex="0">
+            <span className="dropdown-menu__list-item-link">
+              GUI help
+            </span>
+          </li>,
           null,
           <li className="dropdown-menu__list-item" role="menuitem" tabIndex="0" key="issues">
             <a className="dropdown-menu__list-item-link"
@@ -112,7 +128,7 @@ describe('HeaderHelp', function() {
       }
     };
     // call the elements onClick
-    output.props.listItems[2].props.onClick();
+    output.props.listItems[3].props.onClick();
     assert.equal(instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
     assert.equal(instance.props.displayShortcutsModal.callCount, 1);
   });

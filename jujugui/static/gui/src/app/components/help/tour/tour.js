@@ -7,7 +7,7 @@ const React = require('react');
 const Lightbox = require('../../lightbox/lightbox');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-class Tour extends React.Component {
+class Tour extends React.PureComponent {
   render() {
     const tourPath = '/static/gui/build/app/assets/images/non-sprites/tour';
     return (
@@ -20,7 +20,7 @@ class Tour extends React.Component {
         </span>
         <Lightbox
           close={this.props.close.bind(this)}
-          extraClasses="tour">
+          extraClasses={['tour']}>
           <div className="tour__slide">
             <img className="tour__slide-image"
               src={`${tourPath}/welcome.png`}
@@ -31,7 +31,7 @@ class Tour extends React.Component {
                 Welcome to JAAS. You've arrived at the empty canvas.
                  Click on the green button to visit the store and start building
                  your application.
-               </p>
+              </p>
             </div>
           </div>
           <div className="tour__slide">
@@ -82,7 +82,8 @@ class Tour extends React.Component {
               <p className="ten-col">
                 Use the inspector to switch between application view,
                 where you can see a visual representation of your workload,
-                and machine view, where you can see and manage all of the instances your model is using.
+                and machine view, where you can see and manage all of the instances
+                your model is using.
               </p>
             </div>
           </div>
@@ -121,8 +122,8 @@ class Tour extends React.Component {
 }
 
 Tour.propTypes = {
-  endTour: PropTypes.func,
   close: PropTypes.func.isRequired,
+  endTour: PropTypes.func
 };
 
 module.exports = Tour;

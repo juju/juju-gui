@@ -20,7 +20,9 @@ class Help extends React.Component {
   }
   componentWillMount() {
     this.getJujuShow = this.props.webHandler.sendGetRequest(
-      'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCSsoSZBAZ3Ivlbt_fxyjIkw&maxResults=1&order=date&type=video&key=AIzaSyD_639SY-Avl4WEZ1gyQnANtQKrs6jq-PI',
+      'https://www.googleapis.com/youtube/v3/search' +
+      '?part=snippet&channelId=UCSsoSZBAZ3Ivlbt_fxyjIkw' +
+      '&maxResults=1&order=date&type=video&key=AIzaSyD_639SY-Avl4WEZ1gyQnANtQKrs6jq-PI',
       {},
       null,
       null,
@@ -32,10 +34,11 @@ class Help extends React.Component {
             title: data.items[0].snippet.title,
             thumbnail: data.items[0].snippet.thumbnails.medium,
             videoId: data.items[0].id.videoId
-          }
+          };
           this.setState({jujuShow: jujuShow});
         } catch (_) {
-
+          // Don't do anything. The jujushow is a nice addition but not
+          // required.
         }
       }
     );
@@ -76,13 +79,13 @@ class Help extends React.Component {
     let link = 'https://github.com/juju/juju-gui/issues';
     const props = this.props;
     if (props.user) {
-      label = 'Get Support';
+      label = 'Get support';
       link = props.gisf ? 'https://jujucharms.com/support' :
         'https://jujucharms.com/docs/stable/about-juju';
     }
     return (
       <a className="link"
-          href={link} target="_blank">{label}</a>);
+        href={link} target="_blank">{label}</a>);
   }
 
   _generateJujuShow() {
@@ -119,7 +122,7 @@ class Help extends React.Component {
 
     return (<Lightbox
       close={this._handleClose.bind(this)}
-      extraClasses='help'>
+      extraClasses={['help']}>
       <div>
         <header className="help__header clearfix">
           <h3 className="help__header-title">Help</h3>
@@ -135,7 +138,7 @@ class Help extends React.Component {
               <input type="search" name="text"
                 className="header-search__input"
                 placeholder="Search the docs"
-                ref={input => {this.searchDocs = input}} />
+                ref={input => {this.searchDocs = input;}} />
             </form>
           </div>
         </header>
@@ -157,7 +160,10 @@ class Help extends React.Component {
               <a
                 href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
                 target="_blank" className="link charm-row">
-                <img src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg" alt="Kubernetes logo"
+                <img
+                  src={'https://api.jujucharms.com/charmstore/v5/~containers/' +
+                  'kubernetes-master-55/icon.svg'}
+                  alt="Kubernetes logo"
                   width="24" />
                 Kubernetes tutorial</a>
             </p>
@@ -165,7 +171,10 @@ class Help extends React.Component {
               <a
                 href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
                 target="_blank" className="link charm-row">
-                <img src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg" alt="Hadoop Spark logo"
+                <img
+                  src={'https://api.jujucharms.com/charmstore/v5/xenial/' +
+                  'hadoop-client-8/icon.svg'}
+                  alt="Hadoop Spark logo"
                   width="24" />
                 Hadoop Spark tutorial</a>
             </p>
@@ -178,8 +187,8 @@ class Help extends React.Component {
                 src={'/static/gui/build/app/assets/images/non-sprites/tour/help.png'}
               />
               <span role="button" className="link"
-                onClick={this._startTour.bind(this)}
-                >Learn how to use the canvas.
+                onClick={this._startTour.bind(this)}>
+                Learn how to use the canvas.
               </span>
             </p>
           </VanillaCard>

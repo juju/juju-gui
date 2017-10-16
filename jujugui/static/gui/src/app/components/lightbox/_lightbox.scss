@@ -93,7 +93,7 @@
         repeat: no-repeat;
       }
 
-      &.is-disabled {
+      &[disabled] {
         opacity: .5;
         cursor: default;
       }

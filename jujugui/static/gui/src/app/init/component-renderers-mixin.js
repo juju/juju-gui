@@ -354,7 +354,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       gisf={this.applicationConfig.gisf}
       user={this.user}
       webHandler={new yui.juju.environments.web.WebHandler()} />,
-      document.getElementById('help'));
+    document.getElementById('help')
+    );
     next();
   }
 

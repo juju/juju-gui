@@ -1,5 +1,4 @@
-/* Copyright (C) 2015 Canonical Ltd. */
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const React = require('react');
@@ -76,30 +75,18 @@ class Lightbox extends React.Component {
           onClick={this._goToSlide.bind(this, i)}>&bull;</li>);
     }
 
-    const previousButtonClasses = classNames(
-      'lightbox__navigation-previous',
-      {
-        'is-disabled': this.state.activeSlide === 0
-      }
-    );
-
-    const nextButtonClasses = classNames(
-      'lightbox__navigation-next',
-      {
-        'is-disabled': this.state.activeSlide === this.state.lastSlide
-      }
-    );
-
     return (
       <div className="lightbox__navigation">
         <button
+          disabled={this.state.activeSlide === 0}
           onClick={this._previousSlide.bind(this)}
-          className={previousButtonClasses}>
+          className="lightbox__navigation-previous">
           Previous
         </button>
         <button
+          disabled={this.state.activeSlide === this.state.lastSlide}
           onClick={this._nextSlide.bind(this)}
-          className={nextButtonClasses}>
+          className="lightbox__navigation-next">
           Next
         </button>
         <ul className="lightbox__navigation-bullets">
@@ -123,7 +110,7 @@ class Lightbox extends React.Component {
       );
       return (
         <div className={classes} key={index}>{child}</div>
-      )
+      );
     });
   }
 
