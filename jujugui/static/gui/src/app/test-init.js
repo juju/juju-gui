@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const keysim = require('keysim');
 const utils = require('../test/utils');
 const ReactDOM = require('react-dom');
 
@@ -64,15 +63,6 @@ describe('init', () => {
     it('should produce a valid index', () => {
       container.getAttribute('id').should.equal('test-container');
       container.getAttribute('class').should.include('container');
-    });
-
-    it('activates the listeners for keyboard events', () => {
-      const keyboard = keysim.Keyboard.US_ENGLISH;
-      const keystroke = new keysim.Keystroke(keysim.Keystroke.SHIFT, 191);
-      keyboard.dispatchEventsForKeystroke(keystroke, container);
-      const shortcuts = document.getElementById('modal-shortcuts');
-      assert.equal(shortcuts.children.length > 0, true,
-        'The shortcuts component did not render');
     });
 
     describe('MAAS support', () => {

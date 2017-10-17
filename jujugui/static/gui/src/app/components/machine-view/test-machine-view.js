@@ -699,6 +699,7 @@ describe('MachineView', function() {
       '.machine-view__auto-place .button--inline-neutral');
     testUtils.Simulate.click(node);
     assert.equal(autoPlaceUnits.callCount, 1);
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can disable auto place when read only', function() {

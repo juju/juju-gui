@@ -15,8 +15,15 @@ describe('ModalSortcuts', function() {
     test2: {label: 'test2', help: 'a second test item'}
   };
 
-  function visibleRender(hide = sinon.stub()) {
-    return (<div className="modal">
+  it('renders', function() {
+    const hide = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <ModalShortcuts.WrappedComponent
+        closeModal={hide}
+        guiVersion="1.2.3"
+        keybindings={keybindings} />, true);
+    let output = renderer.getRenderOutput();
+    let expected = (<div className="modal">
       <div className="twelve-col no-margin-bottom">
         <h2 className="bordered">Keyboard Shortcuts</h2>
         <span className="close" tabIndex="0" role="button"
@@ -51,17 +58,6 @@ describe('ModalSortcuts', function() {
         </div>
       </div>
     </div>);
-  }
-
-  it('renders', function() {
-    const close = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <ModalShortcuts
-        closeModal={close}
-        guiVersion="1.2.3"
-        keybindings={keybindings} />, true);
-    let output = renderer.getRenderOutput();
-    let expected = visibleRender(close);
     expect(output).toEqualJSX(expected);
   });
 });
