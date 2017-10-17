@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 class InsetSelect extends React.Component {
@@ -46,11 +48,11 @@ class InsetSelect extends React.Component {
     var element, id;
     if (label) {
       id = label.replace(' ', '-');
-      element =
+      element = (
         <label className="inset-select__label"
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,

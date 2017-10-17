@@ -22,9 +22,7 @@ MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
-BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
-REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python
@@ -129,8 +127,8 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
-	$(PY) scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
+$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS)
+	$(PY) scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)"
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
 # fast-babel will be passed a list of all files which have been
@@ -148,27 +146,11 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
-		-not -name "js-macaroon*" \
-		-not -name "d3-min.js" | \
+		-not -name "js-macaroon*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
-
-$(REACT_ASSETS): $(NODE_MODULES)
-	cp $(NODE_MODULES)/prop-types/prop-types.js $(BUILT_JS_ASSETS)/prop-types.js
-	cp $(NODE_MODULES)/prop-types/prop-types.min.js $(BUILT_JS_ASSETS)/prop-types.min.js
-	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
-	cp $(NODE_MODULES)/marked/lib/marked.js $(BUILT_JS_ASSETS)/marked.js
-	cp $(NODE_MODULES)/marked/marked.min.js $(BUILT_JS_ASSETS)/marked.min.js
-	cp $(NODE_MODULES)/clipboard/dist/clipboard.js $(BUILT_JS_ASSETS)/clipboard.js
-	cp $(NODE_MODULES)/clipboard/dist/clipboard.min.js $(BUILT_JS_ASSETS)/clipboard.min.js
-	cp $(NODE_MODULES)/react-dnd/dist/ReactDnD.min.js $(BUILT_JS_ASSETS)/ReactDnD.min.js
-	cp $(NODE_MODULES)/react-dnd-html5-backend/dist/ReactDnDHTML5Backend.min.js $(BUILT_JS_ASSETS)/ReactDnDHTML5Backend.min.js
-	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
-	cp $(NODE_MODULES)/prismjs/prism.js $(BUILT_JS_ASSETS)/prism.js
-	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
-	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(NODE_MODULES)/prismjs/prism.js -o $(BUILT_JS_ASSETS)/prism.min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
@@ -213,10 +195,16 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 	mkdir -p $(GUIBUILD)/app/assets/stack/svg
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
+.PHONY: gui-deps
+gui-deps: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
+
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
-	# Hack for the new init to be built.
-	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+gui: gui-deps
+	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+
+.PHONY: prod-gui
+prod-gui: gui-deps
+	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -t [ envify purge --NODE_ENV production --global true ]
 
 .PHONY: watch
 watch:
@@ -356,7 +344,10 @@ version:
 	echo '{"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"}' > $(GUIBUILD)/app/version.json
 
 .PHONY: dist
-dist: clean-all fast-dist
+dist: clean-all deps fast-babel prod-gui test-deps collect-requirements version
+	# We are only minifying the init bundle here because it takes considerable time.
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
+	$(PY) setup.py sdist --formats=bztar\
 
 .PHONY: fast-dist
 fast-dist: deps fast-babel gui test-deps collect-requirements version

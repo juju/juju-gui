@@ -15,27 +15,23 @@ describe('USSOLoginLink', () => {
         in the address bar above, please allow popups
         from ${window.location.origin}.`;
 
-  beforeAll(done => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('usso-login-link', () => { done(); });
-  });
-
   it('can render a text link', () => {
     const output = jsTestUtils.shallowRender(
       <USSOLoginLink
         addNotification={sinon.stub()}
         displayType={'text'}
         loginToController={sinon.stub()} />);
-    const expected = <div className="usso-login">
-      <a className="usso-login__action"
-        onClick={output.props.children[0].props.onClick}
-        target="_blank">
-          Login
-      </a>
-      <div className="usso-login__notification">
-        {notification}
-      </div>
-    </div>;
+    const expected = (
+      <div className="usso-login">
+        <a className="usso-login__action"
+          onClick={output.props.children[0].props.onClick}
+          target="_blank">
+            Login
+        </a>
+        <div className="usso-login__notification">
+          {notification}
+        </div>
+      </div>);
     expect(output).toEqualJSX(expected);
   });
 

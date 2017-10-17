@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
@@ -18,6 +20,7 @@ MachineViewMachineUnitGlobals.dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
+    props.sendAnalytics('Machine View', 'Drag Target', 'Machine Unit');
     return {unit: props.unit};
   },
 
@@ -111,6 +114,7 @@ MachineViewMachineUnit.propTypes = {
   isDragging: PropTypes.bool.isRequired,
   machineType: PropTypes.string.isRequired,
   removeUnit: PropTypes.func,
+  sendAnalytics: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,
   unit: PropTypes.object.isRequired
 };

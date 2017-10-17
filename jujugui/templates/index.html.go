@@ -149,6 +149,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="inspector-container"></div>
       <div id="white-box-container"></div>
       <div id="machine-view"></div>
+      <div id="post-deployment"></div>
       <div id="status-container"></div>
       <div id="login-notification"></div>
       <div id="cookie-container"></div>
@@ -291,26 +292,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       to download an app the user might not be able to use anyway.
     -->
 
-    <!--
-      d3 must be loaded with the initial yui assets. if loaded by the combo loader
-      it will be combined with our app code and be interpreted under global
-      'use strict' and d3 doesn't work under strict.
-    -->
     {{if .debug}}
     <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
-    <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
     <script src="{{.comboURL}}?app/init-pkg.js"></script>
-    <script data-manual src="{{.comboURL}}?app/assets/javascripts/prop-types.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
     <script src="{{.comboURL}}?modules.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon.js"></script>
     <script src="{{.comboURL}}?app/state/state.js&app/user/user.js&app/utils/github-ssh-keys.js&app/utils/statsd.js&app/jujulib/index.js&app/jujulib/charmstore.js&app/jujulib/bundleservice.js&app/jujulib/plans.js&app/jujulib/payment.js&app/jujulib/stripe.js&app/jujulib/terms.js&app/jujulib/reconnecting-websocket.js&app/jujulib/urls.js&app/jujulib/bakery.js"></script>
     {{else}}
     <script src="{{.comboURL}}?app/init-pkg-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/version-min.js"></script>
-    <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <script data-manual src="{{.comboURL}}?app/assets/javascripts/prop-types.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js"></script>
     <script src="{{.comboURL}}?modules-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/js-macaroon-min.js"></script>
     <script src="{{.comboURL}}?app/state/state-min.js&app/user/user-min.js&app/utils/github-ssh-keys-min.js&app/utils/statsd-min.js&app/jujulib/index-min.js&app/jujulib/charmstore-min.js&app/jujulib/bundleservice-min.js&app/jujulib/plans-min.js&app/jujulib/payment-min.js&app/jujulib/stripe-min.js&app/jujulib/terms-min.js&app/jujulib/reconnecting-websocket-min.js&app/jujulib/urls-min.js&app/jujulib/bakery-min.js"></script>
@@ -345,40 +337,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         YUI(GlobalConfig).use([
-            'acl',
-            'analytics',
             'juju-charm-models',
             'juju-bundle-models',
             'juju-controller-api',
-            'juju-endpoints-controller',
             'juju-env-base',
             'juju-env-api',
-            'juju-env-web-handler',
             'juju-models',
-            'jujulib-utils',
-            'bakery-utils',
-            'net-utils',
             // juju-views group
-            'd3-components',
-            'juju-view-utils',
-            'juju-topology',
-            'juju-view-environment',
             'juju-landscape',
             // end juju-views group
-            'io',
-            'json-parse',
-            'app-base',
-            'app-transitions',
             'base',
             'bundle-import-notifications',
-            'node',
             'model',
-            'cookie',
-            'querystring',
-            'event-key',
-            'event-touch',
             'model-controller',
-            'FileSaver',
             'ghost-deployer-extension',
             'environment-change-set',
             'yui-patches'], function(Y) {

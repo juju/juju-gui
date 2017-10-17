@@ -43,10 +43,8 @@ describe('The bundle model', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'io',
       'juju-bundle-models',
-      'juju-tests-utils',
-      'charmstore-api'
+      'juju-tests-utils'
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');

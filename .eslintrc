@@ -25,6 +25,7 @@ rules:
   quotes: [2, "single"]
   react/jsx-key: 2
   react/jsx-no-duplicate-props: 2
+  react/jsx-wrap-multilines: 2
   react/prop-types: 2
   react/sort-prop-types: 2
   react/jsx-uses-react: 2
@@ -41,9 +42,6 @@ globals:
   beforeAll: true
   beforeEach: true
   chai: true
-  classNames: true
-  Clipboard: true
-  consoleManager: true
   dataLayer: true
   describe: true
   Exception: true
@@ -51,21 +49,15 @@ globals:
   fail: true
   GlobalConfig: true
   it: true
-  JsDiff: true
   jsTestUtils: true
-  jsyaml: true
   juju: true
   jujulib: true
-  marked: true
   MODULES: true
   nacl: true
-  Prism: true
-  PropTypes: true
-  saveAs: true
   shapeup: true
   sinon: true
   Stripe: true
   testUtils: true
+  xdescribe: true
   xit: true
   YUI: true
-  zip: true

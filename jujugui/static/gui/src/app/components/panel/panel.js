@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 class Panel extends React.Component {
@@ -25,6 +27,7 @@ class Panel extends React.Component {
     return classNames(
       'panel-component',
       this.props.instanceName,
+      this.props.extraClasses || null,
       {
         hidden: !this.props.visible
       }
@@ -76,6 +79,7 @@ Panel.propTypes = {
     PropTypes.array
   ]),
   clickAction: PropTypes.func,
+  extraClasses: PropTypes.string,
   focus: PropTypes.bool,
   instanceName: PropTypes.string.isRequired,
   visible: PropTypes.bool.isRequired

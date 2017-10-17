@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../generic-button/generic-button');
@@ -15,7 +16,8 @@ class CreateModelButton extends React.Component {
     // model to resolve a race condition with the new model setup.
     props.changeState({
       profile: null,
-      hash: null
+      hash: null,
+      postDeploymentPanel: null
     });
     props.switchModel(null);
     if (this.props.action) {

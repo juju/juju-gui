@@ -6,6 +6,7 @@ bin/
 build-debug
 build-prod
 build-shared
+browserify-cache.json
 classnames.js
 collected-requirements
 dist
@@ -24,6 +25,7 @@ jujugui.egg-info/
 jujugui/static/build/*
 jujugui/static/gui/build/
 karma-mocha-old.conf.js
+karma.conf.js
 lib/
 libpeerconnection.log
 local/

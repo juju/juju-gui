@@ -11,10 +11,11 @@ const MoreMenu = require('../../more-menu/more-menu');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachineUnit', function() {
-  let acl, service, unit;
+  let acl, sendAnalytics, service, unit;
 
   beforeEach(function () {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
+    sendAnalytics = sinon.stub();
     service = {
       get: function(val) {
         switch (val) {
@@ -48,6 +49,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="machine"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />, true);
     const output = renderer.getRenderOutput();
@@ -77,6 +79,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     const expected = (
@@ -110,6 +113,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     const expected = (
@@ -131,6 +135,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={true}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     const expected = (
@@ -153,6 +158,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     const expected = (
@@ -173,6 +179,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     const expected = (
@@ -194,6 +201,7 @@ describe('MachineViewMachineUnit', function() {
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
+        sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
     output.props.children[2].props.items[0].action();

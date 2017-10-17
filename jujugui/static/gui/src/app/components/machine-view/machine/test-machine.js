@@ -15,10 +15,11 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachine', function() {
   let acl, applications, generateMachineDetails, genericConstraints,
-      machineUnitACL, parseConstraints;
+      machineUnitACL, parseConstraints, sendAnalytics;
 
   beforeEach(function () {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
+    sendAnalytics = sinon.stub();
     machineUnitACL = acl.reshape(
       MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
     generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
@@ -92,6 +93,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />, true);
@@ -119,6 +121,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -129,6 +132,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -189,6 +193,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />, true);
@@ -235,6 +240,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         type="machine"
       />, true);
     const instance = renderer.getMountedInstance();
@@ -280,6 +286,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         type="machine"
       />, true);
     const instance = renderer.getMountedInstance();
@@ -382,6 +389,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         type="machine"
       />);
     const expected = (
@@ -392,6 +400,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={wordpress}
             unit={{
               'deleted': false,
@@ -449,6 +458,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         showConstraints={false}
         type="machine"
       />, true);
@@ -474,6 +484,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -484,6 +495,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -536,6 +548,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="container"
       />, true);
@@ -561,6 +574,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/0"
             machineType="container"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -571,6 +585,7 @@ describe('MachineViewMachine', function() {
             key="wordpress/1"
             machineType="container"
             removeUnit={removeUnit}
+            sendAnalytics={sendAnalytics}
             service={applications.getById()}
             unit={{
               'agent_state': 'started',
@@ -626,6 +641,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: destroyMachines
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />);
@@ -670,6 +686,7 @@ describe('MachineViewMachine', function() {
         }}
         type="container"
         parseConstraints={sinon.stub()}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
       />, true);
     const output = renderer.getRenderOutput();
@@ -727,6 +744,7 @@ describe('MachineViewMachine', function() {
           destroyMachines: sinon.stub()
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />, true);
@@ -775,6 +793,7 @@ describe('MachineViewMachine', function() {
           providerType: 'aws'
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />, true);
@@ -847,6 +866,7 @@ describe('MachineViewMachine', function() {
           updateMachineSeries: updateMachineSeries
         }}
         parseConstraints={parseConstraints}
+        sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine"
       />, true);

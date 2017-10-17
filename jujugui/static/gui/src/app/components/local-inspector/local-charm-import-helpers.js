@@ -96,7 +96,7 @@ function _uploadLocalCharmLoad(file, env, db, options, e) {
   if (e.type === 'error' || e.target.status >= 400) {
     notifications.add({
       title: 'Import failed',
-      message: 'Import from "' + file.name + '" failed. ' + res.Error,
+      message: 'Import from "' + file.name + '" failed. ' + res.Error || res.error,
       level: 'error'
     });
     console.log('error', e);

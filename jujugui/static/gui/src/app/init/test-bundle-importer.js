@@ -2,6 +2,7 @@
 'use strict';
 
 const BundleImporter = require('./bundle-importer');
+const jujulibConversionUtils = require('./jujulib-conversion-utils');
 
 describe('BundleImporter', () => {
   let bundleImporter, charmstore, db, getBundleChanges,
@@ -10,7 +11,7 @@ describe('BundleImporter', () => {
   beforeAll(done => {
     const requires = [
       'juju-tests-utils', 'juju-models', 'juju-env-api',
-      'juju-tests-factory', 'environment-change-set', 'jujulib-utils'];
+      'juju-tests-factory', 'environment-change-set'];
     YUI(GlobalConfig).use(requires, Y => {
       utils = Y['juju-tests'].utils;
       models = Y.namespace('juju.models');
@@ -44,7 +45,7 @@ describe('BundleImporter', () => {
       charmstore,
       db,
       getBundleChanges: getBundleChanges,
-      makeEntityModel: yui.juju.makeEntityModel,
+      makeEntityModel: jujulibConversionUtils.makeEntityModel,
       modelAPI
     });
   });

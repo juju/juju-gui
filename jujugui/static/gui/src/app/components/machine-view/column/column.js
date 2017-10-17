@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
@@ -25,9 +27,9 @@ MachineViewColumnGlobals.dropTarget = {
     if (monitor.didDrop()) {
       return;
     };
-    var item = monitor.getItem();
+    props.sendAnalytics('Machine View', 'Drop Target', 'Column');
     if (props.droppable) {
-      props.dropUnit(item.unit, null, props.type);
+      props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },
 
@@ -86,6 +88,7 @@ class MachineViewColumn extends React.Component {
           droppable={props.droppable}
           dropUnit={props.dropUnit}
           menuItems={props.menuItems}
+          sendAnalytics={props.sendAnalytics}
           title={props.title}
           toggle={props.toggle}
           type={props.type} />
@@ -117,6 +120,7 @@ MachineViewColumn.propTypes = {
   droppable: PropTypes.bool.isRequired,
   isOver: PropTypes.bool.isRequired,
   menuItems: PropTypes.array,
+  sendAnalytics: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   toggle: PropTypes.object,
   type: PropTypes.string

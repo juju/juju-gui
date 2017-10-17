@@ -1,3 +1,16 @@
+- 2.10.1:
+
+  - The majority of the GUI is now node-style require modules replacing the original YUI-style modules.
+  - The init sequence has been completely rewritten to take advantage of this module system considerably speeding up time to interaction.
+  - Size of the code sent to the client considerably reduced.
+  - Clicking on a machine in the Status view now links to that machine in the Machine View.
+  - Status view now sorts based on status level with error being the highest priority.
+  - Clicking on the relation in the status view now links to that relation in the Inspector.
+  - Beta release of the new Post Deployment document feature. After a bundle is deployed the GUI will display the contents of the bundles getstarted.md file.
+  - (Fix) Removing the model name in the model switcher pre-commit no longer prevents you from updating the model name.
+  - (Fix) Notifications now show on top of Deployment Flow.
+  - (Fix) Close local charm inspector when switching models.
+
 - 2.9.2:
 
   - Application icons are shown in the Beta Status view.

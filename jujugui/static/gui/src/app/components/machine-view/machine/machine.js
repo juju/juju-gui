@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
@@ -23,8 +25,8 @@ MachineViewMachineGlobals.dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function (props, monitor, component) {
-    var item = monitor.getItem();
-    props.dropUnit(item.unit, props.machineAPI.machine.id);
+    props.sendAnalytics('Machine View', 'Drop Target', 'Machine');
+    props.dropUnit(monitor.getItem().unit, props.machineAPI.machine.id);
   },
 
   /**
@@ -188,6 +190,7 @@ class MachineViewMachine extends React.Component {
           key={unit.id}
           machineType={props.type}
           removeUnit={props.machineAPI.removeUnit}
+          sendAnalytics={props.sendAnalytics}
           service={service}
           unit={unit} />);
     });
@@ -306,6 +309,7 @@ MachineViewMachine.propTypes = {
     updateMachineSeries: PropTypes.func
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
   type: PropTypes.string.isRequired
 };

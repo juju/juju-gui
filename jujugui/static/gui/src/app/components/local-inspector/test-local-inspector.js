@@ -176,24 +176,27 @@ describe('LocalInspector', function() {
               </label>
             </li>
           </ul>
-          <ul className="local-inspector__list">
-            <li key="apache2-2">
-              <label>
-                <input type="checkbox" data-id="apache2-2"
-                  disabled={false}
-                  ref="service-apache2-2" />
-                apache2
-              </label>
-            </li>
-            <li key="mysql-1">
-              <label>
-                <input type="checkbox" data-id="mysql-1"
-                  disabled={false}
-                  ref="service-mysql-1" />
-                mysql
-              </label>
-            </li>
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              <li key="apache2-2">
+                <label>
+                  <input type="checkbox" data-id="apache2-2"
+                    disabled={false}
+                    ref="service-apache2-2" />
+                  apache2
+                </label>
+              </li>
+              <li key="mysql-1">
+                <label>
+                  <input type="checkbox" data-id="mysql-1"
+                    disabled={false}
+                    ref="service-mysql-1" />
+                  mysql
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
         <ButtonRow
           buttons={buttons} />
@@ -238,24 +241,27 @@ describe('LocalInspector', function() {
         <div className="inspector-content local-inspector__section">
           {output.props.children[1].props.children[0]}
           {output.props.children[1].props.children[1]}
-          <ul className="local-inspector__list">
-            <li key="apache2-2">
-              <label>
-                <input type="checkbox" data-id="apache2-2"
-                  disabled={false}
-                  ref="service-apache2-2" />
-                apache2
-              </label>
-            </li>
-            <li key="mysql-1">
-              <label>
-                <input type="checkbox" data-id="mysql-1"
-                  disabled={false}
-                  ref="service-mysql-1" />
-                mysql
-              </label>
-            </li>
-          </ul>
+          <div>
+            <p className="local-inspector__label">Choose applications to upgrade:</p>
+            <ul className="local-inspector__list">
+              <li key="apache2-2">
+                <label>
+                  <input type="checkbox" data-id="apache2-2"
+                    disabled={false}
+                    ref="service-apache2-2" />
+                  apache2
+                </label>
+              </li>
+              <li key="mysql-1">
+                <label>
+                  <input type="checkbox" data-id="mysql-1"
+                    disabled={false}
+                    ref="service-mysql-1" />
+                  mysql
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
         {output.props.children[2]}
       </div>);
@@ -291,21 +297,22 @@ describe('LocalInspector', function() {
   });
 
   it('can handle updating charms', function() {
-    var file = {
+    const file = {
       name: 'apache2.zip',
       size: '2048'
     };
-    var getById = sinon.stub();
+    const getById = sinon.stub();
     getById.withArgs('mysql').returns({id: 'mysql'});
     getById.withArgs('apache2').returns({id: 'apache2'});
-    var services = {
+    getById.withArgs('gui-test').returns({id: 'gui-test'});
+    const services = {
       toArray: sinon.stub().returns([]),
       getById: getById
     };
-    var uploadLocalCharm = sinon.spy();
-    var upgradeServiceUsingLocalCharm = sinon.spy();
-    var changeState = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const uploadLocalCharm = sinon.spy();
+    const upgradeServiceUsingLocalCharm = sinon.spy();
+    const changeState = sinon.spy();
+    const shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
         file={file}
@@ -315,17 +322,18 @@ describe('LocalInspector', function() {
         uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
         changeState={changeState} />, true);
-    var instance = shallowRenderer.getMountedInstance();
-    var output = shallowRenderer.getRenderOutput();
+    const instance = shallowRenderer.getMountedInstance();
+    const output = shallowRenderer.getRenderOutput();
     instance.refs = {
       'service-mysql': {checked: true},
       'service-django': {checked: false},
-      'service-apache2': {checked: true}
+      'service-apache2': {checked: true},
+      'service-gui-test': {checked: true}
     };
     output.props.children[2].props.buttons[1].action();
     assert.equal(upgradeServiceUsingLocalCharm.callCount, 1);
     assert.deepEqual(upgradeServiceUsingLocalCharm.args[0][0],
-      [{id: 'mysql'}, {id: 'apache2'}]);
+      [{id: 'mysql'}, {id: 'apache2'}, {id: 'gui-test'}]);
     assert.equal(upgradeServiceUsingLocalCharm.args[0][1], file);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

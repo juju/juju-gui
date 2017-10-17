@@ -23,10 +23,9 @@ describe('Landscape integration', function() {
   var views, models, db, landscape;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use([
       'juju-landscape',
-      'juju-models',
-      'juju-views'], function(Y) {
+      'juju-models'], function(Y) {
       var envAnno;
 
       views = Y.namespace('juju.views');
@@ -87,7 +86,6 @@ describe('Landscape integration', function() {
       'http://landscape.example.com/computers/criteria/' +
         'environment:test+unit:mysql-0/');
   });
-
 
   it('should summarize landscape annotations at object parents', function() {
     var unit1, unit2;

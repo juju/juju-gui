@@ -129,11 +129,6 @@ const createDeploymentFlow = (props = {}) => {
 describe('DeploymentFlow', function() {
   let applications;
 
-  beforeAll(function(done) {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-flow', function() { done(); });
-  });
-
   beforeEach(() => {
     window.juju_config = {flags: {}};
     applications = [
@@ -278,7 +273,13 @@ describe('DeploymentFlow', function() {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
-    const entityModel = {id: entityId};
+    const entityModel = {
+      id: entityId,
+      get: sinon.stub().returns([]),
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
     const entityData = [entityModel];
     const getEntity = sinon.stub();
     const makeEntityModel = sinon.stub().returns(entityModel);

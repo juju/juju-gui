@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const AccordionSection = require('../../accordion-section/accordion-section');
@@ -341,13 +343,14 @@ class EntityContent extends React.Component {
       return;
     }
     const entity = entityModel.toEntity();
-    return <EntityContentDiagram
-      clearLightbox={this.props.clearLightbox}
-      displayLightbox={this.props.displayLightbox}
-      diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
-      isExpandable={true}
-      isRow={false}
-      title={entity.displayName}/>;
+    return (
+      <EntityContentDiagram
+        clearLightbox={this.props.clearLightbox}
+        displayLightbox={this.props.displayLightbox}
+        diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
+        isExpandable={true}
+        isRow={false}
+        title={entity.displayName}/>);
   }
 
   /**

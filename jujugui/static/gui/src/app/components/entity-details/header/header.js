@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
@@ -58,7 +60,10 @@ class EntityHeader extends React.Component {
   _closeEntityDetails() {
     this.props.changeState({
       hash: null,
-      store: null
+      store: null,
+      postDeploymentPanel: {
+        entityId: this.props.entityModel.toEntity().id
+      }
     });
   }
 

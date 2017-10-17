@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
@@ -19,6 +21,7 @@ MachineViewUnplacedUnitGlobals.dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
+    props.sendAnalytics('Machine View', 'Drag Target', 'Application Unit');
     return {unit: props.unitAPI.unit};
   },
 
@@ -142,6 +145,7 @@ MachineViewUnplacedUnit.propTypes = {
     placeUnit: PropTypes.func.isRequired,
     providerType: PropTypes.string
   }).isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array,
   unitAPI: shapeup.shape({
     icon: PropTypes.string.isRequired,

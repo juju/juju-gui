@@ -107,6 +107,17 @@ YUI.add('environment-change-set', function(Y) {
       return key;
     },
 
+
+
+    /**
+      Given a unit and reference to the db get that units series.
+      @param {Object} unit The unit object.
+      @param {Object} db reference to the db.
+      @return {String} The charm series.
+    */
+    _getUnitSeries: (unit, db) =>
+      db.services.getServiceByName(unit.id.split('/')[0]).get('series'),
+
     /**
       Creates a new record of the appropriate type in the changeSet.
 
@@ -207,7 +218,7 @@ YUI.add('environment-change-set', function(Y) {
       // Commands may define a prepare method to be called before the actual
       // external command execution.
       if (command.prepare) {
-        command.prepare(this.get('db'));
+        command.prepare(this.get('db'), this);
       }
       this._markCommitStatus('in-progress', record.command);
       // XXX we should ensure that the method is actually a function.
@@ -1269,8 +1280,9 @@ YUI.add('environment-change-set', function(Y) {
 
           @method prepare
           @param {Object} db The database instance.
+          @param {Object} ecs The ecs module.
         */
-        prepare: function(db) {
+        prepare: function(db, ecs) {
           var units = db.units.filterByMachine(this.options.modelId);
           if (!units.length) {
             return;
@@ -1280,7 +1292,7 @@ YUI.add('environment-change-set', function(Y) {
           // This is safe since this kind of validation is done during
           // units' placement.
           if (!this.args[0][0].series) {
-            this.args[0][0].series = utils.getUnitSeries(units[0], db);
+            this.args[0][0].series = ecs._getUnitSeries(units[0], db);
           }
         },
         /**
@@ -1506,7 +1518,7 @@ YUI.add('environment-change-set', function(Y) {
           // If the machine doesn't yet have a series defined then set one
           // when placing the first unit on it.
           if (!value.command.args[0][0].series) {
-            value.command.args[0][0].series = utils.getUnitSeries(unit, db);
+            value.command.args[0][0].series = this._getUnitSeries(unit, db);
           }
           record.parents.push(key);
           containerExists = false;
@@ -1596,7 +1608,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     validateUnitPlacement: function(unit, machineId, db) {
       var machine = db.machines.getById(machineId);
-      var unitSeries = utils.getUnitSeries(unit, db);
+      var unitSeries = this._getUnitSeries(unit, db);
       if (machine.series) {
         // This is a real provisioned machine. Ensure its series matches the
         // unit series.
@@ -1611,7 +1623,7 @@ YUI.add('environment-change-set', function(Y) {
       var error = null;
       var db = this.get('db');
       db.units.filterByMachine(machine.id).some(existingUnit => {
-        var existingUnitSeries = utils.getUnitSeries(existingUnit, db);
+        var existingUnitSeries = this._getUnitSeries(existingUnit, db);
         if (existingUnitSeries !== unitSeries) {
           error = 'machine ' + machine.id + ' already includes units with a ' +
               'different series: ' + existingUnitSeries;

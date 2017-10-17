@@ -423,9 +423,5 @@ YUI.add('juju-env-base', function(Y) {
   module.BaseEnvironment = BaseEnvironment;
 
 }, '0.1.0', {
-  requires: [
-    'base',
-    'json-parse',
-    'json-stringify'
-  ]
+  requires: ['base']
 });

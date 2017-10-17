@@ -11,7 +11,7 @@ beforeEach(function() {
 afterEach(function() {
   console.error.calls.all().forEach(call => {
     const error = call.args[0];
-    if (error.startsWith('Warning: Failed prop type:')) {
+    if (error && error.startsWith('Warning: Failed prop type:')) {
       fail(error);
     }
   });

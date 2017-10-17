@@ -173,6 +173,15 @@ describe('State', () => {
       }
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/q/u/hatch/?requires=http',
+    state: {
+      profile: 'hatch',
+      search: {
+        requires: 'http'
+      }
+    },
+    error: null
   }];
 
   const guiStateTests = [{
@@ -1371,6 +1380,43 @@ describe('State', () => {
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
       assert.deepEqual(dispatchStub.args[0], [['gui.machines'], false]);
+    });
+
+    it('updates state sub objects', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['precise', 'trusty', 'xenial'],
+        location: {href: 'i/machines'}
+      });
+      sinon.stub(state, '_pushState');
+      state.dispatch();
+      sinon.stub(state, 'dispatch').returns({error: null});
+      const stub1 = sinon.stub();
+      state.register([
+        ['test', stub1 ]
+      ]);
+      state.changeState({
+        test: {
+          test1: true
+        }
+      });
+      assert.deepEqual(state.current.test, {test1: true});
+      state.changeState({
+        test: {
+          test2: true
+        }
+      });
+      assert.deepEqual(state.current.test, {test1: true, test2: true});
+      state.changeState({
+        test1: 'roflcopter'
+      });
+      assert.deepEqual(state.current.test, {test1: true, test2: true});
+      state.changeState({
+        test: {
+          test1: false
+        }
+      });
+      assert.deepEqual(state.current.test, {test1: false, test2: true});
     });
   });
 

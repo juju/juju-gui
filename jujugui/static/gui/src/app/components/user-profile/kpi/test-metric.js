@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const d3 = require('d3');
 const React = require('react');
 
 const UserProfileEntityMetric = require('./metric');
@@ -8,14 +9,7 @@ const UserProfileEntityMetric = require('./metric');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UserProfileEntityMetrics', () => {
-  let d3, metrics, metricTypes;
-
-  beforeAll(done => {
-    YUI().use('d3', Y => {
-      d3 = Y.d3;
-      done();
-    });
-  });
+  let metrics, metricTypes;
 
   beforeEach(() => {
     const today = new Date();

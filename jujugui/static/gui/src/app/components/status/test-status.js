@@ -22,6 +22,7 @@ describe('Status', function() {
     defaultModel = {
       cloud: 'aws',
       environmentName: 'my-model',
+      modelUUID: 'myuuid',
       region: 'neutral zone',
       sla: 'advanced',
       version: '2.42.47'

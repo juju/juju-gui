@@ -1,0 +1,54 @@
+.post-deployment {
+  max-height: calc(100% - 140px - 166px);
+  z-index: index($z-indexed-elements, post-deployment);
+  width: auto;
+  max-width: 295px;
+  left: auto;
+  right: 20px;
+  top: 166px;
+  height: auto;
+  padding: 20px;
+  overflow: auto;
+  line-height: 1.3125rem;
+
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  p,
+  li,
+  a,
+  .link {
+    font-size: .875rem;
+  }
+
+  a,
+  .link {
+    color: $link-blue;
+    font-weight: 300;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 1rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid $color-mid-light;
+  }
+
+  @media screen and (min-width: 1441px) {
+    & {
+      max-width: 395px;
+    }
+  }
+}

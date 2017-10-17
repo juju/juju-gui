@@ -23,7 +23,8 @@ function queryComponentSelector(component, selector, all) {
 }
 
 describe('MachineView', function() {
-  let acl, machines, parseConstraints, parseMachineName, generateMachineDetails;
+  let acl, generateMachineDetails, machines, parseConstraints,
+      parseMachineName, sendAnalytics;
 
   beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
@@ -33,6 +34,7 @@ describe('MachineView', function() {
       containerType: null,
       number: 'new0'
     });
+    sendAnalytics = sinon.stub();
     generateMachineDetails = sinon.stub();
     machines = {
       filterByParent: sinon.stub().returns([{
@@ -90,7 +92,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         }}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
@@ -103,6 +106,7 @@ describe('MachineView', function() {
           <MachineViewColumn
             acl={acl}
             droppable={false}
+            sendAnalytics={sendAnalytics}
             title="New units"
             toggle={{
               action: instance._toggleScaleUp,
@@ -162,6 +166,7 @@ describe('MachineView', function() {
               action: machineMenuItems[8].action
             }]}
             ref="machinesColumn"
+            sendAnalytics={sendAnalytics}
             title="My Model (0)"
             type="machine">
             {undefined}
@@ -173,7 +178,7 @@ describe('MachineView', function() {
                 <li>Customise placement</li>
                 <li>Scale up your model</li>
                 <li>Manually place new units</li>
-                <li>Collocate applications</li>
+                <li>Colocate applications</li>
               </ul>
               <span className="link"
                 onClick={instance._addMachine}
@@ -207,6 +212,7 @@ describe('MachineView', function() {
               action: containerMenuItems[4].action
             }]}
             ref="containersColumn"
+            sendAnalytics={sendAnalytics}
             title="0 containers, 0 units"
             type="container">
             {undefined}
@@ -249,7 +255,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -303,7 +310,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[1]
       .props.children[1].props.onClick();
@@ -343,7 +351,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <SvgIcon name="task-done_16"
@@ -388,7 +397,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     const output = renderer.getRenderOutput();
@@ -457,7 +467,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -469,6 +480,7 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/0"
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
+          sendAnalytics={sendAnalytics}
           series={['trusty', 'xenial']}
           unitAPI={{
             icon: 'django.svg',
@@ -482,6 +494,7 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/1"
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
+          sendAnalytics={sendAnalytics}
           series={['trusty', 'xenial']}
           unitAPI={{
             icon: 'django.svg',
@@ -550,7 +563,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -562,6 +576,7 @@ describe('MachineView', function() {
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
           key="django/0"
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
+          sendAnalytics={sendAnalytics}
           series={['trusty', 'xenial']}
           unitAPI={{
             icon: 'django.svg',
@@ -621,7 +636,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />);
     const expected = (
       <div className="machine-view__column-onboarding">
         <SvgIcon name="task-done_16"
@@ -677,7 +693,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />);
     const node = queryComponentSelector(component,
       '.machine-view__auto-place .button--inline-neutral');
     testUtils.Simulate.click(node);
@@ -729,7 +746,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />);
     const expected = (
       <GenericButton
         action={autoPlaceUnits}
@@ -779,7 +797,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -791,7 +810,7 @@ describe('MachineView', function() {
           <li>Customise placement</li>
           <li>Scale up your model</li>
           <li>Manually place new units</li>
-          <li>Collocate applications</li>
+          <li>Colocate applications</li>
         </ul>
         <span className="link"
           onClick={instance._addMachine}
@@ -850,7 +869,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="machine-view__column-onboarding">
@@ -914,7 +934,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -936,6 +957,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="machine-new0"
+          sendAnalytics={sendAnalytics}
           showConstraints={true}
           type="machine"
         />
@@ -954,6 +976,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="machine-new1"
+          sendAnalytics={sendAnalytics}
           showConstraints={true}
           type="machine"
         />
@@ -1015,7 +1038,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1040,6 +1064,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="machine-new0"
+          sendAnalytics={sendAnalytics}
           showConstraints={true}
           type="machine"
         />
@@ -1061,6 +1086,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="machine-new5"
+          sendAnalytics={sendAnalytics}
           showConstraints={true}
           type="machine"
         />
@@ -1124,7 +1150,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['wily']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
@@ -1147,6 +1174,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="machine-new0"
+          sendAnalytics={sendAnalytics}
           showConstraints={true}
           type="machine"
         />
@@ -1164,6 +1192,7 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          sendAnalytics={sendAnalytics}
           showConstraints={false}
           ref="machine-new1"
           type="machine"
@@ -1216,7 +1245,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
@@ -1279,7 +1309,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const column = document.createElement('div');
     column.innerHTML = '<div className="machine-view__column-content"></div>';
@@ -1344,7 +1375,8 @@ describe('MachineView', function() {
           parentId: null,
           containerType: null,
           number: 'new1'
-        })} />, true);
+        })}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const column = document.createElement('div');
     column.innerHTML = '<div className="machine-view__column-content"></div>';
@@ -1396,7 +1428,8 @@ describe('MachineView', function() {
           parentId: null,
           containerType: null,
           number: 'new1'
-        })} />, true);
+        })}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(changeState.callCount, 0);
@@ -1459,7 +1492,8 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1486,6 +1520,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="container-new0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
         <MachineViewMachine
@@ -1504,6 +1539,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
       </ul>);
@@ -1570,7 +1606,8 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1600,6 +1637,7 @@ describe('MachineView', function() {
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
           ref="container-new0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
         <MachineViewMachine
@@ -1619,6 +1657,7 @@ describe('MachineView', function() {
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
         <MachineViewMachine
@@ -1638,6 +1677,7 @@ describe('MachineView', function() {
           modelAPI={reshapedModelAPI}
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/5"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
       </ul>);
@@ -1698,7 +1738,8 @@ describe('MachineView', function() {
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
         series={['trusty', 'xenial']}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1768,7 +1809,8 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();
@@ -1796,6 +1838,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="container-new0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
         <MachineViewMachine
@@ -1812,6 +1855,7 @@ describe('MachineView', function() {
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
+          sendAnalytics={sendAnalytics}
           type="container"
         />
       </ul>);
@@ -1865,7 +1909,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
@@ -1918,7 +1963,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
@@ -1965,7 +2011,8 @@ describe('MachineView', function() {
           updateMachineSeries: sinon.stub()
         })}
         parseConstraints={parseConstraints}
-        parseMachineName={parseMachineName} />, true);
+        parseMachineName={parseMachineName}
+        sendAnalytics={sendAnalytics} />, true);
     const output = renderer.getRenderOutput();
     const machineMenuItems = output.props.children.props.children[1]
       .props.menuItems;

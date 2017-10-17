@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
@@ -140,14 +141,14 @@ class EnvList extends React.Component {
     const user = this.props.user;
     let createNew;
     if (user) {
-      createNew = <CreateModelButton
-        type="neutral"
-        title="Start a new model"
-        disabled={!canAddModels}
-        changeState={this.props.changeState}
-        switchModel={this.props.switchModel}
-        action={this._handleNewModelClick.bind(this)}
-      />;
+      createNew = (
+        <CreateModelButton
+          type="neutral"
+          title="Start a new model"
+          disabled={!canAddModels}
+          changeState={this.props.changeState}
+          switchModel={this.props.switchModel}
+          action={this._handleNewModelClick.bind(this)} />);
     }
     return (
       <Panel

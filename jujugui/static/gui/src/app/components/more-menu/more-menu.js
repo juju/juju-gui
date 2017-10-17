@@ -1,7 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
+
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const SvgIcon = require('../svg-icon/svg-icon');

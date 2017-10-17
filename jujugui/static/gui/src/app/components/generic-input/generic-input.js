@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
@@ -170,11 +172,11 @@ class GenericInput extends React.Component {
     );
     if (label) {
       id = label.replace(' ', '-');
-      element =
+      element = (
         <label className={classes}
           htmlFor={id}>
           {label}
-        </label>;
+        </label>);
     }
     return {
       labelElement: element,
