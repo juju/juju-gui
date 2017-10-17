@@ -302,6 +302,7 @@ class GUIApp {
     */
     this.topology = this._renderTopology();
     this._renderComponents();
+    this._renderUserMenu();
     const result = this.state.bootstrap();
     if (result.error) {
       console.error(result.error);
