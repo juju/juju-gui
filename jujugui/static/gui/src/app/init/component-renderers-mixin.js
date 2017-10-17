@@ -353,7 +353,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       displayShortcutsModal={this._displayShortcutsModal.bind(this)}
       gisf={this.applicationConfig.gisf}
       user={this.user}
-      webHandler={new yui.juju.environments.web.WebHandler()} />,
+      webHandler={new yui.juju.environments.web.WebHandler()}
+      youtubeKey={this.applicationConfig.youtubeKey} />,
     document.getElementById('help')
     );
     next();

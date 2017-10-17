@@ -19,10 +19,14 @@ class Help extends React.Component {
     };
   }
   componentWillMount() {
+    if (!this.props.youtubeKey) {
+      return;
+    }
     this.getJujuShow = this.props.webHandler.sendGetRequest(
-      'https://www.googleapis.com/youtube/v3/search' +
-      '?part=snippet&channelId=UCSsoSZBAZ3Ivlbt_fxyjIkw' +
-      '&maxResults=1&order=date&type=video&key=AIzaSyD_639SY-Avl4WEZ1gyQnANtQKrs6jq-PI',
+      `https://www.googleapis.com/youtube/v3/search\
+?part=snippet&channelId=UCSsoSZBAZ3Ivlbt_fxyjIkw\
+&maxResults=1&order=date&type=video&key=\
+${this.props.youtubeKey}`,
       {},
       null,
       null,
@@ -243,7 +247,8 @@ Help.propTypes = {
   displayShortcutsModal: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
   user: PropTypes.object.isRequired,
-  webHandler: PropTypes.func.isRequired
+  webHandler: PropTypes.func.isRequired,
+  youtubeKey: PropTypes.string
 };
 
 module.exports = Help;
