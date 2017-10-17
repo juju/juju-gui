@@ -1,5 +1,11 @@
 - 2.10.1:
 
+  - (Fix) Switching profiles between users now properly updates page title.
+  - (Fix) Clicking outside the Shortcut modal now closes it.
+  - (Fix) Render the user menu even if not connected to a controller.
+
+- 2.10.0:
+
   - The majority of the GUI is now node-style require modules replacing the original YUI-style modules.
   - The init sequence has been completely rewritten to take advantage of this module system considerably speeding up time to interaction.
   - Size of the code sent to the client considerably reduced.
