@@ -193,7 +193,9 @@ ${this.props.youtubeAPIKey}`,
             <p>
               <img
                 className="help__tour-image"
-                src={`${basePath}/help.png`}
+                width="201"
+                src={`${basePath}/help@1x.png`}
+                srcSet={`${basePath}/help@2x.png 402w`}
               />
               <span role="button" className="link"
                 onClick={this._startTour.bind(this)}>

@@ -53,6 +53,10 @@
       &:nth-child(4) {
         .tour__slide-image {
           margin-top: 4rem;
+
+          @media screen and (min-width: $breakpoint-medium) {
+            margin-top: 1rem;
+          }
         }
       }
     }

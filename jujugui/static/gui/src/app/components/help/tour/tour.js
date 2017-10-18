@@ -25,9 +25,8 @@ class Tour extends React.PureComponent {
           extraClasses={['tour']}>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/welcome.png`}
-              srcSet={''}
-              sizes={'(max-width: 620px) 620w'}
+              src={`${basePath}/welcome@1x.png`}
+              srcSet={`${basePath}/welcome@2x.png 2x`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -39,7 +38,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/store.png`}
+              src={`${basePath}/store@1x.png`}
+              srcSet={`
+${basePath}/store@2x.png 2x,
+${basePath}/store-mobile@1x.png 347w,
+`}
+              sizes="(max-width: 768px) 347w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -50,7 +54,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/relations.png`}
+              src={`${basePath}/relations@1x.png`}
+              srcSet={`
+${basePath}/relations@2x.png 2x,
+${basePath}/relations-mobile@1x.png 335w,
+`}
+              sizes="(max-width: 768px) 335w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -64,7 +73,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/inspector.png`}
+              src={`${basePath}/inspector@1x.png`}
+              srcSet={`
+${basePath}/inspector@2x.png 2x,
+${basePath}/inspector-mobile@1x.png 307w,
+`}
+              sizes="(max-width: 768px) 307w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -75,7 +89,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/machine-app-view.png`}
+              src={`${basePath}/machine-app-view@1x.png`}
+              srcSet={`
+${basePath}/machine-app-view@2x.png 2x,
+${basePath}/machine-app-view-mobile@1x.png 431w,
+`}
+              sizes="(max-width: 768px) 431w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -88,7 +107,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/deploy.png`}
+              src={`${basePath}/deploy@1x.png`}
+              srcSet={`
+${basePath}/deploy@2x.png 2x,
+${basePath}/deploy-mobile@1x.png 341w,
+`}
+              sizes="(max-width: 768px) 341w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -99,7 +123,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${basePath}/post-deploy.png`}
+              src={`${basePath}/post-deploy@1x.png`}
+              srcSet={`
+${basePath}/post-deploy@2x.png 2x,
+${basePath}/post-deploy-mobile@1x.png 375w,
+`}
+              sizes="(max-width: 768px) 375w"
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
