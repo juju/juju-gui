@@ -287,7 +287,6 @@ class DeploymentFlow extends React.Component {
     @param {String} err An error if deployment failed, null otherwise.
   */
   _handleClose(err) {
-    this.setState({deploying: false});
     if (err) {
       // Error handling is already done by the original deploy callback.
       // Here we need to just prevent the deployment flow to close.
