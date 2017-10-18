@@ -3,6 +3,7 @@
 'use strict';
 
 const React = require('react');
+const PropTypes = require('prop-types');
 
 class VanillaCard extends React.Component {
   _generateHeader() {
@@ -31,9 +32,9 @@ class VanillaCard extends React.Component {
 }
 
 VanillaCard.propTypes = {
-  children: React.PropTypes.node,
-  headerContent: React.PropTypes.node,
-  title: React.PropTypes.node
+  children: PropTypes.node,
+  headerContent: PropTypes.node,
+  title: PropTypes.node
 };
 
 module.exports = VanillaCard;

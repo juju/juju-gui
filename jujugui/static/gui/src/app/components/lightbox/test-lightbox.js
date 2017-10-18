@@ -119,24 +119,30 @@ describe('Lightbox', function() {
             <div className="lightbox__navigation">
               <button disabled
                 className="lightbox__navigation-previous"
-                onClick={instance._previousSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._goToSlide.bind(instance, -1)}>
                 Previous
               </button>
               <button className="lightbox__navigation-next"
-                onClick={instance._nextSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._goToSlide.bind(instance, 1)}>
                 Next
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
                   &bull;
                 </li>
               </ul>
@@ -167,24 +173,30 @@ describe('Lightbox', function() {
           <div className="lightbox__content">
             <div className="lightbox__navigation">
               <button className="lightbox__navigation-previous"
-                onClick={instance._previousSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._goToSlide.bind(instance, -1)}>
                 Previous
               </button>
               <button className="lightbox__navigation-next"
-                onClick={instance._nextSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._gotoSlide.bind(instance, 1)}>
                 Next
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
                   &bull;
                 </li>
               </ul>
@@ -215,25 +227,31 @@ describe('Lightbox', function() {
           <div className="lightbox__content">
             <div className="lightbox__navigation">
               <button className="lightbox__navigation-previous"
-                onClick={instance._previousSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._goToSlide.bind(instance, -1)}>
                 Previous
               </button>
               <button disabled
                 className="lightbox__navigation-next"
-                onClick={instance._nextSlide}>
+                style={{
+                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+                }}
+                onClick={instance._goToSlide.bind(instance, 1)}>
                 Next
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
                   &bull;
                 </li>
                 <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance._goToSlide}>
+                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
                   &bull;
                 </li>
               </ul>
@@ -251,6 +269,7 @@ describe('Lightbox', function() {
         </div>
       </div>);
     });
+
     it('renders with multiple slides', () => {
       expect(output).toEqualJSX(
         slide1
@@ -258,7 +277,7 @@ describe('Lightbox', function() {
     });
 
     it('moves to the next slide when _nextSlide is called', () => {
-      instance._nextSlide();
+      instance._goToSlide(1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide2
@@ -266,7 +285,7 @@ describe('Lightbox', function() {
     });
 
     it('disables the next slide button when the last slide is active', () => {
-      instance._nextSlide();
+      instance._goToSlide(1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide3
@@ -274,7 +293,7 @@ describe('Lightbox', function() {
     });
 
     it('does not move past the final slide', () => {
-      instance._nextSlide();
+      instance._goToSlide(1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide3
@@ -282,7 +301,7 @@ describe('Lightbox', function() {
     });
 
     it('moves to the prev slide when _previousSlide is called', () => {
-      instance._previousSlide();
+      instance._goToSlide(-1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide2
@@ -290,7 +309,7 @@ describe('Lightbox', function() {
     });
 
     it('disables the prev slide button when the first slide is active', () => {
-      instance._previousSlide();
+      instance._goToSlide(-1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide1
@@ -298,7 +317,7 @@ describe('Lightbox', function() {
     });
 
     it('does not move past the first slide', () => {
-      instance._previousSlide();
+      instance._goToSlide(-1);
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide1
@@ -306,7 +325,9 @@ describe('Lightbox', function() {
     });
 
     it('moves to the nth slide when _goToSlide is called', () => {
-      instance._goToSlide(1);
+      instance.setState({
+        activeSlide: 1
+      });
       output = renderer.getRenderOutput();
       expect(output).toEqualJSX(
         slide2

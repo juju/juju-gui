@@ -67,7 +67,10 @@
     right: 0;
     bottom: 0;
     top: 0;
-    // This is to put the content above the navigation
+    // The navigation is generated before, but at the same level as __slide's.
+    // This is to put the __slide's above the navigation so the __slide
+    // content is clickable. The Navigation remains clickable because it is
+    // positioned outside of the __slide's box.
     z-index: -1;
 
     &-previous,
@@ -88,7 +91,6 @@
       margin-top: -1.5rem;
       background: {
         color: $white;
-        image: url('/static/gui/build/app/assets/svgs/chevron_down_16.svg');
         position: 1rem 1.1rem;
         repeat: no-repeat;
       }

@@ -106,7 +106,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           getUnitStatusCounts={initUtils.getUnitStatusCounts}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
-          changeState={this.state.changeState.bind(this.state)} />
+          changeState={this._bound.changeState} />
       </Panel>,
       document.getElementById('inspector-container'));
   }
@@ -137,7 +137,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       <ModelActions
         acl={this.acl}
         appState={this.state}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
@@ -250,7 +250,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         listModelsWithInfo={
           this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
         getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         destroyModels={
           this.controllerAPI.destroyModels.bind(this.controllerAPI)}
         getAgreements={this.terms.getAgreements.bind(this.terms)}
@@ -309,7 +309,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <HeaderHelp
         appState={this.state}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         gisf={this.applicationConfig.gisf}
         displayShortcutsModal={this._displayShortcutsModal.bind(this)}
         user={this.user} />,
@@ -356,13 +356,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     Opens the help overlay.
   */
   _renderHelp(state, next) {
+    const handler = new WebHandler();
     ReactDOM.render(<Help
-      changeState={this.state.changeState.bind(this.state)}
+      changeState={this._bound.changeState}
       displayShortcutsModal={this._displayShortcutsModal.bind(this)}
       gisf={this.applicationConfig.gisf}
       user={this.user}
-      webHandler={new WebHandler()}
-      youtubeKey={this.applicationConfig.youtubeKey} />,
+      sendGetRequest={handler.sendGetRequest.bind(handler)}
+      staticURL={this.applicationConfig.staticURL || ''}
+      youtubeAPIKey={this.applicationConfig.youtubeAPIKey} />,
     document.getElementById('help')
     );
     next();
@@ -418,7 +420,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
     ReactDOM.render(
       <PostDeployment
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
         getFile={charmstore.getFile.bind(charmstore)}
@@ -708,7 +710,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
             this, db, modelAPI),
@@ -875,7 +877,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       inspector = (
         <LocalInspector
           acl={this.acl}
-          changeState={this.state.changeState.bind(this.state)}
+          changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
           services={db.services}
@@ -970,7 +972,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         charmstore={charmstore}
         changesFilterByParent={
           changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         cloud={cloud}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
@@ -1076,7 +1078,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <DeploymentBar
         acl={this.acl}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         currentChangeSet={ecs.getCurrentChangeSet()}
         generateChangeDescription={
           changesUtils.generateChangeDescription.bind(
@@ -1167,7 +1169,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       }
       initUtils.showProfile(
         this.modelAPI && this.modelAPI.get('ecs'),
-        this.state.changeState.bind(this.state),
+        this._bound.changeState,
         username);
     };
     const navigateUserAccount = () => {
@@ -1177,7 +1179,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       }
       initUtils.showAccount(
         this.modelAPI && this.modelAPI.get('ecs'),
-        this.state.changeState.bind(this.state));
+        this._bound.changeState);
     };
 
     const showHelp = () => {
@@ -1232,7 +1234,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         appState={this.state}
         user={this.user}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         humanizeTimestamp={initUtils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
@@ -1241,7 +1243,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         showEnvSwitcher={showEnvSwitcher}
         showProfile={initUtils.showProfile.bind(
           this, modelAPI && ecs,
-          this.state.changeState.bind(this.state))}
+          this._bound.changeState)}
         switchModel={this._bound.switchModel}
         loadingModel={modelAPI.loading}
         modelCommitted={!!modelAPI.get('modelUUID')} />,

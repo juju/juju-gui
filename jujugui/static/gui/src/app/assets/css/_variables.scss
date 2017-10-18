@@ -19,16 +19,6 @@ $color-information:      #335280 !default;
 
 $color-input-shadow:     rgba($color-x-dark, .12) !default;
 
-// Global spacing settings
-$sp-xx-small: 1rem * .25 !default;
-$sp-x-small: 1rem * .5 !default;
-$sp-small: 1rem * .75 !default;
-$sp-medium: 1rem !default;
-$sp-large: 1rem * 1.5 !default;
-$sp-x-large: 1rem * 2 !default;
-$sp-xx-large: 1rem * 2.5 !default;
-$sp-xxx-large: 1rem * 3 !default;
-
 // for _patterns_grid-list.scss
 $grid-border-style:      1px dotted $color-mid-light !default;
 

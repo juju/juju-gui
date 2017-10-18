@@ -34,19 +34,9 @@ describe('Tour', () => {
     // Slides
     const slides = output.props.children[1].props.children;
     assert.isDefined(slides);
-    assert.isDefined(slides[0]);
-    assert.deepEqual(slides[0].props.className, 'tour__slide');
-    assert.isDefined(slides[1]);
-    assert.deepEqual(slides[1].props.className, 'tour__slide');
-    assert.isDefined(slides[2]);
-    assert.deepEqual(slides[2].props.className, 'tour__slide');
-    assert.isDefined(slides[3]);
-    assert.deepEqual(slides[3].props.className, 'tour__slide');
-    assert.isDefined(slides[4]);
-    assert.deepEqual(slides[4].props.className, 'tour__slide');
-    assert.isDefined(slides[5]);
-    assert.deepEqual(slides[5].props.className, 'tour__slide');
-    assert.isDefined(slides[6]);
-    assert.deepEqual(slides[6].props.className, 'tour__slide');
+    assert.equal(slides.length, 6);
+    slides.forEach((slide) => {
+      assert.deepEqual(slide.props.className, 'tour__slide');
+    });
   });
 });

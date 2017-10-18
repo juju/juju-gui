@@ -20,14 +20,14 @@ class Help extends React.Component {
     };
   }
   componentWillMount() {
-    if (!this.props.youtubeKey) {
+    if (!this.props.youtubeAPIKey) {
       return;
     }
-    this.getJujuShow = this.props.webHandler.sendGetRequest(
+    this.getJujuShow = this.props.sendGetRequest(
       `https://www.googleapis.com/youtube/v3/search\
 ?part=snippet&channelId=UCSsoSZBAZ3Ivlbt_fxyjIkw\
 &maxResults=1&order=date&type=video&key=\
-${this.props.youtubeKey}`,
+${this.props.youtubeAPIKey}`,
       {},
       null,
       null,
@@ -71,8 +71,8 @@ ${this.props.youtubeKey}`,
    Click the button, get the shortcuts.
   */
   _handleShortcutsLink() {
-    this.props.displayShortcutsModal();
     this._handleClose();
+    this.props.displayShortcutsModal();
   }
 
   /**
@@ -121,9 +121,13 @@ ${this.props.youtubeKey}`,
         <Tour
           endTour={this._endTour.bind(this)}
           close={this._handleClose.bind(this)}
+          staticURL={this.props.staticURL}
         />
       );
     }
+
+    const staticURL = this.props.staticURL;
+    const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
 
     return (<Lightbox
       close={this._handleClose.bind(this)}
@@ -189,7 +193,7 @@ ${this.props.youtubeKey}`,
             <p>
               <img
                 className="help__tour-image"
-                src={'/static/gui/build/app/assets/images/non-sprites/tour/help.png'}
+                src={`${basePath}/help.png`}
               />
               <span role="button" className="link"
                 onClick={this._startTour.bind(this)}>
@@ -208,7 +212,8 @@ ${this.props.youtubeKey}`,
             </p>
             <p>
               <a className="link"
-                href="https://jujucharms.com/how-it-works" target="_blank">
+                href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                target="_blank">
                 FAQs
               </a>
             </p>
@@ -247,9 +252,10 @@ Help.propTypes = {
   changeState: PropTypes.func.isRequired,
   displayShortcutsModal: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
+  sendGetRequest: PropTypes.func.isRequired,
+  staticURL: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
-  webHandler: PropTypes.func.isRequired,
-  youtubeKey: PropTypes.string
+  youtubeAPIKey: PropTypes.string
 };
 
 module.exports = Help;

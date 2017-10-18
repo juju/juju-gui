@@ -10,7 +10,8 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 
 class Tour extends React.PureComponent {
   render() {
-    const tourPath = '/static/gui/build/app/assets/images/non-sprites/tour';
+    const staticURL = this.props.staticURL;
+    const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
     return (
       <div>
         <span className="back-to-help"
@@ -24,8 +25,9 @@ class Tour extends React.PureComponent {
           extraClasses={['tour']}>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/welcome.png`}
-              srcSet={`${tourPath}/welcome-mobile.png 620w` }
+              src={`${basePath}/welcome.png`}
+              srcSet={''}
+              sizes={'(max-width: 620px) 620w'}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -37,8 +39,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/store.png`}
-              srcSet={`${tourPath}/store-mobile.png 620w` }
+              src={`${basePath}/store.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -49,8 +50,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/relations.png`}
-              srcSet={`${tourPath}/relations-mobile.png 620w` }
+              src={`${basePath}/relations.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -64,8 +64,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/inspector.png`}
-              srcSet={`${tourPath}/inspector-mobile.png 620w` }
+              src={`${basePath}/inspector.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -76,8 +75,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/machine-app-view.png`}
-              srcSet={`${tourPath}/machine-app-view-mobile.png 620w` }
+              src={`${basePath}/machine-app-view.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -90,8 +88,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/deploy.png`}
-              srcSet={`${tourPath}/deploy-mobile.png 620w` }
+              src={`${basePath}/deploy.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -102,8 +99,7 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
-              src={`${tourPath}/post-deploy.png`}
-              srcSet={`${tourPath}/post-deploy-mobile.png 620w` }
+              src={`${basePath}/post-deploy.png`}
             />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
@@ -124,7 +120,8 @@ class Tour extends React.PureComponent {
 
 Tour.propTypes = {
   close: PropTypes.func.isRequired,
-  endTour: PropTypes.func
+  endTour: PropTypes.func,
+  staticURL: PropTypes.string.isRequired
 };
 
 module.exports = Tour;

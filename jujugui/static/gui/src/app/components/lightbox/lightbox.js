@@ -29,30 +29,20 @@ class Lightbox extends React.Component {
     }
   }
 
-  _goToSlide(index) {
-    if (index < 0) {
-      index = 0;
+  _goToSlide(delta) {
+    let newIndex = this.state.activeSlide + delta;
+
+    if (newIndex < 0) {
+      newIndex = 0;
     }
-    if (index > this.state.lastSlide) {
-      index = this.state.lastSlide;
+
+    if (newIndex > this.state.lastSlide) {
+      newIndex = this.state.lastSlide;
     }
+
     this.setState({
-      activeSlide: index
+      activeSlide: newIndex
     });
-  }
-
-  _nextSlide() {
-    const nextSlide = this.state.activeSlide + 1;
-    if (nextSlide <= this.state.lastSlide) {
-      this._goToSlide(nextSlide);
-    }
-  }
-
-  _previousSlide() {
-    const nextSlide = this.state.activeSlide - 1;
-    if (nextSlide >= 0) {
-      this._goToSlide(nextSlide);
-    }
   }
 
   _generateNavigation() {
@@ -74,21 +64,27 @@ class Lightbox extends React.Component {
         <li
           className={classes}
           key={i}
-          onClick={this._goToSlide.bind(this, i)}>&bull;</li>);
+          onClick={this.setState.bind(this, {activeSlide: i})}>&bull;</li>);
     }
 
     return (
       <div className="lightbox__navigation">
         <button
           disabled={this.state.activeSlide === 0}
-          onClick={this._previousSlide.bind(this)}
-          className="lightbox__navigation-previous">
+          onClick={this._goToSlide.bind(this, -1)}
+          className="lightbox__navigation-previous"
+          style={{
+            backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+          }}>
           Previous
         </button>
         <button
           disabled={this.state.activeSlide === this.state.lastSlide}
-          onClick={this._nextSlide.bind(this)}
-          className="lightbox__navigation-next">
+          onClick={this._goToSlide.bind(this, 1)}
+          className="lightbox__navigation-next"
+          style={{
+            backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
+          }}>
           Next
         </button>
         <ul className="lightbox__navigation-bullets">
@@ -99,7 +95,7 @@ class Lightbox extends React.Component {
   }
 
   _generateContent() {
-    if (!this.props.children.map) {
+    if (!this.state.lastSlide) {
       return this.props.children;
     }
 
@@ -135,18 +131,17 @@ class Lightbox extends React.Component {
       );
     }
 
-    let classes = ['lightbox'];
-
-    if (this.props.extraClasses) {
-      classes = classes.concat(this.props.extraClasses);
-    }
+    let classes = classNames(
+      'lightbox',
+      this.props.extraClasses
+    );
 
     return (
-      <div className={classes.join(' ')} onClick={this._handleClose.bind(this)}>
+      <div className={classes} onClick={this._handleClose.bind(this)}>
         <button className="lightbox__close">
           <SvgIcon name="close_16_white" width="16" />
         </button>
-        <div className="lightbox__wrapper" onClick={this._stopPropagation.bind(this)}>
+        <div className="lightbox__wrapper" onClick={this._stopPropagation}>
           <div className="lightbox__content">
             {this._generateNavigation()}
             {this._generateContent()}
