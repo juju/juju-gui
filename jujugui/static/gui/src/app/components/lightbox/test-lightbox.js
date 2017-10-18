@@ -183,7 +183,7 @@ describe('Lightbox', function() {
                 style={{
                   backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
                 }}
-                onClick={instance._gotoSlide.bind(instance, 1)}>
+                onClick={instance._goToSlide.bind(instance, 1)}>
                 Next
               </button>
               <ul className="lightbox__navigation-bullets">

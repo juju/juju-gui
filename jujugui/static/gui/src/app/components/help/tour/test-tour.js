@@ -11,7 +11,7 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('Tour', () => {
   it('renders', () => {
     const renderer = jsTestUtils.shallowRender(
-      <Tour close={sinon.stub()} endTour={sinon.stub()} />,
+      <Tour close={sinon.stub()} endTour={sinon.stub()} staticURL="" />,
       true
     );
 
@@ -34,7 +34,7 @@ describe('Tour', () => {
     // Slides
     const slides = output.props.children[1].props.children;
     assert.isDefined(slides);
-    assert.equal(slides.length, 6);
+    assert.equal(slides.length, 7);
     slides.forEach((slide) => {
       assert.deepEqual(slide.props.className, 'tour__slide');
     });

@@ -12,14 +12,13 @@ const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Help', () => {
   it('renders', () => {
-    const webHandler = sinon.stub();
-    webHandler.sendGetRequest = sinon.stub();
     const renderer = jsTestUtils.shallowRender(<Help
       changeState={sinon.stub()}
       displayShortcutsModal={sinon.stub()}
       gisf={true}
       user={{user: true}}
-      webHandler={webHandler}
+      staticURL=""
+      sendGetRequest={sinon.stub()}
     />, true);
     const output = renderer.getRenderOutput();
     expect(
@@ -95,7 +94,11 @@ describe('Help', () => {
             <VanillaCard title="Take a tour">
               <p>
                 <img className="help__tour-image"
-                  src="/static/gui/build/app/assets/images/non-sprites/tour/help.png"
+                  src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                  /* eslint-disable max-len */
+                  srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                  /* eslint-enable max-len */
+                  width="201"
                 />
                 <span className="link"
                   onClick={sinon.stub()}
@@ -116,7 +119,7 @@ describe('Help', () => {
               </p>
               <p>
                 <a className="link"
-                  href="https://jujucharms.com/how-it-works"
+                  href="https://jujucharms.com/how-it-works#frequently-asked-questions"
                   target="_blank">
                   FAQs
                 </a>
