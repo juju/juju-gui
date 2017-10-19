@@ -84,8 +84,10 @@ class ModelActions extends React.Component {
         </span>
       );
     }
+    // TODO use feature flag (upcoming branch).
+    // 2017-10-16 Makyo
     let terminalAction = null;
-    if (false) {
+    if (true) {
       terminalAction = (<Terminal
         address={props.address}
         creds={props.creds} />);

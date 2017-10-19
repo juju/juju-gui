@@ -97,10 +97,10 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     handleGUIServices: (unit, db) => {
-      // XXX This is in place for some minor test difficulties. Something about
-      // the way that test data is loaded into the db allows this to be
-      // undefined. This is a problem with tests only and lower priority, so
-      // this will be an issue to be tackled later.
+      // XXX This if-statement is in place for some minor test difficulties.
+      // Something about the way that test data is loaded into the dbin tests
+      // allows unit.charmUrl to be undefined. This is a problem with tests
+      // only and lower priority, so this will be an issue to be tackled later.
       // https://github.com/juju/juju-gui/issues/3277
       // Makyo 2017-10-12
       if (!unit.charmUrl) {
@@ -342,7 +342,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         hooks.forEach(function(hook) {
           hook();
         });
-        // Handle GUI additional services.
+        // Handle GUI additional services. This is called on applications and
+        // units, as changes to both can affect the behavior of the GUI.
         app.get('units').each(unit => {
           utils.handleGUIServices(unit, db);
         });

@@ -264,13 +264,6 @@ const EnvironmentView = proxyquire('./environment', {
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
-      //
-      // XXX This is in place for some minor test difficulties. Something about
-      // the way that test data is loaded into the db allows this to be
-      // undefined. This is a problem with tests only and lower priority, so
-      // this will be an issue to be tackled later.
-      // https://github.com/juju/juju-gui/issues/3277
-      // Makyo 2017-10-12
       db.onDelta({detail: {data: Y.clone(environment_delta)}});
       db.fireEvent = sinon.stub();
       var charmData = testUtils.loadFixture('data/mysql-api-response.json',

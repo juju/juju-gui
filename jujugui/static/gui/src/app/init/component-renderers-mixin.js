@@ -1142,15 +1142,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     }
   }
 
-  _renderTerminal() {
-    const container = document.getElementById('profile-link-container');
-    const address = this.db.environment.get('jujushellAddress');
-    ReactDOM.render(<Terminal
-      address={address}
-      creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
-    />, container);
-  }
-
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.

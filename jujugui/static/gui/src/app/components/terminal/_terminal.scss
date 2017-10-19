@@ -1,0 +1,17 @@
+.juju-shell__terminal-container {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 2px;
+
+  .terminal {
+    background-color: #111;
+    color: #fafafa;
+    padding: 2px;
+    height: 100%;
+
+    .xterm-rows {
+        padding: 2px;
+    }
+  }
+}

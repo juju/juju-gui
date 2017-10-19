@@ -1,14 +1,19 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
+const classNames = require('classnames');
 const PropTypes = require('prop-types');
+const React = require('react');
+const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 const XTerm = require('xterm');
+
+// xterm.js loads plugins by requiring them. This changes the prototype of the
+// xterm object. This is inherently dirty, but not really up to us, and perhaps
+// not something we can change.
 require('xterm/lib/addons/terminado/terminado');
 
 const Lightbox = require('../lightbox/lightbox');
-
 const SvgIcon = require('../svg-icon/svg-icon');
 
 /** Terminal component used to display the Juju shell. */
@@ -33,26 +38,28 @@ class Terminal extends React.Component {
   }
 
   setOpened(opened, evt) {
-    if (evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    }
+    evt.stopPropagation();
+    evt.preventDefault();
     this.setState({opened: opened});
   }
 
   startTerm() {
     const props = this.props;
+    // For now, the shell server is listening for ws (rather than wss)
+    // connections. This will need to be changed when certs are passed in.
     const ws = new WebSocket(`ws://${props.address}/ws/`);
     ws.onopen = () => {
+      const macaroons = props.creds.macaroons && [props.creds.macaroons];
       ws.send(JSON.stringify({
         operation: 'login',
         username: props.creds.user,
         password: props.creds.password,
-        macaroons: props.creds.macaroons
+        macaroons: macaroons
       }));
       ws.send(JSON.stringify({operation: 'start'}));
     };
     ws.onerror = err => {
+      // TODO include notification
       console.error('WebSocket error:', err);
     };
     ws.onmessage = evt => {
@@ -64,7 +71,8 @@ class Terminal extends React.Component {
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
         term.terminadoAttach(ws);
-        term.open(document.getElementById('juju-shell'));
+        term.open(ReactDOM.findDOMNode(this)
+          .querySelector('.juju-shell__terminal-container'));
         this.term = term;
       }
     };
@@ -82,16 +90,17 @@ class Terminal extends React.Component {
     if (this.state.opened) {
       return (
         <Lightbox close={this.setOpened.bind(this, false)}>
-          <div id="juju-shell"></div>
+          <div className="juju-shell__terminal-container"></div>
         </Lightbox>
       );
     }
     const props = this.props;
     const address = props.address;
-    let classes = 'model-actions__import model-actions__button';
-    if (!address) {
-      classes += ' model-actions__button-disabled';
-    }
+    const classes = classNames(
+      'model-actions__import',
+      'model-actions__button',
+      {'model-actions__button-disabled': !address}
+    );
     return (
       <span className={classes}
         onClick={address && this.setOpened.bind(this, true)}
@@ -119,7 +128,7 @@ Terminal.propTypes = {
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,
-    macaroons: PropTypes.object
+    macaroons: PropTypes.array
   })
 };
 
