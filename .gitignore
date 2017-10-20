@@ -17,6 +17,7 @@ downloadcache/
 .emacs.desktop
 .emacs.desktop.lock
 .floo*
+.last-transpile
 fast-babel
 gui.sublime-project
 gui.sublime-workspace
