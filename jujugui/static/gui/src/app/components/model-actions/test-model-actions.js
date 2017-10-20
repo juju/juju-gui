@@ -10,12 +10,14 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('ModelActions', function() {
-  var acl, term;
+  var acl, addNotification, term;
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    if (true) {
+    addNotification = sinon.stub;
+    if (false) {
       term = (<Terminal
+        addNotification={addNotification}
         address={undefined}
         creds={undefined} />);
     }
@@ -25,6 +27,7 @@ describe('ModelActions', function() {
     var renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -95,6 +98,7 @@ describe('ModelActions', function() {
     var output = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -118,6 +122,7 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -143,6 +148,7 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -168,6 +174,7 @@ describe('ModelActions', function() {
     var renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -237,6 +244,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -256,6 +264,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {root: 'new'}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -276,6 +285,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -296,6 +306,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -317,6 +328,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {profile: 'foo'}}}
         changeState={sinon.stub()}
         creds={undefined}
@@ -338,6 +350,7 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {root: 'account'}}}
         changeState={sinon.stub()}
         creds={undefined}

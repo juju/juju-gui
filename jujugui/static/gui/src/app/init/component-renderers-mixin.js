@@ -137,6 +137,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
+        addNotification={this._bound.addNotification}
         address={address}
         appState={this.state}
         changeState={this._bound.changeState}

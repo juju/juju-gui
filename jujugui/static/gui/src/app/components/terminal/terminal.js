@@ -57,13 +57,23 @@ class Terminal extends React.Component {
       ws.send(JSON.stringify({operation: 'start'}));
     };
     ws.onerror = err => {
-      // TODO include notification
       console.error('WebSocket error:', err);
+      props.addNotification({
+        title: 'WebSocket connection failed',
+        message: 'Failed to open WebSocket connection: ' + err,
+        level: 'error'
+      });
     };
     ws.onmessage = evt => {
       const resp = JSON.parse(evt.data);
       if (resp.code === 'error') {
+        // TODO include notification
         console.error(resp.message);
+        props.addNotification({
+          title: 'Error talking to the terminal server',
+          message: 'Error talking to the terminal server: ' + resp.message,
+          level: 'error'
+        });
         return;
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
@@ -119,6 +129,7 @@ class Terminal extends React.Component {
 };
 
 Terminal.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   // The address of the jujushell service, or an empty string if jujushell is
   // not available.
   address: PropTypes.string,

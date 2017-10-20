@@ -11,9 +11,16 @@ const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Terminal', () => {
 
+  let addNotification;
+
+  beforeEach(() => {
+    addNotification = sinon.stub;
+  });
+
   it('should display a button', () => {
     const renderer = jsTestUtils.shallowRender(
       <Terminal
+        addNotification={addNotification}
         address={undefined}
         creds={undefined}
       />, true);
@@ -41,6 +48,7 @@ describe('Terminal', () => {
   it('should only enable the button when an address is available', () => {
     const renderer = jsTestUtils.shallowRender(
       <Terminal
+        addNotification={addNotification}
         address="http://1.2.3.4"
         creds={undefined}
       />, true);
@@ -68,6 +76,7 @@ describe('Terminal', () => {
   it('should open the Lightbox when button is clicked', () => {
     const renderer = jsTestUtils.shallowRender(
       <Terminal
+        addNotification={addNotification}
         address="http://1.2.3.4"
         creds={undefined}
       />, true);
@@ -86,6 +95,7 @@ describe('Terminal', () => {
   it('should start and stop a terminal session', () => {
     const renderer = jsTestUtils.shallowRender(
       <Terminal
+        addNotification={addNotification}
         address="http://1.2.3.4"
         creds={undefined}
       />, true);

@@ -87,8 +87,9 @@ class ModelActions extends React.Component {
     // TODO use feature flag (upcoming branch).
     // 2017-10-16 Makyo
     let terminalAction = null;
-    if (true) {
+    if (false) {
       terminalAction = (<Terminal
+        addNotification={props.addNotification}
         address={props.address}
         creds={props.creds} />);
     }
@@ -137,6 +138,7 @@ class ModelActions extends React.Component {
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
   address: PropTypes.string,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
