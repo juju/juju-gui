@@ -408,7 +408,7 @@ class DeploymentSSHKey extends React.Component {
     return false;
   }
 
-  componentDidUpdate() {
+  componentWillUpdate() {
     this._updateButtonState();
   }
 
