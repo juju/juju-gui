@@ -61,6 +61,11 @@
     &-search {
       float: right;
       padding: 0;
+      width: 252px;
+
+      .header-search__input {
+        width: 175px;
+      }
     }
   }
 
