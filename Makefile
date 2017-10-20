@@ -364,7 +364,8 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
-	- rm -rf .last-transpile
+	- rm .last-transpile
+	- rm browserify-cache.json
 
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest
