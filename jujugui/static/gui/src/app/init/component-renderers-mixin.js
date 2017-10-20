@@ -31,7 +31,6 @@ const EnvSizeDisplay = require('../components/env-size-display/env-size-display'
 const ExpandingProgress = require('../components/expanding-progress/expanding-progress');
 const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
-const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
 const Help = require('../components/help/help');
 const Inspector = require('../components/inspector/inspector');
@@ -306,13 +305,25 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     Renders the Header Help component to the page.
   */
   _renderHeaderHelp() {
+    const openHelp = () => {
+      this.state.changeState({
+        help: true
+      });
+    };
     ReactDOM.render(
-      <HeaderHelp
-        appState={this.state}
-        changeState={this._bound.changeState}
-        gisf={this.applicationConfig.gisf}
-        displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-        user={this.user} />,
+      <span className="header__button"
+        onClick={openHelp.bind(this)}
+        role="button"
+        tabIndex="0">
+        <SvgIcon name="help_16"
+          className="header__button-icon"
+          size="16" />
+        <span className="tooltip__tooltip--below">
+          <span className="tooltip__inner tooltip__inner--up">
+            Help
+          </span>
+        </span>
+      </span>,
       document.getElementById('header-help'));
   }
 

@@ -54,7 +54,7 @@
         .tour__slide-image {
           margin-top: 4rem;
 
-          @media screen and (min-width: $breakpoint-medium) {
+          @media screen and (max-width: $breakpoint-medium) {
             margin-top: 1rem;
           }
         }

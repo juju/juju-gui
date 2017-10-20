@@ -69,8 +69,11 @@ ${this.props.youtubeAPIKey}`,
 
   /**
    Click the button, get the shortcuts.
+
+   @param {Object} evt The click event.
   */
-  _handleShortcutsLink() {
+  _handleShortcutsLink(evt) {
+    evt.stopPropagation();
     this._handleClose();
     this.props.displayShortcutsModal();
   }
