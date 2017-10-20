@@ -667,6 +667,7 @@ describe('BudgetTableRow', function() {
         service={service}
         showTerms={showTerms}
         withPlans={true} />, true);
+    renderer.getMountedInstance().componentWillMount();
     const output = renderer.getRenderOutput();
     const expected = (
       <div>
@@ -732,8 +733,9 @@ describe('BudgetTableRow', function() {
         service={service}
         showTerms={showTerms}
         withPlans={true} />, true);
-    const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
+    instance.componentWillMount();
+    const output = renderer.getRenderOutput();
     const expected = (
       <div>
         <ExpandingRow

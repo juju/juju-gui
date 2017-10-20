@@ -1140,6 +1140,7 @@ describe('Status', function() {
           </select>
         </div>
       </div>);
+    comp.instance._setHighestStatus('error');
     comp.instance.componentDidUpdate();
     const output = comp.renderer.getRenderOutput();
     const wrapper = output.props.children;

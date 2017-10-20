@@ -6,7 +6,6 @@ const React = require('react');
 const AddedServicesListItem = require('./item');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
 
 describe('AddedServicesListItem', function() {
   var mockService;
@@ -269,7 +268,7 @@ describe('AddedServicesListItem', function() {
   });
 
   it('calls the changeState callable on click', function() {
-    var service = {
+    const service = {
       getAttrs: function() {
         return {
           icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
@@ -281,10 +280,9 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    var changeStub = sinon.stub();
-    var panToService = sinon.stub();
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const changeStub = sinon.stub();
+    const panToService = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <AddedServicesListItem
         focusService={sinon.stub()}
         unfocusService={sinon.stub()}
@@ -292,8 +290,8 @@ describe('AddedServicesListItem', function() {
         getUnitStatusCounts={getUnitStatusCounts()}
         hoverService={sinon.stub()}
         panToService={panToService}
-        service={service} />);
-    var output = shallowRenderer.getRenderOutput();
+        service={service} />, true);
+    const output = renderer.getRenderOutput();
     output.props.onClick({
       currentTarget: {
         getAttribute: () => 'serviceId'
