@@ -14,7 +14,7 @@ describe('ModelActions', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    if (false) {
+    if (true) {
       term = (<Terminal
         address={undefined}
         creds={undefined} />);
