@@ -80,8 +80,6 @@ help:
 #########
 .PHONY: sysdeps
 sysdeps:
-	sudo apt install -y software-properties-common
-	sudo add-apt-repository -y ppa:yellow/ppa
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt install -y nodejs
 	sudo apt update
@@ -271,7 +269,7 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: lint-components lint-python lint-js lint-css
+lint: $(NODE_MODULES) lint-components lint-python lint-js lint-css
 
 .PHONY: lint-python
 lint-python: $(FLAKE8)
