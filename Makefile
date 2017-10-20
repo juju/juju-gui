@@ -44,9 +44,6 @@ STATIC_CSS_FILES = \
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
-SYSDEPS = coreutils g++ git inotify-tools nodejs \
-	python-virtualenv realpath xvfb chromium-browser
-
 CURRENT_VERSION = $(shell sed -n -e '/current_version =/ s/.*\= *// p' .bumpversion.cfg)
 CURRENT_COMMIT = $(shell git rev-parse HEAD)
 
@@ -83,13 +80,12 @@ help:
 #########
 .PHONY: sysdeps
 sysdeps:
-	sudo apt-get install -y software-properties-common
+	sudo apt install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
-	sudo apt-get update
-	sudo apt-get install -y $(SYSDEPS)
-
-.PHONY: src
-src: $(GUISRC)
+	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+	sudo apt install -y nodejs
+	sudo apt update
+	sudo apt install -y coreutils g++ git inotify-tools python-virtualenv realpath xvfb chromium-browser
 
 #######
 # TOOLS
@@ -98,7 +94,7 @@ $(PY):
 	virtualenv .
 
 $(NODE_MODULES):
-	npm install --cache-min 999999
+	npm install
 
 .PHONY: server
 server: gui
@@ -131,21 +127,14 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(
 	$(PY) scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)"
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
-# fast-babel will be passed a list of all files which have been
-# changed since the last time this target has run.
-fast-babel: $(RAWJSFILES)
-	FILE_LIST="$?" ./scripts/transpile.js
-	@touch $@
-
 $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
-	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
+	./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
-		-not -name "react*" \
 		-not -name "js-macaroon*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
@@ -218,7 +207,7 @@ watch:
 # Download cache
 ################
 $(CACHE):
-	git clone --depth=1 "git@github.com:juju/juju-gui-downloadcache.git" $(CACHE)
+	git clone --depth=1 "https://github.com/juju/juju-gui-downloadcache.git" $(CACHE)
 
 downloadcache: $(CACHE)
 
@@ -330,7 +319,7 @@ check: clean-pyc lint test
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
-ci-check: clean-downloadcache deps fast-babel check
+ci-check: clean-downloadcache deps check
 
 ###########
 # Packaging
@@ -344,13 +333,13 @@ version:
 	echo '{"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"}' > $(GUIBUILD)/app/version.json
 
 .PHONY: dist
-dist: clean-all deps fast-babel prod-gui test-deps collect-requirements version
+dist: clean-all deps prod-gui test-deps collect-requirements version
 	# We are only minifying the init bundle here because it takes considerable time.
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
 	$(PY) setup.py sdist --formats=bztar\
 
 .PHONY: fast-dist
-fast-dist: deps fast-babel gui test-deps collect-requirements version
+fast-dist: deps gui test-deps collect-requirements version
 	# We are only minifying the init bundle here because it takes considerable time.
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
 	$(PY) setup.py sdist --formats=bztar\
@@ -375,7 +364,7 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
-	- rm -rf fast-babel
+	- rm -rf .last-transpile
 
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest
