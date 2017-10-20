@@ -77,7 +77,7 @@ describe('Terminal', () => {
     output = renderer.getRenderOutput();
     const expected = (
       <Lightbox close={instance.setOpened}>
-        <div id="juju-shell"></div>
+        <div className="juju-shell__terminal-container"></div>
       </Lightbox>
     );
     expect(output).toEqualJSX(expected);

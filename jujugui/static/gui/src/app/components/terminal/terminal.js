@@ -38,8 +38,6 @@ class Terminal extends React.Component {
   }
 
   setOpened(opened, evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
     this.setState({opened: opened});
   }
 
