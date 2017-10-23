@@ -650,9 +650,8 @@ class Status extends React.Component {
         this._setHighestStatus(this._getHighestStatus(
           [unit.agentStatus, unit.workloadStatus]));
         let publicAddress = unit.public_address;
-        if (appExposed) {
-          const portRanges = unit.portRanges;
-          const port = portRanges[0].from;
+        if (appExposed && unit.portRanges.length) {
+          const port = unit.portRanges[0].from;
           const label = `${unit.public_address}:${port}`;
           const protocol = port === 443 ? 'https' : 'http';
           const href = `${protocol}://${label}`;

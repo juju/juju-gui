@@ -101,6 +101,16 @@ describe('Status', function() {
       workloadStatus: 'error',
       workloadStatusMessage: 'exterminate!'
     }, {
+      agentStatus: 'idle',
+      displayName: 'django/42',
+      id: 'django/id42',
+      machine: '2',
+      public_address: '1.2.3.6',
+      // Simulate that the unit didn't open ports yet.
+      portRanges: [],
+      workloadStatus: 'installing',
+      workloadStatusMessage: ''
+    }, {
       // Unplaced units are excluded.
       agentStatus: '',
       displayName: 'django/2',
@@ -612,7 +622,7 @@ describe('Status', function() {
               content: <span className="status-view__status--ok">active</span>
             }, {
               columnSize: 1,
-              content: 2
+              content: 3
             }, {
               columnSize: 2,
               content: (
@@ -820,6 +830,57 @@ describe('Status', function() {
             }],
             extraData: 'error',
             key: 'django/id1'
+          }, {
+            classes: ['status-view__table-row--pending'],
+            clickState: {
+              gui: {
+                inspector: {
+                  activeComponent: 'unit',
+                  id: 'django',
+                  unit: 'id42'
+                }
+              }
+            },
+            columns: [{
+              columnSize: 2,
+              content: (
+                <span>
+                  <img className="status-view__icon"
+                    src="django.svg" />
+                  django/42
+                </span>)
+            }, {
+              columnSize: 2,
+              content: (
+                <span className="status-view__status--pending">
+                  installing
+                </span>)
+            }, {
+              columnSize: 2,
+              content: (
+                <span className="status-view__status--ok">
+                  idle
+                </span>)
+            }, {
+              columnSize: 1,
+              content: (
+                <a className="status-view__link"
+                  href={undefined}
+                  onClick={sinon.stub()}>
+                  2
+                </a>)
+            }, {
+              columnSize: 2,
+              content: '1.2.3.6'
+            }, {
+              columnSize: 1,
+              content: ''
+            }, {
+              columnSize: 2,
+              content: ''
+            }],
+            extraData: 'pending',
+            key: 'django/id42'
           }]}
           sort={sinon.stub()}
           tableClasses={['status-view__table']} />

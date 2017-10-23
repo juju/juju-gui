@@ -1067,9 +1067,7 @@ utils.createMachinesPlaceUnits = function(
     }], function(machine) {
       db.machines.remove(machine);
     }.bind(this, machine), { modelId: machine.id});
-    env.placeUnit(
-      viewUtils.addGhostAndEcsUnits(db, env, service, 1)[0],
-      machine.id);
+    env.placeUnit(addGhostAndEcsUnits(db, env, service, 1)[0], machine.id);
   }
 };
 
@@ -1086,7 +1084,7 @@ utils.createMachinesPlaceUnits = function(
   @param {Function} callback optional The callback to call after the units
     have been added to the env.
 */
-utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
+function addGhostAndEcsUnits(db, env, service, unitCount, callback) {
   var serviceName = service.get('id'),
       unitCount = parseInt(unitCount, 10),
       units = [],
@@ -1149,6 +1147,7 @@ function removeGhostAddUnitCallback(ghostUnit, db, callback, e) {
     callback(e, db, ghostUnit);
   }
 }
+utils.addGhostAndEcsUnits = addGhostAndEcsUnits;
 utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
 
 module.exports = utils;
