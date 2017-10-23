@@ -297,6 +297,36 @@ describe('DeploymentSSHKey', function() {
       );
     });
 
+    it ('removes key from table', () => {
+      const comp = render('aws');
+      comp.instance.refs = {
+        githubUsername: {
+          getValue: sinon.stub(),
+          focus: sinon.stub(),
+          setValue: sinon.stub()
+        }
+      };
+      comp.instance._addGithubKeysCallback(null, [
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+      ]);
+      let output = comp.renderer.getRenderOutput();
+      let removeButton = output.props.children[1].props.children[0]
+        .props.children[1][0].props.children[2].props.children;
+      expect(removeButton).toEqualJSX(
+        <span className="added-keys__key-remove right"
+          onClick={comp.instance._removeKey.bind(comp.instance)}
+          role="button"
+          title="Remove key">
+          <SvgIcon name="close_16" size="16" />
+        </span>
+      );
+
+      comp.instance._removeKey.bind(comp.instance)(1);
+      output = comp.renderer.getRenderOutput();
+
+      assert.deepEqual(output.props.children[1], false);
+    });
+
     it('stores the SSH keys', function() {
       const comp = render('gce');
       comp.instance.refs = {
@@ -375,6 +405,38 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
+    });
+
+    it('removes key from table', () => {
+      comp.instance._handleAddMoreKeys.call(comp.instance);
+      let output = comp.renderer.getRenderOutput();
+      expect(output.props.children[1]).toEqualJSX(
+        <div>
+          <ul className="deployment-machines__list clearfix">
+            <li className="deployment-flow__row-header twelve-col last-col">
+              Launchpad Users
+            </li>
+            <li className="deployment-flow__row twelve-col">
+              <div className="eleven-col">
+                rose
+              </div>
+              <div className="one-col last-col">
+                <span className="added-keys__key-remove right"
+                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  role="button"
+                  title="Remove username">
+                  <SvgIcon name="close_16" size="16" />
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      );
+
+      comp.instance._removeLPUsername.bind(comp.instance)('rose');
+      output = comp.renderer.getRenderOutput();
+
+      assert.deepEqual(output.props.children[1], false);
     });
 
     it('shows a table for usernames and keys', () => {
@@ -487,6 +549,38 @@ describe('DeploymentSSHKey', function() {
         </div>
       );
     });
+  });
+
+  it('can disable and enable the add', () => {
+    const comp = render('aws');
+    let output = comp.output.props.children[3].props.children[2];
+    expect(output).toEqualJSX(
+      <div className="right">
+        <GenericButton
+          action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+          disabled={true}
+          type="positive">
+          Add Keys
+        </GenericButton>
+      </div>
+    );
+
+    comp.instance.setState({
+      buttonDisabled: false
+    });
+
+    output = comp.renderer.getRenderOutput()
+      .props.children[3].props.children[2];
+    expect(output).toEqualJSX(
+      <div className="right">
+        <GenericButton
+          action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+          disabled={false}
+          type="positive">
+          Add Keys
+        </GenericButton>
+      </div>
+    );
   });
 
 });
