@@ -19,7 +19,6 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 const jsTestUtils = require('../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
 
 describe('Inspector', function() {
   var acl, appState;
@@ -1303,7 +1302,7 @@ describe('Inspector', function() {
   });
 
   it('passes changeState callable to header component', function() {
-    var service = {
+    const service = {
       get: function(val) {
         if (val === 'id') {
           return 'apache2';
@@ -1314,8 +1313,7 @@ describe('Inspector', function() {
         }
         return {name: 'demo'};
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const renderer = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
         addCharm={sinon.stub()}
@@ -1351,8 +1349,8 @@ describe('Inspector', function() {
         showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -1367,7 +1365,7 @@ describe('Inspector', function() {
       activeComponent: 'relations',
       id: 'service2'
     };
-    var service = {
+    const service = {
       get: function(val) {
         if (val === 'id') {
           return 'apache2';
@@ -1378,8 +1376,7 @@ describe('Inspector', function() {
         }
         return {name: 'demo'};
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const renderer = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
         addCharm={sinon.stub()}
@@ -1415,8 +1412,8 @@ describe('Inspector', function() {
         showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -1430,12 +1427,11 @@ describe('Inspector', function() {
   });
 
   it('does not go back to the inspector from the same service', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('name').returns('demo');
-    var service = {get: getStub};
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const service = {get: getStub};
+    const renderer = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
         addCharm={sinon.stub()}
@@ -1471,8 +1467,8 @@ describe('Inspector', function() {
         showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -1483,12 +1479,11 @@ describe('Inspector', function() {
   });
 
   it('passes a title to the header component', function() {
-    var service = {
+    const service = {
       get: function() {
         return 'demo';
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const renderer = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
         addCharm={sinon.stub()}
@@ -1524,27 +1519,26 @@ describe('Inspector', function() {
         showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     assert.equal(output.props.children[0].props.title, 'demo');
   });
 
   it('passes the type to the header component', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('icon').returns('icon.svg');
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       filterByStatus: sinon.stub().returns([])
     });
-    var service = {get: getStub};
+    const service = {get: getStub};
     appState.current.gui.inspector = {
       id: 'django',
       activeComponent: 'units',
       units: 'error',
       unitStatus: null
     };
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const renderer = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
         addCharm={sinon.stub()}
@@ -1580,8 +1574,8 @@ describe('Inspector', function() {
         showPlans={false}
         unexposeService={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.type, 'error');
   });
 });

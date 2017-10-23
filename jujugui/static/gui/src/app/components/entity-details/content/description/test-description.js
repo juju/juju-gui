@@ -40,8 +40,7 @@ describe('EntityContentDescription', function() {
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
-
-      assert.equal(output, null);
+      assert.equal(output, false);
     });
 
     it('can render with a description', () => {
@@ -76,8 +75,7 @@ describe('EntityContentDescription', function() {
           changeState={sinon.stub()}
           entityModel={mockEntity}
           renderMarkdown={marked} />);
-
-      assert.equal(output, null);
+      assert.equal(output, false);
     });
 
     it('can render with a description', () => {

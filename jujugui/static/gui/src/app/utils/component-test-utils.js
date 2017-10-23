@@ -18,11 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var JsDiff = require('diff');
+const JsDiff = require('diff');
 
-var testUtils = require('react-dom/test-utils');
+const ShallowRenderer = require('react-test-renderer/shallow');
 
-var jsTestUtils = {
+const jsTestUtils = {
 
   /**
     shallowRender provides a convenience wrapper around the React
@@ -33,14 +33,13 @@ var jsTestUtils = {
       https://github.com/facebook/react/blob/
       dc2570e1ceebd2b4be7ebe0990f8524f6b53ea7c/src/test/ReactTestUtils.js#L347
 
-    @method shallowRender
     @param {Object} component The components to render.
     @param {Boolean} returnRenderer Whether or not it should return the
       component instance or just the rendered output.
     @return {Object} See returnRenderer parameter.
   */
   shallowRender: function(component, returnRenderer) {
-    var shallowRenderer = testUtils.createRenderer();
+    const shallowRenderer = new ShallowRenderer();
     shallowRenderer.render(component);
     // XXX: Add the getMountedInstance until it lands, at which point this can
     // removed. See:

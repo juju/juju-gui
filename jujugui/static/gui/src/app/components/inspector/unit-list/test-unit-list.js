@@ -178,13 +178,12 @@ describe('UnitList', () => {
   });
 
   it('displays the provided count', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    const renderer = jsTestUtils.shallowRender(
       <CheckListItem
         aside="5"
         label="label"
-        whenChanged={sinon.stub()} />);
-    var output = shallowRenderer.getRenderOutput();
+        whenChanged={sinon.stub()} />, true);
+    const output = renderer.getRenderOutput();
     assert.equal(output.props.children.props.children[3].props.children, '5');
   });
 

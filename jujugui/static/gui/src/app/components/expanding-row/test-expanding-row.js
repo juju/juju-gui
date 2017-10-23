@@ -92,26 +92,27 @@ describe('ExpandingRow', () => {
   });
 
   it('can update to be expanded', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <ExpandingRow
         expanded={false}>
         <span>closed</span>
         <span>open</span>
       </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     // Mock the ref. The MutationObserver needs a real DOM node.
     instance.refs = {inner: document.createElement('div')};
     // The shallow renderer does not call componentDidMount, so call it
     // manually.
     instance.componentDidMount();
-    var output = renderer.getRenderOutput();
-    output = renderer.render(
+    instance.componentWillUpdate.call(instance, {expanded: true});
+    renderer.render(
       <ExpandingRow
         expanded={true}>
         <span>closed</span>
         <span>open</span>
       </ExpandingRow>);
-    var expected = (
+    const output = renderer.getRenderOutput();
+    const expected = (
       <li className={
         'expanding-row twelve-col expanding-row--expanded ' +
         'expanding-row--clickable'}

@@ -57,8 +57,9 @@ describe('HeaderSearch', function() {
       }
     };
     output.props.children[2].props.onClick();
-    assert.equal(blurStub.callCount, 1);
-    assert.equal(appState.changeState.callCount, 1);
+    instance.componentDidUpdate();
+    assert.equal(blurStub.callCount, 1, 'blurStub not called');
+    assert.equal(appState.changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,
       root: null,
@@ -155,6 +156,7 @@ describe('HeaderSearch', function() {
       }
     };
     output.props.children[1].props.onClick();
+    instance.componentDidUpdate();
     assert.equal(blurStub.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
