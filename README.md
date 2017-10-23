@@ -25,4 +25,4 @@ simply run `juju upgrade-gui`.
 
 ### Developing the GUI
 
-Documentation outlining how to develop with the GUI can be found in the `HACKING.md` document
+Documentation outlining how to develop with the GUI can be found in the `docs/hacking.md` document
