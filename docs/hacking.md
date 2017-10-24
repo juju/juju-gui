@@ -33,7 +33,7 @@ path will trigger a rebuild of the modified files.
 
 In order to actually use the GUI in the development mode you will need to connect
 it to a Juju Controller. To do this we use [GUIProxy](https://github.com/juju/guiproxy),
-see it's Readme for information on how to use and build it.
+see its Readme for information on how to use and build it.
 
 ## Running Tests
 

@@ -10,7 +10,7 @@ The Juju GUI is open source and the code is available on [GitHub](https://github
 
 The latest release of the Juju GUI is made available to all users of Juju automatically
 and can be launched by running `juju gui` in your terminal. For those using
-[JAAS](https://jujucharms.com) you can use the GUI by logging into your account
+[JAAS](https://jujucharms.com), you can use the GUI by logging into your account
 or [creating a new model](https://jujucharms.com/new).
 
 ### Issues & Feature Requests

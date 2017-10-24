@@ -80,7 +80,7 @@ guiproxy -env production
 ```bash
 make dist
 juju bootstrap google google
-juju upgrade-gui dist/juju-gui-2.10.2.tar.bz2
+juju upgrade-gui dist/juju-gui-*.tar.bz2
 ```
 
 ### Push to GitHub
