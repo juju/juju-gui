@@ -105,7 +105,6 @@ describe('Store', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      root: null,
       store: 'kibana'
     });
   });

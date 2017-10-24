@@ -34,7 +34,7 @@ class HeaderSearch extends React.Component {
   */
   _activeForComponent() {
     const state = this.props.appState.current;
-    return state.root === 'store' ||
+    return state.store === '' ||
             state.store !== undefined || state.search !== undefined;
   }
 
@@ -102,15 +102,20 @@ class HeaderSearch extends React.Component {
   _handleSearchFocus() {
     this._openSearch(true);
     if (!this.state.active && !this.state.query) {
-      this.props.appState.changeState({
-        root: 'store',
+      const appState = this.props.appState;
+      const newState = {
+        store: '',
         user: null,
         profile: null,
         gui: {
           machines: null,
           inspector: null
         }
-      });
+      };
+      if (!appState.current.model) {
+        newState.root = 'new';
+      };
+      appState.changeState(newState);
     }
   }
 
@@ -177,7 +182,6 @@ class HeaderSearch extends React.Component {
     this._closeSearch();
     this.props.appState.changeState({
       hash: null,
-      root: null,
       store: null,
       search: null
     });
@@ -202,7 +206,7 @@ class HeaderSearch extends React.Component {
   _handleStoreClick(e) {
     this.setState({query: ''});
     this.props.appState.changeState({
-      root: 'store'
+      store: ''
     });
   }
 
