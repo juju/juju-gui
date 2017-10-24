@@ -1,6 +1,4 @@
-====================
-GUI Embedded in Juju
-====================
+# GUI Embedded in Juju
 
 Starting from Juju 2.0, the Juju GUI is served directly by Juju controllers.
 Juju uses the GUI releases created from this code base. Controllers serve the
