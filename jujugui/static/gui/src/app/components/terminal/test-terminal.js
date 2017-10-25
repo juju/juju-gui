@@ -101,8 +101,7 @@ describe('Terminal', () => {
       />, true);
     const startTerm = sinon.stub();
     const stopTerm = sinon.stub();
-    let output = renderer.getRenderOutput();
-    let instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.startTerm = startTerm;
     instance.stopTerm = stopTerm;
     // Ensure that startTerm and stopTerm are called when state changes.

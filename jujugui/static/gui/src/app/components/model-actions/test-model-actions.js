@@ -159,7 +159,7 @@ describe('ModelActions', function() {
           ref="file-input" />
       </div>);
     expect(output).toEqualJSX(expected);
-  })
+  });
 
   it('can export the env', function() {
     var exportEnvironmentFile = sinon.stub();
