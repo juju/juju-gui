@@ -76,6 +76,9 @@ class Terminal extends React.Component {
         });
         return;
       }
+      if (resp['0'] === 'disconnect') {
+        this.setOpened(false);
+      }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
         term.terminadoAttach(ws);
