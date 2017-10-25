@@ -50,6 +50,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -132,13 +133,18 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderModelActions() {
     const db = this.db;
     const modelAPI = this.modelAPI;
+    const address = this.db.environment.get('jujushellAddress');
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
+        addNotification={this._bound.addNotification}
+        address={address}
         appState={this.state}
         changeState={this._bound.changeState}
+        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
+        flags={window.juju_config.flags}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
@@ -1137,6 +1143,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       next();
     }
   }
+
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.

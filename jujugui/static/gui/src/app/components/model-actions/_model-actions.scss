@@ -57,6 +57,13 @@
     border-radius: 2px;
     border-right-width: 0;
 
+    &-disabled {
+      svg {
+        opacity: 0.5;
+      }
+      cursor: default;
+    }
+
     &:first-child {
       border-radius: 2px 0 0 2px;
     }

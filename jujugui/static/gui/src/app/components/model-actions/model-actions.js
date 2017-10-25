@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
+const Terminal = require('../terminal/terminal');
 
 class ModelActions extends React.Component {
   /**
@@ -61,6 +62,7 @@ class ModelActions extends React.Component {
     // model.
     const sharingEnabled = props.userIsAuthenticated &&
       props.appState.current.root !== 'new';
+    const useTerm = this.props.flags['terminal'];
     let shareAction = null;
     if (sharingEnabled) {
       const shareClasses = classNames(
@@ -82,6 +84,15 @@ class ModelActions extends React.Component {
           </span>
         </span>
       );
+    }
+    // TODO use feature flag (upcoming branch).
+    // 2017-10-16 Makyo
+    let terminalAction = null;
+    if (useTerm) {
+      terminalAction = (<Terminal
+        addNotification={props.addNotification}
+        address={props.address}
+        creds={props.creds} />);
     }
     const isReadOnly = props.acl.isReadOnly();
     return (
@@ -114,6 +125,7 @@ class ModelActions extends React.Component {
             </span>
           </span>
           {shareAction}
+          {terminalAction}
         </div>
         <input className="model-actions__file"
           type="file"
@@ -127,9 +139,13 @@ class ModelActions extends React.Component {
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,
+  addNotification: PropTypes.func.isRequired,
+  address: PropTypes.string,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
+  creds: PropTypes.object,
   exportEnvironmentFile: PropTypes.func.isRequired,
+  flags: PropTypes.object.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,
   loadingModel: PropTypes.bool,
