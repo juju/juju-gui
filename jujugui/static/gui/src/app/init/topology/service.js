@@ -1052,15 +1052,16 @@ class ServiceModule {
           message: 'Changeset processing started.',
           level: 'important'
         });
-        var charmstore = topo.charmstore;
+        const charmstore = topo.charmstore;
+        const bundleId = entityData.id.replace('cs:', '');
         charmstore.getBundleYAML(
-          entityData.id.replace('cs:', ''),
+          bundleId,
           function(error, bundleYAML) {
             if (error) {
               console.error(error);
               return;
             }
-            topo.bundleImporter.importBundleYAML(bundleYAML);
+            topo.bundleImporter.importBundleYAML(bundleId, bundleYAML);
           }.bind(this));
       }
     }

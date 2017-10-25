@@ -14,13 +14,16 @@ class BundleImporter {
     this._collectedServices = [];
     this.makeEntityModel = cfg.makeEntityModel;
     this.recordSet = null;
+    this.bundleId = null;
   }
 
   /**
     Import a bundle YAML into the current model.
     @param {String} bundleYAML The bundle YAML to deploy.
   */
-  importBundleYAML(bundleYAML) {
+  importBundleYAML(bundleId, bundleYAML) {
+    this.bundleId = bundleId;
+
     this.db.notifications.add({
       title: 'Fetching bundle data',
       message: 'Fetching detailed bundle data, this may take some time',
@@ -673,6 +676,11 @@ class BundleImporter {
           annotations['gui-y'] = parseInt(annotations['gui-y']) + space;
         }
       }
+
+      if (this.bundleId && annotations['bundle-id']) {
+        annotations['bundle-id'] = this.bundleId;
+      }
+
       application.set('annotations', annotations);
     }
     next();

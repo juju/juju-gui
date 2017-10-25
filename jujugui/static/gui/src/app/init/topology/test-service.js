@@ -409,7 +409,7 @@ describe('service module events', function() {
       }
     };
     view.topo.bundleImporter = {
-      importBundleYAML: function(e) {
+      importBundleYAML: function(a, e) {
         assert.equal(e.target.responseText, 'bundle: BUNDLE DATA');
         done();
       }

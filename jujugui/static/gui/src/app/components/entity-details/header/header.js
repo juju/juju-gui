@@ -47,7 +47,7 @@ class EntityHeader extends React.Component {
       this.props.deployService(entityModel, undefined, plans, activePlan);
     } else {
       var id = entity.id.replace('cs:', '');
-      this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
+      this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this, id));
     }
     this._closeEntityDetails();
   }
@@ -74,7 +74,7 @@ class EntityHeader extends React.Component {
     @param {String} error The error, if any. Null if no error.
     @param {String} yaml The yaml for the bundle
   */
-  _getBundleYAMLCallback(error, yaml) {
+  _getBundleYAMLCallback(bundleId, error, yaml) {
     if (error) {
       console.error(error);
       this.props.addNotification({
@@ -85,7 +85,7 @@ class EntityHeader extends React.Component {
       });
       return;
     }
-    this.props.importBundleYAML(yaml);
+    this.props.importBundleYAML(bundleId, yaml);
     this._closeEntityDetails();
   }
 

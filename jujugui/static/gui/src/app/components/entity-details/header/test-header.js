@@ -495,7 +495,7 @@ describe('EntityHeader', function() {
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
-    assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
+    assert.deepEqual(importBundleYAML.args[0][1], 'mock yaml');
   });
 
   it('displays a notification if there is a bundle deploy error', function() {

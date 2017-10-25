@@ -1509,7 +1509,9 @@ class GUIApp {
         if (error) {
           failureNotification(error);
         } else {
-          this.bundleImporter.importBundleYAML(bundleYAML);
+          this.bundleImporter.importBundleYAML(
+            entityId.replace('cs:', ''),
+            bundleYAML);
         }
       });
     } else {
