@@ -37,7 +37,7 @@ class Terminal extends React.Component {
     }
   }
 
-  setOpened(opened, evt) {
+  setOpened(opened) {
     this.setState({opened: opened});
   }
 

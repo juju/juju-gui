@@ -62,6 +62,7 @@ class ModelActions extends React.Component {
     // model.
     const sharingEnabled = props.userIsAuthenticated &&
       props.appState.current.root !== 'new';
+    const useTerm = this.props.flags['terminal'];
     let shareAction = null;
     if (sharingEnabled) {
       const shareClasses = classNames(
@@ -87,7 +88,7 @@ class ModelActions extends React.Component {
     // TODO use feature flag (upcoming branch).
     // 2017-10-16 Makyo
     let terminalAction = null;
-    if (false) {
+    if (useTerm) {
       terminalAction = (<Terminal
         addNotification={props.addNotification}
         address={props.address}
@@ -144,6 +145,7 @@ ModelActions.propTypes = {
   changeState: PropTypes.func.isRequired,
   creds: PropTypes.object,
   exportEnvironmentFile: PropTypes.func.isRequired,
+  flags: PropTypes.object.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,
   loadingModel: PropTypes.bool,

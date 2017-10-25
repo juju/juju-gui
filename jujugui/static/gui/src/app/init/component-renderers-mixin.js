@@ -144,6 +144,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
+        flags={window.juju_config.flags}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}

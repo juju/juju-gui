@@ -101,12 +101,16 @@ describe('Terminal', () => {
       />, true);
     const startTerm = sinon.stub();
     const stopTerm = sinon.stub();
-    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    let instance = renderer.getMountedInstance();
     instance.startTerm = startTerm;
     instance.stopTerm = stopTerm;
+    // Ensure that startTerm and stopTerm are called when state changes.
     instance.setOpened(true);
-    instance.setOpened(false);
+    instance.componentDidUpdate({}, {opened: false});
     assert.strictEqual(startTerm.callCount, 1);
+    instance.setOpened(false);
+    instance.componentDidUpdate({}, {opened: true});
     assert.strictEqual(stopTerm.callCount, 1);
   });
 });
