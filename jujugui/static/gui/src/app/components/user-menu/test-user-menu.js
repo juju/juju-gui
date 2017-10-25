@@ -28,6 +28,7 @@ describe('UserMenu', () => {
         controllerAPI={controllerAPI}
         navigateUserAccount={sinon.stub()}
         navigateUserProfile={sinon.stub()}
+        showHelp={sinon.stub()}
       />, true);
     return {
       renderer: renderer,
@@ -58,6 +59,13 @@ describe('UserMenu', () => {
             <a className="dropdown-menu__list-item-link"
               role="button"
               onClick={c.instance._handleAccountClick}>Account</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="help">
+            <a className="dropdown-menu__list-item-link"
+              onClick={c.instance.props.showHelp} role="button">
+                GUI help
+            </a>
           </li>,
           <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="logout">
@@ -92,6 +100,13 @@ describe('UserMenu', () => {
             <a className="dropdown-menu__list-item-link"
               role="button"
               onClick={c.instance._handleAccountClick}>Account</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="help">
+            <a className="dropdown-menu__list-item-link"
+              onClick={c.instance.props.showHelp} role="button">
+                GUI help
+            </a>
           </li>,
           <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="logout">
