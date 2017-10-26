@@ -88,8 +88,8 @@ describe('State', () => {
     state: { root: 'new' },
     error: null
   }, {
-    path: 'http://abc.com:123/store',
-    state: { root: 'store' },
+    path: 'http://abc.com:123/new/store',
+    state: { root: 'new', store: '' },
     error: null
   }, {
     path: 'http://abc.com:123/about',
@@ -196,6 +196,10 @@ describe('State', () => {
     state: {gui: {machines: '' }},
     error: null
   }, {
+    path: 'http://abc.com:123/store/i/machines',
+    state: {gui: {machines: '' }, store: ''},
+    error: null
+  }, {
     path: 'http://abc.com:123/i/applications/inspector/ghost',
     state: {gui: {applications: '', inspector: {id:'ghost'}}},
     error: null
@@ -234,6 +238,10 @@ describe('State', () => {
   }];
 
   const storeStateTests = [{
+    path: 'http://abc.com:123/store',
+    state: { store: '' },
+    error: null
+  }, {
     path: 'http://abc.com:123/haproxy',
     state: { store: 'haproxy' },
     error: null
@@ -256,6 +264,10 @@ describe('State', () => {
   }];
 
   const modelStoreStateTests = [{
+    path: 'http://abc.com:123/u/hatch/staging/store',
+    state: { user: 'hatch/staging', store: '' },
+    error: null
+  }, {
     path: 'http://abc.com:123/u/hatch/staging/haproxy',
     state: { user: 'hatch/staging', store: 'haproxy' },
     error: null
@@ -997,7 +1009,7 @@ describe('State', () => {
 
     it('works with store as the root, but not other ROOT_RESERVED', () => {
       const ROOT_RESERVED = [
-        'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
+        'about', 'account', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new'];
 
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',

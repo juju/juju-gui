@@ -1,3 +1,8 @@
+- 2.10.2:
+
+  - (Fix) Status View no longer errors if ports are not yet available.
+  - (Fix) Scaling applications from the inspector no longer fails on submit.
+
 - 2.10.1:
 
   - (Fix) Switching profiles between users now properly updates page title.

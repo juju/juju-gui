@@ -31,8 +31,8 @@ const EnvSizeDisplay = require('../components/env-size-display/env-size-display'
 const ExpandingProgress = require('../components/expanding-progress/expanding-progress');
 const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
 const HeaderLogo = require('../components/header-logo/header-logo');
-const HeaderHelp = require('../components/header-help/header-help');
 const HeaderSearch = require('../components/header-search/header-search');
+const Help = require('../components/help/help');
 const Inspector = require('../components/inspector/inspector');
 const ISVProfile = require('../components/isv-profile/isv-profile');
 const Lightbox = require('../components/lightbox/lightbox');
@@ -50,6 +50,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -105,7 +106,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
           getUnitStatusCounts={initUtils.getUnitStatusCounts}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
-          changeState={this.state.changeState.bind(this.state)} />
+          changeState={this._bound.changeState} />
       </Panel>,
       document.getElementById('inspector-container'));
   }
@@ -132,13 +133,18 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderModelActions() {
     const db = this.db;
     const modelAPI = this.modelAPI;
+    const address = this.db.environment.get('jujushellAddress');
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
+        addNotification={this._bound.addNotification}
+        address={address}
         appState={this.state}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
+        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
+        flags={window.juju_config.flags}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
@@ -249,7 +255,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         listModelsWithInfo={
           this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
         getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         destroyModels={
           this.controllerAPI.destroyModels.bind(this.controllerAPI)}
         getAgreements={this.terms.getAgreements.bind(this.terms)}
@@ -305,12 +311,25 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     Renders the Header Help component to the page.
   */
   _renderHeaderHelp() {
+    const openHelp = () => {
+      this.state.changeState({
+        help: true
+      });
+    };
     ReactDOM.render(
-      <HeaderHelp
-        appState={this.state}
-        gisf={this.applicationConfig.gisf}
-        displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-        user={this.user} />,
+      <span className="header__button"
+        onClick={openHelp.bind(this)}
+        role="button"
+        tabIndex="0">
+        <SvgIcon name="help_16"
+          className="header__button-icon"
+          size="16" />
+        <span className="tooltip__tooltip--below">
+          <span className="tooltip__inner tooltip__inner--up">
+            Help
+          </span>
+        </span>
+      </span>,
       document.getElementById('header-help'));
   }
 
@@ -348,6 +367,33 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         {content}
       </Lightbox>,
       document.getElementById('lightbox'));
+  }
+
+  /**
+    Opens the help overlay.
+  */
+  _renderHelp(state, next) {
+    const handler = new WebHandler();
+    ReactDOM.render(<Help
+      changeState={this._bound.changeState}
+      displayShortcutsModal={this._displayShortcutsModal.bind(this)}
+      gisf={this.applicationConfig.gisf}
+      user={this.user}
+      sendGetRequest={handler.sendGetRequest.bind(handler)}
+      staticURL={this.applicationConfig.staticURL || ''}
+      youtubeAPIKey={this.applicationConfig.youtubeAPIKey} />,
+    document.getElementById('help')
+    );
+    next();
+  }
+
+  /**
+    Remove the help overlay.
+  */
+  _clearHelp(state, next) {
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById('help')
+    );
   }
 
   /**
@@ -402,7 +448,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <PostDeployment
         addCharmAnnotations={addCharmAnnotations}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
         getFile={charmstore.getFile.bind(charmstore)}
@@ -439,7 +485,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   /**
-    Remove post deployment help.
+    Remove post deployment.
 
     @param {Object} state The current state.
     @param {Function} next Run the next handler.
@@ -500,7 +546,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       document.getElementById('header-logo'));
   }
 
-  _clearUserEntity() {}
   /**
     Renders the Charmbrowser component to the page in the designated element.
     @param {Object} state - The app state.
@@ -693,7 +738,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
             this, db, modelAPI),
@@ -860,7 +905,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       inspector = (
         <LocalInspector
           acl={this.acl}
-          changeState={this.state.changeState.bind(this.state)}
+          changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
           services={db.services}
@@ -955,7 +1000,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         charmstore={charmstore}
         changesFilterByParent={
           changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         cloud={cloud}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
@@ -1061,7 +1106,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <DeploymentBar
         acl={this.acl}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         currentChangeSet={ecs.getCurrentChangeSet()}
         generateChangeDescription={
           changesUtils.generateChangeDescription.bind(
@@ -1109,6 +1154,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       next();
     }
   }
+
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.
@@ -1152,7 +1198,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       }
       initUtils.showProfile(
         this.modelAPI && this.modelAPI.get('ecs'),
-        this.state.changeState.bind(this.state),
+        this._bound.changeState,
         username);
     };
     const navigateUserAccount = () => {
@@ -1162,7 +1208,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       }
       initUtils.showAccount(
         this.modelAPI && this.modelAPI.get('ecs'),
-        this.state.changeState.bind(this.state));
+        this._bound.changeState);
+    };
+
+    const showHelp = () => {
+      this.state.changeState({
+        help: true
+      });
     };
 
     ReactDOM.render(<UserMenu
@@ -1170,6 +1222,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
+      showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink}
     />, linkContainer);
   }
@@ -1210,7 +1263,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         appState={this.state}
         user={this.user}
-        changeState={this.state.changeState.bind(this.state)}
+        changeState={this._bound.changeState}
         humanizeTimestamp={initUtils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         modelName={this.db.environment.get('name')}
@@ -1219,7 +1272,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         showEnvSwitcher={showEnvSwitcher}
         showProfile={initUtils.showProfile.bind(
           this, modelAPI && ecs,
-          this.state.changeState.bind(this.state))}
+          this._bound.changeState)}
         switchModel={this._bound.switchModel}
         loadingModel={modelAPI.loading}
         modelCommitted={!!modelAPI.get('modelUUID')} />,

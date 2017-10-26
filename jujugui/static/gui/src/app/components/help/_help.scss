@@ -1,0 +1,210 @@
+
+.help {
+  $help-max-width: 850px;
+
+  &.lightbox {
+    @media screen and (min-width: $help-max-width) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .lightbox__close {
+    @media screen and (max-width: $help-max-width - 1) {
+      top: .5rem;
+      right: .5rem;
+    }
+  }
+
+  .lightbox__wrapper {
+    text-align: left;
+
+    @media screen and (min-width: $help-max-width) {
+      width: 850px;
+      left: auto;
+      right: auto;
+      top: auto;
+      bottom: auto;
+    }
+
+    @media screen and (max-width: $help-max-width - 1) {
+      top: 2.5rem;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .lightbox__content {
+      padding: 0;
+
+      @media screen and (min-width: $help-max-width) {
+        height: 530px;
+        overflow: hidden;
+      }
+
+      @media screen and (max-width: $help-max-width - 1) {
+        overflow: auto;
+      }
+    }
+  }
+
+  &__header {
+    padding: 1.5rem;
+
+    &-title {
+      float: left;
+      margin: 0;
+      line-height: 40px;
+    }
+
+    &-search {
+      float: right;
+      padding: 0;
+      width: 252px;
+
+      .header-search__input {
+        width: 175px;
+      }
+    }
+  }
+
+  &__content {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+
+    @media screen and (max-width: $breakpoint-medium) {
+      flex-direction: column;
+
+      .p-card:nth-child(2) {
+        order: 1;
+      }
+    }
+
+    .p-card {
+      width: 100%;
+      margin-left: 1.5rem;
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        background: $color-light;
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      @media screen and (max-width: $breakpoint-medium) {
+        margin: {
+          left: 0;
+          top: 1.5rem;
+        }
+
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+    }
+
+    .link {
+      font-weight: 300;
+      color: $link-blue;
+      cursor: pointer;
+    }
+  }
+
+  &__footer {
+    display: block;
+    background: $dark-header;
+    padding: 1.5rem;
+    border-radius: 0 0 $border-radius $border-radius;
+    color: $white;
+
+    a, .link {
+      color: $white;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+        color: $white;
+      }
+    }
+
+    .external {
+      background-image: $svg-external;
+    }
+
+    @media screen and (max-width: $breakpoint-medium) {
+      display: flex;
+      flex-direction: column;
+
+      .four-col {
+        margin: {
+          top: 1rem;
+          bottom: 0;
+        }
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,.5);
+
+        &:nth-child(1) {
+          order: 2;
+
+          p:first-child {
+            display: none;
+          }
+        }
+        &:nth-child(2) {
+          order: 1;
+          margin-top: 0;
+          border-top: 0;
+          padding-top: 0;
+        }
+        &:nth-child(3) {
+          order: 3;
+        }
+      }
+    }
+  }
+
+  .juju-show {
+    &__image {
+      height: 90px;
+      margin-bottom: .5rem;
+
+      @media screen and (max-width: 400px) {
+        height: auto;
+      }
+    }
+
+    &__title {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .charm-row {
+    line-height: 24px;
+    display: flex;
+    align-items: flex-start;
+
+    img {
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 1rem;
+    }
+  }
+
+  &__tour-image {
+    border: 1px solid $color-mid-light;
+    padding: 1rem;
+    border-radius: $border-radius;
+    margin-bottom: .5rem;
+
+    @media screen and (max-width: $breakpoint-medium) {
+      display: block;
+    }
+  }
+}

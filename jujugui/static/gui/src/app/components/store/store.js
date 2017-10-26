@@ -71,7 +71,6 @@ class Store extends React.Component {
     var id = (e.target.dataset.entity ||
       e.target.closest('[data-entity]').dataset.entity);
     this.props.changeState({
-      root: null,
       store: id
     });
   }

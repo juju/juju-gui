@@ -81,7 +81,7 @@ class DeploymentDirectDeploy extends React.Component {
     this.props.changeState({
       gui: {deploy: null},
       profile: null,
-      root: 'store',
+      store: '',
       special: {dd: null}
     });
   }

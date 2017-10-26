@@ -4,24 +4,29 @@
 const React = require('react');
 
 const ModelActions = require('./model-actions');
+const Terminal = require('../terminal/terminal');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('ModelActions', function() {
-  var acl;
+  var acl, addNotification;
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    addNotification = sinon.stub;
   });
 
   it('can render and pass the correct props', function() {
     var renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -82,14 +87,91 @@ describe('ModelActions', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can render the terminalAction', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <ModelActions
+        acl={acl}
+        addNotification={addNotification}
+        appState={{current: {}}}
+        changeState={sinon.stub()}
+        creds={undefined}
+        exportEnvironmentFile={sinon.stub()}
+        flags={{'terminal': true}}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        userIsAuthenticated={true}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="model-actions">
+        <div className="model-actions__buttons">
+          <span className="model-actions__export model-actions__button"
+            onClick={instance._handleExport}
+            role="button"
+            tabIndex="0">
+            <SvgIcon name="export_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Export
+              </span>
+            </span>
+          </span>
+          <span className="model-actions__import model-actions__button"
+            onClick={instance._handleImportClick}
+            role="button"
+            tabIndex="0">
+            <SvgIcon name="import_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Import
+              </span>
+            </span>
+          </span>
+          <span className="model-actions__share model-actions__button"
+            onClick={instance.props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
+            </span>
+          </span>
+          <Terminal
+            addNotification={instance.props.addNotification}
+            address={instance.props.address}
+            creds={instance.props.creds} />
+        </div>
+        <input className="model-actions__file"
+          type="file"
+          onChange={instance._handleImportFile}
+          accept=".zip,.yaml,.yml"
+          ref="file-input" />
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
   it('can export the env', function() {
     var exportEnvironmentFile = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -109,9 +191,12 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
+        flags={{}}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
@@ -133,9 +218,12 @@ describe('ModelActions', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={exportEnvironmentFile}
+        flags={{}}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
@@ -157,9 +245,12 @@ describe('ModelActions', function() {
     var renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -224,9 +315,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={false}
@@ -242,9 +336,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {root: 'new'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -261,9 +358,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
@@ -280,9 +380,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={true}
@@ -300,9 +403,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {profile: 'foo'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={false}
@@ -320,9 +426,12 @@ describe('ModelActions', function() {
     const renderer = jsTestUtils.shallowRender(
       <ModelActions
         acl={acl}
+        addNotification={addNotification}
         appState={{current: {root: 'account'}}}
         changeState={sinon.stub()}
+        creds={undefined}
         exportEnvironmentFile={sinon.stub()}
+        flags={{}}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={false}

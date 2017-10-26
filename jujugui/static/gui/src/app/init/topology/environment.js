@@ -225,7 +225,7 @@ class EnvironmentView {
       'Onboarding plus'
     );
     this.state.changeState({
-      root: 'store'
+      store: ''
     });
   }
 };
