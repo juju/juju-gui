@@ -76,6 +76,8 @@ class Terminal extends React.Component {
         });
         return;
       }
+      // Terminado sends a "disconnect" message when the process it's running
+      // exits. When we receive that, we close the terminal.
       if (resp['0'] === 'disconnect') {
         this.setOpened(false);
       }
