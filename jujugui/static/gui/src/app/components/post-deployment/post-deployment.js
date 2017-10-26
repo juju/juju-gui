@@ -54,6 +54,7 @@ class PostDeployment extends React.Component {
 
     const files = entityData[0].files;
     if (files && files.includes('getstarted.md')) {
+      this.props.addCharmAnnotations(this.props.entityId);
       this.props.getFile(
         this.props.entityId,
         'getstarted.md',
@@ -223,6 +224,7 @@ class PostDeployment extends React.Component {
 }
 
 PostDeployment.propTypes = {
+  addCharmAnnotations: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,

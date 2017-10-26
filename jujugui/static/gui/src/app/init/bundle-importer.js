@@ -677,7 +677,7 @@ class BundleImporter {
         }
       }
 
-      if (this.bundleId && annotations['bundle-id']) {
+      if (this.bundleId && !annotations['bundle-id']) {
         annotations['bundle-id'] = this.bundleId;
       }
 

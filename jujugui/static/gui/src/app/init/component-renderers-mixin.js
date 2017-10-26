@@ -389,8 +389,19 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       this.state.changeState(storeState);
     };
 
+    const addCharmAnnotations = (entityId) => {
+      const getStartedPath = charmstore._generatePath(
+        entityId, null, '/archive/getstarted.md');
+      this.db.services.each(s => {
+        let annotations = s.get('annotations');
+        annotations['get-started'] = getStartedPath;
+        s.set('annotations', annotations);
+      });
+    };
+
     ReactDOM.render(
       <PostDeployment
+        addCharmAnnotations={addCharmAnnotations}
         changeState={this.state.changeState.bind(this.state)}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}

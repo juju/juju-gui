@@ -20,6 +20,7 @@ describe('PostDeployment', () => {
     Object.defineProperty(marked, 'Renderer', {value: sinon.stub()});
 
     const _props = {
+      addCharmAnnotations: props.addCharmAnnotations || sinon.stub(),
       changeState: props.changeState || sinon.stub(),
       entityId: props.entityId || 'test',
       getEntity: props.getEntity
@@ -39,6 +40,7 @@ describe('PostDeployment', () => {
 
     const renderer = jsTestUtils.shallowRender(
       <PostDeployment
+        addCharmAnnotations={_props.addCharmAnnotations}
         changeState={_props.changeState}
         entityId={_props.entityId}
         getEntity={_props.getEntity}
