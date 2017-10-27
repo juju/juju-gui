@@ -72,6 +72,18 @@ var module = module;
     },
 
     /**
+      Gets the getstarted.md path from the archive.
+
+      @param {String} entityId The id of the entity to get the getstarted.md
+        file from.
+      @return {String} A charmstore url.
+    */
+    getStartedURL: function(entityId) {
+      return this._generatePath(
+        entityId, null, '/archive/getstarted.md');
+    },
+
+    /**
       Transforms the results from a charmstore query into model objects.
 
       @method _transformQueryResults

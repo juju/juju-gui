@@ -435,9 +435,16 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       this.state.changeState(storeState);
     };
 
-    const addCharmAnnotations = (entityId) => {
-      const getStartedPath = charmstore._generatePath(
-        entityId, null, '/archive/getstarted.md');
+    const addGetStartedAnnotation = (entityId) => {
+      let bundleUrl;
+      try {
+        bundleUrl = window.jujulib.URL.fromString(entityId);
+      } catch (_) {
+        bundleUrl = window.jujulib.URL.fromLegacyString(entityId);
+      }
+      const getStartedPath = charmstore.getStartedURL(
+        `${bundleUrl.series}/${bundleUrl.name}-${bundleUrl.revision}`
+      );
       this.db.services.each(s => {
         let annotations = s.get('annotations');
         annotations['get-started'] = getStartedPath;
@@ -447,7 +454,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
 
     ReactDOM.render(
       <PostDeployment
-        addCharmAnnotations={addCharmAnnotations}
+        addGetStartedAnnotation={addGetStartedAnnotation}
         changeState={this._bound.changeState}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}

@@ -1512,9 +1512,18 @@ class GUIApp {
         if (error) {
           failureNotification(error);
         } else {
+          let bundleUrl;
+          try {
+            bundleUrl = window.jujulib.URL.fromString(entityId);
+          } catch (_) {
+            bundleUrl = window.jujulib.URL.fromLegacyString(entityId);
+          }
           this.bundleImporter.importBundleYAML(
-            entityId.replace('cs:', ''),
-            bundleYAML);
+            bundleYAML,
+            {
+              'bundle-url': bundleUrl.path()
+            }
+          );
         }
       });
     } else {

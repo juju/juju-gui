@@ -1053,15 +1053,24 @@ class ServiceModule {
           level: 'important'
         });
         const charmstore = topo.charmstore;
-        const bundleId = entityData.id.replace('cs:', '');
+        let bundleUrl;
+        try {
+          bundleUrl = window.jujulib.URL.fromString(entityData.id).path();
+        } catch (_) {
+          bundleUrl = window.jujulib.URL.fromLegacyString(entityData.id).path();
+        }
         charmstore.getBundleYAML(
-          bundleId,
+          entityData.id,
           function(error, bundleYAML) {
             if (error) {
               console.error(error);
               return;
             }
-            topo.bundleImporter.importBundleYAML(bundleId, bundleYAML);
+            topo.bundleImporter.importBundleYAML(
+              bundleYAML,
+              {
+                'bundle-url': bundleUrl
+              });
           }.bind(this));
       }
     }
