@@ -60,7 +60,7 @@ var module = module;
         request.
       @param extension {Boolean} Any extension to add to the endpoint
         such as /meta/any or /archive.
-      @return {String} A charmstore url based on the query and endpoint params
+      @return {String} A charm store URL based on the query and endpoint params
         passed in.
     */
     _generatePath: function(endpoint, query, extension) {
@@ -76,11 +76,10 @@ var module = module;
 
       @param {String} entityId The id of the entity to get the getstarted.md
         file from.
-      @return {String} A charmstore url.
+      @return {String} A charm store URL.
     */
     getStartedURL: function(entityId) {
-      return this._generatePath(
-        entityId, null, '/archive/getstarted.md');
+      return this._generatePath(entityId, null, '/archive/getstarted.md');
     },
 
     /**

@@ -1507,28 +1507,23 @@ class GUIApp {
     // The charmstore apiv4 format can have the bundle keyword either at the
     // start, for charmers bundles, or after the username, for namespaced
     // bundles. ex) bundle/swift & ~jorge/bundle/swift
-    if (entityId.indexOf('bundle/') > -1) {
+    const entityURL = window.jujulib.URL.fromLegacyString(entityId);
+    if (entityURL.isBundle()) {
       charmstore.getBundleYAML(entityId, (error, bundleYAML) => {
         if (error) {
           failureNotification(error);
         } else {
-          let bundleUrl;
-          try {
-            bundleUrl = window.jujulib.URL.fromString(entityId);
-          } catch (_) {
-            bundleUrl = window.jujulib.URL.fromLegacyString(entityId);
-          }
           this.bundleImporter.importBundleYAML(
             bundleYAML,
             {
-              'bundle-url': bundleUrl.path()
+              'bundle-url': entityURL.path()
             }
           );
         }
       });
     } else {
       // If it's not a bundle then it's a charm.
-      charmstore.getEntity(entityId.replace('cs:', ''), (error, charm) => {
+      charmstore.getEntity(entityURL.legacyPath(), (error, charm) => {
         if (error) {
           failureNotification(error);
         } else {

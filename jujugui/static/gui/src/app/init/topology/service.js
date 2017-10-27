@@ -1053,12 +1053,8 @@ class ServiceModule {
           level: 'important'
         });
         const charmstore = topo.charmstore;
-        let bundleUrl;
-        try {
-          bundleUrl = window.jujulib.URL.fromString(entityData.id).path();
-        } catch (_) {
-          bundleUrl = window.jujulib.URL.fromLegacyString(entityData.id).path();
-        }
+        let bundleURL = window.jujulib.URL.
+          fromLegacyString(entityData.id).path();
         charmstore.getBundleYAML(
           entityData.id,
           function(error, bundleYAML) {
@@ -1069,7 +1065,7 @@ class ServiceModule {
             topo.bundleImporter.importBundleYAML(
               bundleYAML,
               {
-                'bundle-url': bundleUrl
+                'bundle-url': bundleURL
               });
           }.bind(this));
       }

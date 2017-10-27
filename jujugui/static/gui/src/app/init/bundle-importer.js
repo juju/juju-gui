@@ -89,7 +89,7 @@ class BundleImporter {
     Fetch the dry-run output from the Guiserver.
     @param {String} bundleYAML The bundle file contents.
     @param {String} changesToken The token identifying a bundle change set.
-    @param {Object} annotatins Extra annotations to add to the charms in
+    @param {Object} annotations Extra annotations to add to the charms in
       the bundle.
   */
   fetchDryRun(bundleYAML, changesToken, annotations) {

@@ -2230,7 +2230,6 @@ YUI.add('juju-models', function(Y) {
     if (_annotationProperty[entity.name]) {
       return entity.annotations;
     }
-    console.log(entity.get('annotations'));
     return entity.get('annotations');
   };
 

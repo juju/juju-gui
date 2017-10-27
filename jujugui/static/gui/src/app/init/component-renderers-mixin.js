@@ -436,14 +436,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     };
 
     const addGetStartedAnnotation = (entityId) => {
-      let bundleUrl;
-      try {
-        bundleUrl = window.jujulib.URL.fromString(entityId);
-      } catch (_) {
-        bundleUrl = window.jujulib.URL.fromLegacyString(entityId);
-      }
+      let bundleURL = window.jujulib.URL.fromLegacyString(entityId);
       const getStartedPath = charmstore.getStartedURL(
-        `${bundleUrl.series}/${bundleUrl.name}-${bundleUrl.revision}`
+        `${bundleURL.series}/${bundleURL.name}-${bundleURL.revision}`
       );
       this.db.services.each(s => {
         let annotations = s.get('annotations');
