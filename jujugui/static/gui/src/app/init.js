@@ -343,7 +343,7 @@ class GUIApp {
   */
   _setupCharmstore(config, Charmstore) {
     if (this.charmstore === undefined) {
-      return new Charmstore(config.charmstoreURL, this.bakery);
+      this.charmstore = new Charmstore(config.charmstoreURL, this.bakery);
       // Store away the charmstore auth info.
       if (this.bakery.storage.get(config.charmstoreURL)) {
         this.users['charmstore'] = {loading: true};

@@ -434,21 +434,22 @@ describe('Bakery', () => {
     });
 
     describe('keys', () => {
-      it('special cases identity', () => {
-        // There's no identity url in services
-        Object.keys(storage._services).forEach(key => {
-          assert.notEqual('identity', key);
-        });
+      it('removes discharge suffix', () => {
         assert.equal(
-          'identity', storage._getKey('http://example.com/identity/'));
+          'http://example.com/identity',
+          storage._getKey('http://example.com/identity/discharge'));
       });
 
       it('gets keys from services', () => {
         assert.equal(
-          'charmstore', storage._getKey('http://example.com/charmstore'));
+          'charmstore',
+          storage._getKey('http://example.com/charmstore'));
+      });
+
+      it('does not modify other keys', () => {
+        assert.equal('a-key', storage._getKey('a-key'));
       });
     });
 
   });
 });
-
