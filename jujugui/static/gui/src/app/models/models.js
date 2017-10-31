@@ -166,7 +166,7 @@ YUI.add('juju-models', function(Y) {
       name: {},
       provider: {},
       defaultSeries: {},
-      jujushellAddress: {},
+      jujushellURL: {},
       annotations: {
         valueFn: function() {return {};}
       }
