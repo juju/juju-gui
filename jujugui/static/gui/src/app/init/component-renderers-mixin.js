@@ -50,7 +50,6 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
-const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -134,6 +133,21 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const db = this.db;
     const modelAPI = this.modelAPI;
     const address = this.db.environment.get('jujushellAddress');
+    const user = this.user;
+    const identityURL = user.identityURL();
+    const creds = {};
+    if (identityURL) {
+      const serialized = user.getMacaroon('identity');
+      // Note that the macaroons we provide to jujushell are not the same
+      // already stored in the user. For being able to log in to both the
+      // controller and models we provide the identity token here, and that's
+      // the reason why we cannot use fromShape.
+      creds.macaroons = {};
+      creds.macaroons[identityURL] = JSON.parse(atob(serialized));
+    } else {
+      creds.user = user.controller.user;
+      creds.password = user.controller.password;
+    }
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
@@ -141,7 +155,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         address={address}
         appState={this.state}
         changeState={this._bound.changeState}
-        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
+        creds={creds}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
         flags={window.juju_config.flags}

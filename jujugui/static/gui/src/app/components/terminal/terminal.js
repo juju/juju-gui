@@ -41,18 +41,22 @@ class Terminal extends React.Component {
     this.setState({opened: opened});
   }
 
+  /**
+    Set up the terminal WebSocket connection, including handling of initial
+    handlshake and then attaching the xterm.js session.
+  */
   startTerm() {
     const props = this.props;
+    const creds = props.creds;
     // For now, the shell server is listening for ws (rather than wss)
     // connections. This will need to be changed when certs are passed in.
     const ws = new WebSocket(`ws://${props.address}/ws/`);
     ws.onopen = () => {
-      const macaroons = props.creds.macaroons && [props.creds.macaroons];
       ws.send(JSON.stringify({
         operation: 'login',
-        username: props.creds.user,
-        password: props.creds.password,
-        macaroons: macaroons
+        username: creds.user,
+        password: creds.password,
+        macaroons: creds.macaroons
       }));
       ws.send(JSON.stringify({operation: 'start'}));
     };
@@ -92,6 +96,10 @@ class Terminal extends React.Component {
     this.ws = ws;
   }
 
+  /**
+    Destroy the terminal window and close the WebSocket connection to the
+    Juju shell service.
+  */
   stopTerm() {
     this.term.destroy();
     this.term = null;
@@ -142,7 +150,7 @@ Terminal.propTypes = {
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,
-    macaroons: PropTypes.array
+    macaroons: PropTypes.object
   })
 };
 
