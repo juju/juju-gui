@@ -10,6 +10,11 @@
   line-height: 1.6;
   list-style: none;
 
+  a {
+    color: $white;
+    text-decoration: underline;
+  }
+
   &--error {
     background-color: $error;
     color: $white;
