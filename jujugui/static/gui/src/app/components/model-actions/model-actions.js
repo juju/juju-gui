@@ -4,7 +4,6 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const queryString = require('query-string');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -44,39 +43,9 @@ class ModelActions extends React.Component {
     Handle the user clicking the show-terminal button.
   */
   _handleTerminalClick() {
-    const props = this.props;
-    const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
-    const githubIssueBody = `GUI Version: ${window.GUI_VERSION.version}
-JAAS: ${props.gisf}
-Location: ${window.location.href}
-Browser: ${navigator.userAgent}`;
-    const githubIssueValues = {
-      title: 'Juju shell unavailable',
-      body: githubIssueBody
-    };
-    const githubIssueLink =
-      `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
-    if (!props.address) {
-      let message = 'an unknown error has occurred please file an issue ';
-      let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
-      if (!props.gisf) {
-        const jujushell = props.db.services.getServicesFromCharmName('jujushell')[0];
-        if (jujushell) {
-          message = 'deploy and expose the "jujushell" charm and try again.';
-        } else if (jujushell.get('exposed')) {
-          message = 'expose the "jujushell" charm and try again.';
-        }
-      }
-      props.addNotification({
-        title: 'Unable to open Terminal',
-        message: [
-          <span key="prefix">Unable to open Terminal, </span>,
-          <span key="message">{message}</span>,
-          link],
-        level: 'error'
-      });
-      return;
-    }
+    this.props.changeState({
+      terminal: true
+    });
   }
 
   /**
@@ -125,7 +94,7 @@ Browser: ${navigator.userAgent}`;
     }
 
     let terminalAction = null;
-    if (props.flags['terminal']) {
+    if (props.displayTerminalButton) {
       terminalAction = (
         <span className="model-actions__import model-actions__button"
           onClick={this._handleTerminalClick.bind(this)}
@@ -186,15 +155,10 @@ Browser: ${navigator.userAgent}`;
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,
-  addNotification: PropTypes.func.isRequired,
-  address: PropTypes.string,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
-  creds: PropTypes.object,
-  db: PropTypes.object.isRequired,
+  displayTerminalButton: PropTypes.bool.isRequired,
   exportEnvironmentFile: PropTypes.func.isRequired,
-  flags: PropTypes.object.isRequired,
-  gisf: PropTypes.bool.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,
   loadingModel: PropTypes.bool,
