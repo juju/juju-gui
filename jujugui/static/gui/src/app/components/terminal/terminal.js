@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
+const classnames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -13,15 +13,12 @@ const XTerm = require('xterm');
 // not something we can change.
 require('xterm/lib/addons/terminado/terminado');
 
-const Lightbox = require('../lightbox/lightbox');
-const SvgIcon = require('../svg-icon/svg-icon');
-
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {opened: false};
+    this.state = {opened: props.visibility};
     this.term = null;
     this.ws = null;
   }
@@ -35,10 +32,6 @@ class Terminal extends React.Component {
     if (!prevState.opened && state.opened) {
       this.startTerm();
     }
-  }
-
-  setOpened(opened) {
-    this.setState({opened: opened});
   }
 
   /**
@@ -83,7 +76,7 @@ class Terminal extends React.Component {
       // Terminado sends a "disconnect" message when the process it's running
       // exits. When we receive that, we close the terminal.
       if (resp['0'] === 'disconnect') {
-        this.setOpened(false);
+        this.setState({opened: false});
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
@@ -108,34 +101,12 @@ class Terminal extends React.Component {
   }
 
   render() {
-    if (this.state.opened) {
-      return (
-        <Lightbox close={this.setOpened.bind(this, false)}>
-          <div className="juju-shell__terminal-container"></div>
-        </Lightbox>
-      );
-    }
-    const props = this.props;
-    const address = props.address;
-    const classes = classNames(
-      'model-actions__import',
-      'model-actions__button',
-      {'model-actions__button-disabled': !address}
+    const classNames = classnames(
+      'juju-shell__terminal-container',
+      {'juju-shell__hidden': !this.state.opened}
     );
     return (
-      <span className={classes}
-        onClick={address && this.setOpened.bind(this, true)}
-        role="button"
-        tabIndex="0">
-        <SvgIcon name="code-snippet_24"
-          className="model-actions__icon"
-          size="16" />
-        <span className="tooltip__tooltip--below">
-          <span className="tooltip__inner tooltip__inner--up">
-            Juju shell
-          </span>
-        </span>
-      </span>
+      <div className={classNames}></div>
     );
   }
 
@@ -151,7 +122,10 @@ Terminal.propTypes = {
     user: PropTypes.string,
     password: PropTypes.string,
     macaroons: PropTypes.object
-  })
+  }),
+  db: PropTypes.object.isRequired,
+  gisf: PropTypes.bool.isRequired,
+  visibility: PropTypes.bool.isRequired
 };
 
 module.exports = Terminal;
