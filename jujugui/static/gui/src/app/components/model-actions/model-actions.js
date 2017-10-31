@@ -6,7 +6,6 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
-const Terminal = require('../terminal/terminal');
 
 class ModelActions extends React.Component {
   /**
@@ -41,6 +40,39 @@ class ModelActions extends React.Component {
   }
 
   /**
+    Handle the user clicking the show-terminal button.
+  */
+  _handleTerminalClick() {
+    const props = this.props;
+    const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
+    const githubIssueTitle = 'Juju shell unavailable';
+    const githubIssueBody = `GUI Version: ${window.GUI_VERSION.version}
+JAAS: ${props.gisf}
+Location: ${window.location.href}
+Browser: ${navigator.userAgent}`;
+    const githubIssueLink =
+      `${githubIssueHref}?title=${githubIssueTitle}&body=${githubIssueBody}`;
+    if (!props.address) {
+      let message =
+        `an unknown error has occurred please file an issue here: ${githubIssueLink}`;
+      if (!props.gisf) {
+        const jujushell = props.db.services.getServicesFromCharmName('jujushell')[0];
+        if (jujushell) {
+          message = 'deploy and expose the "jujushell" charm and try again.';
+        } else if (jujushell.get('exposed')) {
+          message = 'expose the "jujushell" charm and try again.';
+        }
+      }
+      props.addNotification({
+        title: 'Unable to open Terminal',
+        message: `Unable to load Terminal, ${message}`,
+        level: 'error'
+      });
+      return;
+    }
+  }
+
+  /**
     Returns the classes for the button based on the provided props.
     @returns {String} The collection of class names.
   */
@@ -62,7 +94,6 @@ class ModelActions extends React.Component {
     // model.
     const sharingEnabled = props.userIsAuthenticated &&
       props.appState.current.root !== 'new';
-    const useTerm = this.props.flags['terminal'];
     let shareAction = null;
     if (sharingEnabled) {
       const shareClasses = classNames(
@@ -85,14 +116,23 @@ class ModelActions extends React.Component {
         </span>
       );
     }
-    // TODO use feature flag (upcoming branch).
-    // 2017-10-16 Makyo
+
     let terminalAction = null;
-    if (useTerm) {
-      terminalAction = (<Terminal
-        addNotification={props.addNotification}
-        address={props.address}
-        creds={props.creds} />);
+    if (props.flags['terminal']) {
+      terminalAction = (
+        <span className="model-actions__import model-actions__button"
+          onClick={this._handleTerminalClick.bind(this)}
+          role="button"
+          tabIndex="0">
+          <SvgIcon name="code-snippet_24"
+            className="model-actions__icon"
+            size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner tooltip__inner--up">
+              Juju shell
+            </span>
+          </span>
+        </span>);
     }
     const isReadOnly = props.acl.isReadOnly();
     return (
@@ -144,8 +184,10 @@ ModelActions.propTypes = {
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   creds: PropTypes.object,
+  db: PropTypes.object.isRequired,
   exportEnvironmentFile: PropTypes.func.isRequired,
   flags: PropTypes.object.isRequired,
+  gisf: PropTypes.bool.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,
   loadingModel: PropTypes.bool,
