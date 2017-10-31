@@ -134,7 +134,8 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const modelAPI = this.modelAPI;
     // If a URL has been provided for the jujuShellURL then use it over any
     // provided by the environment.
-    const address = this.applicationConfig.jujushellURL ||
+    const config = this.applicationConfig;
+    const address = config.jujushellURL ||
       `ws://${db.environment.get('jujushellURL')}/ws/`;
     const user = this.user;
     const identityURL = user.identityURL();
@@ -157,11 +158,13 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         address={address}
         appState={this.state}
+        db={this.db}
         changeState={this._bound.changeState}
         creds={creds}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, db)}
         flags={window.juju_config.flags}
+        gisf={config.gisf}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}

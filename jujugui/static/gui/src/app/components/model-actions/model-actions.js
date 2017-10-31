@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const queryString = require('query-string');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -45,16 +46,19 @@ class ModelActions extends React.Component {
   _handleTerminalClick() {
     const props = this.props;
     const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
-    const githubIssueTitle = 'Juju shell unavailable';
     const githubIssueBody = `GUI Version: ${window.GUI_VERSION.version}
 JAAS: ${props.gisf}
 Location: ${window.location.href}
 Browser: ${navigator.userAgent}`;
+    const githubIssueValues = {
+      title: 'Juju shell unavailable',
+      body: githubIssueBody
+    };
     const githubIssueLink =
-      `${githubIssueHref}?title=${githubIssueTitle}&body=${githubIssueBody}`;
+      `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
     if (!props.address) {
-      let message =
-        `an unknown error has occurred please file an issue here: ${githubIssueLink}`;
+      let message = 'an unknown error has occurred please file an issue ';
+      let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
       if (!props.gisf) {
         const jujushell = props.db.services.getServicesFromCharmName('jujushell')[0];
         if (jujushell) {
@@ -65,7 +69,10 @@ Browser: ${navigator.userAgent}`;
       }
       props.addNotification({
         title: 'Unable to open Terminal',
-        message: `Unable to load Terminal, ${message}`,
+        message: [
+          <span key="prefix">Unable to open Terminal, </span>,
+          <span key="message">{message}</span>,
+          link],
         level: 'error'
       });
       return;
