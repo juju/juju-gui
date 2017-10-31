@@ -138,6 +138,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const creds = {};
     if (identityURL) {
       const serialized = user.getMacaroon('identity');
+      // Note that the macaroons we provide to jujushell are not the same
+      // already stored in the user. For being able to log in to both the
+      // controller and models we provide the identity token here, and that's
+      // the reason why we cannot use fromShape.
       creds.macaroons = {};
       creds.macaroons[identityURL] = JSON.parse(atob(serialized));
     } else {
