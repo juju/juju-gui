@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const marked = require('marked');
 const Prism = require('prismjs');
 const prismLanguages = require('prism-languages');
+const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
@@ -183,7 +184,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       />, sharing);
   }
 
-  _terminalVisibility(visibility = false) {
+  _terminalVisibility(visibility = false, address) {
     const db = this.db;
     const config = this.applicationConfig;
     const user = this.user;
@@ -206,8 +207,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         addNotification={this._bound.addNotification}
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
-        address={config.jujushellURL ||
-          `ws://${db.environment.get('jujushellURL')}/ws/`}
+        address={address}
         creds={creds}
         db={db}
         gisf={config.gisf}
@@ -216,7 +216,42 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   _displayTerminal(state, next) {
-    this._terminalVisibility(true);
+    const config = this.applicationConfig;
+    const db = this.db;
+    const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
+    const githubIssueValues = {
+      title: 'Juju shell unavailable',
+      body: `GUI Version: ${window.GUI_VERSION.version}
+JAAS: ${config.gisf}
+Location: ${window.location.href}
+Browser: ${navigator.userAgent}`
+    };
+    const githubIssueLink =
+      `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
+    const address = config.jujushellURL ||
+      `ws://${db.environment.get('jujushellURL')}/ws/`;
+    if (!address) {
+      let message = 'an unknown error has occurred please file an issue ';
+      let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
+      if (!config.gisf) {
+        const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
+        if (jujushell) {
+          message = 'deploy and expose the "jujushell" charm and try again.';
+        } else if (jujushell.get('exposed')) {
+          message = 'expose the "jujushell" charm and try again.';
+        }
+      }
+      this._bound.addNotification({
+        title: 'Unable to open Terminal',
+        message: [
+          <span key="prefix">Unable to open Terminal, </span>,
+          <span key="message">{message}</span>,
+          link],
+        level: 'error'
+      });
+      return;
+    }
+    this._terminalVisibility(true, address);
     next();
   }
 
