@@ -50,6 +50,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
+const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
@@ -130,41 +131,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     element.
   */
   _renderModelActions() {
-    const db = this.db;
     const modelAPI = this.modelAPI;
-    // If a URL has been provided for the jujuShellURL then use it over any
-    // provided by the environment.
-    const config = this.applicationConfig;
-    const address = config.jujushellURL ||
-      `ws://${db.environment.get('jujushellURL')}/ws/`;
-    const user = this.user;
-    const identityURL = user.identityURL();
-    const creds = {};
-    if (identityURL) {
-      const serialized = user.getMacaroon('identity');
-      // Note that the macaroons we provide to jujushell are not the same
-      // already stored in the user. For being able to log in to both the
-      // controller and models we provide the identity token here, and that's
-      // the reason why we cannot use fromShape.
-      creds.macaroons = {};
-      creds.macaroons[identityURL] = JSON.parse(atob(serialized));
-    } else {
-      creds.user = user.controller.user;
-      creds.password = user.controller.password;
-    }
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        addNotification={this._bound.addNotification}
-        address={address}
+        displayTerminalButton={window.juju_config.flags['terminal']}
         appState={this.state}
-        db={this.db}
         changeState={this._bound.changeState}
-        creds={creds}
         exportEnvironmentFile={
-          initUtils.exportEnvironmentFile.bind(initUtils, db)}
-        flags={window.juju_config.flags}
-        gisf={config.gisf}
+          initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
@@ -206,6 +181,48 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         humanizeTimestamp={initUtils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
       />, sharing);
+  }
+
+  _terminalVisibility(visibility = false) {
+    const db = this.db;
+    const config = this.applicationConfig;
+    const user = this.user;
+    const identityURL = user.identityURL();
+    const creds = {};
+    if (identityURL) {
+      const serialized = user.getMacaroon('identity');
+      // Note that the macaroons we provide to jujushell are not the same
+      // already stored in the user. For being able to log in to both the
+      // controller and models we provide the identity token here, and that's
+      // the reason why we cannot use fromShape.
+      creds.macaroons = {};
+      creds.macaroons[identityURL] = JSON.parse(atob(serialized));
+    } else {
+      creds.user = user.controller.user;
+      creds.password = user.controller.password;
+    }
+    ReactDOM.render(
+      <Terminal
+        addNotification={this._bound.addNotification}
+        // If a URL has been provided for the jujuShellURL then use it over any
+        // provided by the environment.
+        address={config.jujushellURL ||
+          `ws://${db.environment.get('jujushellURL')}/ws/`}
+        creds={creds}
+        db={db}
+        gisf={config.gisf}
+        visibility={visibility} />,
+      document.getElementById('terminal-container'));
+  }
+
+  _displayTerminal(state, next) {
+    this._terminalVisibility(true);
+    next();
+  }
+
+  _clearTerminal(state, next) {
+    this._terminalVisibility(false);
+    next();
   }
   /**
     Renders the ISV profile component.
