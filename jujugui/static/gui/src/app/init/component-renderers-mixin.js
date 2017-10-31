@@ -132,7 +132,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderModelActions() {
     const db = this.db;
     const modelAPI = this.modelAPI;
-    const address = this.db.environment.get('jujushellAddress');
+    // If a URL has been provided for the jujuShellURL then use it over any
+    // provided by the environment.
+    const address = this.applicationConfig.jujushellURL ||
+      `ws://${db.environment.get('jujushellURL')}/ws/`;
     const user = this.user;
     const identityURL = user.identityURL();
     const creds = {};

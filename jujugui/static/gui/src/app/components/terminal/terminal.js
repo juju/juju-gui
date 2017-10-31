@@ -50,7 +50,7 @@ class Terminal extends React.Component {
     const creds = props.creds;
     // For now, the shell server is listening for ws (rather than wss)
     // connections. This will need to be changed when certs are passed in.
-    const ws = new WebSocket(`ws://${props.address}/ws/`);
+    const ws = new WebSocket(props.address);
     ws.onopen = () => {
       ws.send(JSON.stringify({
         operation: 'login',
