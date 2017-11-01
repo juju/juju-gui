@@ -190,7 +190,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const user = this.user;
     const identityURL = user.identityURL();
     const creds = {};
-    if (identityURL) {
+    if (identityURL && config.gisf) {
       const serialized = user.getMacaroon('identity');
       // Note that the macaroons we provide to jujushell are not the same
       // already stored in the user. For being able to log in to both the
@@ -228,17 +228,25 @@ Browser: ${navigator.userAgent}`
     };
     const githubIssueLink =
       `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
-    const address = config.jujushellURL ||
-      `ws://${db.environment.get('jujushellURL')}/ws/`;
+    const address = function() {
+      if (config.jujushellURL) {
+        return config.jujushellURL;
+      }
+      if (db.environment.get('jujushellURL')) {
+        return `ws://${db.environment.get('jujushellURL')}/ws/`;
+      }
+    }();
     if (!address) {
       let message = 'an unknown error has occurred please file an issue ';
       let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
       if (!config.gisf) {
         const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
-        if (jujushell) {
+        if (!jujushell) {
           message = 'deploy and expose the "jujushell" charm and try again.';
-        } else if (jujushell.get('exposed')) {
+          link = null;
+        } else if (jujushell && !jujushell.get('exposed')) {
           message = 'expose the "jujushell" charm and try again.';
+          link = null;
         }
       }
       this._bound.addNotification({
@@ -249,6 +257,7 @@ Browser: ${navigator.userAgent}`
           link],
         level: 'error'
       });
+      this.state.changeState({terminal: null});
       return;
     }
     this._terminalVisibility(true, address);

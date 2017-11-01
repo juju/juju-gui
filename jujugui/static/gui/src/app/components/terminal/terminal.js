@@ -23,6 +23,12 @@ class Terminal extends React.Component {
     this.ws = null;
   }
 
+  componentDidMount() {
+    if (this.state.opened) {
+      this.startTerm();
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const state = this.state;
     if (prevState.opened && !state.opened) {
@@ -57,7 +63,7 @@ class Terminal extends React.Component {
       console.error('WebSocket error:', err);
       props.addNotification({
         title: 'WebSocket connection failed',
-        message: 'Failed to open WebSocket connection: ' + err,
+        message: 'Failed to open WebSocket connection',
         level: 'error'
       });
     };
@@ -81,8 +87,7 @@ class Terminal extends React.Component {
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
         term.terminadoAttach(ws);
-        term.open(ReactDOM.findDOMNode(this)
-          .querySelector('.juju-shell__terminal-container'));
+        term.open(ReactDOM.findDOMNode(this));
         this.term = term;
       }
     };
@@ -102,7 +107,7 @@ class Terminal extends React.Component {
 
   render() {
     const classNames = classnames(
-      'juju-shell__terminal-container',
+      'juju-shell',
       {'juju-shell__hidden': !this.state.opened}
     );
     return (
