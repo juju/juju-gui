@@ -97,15 +97,11 @@ class DeploymentBar extends React.Component {
 
   render() {
     return (
-      <Panel
-        instanceName="deployment-bar-panel"
-        visible={true}>
-        <div className="deployment-bar">
-          <DeploymentBarNotification
-            change={this.state.latestChangeDescription} />
-          {this._generateButton()}
-        </div>
-      </Panel>
+      <div className="deployment-bar">
+        <DeploymentBarNotification
+          change={this.state.latestChangeDescription} />
+        {this._generateButton()}
+      </div>
     );
   }
 };

@@ -57,10 +57,10 @@ $z-indexed-elements: search-results-list-block__tags,
   machine-view,
   inspector-view,
   env-size-display,
-  deployment-bar-panel,
   top-page,
   header-banner-breadcrumbs,
   env-list-panel,
+  footer,
   white-box,
   entity-sticky-header,
   header-banner-search,
@@ -77,8 +77,7 @@ $z-indexed-elements: search-results-list-block__tags,
   centered-column,
   notification,
   lightbox,
-  back-to-help,
-  terminal;
+  back-to-help;
 // sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
@@ -149,6 +148,7 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'canvas/relation';
 @import 'canvas/relation-menu';
 @import 'canvas/service';
+@import 'canvas/footer';
 
 @import 'plugins/prism';
 @import 'plugins/prism-overrides';
