@@ -12,6 +12,7 @@ const XTerm = require('xterm');
 // xterm object. This is inherently dirty, but not really up to us, and perhaps
 // not something we can change.
 require('xterm/lib/addons/terminado/terminado');
+require('xterm/lib/addons/fit/fit');
 
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
@@ -87,7 +88,10 @@ class Terminal extends React.Component {
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
         term.terminadoAttach(ws);
-        term.open(ReactDOM.findDOMNode(this));
+        term.open(
+          ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
+          true);
+        term.fit();
         this.term = term;
       }
     };
@@ -111,7 +115,10 @@ class Terminal extends React.Component {
       {'juju-shell__hidden': !this.state.opened}
     );
     return (
-      <div className={classNames}></div>
+      <div className={classNames}>
+        <div className="juju-shell__header">Juju Shell</div>
+        <div className="juju-shell__terminal"></div>
+      </div>
     );
   }
 

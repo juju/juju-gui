@@ -6,7 +6,6 @@ const React = require('react');
 
 const DeploymentBarNotification = require('./notification/notification');
 const GenericButton = require('../generic-button/generic-button');
-const Panel = require('../panel/panel');
 
 class DeploymentBar extends React.Component {
   constructor() {
