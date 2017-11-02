@@ -87,11 +87,15 @@ class Terminal extends React.Component {
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         const term = new XTerm();
+        term.on('open', e => {
+          // To properly have the terminal area fit the full width we have to
+          // call fit a little bit after it's been opened.
+          setTimeout(() => term.fit(), 500);
+        });
         term.terminadoAttach(ws);
         term.open(
           ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
           true);
-        term.fit();
         this.term = term;
       }
     };

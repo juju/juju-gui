@@ -1,6 +1,6 @@
 .juju-shell {
   width: 100%;
-  background-color: #000;
+  background-color: #111;
 
   &__header {
     background-color: $dark-warm-grey;
@@ -12,19 +12,21 @@
 
   &__terminal {
     height: 150px;
+    width: 100%;
   }
 
   // xterm.scss overrides.
   .terminal {
-    background-color: #000;
+    background-color: #111;
     color: $light-grey;
 
     .xterm-viewport::-webkit-scrollbar-track  {
-      background-color: #000;
+      background-color: #111;
     }
 
     .xterm-rows,
     .xterm-selection {
+      font-family: "ubuntu mono";
       top: 10px;
       left: 10px;
     }
