@@ -8,6 +8,27 @@
     text-align: center;
     line-height: 30px;
     height: 30px;
+    position: relative;
+
+    &-actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      line-height: 36px;
+
+      .svg-icon {
+        stroke: #cdcdcd;
+        fill: #cdcdcd;
+        margin-right: 12px;
+        cursor: pointer;
+      }
+
+      .svg-icon:hover {
+        stroke: #f7f7f7;
+        fill: #f7f7f7
+      }
+
+    }
   }
 
   &__terminal {

@@ -8,6 +8,8 @@ const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 const XTerm = require('xterm');
 
+const SvgIcon = require('../svg-icon/svg-icon');
+
 // xterm.js loads plugins by requiring them. This changes the prototype of the
 // xterm object. This is inherently dirty, but not really up to us, and perhaps
 // not something we can change.
@@ -120,7 +122,14 @@ class Terminal extends React.Component {
     );
     return (
       <div className={classNames}>
-        <div className="juju-shell__header">Juju Shell</div>
+        <div className="juju-shell__header">
+          <span className="juju-shell__header-label">Juju Shell</span>
+          <div className="juju-shell__header-actions">
+            <SvgIcon name="minimize-bar_16" size="16" />
+            <SvgIcon name="maximize-bar_16" size="16" />
+            <SvgIcon name="close_16" size="16" />
+          </div>
+        </div>
         <div className="juju-shell__terminal"></div>
       </div>
     );
