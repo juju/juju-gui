@@ -48,9 +48,20 @@ class Terminal extends React.Component {
   startTerm() {
     const props = this.props;
     const creds = props.creds;
-    // For now, the shell server is listening for ws (rather than wss)
-    // connections. This will need to be changed when certs are passed in.
+
+    const term = new XTerm();
+    term.write('Connecting... ');
+    this.term = term;
+    term.on('open', e => {
+      // To properly have the terminal area fit the full width we have to
+      // call fit a little bit after it's been opened.
+      setTimeout(() => term.fit(), 500);
+    });
+    term.open(
+      ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
+      true);
     const ws = new WebSocket(props.address);
+    this.ws = ws;
     ws.onopen = () => {
       ws.send(JSON.stringify({
         operation: 'login',
@@ -71,7 +82,6 @@ class Terminal extends React.Component {
     ws.onmessage = evt => {
       const resp = JSON.parse(evt.data);
       if (resp.code === 'error') {
-        // TODO include notification
         console.error(resp.message);
         props.addNotification({
           title: 'Error talking to the terminal server',
@@ -86,20 +96,10 @@ class Terminal extends React.Component {
         this.setState({opened: false});
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
-        const term = new XTerm();
-        term.on('open', e => {
-          // To properly have the terminal area fit the full width we have to
-          // call fit a little bit after it's been opened.
-          setTimeout(() => term.fit(), 500);
-        });
         term.terminadoAttach(ws);
-        term.open(
-          ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
-          true);
-        this.term = term;
+        term.writeln('connected to temporary workspace.\n');
       }
     };
-    this.ws = ws;
   }
 
   /**
