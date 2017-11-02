@@ -184,7 +184,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
       />, sharing);
   }
 
-  _terminalVisibility(visibility = false, address) {
+  _renderTerminal(address) {
     const db = this.db;
     const config = this.applicationConfig;
     const user = this.user;
@@ -208,10 +208,10 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
+        changeState={this._bound.changeState}
         creds={creds}
         db={db}
-        gisf={config.gisf}
-        visibility={visibility} />,
+        gisf={config.gisf}/>,
       document.getElementById('terminal-container'));
   }
 
@@ -260,12 +260,12 @@ Browser: ${navigator.userAgent}`
       this.state.changeState({terminal: null});
       return;
     }
-    this._terminalVisibility(true, address);
+    this._renderTerminal(address);
     next();
   }
 
   _clearTerminal(state, next) {
-    this._terminalVisibility(false);
+    ReactDOM.unmountComponentAtNode(document.getElementById('terminal-container'));
     next();
   }
   /**

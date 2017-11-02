@@ -21,36 +21,19 @@ class Terminal extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {opened: props.visibility};
+    this.state = {
+      size: 'min'
+    };
     this.term = null;
     this.ws = null;
-  }
-
-  componentDidMount() {
-    if (this.state.opened) {
-      this.startTerm();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const state = this.state;
-    if (prevState.opened && !state.opened) {
-      this.stopTerm();
-      return;
-    }
-    if (!prevState.opened && state.opened) {
-      this.startTerm();
-    }
   }
 
   /**
     Set up the terminal WebSocket connection, including handling of initial
     handlshake and then attaching the xterm.js session.
   */
-  startTerm() {
+  componentDidMount() {
     const props = this.props;
-    const creds = props.creds;
-
     const term = new XTerm();
     term.write('Connecting... ');
     this.term = term;
@@ -64,6 +47,7 @@ class Terminal extends React.Component {
       true);
     const ws = new WebSocket(props.address);
     this.ws = ws;
+    const creds = props.creds;
     ws.onopen = () => {
       ws.send(JSON.stringify({
         operation: 'login',
@@ -104,33 +88,59 @@ class Terminal extends React.Component {
     };
   }
 
-  /**
-    Destroy the terminal window and close the WebSocket connection to the
-    Juju shell service.
-  */
-  stopTerm() {
+  componentWillUnmount() {
     this.term.destroy();
     this.term = null;
     this.ws.close();
     this.ws = null;
   }
 
+  setSize(size) {
+    this.setState({size: size}, () => {
+      if (this.term) {
+        this.term.fit();
+      }
+    });
+  }
+
+  close() {
+    this.props.changeState({
+      terminal: null
+    });
+  }
+
   render() {
+    const state = this.state;
     const classNames = classnames(
       'juju-shell',
-      {'juju-shell__hidden': !this.state.opened}
+      {'juju-shell__hidden': !state.opened}
     );
+
+    const terminalClassNames = classnames(
+      'juju-shell__terminal', {
+        'juju-shell__terminal--min': state.size === 'min'
+      });
+    const styles = {};
+    if (state.size === 'max') {
+      styles.height = window.innerHeight - 250 + 'px';
+    }
     return (
       <div className={classNames}>
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <SvgIcon name="minimize-bar_16" size="16" />
-            <SvgIcon name="maximize-bar_16" size="16" />
-            <SvgIcon name="close_16" size="16" />
+            <span onClick={this.setSize.bind(this, 'min')}>
+              <SvgIcon name="minimize-bar_16" size="16" />
+            </span>
+            <span onClick={this.setSize.bind(this, 'max')}>
+              <SvgIcon name="maximize-bar_16" size="16" />
+            </span>
+            <span onClick={this.close.bind(this)}>
+              <SvgIcon name="close_16" size="16" />
+            </span>
           </div>
         </div>
-        <div className="juju-shell__terminal"></div>
+        <div className={terminalClassNames} style={styles}></div>
       </div>
     );
   }
@@ -143,6 +153,7 @@ Terminal.propTypes = {
   // not available.
   address: PropTypes.string,
   // Credentials are used to authenticate the user to the jujushell service.
+  changeState: PropTypes.func.isRequired,
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,

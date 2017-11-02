@@ -32,8 +32,11 @@
   }
 
   &__terminal {
-    height: 150px;
     width: 100%;
+
+    &--min {
+      height: 150px;
+    }
   }
 
   // xterm.scss overrides.
