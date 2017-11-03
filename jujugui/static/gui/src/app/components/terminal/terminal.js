@@ -45,7 +45,7 @@ class Terminal extends React.Component {
     term.open(
       ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
       true);
-    const ws = new WebSocket(props.address);
+    const ws = new props.WebSocket(props.address);
     this.ws = ws;
     const creds = props.creds;
     ws.onopen = () => {
@@ -79,7 +79,7 @@ class Terminal extends React.Component {
       // Terminado sends a "disconnect" message when the process it's running
       // exits. When we receive that, we close the terminal.
       if (resp['0'] === 'disconnect') {
-        this.setState({opened: false});
+        this.close();
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         term.terminadoAttach(ws);
@@ -111,11 +111,6 @@ class Terminal extends React.Component {
 
   render() {
     const state = this.state;
-    const classNames = classnames(
-      'juju-shell',
-      {'juju-shell__hidden': !state.opened}
-    );
-
     const terminalClassNames = classnames(
       'juju-shell__terminal', {
         'juju-shell__terminal--min': state.size === 'min'
@@ -125,7 +120,7 @@ class Terminal extends React.Component {
       styles.height = window.innerHeight - 250 + 'px';
     }
     return (
-      <div className={classNames}>
+      <div className="juju-shell">
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
@@ -148,6 +143,7 @@ class Terminal extends React.Component {
 };
 
 Terminal.propTypes = {
+  WebSocket: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
   // The address of the jujushell service, or an empty string if jujushell is
   // not available.
@@ -158,10 +154,7 @@ Terminal.propTypes = {
     user: PropTypes.string,
     password: PropTypes.string,
     macaroons: PropTypes.object
-  }),
-  db: PropTypes.object.isRequired,
-  gisf: PropTypes.bool.isRequired,
-  visibility: PropTypes.bool.isRequired
+  })
 };
 
 module.exports = Terminal;

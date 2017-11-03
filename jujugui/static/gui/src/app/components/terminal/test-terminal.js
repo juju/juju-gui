@@ -2,8 +2,9 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
+const ReactTestUtils = require('react-dom/test-utils');
 
-const Lightbox = require('../lightbox/lightbox');
 const SvgIcon = require('../svg-icon/svg-icon');
 const Terminal = require('./terminal');
 
@@ -11,105 +12,106 @@ const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Terminal', () => {
 
-  let addNotification;
+  let websocket;
 
-  beforeEach(() => {
-    addNotification = sinon.stub;
+  function setupWebsocket() {
+    websocket = function() {};
+    websocket.prototype.send = sinon.stub();
+    websocket.prototype.close = sinon.stub();
+  }
+
+  function renderComponent(options) {
+    setupWebsocket();
+
+    return jsTestUtils.shallowRender(
+      <Terminal
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />, true);
+  };
+
+  it('should render', () => {
+    const expected = (
+      <div className="juju-shell">
+        <div className="juju-shell__header">
+          <span className="juju-shell__header-label">Juju Shell</span>
+          <div className="juju-shell__header-actions">
+            <span onClick={sinon.stub()}>
+              <SvgIcon name="minimize-bar_16" size="16" />
+            </span>
+            <span onClick={sinon.stub()}>
+              <SvgIcon name="maximize-bar_16" size="16" />
+            </span>
+            <span onClick={sinon.stub()}>
+              <SvgIcon name="close_16" size="16" />
+            </span>
+          </div>
+        </div>
+        <div className={'juju-shell__terminal juju-shell__terminal--min'} style={{}}></div>
+      </div>);
+    expect(renderComponent().getRenderOutput()).toEqualJSX(expected);
   });
 
-  it('should display a button', () => {
-    const renderer = jsTestUtils.shallowRender(
+  it('instantiates the terminal and connects to the websocket on mount', () => {
+    const component = ReactTestUtils.renderIntoDocument(
       <Terminal
-        addNotification={addNotification}
-        address={undefined}
-        creds={undefined}
-      />, true);
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />
+    );
+    assert.equal(component.ws instanceof websocket, true);
+    assert.equal(typeof component.term, 'object');
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+    assert.equal(websocket.prototype.close.callCount, 1);
+  });
+
+  it('can be closed by clicking the X', () => {
+    const renderer = renderComponent();
     const output = renderer.getRenderOutput();
-    const classes = 'model-actions__import model-actions__button ' +
-      'model-actions__button-disabled';
-    const expected = (
-      <span className={classes}
-        onClick={undefined}
-        role="button"
-        tabIndex="0">
-        <SvgIcon name="code-snippet_24"
-          className="model-actions__icon"
-          size="16" />
-        <span className="tooltip__tooltip--below">
-          <span className="tooltip__inner tooltip__inner--up">
-            Juju shell
-          </span>
-        </span>
-      </span>
-    );
-    expect(output).toEqualJSX(expected);
+    const instance = renderer.getMountedInstance();
+    // Call the onClick for the X
+    output.props.children[0].props.children[1].props.children[2].props.onClick();
+    assert.deepEqual(instance.props.changeState.args[0], [{
+      terminal: null
+    }]);
   });
 
-  it('should only enable the button when an address is available', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Terminal
-        addNotification={addNotification}
-        address="http://1.2.3.4"
-        creds={undefined}
-      />, true);
+  it('can be resized by clicking the two resize buttons', () => {
+    const renderer = renderComponent();
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const classes = 'model-actions__import model-actions__button';
-    const expected = (
-      <span className={classes}
-        onClick={instance.setOpened}
-        role="button"
-        tabIndex="0">
-        <SvgIcon name="code-snippet_24"
-          className="model-actions__icon"
-          size="16" />
-        <span className="tooltip__tooltip--below">
-          <span className="tooltip__inner tooltip__inner--up">
-            Juju shell
-          </span>
-        </span>
-      </span>
-    );
-    expect(output).toEqualJSX(expected);
+    // Call the onClick for the maximize
+    output.props.children[0].props.children[1].props.children[1].props.onClick();
+    assert.equal(instance.state.size, 'max');
+    const output2 = renderer.getRenderOutput();
+    // Check that the styles have been updated for max height.
+    // Because the browser dimensions can vary across machines this just checks
+    // that the height was indeed set.
+    const termElement = output2.props.children[1];
+    const heightStyle = termElement.props.style.height;
+    assert.equal(termElement.props.className, 'juju-shell__terminal');
+    assert.equal(heightStyle.indexOf('px') !== -1, true);
+    assert.equal(parseInt(heightStyle.split('px')[0], 10) > 100, true);
+    // Call the onclick for the minimize
+    output.props.children[0].props.children[1].props.children[0].props.onClick();
+    assert.equal(instance.state.size, 'min');
+    const output3 = renderer.getRenderOutput();
+    const termElement2 = output3.props.children[1];
+    assert.equal(
+      termElement2.props.className, 'juju-shell__terminal juju-shell__terminal--min');
+    assert.deepEqual(termElement2.props.style, {});
   });
 
-  it('should open the Lightbox when button is clicked', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Terminal
-        addNotification={addNotification}
-        address="http://1.2.3.4"
-        creds={undefined}
-      />, true);
-    const instance = renderer.getMountedInstance();
-    let output = renderer.getRenderOutput();
-    output.props.onClick();
-    output = renderer.getRenderOutput();
-    const expected = (
-      <Lightbox close={instance.setOpened}>
-        <div className="juju-shell__terminal-container"></div>
-      </Lightbox>
-    );
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('should start and stop a terminal session', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Terminal
-        addNotification={addNotification}
-        address="http://1.2.3.4"
-        creds={undefined}
-      />, true);
-    const startTerm = sinon.stub();
-    const stopTerm = sinon.stub();
-    const instance = renderer.getMountedInstance();
-    instance.startTerm = startTerm;
-    instance.stopTerm = stopTerm;
-    // Ensure that startTerm and stopTerm are called when state changes.
-    instance.setOpened(true);
-    instance.componentDidUpdate({}, {opened: false});
-    assert.strictEqual(startTerm.callCount, 1);
-    instance.setOpened(false);
-    instance.componentDidUpdate({}, {opened: true});
-    assert.strictEqual(stopTerm.callCount, 1);
-  });
 });

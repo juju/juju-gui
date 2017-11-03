@@ -136,7 +136,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        displayTerminalButton={window.juju_config.flags['terminal']}
+        displayTerminalButton={this.applicationConfig.flags['terminal'] || false}
         appState={this.state}
         changeState={this._bound.changeState}
         exportEnvironmentFile={
@@ -185,7 +185,6 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   }
 
   _renderTerminal(address) {
-    const db = this.db;
     const config = this.applicationConfig;
     const user = this.user;
     const identityURL = user.identityURL();
@@ -210,8 +209,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         address={address}
         changeState={this._bound.changeState}
         creds={creds}
-        db={db}
-        gisf={config.gisf}/>,
+        WebSocket={WebSocket}/>,
       document.getElementById('terminal-container'));
   }
 
