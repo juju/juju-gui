@@ -53,7 +53,7 @@ class PostDeployment extends React.Component {
     }
 
     const files = entityData[0].files;
-    if (files && files.includes('getstarted.md')) {
+    if (files && files.some(ele => ele.toLowerCase() === 'getstarted.md')) {
       this.props.getFile(
         this.props.entityId,
         'getstarted.md',
