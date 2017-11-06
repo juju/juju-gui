@@ -106,6 +106,9 @@ describe('PostDeployment', () => {
         } onClick={instance._handleContentClick.bind(instance)} />
       </Panel>
     );
+    // When requesting the file it should request the actual name as
+    // charmstore is case sensitive
+    assert.equal(instance.props.getFile.args[0][1], 'gEtstArteD.md');
   });
 
   it('extracts metadata in markdown head', () => {
