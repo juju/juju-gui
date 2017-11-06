@@ -37,7 +37,7 @@ class Terminal extends React.Component {
     const term = new XTerm();
     term.write('Connecting... ');
     this.term = term;
-    term.on('open', e => {
+    term.on('open', () => {
       // To properly have the terminal area fit the full width we have to
       // call fit a little bit after it's been opened.
       setTimeout(() => term.fit(), 500);
@@ -95,6 +95,12 @@ class Terminal extends React.Component {
     this.ws = null;
   }
 
+  /**
+    Sets the size value in the component state to the provided value. Also
+    calls to refit the terminal to the container size.
+    @param {String} size The size to set the terminal to. Possible values
+      are 'min' and 'max'.
+  */
   setSize(size) {
     this.setState({size: size}, () => {
       if (this.term) {
@@ -103,6 +109,9 @@ class Terminal extends React.Component {
     });
   }
 
+  /**
+    Calls to set the app state to terminal: null.
+  */
   close() {
     this.props.changeState({
       terminal: null
