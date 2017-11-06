@@ -227,11 +227,11 @@ Browser: ${navigator.userAgent}`
     const githubIssueLink =
       `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
     const address = function() {
-      if (config.jujushellURL) {
-        return config.jujushellURL;
-      }
       if (db.environment.get('jujushellURL')) {
         return `ws://${db.environment.get('jujushellURL')}/ws/`;
+      }
+      if (config.jujushellURL) {
+        return config.jujushellURL;
       }
     }();
     if (!address) {
