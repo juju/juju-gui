@@ -123,16 +123,48 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             </form>
           </div>
         </div>
-        <div id="loading-message" class="centered-column">
-          <svg class="svg-icon"
-            viewBox="0 0 90 35"
-            style="width:90px; height:35px;">
-            <use xlink:href="#juju-logo" />
-          </svg>
-          <div class="panel">
-            <div id="loading-indicator"></div>
-            <div id="loading-message-text" class="header">
-              Hello, world.
+        <div id="loading-message">
+          <div class="loading-header">
+            <div class="loading-header__logo">
+              <svg class="svg-icon"
+                viewBox="0 0 90 35"
+                style="width:90px; height:35px;">
+                <use xlink:href="#juju-logo" />
+              </svg>
+            </div>
+            <div class="loading-fake-content space cols-one"></div>
+            <div class="loading-fake-content cols-one"></div>
+            <div class="loading-fake-content cols-one"></div>
+            <div>
+              <div class="loading-fake-content space cols-one half-height"></div>
+            </div>
+            <div>
+              <div class="loading-fake-content space cols-half"></div>
+              <div class="loading-fake-content cols-three"></div>
+              <div class="loading-fake-content cols-three"></div>
+              <div class="loading-fake-content cols-two"></div>
+            </div>
+            <div class="loading-header__search">
+              <div class="loading-fake-content cols-seven"></div>
+              <div class="loading-fake-content cols-half space"></div>
+              <div class="loading-fake-content cols-one"></div>
+              <div class="loading-fake-content cols-half space"></div>
+              <div class="loading-fake-content cols-two"></div>
+              <div class="content-right">
+                <div class="loading-fake-content space half-height"></div>
+              </div>
+              <div class="content-right">
+                <div class="loading-fake-content cols-one"></div>
+              </div>
+              <div class="content-right">
+                <div class="loading-fake-content cols-one"></div>
+              </div>
+            </div>
+            <div class="loading-header__deploy">
+              <div class="loading-fake-content cols-four"></div>
+            </div>
+            <div class="spinner-container">
+              <div class="spinner-loading">Loading...</div>
             </div>
           </div>
         </div>
@@ -172,57 +204,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         components: {},
         utils: {}
       };
-
-      // Note that any changes to MessageRotator need to be made in both
-      // index.html.go and index.html.mako.
-      class MessageRotator {
-        constructor() {
-          this.messages = [
-            'Requesting code...',
-            'Reading the configuration...',
-            'Connecting to the backend...',
-            'Reticulating splines...',
-            'Establishing API connections...',
-            'Verifying identity...',
-            'Checking controller information...',
-            'Setting phasers to stun...',
-            'Querying the charm store...',
-            'Rendering the GUI...'
-          ];
-          this.interval = 3000;
-          this.index = 0;
-          this.maxIndex = this.messages.length - 1;
-        }
-
-        advance() {
-          // Display the next message.
-          const message = this.messages[this.index];
-          document.getElementById('loading-message-text').innerHTML = message;
-          // If we're at the end of the messages, loop back to the beginning.
-          // Else, advance to the next message.
-          if (this.index === this.maxIndex) {
-            this.index = 0;
-          } else {
-            this.index += 1;
-          }
-        }
-
-        start() {
-          // Display the first message.
-          this.advance();
-          // Setup the timer for subsequent messages.
-          this.timerId = window.setInterval(() => this.advance(), this.interval);
-        }
-
-        stop() {
-          if (this.timerId) {
-            window.clearInterval(this.timerId);
-          }
-        }
-      }
-
-      messageRotator = new MessageRotator();
-      messageRotator.start();
 
       getDocument = function() {
         return document;
@@ -361,12 +342,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
           const JujuGUI = require('init');
           window.JujuGUI = new JujuGUI(juju_config);
-
-          const stopHandler = () => {
-            document.removeEventListener('login', stopHandler);
-            messageRotator.stop()
-          };
-          document.addEventListener('login', stopHandler);
         });
       };
     </script>
