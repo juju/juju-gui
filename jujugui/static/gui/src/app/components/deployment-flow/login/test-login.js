@@ -35,7 +35,8 @@ describe('DeploymentLogin', function() {
             You will need to sign in with an Ubuntu One account to deploy
             your model with Juju-as-a-Service.
           </p>
-          <div className="deployment-login__features">
+          <div className={
+            'deployment-login__features twelve-col no-margin-bottom'}>
             <div className="six-col">
               <div className="deployment-login__feature">
                 <SvgIcon
@@ -69,7 +70,7 @@ describe('DeploymentLogin', function() {
               </div>
             </div>
           </div>
-          <div className="deployment-login__login">
+          <div className="deployment-login__login twelve-col">
             <USSOLoginLink
               addNotification={addNotification}
               gisf={true}

@@ -2,19 +2,20 @@
   position: relative;
 
   &__notification {
+    $width: 280px;
     background: $white;
     box-shadow: $box-shadow;
     box-sizing: border-box;
     color: $dark-warm-grey;
     font-size: .875rem;
     line-height: normal;
-    margin: 10px auto 0;
+    margin-left: -($width / 2);
     padding: 12px 25px;
     position: absolute;
     z-index: index($z-indexed-elements, environment-help);
-    top: 150%;
-    right: 0px;
-    width: 280px;
+    top: 3rem;
+    left: 50%;
+    width: $width;
     display: none;
   }
 
