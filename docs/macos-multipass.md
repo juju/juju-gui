@@ -1,7 +1,7 @@
 # Juju GUI and multipass
 
 This document describes how to set up a development environment for the Juju GUI
-on macos with multipass. The *Initial setup* section must be done only once
+on macOS with multipass. The *Initial setup* section must be done only once
 initially. The *Working with the GUI* section describes the daily routine of
 switching to GUI branches under review and QAing them.
 
@@ -18,7 +18,7 @@ switching to GUI branches under review and QAing them.
 
 ### Make the instance discoverable
 
-- In order to make the instance hostname discoverable from macos, run the
+- In order to make the instance hostname discoverable from macOS, run the
   following commands:
 ```shell
 ubuntu exec dev -- sudo apt update
@@ -42,7 +42,7 @@ ubuntu exec dev -- sudo apt install avahi-daemon avahi-autoipd
 sudo sh -c "echo '/home/ubuntu/code *(rw,sync,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
 sudo /etc/init.d/nfs-kernel-server restart
 ```
-- Exit to get back to the host system (macos): you can either use `exit` or send
+- Exit to get back to the host system (macOS): you can either use `exit` or send
   the EOF signal with CTRL-D.
 - Double check that the host can see the export: the command
   `showmount -e dev.local` should show an output like:
@@ -52,9 +52,10 @@ Exports list on dev.local:
 ```
 - Create a directory where to mount the export: `mkdir -p ~/code/ubuntu`.
 - Enable automatic mounting of this share by adding an entry to the host fstab
-  file, and then mount it:
+  file, and then mount it. Note that `{user}` must be replaced with your own user
+  name in macOS:
 ```shell
-sudo sh -c "echo dev.local:/home/ubuntu/code /Users/frankban/code/ubuntu nfs resvport,rw,rsize=8192,wsize=8192,timeo=14,intr >> /etc/fstab"
+sudo sh -c "echo dev.local:/home/ubuntu/code /Users/{user}/code/ubuntu nfs resvport,rw,rsize=8192,wsize=8192,timeo=14,intr >> /etc/fstab"
 sudo mount -a
 ```
 - At this point you should have the code directory of the guest mounted in the
@@ -62,9 +63,9 @@ sudo mount -a
   while still using your favorite visual editor for hacking in the GUI from the
   host. Try creating a file:
 ```shell
-ssh ubuntu@dev2.local 'touch ~/code/it-works'
-ll ~/code/ubuntu2/it-works # This should work.
-rm ~/code/ubuntu2/it-works # Clean it up.
+ssh ubuntu@dev.local 'touch ~/code/it-works'
+ll ~/code/ubuntu/it-works # This should work.
+rm ~/code/ubuntu/it-works # Clean it up.
 ```
 
 ### Set up the Juju GUI
@@ -109,7 +110,7 @@ echo -e '\nexport GOPATH=$HOME/code/go\nexport PATH=$PATH:$GOROOT/bin:$GOPATH/bi
 
 ## Working with the GUI
 
-As mentioned, while development can be done using your favorite macos editor
+As mentioned, while development can be done using your favorite macOS editor
 (if you wish), the GUI can be run exclusively from ubuntu. So, from now on, this
 document assumes you are working from inside the dev instance. As usual, to run
 commands in the instance, you first need to SSH into it with
@@ -161,7 +162,7 @@ git pull origin
   http://192.168.64.7:8042/
 ```
   Do not use the localhost URL (it will only work from inside the instance);
-  select a URL that can be reached from the macos host instead, and point your
+  select a URL that can be reached from the macOS host instead, and point your
   favorite browser to it: you'll get access to the GUI and it will be connected
   to the production JAAS, because we are running guiproxy with `-env prod`.
   CTRL-C is used to quit guiproxy as well.
