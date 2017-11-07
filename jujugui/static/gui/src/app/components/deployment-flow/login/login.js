@@ -38,7 +38,8 @@ class DeploymentLogin extends React.Component {
             You will need to sign in with an Ubuntu One account to deploy
             your model with Juju-as-a-Service.
           </p>
-          <div className="deployment-login__features">
+          <div className={
+            'deployment-login__features twelve-col no-margin-bottom'}>
             <div className="six-col">
               <div className="deployment-login__feature">
                 {this._generateTick()}
@@ -60,7 +61,7 @@ class DeploymentLogin extends React.Component {
               </div>
             </div>
           </div>
-          <div className="deployment-login__login">
+          <div className="deployment-login__login twelve-col">
             <USSOLoginLink
               addNotification={this.props.addNotification}
               gisf={this.props.gisf}
