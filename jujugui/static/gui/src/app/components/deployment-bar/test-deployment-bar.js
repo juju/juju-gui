@@ -6,7 +6,6 @@ const React = require('react');
 const DeploymentBar = require('./deployment-bar');
 const DeploymentBarNotification = require('./notification/notification');
 const GenericButton = require('../generic-button/generic-button');
-const Panel = require('../panel/panel');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
@@ -37,22 +36,18 @@ describe('DeploymentBar', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <Panel
-        instanceName="deployment-bar-panel"
-        visible={true}>
-        <div className="deployment-bar">
-          <DeploymentBarNotification
-            change={null} />
-          <div className="deployment-bar__deploy">
-            <GenericButton
-              action={instance._deployAction}
-              type="inline-deployment"
-              disabled={false}>
-              Deploy changes (2)
-            </GenericButton>
-          </div>
+      <div className="deployment-bar">
+        <DeploymentBarNotification
+          change={null} />
+        <div className="deployment-bar__deploy">
+          <GenericButton
+            action={instance._deployAction}
+            type="inline-deployment"
+            disabled={false}>
+            Deploy changes (2)
+          </GenericButton>
         </div>
-      </Panel>);
+      </div>);
     expect(output).toEqualJSX(expected);
   });
 
@@ -70,7 +65,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     assert.isFalse(
-      output.props.children.props.children[1].props.children.props.disabled);
+      output.props.children[1].props.children.props.disabled);
   });
 
   it('disables the button if there are no changes', function() {
@@ -87,7 +82,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     assert.isTrue(
-      output.props.children.props.children[1].props.children.props.disabled);
+      output.props.children[1].props.children.props.disabled);
   });
 
   it('passes the button the correct title if there are commits', function() {
@@ -105,7 +100,7 @@ describe('DeploymentBar', function() {
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children.props.children[1].props.children.props.children,
+      output.props.children[1].props.children.props.children,
       'Commit changes (0)');
   });
 
@@ -137,7 +132,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -172,7 +167,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -190,7 +185,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
   });
@@ -223,7 +218,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -241,7 +236,7 @@ describe('DeploymentBar', function() {
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -259,7 +254,7 @@ describe('DeploymentBar', function() {
         services={[]}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
-    expect(output.props.children.props.children[0]).toEqualJSX(
+    expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification
         change={change} />);
   });
@@ -281,7 +276,7 @@ describe('DeploymentBar', function() {
       <div className="deployment-bar__read-only">
         Read only
       </div>);
-    expect(output.props.children.props.children[1]).toEqualJSX(expected);
+    expect(output.props.children[1]).toEqualJSX(expected);
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{

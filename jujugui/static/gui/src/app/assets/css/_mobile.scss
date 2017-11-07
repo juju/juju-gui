@@ -195,17 +195,6 @@
     margin-bottom: 20px;
   }
 
-  // Deployment bar
-  .panel-component.deployment-bar-panel {
-    bottom: 20px;
-
-    .deployment-bar__export,
-    .deployment-bar__import,
-    .button--inline-neutral {
-      display: none;
-    }
-  }
-
   // Search results
   .search-results .list-block {
     .list-block__filters--selects {

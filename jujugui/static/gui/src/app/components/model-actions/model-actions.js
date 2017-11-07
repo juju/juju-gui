@@ -6,7 +6,6 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
-const Terminal = require('../terminal/terminal');
 
 class ModelActions extends React.Component {
   /**
@@ -41,6 +40,15 @@ class ModelActions extends React.Component {
   }
 
   /**
+    Handle the user clicking the show-terminal button.
+  */
+  _handleTerminalClick() {
+    this.props.changeState({
+      terminal: true
+    });
+  }
+
+  /**
     Returns the classes for the button based on the provided props.
     @returns {String} The collection of class names.
   */
@@ -62,7 +70,6 @@ class ModelActions extends React.Component {
     // model.
     const sharingEnabled = props.userIsAuthenticated &&
       props.appState.current.root !== 'new';
-    const useTerm = this.props.flags['terminal'];
     let shareAction = null;
     if (sharingEnabled) {
       const shareClasses = classNames(
@@ -85,14 +92,23 @@ class ModelActions extends React.Component {
         </span>
       );
     }
-    // TODO use feature flag (upcoming branch).
-    // 2017-10-16 Makyo
+
     let terminalAction = null;
-    if (useTerm) {
-      terminalAction = (<Terminal
-        addNotification={props.addNotification}
-        address={props.address}
-        creds={props.creds} />);
+    if (props.displayTerminalButton) {
+      terminalAction = (
+        <span className="model-actions__import model-actions__button"
+          onClick={this._handleTerminalClick.bind(this)}
+          role="button"
+          tabIndex="0">
+          <SvgIcon name="code-snippet_24"
+            className="model-actions__icon"
+            size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner tooltip__inner--up">
+              Juju shell
+            </span>
+          </span>
+        </span>);
     }
     const isReadOnly = props.acl.isReadOnly();
     return (
@@ -139,13 +155,10 @@ class ModelActions extends React.Component {
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,
-  addNotification: PropTypes.func.isRequired,
-  address: PropTypes.string,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
-  creds: PropTypes.object,
+  displayTerminalButton: PropTypes.bool.isRequired,
   exportEnvironmentFile: PropTypes.func.isRequired,
-  flags: PropTypes.object.isRequired,
   hideDragOverNotification: PropTypes.func.isRequired,
   importBundleFile: PropTypes.func.isRequired,
   loadingModel: PropTypes.bool,

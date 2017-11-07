@@ -1,6 +1,12 @@
-.deployment-bar {
+#deployment-bar-container {
   height: 40px;
-  text-align: right;
+  margin-bottom: 20px;
+}
+
+.deployment-bar {
+  float: right;
+  position: relative;
+  right: 20px;
 
   &__deploy {
     @extend %floating-panel;

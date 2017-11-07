@@ -521,6 +521,9 @@ class GUIApp {
       ['postDeploymentPanel',
         this._displayPostDeployment.bind(this),
         this._clearPostDeployment.bind(this)],
+      ['terminal',
+        this._displayTerminal.bind(this),
+        this._clearTerminal.bind(this)],
       // Nothing needs to be done at the top level when the hash changes.
       ['hash'],
       // special dd is handled by the root dispatcher as it requires /new

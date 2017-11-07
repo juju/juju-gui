@@ -138,7 +138,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         <div id="login-container"></div>
       </div>
-
       <div id="top-page-container"></div>
       <div id="popup-container"></div>
       <div id="sharing-container"></div>
@@ -154,13 +153,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="login-notification"></div>
       <div id="cookie-container"></div>
       <div id="help"></div>
+      <div id="app-footer">
+        <div id="deployment-bar-container"></div>
+        <div id="terminal-container"></div>
+      </div>
       <div id="viewport">
         <div id="content">
           <div id="modal-shortcuts"></div>
           <div id="modal-gui-settings"></div>
           <div id="lightbox"></div>
-          <div id="main">
-          </div> <!-- /container -->
+          <div id="main"></div>
           <div id="drag-over-notification-container"></div>
         </div>
         <div id="notifications-container"></div>

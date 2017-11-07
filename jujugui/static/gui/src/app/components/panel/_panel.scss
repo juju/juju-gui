@@ -51,15 +51,6 @@
     background-color: $white;
   }
 
-  &.deployment-bar-panel {
-    right: 20px;
-    bottom: 30px;
-    z-index: index($z-indexed-elements, deployment-bar-panel);
-    background-color: transparent;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
   &.env-list-panel {
     top: 65px;
     right: -260px;
