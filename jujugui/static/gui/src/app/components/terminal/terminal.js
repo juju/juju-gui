@@ -133,13 +133,13 @@ class Terminal extends React.Component {
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <span onClick={this.setSize.bind(this, 'min')}>
+            <span onClick={this.setSize.bind(this, 'min')} tabIndex="0" role="button">
               <SvgIcon name="minimize-bar_16" size="16" />
             </span>
-            <span onClick={this.setSize.bind(this, 'max')}>
+            <span onClick={this.setSize.bind(this, 'max')} tabIndex="0" role="button">
               <SvgIcon name="maximize-bar_16" size="16" />
             </span>
-            <span onClick={this.close.bind(this)}>
+            <span onClick={this.close.bind(this)} tabIndex="0" role="button">
               <SvgIcon name="close_16" size="16" />
             </span>
           </div>

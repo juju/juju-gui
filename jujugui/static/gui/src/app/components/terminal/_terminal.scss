@@ -17,15 +17,15 @@
       line-height: 36px;
 
       .svg-icon {
-        stroke: #cdcdcd;
-        fill: #cdcdcd;
+        stroke: $mid-grey;
+        fill: $mid-grey;
         margin-right: 12px;
         cursor: pointer;
       }
 
       .svg-icon:hover {
-        stroke: #f7f7f7;
-        fill: #f7f7f7
+        stroke: $light-grey;
+        fill: $light-grey;
       }
 
     }

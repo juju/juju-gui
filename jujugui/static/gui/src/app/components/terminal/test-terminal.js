@@ -42,13 +42,13 @@ describe('Terminal', () => {
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <span onClick={sinon.stub()}>
+            <span onClick={sinon.stub()} tabIndex="0" role="button">
               <SvgIcon name="minimize-bar_16" size="16" />
             </span>
-            <span onClick={sinon.stub()}>
+            <span onClick={sinon.stub()} tabIndex="0" role="button">
               <SvgIcon name="maximize-bar_16" size="16" />
             </span>
-            <span onClick={sinon.stub()}>
+            <span onClick={sinon.stub()} tabIndex="0" role="button">
               <SvgIcon name="close_16" size="16" />
             </span>
           </div>
