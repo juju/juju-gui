@@ -1088,6 +1088,9 @@ Browser: ${navigator.userAgent}`
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
             changesUtils, services, db.units)}
+        generateChangeDescription={
+          changesUtils.generateChangeDescription.bind(
+            changesUtils, services, db.units)}
         generateCloudCredentialName={initUtils.generateCloudCredentialName}
         generateMachineDetails={
           initUtils.generateMachineDetails.bind(
