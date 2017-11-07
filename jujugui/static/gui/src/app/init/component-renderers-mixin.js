@@ -237,15 +237,16 @@ Browser: ${navigator.userAgent}`
     if (!address) {
       let message = 'an unknown error has occurred please file an issue ';
       let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
-      if (!config.gisf) {
-        const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
-        if (!jujushell) {
-          message = 'deploy and expose the "jujushell" charm and try again.';
-          link = null;
-        } else if (jujushell && !jujushell.get('exposed')) {
-          message = 'expose the "jujushell" charm and try again.';
-          link = null;
-        }
+      const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
+      if (!jujushell || jujushell.get('pending')) {
+        message = 'deploy and expose the "jujushell" charm and try again.';
+        link = null;
+      } else if (!jujushell.get('aggregated_status').running) {
+        message = 'jujushell has not yet been successfully deployed.';
+        link = null;
+      } else if (jujushell && !jujushell.get('exposed')) {
+        message = 'expose the "jujushell" charm and try again.';
+        link = null;
       }
       this._bound.addNotification({
         title: 'Unable to open Terminal',
