@@ -31,11 +31,23 @@ describe('user auth class', () => {
   const getMockStorage = function() {
     return new function() {
       return {
-        store: {},
-        setItem: function(name, val) { this.store[name] = val; },
-        getItem: function(name) { return this.store[name] || null; },
-        removeItem: function(name) { delete this.store[name]; },
-        clear: function() { this.store = {}; }
+        _names: {},
+        setItem: function(name, val) {
+          this[name] = val;
+          this._names[name] = true;
+        },
+        getItem: function(name) {
+          return this[name] || null;
+        },
+        removeItem: function(name) {
+          delete this[name];
+          delete this._names[name];
+        },
+        clear: function() {
+          Object.keys(this._names).forEach(name => {
+            this.removeItem(name);
+          });
+        }
       };
     };
   };
@@ -56,7 +68,7 @@ describe('user auth class', () => {
     it('can be set', () => {
       user.controller = {user: 'rose'};
       assert.deepEqual(
-        JSON.parse(storage.store.controllerCredentials), {user: 'rose'});
+        JSON.parse(storage.controllerCredentials), {user: 'rose'});
     });
 
     it('can be retrieved', () => {
@@ -104,7 +116,7 @@ describe('user auth class', () => {
     it('can be set', () => {
       user.model = {user: 'rose'};
       assert.deepEqual(
-        JSON.parse(storage.store.modelCredentials), {user: 'rose'});
+        JSON.parse(storage.modelCredentials), {user: 'rose'});
     });
 
     it('can be retrieved', () => {
@@ -163,6 +175,35 @@ describe('user auth class', () => {
       user.setMacaroon('test', 'foo-bar');
       user.clearMacaroon('test');
       assert.deepEqual(storage.getItem('test'), null);
+    });
+  });
+
+  describe('identityURL', () => {
+    let storage, user;
+
+    beforeEach(() => {
+      storage = getMockStorage();
+      user = new window.jujugui.User({localStorage: storage});
+      storage.setItem('charmstore', '<charmstore macaroon>');
+      storage.setItem('identity', '<identity token>');
+      storage.setItem('terms', '<terms macaroon>');
+      storage.setItem('https://1.2.3.4/identity', '<identity token>');
+      storage.setItem('https://1.2.3.4/omni', '<omni macaroon>');
+      storage.setItem('https://1.2.3.4/null', null);
+    });
+
+    it('returns the identity URL', () => {
+      assert.strictEqual(user.identityURL(), 'https://1.2.3.4/identity');
+    });
+
+    it('returns null if an URL with the identity token is not set', () => {
+      storage.removeItem('https://1.2.3.4/identity');
+      assert.strictEqual(user.identityURL(), null);
+    });
+
+    it('returns null if the token is not set', () => {
+      storage.removeItem('identity');
+      assert.strictEqual(user.identityURL(), null);
     });
   });
 

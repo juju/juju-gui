@@ -47,13 +47,13 @@ class DeploymentChangeItem extends React.Component {
   render() {
     var change = this.props.change;
     return (
-      <li className="deployment-change-item">
+      <div className="deployment-change-item">
         <span className="deployment-change-item__change">
           {this._generateIcon(change.icon)}
           {change.description}
         </span>
         {this._generateTime()}
-      </li>
+      </div>
     );
   }
 };

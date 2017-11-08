@@ -65,7 +65,7 @@ class NotificationListItem extends React.Component {
 };
 
 NotificationListItem.propTypes = {
-  message: PropTypes.string.isRequired,
+  message: PropTypes.node,
   removeNotification: PropTypes.func.isRequired,
   timeout: PropTypes.number,
   timestamp: PropTypes.string.isRequired,

@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const marked = require('marked');
 const Prism = require('prismjs');
 const prismLanguages = require('prism-languages');
+const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
@@ -131,20 +132,15 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     element.
   */
   _renderModelActions() {
-    const db = this.db;
     const modelAPI = this.modelAPI;
-    const address = this.db.environment.get('jujushellAddress');
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        addNotification={this._bound.addNotification}
-        address={address}
+        displayTerminalButton={this.applicationConfig.flags['terminal'] || false}
         appState={this.state}
         changeState={this._bound.changeState}
-        creds={shapeup.fromShape(this.user.model, Terminal.propTypes.creds)}
         exportEnvironmentFile={
-          initUtils.exportEnvironmentFile.bind(initUtils, db)}
-        flags={window.juju_config.flags}
+          initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
@@ -186,6 +182,90 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         humanizeTimestamp={initUtils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
       />, sharing);
+  }
+
+  _renderTerminal(address) {
+    const config = this.applicationConfig;
+    const user = this.user;
+    const identityURL = user.identityURL();
+    const creds = {};
+    if (identityURL && config.gisf) {
+      const serialized = user.getMacaroon('identity');
+      // Note that the macaroons we provide to jujushell are not the same
+      // already stored in the user. For being able to log in to both the
+      // controller and models we provide the identity token here, and that's
+      // the reason why we cannot use fromShape.
+      creds.macaroons = {};
+      creds.macaroons[identityURL] = JSON.parse(atob(serialized));
+    } else {
+      creds.user = user.controller.user;
+      creds.password = user.controller.password;
+    }
+    ReactDOM.render(
+      <Terminal
+        addNotification={this._bound.addNotification}
+        // If a URL has been provided for the jujuShellURL then use it over any
+        // provided by the environment.
+        address={address}
+        changeState={this._bound.changeState}
+        creds={creds}
+        WebSocket={WebSocket}/>,
+      document.getElementById('terminal-container'));
+  }
+
+  _displayTerminal(state, next) {
+    const config = this.applicationConfig;
+    const db = this.db;
+    const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
+    const githubIssueValues = {
+      title: 'Juju shell unavailable',
+      body: `GUI Version: ${window.GUI_VERSION.version}
+JAAS: ${config.gisf}
+Location: ${window.location.href}
+Browser: ${navigator.userAgent}`
+    };
+    const githubIssueLink =
+      `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
+    const address = function() {
+      if (db.environment.get('jujushellURL')) {
+        return `ws://${db.environment.get('jujushellURL')}/ws/`;
+      }
+      if (config.jujushellURL) {
+        return config.jujushellURL;
+      }
+    }();
+    if (!address) {
+      let message = 'an unknown error has occurred please file an issue ';
+      let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
+      const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
+      if (!jujushell || jujushell.get('pending')) {
+        message = 'deploy and expose the "jujushell" charm and try again.';
+        link = null;
+      } else if (!jujushell.get('aggregated_status').running) {
+        message = 'jujushell has not yet been successfully deployed.';
+        link = null;
+      } else if (jujushell && !jujushell.get('exposed')) {
+        message = 'expose the "jujushell" charm and try again.';
+        link = null;
+      }
+      this._bound.addNotification({
+        title: 'Unable to open Terminal',
+        message: [
+          <span key="prefix">Unable to open Terminal, </span>,
+          <span key="message">{message}</span>,
+          link],
+        level: 'error'
+      });
+      this.state.changeState({terminal: null});
+      return;
+    }
+    this._renderTerminal(address);
+    next();
+  }
+
+  _clearTerminal(state, next) {
+    ReactDOM.unmountComponentAtNode(document.getElementById('terminal-container'));
+    next();
   }
   /**
     Renders the ISV profile component.
@@ -1020,6 +1100,9 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         formatConstraints={viewUtils.formatConstraints.bind(viewUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
+            changesUtils, services, db.units)}
+        generateChangeDescription={
+          changesUtils.generateChangeDescription.bind(
             changesUtils, services, db.units)}
         generateCloudCredentialName={initUtils.generateCloudCredentialName}
         generateMachineDetails={

@@ -48,31 +48,32 @@ const User = class User {
     this.expirationDatetime = cfg.expirationDatetime || getExpirationDate();
   }
 
-  /** Gets the expiration date out of session storage for the user.
+  /**
+    Gets the expiration date out of session storage for the user.
 
-   Since all data dumped into session storage is serialized, so this also
-   converts the value back into a Date.
-   */
+    Since all data dumped into session storage is serialized, so this also
+    converts the value back into a Date.
+  */
   get expirationDatetime() {
     return new Date(this.sessionStorage.getItem('expirationDatetime'));
   }
 
   /**
-   Sets the expiration date for the user's tokens.
+    Sets the expiration date for the user's tokens.
 
-   Since the date is stored in session storage it will be serialized.
+    Since the date is stored in session storage it will be serialized.
 
-   @param expirationDate Date The time to expire the session for the user.
-   */
+    @param expirationDate Date The time to expire the session for the user.
+  */
   set expirationDatetime(expirationDatetime) {
     this.sessionStorage.setItem('expirationDatetime', expirationDatetime);
   }
 
   /**
-   Checks the expiration date and if reached purges the data. We dump all tokens
-   (controller/models, charmstore, omni, &c) as this is a full session
-   expiration.
-   */
+    Checks the expiration date and if reached purges the data. We dump all
+    tokens (controller/models, charmstore, omni, etc.) as this is a full session
+    expiration.
+  */
   _purgeIfExpired() {
     const now = new Date();
     if (now > this.expirationDatetime) {
@@ -82,13 +83,13 @@ const User = class User {
   }
 
   /**
-   Get's the user's display name from the username in controller credentials.
+    Gets the user's display name from the username in controller credentials.
 
-   The user's display name is the first half of the full username. That is, in
-   "doctor@who", the display name is "doctor".
+    The user's display name is the first half of the full username. That is, in
+    "doctor@who", the display name is "doctor".
 
-   If external auth -- e.g. from HJC -- exists, that is used for name data.
-   */
+    If external auth -- e.g. from HJC -- exists, that is used for name data.
+  */
   get displayName() {
     this._purgeIfExpired();
     if (this.externalAuth) {
@@ -98,12 +99,12 @@ const User = class User {
   }
 
   /**
-   Get's the user's username from the username in controller credentials.
+    Gets the user's username from the username in controller credentials.
 
-   The full username includes location, e.g. @external.
+    The full username includes location, e.g. @external.
 
-   If external auth -- e.g. from HJC -- exists, that is used for name data.
-   */
+    If external auth -- e.g. from HJC -- exists, that is used for name data.
+  */
   get username() {
     this._purgeIfExpired();
     if (this.externalAuth) {
@@ -113,21 +114,21 @@ const User = class User {
   }
 
   /**
-   Setter for external auth information, i.e. from HJC.
+    Setter for external auth information, i.e. from HJC.
 
-   External auth information is used for determining username display and
-   controller credential status.
-   */
+    External auth information is used for determining username display and
+    controller credential status.
+  */
   set externalAuth(val) {
     this._external = val;
   }
 
   /**
-   Getter for external auth information, i.e. from HJC.
+    Getter for external auth information, i.e. from HJC.
 
-   Since external auth from HJC can be a nested object, this moves name data to
-   the top level of the object.
-   */
+    Since external auth from HJC can be a nested object, this moves name data to
+    the top level of the object.
+  */
   get externalAuth() {
     this._purgeIfExpired();
     const externalAuth = this._external;
@@ -141,12 +142,12 @@ const User = class User {
   }
 
   /**
-   Gets credentials out of sessionStorage.
+    Gets credentials out of sessionStorage.
 
-   @param {String} type The type of credential. Expected to be either
-   'controller' or 'model'.
-   @return {Object} A credentials object with both the stored data and
-   convenience attributes for handling login flow.
+    @param {String} type The type of credential. Expected to be either
+      'controller' or 'model'.
+    @return {Object} A credentials object with both the stored data and
+      convenience attributes for handling login flow.
   */
   _getCredentials(type) {
     this._purgeIfExpired();
@@ -178,12 +179,12 @@ const User = class User {
       },
       areAvailable: {
         /**
-          * Reports whether or not credentials are populated.
-          *
-          * @method get
-          * @return {Boolean} Whether or not either user and password or
-          *   macaroons are set.
-          */
+          Reports whether or not credentials are populated.
+
+          @method get
+          @return {Boolean} Whether or not either user and password or
+            macaroons are set.
+        */
         get: function() {
           const creds = !!((this.user && this.password) || this.macaroons);
           // In typical deploys this is sufficient however in HJC or when
@@ -196,26 +197,43 @@ const User = class User {
   }
 
   /**
-   Sets credentials in sessionStorage.
+    Sets credentials in sessionStorage.
 
-   @param {String} type The type of credential. Expected to be either
-   'controller' or 'model'.
-   @param {Object} credentials The credentials object to be stored.
-   */
+    @param {String} type The type of credential. Expected to be either
+      'controller' or 'model'.
+    @param {Object} credentials The credentials object to be stored.
+  */
   _setCredentials(type, credentials) {
     this.sessionStorage.setItem(
       type + 'Credentials', JSON.stringify(credentials));
   }
 
+  /**
+    Returns controller credentials.
+
+    @return {Object} A credentials object with both the stored data and
+      convenience attributes for handling login flow.
+  */
   get controller() {
     this._purgeIfExpired();
     return this._getCredentials('controller');
   }
 
+  /**
+    Sets controller credentials.
+
+    @param {Object} credentials The credentials object to be stored.
+  */
   set controller(credentials) {
     this._setCredentials('controller', credentials);
   }
 
+  /**
+    Returns model credentials.
+
+    @return {Object} A credentials object with both the stored data and
+      convenience attributes for handling login flow.
+  */
   get model() {
     this._purgeIfExpired();
     // There are situations where we have no model creds but can fall back to
@@ -228,23 +246,68 @@ const User = class User {
     return this._getCredentials('controller');
   }
 
+  /**
+    Sets model credentials.
+
+    @param {Object} credentials The credentials object to be stored.
+  */
   set model(credentials) {
     this._setCredentials('model', credentials);
   }
 
+  /**
+    Returns the inferred identity URL, which is only available after a
+    successful login, and can be assumed to be valid only for the duration of
+    the user session.
+
+    @return {String} The URL of the identity manager (or null if not present).
+  */
+  identityURL() {
+    const token = this.getMacaroon('identity');
+    if (!token) {
+      return null;
+    }
+    for (const key in this.localStorage) {
+      if (key !== 'identity' && this.getMacaroon(key) === token) {
+        return key;
+      }
+    }
+    return null;
+  }
+
+  /**
+    Sets the given serialized macaroons for the given service.
+
+    @param {String} service The service name, like "charmstore" or "terms".
+    @param {String} macaroon The serialized macaroons.
+  */
   setMacaroon(service, macaroon) {
     this.localStorage.setItem(service, macaroon);
   }
 
+  /**
+    Retrieves serialized macaroons for the given service.
+
+    @param {String} service The service name, like "charmstore" or "terms".
+    @return {String} The serialized macaroons.
+  */
   getMacaroon(service) {
     this._purgeIfExpired();
     return this.localStorage.getItem(service);
   }
 
+  /**
+    Removes macaroons for the given service.
+
+    @param {String} service The service name, like "charmstore" or "terms".
+  */
   clearMacaroon(service) {
     this.localStorage.removeItem(service);
   }
 
+  /**
+    Removes all stored macaroons (for all services).
+  */
   clearMacaroons() {
     this.localStorage.clear();
   }

@@ -77,6 +77,7 @@ const createDeploymentFlow = (props = {}) => {
     deploy: sinon.stub().callsArg(0),
     formatConstraints: sinon.stub(),
     generateAllChangeDescriptions: sinon.stub(),
+    generateChangeDescription: sinon.stub(),
     generateCloudCredentialName: sinon.stub(),
     generateMachineDetails: sinon.stub(),
     generatePath: sinon.stub(),
@@ -228,6 +229,7 @@ describe('DeploymentFlow', function() {
               changesFilterByParent={props.changesFilterByParent}
               charmsGetById={props.charmsGetById}
               generateAllChangeDescriptions={props.generateAllChangeDescriptions}
+              generateChangeDescription={props.generateChangeDescription}
               getCurrentChangeSet={props.getCurrentChangeSet}
               getServiceByName={props.getServiceByName}
               listPlansForCharm={props.listPlansForCharm}

@@ -19,8 +19,8 @@ describe('DeploymentChangeItem', function() {
     var output = jsTestUtils.shallowRender(
       <DeploymentChangeItem
         change={change} />);
-    assert.deepEqual(output,
-      <li className="deployment-change-item">
+    const expected = (
+      <div className="deployment-change-item">
         <span className="deployment-change-item__change">
           <SvgIcon name="my-icon"
             className="deployment-change-item__icon"
@@ -30,7 +30,8 @@ describe('DeploymentChangeItem', function() {
         <span className="deployment-change-item__time">
           {change.time}
         </span>
-      </li>);
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display an svg icon', function() {
@@ -42,8 +43,8 @@ describe('DeploymentChangeItem', function() {
     var output = jsTestUtils.shallowRender(
       <DeploymentChangeItem
         change={change} />);
-    assert.deepEqual(output,
-      <li className="deployment-change-item">
+    const expected = (
+      <div className="deployment-change-item">
         <span className="deployment-change-item__change">
           <img src="my-icon.svg" alt=""
             className="deployment-change-item__icon" />
@@ -52,7 +53,8 @@ describe('DeploymentChangeItem', function() {
         <span className="deployment-change-item__time">
           {change.time}
         </span>
-      </li>);
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can display without the time', function() {
@@ -65,14 +67,15 @@ describe('DeploymentChangeItem', function() {
       <DeploymentChangeItem
         change={change}
         showTime={false} />);
-    assert.deepEqual(output,
-      <li className="deployment-change-item">
+    const expected = (
+      <div className="deployment-change-item">
         <span className="deployment-change-item__change">
           <img src="my-icon.svg" alt=""
             className="deployment-change-item__icon" />
           Django was added
         </span>
         {undefined}
-      </li>);
+      </div>);
+    expect(output).toEqualJSX(expected);
   });
 });

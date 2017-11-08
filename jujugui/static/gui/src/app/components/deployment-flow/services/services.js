@@ -4,7 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const BasicTable = require('../../basic-table/basic-table');
 const BudgetTable = require('../../budget-table/budget-table');
+const changesUtils = require('../../../init/changes-utils');
 const DeploymentChangeItem = require('../change-item/change-item');
 
 class DeploymentServices extends React.Component {
@@ -20,10 +22,11 @@ class DeploymentServices extends React.Component {
     const infos = {};
     for (let key in changes) {
       const items = changes[key].map(change => (
-        <DeploymentChangeItem
-          change={change}
-          key={change.id}
-          showTime={false} />));
+        <li key={change.id}>
+          <DeploymentChangeItem
+            change={change}
+            showTime={false} />
+        </li>));
       infos[key] = (
         <ul className="deployment-services__changes">
           {items}
@@ -34,13 +37,11 @@ class DeploymentServices extends React.Component {
 
   /**
     Generate spend summary.
-
-    @method _generateSpend
     @returns {Object} The spend markup.
   */
   _generateSpend() {
     if (!this.props.withPlans) {
-      return;
+      return null;
     }
     return (
       <div className="prepend-seven">
@@ -52,30 +53,73 @@ class DeploymentServices extends React.Component {
     );
   }
 
-  render() {
-    const props = this.props;
-    const currentChangeSet = props.getCurrentChangeSet();
-    const changes = props.sortDescriptionsByApplication(
+  /**
+    Generate the removed machines if there are any.
+    @returns {Object} The service changes markup.
+  */
+  _generateServiceChanges() {
+    const currentChangeSet = this.props.getCurrentChangeSet();
+    const changes = this.props.sortDescriptionsByApplication(
       currentChangeSet,
-      props.generateAllChangeDescriptions(currentChangeSet));
+      this.props.generateAllChangeDescriptions(currentChangeSet));
+    if (!changes || !Object.keys(changes).length) {
+      return null;
+    }
+    return (
+      <BudgetTable
+        acl={this.props.acl}
+        addNotification={this.props.addNotification}
+        allocationEditable={true}
+        charmsGetById={this.props.charmsGetById}
+        extraInfo={this._generateExtraInfo(changes)}
+        listPlansForCharm={this.props.listPlansForCharm}
+        parseTermId={this.props.parseTermId}
+        plansEditable={true}
+        services={Object.keys(changes).map(this.props.getServiceByName)}
+        showTerms={this.props.showTerms}
+        withPlans={this.props.withPlans} />);
+  }
+
+  /**
+    Generate the removed machines if there are any.
+    @returns {Object} The destroyed machines markup.
+  */
+  _generateRemovedMachines() {
+    const currentChangeSet = this.props.getCurrentChangeSet();
+    const groupedChanges = changesUtils.getGroupedChanges(currentChangeSet);
+    const destroyed = groupedChanges._destroyMachines;
+    if (!destroyed || !Object.keys(destroyed).length) {
+      return null;
+    }
+    const removedMachines = Object.keys(destroyed).map(key => {
+      const change = this.props.generateChangeDescription(destroyed[key]);
+      return {
+        columns: [{
+          columnSize: 12,
+          content: (
+            <DeploymentChangeItem
+              change={change}
+              key={change.id}
+              showTime={false} />)
+        }],
+        key: change.id
+      };
+    });
+    return (
+      <BasicTable
+        headers={[{
+          content: 'Machines',
+          columnSize: 12
+        }]}
+        rows={removedMachines} />);
+  }
+
+  render() {
     return (
       <div>
-        <BudgetTable
-          acl={this.props.acl}
-          addNotification={this.props.addNotification}
-          allocationEditable={true}
-          charmsGetById={this.props.charmsGetById}
-          extraInfo={this._generateExtraInfo(changes)}
-          listPlansForCharm={this.props.listPlansForCharm}
-          parseTermId={this.props.parseTermId}
-          plansEditable={true}
-          services={
-            Object
-              .keys(changes)
-              .map(this.props.getServiceByName)}
-          showTerms={this.props.showTerms}
-          withPlans={this.props.withPlans} />
+        {this._generateServiceChanges()}
         {this._generateSpend()}
+        {this._generateRemovedMachines()}
       </div>
     );
   }
@@ -87,6 +131,7 @@ DeploymentServices.propTypes = {
   changesFilterByParent: PropTypes.func.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
+  generateChangeDescription: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,

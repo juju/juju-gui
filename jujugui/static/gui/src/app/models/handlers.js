@@ -123,7 +123,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         }
         address = `${unit.public_address}:${port}`;
       }
-      db.environment.set('jujushellAddress', address);
+      db.environment.set('jujushellURL', address);
     },
 
     /**

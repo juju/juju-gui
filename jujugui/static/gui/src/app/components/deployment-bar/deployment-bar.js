@@ -6,7 +6,6 @@ const React = require('react');
 
 const DeploymentBarNotification = require('./notification/notification');
 const GenericButton = require('../generic-button/generic-button');
-const Panel = require('../panel/panel');
 
 class DeploymentBar extends React.Component {
   constructor() {
@@ -97,15 +96,11 @@ class DeploymentBar extends React.Component {
 
   render() {
     return (
-      <Panel
-        instanceName="deployment-bar-panel"
-        visible={true}>
-        <div className="deployment-bar">
-          <DeploymentBarNotification
-            change={this.state.latestChangeDescription} />
-          {this._generateButton()}
-        </div>
-      </Panel>
+      <div className="deployment-bar">
+        <DeploymentBarNotification
+          change={this.state.latestChangeDescription} />
+        {this._generateButton()}
+      </div>
     );
   }
 };

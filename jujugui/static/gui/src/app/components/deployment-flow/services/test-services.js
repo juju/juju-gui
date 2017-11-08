@@ -3,9 +3,10 @@
 
 const React = require('react');
 
-const DeploymentServices = require('./services');
+const BasicTable = require('../../basic-table/basic-table');
 const BudgetTable = require('../../budget-table/budget-table');
 const DeploymentChangeItem = require('../change-item/change-item');
+const DeploymentServices = require('./services');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -26,22 +27,23 @@ describe('DeploymentServices', function() {
     const charmsGetById = sinon.stub();
     const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <DeploymentServices
         acl={acl}
         addNotification={addNotification}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub()}
-        getCurrentChangeSet={sinon.stub()}
+        generateChangeDescription={sinon.stub()}
+        getCurrentChangeSet={sinon.stub().returns({})}
         getServiceByName={getServiceByName}
         listPlansForCharm={listPlansForCharm}
         parseTermId={parseTermId}
         showTerms={showTerms}
         sortDescriptionsByApplication={sortDescriptionsByApplication}
         withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div>
         <BudgetTable
           acl={acl}
@@ -51,33 +53,39 @@ describe('DeploymentServices', function() {
           extraInfo={{
             elasticsearch:
               (<ul className="deployment-services__changes">
-                <DeploymentChangeItem
-                  change={{
-                    description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
-                    icon: 'changes-config-changed',
-                    id: 'setConfig-169',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
+                      icon: 'changes-config-changed',
+                      id: 'setConfig-169',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
               </ul>),
             kibana:
               <ul className="deployment-services__changes">
-                <DeploymentChangeItem
-                  change={{
-                    description: ' kibana will be added to the model.',
-                    icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
-                    id: 'service-131',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
-                <DeploymentChangeItem
-                  change={{
-                    description: ' 1 kibana unit will be added.',
-                    icon: 'changes-units-added',
-                    id: 'addUnits-655',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: ' kibana will be added to the model.',
+                      icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
+                      id: 'service-131',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: ' 1 kibana unit will be added.',
+                      icon: 'changes-units-added',
+                      id: 'addUnits-655',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
               </ul>
           }}
           listPlansForCharm={listPlansForCharm}
@@ -92,6 +100,7 @@ describe('DeploymentServices', function() {
             $100
           </span>
         </div>
+        {null}
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -102,14 +111,15 @@ describe('DeploymentServices', function() {
     const charmsGetById = sinon.stub();
     const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <DeploymentServices
         acl={acl}
         addNotification={addNotification}
         changesFilterByParent={sinon.stub()}
         charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub()}
-        getCurrentChangeSet={sinon.stub()}
+        generateChangeDescription={sinon.stub()}
+        getCurrentChangeSet={sinon.stub().returns({})}
         getServiceByName={getServiceByName}
         listPlansForCharm={listPlansForCharm}
         parseTermId={parseTermId}
@@ -117,8 +127,8 @@ describe('DeploymentServices', function() {
         showTerms={showTerms}
         sortDescriptionsByApplication={sortDescriptionsByApplication}
         withPlans={false} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div>
         <BudgetTable
           acl={acl}
@@ -128,33 +138,39 @@ describe('DeploymentServices', function() {
           extraInfo={{
             elasticsearch:
               (<ul className="deployment-services__changes">
-                <DeploymentChangeItem
-                  change={{
-                    description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
-                    icon: 'changes-config-changed',
-                    id: 'setConfig-169',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
+                      icon: 'changes-config-changed',
+                      id: 'setConfig-169',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
               </ul>),
             kibana:
               <ul className="deployment-services__changes">
-                <DeploymentChangeItem
-                  change={{
-                    description: ' kibana will be added to the model.',
-                    icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
-                    id: 'service-131',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
-                <DeploymentChangeItem
-                  change={{
-                    description: ' 1 kibana unit will be added.',
-                    icon: 'changes-units-added',
-                    id: 'addUnits-655',
-                    time: '1:28 pm'
-                  }}
-                  showTime={false}/>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: ' kibana will be added to the model.',
+                      icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
+                      id: 'service-131',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
+                <li>
+                  <DeploymentChangeItem
+                    change={{
+                      description: ' 1 kibana unit will be added.',
+                      icon: 'changes-units-added',
+                      id: 'addUnits-655',
+                      time: '1:28 pm'
+                    }}
+                    showTime={false} />
+                </li>
               </ul>
           }}
           listPlansForCharm={listPlansForCharm}
@@ -163,7 +179,84 @@ describe('DeploymentServices', function() {
           services={[{name: 'kibana'}, {name: 'elasticsearch'}]}
           showTerms={showTerms}
           withPlans={false} />
-        {undefined}
+        {null}
+        {null}
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render with machines and no services', function() {
+    const addNotification = sinon.stub();
+    const listPlansForCharm = sinon.stub();
+    const charmsGetById = sinon.stub();
+    const parseTermId = sinon.stub();
+    const showTerms = sinon.stub();
+    const machineChanges = [
+      {id: 'machine0'},
+      {id: 'machine1'}
+    ];
+    const generateChangeDescription = sinon.stub();
+    generateChangeDescription.onFirstCall().returns(machineChanges[0]);
+    generateChangeDescription.onSecondCall().returns(machineChanges[1]);
+    const renderer = jsTestUtils.shallowRender(
+      <DeploymentServices
+        acl={acl}
+        addNotification={addNotification}
+        changesFilterByParent={sinon.stub()}
+        charmsGetById={charmsGetById}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateChangeDescription={generateChangeDescription}
+        getCurrentChangeSet={sinon.stub().returns({
+          destroy1: {
+            command: {
+              method: '_destroyMachines'
+            }
+          },
+          destroy2: {
+            command: {
+              method: '_destroyMachines'
+            }
+          }
+        })}
+        getServiceByName={getServiceByName}
+        listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
+        showChangelogs={false}
+        showTerms={showTerms}
+        sortDescriptionsByApplication={
+          sortDescriptionsByApplication.returns(null)}
+        withPlans={false} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div>
+        {null}
+        {null}
+        <BasicTable
+          headers={[{
+            content: 'Machines',
+            columnSize: 12
+          }]}
+          rows={[{
+            columns: [{
+              columnSize: 12,
+              content: (
+                <DeploymentChangeItem
+                  change={machineChanges[0]}
+                  key={machineChanges[0].id}
+                  showTime={false} />)
+            }],
+            key: machineChanges[0].id
+          }, {
+            columns: [{
+              columnSize: 12,
+              content: (
+                <DeploymentChangeItem
+                  change={machineChanges[1]}
+                  key={machineChanges[1].id}
+                  showTime={false} />)
+            }],
+            key: machineChanges[1].id
+          }]} />
       </div>);
     expect(output).toEqualJSX(expected);
   });

@@ -277,8 +277,13 @@ var module = module;
               this.storage.set(url, macaroons, () => {
                 if (jsonResponse.DischargeToken) {
                   const token = serialize(jsonResponse.DischargeToken);
-                  this.storage.set('identity', token, () => {
-                    exitSuccessfully(resp);
+                  this.storage.set(url, token, () => {
+                    // Also set this token with a fixed "identity" key so that
+                    // it is easy to inject the identity token from an external
+                    // system, like OpenStack Horizon/Keystone.
+                    this.storage.set('identity', token, () => {
+                      exitSuccessfully(resp);
+                    });
                   });
                   return;
                 }
@@ -545,23 +550,21 @@ var module = module;
       @return {String} A possibly simplified/reduced key.
     */
     _getKey(key) {
-      // This is an ugly special case, required because it is possible to
-      // provide an initial discharge token from outside the GUI, and because
-      // the GUI doesn't (and shouldn't) know the identity service location.
-      // So here we are just guessing how an identity endpoint URL should be,
-      // but there is surely area of improvement.
-      if (key.indexOf('/identity/') !== -1) {
-        return 'identity';
-      }
-      let result = key;
-      const services = this._services;
-      Object.keys(services).forEach(service => {
-        const baseURL = services[service];
+      // If this is one of the external services known by the GUI, such as
+      // the charm store or terms, flat out the key to the service name.
+      for (const service in this._services) {
+        const baseURL = this._services[service];
         if (key.indexOf(baseURL) === 0) {
-          result = service;
+          return service;
         }
-      });
-      return result;
+      }
+      // If the endpoint ends with "/discharge", remove the suffix, which is
+      // usally added back by bakery by convention.
+      const suffix = '/discharge';
+      if (key.slice(-suffix.length) === suffix) {
+        return key.slice(0, -suffix.length);
+      }
+      return key;
     }
 
   };

@@ -1,58 +1,59 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
+const classnames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 const XTerm = require('xterm');
 
+const SvgIcon = require('../svg-icon/svg-icon');
+
 // xterm.js loads plugins by requiring them. This changes the prototype of the
 // xterm object. This is inherently dirty, but not really up to us, and perhaps
 // not something we can change.
 require('xterm/lib/addons/terminado/terminado');
-
-const Lightbox = require('../lightbox/lightbox');
-const SvgIcon = require('../svg-icon/svg-icon');
+require('xterm/lib/addons/fit/fit');
 
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {opened: false};
+    this.state = {
+      size: 'min'
+    };
     this.term = null;
     this.ws = null;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const state = this.state;
-    if (prevState.opened && !state.opened) {
-      this.stopTerm();
-      return;
-    }
-    if (!prevState.opened && state.opened) {
-      this.startTerm();
-    }
-  }
-
-  setOpened(opened) {
-    this.setState({opened: opened});
-  }
-
-  startTerm() {
+  /**
+    Set up the terminal WebSocket connection, including handling of initial
+    handlshake and then attaching the xterm.js session.
+  */
+  componentDidMount() {
     const props = this.props;
-    // For now, the shell server is listening for ws (rather than wss)
-    // connections. This will need to be changed when certs are passed in.
-    const ws = new WebSocket(`ws://${props.address}/ws/`);
+    const term = new XTerm();
+    term.write('Connecting... ');
+    this.term = term;
+    term.on('open', () => {
+      // To properly have the terminal area fit the full width we have to
+      // call fit a little bit after it's been opened.
+      setTimeout(() => term.fit(), 500);
+    });
+    term.open(
+      ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
+      true);
+    const ws = new props.WebSocket(props.address);
+    this.ws = ws;
+    const creds = props.creds;
     ws.onopen = () => {
-      const macaroons = props.creds.macaroons && [props.creds.macaroons];
       ws.send(JSON.stringify({
         operation: 'login',
-        username: props.creds.user,
-        password: props.creds.password,
-        macaroons: macaroons
+        username: creds.user,
+        password: creds.password,
+        macaroons: creds.macaroons
       }));
       ws.send(JSON.stringify({operation: 'start'}));
     };
@@ -60,14 +61,13 @@ class Terminal extends React.Component {
       console.error('WebSocket error:', err);
       props.addNotification({
         title: 'WebSocket connection failed',
-        message: 'Failed to open WebSocket connection: ' + err,
+        message: 'Failed to open WebSocket connection',
         level: 'error'
       });
     };
     ws.onmessage = evt => {
       const resp = JSON.parse(evt.data);
       if (resp.code === 'error') {
-        // TODO include notification
         console.error(resp.message);
         props.addNotification({
           title: 'Error talking to the terminal server',
@@ -76,68 +76,93 @@ class Terminal extends React.Component {
         });
         return;
       }
+      // Terminado sends a "disconnect" message when the process it's running
+      // exits. When we receive that, we close the terminal.
+      if (resp['0'] === 'disconnect') {
+        this.close();
+      }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
-        const term = new XTerm();
         term.terminadoAttach(ws);
-        term.open(ReactDOM.findDOMNode(this)
-          .querySelector('.juju-shell__terminal-container'));
-        this.term = term;
+        term.writeln('connected to temporary workspace.\n');
       }
     };
-    this.ws = ws;
   }
 
-  stopTerm() {
+  componentWillUnmount() {
     this.term.destroy();
     this.term = null;
     this.ws.close();
     this.ws = null;
   }
 
+  /**
+    Sets the size value in the component state to the provided value. Also
+    calls to refit the terminal to the container size.
+    @param {String} size The size to set the terminal to. Possible values
+      are 'min' and 'max'.
+  */
+  setSize(size) {
+    this.setState({size: size}, () => {
+      if (this.term) {
+        this.term.fit();
+      }
+    });
+  }
+
+  /**
+    Calls to set the app state to terminal: null.
+  */
+  close() {
+    this.props.changeState({
+      terminal: null
+    });
+  }
+
   render() {
-    if (this.state.opened) {
-      return (
-        <Lightbox close={this.setOpened.bind(this, false)}>
-          <div className="juju-shell__terminal-container"></div>
-        </Lightbox>
-      );
+    const state = this.state;
+    const terminalClassNames = classnames(
+      'juju-shell__terminal', {
+        'juju-shell__terminal--min': state.size === 'min'
+      });
+    const styles = {};
+    if (state.size === 'max') {
+      styles.height = window.innerHeight - 250 + 'px';
     }
-    const props = this.props;
-    const address = props.address;
-    const classes = classNames(
-      'model-actions__import',
-      'model-actions__button',
-      {'model-actions__button-disabled': !address}
-    );
     return (
-      <span className={classes}
-        onClick={address && this.setOpened.bind(this, true)}
-        role="button"
-        tabIndex="0">
-        <SvgIcon name="code-snippet_24"
-          className="model-actions__icon"
-          size="16" />
-        <span className="tooltip__tooltip--below">
-          <span className="tooltip__inner tooltip__inner--up">
-            Juju shell
-          </span>
-        </span>
-      </span>
+      <div className="juju-shell">
+        <div className="juju-shell__header">
+          <span className="juju-shell__header-label">Juju Shell</span>
+          <div className="juju-shell__header-actions">
+            <span onClick={this.setSize.bind(this, 'min')} tabIndex="0" role="button">
+              <SvgIcon name="minimize-bar_16" size="16" />
+            </span>
+            <span onClick={this.setSize.bind(this, 'max')} tabIndex="0" role="button">
+              <SvgIcon name="maximize-bar_16" size="16" />
+            </span>
+            <span onClick={this.close.bind(this)} tabIndex="0" role="button">
+              <SvgIcon name="close_16" size="16" />
+            </span>
+          </div>
+        </div>
+        <div className={terminalClassNames} style={styles}></div>
+      </div>
     );
   }
 
 };
 
 Terminal.propTypes = {
+  WebSocket: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
   // The address of the jujushell service, or an empty string if jujushell is
   // not available.
   address: PropTypes.string,
   // Credentials are used to authenticate the user to the jujushell service.
+  changeState: PropTypes.func.isRequired,
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,
-    macaroons: PropTypes.array
+    macaroons: PropTypes.object
   })
 };
 

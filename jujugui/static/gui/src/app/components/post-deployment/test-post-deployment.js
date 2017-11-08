@@ -86,6 +86,33 @@ describe('PostDeployment', () => {
     );
   });
 
+  it('is not case sensitive on getstarted.md', () => {
+    const rendered = renderComponent();
+    const instance = rendered.instance;
+    instance._getEntityCallback(null, [{id: 'test', files: ['gEtstArteD.md']}]);
+    const output = rendered.renderer.getRenderOutput();
+    expect(output).toEqualJSX(
+      <Panel
+        instanceName="post-deployment"
+        extraClasses="post-deployment"
+        visible={true}>
+        <span className="close" tabIndex="0" role="button"
+          onClick={instance._closePostDeployment}>
+          <SvgIcon name="close_16"
+            size="16" />
+        </span>
+        <div dangerouslySetInnerHTML={
+          {
+            __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+          }
+        } onClick={instance._handleContentClick.bind(instance)} />
+      </Panel>
+    );
+    // When requesting the file it should request the actual name as
+    // charmstore is case sensitive
+    assert.equal(instance.props.getFile.args[0][1], 'gEtstArteD.md');
+  });
+
   it('extracts metadata in markdown head', () => {
     const rendered = renderComponent();
     const instance = rendered.instance;

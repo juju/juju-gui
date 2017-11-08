@@ -53,11 +53,16 @@ class PostDeployment extends React.Component {
     }
 
     const files = entityData[0].files;
-    if (files && files.includes('getstarted.md')) {
-      this.props.addGetStartedAnnotation(this.props.entityId);
+    let fileName = 'getstarted.md';
+    if (files && files.some(file => {
+      if (file.toLowerCase() === fileName) {
+        fileName = file;
+        return true;
+      }
+    })) {
       this.props.getFile(
         this.props.entityId,
-        'getstarted.md',
+        fileName,
         this._getGetStartedCallback.bind(this)
       );
     }

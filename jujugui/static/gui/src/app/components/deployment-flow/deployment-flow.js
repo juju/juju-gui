@@ -805,6 +805,8 @@ class DeploymentFlow extends React.Component {
             getCurrentChangeSet={this.props.getCurrentChangeSet}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
+            generateChangeDescription={
+              this.props.generateChangeDescription}
             sortDescriptionsByApplication={
               this.props.sortDescriptionsByApplication}
             listPlansForCharm={this.props.listPlansForCharm}
@@ -1071,6 +1073,7 @@ DeploymentFlow.propTypes = {
   deploy: PropTypes.func.isRequired,
   formatConstraints: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
+  generateChangeDescription: PropTypes.func.isRequired,
   generateCloudCredentialName: PropTypes.func.isRequired,
   generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,

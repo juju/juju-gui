@@ -343,7 +343,7 @@ class GUIApp {
   */
   _setupCharmstore(config, Charmstore) {
     if (this.charmstore === undefined) {
-      return new Charmstore(config.charmstoreURL, this.bakery);
+      this.charmstore = new Charmstore(config.charmstoreURL, this.bakery);
       // Store away the charmstore auth info.
       if (this.bakery.storage.get(config.charmstoreURL)) {
         this.users['charmstore'] = {loading: true};
@@ -521,6 +521,9 @@ class GUIApp {
       ['postDeploymentPanel',
         this._displayPostDeployment.bind(this),
         this._clearPostDeployment.bind(this)],
+      ['terminal',
+        this._displayTerminal.bind(this),
+        this._clearTerminal.bind(this)],
       // Nothing needs to be done at the top level when the hash changes.
       ['hash'],
       // special dd is handled by the root dispatcher as it requires /new
