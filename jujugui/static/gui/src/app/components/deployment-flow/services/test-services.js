@@ -214,7 +214,7 @@ describe('DeploymentServices', function() {
           },
           destroy2: {
             command: {
-              method: '_destroyMachines'
+              method: '_addMachines'
             }
           }
         })}
