@@ -489,7 +489,8 @@ Browser: ${navigator.userAgent}`
     }
 
     const entityId = state.postDeploymentPanel.entityId;
-    // If there are no new entites then there's no need to display the panel.
+    // If no new applications have been deployed then there's no need to
+    // display the panel.
     if (entityId) {
       const nowMillis = new Date().getTime();
 
