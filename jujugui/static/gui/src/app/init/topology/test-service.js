@@ -401,7 +401,7 @@ describe('service module events', function() {
       clientX: 155,
       clientY: 153,
       preventDefault: sinon.stub()
-    };
+    };  
 
     view.topo.charmstore = {
       getBundleYAML: function(id, callback) {
@@ -409,8 +409,8 @@ describe('service module events', function() {
       }
     };
     view.topo.bundleImporter = {
-      importBundleYAML: function(e) {
-        assert.equal(e.target.responseText, 'bundle: BUNDLE DATA');
+      importBundleYAML: function(a, e) {
+        assert.equal(a.target.responseText, 'bundle: BUNDLE DATA');
         done();
       }
     };

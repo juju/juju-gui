@@ -229,6 +229,7 @@ class PostDeployment extends React.Component {
 }
 
 PostDeployment.propTypes = {
+  addGetStartedAnnotation: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,

@@ -515,8 +515,21 @@ Browser: ${navigator.userAgent}`
       this.state.changeState(storeState);
     };
 
+    const addGetStartedAnnotation = (entityId) => {
+      let bundleURL = window.jujulib.URL.fromLegacyString(entityId);
+      const getStartedPath = charmstore.getStartedURL(
+        `${bundleURL.series}/${bundleURL.name}-${bundleURL.revision}`
+      );
+      this.db.services.each(s => {
+        let annotations = s.get('annotations');
+        annotations['get-started'] = getStartedPath;
+        s.set('annotations', annotations);
+      });
+    };
+
     ReactDOM.render(
       <PostDeployment
+        addGetStartedAnnotation={addGetStartedAnnotation}
         changeState={this._bound.changeState}
         entityId={entityId}
         getEntity={charmstore.getEntity.bind(charmstore)}
