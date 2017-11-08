@@ -54,7 +54,7 @@ class DeploymentServices extends React.Component {
   }
 
   /**
-    Generate the removed machines if there are any.
+    Generate the service changes if there are any.
     @returns {Object} The service changes markup.
   */
   _generateServiceChanges() {
@@ -81,18 +81,21 @@ class DeploymentServices extends React.Component {
   }
 
   /**
-    Generate the removed machines if there are any.
+    Generate the machines changes if there are any.
     @returns {Object} The destroyed machines markup.
   */
-  _generateRemovedMachines() {
+  _generateMachineChanges() {
     const currentChangeSet = this.props.getCurrentChangeSet();
     const groupedChanges = changesUtils.getGroupedChanges(currentChangeSet);
-    const destroyed = groupedChanges._destroyMachines;
-    if (!destroyed || !Object.keys(destroyed).length) {
+    const added = groupedChanges._addMachines || {};
+    const destroyed = groupedChanges._destroyMachines || {};
+    let changes = Object.keys(added).map(key => added[key]);
+    changes = changes.concat(Object.keys(destroyed).map(key => destroyed[key]));
+    if (!changes.length) {
       return null;
     }
-    const removedMachines = Object.keys(destroyed).map(key => {
-      const change = this.props.generateChangeDescription(destroyed[key]);
+    const machines = changes.map(item => {
+      const change = this.props.generateChangeDescription(item);
       return {
         columns: [{
           columnSize: 12,
@@ -111,7 +114,7 @@ class DeploymentServices extends React.Component {
           content: 'Machines',
           columnSize: 12
         }]}
-        rows={removedMachines} />);
+        rows={machines} />);
   }
 
   render() {
@@ -119,7 +122,7 @@ class DeploymentServices extends React.Component {
       <div>
         {this._generateServiceChanges()}
         {this._generateSpend()}
-        {this._generateRemovedMachines()}
+        {this._generateMachineChanges()}
       </div>
     );
   }
