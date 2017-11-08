@@ -825,6 +825,13 @@ YUI.add('environment-change-set', function(Y) {
           // If the addCharm call is not used anywhere else then it can be
           // safely removed.
           if (!used) {
+            // It is possible that some resources were added with the charm
+            // which also needs to be removed.
+            record.parents.forEach(key => {
+              if (key.indexOf('addPendingResources-') === 0) {
+                this._removeExistingRecord(key);
+              }
+            });
             this._removeExistingRecord(key);
           }
         }

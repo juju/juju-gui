@@ -1002,13 +1002,14 @@ describe('Environment Change Set', function() {
         db.relations.remove = sinon.stub();
         ecs.lazyAddCharm(
           ['cs:wordpress', 'cookies', null], {applicationId: 'foo'});
+        ecs.lazyAddPendingResources([{charmURL: 'cs:wordpress'}]);
         ecs.lazyDeploy(
           [{charmURL: 'cs:wordpress'}, function() {}], {modelId: 'baz'});
         ecs.lazyDeploy(
           [{charmURL: 'cs:wordpress'}, function() {}], {modelId: 'baz2'});
-        assert.equal(Object.keys(ecs.changeSet).length, 3);
+        assert.equal(Object.keys(ecs.changeSet).length, 4);
         ecs.lazyDestroyApplication(['baz']);
-        assert.equal(Object.keys(ecs.changeSet).length, 2);
+        assert.equal(Object.keys(ecs.changeSet).length, 3);
         ecs.lazyDestroyApplication(['baz2']);
         assert.equal(Object.keys(ecs.changeSet).length, 0);
       });
