@@ -20,6 +20,7 @@ def update(settings):
     Modify the given settings object in place.
     """
     _update(settings, 'jujugui.apiAddress', default=None)
+    _update(settings, 'jujugui.jujushellURL', default=None)
     _update(settings, 'jujugui.auth', default=None)
     _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
     _update(settings, 'jujugui.GTM_enabled', default=False)
