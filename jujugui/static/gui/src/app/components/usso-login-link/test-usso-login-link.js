@@ -10,11 +10,6 @@ const jsTestUtils = require('../../utils/component-test-utils');
 const testUtils = require('react-dom/test-utils');
 
 describe('USSOLoginLink', () => {
-
-  const notification = `If requested,
-        in the address bar above, please allow popups
-        from ${window.location.origin}.`;
-
   it('can render a text link', () => {
     const output = jsTestUtils.shallowRender(
       <USSOLoginLink
@@ -24,13 +19,10 @@ describe('USSOLoginLink', () => {
     const expected = (
       <div className="usso-login">
         <a className="usso-login__action"
-          onClick={output.props.children[0].props.onClick}
+          onClick={output.props.children.props.onClick}
           target="_blank">
             Login
         </a>
-        <div className="usso-login__notification">
-          {notification}
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -82,9 +74,6 @@ describe('USSOLoginLink', () => {
           type="positive" >
           Sign up/Log in with USSO
         </GenericButton>
-        <div className="usso-login__notification">
-          {notification}
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -100,7 +89,7 @@ describe('USSOLoginLink', () => {
           Scooby Doo
       </USSOLoginLink>, true);
     const output = component.getRenderOutput();
-    assert.equal(output.props.children[0].props.children, 'Scooby Doo');
+    assert.equal(output.props.children.props.children, 'Scooby Doo');
   });
 
   it('can render a text link with custom content', () => {
@@ -114,7 +103,7 @@ describe('USSOLoginLink', () => {
           Scooby Doo
       </USSOLoginLink>, true);
     const output = component.getRenderOutput();
-    assert.equal(output.props.children[0].props.children, 'Scooby Doo');
+    assert.equal(output.props.children.props.children, 'Scooby Doo');
   });
 
   it('calls loginToController on click for button link', () => {

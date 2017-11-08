@@ -1,23 +1,6 @@
 .usso-login {
   position: relative;
 
-  &__notification {
-    background: $white;
-    box-shadow: $box-shadow;
-    box-sizing: border-box;
-    color: $dark-warm-grey;
-    font-size: .875rem;
-    line-height: normal;
-    margin: 10px auto 0;
-    padding: 12px 25px;
-    position: absolute;
-    z-index: index($z-indexed-elements, environment-help);
-    top: 150%;
-    right: 0px;
-    width: 280px;
-    display: none;
-  }
-
   &__action {
     cursor: pointer;
     padding: 0;
@@ -31,19 +14,6 @@
       color: $white !important;
       // scss-lint:enable ImportantRule
       padding: 12px 24px;
-    }
-  }
-
-  &__action:hover + &__notification {
-    display: block;
-    // scss-lint:disable ImportantRule
-    color: $dark-warm-grey !important;
-    // scss-lint:enable ImportantRule
-
-    &.button--positive {
-      // scss-lint:disable ImportantRule
-      color: $white !important;
-      // scss-lint:enable ImportantRule
     }
   }
 }

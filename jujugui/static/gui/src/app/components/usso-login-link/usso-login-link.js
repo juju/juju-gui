@@ -76,9 +76,6 @@ class USSOLoginLink extends React.Component {
   }
 
   render() {
-    const notification = `If requested,
-      in the address bar above, please allow popups
-      from ${window.location.origin}.`;
     let ele;
     if (this.props.displayType === 'button') {
       ele = this._renderButtonLink();
@@ -88,9 +85,6 @@ class USSOLoginLink extends React.Component {
     return(
       <div className="usso-login">
         {ele}
-        <div className="usso-login__notification">
-          {notification}
-        </div>
       </div>);
   }
 };
