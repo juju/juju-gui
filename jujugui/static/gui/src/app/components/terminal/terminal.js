@@ -29,7 +29,7 @@ class Terminal extends React.Component {
   }
 
   _runCommand(command) {
-    this.ws.send(JSON.stringify(["stdin", command]));
+    this.ws.send(JSON.stringify(["stdin", `${command}\n`]));
   }
 
   _runCommands(commands, join) {
@@ -98,10 +98,10 @@ class Terminal extends React.Component {
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         term.terminadoAttach(ws);
         term.writeln('connected to temporary workspace.\n');
-        if (this.props.commands) {
-          window.setTimeout(500, () => {
-            this._runCommands(this.props.commands);
-          });
+        if (props.commands) {
+          window.setTimeout(() => {
+            this._runCommands(props.commands);
+          }, 500);
         }
       }
     };
