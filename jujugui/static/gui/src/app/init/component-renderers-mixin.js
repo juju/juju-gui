@@ -489,43 +489,46 @@ Browser: ${navigator.userAgent}`
     }
 
     const entityId = state.postDeploymentPanel.entityId;
-    const nowMillis = new Date().getTime();
+    // If there are no new entites then there's no need to display the panel.
+    if (entityId) {
+      const nowMillis = new Date().getTime();
 
-    this.postDeploymentPanel = {
-      openTime: nowMillis,
-      entityId: entityId
-    };
-
-    const charmstore = this.charmstore;
-
-    const showEntityDetails = (id) => {
-      let url;
-      try {
-        url = window.jujulib.URL.fromString(id);
-      } catch (_) {
-        url = window.jujulib.URL.fromLegacyString(id);
-      }
-
-      const storeState = {
-        profile: null,
-        search: null,
-        store: url.path()
+      this.postDeploymentPanel = {
+        openTime: nowMillis,
+        entityId: entityId
       };
 
-      this.state.changeState(storeState);
-    };
+      const charmstore = this.charmstore;
 
-    ReactDOM.render(
-      <PostDeployment
-        changeState={this._bound.changeState}
-        entityId={entityId}
-        getEntity={charmstore.getEntity.bind(charmstore)}
-        getFile={charmstore.getFile.bind(charmstore)}
-        makeEntityModel={jujulibConversionUtils.makeEntityModel}
-        marked={marked}
-        showEntityDetails={showEntityDetails.bind(this, entityId)} />,
-      document.getElementById('post-deployment')
-    );
+      const showEntityDetails = (id) => {
+        let url;
+        try {
+          url = window.jujulib.URL.fromString(id);
+        } catch (_) {
+          url = window.jujulib.URL.fromLegacyString(id);
+        }
+
+        const storeState = {
+          profile: null,
+          search: null,
+          store: url.path()
+        };
+
+        this.state.changeState(storeState);
+      };
+
+      ReactDOM.render(
+        <PostDeployment
+          changeState={this._bound.changeState}
+          entityId={entityId}
+          getEntity={charmstore.getEntity.bind(charmstore)}
+          getFile={charmstore.getFile.bind(charmstore)}
+          makeEntityModel={jujulibConversionUtils.makeEntityModel}
+          marked={marked}
+          showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+        document.getElementById('post-deployment')
+      );
+    }
 
     next();
   }
