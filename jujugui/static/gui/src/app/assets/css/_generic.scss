@@ -150,6 +150,7 @@ $pre-background: #fdf6f2;
   .link {
     text-decoration: none;
     font-weight: normal;
+    cursor: pointer;
 
     &:hover {
       color: $link-blue;
