@@ -212,7 +212,7 @@ class GenericInput extends React.Component {
     }
     return (
       <input className="generic-input__field"
-        autoComplete={this.props.autocomplete}
+        autoComplete={this.props.autocomplete ? 'on' : 'off'}
         defaultValue={this.props.value}
         disabled={disabled}
         id={id}
