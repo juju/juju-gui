@@ -30,9 +30,12 @@ class AccordionSection extends React.Component {
     @return {Object} Object of CSS styles.
   */
   _getStyle() {
+    const content = this['accordion-section-content'];
+    // If the content does not yet exist then set it to a very high number so
+    // that the content does not get cut off.
+    const scrollHeight = content ? content.scrollHeight : 9999999;
     return {
-      maxHeight: this.state.open ?
-        this['accordion-section-content'].scrollHeight : 0
+      maxHeight: this.state.open ? scrollHeight + 'px' : 0
     };
   }
 
@@ -65,13 +68,30 @@ class AccordionSection extends React.Component {
   }
 
   /**
+    The callback for after the content has been mounted/unmounted.
+    @param content {Object} The content element that was (un)mounted.
+  */
+  _contentRefCallback(content) {
+    this['accordion-section-content'] = content;
+    // This gets called on mount and unmount, so the div won't exist
+    // on unmount, nor do we wish to update the max-height.
+    if (content && this.props.startOpen) {
+      // After the div is mounted then set the max-height to the actual
+      // height of the div. This is only required when the section starts
+      // expanded as the div does not exist when the first max-height
+      // calculation is made.
+      this['accordion-section-content'].style.maxHeight = this._getStyle().maxHeight;
+    }
+  }
+
+  /**
     Generates the content from the components children.
 
     @return {Object} The React div element.
   */
   _generateContent() {
     return (<div className="accordion-section__content"
-      ref={(div) => { this['accordion-section-content'] = div; }}
+      ref={this._contentRefCallback.bind(this)}
       style={this._getStyle()}>
       {this.props.children}
     </div>);

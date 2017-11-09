@@ -66,7 +66,7 @@ describe('AccordionSection', () => {
             size="16" />
         </div>
         <div className="accordion-section__content" ref={sinon.stub()}
-          style={{maxHeight: 100}}><span>Hello</span></div>
+          style={{maxHeight: '100px'}}><span>Hello</span></div>
       </div>);
   });
 
