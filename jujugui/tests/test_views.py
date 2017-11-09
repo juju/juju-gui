@@ -147,6 +147,7 @@ class ConfigTests(ViewTestCase):
         self.assertIsNone(config['auth'])
         self.assertEqual('wss', config['socket_protocol'])
         self.assertIsNone(config['gisfLogout'])
+        self.assertIsNone(config.get('jujushellURL'))
 
     def test_customized_options(self):
         self.update_settings({
@@ -154,6 +155,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.charmstore_url': 'http://1.2.3.4/cs-api',
             'jujugui.discharge_token': 'my_discharge_token',
             'jujugui.gisf': 'true',
+            'jujugui.jujushellURL': 'https://shell.example.com',
             'jujugui.gisflogout_url': '/logout',
             'jujugui.GTM_enabled': 'true',
             'jujugui.insecure': 'true',
@@ -166,6 +168,7 @@ class ConfigTests(ViewTestCase):
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
+        self.assertEqual('https://shell.example.com', config['jujushellURL'])
         self.assertEqual('http://1.2.3.4/cs-api/', config['charmstoreURL'])
         self.assertEqual('http://1.2.3.4/plans-api/', config['plansURL'])
         self.assertEqual('/_stats', config['statsURL'])
