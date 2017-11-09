@@ -24,7 +24,7 @@ class AccordionSection extends React.Component {
     // calculation is made.
     if (this.props.startOpen) {
       const styles = this._getStyle();
-      this['accordion-section-content'].style.maxHeight = styles.maxHeight;
+      this.refs.content.style.maxHeight = styles.maxHeight;
     }
   }
 
@@ -41,7 +41,7 @@ class AccordionSection extends React.Component {
     @return {Object} Object of CSS styles.
   */
   _getStyle() {
-    const content = this['accordion-section-content'];
+    const content = this.refs.content;
     // If the content does not yet exist then set it to a very high number so
     // that the content does not get cut off.
     const scrollHeight = content ? content.scrollHeight : 9999999;
@@ -85,7 +85,7 @@ class AccordionSection extends React.Component {
   */
   _generateContent() {
     return (<div className="accordion-section__content"
-      ref={(div) => { this['accordion-section-content'] = div; }}
+      ref="content"
       style={this._getStyle()}>
       {this.props.children}
     </div>);
