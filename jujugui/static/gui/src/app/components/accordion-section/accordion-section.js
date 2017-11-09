@@ -17,6 +17,17 @@ class AccordionSection extends React.Component {
     };
   }
 
+  componentDidMount() {
+    // After the div is mounted then set the max-height to the actual
+    // height of the div. This is only required when the section starts
+    // expanded as the div does not exist when the first max-height
+    // calculation is made.
+    if (this.props.startOpen) {
+      const styles = this._getStyle();
+      this['accordion-section-content'].style.maxHeight = styles.maxHeight;
+    }
+  }
+
   /**
     Toggles the collapsable content section.
   */
@@ -68,30 +79,13 @@ class AccordionSection extends React.Component {
   }
 
   /**
-    The callback for after the content has been mounted/unmounted.
-    @param content {Object} The content element that was (un)mounted.
-  */
-  _contentRefCallback(content) {
-    this['accordion-section-content'] = content;
-    // This gets called on mount and unmount, so the div won't exist
-    // on unmount, nor do we wish to update the max-height.
-    if (content && this.props.startOpen) {
-      // After the div is mounted then set the max-height to the actual
-      // height of the div. This is only required when the section starts
-      // expanded as the div does not exist when the first max-height
-      // calculation is made.
-      this['accordion-section-content'].style.maxHeight = this._getStyle().maxHeight;
-    }
-  }
-
-  /**
     Generates the content from the components children.
 
     @return {Object} The React div element.
   */
   _generateContent() {
     return (<div className="accordion-section__content"
-      ref={this._contentRefCallback.bind(this)}
+      ref={(div) => { this['accordion-section-content'] = div; }}
       style={this._getStyle()}>
       {this.props.children}
     </div>);
