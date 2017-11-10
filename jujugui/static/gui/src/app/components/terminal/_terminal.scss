@@ -48,10 +48,14 @@
       background-color: #111;
     }
 
+    .xterm-viewport {
+      background-color: #111;
+    }
+
     .xterm-rows,
     .xterm-selection {
       font-family: "ubuntu mono";
-      top: 10px;
+      background-color: #111;
       left: 10px;
     }
   }
