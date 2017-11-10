@@ -22,12 +22,15 @@ class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      size: 'min'
+      size: 'min',
+      terminalSize: null
     };
     this.term = null;
     this.ws = null;
     this.terminalSetup;
     this.initialCommandsSent = false;
+    this.resizeTimeout = null;
+    this._boundThrottledResize = null;
   }
 
   /**
@@ -103,9 +106,33 @@ class Terminal extends React.Component {
         term.writeln('connected to temporary workspace.\n');
       }
     };
+
+    this.attachResizeListener();
+  }
+
+  /**
+    Throttles the window resize event so we only do it every 50ms.
+  */
+  _throttledResize() {
+    if (this.resizeTimeout == null) {
+      this.resizeTimeout = setTimeout(() => {
+        this.resizeTimeout = null;
+        this.setSize(this.state.size);
+      }, 50);
+    }
+  }
+
+  /**
+    Attaches the window resize event listener to resize the terminal when them
+    window changes size.
+  */
+  attachResizeListener() {
+    this._boundThrottledResize = this._throttledResize.bind(this);
+    window.addEventListener('resize', this._boundThrottledResize, false);
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this._boundThrottledResize, false);
     this.term.destroy();
     this.term = null;
     this.ws.close();
@@ -119,7 +146,14 @@ class Terminal extends React.Component {
       are 'min' and 'max'.
   */
   setSize(size) {
-    this.setState({size: size}, () => {
+    let terminalSize = null;
+    if (size === 'max') {
+      terminalSize= window.innerHeight - 250 + 'px';
+    }
+    this.setState({
+      size,
+      terminalSize
+    }, () => {
       if (this.term) {
         this.term.fit();
       }
@@ -143,7 +177,7 @@ class Terminal extends React.Component {
       });
     const styles = {};
     if (state.size === 'max') {
-      styles.height = window.innerHeight - 250 + 'px';
+      styles.height = state.terminalSize;
     }
     return (
       <div className="juju-shell">
