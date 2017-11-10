@@ -26,6 +26,8 @@ class Terminal extends React.Component {
     };
     this.term = null;
     this.ws = null;
+    this.terminalSetup;
+    this.initialCommandsSent = false;
   }
 
   /**
@@ -78,8 +80,23 @@ class Terminal extends React.Component {
       }
       // Terminado sends a "disconnect" message when the process it's running
       // exits. When we receive that, we close the terminal.
-      if (resp['0'] === 'disconnect') {
-        this.close();
+      switch(resp[0]) {
+        case 'disconnect':
+          this.close();
+          break;
+        case 'setup':
+          this.terminalSetup = true;
+          break;
+        case 'stdout':
+          if (this.terminalSetup && !this.initialCommandsSent) {
+            if (resp[1].indexOf('\u001b[01;32') === 0) {
+              this.initialCommandsSent = true;
+              const commands = props.commands;
+              if (commands) {
+                commands.forEach(c => ws.send(JSON.stringify(['stdin', `${c}\n`])));
+              }
+            }
+          }
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         term.terminadoAttach(ws);
@@ -159,6 +176,7 @@ Terminal.propTypes = {
   address: PropTypes.string,
   // Credentials are used to authenticate the user to the jujushell service.
   changeState: PropTypes.func.isRequired,
+  commands: PropTypes.array,
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,
