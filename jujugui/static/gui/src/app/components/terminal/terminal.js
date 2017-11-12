@@ -92,6 +92,8 @@ class Terminal extends React.Component {
           break;
         case 'stdout':
           if (this.terminalSetup && !this.initialCommandsSent) {
+            // If the first PS1 presented to the user changes then this will
+            // need to be updated.
             if (resp[1].indexOf('\u001b[01;32') === 0) {
               this.initialCommandsSent = true;
               const commands = props.commands;

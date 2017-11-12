@@ -20,7 +20,7 @@ describe('Terminal', () => {
     websocket.prototype.close = sinon.stub();
   }
 
-  function renderComponent(options) {
+  function renderComponent(options = {}) {
     setupWebsocket();
 
     return jsTestUtils.shallowRender(
@@ -28,6 +28,7 @@ describe('Terminal', () => {
         addNotification={sinon.stub()}
         address="1.2.3.4:123"
         changeState={sinon.stub()}
+        commands={options.commands}
         creds={{
           user: 'user',
           password: 'password',
@@ -59,6 +60,7 @@ describe('Terminal', () => {
   });
 
   it('instantiates the terminal and connects to the websocket on mount', () => {
+    setupWebsocket();
     const component = ReactTestUtils.renderIntoDocument(
       <Terminal
         addNotification={sinon.stub()}
@@ -75,6 +77,29 @@ describe('Terminal', () => {
     assert.equal(typeof component.term, 'object');
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.close.callCount, 1);
+  });
+
+  it('sends supplied commands when it is set up', () => {
+    setupWebsocket();
+    const component = ReactTestUtils.renderIntoDocument(
+      <Terminal
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        commands={['juju status']}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />
+    );
+    // Send the setup from the term.
+    component.ws.onmessage({data: '["setup", {}]'});
+    // Send the initial PS1
+    component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+    assert.equal(websocket.prototype.send.callCount, 1);
   });
 
   it('can be closed by clicking the X', () => {
