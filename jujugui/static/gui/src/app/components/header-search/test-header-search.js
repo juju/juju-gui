@@ -19,6 +19,10 @@ describe('HeaderSearch', function() {
     };
   });
 
+  afterEach(() => {
+    appState = null;
+  });
+
   it('sets the active class if there is search metadata', function() {
     appState.current.search = 'apache2';
     const className = 'header-search header-search--active';
@@ -133,6 +137,31 @@ describe('HeaderSearch', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       store: '',
+      root: 'new',
+      user: null,
+      profile: null,
+      gui: {
+        machines: null,
+        inspector: null
+      }
+    });
+  });
+
+  it('handles focusing when there is an existing store value', () => {
+    appState.current.store = '/u/hatch/juju-gui/precise/14';
+    const renderer = jsTestUtils.shallowRender(
+      <HeaderSearch
+        appState={appState} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {
+      searchInput: {
+        focus: sinon.stub()
+      }
+    };
+    instance.state.active = false;
+    instance._handleSearchFocus();
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
       root: 'new',
       user: null,
       profile: null,

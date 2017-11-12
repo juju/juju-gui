@@ -100,11 +100,9 @@ class HeaderSearch extends React.Component {
     @method _handleSearchFocus
   */
   _handleSearchFocus() {
-    this._openSearch(true);
     if (!this.state.active && !this.state.query) {
       const appState = this.props.appState;
       const newState = {
-        store: '',
         user: null,
         profile: null,
         gui: {
@@ -112,20 +110,24 @@ class HeaderSearch extends React.Component {
           inspector: null
         }
       };
+      // Open the base store page if it is not already displaying an entity.
+      if (!appState.current.store) {
+        newState.store = '';
+      }
       if (!appState.current.model) {
         newState.root = 'new';
-      };
+      }
       appState.changeState(newState);
     }
+    // Opening the search needs to be after the above condition as it modifies
+    // the active state which the above condition needs to check.
+    this._openSearch();
   }
 
   /**
     Open the search box.
-
-    @method _openSearch
-    @param {Boolean} inputOpen Whether the input should be open.
   */
-  _openSearch(inputOpen) {
+  _openSearch() {
     this.setState({active: true});
     this.refs.searchInput.focus();
   }
@@ -153,7 +155,7 @@ class HeaderSearch extends React.Component {
     // If the search box is not open then instead of submitting the form the
     // search box should be opened.
     if (!this.state.active) {
-      this._openSearch(true);
+      this._openSearch();
       return;
     }
     const query = this.state.query.trim();
