@@ -157,7 +157,7 @@ describe('ChangesUtils', () => {
       change: {
         command: {
           method: '_addMachines',
-          args: [[{parentId: 1}]]
+          args: [[{constraints: {}, parentId: 1}]]
         }
       }
     }, {
@@ -166,7 +166,10 @@ describe('ChangesUtils', () => {
       change: {
         command: {
           method: '_addMachines',
-          args: [[{parentId: 1}, {parentId: 1}]]
+          args: [[
+            {constraints: {}, parentId: 1},
+            {constraints: {}, parentId: 1}
+          ]]
         }
       }
     }, {

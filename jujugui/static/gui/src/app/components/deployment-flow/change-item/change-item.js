@@ -51,6 +51,9 @@ class DeploymentChangeItem extends React.Component {
         <span className="deployment-change-item__change">
           {this._generateIcon(change.icon)}
           {change.description}
+          <span className="deployment-change-item__change-command">
+            {change.command}
+          </span>
         </span>
         {this._generateTime()}
       </div>

@@ -9,13 +9,20 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentChangeItem', function() {
+  let change;
 
-  it('can display a sprite icon', function() {
-    var change = {
-      icon: 'my-icon',
+  beforeEach(() => {
+
+    change = {
+      icon: 'my-icon.svg',
+      command: 'juju deploy cs:django',
       description: 'Django was added',
       time: '10:12 am'
     };
+  });
+
+  it('can display a sprite icon', function() {
+    change.icon = 'my-icon';
     var output = jsTestUtils.shallowRender(
       <DeploymentChangeItem
         change={change} />);
@@ -26,6 +33,9 @@ describe('DeploymentChangeItem', function() {
             className="deployment-change-item__icon"
             size="16" />
           Django was added
+          <span className="deployment-change-item__change-command">
+            juju deploy cs:django
+          </span>
         </span>
         <span className="deployment-change-item__time">
           {change.time}
@@ -35,11 +45,6 @@ describe('DeploymentChangeItem', function() {
   });
 
   it('can display an svg icon', function() {
-    var change = {
-      icon: 'my-icon.svg',
-      description: 'Django was added',
-      time: '10:12 am'
-    };
     var output = jsTestUtils.shallowRender(
       <DeploymentChangeItem
         change={change} />);
@@ -49,6 +54,9 @@ describe('DeploymentChangeItem', function() {
           <img src="my-icon.svg" alt=""
             className="deployment-change-item__icon" />
           Django was added
+          <span className="deployment-change-item__change-command">
+            juju deploy cs:django
+          </span>
         </span>
         <span className="deployment-change-item__time">
           {change.time}
@@ -58,11 +66,6 @@ describe('DeploymentChangeItem', function() {
   });
 
   it('can display without the time', function() {
-    var change = {
-      icon: 'my-icon.svg',
-      description: 'Django was added',
-      time: '10:12 am'
-    };
     var output = jsTestUtils.shallowRender(
       <DeploymentChangeItem
         change={change}
@@ -73,6 +76,9 @@ describe('DeploymentChangeItem', function() {
           <img src="my-icon.svg" alt=""
             className="deployment-change-item__icon" />
           Django was added
+          <span className="deployment-change-item__change-command">
+            juju deploy cs:django
+          </span>
         </span>
         {undefined}
       </div>);

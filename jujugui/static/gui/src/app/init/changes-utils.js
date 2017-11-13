@@ -164,6 +164,22 @@ const changesUtils = {
   },
 
   /**
+    Convert an object to a keyval string e.g. {one: 'two', three: 'four'}
+    becomes one='two' three='four'.
+    @param args {Object} The object of arguments.
+  */
+  _objectToParams: (args={}) => {
+    return Object.keys(args).map(key => {
+      const property = [key];
+      const value = args[key];
+      if (value) {
+        property.push(value);
+      }
+      return property.join('=');
+    }).join(' ');
+  },
+
+  /**
     Return a description of an ecs change for the summary.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
@@ -174,6 +190,7 @@ const changesUtils = {
     let changeItem = {};
 
     if (change && change.command) {
+      let command;
       let ghostService;
       let machineType;
       let name;
@@ -183,7 +200,7 @@ const changesUtils = {
       // units as follow up.
       switch (change.command.method) {
         case '_addCharm':
-          const command = change.command;
+          command = change.command;
           changeItem.description = ' ' + command.args[0] +
             ' will be added to the controller.';
           // TODO frankban: retrieve the icon from the charm itself. We cannot
@@ -282,11 +299,23 @@ const changesUtils = {
         case '_addMachines':
           machineType = change.command.args[0][0].parentId ?
             'container' : 'machine';
+          const machines = change.command.args[0];
           changeItem.icon = 'changes-' + machineType + '-created';
           changeItem.description = change.command.args[0].length +
               ' ' + machineType +
-              (change.command.args[0].length !== 1 ? 's' : '') +
+              (machines.length !== 1 ? 's' : '') +
               ' will be added.';
+          const series = machines[0].series;
+          const constraints = changesUtils._objectToParams(
+            machines[0].constraints);
+          command = `juju add-machine -n ${machines.length}`;
+          if (constraints) {
+            command = `${command} --constraints ${constraints}`;
+          }
+          if (series) {
+            command = `${command} --series ${series}`;
+          }
+          changeItem.command = command;
           break;
         case '_destroyMachines':
           machineType = change.command.args[0][0].indexOf('/') !== -1 ?
@@ -303,15 +332,7 @@ const changesUtils = {
           const cfgServ = services.getById(change.command.args[0]);
           console.log('_set_config', change);
           ghostService = services.getById(change.command.args[0]);
-          const args = change.command.args[1];
-          const config = Object.keys(args).map(key => {
-            const property = [key];
-            const value = args[key];
-            if (value) {
-              property.push(value);
-            }
-            return property.join('=');
-          }).join(' ');
+          const config = changesUtils._objectToParams(change.command.args[1]);
           changeItem.icon = 'changes-config-changed';
           changeItem.description = 'Configuration values will be changed for ' +
               cfgServ.get('displayName').match(removeBrackets)[1] + '.';
@@ -334,7 +355,6 @@ const changesUtils = {
     } else {
       changeItem.time = changesUtils._formatAMPM(new Date(change.timestamp));
     }
-    console.log('changeItem', changeItem);
     return changeItem;
   },
 
