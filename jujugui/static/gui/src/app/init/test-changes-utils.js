@@ -193,7 +193,7 @@ describe('ChangesUtils', () => {
       change: {
         command: {
           method: '_set_config',
-          args: ['django']
+          args: ['django', {}]
         }
       }
     }, {
