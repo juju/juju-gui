@@ -36,12 +36,9 @@ class UserProfileEntity extends React.Component {
 
   /**
     Navigate to the entity details.
-
-    @method _viewEntity
     @param {String} id The entity id.
-    @param {Object} evt The click event.
   */
-  _viewEntity(id, evt) {
+  _viewEntity(id) {
     const url = window.jujulib.URL.fromLegacyString(id);
     this.props.changeState({profile: null, store: url.path()});
   }
@@ -98,8 +95,6 @@ class UserProfileEntity extends React.Component {
 
   /**
     Generate a list of commits.
-
-    @method _generateTags
     @returns {Object} A list of commits.
   */
   _generateCommits() {
