@@ -607,6 +607,13 @@ describe('init utils', () => {
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.equal(app.controllerAPI.createModel.callCount, 0);
+      // Sets the post deployment panel state to show.
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        postDeploymentPanel: {
+          show: true
+        }
+      }]);
     });
 
     it('can create a new model', () => {
