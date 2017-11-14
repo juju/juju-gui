@@ -187,6 +187,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
   _renderTerminal(address) {
     const config = this.applicationConfig;
     const user = this.user;
+    const modelName = this.db.environment.get('name');
     const identityURL = user.identityURL();
     const creds = {};
     if (identityURL && config.gisf) {
@@ -209,6 +210,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         address={address}
         changeState={this._bound.changeState}
         creds={creds}
+        commands={[`juju switch ${modelName}`, 'juju status']}
         WebSocket={WebSocket}/>,
       document.getElementById('terminal-container'));
   }

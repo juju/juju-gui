@@ -28,6 +28,20 @@ class Terminal extends React.Component {
     this.ws = null;
   }
 
+  _runCommand(command) {
+    this.ws.send(JSON.stringify(["stdin", `${command}\n`]));
+  }
+
+  _runCommands(commands, join) {
+    if (join) {
+      this._runCommand(commands.join(';'));
+    } else {
+      commands.forEach((command) => {
+        this._runCommand(command);
+      });
+    }
+  }
+
   /**
     Set up the terminal WebSocket connection, including handling of initial
     handlshake and then attaching the xterm.js session.
@@ -84,6 +98,11 @@ class Terminal extends React.Component {
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         term.terminadoAttach(ws);
         term.writeln('connected to temporary workspace.\n');
+        if (props.commands) {
+          window.setTimeout(() => {
+            this._runCommands(props.commands);
+          }, 500);
+        }
       }
     };
   }
@@ -159,6 +178,7 @@ Terminal.propTypes = {
   address: PropTypes.string,
   // Credentials are used to authenticate the user to the jujushell service.
   changeState: PropTypes.func.isRequired,
+  commands: PropTypes.array,
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,
