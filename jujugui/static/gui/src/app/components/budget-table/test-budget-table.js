@@ -31,7 +31,7 @@ describe('BudgetTable', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="budget-table">
+      <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
           <div className="three-col">
             Name
@@ -100,7 +100,7 @@ describe('BudgetTable', function() {
         withPlans={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="budget-table">
+      <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
           <div className="three-col">
             Name
@@ -156,7 +156,7 @@ describe('BudgetTable', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="budget-table">
+      <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
           <div className="three-col">
             Name

@@ -9,6 +9,13 @@
 
   &__change {
     width: 66.666%;
+
+    &-command {
+      display: block;
+      padding-left: 34px;
+      color: $warm-grey;
+      font-size: $base * 0.90;
+    }
   }
 
   &__time {

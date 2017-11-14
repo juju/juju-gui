@@ -64,7 +64,7 @@ class BudgetTable extends React.Component {
 
   render() {
     return (
-      <div className="budget-table">
+      <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
           <div className="three-col">
             Name
