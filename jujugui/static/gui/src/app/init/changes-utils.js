@@ -165,18 +165,28 @@ const changesUtils = {
 
   /**
     Convert an object to a keyval string e.g. {one: 'two', three: 'four'}
-    becomes one='two' three='four'.
+    becomes one='two' three='four'. Empty string and null values will be
+    retained, but undefined values will not be included e.g.
+    {one: '', two: undefined, three: null} will become one="" three=null.
     @param args {Object} The object of arguments.
   */
   _objectToParams: (args={}) => {
-    return Object.keys(args).map(key => {
+    let params = [];
+    Object.keys(args).forEach(key => {
       const property = [key];
-      const value = args[key];
-      if (value) {
-        property.push(value);
+      let value = args[key];
+      if (value === '') {
+        value = '""';
       }
-      return property.join('=');
-    }).join(' ');
+      if (value === null) {
+        value = 'null';
+      }
+      property.push(value);
+      if (value !== undefined) {
+        return params.push(property.join('='));
+      }
+    });
+    return params.join(' ');
   },
 
   /**
@@ -229,9 +239,16 @@ const changesUtils = {
           ghostService = services.getById(
             change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
-          changeItem.description = ' ' + ghostService.get('name') +
+          name = ghostService.get('name');
+          changeItem.description = ' ' + name +
               ' will be added to the model.';
-          changeItem.command = `juju deploy ${ghostService.get('charm')}`;
+          command = `juju deploy ${ghostService.get('charm')}`;
+          const originalName = ghostService.get('displayName').replace(
+            '(', '').replace(')', '');
+          if (name !== originalName) {
+            command = `${command} ${name}`;
+          }
+          changeItem.command = command;
           break;
         case '_destroyApplication':
           name = change.command.args[0];
@@ -283,7 +300,7 @@ const changesUtils = {
           changeItem.description = change.command.args[0][1].name +
               ' relation will be added between ' +
               serviceList[0] + ' and ' + serviceList[1] + '.';
-          changeItem.command = `juju add-relation ${serviceList[0]} ` +
+          changeItem.command = `juju relate ${serviceList[0]} ` +
             `${serviceList[1]}`;
           break;
         case '_remove_relation':
@@ -330,7 +347,6 @@ const changesUtils = {
           break;
         case '_set_config':
           const cfgServ = services.getById(change.command.args[0]);
-          console.log('_set_config', change);
           ghostService = services.getById(change.command.args[0]);
           const config = changesUtils._objectToParams(change.command.args[1]);
           changeItem.icon = 'changes-config-changed';

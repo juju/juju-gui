@@ -8,7 +8,6 @@ describe('ChangesUtils', () => {
 
   beforeAll(done => {
     let requirements = [
-      'changes-utils',
       'environment-change-set',
       'juju-models'
     ];
@@ -76,8 +75,14 @@ describe('ChangesUtils', () => {
     assert.deepEqual(services, ['mysql', 'wordpress']);
   });
 
-  it('can generate descriptions for any change type', () => {
+  it('can generate descriptions and commands for any change type', () => {
     addEntities(db);
+    db.services.add({
+      charm: 'cs:trusty/apache2-1',
+      icon: 'apache2.svg',
+      id: 'apache2',
+      name: 'apache2-master'
+    });
     const tests = [{
       icon: 'django.svg',
       msg: ' cs:trusty/django-1 will be added to the controller.',
@@ -98,6 +103,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju deploy cs:trusty/django-1',
       icon: 'django.svg',
       msg: ' django will be added to the model.',
       change: {
@@ -109,6 +115,19 @@ describe('ChangesUtils', () => {
       },
       time: '12:34 PM'
     }, {
+      command: 'juju deploy cs:trusty/apache2-1 apache2-master',
+      icon: 'apache2.svg',
+      msg: ' apache2-master will be added to the model.',
+      change: {
+        command: {
+          method: '_deploy',
+          args: ['cs:trusty/apache2-1', 'apache2'],
+          options: {modelId: 'apache2'}
+        }
+      },
+      time: '12:34 PM'
+    }, {
+      command: 'juju add-unit -n 1 django',
       icon: 'changes-units-added',
       msg: ' 1 django unit will be added.',
       change: {
@@ -119,6 +138,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju remove-unit foo/0',
       icon: 'changes-units-removed',
       msg: '1 unit will be removed from foo',
       change: {
@@ -130,6 +150,7 @@ describe('ChangesUtils', () => {
     }, {
       // Note that this case is never used in production code.
       // We always add a single unit to a service.
+      command: 'juju add-unit -n 2 django',
       icon: 'changes-units-added',
       msg: ' 2 django units will be added.',
       change: {
@@ -140,6 +161,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju relate foo baz',
       icon: 'changes-relation-added',
       msg: 'bar relation will be added between foo and baz.',
       change: {
@@ -152,6 +174,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju add-machine -n 1',
       icon: 'changes-container-created',
       msg: '1 container will be added.',
       change: {
@@ -161,6 +184,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju add-machine -n 2',
       icon: 'changes-container-created',
       msg: '2 containers will be added.',
       change: {
@@ -173,6 +197,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju add-machine -n 1',
       icon: 'changes-machine-created',
       msg: '1 machine will be added.',
       change: {
@@ -182,6 +207,7 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju add-machine -n 2',
       icon: 'changes-machine-created',
       msg: '2 machines will be added.',
       change: {
@@ -191,12 +217,19 @@ describe('ChangesUtils', () => {
         }
       }
     }, {
+      command: 'juju config django one="" two=two three=3 four=null',
       icon: 'changes-config-changed',
       msg: 'Configuration values will be changed for django.',
       change: {
         command: {
           method: '_set_config',
-          args: ['django', {}]
+          args: ['django', {
+            one: '',
+            two: 'two',
+            three: 3,
+            four: null,
+            five: undefined
+          }]
         }
       }
     }, {
@@ -217,6 +250,7 @@ describe('ChangesUtils', () => {
         db.services, db.units, test.change, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
+      assert.equal(change.command, test.command);
       if (test.timestamp) {
         assert.equal(change.time, test.time);
       } else {
