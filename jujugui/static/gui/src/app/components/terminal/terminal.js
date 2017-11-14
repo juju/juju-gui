@@ -22,10 +22,18 @@ class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      size: 'min'
+      size: 'min',
+      // The terminalSize will be set to the window height subtract some
+      // value, that will be set here and used to determine the height
+      // of the terminal.
+      terminalSize: null
     };
     this.term = null;
     this.ws = null;
+    this.terminalSetup;
+    this.initialCommandsSent = false;
+    this.resizeTimeout = null;
+    this._boundThrottledResize = null;
   }
 
   /**
@@ -76,19 +84,64 @@ class Terminal extends React.Component {
         });
         return;
       }
-      // Terminado sends a "disconnect" message when the process it's running
-      // exits. When we receive that, we close the terminal.
-      if (resp['0'] === 'disconnect') {
-        this.close();
+      switch(resp[0]) {
+        case 'disconnect':
+          // Terminado sends a "disconnect" message when the process it's
+          // running exits. When we receive that, we close the terminal.
+          this.close();
+          break;
+        case 'setup':
+          // Terminado sends a "setup" message after it's fully done setting
+          // up on the server side and will be sending the first PS1 to the
+          // client.
+          this.terminalSetup = true;
+          break;
+        case 'stdout':
+          if (this.terminalSetup && !this.initialCommandsSent) {
+            // If the first PS1 presented to the user changes then this will
+            // need to be updated.
+            if (resp[1].indexOf('\u001b[01;32') === 0) {
+              this.initialCommandsSent = true;
+              const commands = props.commands;
+              if (commands) {
+                commands.forEach(
+                  cmd => ws.send(JSON.stringify(['stdin', `${cmd}\n`])));
+              }
+            }
+          }
       }
       if (resp.code === 'ok' && resp.message === 'session is ready') {
         term.terminadoAttach(ws);
         term.writeln('connected to temporary workspace.\n');
       }
     };
+
+    this.attachResizeListener();
+  }
+
+  /**
+    Throttles the window resize event so we only do it every 50ms.
+  */
+  _throttledResize() {
+    if (this.resizeTimeout == null) {
+      this.resizeTimeout = setTimeout(() => {
+        this.resizeTimeout = null;
+        this.setSize(this.state.size);
+      }, 50);
+    }
+  }
+
+  /**
+    Attaches the window resize event listener to resize the terminal when them
+    window changes size.
+  */
+  attachResizeListener() {
+    this._boundThrottledResize = this._throttledResize.bind(this);
+    window.addEventListener('resize', this._boundThrottledResize, false);
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this._boundThrottledResize, false);
     this.term.destroy();
     this.term = null;
     this.ws.close();
@@ -102,7 +155,14 @@ class Terminal extends React.Component {
       are 'min' and 'max'.
   */
   setSize(size) {
-    this.setState({size: size}, () => {
+    let terminalSize = null;
+    if (size === 'max') {
+      terminalSize = window.innerHeight - 250 + 'px';
+    }
+    this.setState({
+      size,
+      terminalSize
+    }, () => {
       if (this.term) {
         this.term.fit();
       }
@@ -126,7 +186,7 @@ class Terminal extends React.Component {
       });
     const styles = {};
     if (state.size === 'max') {
-      styles.height = window.innerHeight - 250 + 'px';
+      styles.height = state.terminalSize;
     }
     return (
       <div className="juju-shell">
@@ -159,6 +219,7 @@ Terminal.propTypes = {
   address: PropTypes.string,
   // Credentials are used to authenticate the user to the jujushell service.
   changeState: PropTypes.func.isRequired,
+  commands: PropTypes.array,
   creds: shapeup.shape({
     user: PropTypes.string,
     password: PropTypes.string,

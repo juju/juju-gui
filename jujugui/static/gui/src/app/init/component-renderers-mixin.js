@@ -188,6 +188,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
     const config = this.applicationConfig;
     const user = this.user;
     const identityURL = user.identityURL();
+    const modelName = this.db.environment.get('name');
     const creds = {};
     if (identityURL && config.gisf) {
       const serialized = user.getMacaroon('identity');
@@ -208,6 +209,7 @@ const ComponentRenderersMixin = (superclass) => class extends superclass {
         // provided by the environment.
         address={address}
         changeState={this._bound.changeState}
+        commands={[`juju switch ${modelName}`]}
         creds={creds}
         WebSocket={WebSocket}/>,
       document.getElementById('terminal-container'));
