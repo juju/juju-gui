@@ -41,7 +41,7 @@ describe('AccordionSection', () => {
           <SvgIcon className="right" name="chevron_down_16"
             size="16" />
         </div>
-        <div className="accordion-section__content" ref={sinon.stub()}
+        <div className="accordion-section__content" ref="content"
           style={{maxHeight: 0}}><span>Hello</span></div>
       </div>);
   });
@@ -53,7 +53,9 @@ describe('AccordionSection', () => {
       children: <span>Hello</span>
     });
     const instance = comp.renderer.getMountedInstance();
-    instance['accordion-section-content'] = {scrollHeight: 100};
+    instance.refs = {
+      content: {scrollHeight: 100}
+    };
     instance._toggle();
     let output = comp.renderer.getRenderOutput();
     expect(output).toEqualJSX(
@@ -65,8 +67,8 @@ describe('AccordionSection', () => {
           <SvgIcon className="right" name="chevron_up_16"
             size="16" />
         </div>
-        <div className="accordion-section__content" ref={sinon.stub()}
-          style={{maxHeight: 100}}><span>Hello</span></div>
+        <div className="accordion-section__content" ref="content"
+          style={{maxHeight: '100px'}}><span>Hello</span></div>
       </div>);
   });
 
@@ -82,7 +84,7 @@ describe('AccordionSection', () => {
           onClick={null}>
           <span className="accordion-section__title-content">My title!</span>
         </div>
-        <div className="accordion-section__content" ref={sinon.stub()}
+        <div className="accordion-section__content" ref="content"
           style={{maxHeight: 0}}></div>
       </div>
     );

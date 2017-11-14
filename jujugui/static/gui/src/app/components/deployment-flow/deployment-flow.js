@@ -796,6 +796,7 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-services">
         <AccordionSection
+          startOpen={this.props.modelCommitted}
           title="Model changes">
           <DeploymentServices
             acl={this.props.acl}
