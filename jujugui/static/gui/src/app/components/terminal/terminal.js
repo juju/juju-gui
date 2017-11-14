@@ -23,6 +23,9 @@ class Terminal extends React.Component {
     super(props);
     this.state = {
       size: 'min',
+      // The terminalSize will be set to the window height subtract some
+      // value, that will be set here and used to determine the height
+      // of the terminal.
       terminalSize: null
     };
     this.term = null;
@@ -81,13 +84,16 @@ class Terminal extends React.Component {
         });
         return;
       }
-      // Terminado sends a "disconnect" message when the process it's running
-      // exits. When we receive that, we close the terminal.
       switch(resp[0]) {
         case 'disconnect':
+          // Terminado sends a "disconnect" message when the process it's
+          // running exits. When we receive that, we close the terminal.
           this.close();
           break;
         case 'setup':
+          // Terminado sends a "setup" message after it's fully done setting
+          // up on the server side and will be sending the first PS1 to the
+          // client.
           this.terminalSetup = true;
           break;
         case 'stdout':
@@ -98,7 +104,8 @@ class Terminal extends React.Component {
               this.initialCommandsSent = true;
               const commands = props.commands;
               if (commands) {
-                commands.forEach(c => ws.send(JSON.stringify(['stdin', `${c}\n`])));
+                commands.forEach(
+                  cmd => ws.send(JSON.stringify(['stdin', `${cmd}\n`])));
               }
             }
           }
@@ -150,7 +157,7 @@ class Terminal extends React.Component {
   setSize(size) {
     let terminalSize = null;
     if (size === 'max') {
-      terminalSize= window.innerHeight - 250 + 'px';
+      terminalSize = window.innerHeight - 250 + 'px';
     }
     this.setState({
       size,

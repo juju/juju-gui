@@ -100,6 +100,32 @@ describe('Terminal', () => {
     component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.send.callCount, 1);
+    assert.deepEqual(websocket.prototype.send.args[0], ['["stdin","juju status\\n"]']);
+  });
+
+  it('sends multiple commands when it is set up', () => {
+    setupWebsocket();
+    const component = ReactTestUtils.renderIntoDocument(
+      <Terminal
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        commands={['juju status', 'juju switch']}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />
+    );
+    // Send the setup from the term.
+    component.ws.onmessage({data: '["setup", {}]'});
+    // Send the initial PS1
+    component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+    assert.equal(websocket.prototype.send.callCount, 2);
+    assert.deepEqual(websocket.prototype.send.args[0], ['["stdin","juju status\\n"]']);
+    assert.deepEqual(websocket.prototype.send.args[1], ['["stdin","juju switch\\n"]']);
   });
 
   it('can be closed by clicking the X', () => {
