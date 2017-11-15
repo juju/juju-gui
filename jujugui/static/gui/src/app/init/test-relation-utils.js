@@ -239,7 +239,7 @@ describe('RelationUtils', () => {
     let db, service, getById;
 
     beforeEach(() => {
-      db = new models.Database();
+      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:mysql',

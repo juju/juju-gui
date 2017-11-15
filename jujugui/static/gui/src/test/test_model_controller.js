@@ -53,7 +53,8 @@ describe('Model Controller Promises', function() {
     conn = new utils.SocketStub();
     environment = env = new yui.juju.environments.GoEnvironment({
       conn: conn, user: userClass});
-    db = new yui.juju.models.Database();
+    db = new yui.juju.models.Database(
+      {getECS: sinon.stub().returns({changeSet: {}})});
     env.connect();
     modelController = new yui.juju.ModelController({
       db: db,

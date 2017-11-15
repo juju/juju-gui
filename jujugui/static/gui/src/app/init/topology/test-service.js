@@ -39,7 +39,7 @@ describe('service module annotations', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     called = false;
     location = { 'gui-x': 0, 'gui-y': 0};
     const env = {
@@ -126,7 +126,7 @@ describe('service updates', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     view = new EnvironmentView(
       { container: viewContainer,
         db: db,
@@ -202,7 +202,7 @@ describe('service module events', function() {
     viewContainer = utils.makeContainer(this, 'content');
     const charmData = utils.loadFixture('data/haproxy-api-response.json', true);
     charm = new models.Charm(charmData.charm);
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     db.services.add({id: 'haproxy', charm: 'cs:precise/haproxy-18'});
     db.charms.add(charm);
     view = new EnvironmentView({
@@ -764,7 +764,7 @@ describe('canvasDropHandler', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database();
+    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     const env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};
@@ -823,7 +823,7 @@ describe('_canvasDropHandler', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database();
+    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     const env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};
@@ -890,7 +890,7 @@ describe('updateElementVisibility', function() {
   beforeEach(function() {
     cleanups = [];
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database();
+    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     const env = {
       update_annotations: function(name, type, data) {},
       get: function() {}};

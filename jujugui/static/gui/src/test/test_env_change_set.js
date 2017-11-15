@@ -50,7 +50,7 @@ describe('Environment Change Set', function() {
     const userClass = new window.jujugui.User(
       {sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
-    dbObj = new models.Database();
+    dbObj = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     dbObj.fireEvent = sinon.stub();
     ecs = new ECS({
       db: dbObj

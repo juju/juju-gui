@@ -251,7 +251,7 @@ const EnvironmentView = proxyquire('./environment', {
       userClass.controller = {user: 'user', password: 'password'};
       relationUtils = window.juju.utils.RelationUtils;
       conn = new testUtils.SocketStub();
-      db = new models.Database();
+      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       ecs = new juju.EnvironmentChangeSet({db: db});
       env = new juju.environments.GoEnvironment({
         conn: conn, ecs: ecs, user: userClass});
@@ -309,7 +309,7 @@ const EnvironmentView = proxyquire('./environment', {
 
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       view.db = db;
       view.render().rendered();
 
@@ -328,7 +328,7 @@ const EnvironmentView = proxyquire('./environment', {
 
     it('should handle clicking the plus', function() {
       // Use a db w/o the delta loaded
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       view.db = db;
       const state = {
         changeState: sinon.stub()
@@ -1373,7 +1373,7 @@ const EnvironmentView = proxyquire('./environment', {
 
     it('should stop creating a relation if the background is clicked',
       function() {
-        var db = new models.Database(),
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             endpointsMap = {'service-1': {requires: [], provides: []}};
         var fauxController = new Y.Base();
         fauxController.endpointsMap = endpointsMap;
@@ -1449,7 +1449,7 @@ const EnvironmentView = proxyquire('./environment', {
     describe('onboarding integration with the environment', function() {
       it('shows/hides the integrated button when a service is added',
         function() {
-          db = new models.Database();
+          db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           view.db = db;
           view.render().rendered();
           var includedPlus = view.topo.vis.select('.included-plus');

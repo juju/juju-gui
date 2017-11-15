@@ -20,13 +20,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Ghost Deployer Extension', function() {
 
-  var Y, juju, ghostDeployer, GhostDeployer;
+  var Y, juju, ghostDeployer, GhostDeployer, models;
 
   before(function(done) {
     var requires = ['base', 'base-build', 'model', 'ghost-deployer-extension',
       'juju-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
+      models._getECS = sinon.stub().returns({changeSet: {}});
       done();
     });
   });
@@ -96,7 +98,7 @@ describe('Ghost Deployer Extension', function() {
   it('sets the ghost service config to its defaults', function() {
     var charm = makeCharm();
     charm.set('options', { foo: { default: 'bar' }});
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     ghostDeployer.deployService(charm);
     var service = ghostDeployer.db.services.item(0);
     assert.deepEqual(service.get('config'), {foo: 'bar'});
@@ -104,7 +106,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('sets the active plan on the service', function() {
     var charm = makeCharm();
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     ghostDeployer.deployService(charm, undefined, null, 'active-plan');
     var service = ghostDeployer.db.services.item(0);
     assert.equal(service.get('activePlan'), 'active-plan');
@@ -113,7 +115,7 @@ describe('Ghost Deployer Extension', function() {
   it('sets the plans on the charm', function() {
     var charm = makeCharm();
     var plans = ['plan1', 'plan2'];
-    ghostDeployer.db.charms = new Y.juju.models.ServiceList();
+    ghostDeployer.db.charms = new models.ServiceList();
     ghostDeployer.deployService(charm, undefined, plans, 'active-plan');
     var service = ghostDeployer.db.charms.item(0);
     assert.deepEqual(service.get('plans'), plans);
@@ -122,7 +124,7 @@ describe('Ghost Deployer Extension', function() {
   it('sets the plans on the charm when not setting an active plan', function() {
     var charm = makeCharm();
     var plans = ['plan1', 'plan2'];
-    ghostDeployer.db.charms = new Y.juju.models.ServiceList();
+    ghostDeployer.db.charms = new models.ServiceList();
     ghostDeployer.deployService(charm, undefined, plans);
     var service = ghostDeployer.db.charms.item(0);
     assert.deepEqual(service.get('plans'), plans);
@@ -208,7 +210,7 @@ describe('Ghost Deployer Extension', function() {
       package_name: 'mysql',
       is_subordinate: false
     };
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     var services = ghostDeployer.db.services;
     services.ghostService(charm);
     services.ghostService(charm);
@@ -233,7 +235,7 @@ describe('Ghost Deployer Extension', function() {
       package_name: 'mysql-slave',
       is_subordinate: false
     };
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     var services = ghostDeployer.db.services;
     services.ghostService(new Y.Model(mysqlSlave));
     services.ghostService(new Y.Model(mysql));
@@ -254,7 +256,7 @@ describe('Ghost Deployer Extension', function() {
       package_name: 'my-mysql-slave',
       is_subordinate: false
     };
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     var services = ghostDeployer.db.services;
     services.ghostService(new Y.Model(mysqlSlave));
     services.ghostService(new Y.Model(mysql));
@@ -264,7 +266,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('uses the default name if available', function() {
     var charm = makeCharm();
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     var services = ghostDeployer.db.services;
     services.ghostService(charm);
     var service2 = services.ghostService(charm);
@@ -278,7 +280,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('increments the name with middle deleted services', function() {
     var charm = makeCharm();
-    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services = new models.ServiceList();
     var services = ghostDeployer.db.services;
     services.ghostService(charm);
     services.ghostService(charm);

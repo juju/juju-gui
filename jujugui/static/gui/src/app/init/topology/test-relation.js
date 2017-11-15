@@ -240,7 +240,7 @@ describe('topology relation module', function() {
       }, {
         name: 'db', service: 'mysql', type: 'mysql'
       }]];
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       db.services.add({
         id: '97813654$',
         displayName: '(wordpress)'

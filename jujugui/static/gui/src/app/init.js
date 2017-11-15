@@ -81,7 +81,7 @@ class GUIApp {
       The application database.
       @type {Object}
     */
-    this.db = new yui.juju.models.Database();
+    this.db = new yui.juju.models.Database({getECS: () => this.ecs});
     /**
       Timer for debouncing database change events.
       @type {Integer}

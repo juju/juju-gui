@@ -32,7 +32,7 @@ describe('Juju delta handlers', function() {
   });
 
   beforeEach(function() {
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
   });
 
   describe('unitInfo handler', function() {

@@ -79,7 +79,7 @@ describe('topology', function() {
   });
 
   function createStandardTopo() {
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     topo = new Topology();
     topo.container = container;
     topo.db = db;
