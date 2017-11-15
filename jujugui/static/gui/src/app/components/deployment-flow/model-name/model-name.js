@@ -22,7 +22,10 @@ class DeploymentModelName extends React.Component {
     @param evt {Object} The blur event.
   */
   _updateModelName(evt) {
-    const modelName = evt.currentTarget.value;
+    let modelName = '';
+    // This method is called onChange and onBlur and the argument signature
+    // differs for these two events.
+    modelName = typeof evt === 'string' ? evt : evt.currentTarget.value;
     this.setState({modelName: modelName});
     if (modelName !== '') {
       this.props.setModelName(modelName);
@@ -35,6 +38,7 @@ class DeploymentModelName extends React.Component {
     if (value === 'mymodel' && ddEntity) {
       value = ddEntity.get('name');
     }
+    const _updateModelName = this._updateModelName.bind(this);
     return (
       <div className="six-col no-margin-bottom">
         <GenericInput
@@ -42,7 +46,8 @@ class DeploymentModelName extends React.Component {
           key="modelName"
           label="Model name"
           required={true}
-          onBlur={this._updateModelName.bind(this)}
+          onChange={_updateModelName}
+          onBlur={_updateModelName}
           ref="modelName"
           validate={[{
             regex: /\S+/,
