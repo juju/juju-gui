@@ -627,6 +627,11 @@ utils.deploy = function(
   // If we're in a model which exists then just commit the ecs and return.
   if (modelAPI.get('connected')) {
     modelAPI.get('ecs').commit(modelAPI);
+    app.state.changeState({
+      postDeploymentPanel: {
+        show: true
+      }
+    });
     callback(null);
     return;
   }
