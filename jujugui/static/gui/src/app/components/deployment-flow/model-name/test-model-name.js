@@ -30,6 +30,7 @@ describe('DeploymentModelName', () => {
           key="modelName"
           label="Model name"
           required={true}
+          onChange={sinon.stub()}
           onBlur={sinon.stub()}
           ref="modelName"
           validate={[{
@@ -62,6 +63,7 @@ describe('DeploymentModelName', () => {
           key="modelName"
           label="Model name"
           required={true}
+          onChange={sinon.stub()}
           onBlur={sinon.stub()}
           ref="modelName"
           validate={[{
@@ -116,6 +118,20 @@ describe('DeploymentModelName', () => {
         value: 'snazzy-bundle'
       }
     });
+    assert.equal(setModelName.callCount, 1);
+    assert.equal(setModelName.args[0][0], 'snazzy-bundle');
+  });
+
+  it('can update the model name on change', () => {
+    const setModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <DeploymentModelName
+        acl={acl}
+        ddEntity={null}
+        modelName="mymodel"
+        setModelName={setModelName} />, true);
+    const output = renderer.getRenderOutput();
+    output.props.children.props.onChange('snazzy-bundle');
     assert.equal(setModelName.callCount, 1);
     assert.equal(setModelName.args[0][0], 'snazzy-bundle');
   });
