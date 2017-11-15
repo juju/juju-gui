@@ -20,7 +20,7 @@ describe('ChangesUtils', () => {
 
   beforeEach(() => {
     cleanups = [];
-    db = new models.Database();
+    db = new models.Database({getECS: () => ecs});
     ecs = new ECS({db: db});
   });
 
@@ -68,8 +68,8 @@ describe('ChangesUtils', () => {
     ];
     services.add([
       {id: 'foobar'},
-      {id: '84882221$', displayName: '(mysql)'},
-      {id: 'wordpress', displayName: 'wordpress'}
+      {id: '84882221$', name: 'mysql'},
+      {id: 'wordpress', name: 'wordpress'}
     ]);
     services = changesUtils.getRealRelationEndpointNames(args, services);
     assert.deepEqual(services, ['mysql', 'wordpress']);

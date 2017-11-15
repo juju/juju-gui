@@ -31,7 +31,7 @@ describe('Landscape integration', function() {
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
 
-      db = new models.Database();
+      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       landscape = new views.Landscape();
       landscape.set('db', db);
 

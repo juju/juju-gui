@@ -32,7 +32,7 @@ describe('BundleImporter', () => {
     };
     const userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
-    db = new models.Database();
+    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     modelAPI = new yui.juju.environments.GoEnvironment({
       user: userClass,
       ecs: new yui.juju.EnvironmentChangeSet({

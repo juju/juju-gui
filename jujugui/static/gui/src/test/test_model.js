@@ -25,6 +25,7 @@ describe('test_model.js', function() {
     before(function(done) {
       YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         done();
       });
     });
@@ -114,6 +115,7 @@ describe('test_model.js', function() {
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         relationUtils = window.juju.utils.RelationUtils;
         done();
       });
@@ -136,7 +138,7 @@ describe('test_model.js', function() {
         {id: 'mysql/1', service: 'mysql'}
       ];
       var service = new models.Service({id: 'mysql'});
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       db.services.add(service);
       db.addUnits(units);
       // Encapsulate and re-use testing logic for each flag.
@@ -163,7 +165,7 @@ describe('test_model.js', function() {
     });
 
     it('can update a units displayName', function(done) {
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       db.services.add([
         {id: 'mysql', name: 'mysql'}
       ]);
@@ -186,7 +188,7 @@ describe('test_model.js', function() {
     });
 
     it('can update a unit id', function() {
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       db.services.add([
         {id: 'mysql', name: 'mysql'}
       ]);
@@ -207,7 +209,7 @@ describe('test_model.js', function() {
     });
 
     it('finds related services', function() {
-      var db = new models.Database(),
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
           service = new models.Service({name: 'mysql'});
       db.services.add([
         {id: 'mysql', name: 'mysql'},
@@ -230,7 +232,7 @@ describe('test_model.js', function() {
     });
 
     it('finds unrelated services', function() {
-      var db = new models.Database(),
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
           service = new models.Service({name: 'mysql'});
       db.services.add([
         {id: 'mysql', name: 'mysql'},
@@ -249,7 +251,7 @@ describe('test_model.js', function() {
     });
 
     it('handles undefined endpoints in unrelated services', function() {
-      var db = new models.Database(),
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
           service = new models.Service({name: 'mysql'});
       db.services.add([
         {id: 'mysql', name: 'mysql'},
@@ -268,7 +270,7 @@ describe('test_model.js', function() {
       var db;
 
       beforeEach(function() {
-        db = new models.Database();
+        db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         db._highlightedServices = []; // needs to be explicitly emptied
         db.machines.add([
           {id: '0', hide: false},
@@ -339,7 +341,7 @@ describe('test_model.js', function() {
 
     it('should aggregate unit info when adding units', function() {
       var service_unit = {id: 'mysql/0'};
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       var stub = sinon.stub(
         db.units, 'update_service_unit_aggregates');
       this._cleanups.push(stub.restore);
@@ -458,7 +460,7 @@ describe('test_model.js', function() {
     it('service unit objects should parse the service name from unit id',
       function() {
         var service_unit = {id: 'mysql/0'};
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         db.services.add({id: 'mysql'});
         db.addUnits(service_unit);
         service_unit.service.should.equal('mysql');
@@ -467,14 +469,14 @@ describe('test_model.js', function() {
     it('service unit objects should report their number correctly',
       function() {
         var service_unit = {id: 'mysql/5'};
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         db.services.add({id: 'mysql'});
         db.addUnits(service_unit);
         service_unit.number.should.equal(5);
       });
 
     it('should display service names properly', function() {
-      var db = new models.Database(),
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
           longId = '1234567890123456789',
           shortId = '12345678901234567';
       db.services.add([{id: longId}, {id: shortId}]);
@@ -486,7 +488,7 @@ describe('test_model.js', function() {
     });
 
     it('should display ghost service names properly', function() {
-      var db = new models.Database(),
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
           longId = '12345678901',
           shortId = '123456789';
       db.services.add([
@@ -511,8 +513,49 @@ describe('test_model.js', function() {
         'name does not match');
     });
 
+    it('should update the ecs records when an app name changes', () => {
+      const changeSet = {
+        'add-unit1': {
+          command: {
+            args: ['wordpress1'],
+            method: '_add_unit'
+          }
+        },
+        'add-unit2': {
+          command: {
+            args: ['wordpress99'],
+            method: '_add_unit'
+          }
+        },
+        'add-app1': {
+          command: {
+            args: [{applicationName: 'wordpress1'}],
+            method: '_deploy'
+          }
+        },
+        'add-app2': {
+          command: {
+            args: [{applicationName: 'wordpress99'}],
+            method: '_deploy'
+          }
+        }
+      };
+      let db = new models.Database(
+        {getECS: sinon.stub().returns({changeSet: changeSet})});
+      db.services.add([{id: 'wordpress', name: 'wordpress1'}]);
+      const wordpress = db.services.getById('wordpress');
+      assert.equal(wordpress.get('name'), 'wordpress1');
+      wordpress.set('name', 'wordpress2');
+      assert.equal(changeSet['add-unit1'].command.args[0], 'wordpress2');
+      assert.equal(changeSet['add-unit2'].command.args[0], 'wordpress99');
+      assert.equal(
+        changeSet['add-app1'].command.args[0].applicationName, 'wordpress2');
+      assert.equal(
+        changeSet['add-app2'].command.args[0].applicationName, 'wordpress99');
+    });
+
     it('must be able to resolve models by their name', function() {
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       // Add some services.
       db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
       // A service is properly resolved.
@@ -538,7 +581,7 @@ describe('test_model.js', function() {
     describe('onDelta', function() {
 
       it('should update service units on change', function() {
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         var mysql = new models.Service({id: 'mysql'});
         db.services.add([mysql]);
         assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
@@ -563,7 +606,7 @@ describe('test_model.js', function() {
         // change, but the actual create machine delta may not have arrived.
         // In these cases we check to see if the instance exists, and if not,
         // we create it before applying the changes.
-        var db = new models.Database(),
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             id = '0';
         assert.equal(db.machines.size(), 0,
           'the machine list is not be empty');
@@ -578,7 +621,7 @@ describe('test_model.js', function() {
       });
 
       it('should copy visibility flags from service to unit', function() {
-        var db = new models.Database(),
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             id = 'mysql/0';
         // By default, these flags are all false.
         db.services.add([
@@ -599,7 +642,7 @@ describe('test_model.js', function() {
       });
 
       it('should change machines when units change', function() {
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         var machinesStub = sinon.stub(db.machines, 'process_delta'),
             unitsStub = sinon.stub(db.units, 'process_delta');
         this._cleanups.push(machinesStub.restore);
@@ -616,7 +659,7 @@ describe('test_model.js', function() {
 
       it('should handle remove changes correctly',
         function() {
-          var db = new models.Database();
+          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           var mysql = db.services.add({id: 'mysql'});
           var my0 = {id: 'mysql/0', agent_state: 'pending'};
           var my1 = {id: 'mysql/1', agent_state: 'pending'};
@@ -634,7 +677,7 @@ describe('test_model.js', function() {
 
       it('should be able to reuse existing services with add',
         function() {
-          var db = new models.Database();
+          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           var my0 = new models.Service({id: 'mysql', exposed: true});
           db.services.add([my0]);
           db.onDelta({detail: {data: {result: [
@@ -650,7 +693,7 @@ describe('test_model.js', function() {
       it('should be able to reuse existing units with add',
         // Units are special because they use the LazyModelList.
         function() {
-          var db = new models.Database();
+          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           db.services.add({id: 'mysql'});
           var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
           db.addUnits([my0]);
@@ -666,7 +709,7 @@ describe('test_model.js', function() {
       it('uses default handler for unknown deltas', function() {
         var handler = sinon.stub(
           Y.juju.models.handlers, 'defaultHandler');
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         db.onDelta({detail: {data: {result: [
           ['fakeDelta', 'add', {}]
         ]}}});
@@ -677,7 +720,7 @@ describe('test_model.js', function() {
       // until it's completely removed from the codebase.
       it.skip('should reset relation_errors',
         function() {
-          var db = new models.Database();
+          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           var my0 = {
             id: 'mysql/0',
             relation_errors: {'cache': ['memcached']}
@@ -704,7 +747,7 @@ describe('test_model.js', function() {
 
     it('RelationList.has_relations.. should return true if rel found.',
       function() {
-        var db = new models.Database(),
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             rel0 = new models.Relation({
               id: 'relation-0',
               endpoints: [
@@ -747,7 +790,7 @@ describe('test_model.js', function() {
 
     it('RelationList.get_relations_for_service should do what it says',
       function() {
-        var db = new models.Database(),
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             service = new models.Service({id: 'mysql', exposed: false}),
             rel0 = new models.Relation(
               { id: 'relation-0',
@@ -863,7 +906,7 @@ describe('test_model.js', function() {
     });
 
     it('must be able to reference the Environment model', function() {
-      var db = new models.Database();
+      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       var env = db.environment;
       env.get('annotations').should.eql({});
     });
@@ -893,7 +936,7 @@ describe('test_model.js', function() {
 
       beforeEach(function() {
         // Set up services and units used for tests.
-        db = new models.Database();
+        db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         services = db.services;
         services.add({id: 'flask'});
         services.add({id: 'rails'});
@@ -998,12 +1041,12 @@ describe('test_model.js', function() {
     describe('serviceUnits.preventDirectChanges', function() {
 
       it('changes are disallowed when instantiating the db', function() {
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         assert.strictEqual(db.units.get('preventDirectChanges'), true);
       });
 
       it('changes are disallowed in the service units', function() {
-        var db = new models.Database();
+        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         var service = db.services.add({id: 'django'});
         var units = service.get('units');
         assert.strictEqual(units.get('preventDirectChanges'), true);
@@ -1576,6 +1619,7 @@ describe('test_model.js', function() {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
         'juju-tests-utils'], function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         juju = Y.namespace('juju');
         testUtils = Y.namespace('juju-tests.utils');
         done();
@@ -1730,6 +1774,7 @@ describe('test_model.js', function() {
         'juju-tests-utils'
       ], function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         utils = Y.namespace('juju-tests.utils');
 
         origData = utils.loadFixture('data/browsercharm.json', true);
@@ -1867,12 +1912,13 @@ describe('test_model.js', function() {
         'juju-charm-models'],
       function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         done();
       });
     });
 
     beforeEach(function() {
-      db = new models.Database();
+      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     });
 
     it('can export the model as a bundle', function() {
@@ -2434,6 +2480,7 @@ describe('test_model.js', function() {
     before(function(done) {
       YUI(GlobalConfig).use(['juju-models'], function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         done();
       });
     });
@@ -2612,12 +2659,13 @@ describe('test_model.js', function() {
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         done();
       });
     });
 
     beforeEach(function() {
-      db = new models.Database();
+      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       metadata = {
         name: 'mycharm',
         summary: 'charm summary',
@@ -2719,6 +2767,7 @@ describe('test_model.js', function() {
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
+        models._getECS = sinon.stub().returns({changeSet: {}});
         done();
       });
     });
