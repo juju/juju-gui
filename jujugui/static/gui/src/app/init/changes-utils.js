@@ -1,8 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const removeBrackets = /^\(?(.{0,}?)\)?$/;
-
 const changesUtils = {
 
   /**
@@ -351,7 +349,7 @@ const changesUtils = {
           const config = changesUtils._objectToParams(change.command.args[1]);
           changeItem.icon = 'changes-config-changed';
           changeItem.description = 'Configuration values will be changed for ' +
-              cfgServ.get('displayName').match(removeBrackets)[1] + '.';
+              cfgServ.get('name') + '.';
           changeItem.command = `juju config ${ghostService.get('name')} ` +
             `${config}`;
           break;
@@ -401,8 +399,7 @@ const changesUtils = {
       serviceId = service.get('id');
       args.forEach(arg => {
         if (serviceId === arg[0]) {
-          const matches = service.get('displayName').match(removeBrackets);
-          serviceList.push(matches[matches.length - 1]);
+          serviceList.push(service.get('name'));
         }
       });
     });

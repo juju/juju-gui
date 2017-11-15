@@ -329,6 +329,26 @@ YUI.add('juju-models', function(Y) {
             return value;
           }
           return this.get('packageName');
+        },
+        'setter': function(value) {
+          // Update the ecs with the new application name.
+          const ecs = models._getECS();
+          const currentName = this.get('name');
+          const changeSet = ecs.changeSet;
+          Object.keys(changeSet).forEach(key => {
+            const change = changeSet[key];
+            const method = change.command.method;
+            if (method === '_add_unit') {
+              if (change.command.args[0] === currentName) {
+                change.command.args[0] = value;
+              }
+            } else if (method === '_deploy') {
+              if (change.command.args[0].applicationName === currentName) {
+                change.command.args[0].applicationName = value;
+              }
+            }
+          });
+          return value;
         }
       },
       charm: {},
@@ -2259,7 +2279,8 @@ YUI.add('juju-models', function(Y) {
     */
     _highlightedServices: [],
 
-    initializer: function() {
+    initializer: function(config) {
+      models._getECS = config.getECS;
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
