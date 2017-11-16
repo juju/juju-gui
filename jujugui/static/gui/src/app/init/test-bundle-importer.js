@@ -67,7 +67,7 @@ describe('BundleImporter', () => {
       const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
       const notify = sinon.stub(
         bundleImporter.db.notifications, 'add');
-      bundleImporter.importBundleYAML('foo: bar');
+      bundleImporter.importBundleYAML('id', 'foo: bar');
       assert.equal(fetch.callCount, 1);
       const args = fetch.lastCall.args;
       assert.equal(args.length, 2);

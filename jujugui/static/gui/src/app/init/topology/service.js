@@ -1052,15 +1052,21 @@ class ServiceModule {
           message: 'Changeset processing started.',
           level: 'important'
         });
-        var charmstore = topo.charmstore;
+        const charmstore = topo.charmstore;
+        let bundleURL = window.jujulib.URL.
+          fromLegacyString(entityData.id).path();
         charmstore.getBundleYAML(
-          entityData.id.replace('cs:', ''),
+          entityData.id,
           function(error, bundleYAML) {
             if (error) {
               console.error(error);
               return;
             }
-            topo.bundleImporter.importBundleYAML(bundleYAML);
+            topo.bundleImporter.importBundleYAML(
+              bundleYAML,
+              {
+                'bundle-url': bundleURL
+              });
           }.bind(this));
       }
     }

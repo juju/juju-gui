@@ -520,7 +520,19 @@ Browser: ${navigator.userAgent}`
         this.state.changeState(storeState);
       };
 
-      ReactDOM.render(
+    const addGetStartedAnnotation = (entityId) => {
+      let bundleURL = window.jujulib.URL.fromLegacyString(entityId);
+      const getStartedPath = charmstore.getStartedURL(
+        `${bundleURL.series}/${bundleURL.name}-${bundleURL.revision}`
+      );
+      this.db.services.each(s => {
+        let annotations = s.get('annotations');
+        annotations['get-started'] = getStartedPath;
+        s.set('annotations', annotations);
+      });
+    };
+
+    ReactDOM.render(
         <PostDeployment
           changeState={this._bound.changeState}
           entityId={entityId}
@@ -532,6 +544,19 @@ Browser: ${navigator.userAgent}`
         document.getElementById('post-deployment')
       );
     }
+
+    ReactDOM.render(
+      <PostDeployment
+        addGetStartedAnnotation={addGetStartedAnnotation}
+        changeState={this._bound.changeState}
+        entityId={entityId}
+        getEntity={charmstore.getEntity.bind(charmstore)}
+        getFile={charmstore.getFile.bind(charmstore)}
+        makeEntityModel={jujulibConversionUtils.makeEntityModel}
+        marked={marked}
+        showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+      document.getElementById('post-deployment')
+    );
 
     next();
   }

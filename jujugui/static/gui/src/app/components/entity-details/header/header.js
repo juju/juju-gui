@@ -46,8 +46,11 @@ class EntityHeader extends React.Component {
       // format the method expects.
       this.props.deployService(entityModel, undefined, plans, activePlan);
     } else {
-      var id = entity.id.replace('cs:', '');
-      this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
+      const bundleURL = window.jujulib.URL.fromLegacyString(entity.id);
+      this.props.getBundleYAML(
+        bundleURL.legacyPath(),
+        this._getBundleYAMLCallback.bind(this, bundleURL.path())
+      );
     }
     this._closeEntityDetails();
   }
@@ -71,10 +74,11 @@ class EntityHeader extends React.Component {
     Callback for getting the bundle YAML.
 
     @method _getBundleYAMLSuccess
+    @param {string} bundleURL URL for the bundle.
     @param {String} error The error, if any. Null if no error.
     @param {String} yaml The yaml for the bundle
   */
-  _getBundleYAMLCallback(error, yaml) {
+  _getBundleYAMLCallback(bundleURL, error, yaml) {
     if (error) {
       console.error(error);
       this.props.addNotification({
@@ -85,7 +89,10 @@ class EntityHeader extends React.Component {
       });
       return;
     }
-    this.props.importBundleYAML(yaml);
+    this.props.importBundleYAML(yaml,
+      {
+        'bundle-url': bundleURL
+      });
     this._closeEntityDetails();
   }
 
