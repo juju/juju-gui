@@ -533,19 +533,6 @@ Browser: ${navigator.userAgent}`
     };
 
     ReactDOM.render(
-        <PostDeployment
-          changeState={this._bound.changeState}
-          entityId={entityId}
-          getEntity={charmstore.getEntity.bind(charmstore)}
-          getFile={charmstore.getFile.bind(charmstore)}
-          makeEntityModel={jujulibConversionUtils.makeEntityModel}
-          marked={marked}
-          showEntityDetails={showEntityDetails.bind(this, entityId)} />,
-        document.getElementById('post-deployment')
-      );
-    }
-
-    ReactDOM.render(
       <PostDeployment
         addGetStartedAnnotation={addGetStartedAnnotation}
         changeState={this._bound.changeState}
