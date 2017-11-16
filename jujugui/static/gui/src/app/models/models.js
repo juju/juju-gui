@@ -2244,7 +2244,6 @@ YUI.add('juju-models', function(Y) {
    * @return {Object} Annotations.
    */
   models.getAnnotations = function(entity) {
-    console.log(entity.get('annotations'));
     if (!entity) {
       return undefined;
     }
