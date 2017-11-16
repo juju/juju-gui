@@ -1,3 +1,16 @@
+- 2.11.0:
+
+  - Beta release of a Terminal embedded into the GUI which allows you to perform CLI commands in the browser as you would in your local terminal. Currently only available behind a feature flag, in upcoming releases this will become widely available.
+  - Removed machines are now shown in the Deployment Flow changelog.
+  - Juju CLI commands are now shown alongside each record in the changelog in the Deployment Flow.
+  - The changelog will now default to open when adding to an existing model.
+  - (Fix) Charmstore login no longer requires logging in after refresh if you have already authenticated.
+  - (Fix) Correctly remove pending resources when removing an uncommitted application from the canvas.
+  - (Fix) The store page now always opens when clicking the search box.
+  - (Fix) When updating an application name the changelog will now show the updated name.
+  - (Fix) Update the model name correctly when actions are performed out of sync in the Deployment Flow.
+
+
 - 2.10.2:
 
   - (Fix) Status View no longer errors if ports are not yet available.
