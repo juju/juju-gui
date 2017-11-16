@@ -11,7 +11,7 @@ can be registered at any time and changes to the state must be done by calling
 the `changeState` method.
 
 State maintains a history of all of the state changes throughout the life of
-the application accesible via the `history` propery.
+the application accessible via the `history` property.
 
 ### How to use
 
@@ -39,7 +39,7 @@ const state = new State({
 - `location` - A custom location object to avoid using the window
   location. Typically used for testing purposes.
 - `history` - A custom history object that the state system will execute the
-  push and popstate commands on. Typically used for testing purposes.
+  push and pop state commands on. Typically used for testing purposes.
 
 
 #### Registering dispatchers
@@ -72,7 +72,7 @@ object as an example:
 ```
 
 The state system will:
-1. Run the `baseRouteHandler` as the `state path` with an asteriks will be
+1. Run the `baseRouteHandler` as the `state path` with an asterisk will be
    executed every time the state dispatches.
 2. Run `showGUIMachines` as it's the next route which fully matches the
    object paths in state. Note that `showGUI` is not run here as there is a
@@ -158,13 +158,13 @@ The application state can be retrieved from three places
 - `state.current` - This will return the current application state and is
   available anywhere you have access to the state instance.
 - `dispatcher(state, next)` - While state is executing the dispatchers, both the
-  create and teardown dispatchers are called with the same arugment signature.
+  create and teardown dispatchers are called with the same argument signature.
   the first being the current application state.
 - `state.history` - This is an Array on the state instance which
   holds all changes to the state over the lifecycle of the application.
 
 #### State reserved words, delimiters and state.
-The state system assumes a strict adherance to a defined url and state spec.
+The state system assumes a strict adherence to a defined url and state spec.
 This spec is best understood by reading the tests associated with the state
 system.
 
