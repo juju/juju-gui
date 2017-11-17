@@ -94,10 +94,13 @@ describe('Terminal', () => {
         }}
         WebSocket={websocket} />
     );
+    // Check that fit is called after receiving the first PS1.
+    component.term.fit = sinon.stub(); // eslint-disable-line
     // Send the setup from the term.
     component.ws.onmessage({data: '["setup", {}]'});
     // Send the initial PS1
     component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
+    assert.equal(component.term.fit.callCount, 1); // eslint-disable-line
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.send.callCount, 1);
     assert.deepEqual(websocket.prototype.send.args[0], ['["stdin","juju status\\n"]']);

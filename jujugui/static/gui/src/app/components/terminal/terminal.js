@@ -45,11 +45,6 @@ class Terminal extends React.Component {
     const term = new XTerm();
     term.write('Connecting... ');
     this.term = term;
-    term.on('open', () => {
-      // To properly have the terminal area fit the full width we have to
-      // call fit a little bit after it's been opened.
-      setTimeout(() => term.fit(), 500);
-    });
     term.open(
       ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
       true);
@@ -101,6 +96,8 @@ class Terminal extends React.Component {
             // If the first PS1 presented to the user changes then this will
             // need to be updated.
             if (resp[1].indexOf('\u001b[01;32') === 0) {
+              // Call to resize the terminal after getting the first PS1.
+              term.fit();
               this.initialCommandsSent = true;
               const commands = props.commands;
               if (commands) {
