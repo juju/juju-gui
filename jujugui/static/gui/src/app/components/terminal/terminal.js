@@ -113,7 +113,7 @@ class Terminal extends React.Component {
       }
     };
     ws.onclose = evt => {
-      if (evt.code > 1000) {
+      if (evt && evt.code > 1000) {
         // It is not a normal closure so we should issue an error.
         console.log(evt);
         props.addNotification({
