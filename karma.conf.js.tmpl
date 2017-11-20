@@ -56,12 +56,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/globalconfig.js',
       'jujugui/static/gui/src/app/test-*.js',
       'jujugui/static/gui/src/app/d3-components/test-*.js',
-      'jujugui/static/gui/src/app/init/test-analytics.js',
-      'jujugui/static/gui/src/app/init/test-changes-utils.js',
-      'jujugui/static/gui/src/app/init/test-utils.js',
-      'jujugui/static/gui/src/app/init/test-endpoint-utils.js',
-      'jujugui/static/gui/src/app/init/test-zip-utils.js',
-      'jujugui/static/gui/src/app/init/topology/test-*.js',
+      'jujugui/static/gui/src/app/init/**/test-*.js',
       'jujugui/static/gui/src/app/store/env/test-*.js'
     ],
 
@@ -74,8 +69,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/d3-components/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/init/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/init/topology/test-*.js': ['browserify'],
+      'jujugui/static/gui/src/app/init/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
