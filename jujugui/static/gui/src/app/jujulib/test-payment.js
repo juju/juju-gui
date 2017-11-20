@@ -235,7 +235,7 @@ describe('jujulib payment service', function() {
 
   it('can create a user', function() {
     const bakery = {
-      put: sinon.stub()
+      post: sinon.stub()
     };
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
     const newUser = {
@@ -257,7 +257,7 @@ describe('jujulib payment service', function() {
       token: '54321'
     };
     payment.createUser(newUser, sinon.stub());
-    assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
+    assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -291,7 +291,7 @@ describe('jujulib payment service', function() {
 
   it('can return the user when after creating a user', function() {
     const bakery = {
-      put: function(url, headers, body, callback) {
+      post: function(url, headers, body, callback) {
         assert.equal(
           url,
           'http://1.2.3.4/' +
@@ -330,7 +330,7 @@ describe('jujulib payment service', function() {
 
   it('handles errors when creating a user', function(done) {
     const bakery = {
-      put: function(url, headers, body, callback) {
+      post: function(url, headers, body, callback) {
         const xhr = makeXHRRequest({Error: 'Uh oh!'});
         callback(null, xhr);
       }

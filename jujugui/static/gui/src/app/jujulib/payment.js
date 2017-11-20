@@ -173,8 +173,10 @@ var module = module;
         token: user.token,
         'payment-method-name': user.paymentMethodName || null
       });
-      const headers = null;
-      return this.bakery.put(
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      return this.bakery.post(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
