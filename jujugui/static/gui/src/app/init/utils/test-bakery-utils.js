@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const newBakery = require('./init/utils/bakery-utils');
+const newBakery = require('./bakery-utils');
 
 describe('bakery utils', () => {
   function createNewBakery(
