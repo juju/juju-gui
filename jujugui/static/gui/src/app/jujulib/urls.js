@@ -40,8 +40,8 @@ var module = module;
   ];
 
   // Define valid strings for the name and user parts of charm/bundle URLs.
-  const namePattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]*[a-z][a-z0-9]*)*$/;
-  const userPattern = /^[a-z0-9][a-zA-Z0-9+.-]+$/;
+  const NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]*[a-z][a-z0-9]*)*$/;
+  const USER_PATTERN = /^[a-z0-9][a-zA-Z0-9+.-]+$/;
 
   // Define prefixes for user owned charms/bundles.
   const USER_PREFIX = 'u/';
@@ -76,7 +76,7 @@ var module = module;
     if (!isStringOrNull(parts.name)) {
       return `charm/bundle name is not a string: "${parts.name}"`;
     }
-    if (!namePattern.test(parts.name)) {
+    if (!NAME_PATTERN.test(parts.name)) {
       return `invalid charm/bundle name: "${parts.name}"`;
     }
     if (!isStringOrNull(parts.schema)) {
@@ -88,7 +88,7 @@ var module = module;
     if (!isStringOrNull(parts.user)) {
       return `user is not a string: "${parts.user}"`;
     }
-    if (!userPattern.test(parts.user)) {
+    if (!USER_PATTERN.test(parts.user)) {
       return `invalid user: "${parts.user}"`;
     }
     if (parts.series && SERIES.indexOf(parts.series) === -1) {
@@ -351,7 +351,15 @@ var module = module;
   };
 
   const jujulib = exports.jujulib;
+
+  // Export patterns.
+  jujulib.NAME_PATTERN = NAME_PATTERN;
+  jujulib.USER_PATTERN = USER_PATTERN;
+
+  // Export URL.
   jujulib.URL = URL;
+
+  // Export series
   jujulib.SERIES = SERIES;
   jujulib.BUNDLE_SERIES = BUNDLE_SERIES;
   jujulib.CHARM_SERIES = SERIES.filter(series => {

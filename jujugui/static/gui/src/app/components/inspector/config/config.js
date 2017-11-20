@@ -140,10 +140,10 @@ class Configuration extends React.Component {
         });
         return;
       }
-      if (!nameValue) {
+      if (!window.jujulib.NAME_PATTERN.test(nameValue)) {
         props.addNotification({
           title: 'Invalid application name',
-          message: 'Application name cannot be blank.',
+          message: 'Invalid application name`.',
           level: 'error'
         });
         return;
