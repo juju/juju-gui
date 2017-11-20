@@ -54,7 +54,11 @@ describe('Terminal', () => {
             </span>
           </div>
         </div>
-        <div className={'juju-shell__terminal juju-shell__terminal--min'} style={{}}></div>
+        <div
+          ref="terminal"
+          className={'juju-shell__terminal juju-shell__terminal--min'}
+          style={{}}>
+        </div>
       </div>);
     expect(renderComponent().getRenderOutput()).toEqualJSX(expected);
   });
@@ -146,9 +150,16 @@ describe('Terminal', () => {
     const renderer = renderComponent();
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
+    const textarea = {focus: sinon.stub().withArgs()};
+    instance.refs = {terminal: {
+      querySelector: sinon.stub().withArgs('textarea').returns(textarea)
+    }};
+    instance.term = {fit: sinon.stub()}; // eslint-disable-line
     // Call the onClick for the maximize
     output.props.children[0].props.children[1].props.children[1].props.onClick();
     assert.equal(instance.state.size, 'max');
+    // The focus has been moved back to the terminal.
+    assert.strictEqual(textarea.focus.called, true, 'focus not called');
     const output2 = renderer.getRenderOutput();
     // Check that the styles have been updated for max height.
     // Because the browser dimensions can vary across machines this just checks
