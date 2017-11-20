@@ -647,6 +647,58 @@ describe('Configuration', function() {
     assert.equal(updateUnit.callCount, 0);
   });
 
+  it('stops setting changes if service name is blank', () => {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var charm = {
+      get: sinon.stub().returns({ option1: option1, option2: option2 })
+    };
+    var option1key = 'string body value';
+    var option2key = true;
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('abc123$');
+    serviceGet.withArgs('name').returns('servicename');
+    serviceGet.withArgs('config').returns(
+      { option1: option1key, option2: option2key });
+    var service = {
+      get: serviceGet,
+      set: sinon.stub()
+    };
+    var updateUnit = sinon.stub();
+    var getServiceByName = sinon.stub().returns(false);
+    var addNotification = sinon.stub();
+    var component = testUtils.renderIntoDocument(
+      <Configuration
+        acl={acl}
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={getServiceByName}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        serviceRelations={[]}
+        setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={updateUnit}/>);
+
+    var domNode = ReactDOM.findDOMNode(component);
+    var name = domNode.querySelector('.string-config-input');
+
+    name.innerText = '';
+    testUtils.Simulate.input(name);
+
+    var save = domNode.querySelector('.button-row--count-2 .button--neutral');
+    testUtils.Simulate.click(save);
+
+    // Make sure it emits a notification if the name exists.
+    assert.equal(addNotification.callCount, 1);
+    // Make sure the service name and config wasn't updated.
+    assert.equal(service.set.callCount, 0);
+    // Make sure that the unit names weren't updated.
+    assert.equal(updateUnit.callCount, 0);
+  });
+
   it('not able to change the service name on deployed services', function() {
     var option1 = { key: 'option1key', type: 'string' };
     var option2 = { key: 'option2key', type: 'boolean' };

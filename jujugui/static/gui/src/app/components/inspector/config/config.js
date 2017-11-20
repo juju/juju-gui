@@ -140,6 +140,14 @@ class Configuration extends React.Component {
         });
         return;
       }
+      if (!nameValue) {
+        props.addNotification({
+          title: 'Invalid application name',
+          message: 'Application name cannot be blank.',
+          level: 'error'
+        });
+        return;
+      }
       service.set('name', nameValue);
       props.updateServiceUnitsDisplayname(service.get('id'));
     }
