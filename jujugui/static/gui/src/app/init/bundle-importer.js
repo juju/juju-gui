@@ -19,14 +19,16 @@ class BundleImporter {
   /**
     Import a bundle YAML into the current model.
     @param {String} bundleYAML The bundle YAML to deploy.
+    @param {Object} annotations Extra annotations to be added to the charms
+      in the bundle.
   */
-  importBundleYAML(bundleYAML) {
+  importBundleYAML(bundleYAML, annotations) {
     this.db.notifications.add({
       title: 'Fetching bundle data',
       message: 'Fetching detailed bundle data, this may take some time',
       level: 'important'
     });
-    this.fetchDryRun(bundleYAML, null);
+    this.fetchDryRun(bundleYAML, null, annotations);
   }
 
   /**
@@ -43,11 +45,15 @@ class BundleImporter {
 
   /**
     Loops through the dry-run structure.
+
+    @param {Array} records The records to be updated.
+    @param {Object} annotations Annotations to be added to each charm in the
+      bundle.
   */
-  importBundleDryRun(records) {
+  importBundleDryRun(records, annotations) {
     // Sort dry-run records into the correct order.
     this.recordSet = this._sortDryRunRecords(records);
-    this._executeDryRun(this.recordSet);
+    this._executeDryRun(this.recordSet, annotations);
   }
 
   /**
@@ -83,20 +89,28 @@ class BundleImporter {
     Fetch the dry-run output from the Guiserver.
     @param {String} bundleYAML The bundle file contents.
     @param {String} changesToken The token identifying a bundle change set.
+    @param {Object} annotations Extra annotations to add to the charms in
+      the bundle.
   */
-  fetchDryRun(bundleYAML, changesToken) {
+  fetchDryRun(bundleYAML, changesToken, annotations) {
     if (bundleYAML) {
       bundleYAML = this._ensureV4Format(bundleYAML);
     }
     this._getBundleChanges(
-      bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
+      bundleYAML,
+      changesToken,
+      this._handleFetchDryRun.bind(this, annotations)
+    );
   }
 
   /**
     Handles the dry run response.
-    @param {Object} response The processed response data.
+    @param {Object} annotations Extra annotations to add to each charm in
+      the bundle.
+    @param {Array} errors Errors when retrieving the bundle.
+    @param {Array} changes List of changes to perform.
   */
-  _handleFetchDryRun(errors, changes) {
+  _handleFetchDryRun(annotations, errors, changes) {
     if (errors && errors.length) {
       this.db.notifications.add({
         title: 'Error generating changeSet',
@@ -106,7 +120,7 @@ class BundleImporter {
       });
       return;
     }
-    this.importBundleDryRun(changes);
+    this.importBundleDryRun(changes, annotations);
   }
 
   /**
@@ -223,8 +237,10 @@ class BundleImporter {
     Executes each record passing the resulting models to records which
     require the parent records data set.
     @param {Array} records The list of records in the recordSet.
+    @param {Object} annotations Annotations to be added to each charm in the
+      bundle.
   */
-  _executeDryRun(records) {
+  _executeDryRun(records, annotations) {
     if (this._dryRunIndex === records.length - 1) {
       // Done executing the recordSet.
       this.db.notifications.add({
@@ -241,19 +257,25 @@ class BundleImporter {
       return;
     }
     this._dryRunIndex += 1;
-    this._executeRecord(records[this._dryRunIndex], records);
+    this._executeRecord(records[this._dryRunIndex], records, annotations);
   }
 
   /**
     Executes the supplied record
     @param {Object} record The record object to execute.
     @param {Array} records The list of records in the recordSet.
+    @param {Object} annotations Annotations to be added to each charm in the
+      bundle.
   */
-  _executeRecord(record, records) {
-    var method = this['_execute_' + record.method];
+  _executeRecord(record, records, annotations) {
+    const method = this['_execute_' + record.method];
     if (typeof method === 'function') {
-      this['_execute_' + record.method](
-        record, this._executeDryRun.bind(this, records));
+      let args = [record, this._executeDryRun.bind(this, records, annotations)];
+      if (record.method === 'setAnnotations') {
+        args.push(annotations);
+      }
+
+      this['_execute_' + record.method].apply(this, args);
     } else {
       this.db.notifications.add({
         title: 'Unknown method type',
@@ -648,8 +670,10 @@ class BundleImporter {
     @param {Object} record The setAnnotations record.
     @param {Function} next The method to trigger the executor to move
       on to the next record.
+    @param {Object} extraAnnotations Extra annotations to be added to the
+      record.
   */
-  _execute_setAnnotations(record, next) {
+  _execute_setAnnotations(record, next, extraAnnotations) {
     if (record.args[1] === 'application' || record.args[1] === 'service') {
       // We currently only support the setting of app annotations.
       const entityName = record[record.args[0].replace(/^\$/, '')].get('id');
@@ -673,6 +697,13 @@ class BundleImporter {
           annotations['gui-y'] = parseInt(annotations['gui-y']) + space;
         }
       }
+
+      if (extraAnnotations) {
+        Object.keys(extraAnnotations).forEach(key => {
+          annotations[key] = extraAnnotations[key];
+        });
+      }
+
       application.set('annotations', annotations);
     }
     next();

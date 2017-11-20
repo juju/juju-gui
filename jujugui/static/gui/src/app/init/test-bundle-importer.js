@@ -64,15 +64,17 @@ describe('BundleImporter', () => {
 
   describe('importBundleYAML', () => {
     it('calls fetchDryRun with yaml', () => {
+      const annotations = "{ 'bundle-url': cs:k8s }";
       const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
       const notify = sinon.stub(
         bundleImporter.db.notifications, 'add');
-      bundleImporter.importBundleYAML('foo: bar');
+      bundleImporter.importBundleYAML('foo: bar',
+                                      annotations);
       assert.equal(fetch.callCount, 1);
       const args = fetch.lastCall.args;
       assert.equal(args.length, 2);
       assert.equal(args[0], 'foo: bar');
-      assert.strictEqual(args[1], null);
+      assert.strictEqual(args[1], annotations);
       assert.equal(notify.callCount, 1);
       assert.deepEqual(notify.lastCall.args[0], {
         title: 'Fetching bundle data',
