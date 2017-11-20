@@ -162,8 +162,17 @@ class Terminal extends React.Component {
     }, () => {
       if (this.term) {
         this.term.fit();
+        this.focus();
       }
     });
+  }
+
+  /**
+    Set the focus back to the terminal so that users can keep typing.
+  */
+  focus() {
+    const textarea = this.refs.terminal.querySelector('textarea');
+    textarea.focus();
   }
 
   /**
@@ -201,7 +210,7 @@ class Terminal extends React.Component {
             </span>
           </div>
         </div>
-        <div className={terminalClassNames} style={styles}></div>
+        <div ref="terminal" className={terminalClassNames} style={styles}></div>
       </div>
     );
   }
