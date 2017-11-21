@@ -300,6 +300,8 @@ describe('Configuration', function() {
           id: 'cs:trusty/ghost',
           activeComponent: undefined
         }}});
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can change the service name for ghost services', function() {
@@ -354,6 +356,8 @@ describe('Configuration', function() {
     // Calls to check to see if a service exists.
     assert.equal(getServiceByName.callCount, 1);
     assert.equal(getServiceByName.args[0][0], 'newservicename');
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('allows you to modify the series of multi-series charms', function() {
@@ -645,6 +649,8 @@ describe('Configuration', function() {
     assert.equal(service.set.callCount, 0);
     // Make sure that the unit names weren't updated.
     assert.equal(updateUnit.callCount, 0);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('stops setting changes if service name is invalid', () => {
@@ -709,6 +715,8 @@ describe('Configuration', function() {
     assert.equal(service.set.callCount, 0);
     // Make sure that the unit names weren't updated.
     assert.equal(updateUnit.callCount, 0);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('not able to change the service name on deployed services', function() {
@@ -743,6 +751,8 @@ describe('Configuration', function() {
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
     assert.equal(component.refs.ServiceName, undefined);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can handle cancelling the changes', function() {
