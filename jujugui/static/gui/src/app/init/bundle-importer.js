@@ -19,14 +19,15 @@ class BundleImporter {
   /**
     Import a bundle YAML into the current model.
     @param {String} bundleYAML The bundle YAML to deploy.
+    @param {String} bundleURL The bundle URL that the YAML represents.
   */
-  importBundleYAML(bundleYAML) {
+  importBundleYAML(bundleYAML, bundleURL) {
     this.db.notifications.add({
       title: 'Fetching bundle data',
       message: 'Fetching detailed bundle data, this may take some time',
       level: 'important'
     });
-    this.fetchDryRun(bundleYAML, null);
+    this.fetchDryRun(bundleYAML, bundleURL, null);
   }
 
   /**
@@ -82,21 +83,24 @@ class BundleImporter {
   /**
     Fetch the dry-run output from the Guiserver.
     @param {String} bundleYAML The bundle file contents.
+    @param {String} bundleURL The url of the bundle YAML.
     @param {String} changesToken The token identifying a bundle change set.
   */
-  fetchDryRun(bundleYAML, changesToken) {
+  fetchDryRun(bundleYAML, bundleURL, changesToken) {
     if (bundleYAML) {
       bundleYAML = this._ensureV4Format(bundleYAML);
     }
     this._getBundleChanges(
-      bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
+      bundleYAML, changesToken, this._handleFetchDryRun.bind(this, bundleURL));
   }
 
   /**
-    Handles the dry run response.
-    @param {Object} response The processed response data.
+    Handles the dry run response
+    @param {String} bundleURL The URL of the bundle being deployed..
+    @param {Array} errors Any errors when fetching the changeset.
+    @param {Array} changes The bundle changeset.
   */
-  _handleFetchDryRun(errors, changes) {
+  _handleFetchDryRun(bundleURL, errors, changes) {
     if (errors && errors.length) {
       this.db.notifications.add({
         title: 'Error generating changeSet',
@@ -107,7 +111,7 @@ class BundleImporter {
       return;
     }
     // Add the bundle id annotation record.
-    changes = this._addBundleURLAnnotation('cs:mybundle', changes);
+    changes = this._addBundleURLAnnotation(bundleURL, changes);
     this.importBundleDryRun(changes);
   }
 
@@ -171,9 +175,10 @@ class BundleImporter {
         message: 'Changeset processing started.',
         level: 'important'
       });
+      const bundleFileName = file.name.split('.').slice(0, -1).join('.');
       // result is YAML so we need to fetch the dry run changeset data from
       // the guiserver.
-      this.fetchDryRun(e.target.result, null);
+      this.fetchDryRun(e.target.result, bundleFileName, null);
     }
   }
 
