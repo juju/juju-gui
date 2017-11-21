@@ -300,6 +300,8 @@ describe('Configuration', function() {
           id: 'cs:trusty/ghost',
           activeComponent: undefined
         }}});
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can change the service name for ghost services', function() {
@@ -354,6 +356,8 @@ describe('Configuration', function() {
     // Calls to check to see if a service exists.
     assert.equal(getServiceByName.callCount, 1);
     assert.equal(getServiceByName.args[0][0], 'newservicename');
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('allows you to modify the series of multi-series charms', function() {
@@ -645,6 +649,74 @@ describe('Configuration', function() {
     assert.equal(service.set.callCount, 0);
     // Make sure that the unit names weren't updated.
     assert.equal(updateUnit.callCount, 0);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+  });
+
+  it('stops setting changes if service name is invalid', () => {
+    const option1 = { key: 'option1key', type: 'string' };
+    const option2 = { key: 'option2key', type: 'boolean' };
+    const charm = {
+      get: sinon.stub().returns({ option1: option1, option2: option2 })
+    };
+    const option1key = 'string body value';
+    const option2key = true;
+    const serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('abc123$');
+    serviceGet.withArgs('name').returns('servicename');
+    serviceGet.withArgs('config').returns(
+      { option1: option1key, option2: option2key });
+    const service = {
+      get: serviceGet,
+      set: sinon.stub()
+    };
+    const updateUnit = sinon.stub();
+    const getServiceByName = sinon.stub().returns(false);
+    const addNotification = sinon.stub();
+    const component = testUtils.renderIntoDocument(
+      <Configuration
+        acl={acl}
+        addNotification={addNotification}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={getServiceByName}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        serviceRelations={[]}
+        setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={updateUnit}/>);
+
+    const domNode = ReactDOM.findDOMNode(component);
+    const name = domNode.querySelector('.string-config-input');
+
+    name.innerText = '';
+    testUtils.Simulate.input(name);
+
+    const save = domNode.querySelector('.button-row--count-2 .button--neutral');
+    testUtils.Simulate.click(save);
+
+    // Make sure it emits a notification if the name is empty.
+    assert.equal(addNotification.callCount, 1);
+    // Make sure the service name and config wasn't updated.
+    assert.equal(service.set.callCount, 0);
+    // Make sure that the unit names weren't updated.
+    assert.equal(updateUnit.callCount, 0);
+
+    name.innerText = '!@#$%';
+    testUtils.Simulate.input(name);
+
+    testUtils.Simulate.click(save);
+
+    // Make sure it emits a notification if the name is invalid.
+    assert.equal(addNotification.callCount, 2);
+    // Make sure the service name and config wasn't updated.
+    assert.equal(service.set.callCount, 0);
+    // Make sure that the unit names weren't updated.
+    assert.equal(updateUnit.callCount, 0);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('not able to change the service name on deployed services', function() {
@@ -679,6 +751,8 @@ describe('Configuration', function() {
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
     assert.equal(component.refs.ServiceName, undefined);
+
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can handle cancelling the changes', function() {
