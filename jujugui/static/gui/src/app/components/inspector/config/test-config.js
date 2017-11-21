@@ -691,7 +691,7 @@ describe('Configuration', function() {
     const save = domNode.querySelector('.button-row--count-2 .button--neutral');
     testUtils.Simulate.click(save);
 
-    // Make sure it emits a notification if the name exists.
+    // Make sure it emits a notification if the name is empty.
     assert.equal(addNotification.callCount, 1);
     // Make sure the service name and config wasn't updated.
     assert.equal(service.set.callCount, 0);
@@ -703,7 +703,7 @@ describe('Configuration', function() {
 
     testUtils.Simulate.click(save);
 
-    // Make sure it emits a notification if the name exists.
+    // Make sure it emits a notification if the name is invalid.
     assert.equal(addNotification.callCount, 2);
     // Make sure the service name and config wasn't updated.
     assert.equal(service.set.callCount, 0);

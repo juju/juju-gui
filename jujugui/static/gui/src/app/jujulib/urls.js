@@ -353,8 +353,8 @@ var module = module;
   const jujulib = exports.jujulib;
 
   // Export patterns.
-  jujulib.NAME_PATTERN = NAME_PATTERN;
-  jujulib.USER_PATTERN = USER_PATTERN;
+  jujulib.isValidName = NAME_PATTERN.test.bind(NAME_PATTERN);
+  jujulib.isValidUser = USER_PATTERN.test.bind(USER_PATTERN);
 
   // Export URL.
   jujulib.URL = URL;
