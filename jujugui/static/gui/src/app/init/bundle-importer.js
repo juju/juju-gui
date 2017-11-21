@@ -106,7 +106,42 @@ class BundleImporter {
       });
       return;
     }
+    // Add the bundle id annotation record.
+    changes = this._addBundleIdAnnotation('cs:mybundle', changes);
     this.importBundleDryRun(changes);
+  }
+
+  _addBundleIdAnnotation(bundleId, changes) {
+    // For each different application records and add an annotation for each one.
+    changes.forEach(record => {
+      if (record.method === 'deploy') {
+        // Get the length of the changes array so we can properly index
+        // the new setAnnotations.
+        const length = changes.length;
+        // Look for an annotation that is already for this command, if one exists
+        // then add the bundle-url annotation to it.
+        const found = changes.some(innerRecord => {
+          if (innerRecord.method === 'setAnnotations') {
+            if (innerRecord.args[0] === `$${record.id}`) {
+              // If this setAnnotations is for the outer record then add the
+              // bundle-url key to it.
+              innerRecord.args[2]['bundle-url'] = bundleId;
+              return true;
+            }
+          }
+        });
+        // If there was no setAnnotation record already then create a new one.
+        if (!found) {
+          changes.push({
+            id: `setAnnotations-${length}`,
+            method: 'setAnnotations',
+            args: [`$${record.id}`, 'application', {'bundle-url': bundleId}],
+            requires: [record.id]
+          });
+        }
+      }
+    });
+    return changes;
   }
 
   /**
