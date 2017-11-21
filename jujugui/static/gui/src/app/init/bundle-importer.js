@@ -107,11 +107,16 @@ class BundleImporter {
       return;
     }
     // Add the bundle id annotation record.
-    changes = this._addBundleIdAnnotation('cs:mybundle', changes);
+    changes = this._addBundleURLAnnotation('cs:mybundle', changes);
     this.importBundleDryRun(changes);
   }
 
-  _addBundleIdAnnotation(bundleId, changes) {
+  /**
+    Adds the bundle-url annotation to the changeset.
+    @param {String} bundleURL THe bundle url to save to the annotations.
+    @param {Array} changes The bundle changeset.
+  */
+  _addBundleURLAnnotation(bundleURL, changes) {
     // For each different application records and add an annotation for each one.
     changes.forEach(record => {
       if (record.method === 'deploy') {
@@ -125,7 +130,7 @@ class BundleImporter {
             if (innerRecord.args[0] === `$${record.id}`) {
               // If this setAnnotations is for the outer record then add the
               // bundle-url key to it.
-              innerRecord.args[2]['bundle-url'] = bundleId;
+              innerRecord.args[2]['bundle-url'] = bundleURL;
               return true;
             }
           }
@@ -135,7 +140,7 @@ class BundleImporter {
           changes.push({
             id: `setAnnotations-${length}`,
             method: 'setAnnotations',
-            args: [`$${record.id}`, 'application', {'bundle-url': bundleId}],
+            args: [`$${record.id}`, 'application', {'bundle-url': bundleURL}],
             requires: [record.id]
           });
         }
