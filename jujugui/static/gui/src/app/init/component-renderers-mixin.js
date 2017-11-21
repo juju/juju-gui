@@ -1124,6 +1124,7 @@ Browser: ${navigator.userAgent}`
         getUserName={getUserName}
         gisf={this.gisf}
         groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
+        gtmEnabled={this.applicationConfig.GTM_enabled}
         listBudgets={this.plans.listBudgets.bind(this.plans)}
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}

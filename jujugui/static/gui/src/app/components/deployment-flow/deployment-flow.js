@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const AccordionSection = require('../accordion-section/accordion-section');
+const cookieUtil = require('../../init/cookie-util');
 const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
 const DeploymentCredential = require('./credential/credential');
@@ -931,9 +932,15 @@ class DeploymentFlow extends React.Component {
       return;
     }
     const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
+    const classes = classNames(
+      'inner-wrapper',
+      'deployment-flow__deploy',
+      {'deployment-flow__deploy--cookie-visible': this.props.gtmEnabled &&
+        cookieUtil.show_notification(document)}
+    );
     return (
       <div className="twelve-col">
-        <div className="inner-wrapper deployment-flow__deploy">
+        <div className={classes}>
           {this._generateAgreementsSection()}
           <div className="deployment-flow__deploy-action">
             <GenericButton
@@ -1092,6 +1099,7 @@ DeploymentFlow.propTypes = {
   getUserName: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   groupedChanges: PropTypes.object.isRequired,
+  gtmEnabled: PropTypes.bool,
   importSSHKeys: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,
