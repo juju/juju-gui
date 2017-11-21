@@ -146,7 +146,7 @@ describe('Terminal', () => {
     }]);
   });
 
-  it('handles unexpected websocket closures', () => {
+  it('handles unexpected WebSocket closures', () => {
     setupWebsocket();
     const component = ReactTestUtils.renderIntoDocument(
       <Terminal

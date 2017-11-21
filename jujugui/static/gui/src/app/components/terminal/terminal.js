@@ -113,9 +113,10 @@ class Terminal extends React.Component {
       }
     };
     ws.onclose = evt => {
+      // 1000 is the code for a normal closure, anything above that is abnormal.
       if (evt && evt.code > 1000) {
         // It is not a normal closure so we should issue an error.
-        console.log(evt);
+        console.error(evt);
         props.addNotification({
           title: 'Terminal connection unexpectedly closed.',
           message: 'Terminal connection unexpectedly closed.',
