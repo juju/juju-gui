@@ -146,6 +146,34 @@ describe('Terminal', () => {
     }]);
   });
 
+  it('handles unexpected WebSocket closures', () => {
+    setupWebsocket();
+    const component = ReactTestUtils.renderIntoDocument(
+      <Terminal
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        commands={['juju status', 'juju switch']}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />
+    );
+    component.ws.onclose({
+      // Should only throw the notification on code over 1000 which is an
+      // expected closure.
+      code: 1001
+    });
+    assert.deepEqual(component.props.addNotification.args[0], [{
+      title: 'Terminal connection unexpectedly closed.',
+      message: 'Terminal connection unexpectedly closed.',
+      level: 'error'
+    }]);
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+  });
+
   it('can be resized by clicking the two resize buttons', () => {
     const renderer = renderComponent();
     const output = renderer.getRenderOutput();
