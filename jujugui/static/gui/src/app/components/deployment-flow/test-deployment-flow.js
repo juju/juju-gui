@@ -988,4 +988,29 @@ describe('DeploymentFlow', function() {
       });
     });
   });
+
+  it('can add a class when the cookie notice is visible', () => {
+    const renderer = createDeploymentFlow({
+      getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
+      gtmEnabled: true
+    });
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="twelve-col">
+        <div className={'inner-wrapper deployment-flow__deploy ' +
+          'deployment-flow__deploy--cookie-visible'}>
+          {undefined}
+          <div className="deployment-flow__deploy-action">
+            <GenericButton
+              action={instance._handleDeploy}
+              disabled={true}
+              type="positive">
+              Deploy
+            </GenericButton>
+          </div>
+        </div>
+      </div>);
+    expect(output.props.children[9]).toEqualJSX(expected);
+  });
 });
