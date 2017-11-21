@@ -239,6 +239,7 @@ describe('jujulib payment service', function() {
     };
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
     const newUser = {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -258,6 +259,7 @@ describe('jujulib payment service', function() {
     };
     payment.createUser(newUser, sinon.stub());
     assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{

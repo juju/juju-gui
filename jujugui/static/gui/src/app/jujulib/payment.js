@@ -117,6 +117,7 @@ var module = module;
 
       @public createUser
       @param user {Object} The user data object, containing:
+        - nickname {String} The user's nickname,
         - name {String} The user's full name
         - email {String} The user's email address
         - addresses {Array} A list of address objects, the objects contain:
@@ -162,6 +163,7 @@ var module = module;
       };
       const url = `${this.url}/u`;
       const body = JSON.stringify({
+        nickname: user.nickname,
         name: user.name,
         email: user.email,
         addresses: this._unparseAddresses(user.addresses),

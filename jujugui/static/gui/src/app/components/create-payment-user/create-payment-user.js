@@ -110,6 +110,7 @@ class CreatePaymentUser extends React.Component {
       billingAddress = this.refs.billingAddress.getValue();
     }
     const user = {
+      nickname: this.props.username,
       name: address.name,
       email: refs.emailAddress.getValue(),
       addresses: [address],
