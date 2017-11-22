@@ -48,4 +48,49 @@
     margin-right: 0;
     transform: scale(1.1);
   }
+  
+  &__inline-list {
+    margin-left: 1.25rem;
+    margin-bottom: 0;
+    margin-top: .5rem;
+    padding-left: 0;
+
+    .inspector-header__list-item {
+      position: relative;
+      display: inline;
+      list-style: none;
+      margin-right: 1.25rem;
+
+      &:last-of-type,
+      .last-item {
+        margin-right: 0;
+      }
+
+      a {
+        color: $color-link;
+      }
+
+      &::after {
+        color: $color-mid-dark;
+        content: '\00b7';
+        font-size: 1.4rem;
+        line-height: 0;
+        position: absolute;
+        right: -.8rem;
+        top: .55rem;
+      }
+
+      &:hover::after {
+        color: $color-mid-dark;
+      }
+
+      &:last-of-type,
+      .last-item {
+        &::after {
+          content: '';
+        }
+      }
+    }
+  }
 }
+

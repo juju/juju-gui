@@ -57,6 +57,11 @@ class InspectorHeader extends React.Component {
           <img src={this.props.icon}
             className="inspector-header__service-icon" />
         </span>
+        <ul className="inspector-header__inline-list">
+          <li className="inspector-header__list-item"><a href="#"
+            onClick={this._navigateToGetStarted.bind(this)}>Get started</a></li>
+          <li className="inspector-header__list-item"><a href="#">Charm details</a></li>
+        </ul>
       </div>
     );
   }
