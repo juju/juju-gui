@@ -1046,7 +1046,7 @@ describe('jujulib payment service', function() {
             url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
-            '/charges');
+            '/charges?nickname=spinach');
           const xhr = makeXHRRequest({
             charges:[{
               id: 'TEST-12344',

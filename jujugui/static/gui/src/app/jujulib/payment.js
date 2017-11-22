@@ -603,7 +603,7 @@ var module = module;
         }
         callback(null, parsed);
       };
-      const url = `${this.url}/charges`;
+      const url = `${this.url}/charges?nickname=${username}`;
       const headers = {
         'Content-Type': 'application/json'
       };
