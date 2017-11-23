@@ -22,7 +22,7 @@ describe('EnvSizeDisplay', function() {
     appState = {
       current: {
         gui: {
-          machine: true
+          machines: ''
         }
       },
       changeState: sinon.stub()
@@ -45,7 +45,7 @@ describe('EnvSizeDisplay', function() {
         component, 'a[data-view=application]').innerText, '3 applications');
     assert.equal(
       queryComponentSelector(
-        component, 'a[data-view=machine]').innerText, '4 machines');
+        component, 'a[data-view=machines]').innerText, '4 machines');
   });
 
   it('highlights active tab on initial render', function() {
@@ -59,7 +59,7 @@ describe('EnvSizeDisplay', function() {
     assert.notEqual(
       queryComponentSelector(
         component,
-        '.env-size-display__list-item.is-active a[data-view=machine]'),
+        '.env-size-display__list-item.is-active a[data-view=machines]'),
       null);
   });
 
@@ -74,7 +74,7 @@ describe('EnvSizeDisplay', function() {
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
-      'a[data-view=machine]');
+      'a[data-view=machines]');
     testUtils.Simulate.click(machineLink);
     testUtils.Simulate.click(serviceLink);
 
@@ -104,13 +104,13 @@ describe('EnvSizeDisplay', function() {
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
-      'a[data-view=machine]');
+      'a[data-view=machines]');
 
     testUtils.Simulate.click(machineLink);
     assert.notEqual(
       queryComponentSelector(
         component,
-        '.env-size-display__list-item.is-active a[data-view=machine]'),
+        '.env-size-display__list-item.is-active a[data-view=machines]'),
       null);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
