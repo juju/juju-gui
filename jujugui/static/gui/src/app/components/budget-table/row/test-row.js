@@ -93,13 +93,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -151,13 +148,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div className="twelve-col no-margin-bottom" />
@@ -197,13 +191,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -279,13 +270,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -338,13 +326,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -397,13 +382,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -438,13 +420,10 @@ describe('BudgetTableRow', function() {
               <div className={
                 'budget-table__current twelve-col no-margin-bottom'}>
                 <div>
-                  <div className="three-col no-margin-bottom">
+                  <div className="five-col no-margin-bottom">
                     <img className="budget-table__charm-icon"
                       src="landscape.svg" />
                     Landscape
-                  </div>
-                  <div className="one-col no-margin-bottom">
-                    {4}
                   </div>
                 </div>
               </div>
@@ -528,13 +507,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -569,13 +545,10 @@ describe('BudgetTableRow', function() {
               <div className={
                 'budget-table__current twelve-col no-margin-bottom'}>
                 <div>
-                  <div className="three-col no-margin-bottom">
+                  <div className="five-col no-margin-bottom">
                     <img className="budget-table__charm-icon"
                       src="landscape.svg" />
                     Landscape
-                  </div>
-                  <div className="one-col no-margin-bottom">
-                    {4}
                   </div>
                 </div>
               </div>
@@ -680,13 +653,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
@@ -747,13 +717,10 @@ describe('BudgetTableRow', function() {
           expanded={false}>
           <div>
             <div>
-              <div className="three-col no-margin-bottom">
+              <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
-              </div>
-              <div className="one-col no-margin-bottom">
-                {4}
               </div>
             </div>
             <div>
