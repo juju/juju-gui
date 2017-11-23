@@ -22,7 +22,7 @@ describe('EnvSizeDisplay', function() {
     appState = {
       current: {
         gui: {
-          machines: true
+          machines: ''
         }
       },
       changeState: sinon.stub()
@@ -81,7 +81,7 @@ describe('EnvSizeDisplay', function() {
     assert.equal(appState.changeState.callCount, 2);
     assert.deepEqual(appState.changeState.getCall(0).args[0], {
       gui: {
-        machines: true,
+        machines: '',
         status: null
       }
     });
@@ -115,7 +115,7 @@ describe('EnvSizeDisplay', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
-        machines: true,
+        machines: '',
         status: null
       }
     });
@@ -139,7 +139,7 @@ describe('EnvSizeDisplay', function() {
     assert.equal(appState.changeState.callCount, 2);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
-        machines: true,
+        machines: '',
         status: null
       }
     });
