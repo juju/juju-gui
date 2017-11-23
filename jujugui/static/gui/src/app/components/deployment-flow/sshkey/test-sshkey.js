@@ -113,8 +113,8 @@ describe('DeploymentSSHKey', function() {
       launchpadUsername: {getValue: () => 'rose'},
       sshSource: {getValue: () => 'launchpad'}
     };
+    comp.instance.componentDidUpdate();
     comp.instance._handleSourceChange();
-    comp.instance._updateButtonState();
     const expectedOutput = (
       <div className="deployment-ssh-key">
         <p>
