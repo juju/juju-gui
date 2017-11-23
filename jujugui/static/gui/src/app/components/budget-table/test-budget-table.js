@@ -33,11 +33,8 @@ describe('BudgetTable', function() {
     var expected = (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
-          <div className="three-col">
+          <div className="five-col">
             Name
-          </div>
-          <div className="two-col">
-            New units
           </div>
           <div>
             <div className="three-col">
@@ -102,11 +99,8 @@ describe('BudgetTable', function() {
     var expected = (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
-          <div className="three-col">
+          <div className="five-col">
             Name
-          </div>
-          <div className="two-col">
-            New units
           </div>
           {undefined}
         </div>
@@ -158,11 +152,8 @@ describe('BudgetTable', function() {
     var expected = (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
-          <div className="three-col">
+          <div className="five-col">
             Name
-          </div>
-          <div className="two-col">
-            New units
           </div>
           <div>
             <div className="three-col">
