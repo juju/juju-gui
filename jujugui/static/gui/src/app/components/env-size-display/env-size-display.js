@@ -16,8 +16,8 @@ class EnvSizeDisplay extends React.Component {
     const view = e.currentTarget.dataset.view;
     this.props.appState.changeState({
       gui: {
-        machines: view === 'machines' ? true : null,
-        status: view === 'status' ? true : null
+        machines: view === 'machines' ? '' : null,
+        status: view === 'status' ? '' : null
       }
     });
   }
@@ -32,24 +32,15 @@ class EnvSizeDisplay extends React.Component {
   */
   _genClasses(section) {
     const guiState = this.props.appState.current.gui;
-    let isDefaultTab = false;
 
-    if (guiState) {
-      if (guiState.hasOwnProperty(section) === 'machine' ||
-          guiState.hasOwnProperty(section) === 'status') {
-        isDefaultTab = true;
-      }
-    } else {
-      isDefaultTab = true;
-    }
-
-    if (isDefaultTab && section === 'application') {
+    if (!guiState && section === 'application') {
       return 'env-size-display__list-item is-active';
     }
+
     return classNames(
       'env-size-display__list-item',
       {
-        'is-active': guiState && guiState[section]
+        'is-active': guiState && guiState[section] !== undefined
       }
     );
   }
@@ -64,8 +55,7 @@ class EnvSizeDisplay extends React.Component {
       <li className={this._genClasses('status')}>
         <a data-view="status"
           onClick={this._changeEnvironmentView.bind(this)}
-          className="env-size-display__link"
-          href="#_">
+          className="env-size-display__link">
           status
         </a>
       </li>);
@@ -82,8 +72,7 @@ class EnvSizeDisplay extends React.Component {
           <li className={this._genClasses('application')}>
             <a data-view="application"
               onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link"
-              href="#_">
+              className="env-size-display__link">
               {serviceCount}&nbsp;
               {pluralize('application', serviceCount)}
             </a>
@@ -91,8 +80,7 @@ class EnvSizeDisplay extends React.Component {
           <li className={this._genClasses('machines')}>
             <a data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link"
-              href="#_">
+              className="env-size-display__link">
               {machineCount}&nbsp;
               {pluralize('machine', machineCount)}
             </a>
