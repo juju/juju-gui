@@ -4,6 +4,8 @@
 const BundleImporter = require('./bundle-importer');
 const jujulibConversionUtils = require('./jujulib-conversion-utils');
 
+// XXX There are test failures in thsi branch when it's not run in the full
+// suite of tests.
 describe('BundleImporter', () => {
   let bundleImporter, charmstore, db, getBundleChanges,
       modelAPI, models, utils, yui;
@@ -67,12 +69,13 @@ describe('BundleImporter', () => {
       const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
       const notify = sinon.stub(
         bundleImporter.db.notifications, 'add');
-      bundleImporter.importBundleYAML('foo: bar');
+      bundleImporter.importBundleYAML('foo: bar', 'cs:~foo/bundle/bar');
       assert.equal(fetch.callCount, 1);
       const args = fetch.lastCall.args;
-      assert.equal(args.length, 2);
+      assert.equal(args.length, 3);
       assert.equal(args[0], 'foo: bar');
-      assert.strictEqual(args[1], null);
+      assert.equal(args[1], 'cs:~foo/bundle/bar');
+      assert.strictEqual(args[2], null);
       assert.equal(notify.callCount, 1);
       assert.deepEqual(notify.lastCall.args[0], {
         title: 'Fetching bundle data',
@@ -110,9 +113,10 @@ describe('BundleImporter', () => {
         bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
         assert.equal(fetch.callCount, 1);
         const args = fetch.lastCall.args;
-        assert.equal(args.length, 2);
+        assert.equal(args.length, 3);
         assert.equal(args[0], 'foo');
-        assert.strictEqual(args[1], null);
+        assert.equal(args[1], 'path/to/file');
+        assert.strictEqual(args[2], null);
       });
     });
   });
@@ -150,17 +154,22 @@ describe('BundleImporter', () => {
 
     it('calls to modelAPI to get bundle changes from a YAML', () => {
       const yaml = '{"services":{}}';
-      bundleImporter.fetchDryRun(yaml, null);
+      //sinon.spy(bundleImporter, '_handleFetchDryRun');
+      bundleImporter._handleFetchDryRun = sinon.stub();
+      bundleImporter.fetchDryRun(yaml, 'filename', null);
       assert.equal(getBundleChanges.callCount, 1);
       const args = getBundleChanges.lastCall.args;
       assert.equal(args.length, 3);
       assert.equal(args[0], yaml);
       assert.strictEqual(args[1], null);
+      // Check that the callback was passed the bundle URL.
+      args[2]();
+      assert.equal(bundleImporter._handleFetchDryRun.args[0], 'filename');
     });
 
     it('ensures v4 format on import', () => {
       const yaml = '{"bundle":{"services":{}}}';
-      bundleImporter.fetchDryRun(yaml, null);
+      bundleImporter.fetchDryRun(yaml, 'filename', null);
       assert.equal(getBundleChanges.callCount, 1);
       const args = getBundleChanges.lastCall.args;
       assert.equal(args.length, 3);
@@ -170,7 +179,7 @@ describe('BundleImporter', () => {
 
     it('can import v4 bundles with applications key', () => {
       const yaml = '{"applications":{}}';
-      bundleImporter.fetchDryRun(yaml, null);
+      bundleImporter.fetchDryRun(yaml, 'filename', null);
       assert.equal(getBundleChanges.callCount, 1);
       const args = getBundleChanges.lastCall.args;
       assert.equal(args.length, 3);
@@ -180,7 +189,7 @@ describe('BundleImporter', () => {
 
     it('calls to modelAPI to get bundle changes from a token', () => {
       const token = 'foo';
-      bundleImporter.fetchDryRun(null, token);
+      bundleImporter.fetchDryRun(null, 'filename', token);
       assert.equal(getBundleChanges.callCount, 1);
       const args = getBundleChanges.lastCall.args;
       assert.equal(args.length, 3);
@@ -193,7 +202,7 @@ describe('BundleImporter', () => {
       const dryRun = sinon.stub(
         bundleImporter, 'importBundleDryRun');
       const changes = [{foo: 'bar'}];
-      bundleImporter.fetchDryRun(yaml);
+      bundleImporter.fetchDryRun(yaml, 'filename');
       const callback = getBundleChanges.lastCall.args[2];
       callback([], changes);
       assert.equal(dryRun.callCount, 1);
@@ -373,9 +382,9 @@ describe('BundleImporter', () => {
       const data = utils.loadFixture(
         'data/wordpress-bundle-v3-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
-      assert.equal(db.services.size(), 2);
-      assert.equal(db.units.size(), 2);
-      assert.equal(db.machines.size(), 1);
+      assert.equal(db.services.size(), 2, 'incorrect number of services');
+      assert.equal(db.units.size(), 2, 'incorrect number of units');
+      assert.equal(db.machines.size(), 1, 'incorrect number of machines');
       assert.equal(db.units.item(0).machine, db.units.item(1).machine);
     });
   });
