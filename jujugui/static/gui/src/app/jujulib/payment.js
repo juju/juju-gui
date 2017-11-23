@@ -117,6 +117,7 @@ var module = module;
 
       @public createUser
       @param user {Object} The user data object, containing:
+        - nickname {String} The user's nickname,
         - name {String} The user's full name
         - email {String} The user's email address
         - addresses {Array} A list of address objects, the objects contain:
@@ -162,6 +163,7 @@ var module = module;
       };
       const url = `${this.url}/u`;
       const body = JSON.stringify({
+        nickname: user.nickname,
         name: user.name,
         email: user.email,
         addresses: this._unparseAddresses(user.addresses),
@@ -173,8 +175,10 @@ var module = module;
         token: user.token,
         'payment-method-name': user.paymentMethodName || null
       });
-      const headers = null;
-      return this.bakery.put(
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      return this.bakery.post(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
@@ -267,12 +271,14 @@ var module = module;
         callback(null, this._parsePaymentMethod(response));
       };
       const url = `${this.url}/u/${username}/payment-methods`;
-      const headers = null;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
       const body = JSON.stringify({
         'payment-method-name': methodName,
         token: token
       });
-      return this.bakery.put(
+      return this.bakery.post(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
@@ -298,14 +304,16 @@ var module = module;
       const handler = error => {
         callback(error);
       };
-      const url = `${this.url}/u/${username}/payment-methods/${id}`;
+      const url = `${this.url}/u/${username}/payment-methods/${id}/content`;
       const parts = expiry.split('/');
       const body = JSON.stringify({
         address: this._unparseAddress(address),
         month: parseInt(parts[0]),
         year: parseInt(parts[1])
       });
-      const headers = null;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
       return this.bakery.put(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
@@ -414,13 +422,15 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/addresses/${id}`;
-      const headers = null;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
       const objAddress = this._unparseAddress(address);
       // The API uses the id on the address object, not the id in the URL to do
       // the lookup, so attach the id here.
       objAddress.id = id;
       const body = JSON.stringify(objAddress);
-      this.bakery.post(
+      this.bakery.put(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
@@ -448,13 +458,15 @@ var module = module;
         callback(error);
       };
       const url = `${this.url}/u/${username}/billing-addresses/${id}`;
-      const headers = null;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
       const objAddress = this._unparseAddress(address);
       // The API uses the id on the address object, not the id in the URL to do
       // the lookup, so attach the id here.
       objAddress.id = id;
       const body = JSON.stringify(objAddress);
-      this.bakery.post(
+      this.bakery.put(
         url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
     },
 
@@ -591,13 +603,12 @@ var module = module;
         }
         callback(null, parsed);
       };
-      const url = `${this.url}/charges`;
-      const body = JSON.stringify({
-        nickname: username
-      });
-      const headers = null;
-      return this.bakery.post(
-        url, headers, body, jujulib._wrap(handler, {parseJSON: true}));
+      const url = `${this.url}/charges?nickname=${username}`;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      return this.bakery.get(
+        url, headers, jujulib._wrap(handler, {parseJSON: true}));
     },
 
     /**

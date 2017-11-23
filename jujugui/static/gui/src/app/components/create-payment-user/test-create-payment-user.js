@@ -486,6 +486,7 @@ describe('CreatePaymentUser', function() {
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
     assert.deepEqual(createUser.args[0][0], {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -587,6 +588,7 @@ describe('CreatePaymentUser', function() {
     output.props.children.props.children[1].props.children.props.action();
     assert.equal(createUser.callCount, 1);
     assert.deepEqual(createUser.args[0][0], {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{

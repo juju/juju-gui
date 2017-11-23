@@ -770,7 +770,7 @@ Browser: ${navigator.userAgent}`
         revokeCloudCredential={
           controllerAPI.revokeCloudCredential.bind(controllerAPI)}
         sendAnalytics={this.sendAnalytics}
-        showPay={window.juju_config.flags.pay || false}
+        showPay={this.applicationConfig.flags.pay || false}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         updateAddress={

@@ -31,7 +31,7 @@ describe('Popup', () => {
           <div className="popup__close">
             <GenericButton
               action={close}
-              type="base">
+              type="inline-base">
               <SvgIcon
                 name="close_16"
                 size="16" />
@@ -46,7 +46,7 @@ describe('Popup', () => {
         </div>
       </Panel>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 
   it('can set a type class', () => {
@@ -67,6 +67,6 @@ describe('Popup', () => {
         </div>
       </Panel>
     );
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });
