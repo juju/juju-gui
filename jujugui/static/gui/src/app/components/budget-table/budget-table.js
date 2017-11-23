@@ -66,11 +66,8 @@ class BudgetTable extends React.Component {
     return (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
-          <div className="three-col">
+          <div className="five-col">
             Name
-          </div>
-          <div className="two-col">
-            New units
           </div>
           {this._generatePlanHeaders()}
         </div>
