@@ -117,11 +117,12 @@ class BundleImporter {
 
   /**
     Adds the bundle-url annotation to the changeset.
-    @param {String} bundleURL THe bundle url to save to the annotations.
+    @param {String} bundleURL The bundle URL to save to the annotations.
     @param {Array} changes The bundle changeset.
   */
   _addBundleURLAnnotation(bundleURL, changes) {
-    // For each different application records and add an annotation for each one.
+    // Find all of the deploy records and add an annotation containing the
+    // bundle URL for each one.
     changes.forEach(record => {
       if (record.method === 'deploy') {
         // Get the length of the changes array so we can properly index

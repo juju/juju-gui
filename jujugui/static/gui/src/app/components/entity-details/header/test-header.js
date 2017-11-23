@@ -20,7 +20,8 @@ describe('EntityHeader', function() {
     urllib = sinon.stub();
     urllib.fromLegacyString = sinon.stub().returns({
       revision: 42,
-      path: sinon.stub().returns('u/who/django/42')
+      path: sinon.stub().returns('u/who/django/42'),
+      legacyPath: sinon.stub().returns('django-cluster')
     });
   });
 
