@@ -40,6 +40,10 @@
   }
 
   &__deploy {
+    &--cookie-visible {
+      padding-bottom: 100px;
+    }
+
     &-option {
       margin-bottom: 20px;
 
