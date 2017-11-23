@@ -12,7 +12,7 @@ const Notification = require('../components/notification/notification');
   @param {Object} doc Reference to the window.document.
 */
 function check(doc) {
-  if (show_notification(doc)) {
+  if (shouldShowNotification(doc)) {
     _renderNotification(doc);
   } else {
     _removeNotification(doc);
@@ -24,7 +24,7 @@ function check(doc) {
   @param {Object} doc Reference to the window.document.
   @returns {Boolean} Whether the notification should be showed.
 */
-function show_notification(doc) {
+function shouldShowNotification(doc) {
   return _getCookie(doc, '_cookies_accepted') !== 'true' &&
     !localStorage.getItem('disable-cookie');
 }
@@ -104,4 +104,4 @@ function _removeNotification(doc) {
     doc.getElementById('cookie-container'));
 }
 
-module.exports = {check, close, show_notification};
+module.exports = {check, close, shouldShowNotification};
