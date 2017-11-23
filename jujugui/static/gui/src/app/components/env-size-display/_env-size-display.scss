@@ -30,11 +30,11 @@
     }
 
     &:hover {
-      background-color: $canvas-background;
+      border-bottom: 3px solid $light-mid-grey;
     }
 
-    &.is-active &__link &__icon {
-      color: $ubuntu-orange;
+    &.is-active {
+      border-bottom: 3px solid $ubuntu-orange;
     }
   }
 

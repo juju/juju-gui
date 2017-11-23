@@ -16,8 +16,8 @@ class EnvSizeDisplay extends React.Component {
     const view = e.currentTarget.dataset.view;
     this.props.appState.changeState({
       gui: {
-        machines: view === 'machine' ? '' : null,
-        status: view === 'status' ? '' : null
+        machines: view === 'machines' ? true : null,
+        status: view === 'status' ? true : null
       }
     });
   }
@@ -32,6 +32,20 @@ class EnvSizeDisplay extends React.Component {
   */
   _genClasses(section) {
     const guiState = this.props.appState.current.gui;
+    let isDefaultTab = false;
+
+    if (guiState) {
+      if (guiState.hasOwnProperty(section) === 'machine' ||
+          guiState.hasOwnProperty(section) === 'status') {
+        isDefaultTab = true;
+      }
+    } else {
+      isDefaultTab = true;
+    }
+
+    if (isDefaultTab && section === 'application') {
+      return 'env-size-display__list-item is-active';
+    }
     return classNames(
       'env-size-display__list-item',
       {
@@ -50,7 +64,8 @@ class EnvSizeDisplay extends React.Component {
       <li className={this._genClasses('status')}>
         <a data-view="status"
           onClick={this._changeEnvironmentView.bind(this)}
-          className="env-size-display__link">
+          className="env-size-display__link"
+          href="#_">
           status
         </a>
       </li>);
@@ -67,15 +82,17 @@ class EnvSizeDisplay extends React.Component {
           <li className={this._genClasses('application')}>
             <a data-view="application"
               onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link">
+              className="env-size-display__link"
+              href="#_">
               {serviceCount}&nbsp;
               {pluralize('application', serviceCount)}
             </a>
           </li>
-          <li className={this._genClasses('machine')}>
-            <a data-view="machine"
+          <li className={this._genClasses('machines')}>
+            <a data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link">
+              className="env-size-display__link"
+              href="#_">
               {machineCount}&nbsp;
               {pluralize('machine', machineCount)}
             </a>
